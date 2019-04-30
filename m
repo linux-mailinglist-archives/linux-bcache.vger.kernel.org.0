@@ -2,155 +2,114 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8553CEE7B
-	for <lists+linux-bcache@lfdr.de>; Tue, 30 Apr 2019 03:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3BEBF8B1
+	for <lists+linux-bcache@lfdr.de>; Tue, 30 Apr 2019 14:21:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729761AbfD3Bin (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 29 Apr 2019 21:38:43 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45106 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729238AbfD3Bim (ORCPT
+        id S1726123AbfD3MVl (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 30 Apr 2019 08:21:41 -0400
+Received: from smtp-out-02.aalto.fi ([130.233.228.121]:65243 "EHLO
+        smtp-out-02.aalto.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfD3MVk (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 29 Apr 2019 21:38:42 -0400
-Received: by mail-pl1-f195.google.com with SMTP id o5so5934119pls.12;
-        Mon, 29 Apr 2019 18:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=ZynxS8wT5VQN7Zq/7F3IMTMeMTQDk53jffD4iJ3yhmA=;
-        b=gVGyLx2A3iju9B9qEL8zugMCjbJJf/08jaXqerWXIVUH+jhOcnZ/u3HsPt/mf5fmX4
-         vMq/HK2Cs8hLMXiKQYjYh/i7u/xy7B++Dy2phG8XziWS+WMEv8lCngHJBYWCLrGCvhnu
-         +w3trQUvT+Q6IDYyQWy4/MUqDfXsDN9bzvku/PU33uKBJGZSQDiNqUJyaiYwLMdE/ljh
-         cHDsFaIJCNfHcCyIQh/TnVroYYTswHeOeDbHrMZb6hfMduL3w9+2Yi6quToE7GAOMXfd
-         UvFybh4IkO3QHg82gqdeSsBu9vTGR5NseIV3776SUZibWF/dGzuP443EqkhHrpa7oVgu
-         7/ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ZynxS8wT5VQN7Zq/7F3IMTMeMTQDk53jffD4iJ3yhmA=;
-        b=A02oRU5gI62h+Ge3O4mjmicSvcW5bSBNS1cb4BAIEMfQcSms3bCmj0gLOy4JGDwwjT
-         46uuYEHWRxxG55ljCbEKQ8wq1CYTFf1ToG708C08k03DLyMtMwbZ61q2iHYHHAudk4N3
-         6lxB+QQUnLxA09Zlos/Gg/YQ0y2yiP4XSlAR05kH+qOHfLXBGgXFqso2qpODnpuAyb+V
-         JqM/kx4/tGq3rxfaupRdwwccPKnMKgVjKxkVwyoAOPDHijscRZEh0yXFSBoa6P8s54Jl
-         +XhxJ6ZP8MAgC6uTEnQhT1QAILPsr2zjvvar0DEVR7IIltrnmhVZvpMkAzDFFKCIqWhm
-         upTg==
-X-Gm-Message-State: APjAAAX2dpGkoW3L6mteuiMjHDTQuANszt+Kw1eqC6igxshcdkKH0BeO
-        mDkFN1lsC38rw4xlz3/zNs796Y/l
-X-Google-Smtp-Source: APXvYqypSXLKdOc4BifZ0GR3NGO16WadNXoen/Z2Ppfkq0lI+/5mMCeZ7XACQUf7JvIXLciz66RKhg==
-X-Received: by 2002:a17:902:2862:: with SMTP id e89mr67760487plb.203.1556588322012;
-        Mon, 29 Apr 2019 18:38:42 -0700 (PDT)
-Received: from [0.0.0.0] (172.96.249.239.16clouds.com. [172.96.249.239])
-        by smtp.gmail.com with ESMTPSA id f66sm2350064pfg.55.2019.04.29.18.38.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 18:38:40 -0700 (PDT)
-Subject: Re: [PATCH] bcache: fix memleak when error occurred before journal
- replay
-To:     colyli@suse.de
-Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
-        linux-block@vger.kernel.org
-References: <1556541059-21234-1-git-send-email-fangguoju@gmail.com>
-From:   guoju fang <fangguoju@gmail.com>
-Message-ID: <cae10f04-9a2c-db48-97ad-0cdd7e88a0b8@gmail.com>
-Date:   Tue, 30 Apr 2019 09:38:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 30 Apr 2019 08:21:40 -0400
+X-Greylist: delayed 341 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Apr 2019 08:21:39 EDT
+Received: from smtp-out-02.aalto.fi (localhost.localdomain [127.0.0.1])
+        by localhost (Email Security Appliance) with SMTP id CBA5227130D_CC83B28B;
+        Tue, 30 Apr 2019 12:10:16 +0000 (GMT)
+Received: from mail.lan (kurp.hut.fi [130.233.36.234])
+        by smtp-out-02.aalto.fi (Sophos Email Appliance) with ESMTP id 81F3E271309_CC83B28F;
+        Tue, 30 Apr 2019 12:10:16 +0000 (GMT)
+Received: from orbit.lan (orbit.lan [IPv6:2001:708:190:7::2:100])
+        by mail.lan (Postfix) with ESMTP id 600A71000C9;
+        Tue, 30 Apr 2019 15:15:56 +0300 (EEST)
+Received: from jha (helo=localhost)
+        by orbit.lan with local-esmtp (Exim 4.90_1)
+        (envelope-from <juha.aatrokoski@aalto.fi>)
+        id 1hLRfw-0007tD-Ai; Tue, 30 Apr 2019 15:15:56 +0300
+Date:   Tue, 30 Apr 2019 15:15:56 +0300 (EEST)
+From:   Juha Aatrokoski <juha.aatrokoski@aalto.fi>
+To:     Coly Li <colyli@suse.de>
+cc:     linux-bcache@vger.kernel.org, Shenghui Wang <shhuiw@foxmail.com>
+Subject: Re: [PATCH 18/18] bcache: avoid potential memleak of list of
+ journal_replay(s) in the CACHE_SYNC branch of run_cache_set
+In-Reply-To: <20190424164843.29535-19-colyli@suse.de>
+Message-ID: <alpine.DEB.2.21.1904301510350.7886@orbit.lan>
+References: <20190424164843.29535-1-colyli@suse.de> <20190424164843.29535-19-colyli@suse.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <1556541059-21234-1-git-send-email-fangguoju@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-SASI-RCODE: 200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aalto.fi; h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=its18; bh=XFM+TzimEGmAditcqDhactWBtJtiAPpdUmGnrjMOv2E=; b=kLOOc7Rld0xWVyyccPOqfFk6VztidW2dP7nnmM5mxOWx83agb0mPAigR1X3Y6uTgI5XPNB+Ksft74pySN7zGZwiwRgB9DSF+D5ek/KDB4R8kByjhacGdDvOS6AQN5D5PcFnjIZYirwof1H1UbXOHuk1pJMEeGhgb+Vcoq0pjlmHTKg3utGnLAEoBINvq+m+9aS9Iixs9ree7gtReV6dZCZHYVS8F3SmF0m8kctWleuDXdQlwnd2i1psb9+8R36au7B/O0t3PtSgnC1D2C81RbvcIdkh8/qtJLVjYciBgTPAu2s8z6zjA9vaijU7hRmi8ga6lKAING5g4ECRPqvIHvQ==
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Oh, Shenghui submitted a patch to fix this bug days ago, so please 
-ignore this.
+This patch is missing the following chunk from the original patch:
 
-On 2019/4/29 20:30, Guoju Fang wrote:
-> A list of struct journal_replay is allocated when register cache device
-> and will be freed when journal replay complete. It will cause memory
-> leaks if some error occurred before journal replay.
+@@ -1790,7 +1792,6 @@ static void run_cache_set(struct cache_set *c)
+         set_gc_sectors(c);
+
+         if (CACHE_SYNC(&c->sb)) {
+-               LIST_HEAD(journal);
+                 struct bkey *k;
+                 struct jset *j;
+
+Unless I'm missing something, without this chunk this patch doesn't do 
+anything, as the "journal" that is allocated is the inner one, while the 
+"journal" that is freed is the outer one.
+
+
+On Thu, 25 Apr 2019, Coly Li wrote:
+
+> From: Shenghui Wang <shhuiw@foxmail.com>
 >
-> Signed-off-by: Guoju Fang <fangguoju@gmail.com>
+> In the CACHE_SYNC branch of run_cache_set(), LIST_HEAD(journal) is used
+> to collect journal_replay(s) and filled by bch_journal_read().
+>
+> If all goes well, bch_journal_replay() will release the list of
+> jounal_replay(s) at the end of the branch.
+>
+> If something goes wrong, code flow will jump to the label "err:" and leave
+> the list unreleased.
+>
+> This patch will release the list of journal_replay(s) in the case of
+> error detected.
+>
+> v1 -> v2:
+> * Move the release code to the location after label 'err:' to
+>  simply the change.
+>
+> Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
+> Signed-off-by: Coly Li <colyli@suse.de>
 > ---
->   drivers/md/bcache/super.c | 20 ++++++++++++++------
->   1 file changed, 14 insertions(+), 6 deletions(-)
+> drivers/md/bcache/super.c | 8 ++++++++
+> 1 file changed, 8 insertions(+)
 >
 > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index a697a3a..e4289291 100644
+> index 3f34b96ebbc3..0ffe9acee9d8 100644
 > --- a/drivers/md/bcache/super.c
 > +++ b/drivers/md/bcache/super.c
-> @@ -1782,6 +1782,7 @@ static void run_cache_set(struct cache_set *c)
->   	struct cache *ca;
->   	struct closure cl;
->   	unsigned int i;
+> @@ -1790,6 +1790,8 @@ static int run_cache_set(struct cache_set *c)
+> 	struct cache *ca;
+> 	struct closure cl;
+> 	unsigned int i;
 > +	LIST_HEAD(journal);
->   
->   	closure_init_stack(&cl);
->   
-> @@ -1790,7 +1791,6 @@ static void run_cache_set(struct cache_set *c)
->   	set_gc_sectors(c);
->   
->   	if (CACHE_SYNC(&c->sb)) {
-> -		LIST_HEAD(journal);
->   		struct bkey *k;
->   		struct jset *j;
->   
-> @@ -1820,25 +1820,25 @@ static void run_cache_set(struct cache_set *c)
->   
->   		err = "bad btree root";
->   		if (__bch_btree_ptr_invalid(c, k))
-> -			goto err;
-> +			goto free_journal;
->   
->   		err = "error reading btree root";
->   		c->root = bch_btree_node_get(c, NULL, k,
->   					     j->btree_level,
->   					     true, NULL);
->   		if (IS_ERR_OR_NULL(c->root))
-> -			goto err;
-> +			goto free_journal;
->   
->   		list_del_init(&c->root->list);
->   		rw_unlock(true, c->root);
->   
->   		err = uuid_read(c, j, &cl);
->   		if (err)
-> -			goto err;
-> +			goto free_journal;
->   
->   		err = "error in recovery";
->   		if (bch_btree_check(c))
-> -			goto err;
-> +			goto free_journal;
->   
->   		bch_journal_mark(c, &journal);
->   		bch_initial_gc_finish(c);
-> @@ -1854,7 +1854,7 @@ static void run_cache_set(struct cache_set *c)
->   		err = "error starting allocator thread";
->   		for_each_cache(ca, c, i)
->   			if (bch_cache_allocator_start(ca))
-> -				goto err;
-> +				goto free_journal;
->   
->   		/*
->   		 * First place it's safe to allocate: btree_check() and
-> @@ -1938,6 +1938,14 @@ static void run_cache_set(struct cache_set *c)
->   
->   	set_bit(CACHE_SET_RUNNING, &c->flags);
->   	return;
-> +
-> +free_journal:
+> +	struct journal_replay *l;
+>
+> 	closure_init_stack(&cl);
+>
+> @@ -1949,6 +1951,12 @@ static int run_cache_set(struct cache_set *c)
+> 	set_bit(CACHE_SET_RUNNING, &c->flags);
+> 	return 0;
+> err:
 > +	while (!list_empty(&journal)) {
-> +		struct journal_replay *jr = list_first_entry(&journal,
-> +			    struct journal_replay, list);
-> +		list_del(&jr->list);
-> +		kfree(jr);
+> +		l = list_first_entry(&journal, struct journal_replay, list);
+> +		list_del(&l->list);
+> +		kfree(l);
 > +	}
->   err:
->   	closure_sync(&cl);
->   	/* XXX: test this, it's broken */
+> +
+> 	closure_sync(&cl);
+> 	/* XXX: test this, it's broken */
+> 	bch_cache_set_error(c, "%s", err);
+>
