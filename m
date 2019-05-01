@@ -2,60 +2,93 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0854D10584
-	for <lists+linux-bcache@lfdr.de>; Wed,  1 May 2019 08:42:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDA5D1058E
+	for <lists+linux-bcache@lfdr.de>; Wed,  1 May 2019 08:43:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfEAGmc (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 1 May 2019 02:42:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53184 "EHLO mx1.suse.de"
+        id S1726244AbfEAGnR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 1 May 2019 02:43:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53460 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725776AbfEAGmc (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 1 May 2019 02:42:32 -0400
+        id S1725776AbfEAGnR (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 1 May 2019 02:43:17 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CF5BCAE47;
-        Wed,  1 May 2019 06:42:30 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     axboe@kernel.dk
+        by mx1.suse.de (Postfix) with ESMTP id 3C802AF01;
+        Wed,  1 May 2019 06:43:15 +0000 (UTC)
+Subject: Re: [PATCH] bcache: remove redundant LIST_HEAD(journal) from
+ run_cache_set()
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        juha.aatrokoski@aalto.fi, shhuiw@foxmail.com,
-        Coly Li <colyli@suse.de>
-Subject: [PATCH v2] bcache: remove redundant LIST_HEAD(journal) from run_cache_set()
-Date:   Wed,  1 May 2019 14:42:22 +0800
-Message-Id: <20190501064222.34585-1-colyli@suse.de>
-X-Mailer: git-send-email 2.16.4
+        juha.aatrokoski@aalto.fi, shhuiw@foxmail.com
+References: <20190430140225.21642-1-colyli@suse.de>
+ <0ded62e9-6135-6da1-312d-1ceb6160c93b@suse.de>
+ <54478019-5427-266e-42c2-0d606c6e5ec3@kernel.dk>
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Organization: SUSE Labs
+Message-ID: <b9036b88-9bd9-a96b-a7ed-96bd45708267@suse.de>
+Date:   Wed, 1 May 2019 14:43:07 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <54478019-5427-266e-42c2-0d606c6e5ec3@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Commit 95f18c9d1310 ("bcache: avoid potential memleak of list of
-journal_replay(s) in the CACHE_SYNC branch of run_cache_set") forgets
-to remove the original define of LIST_HEAD(journal), which makes
-the change no take effect. This patch removes redundant variable
-LIST_HEAD(journal) from run_cache_set(), to make Shenghui's fix
-working.
+On 2019/4/30 10:20 下午, Jens Axboe wrote:
+> On 4/30/19 8:05 AM, Coly Li wrote:
+>> On 2019/4/30 10:02 下午, Coly Li wrote:
+>>> Commit 95f18c9d1310 ("bcache: avoid potential memleak of list of
+>>> journal_replay(s) in the CACHE_SYNC branch of run_cache_set") forgets
+>>> to remove the original define of LIST_HEAD(journal), which makes
+>>> the change no take effect. This patch removes redundant variable
+>>> LIST_HEAD(journal) from run_cache_set(), to make Shenghui's fix
+>>> working.
+>>>
+>>> Reported-by: Juha Aatrokoski <juha.aatrokoski@aalto.fi>
+>>> Cc: Shenghui Wang <shhuiw@foxmail.com>
+>>> Signed-off-by: Coly Li <colyli@suse.de>
+>>> ---
+>>>  drivers/md/bcache/super.c | 1 -
+>>>  1 file changed, 1 deletion(-)
+>>>
+>>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+>>> index 0ffe9acee9d8..1b63ac876169 100644
+>>> --- a/drivers/md/bcache/super.c
+>>> +++ b/drivers/md/bcache/super.c
+>>> @@ -1800,7 +1800,6 @@ static int run_cache_set(struct cache_set *c)
+>>>  	set_gc_sectors(c);
+>>>  
+>>>  	if (CACHE_SYNC(&c->sb)) {
+>>> -		LIST_HEAD(journal);
+>>>  		struct bkey *k;
+>>>  		struct jset *j;
+>>>  
+>>>
+>>
+>> Hi Jens,
+>>
+>> Please take this fix for the Linux v5.2 bcache series. It fixes a
+>> problem from
+>> [PATCH 18/18] bcache: avoid potential memleak of list of
+>> journal_replay(s) in the CACHE_SYNC branch of run_cache_set
+>> which is already in your for-next branch.
+>>
+>> Thanks to Juha for cache this bug, and thank you in advance for taking
+>> care of this.
+> 
+> Applied, but please add Fixes: lines patches like that, it's not enough
+> to simply mention it in the commit message.
+> 
 
-Fixes: 95f18c9d1310 ("bcache: avoid potential memleak of list of journal_replay(s) in the CACHE_SYNC branch of run_cache_set")
-Reported-by: Juha Aatrokoski <juha.aatrokoski@aalto.fi>
-Cc: Shenghui Wang <shhuiw@foxmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
----
- drivers/md/bcache/super.c | 1 -
- 1 file changed, 1 deletion(-)
+I just re-send a V2 patch with adding the Fixes: line, thanks for taking
+care of this.
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 0ffe9acee9d8..1b63ac876169 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1800,7 +1800,6 @@ static int run_cache_set(struct cache_set *c)
- 	set_gc_sectors(c);
- 
- 	if (CACHE_SYNC(&c->sb)) {
--		LIST_HEAD(journal);
- 		struct bkey *k;
- 		struct jset *j;
- 
 -- 
-2.16.4
 
+Coly Li
