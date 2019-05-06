@@ -2,40 +2,58 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C9A9147AE
-	for <lists+linux-bcache@lfdr.de>; Mon,  6 May 2019 11:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17B23148A9
+	for <lists+linux-bcache@lfdr.de>; Mon,  6 May 2019 13:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbfEFJeY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 6 May 2019 05:34:24 -0400
-Received: from m50-134.163.com ([123.125.50.134]:50427 "EHLO m50-134.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725883AbfEFJeX (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 6 May 2019 05:34:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=JX24e
-        ddmN0PysCwtZg5z+sThgVmDmhRG6yJDkDEK7h4=; b=DbTOzglTnRKPREL+3eZ0j
-        GtU/zmV+Hu1yzd6Jq/KDzt6N2l7kj1wkDNkk983CR3mLXCBKdMU5ONZwyKOkSMC+
-        4ZKr3LB4rx+ZI2uHVjjZgCmMbRjHNjQXPl2h+PB7Pf4Il7BQgqTBOtPKG7hmnfU/
-        0m9XzPUjB9gZFUaJKzzQ9c=
-Received: from localhost.localdomain (unknown [61.181.149.218])
-        by smtp4 (Coremail) with SMTP id DtGowAAXunKQ_89cyWgBAQ--.153S4;
-        Mon, 06 May 2019 17:34:19 +0800 (CST)
-From:   Xinwei Wei <nkxiaowei@163.com>
+        id S1725886AbfEFLEr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 6 May 2019 07:04:47 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46941 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfEFLEr (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 6 May 2019 07:04:47 -0400
+Received: by mail-pf1-f193.google.com with SMTP id j11so6551534pff.13
+        for <linux-bcache@vger.kernel.org>; Mon, 06 May 2019 04:04:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JX24eddmN0PysCwtZg5z+sThgVmDmhRG6yJDkDEK7h4=;
+        b=bhc2qYgjJrR0AvR0gzcoj7I96z/ABkKuBPDdR9dF7ScbTudNoUJ4hy3B20pYONT/fq
+         U6KYIlAzg7sYeCpM6KAKcvTklRxbpEUhGheO6L2WYP7+A8xUAUZYAws6lX+iptK4hGJX
+         huo5VGj5CGsEZdOu/yzp3JUnhDN7VG59S794H8N1fJqfF0OfzmDQ+vWNAdZFqqG/7Jdk
+         PtM2OPHdGszgpJjl4yBKrUbkhrbp+K8Up+nDmnHIDfW1hKh2v8hoLRsVpfWhGCMlwp8p
+         1zcF/amCwqWzcsYnnTEM4WE2v7RSRtF2ALta3ZpFc2J3tbNK2Xp9MWA8B2uugItRYvGJ
+         sd+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JX24eddmN0PysCwtZg5z+sThgVmDmhRG6yJDkDEK7h4=;
+        b=o2nuqJyob/qMoRHdCC1CrfW2EaOy4RFHDqFoaYhbl+mAVpqZxa1kLRAV07MAf0QzyM
+         y2qlK6zcG6m6PvCMvuTpbfKGM8KRG0vYWMSdv65j3ngLEsinPeb+4nQOW3gJcwFuVH1e
+         JrKVFWP8NAwyDlADnEQYA/R4oZZ0CU0dzypEhyZd+ZrI4Zxxg1czdWaE41TC4cP1VH5I
+         Zg/ZxDahKYIW/9Z3ybXtPl8cCwxWL7pGhMjIV0U9c3i9QPU5EPwXc9x0I0qN8gC0/OrS
+         HWZ0zodp0z2Ih/vl2U/SncHfILBm28M195Vx+Eka2m2EJ/uhA2aWJo5U9cbqdf81nUCI
+         /K3A==
+X-Gm-Message-State: APjAAAWOjnts2inkiYgYMEhlt3e/o89yBroysL/Zu9hcJ//kTOd+3skN
+        ZbHKsMUJu0VOAea1ibiSoJZbAR9TZ/iFew==
+X-Google-Smtp-Source: APXvYqyF+yu+o7lhUAA57phSU5sK5gM/8dZ6npfrgPQ7KvDneG7Rs0D6JTi5zsVf1deluWsab3NNwA==
+X-Received: by 2002:a62:4281:: with SMTP id h1mr32272949pfd.162.1557140685409;
+        Mon, 06 May 2019 04:04:45 -0700 (PDT)
+Received: from localhost.localdomain ([61.181.149.218])
+        by smtp.gmail.com with ESMTPSA id p81sm17053600pfa.26.2019.05.06.04.04.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 06 May 2019 04:04:44 -0700 (PDT)
+From:   Xinwei Wei <xinweiwei90@gmail.com>
 To:     linux-bcache@vger.kernel.org
 Cc:     weixinwei <nkxiaowei@163.com>
 Subject: [PATCH 1/1] bcache-tools:Add blkdiscard if cache dev supports TRIM
-Date:   Mon,  6 May 2019 17:33:46 +0800
-Message-Id: <20190506093345.7780-1-nkxiaowei@163.com>
+Date:   Mon,  6 May 2019 19:04:31 +0800
+Message-Id: <20190506110430.9487-1-xinweiwei90@gmail.com>
 X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DtGowAAXunKQ_89cyWgBAQ--.153S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW3KFWrKw18Kr1DWFWUJry7KFg_yoWkCryxpa
-        4fWws5trZ8J3y7G393Jr15K3WSgwsYy342gF13Xa98Zay3Kr95WFWxCF1jqa4qgr43X3s3
-        Xr1vv3WUGw4DtrJanT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jUpnQUUUUU=
-X-Originating-IP: [61.181.149.218]
-X-CM-SenderInfo: 5qn0xtprzhxqqrwthudrp/1tbiMBusyFWBms23bQAAsW
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
@@ -491,5 +509,4 @@ index e5e7464..3a7badb 100644
  	unsigned int cache_replacement_policy = 0;
 -- 
 2.21.0
-
 
