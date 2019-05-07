@@ -2,171 +2,226 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C3716144
-	for <lists+linux-bcache@lfdr.de>; Tue,  7 May 2019 11:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F374163CF
+	for <lists+linux-bcache@lfdr.de>; Tue,  7 May 2019 14:36:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726369AbfEGJnU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 7 May 2019 05:43:20 -0400
-Received: from mail-eopbgr740077.outbound.protection.outlook.com ([40.107.74.77]:37796
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726399AbfEGJnU (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 7 May 2019 05:43:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mKXUpMrwogN1cdesW4/ghpgmEY6sK28hLKM3itQVf4w=;
- b=d//IjvmJT4r7aJbC8AfaBQ+7PfhHpSXLruUVhAtpvWPvcUevJIV2Qc3z7lySbX/7P+GHkkhX1jV1xwIJn3ThOCPd1B6mOJklbRInsgqZkdKlRCAqY1WfKLUCREe3ETwXlVnY2BPFSib42JLDeAkYcxv9r4N0Nai+Nk38X0mXGbw=
-Received: from CY4PR03CA0023.namprd03.prod.outlook.com (10.168.162.33) by
- CY1PR03MB2267.namprd03.prod.outlook.com (10.166.206.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.10; Tue, 7 May 2019 09:43:16 +0000
-Received: from CY1NAM02FT005.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::201) by CY4PR03CA0023.outlook.office365.com
- (2603:10b6:903:33::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1856.11 via Frontend
- Transport; Tue, 7 May 2019 09:43:16 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
- smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- CY1NAM02FT005.mail.protection.outlook.com (10.152.74.117) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1856.11
- via Frontend Transport; Tue, 7 May 2019 09:43:16 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x479hFYR020548
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Tue, 7 May 2019 02:43:15 -0700
-Received: from saturn.analog.com (10.50.1.244) by NWD2HUBCAS7.ad.analog.com
- (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Tue, 7 May 2019
- 05:43:15 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-bcache@vger.kernel.org>
-CC:     <colyli@suse.de>, <kent.overstreet@gmail.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH] bcache: use sysfs_match_string() instead of __sysfs_match_string()
-Date:   Tue, 7 May 2019 12:43:12 +0300
-Message-ID: <20190507094312.18633-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.17.1
+        id S1725858AbfEGMgr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 7 May 2019 08:36:47 -0400
+Received: from mail.thorsten-knabe.de ([212.60.139.226]:40586 "EHLO
+        mail.thorsten-knabe.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbfEGMgr (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 7 May 2019 08:36:47 -0400
+X-Greylist: delayed 1017 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 May 2019 08:36:46 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=thorsten-knabe.de; s=dkim1; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=xBPcM/z9GRasKzHlCwMssUbP1Wgmxu+WfppW/zxx/5A=; b=KA/YNXrz4nZhpzX+cyvyOiQikw
+        N4PbMSrFbRh4Mhsutq8YV0J9FVmhxb7htvBrGkQ/lZWEmO7dbTJZIkeA2K6e+cHE6BdALwiGwVhtV
+        49AGMjUwX0BggrRAeCKNaco+62fAuzP7BE3wvUeDsTGnfoSad1whi1XfH1W+Y4GdKknUYDMgXfcrb
+        QWD/JMboyCGD3S2IQ/SY/Scg0V7VCgTS7v6L4+0W7k9wKhcQ+ofFiarmUMmwaftX2E6j+TFjxlYCC
+        X1F4tksIbtzZCWRF8qzpEyTABLjsVtP/4jhGr7vtPmUXvdd/hlR/F+7V64gkWAaTq9xZEyKJrXFcj
+        VXal4WDw==;
+Received: from tek01.intern.thorsten-knabe.de ([2a01:170:101e:1::a00:101])
+        by mail.thorsten-knabe.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <linux@thorsten-knabe.de>)
+        id 1hNz4S-0004lv-5U; Tue, 07 May 2019 14:19:46 +0200
+Subject: Re: BUG: bcache failing on top of degraded RAID-6
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org
+References: <557659ec-3f41-d463-aa42-df33cb8d18b8@thorsten-knabe.de>
+ <c11201ba-094a-db5b-4962-1dbafd377c85@suse.de>
+ <0df416df-7cb7-05a4-e7ff-76da1d128560@thorsten-knabe.de>
+ <efd60c92-e2f7-c07d-dc03-557eeee1ae3a@suse.de>
+ <d8473b88-1f3c-145c-0ca8-e8c207f47d38@thorsten-knabe.de>
+ <29b5552f-39b5-b0b9-80ec-cc4a32bcba78@suse.de>
+From:   Thorsten Knabe <linux@thorsten-knabe.de>
+Openpgp: preference=signencrypt
+Message-ID: <3a5e949b-c51c-01ab-578c-ed4883522937@thorsten-knabe.de>
+Date:   Tue, 7 May 2019 14:19:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(136003)(396003)(2980300002)(189003)(199004)(8936002)(26005)(77096007)(186003)(6666004)(356004)(476003)(8676002)(50226002)(6916009)(7696005)(246002)(86362001)(51416003)(70206006)(53416004)(48376002)(2351001)(70586007)(47776003)(50466002)(2906002)(7636002)(305945005)(16586007)(54906003)(106002)(107886003)(316002)(126002)(36756003)(1076003)(5024004)(5660300002)(486006)(2616005)(336012)(14444005)(44832011)(426003)(4326008)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR03MB2267;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9d61e36e-0685-41c9-52f9-08d6d2d06e36
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4709054)(2017052603328);SRVR:CY1PR03MB2267;
-X-MS-TrafficTypeDiagnostic: CY1PR03MB2267:
-X-Microsoft-Antispam-PRVS: <CY1PR03MB2267F5AA609B13B4155760F6F9310@CY1PR03MB2267.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:873;
-X-Forefront-PRVS: 0030839EEE
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: +75uCfFny8fZ1FdVJBjZkvDrd14RsQU9YQbSu7RS/2JgxcRY1c2bvqFhNVWPBnR4KHe2pNfg+LR9iqP3JFpVhNlkFOhxlkaueHADuqO3bn6cjllrKJs6byHThjFOdP/rS/jooVVc8tP6PiU0cKfKzXXe/uiT4I3kfUcAiuhd0sZ/FRXgRsadG95vFHDusJUUgV7teqCDACJaZgCN50YprEcyHqxfnhjDfmTYitY103peYRkWZCCt2wGaoM8cCdFyvg2BdFRZVL5RvfuSh9b2+jncnb+AOori1LLTqFYNF3F5fqPg/U9koWuAoFgL0+1XULDhX2aZk6CXicnQhjLI6XEWkd9Xz5yDRFWCuayjpf46q/clzk2b/uAXQNnL2q0Tb9neUkKDYoA9Tv3wGOPPEAYu1b8UO/Hkt1NphlNHOzc=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2019 09:43:16.0656
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d61e36e-0685-41c9-52f9-08d6d2d06e36
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR03MB2267
+In-Reply-To: <29b5552f-39b5-b0b9-80ec-cc4a32bcba78@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Spam-Report: Content analysis details:   (-1.1 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0000]
+  0.8 DKIM_ADSP_ALL          No valid author signature, domain signs all mail
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The arrays (of strings) that are passed to __sysfs_match_string() are
-static, so use sysfs_match_string() which does an implicit ARRAY_SIZE()
-over these arrays.
+On 3/27/19 2:45 PM, Coly Li wrote:
+> On 2019/3/27 9:42 下午, Thorsten Knabe wrote:
+>> On 3/27/19 12:53 PM, Coly Li wrote:
+>>> On 2019/3/27 7:00 下午, Thorsten Knabe wrote:
+>>>> On 3/27/19 10:44 AM, Coly Li wrote:
+>>>>> On 2019/3/26 9:21 下午, Thorsten Knabe wrote:
+>>>>>> Hello,
+>>>>>>
+>>>>>> there seems to be a serious problem, when running bcache on top of a
+>>>>>> degraded RAID-6 (MD) array. The bcache device /dev/bcache0 disappears
+>>>>>> after a few I/O operations on the affected device and the kernel log
+>>>>>> gets filled with the following log message:
+>>>>>>
+>>>>>> bcache: bch_count_backing_io_errors() md0: IO error on backing device,
+>>>>>> unrecoverable
+>>>>>>
+>>>>>
+>>>>> It seems I/O request onto backing device failed. If the md raid6 device
+>>>>> is the backing device, does it go into read-only mode after degrade ?
+>>>>
+>>>> No, the RAID6 backing device is still in read-write mode after the disk
+>>>> has been removed from the RAID array. That's the way RAID6 is supposed
+>>>> to work.
+>>>>
+>>>>>
+>>>>>
+>>>>>> Setup:
+>>>>>> Linux kernel: 5.1-rc2, 5.0.4, 4.19.0-0.bpo.2-amd64 (Debian backports)
+>>>>>> all affected
+>>>>>> bcache backing device: EXT4 filesystem -> /dev/bcache0 -> /dev/md0 ->
+>>>>>> /dev/sd[bcde]1
+>>>>>> bcache cache device: /dev/sdf1
+>>>>>> cache mode: writethrough, none and cache device detached are all
+>>>>>> affected, writeback and writearound has not been tested
+>>>>>> KVM for testing, first observed on real hardware (failing RAID device)
+>>>>>>
+>>>>>> As long as the RAID6 is healthy, bcache works as expected. Once the
+>>>>>> RAID6 gets degraded, for example by removing a drive from the array
+>>>>>> (mdadm --fail /dev/md0 /dev/sde1, mdadm --remove /dev/md0 /dev/sde1),
+>>>>>> the above-mentioned log messages appear in the kernel log and the bcache
+>>>>>> device /dev/bcache0 disappears shortly afterwards logging:
+>>>>>>
+>>>>>> bcache: bch_cached_dev_error() stop bcache0: too many IO errors on
+>>>>>> backing device md0
+>>>>>>
+>>>>>> to the kernel log.
+>>>>>>
+>>>>>> Increasing /sys/block/bcache0/bcache/io_error_limit to a very high value
+>>>>>> (1073741824) the bcache device /dev/bcache0 remains usable without any
+>>>>>> noticeable filesystem corruptions.
+>>>>>
+>>>>> If the backing device goes into read-only mode, bcache will take this
+>>>>> backing device as a failure status. The behavior is to stop the bcache
+>>>>> device of the failed backing device, to notify upper layer something
+>>>>> goes wrong.
+>>>>>
+>>>>> In writethough and writeback mode, bcache requires the backing device to
+>>>>> be writable.
+>>>>
+>>>> But, the degraded (one disk of the array missing) RAID6 device is still
+>>>> writable.
+>>>>
+>>>> Also after raising the io_error_limit of the bcache device to a very
+>>>> high value (1073741824 in my tests) I can use the bcache device on the
+>>>> degraded RAID6 array for hours reading and writing gigabytes of data,
+>>>> without getting any I/O errors or observing any filesystem corruptions.
+>>>> I'm just getting a lot of those
+>>>>
+>>>> bcache: bch_count_backing_io_errors() md0: IO error on backing device,
+>>>> unrecoverable
+>>>>
+>>>> messages in the kernel log.
+>>>>
+>>>> It seems that I/O requests for data that have been successfully
+>>>> recovered by the RAID6 from the redundant information stored on the
+>>>> additional disks are accidentally counted as failed I/O requests and
+>>>> when the configured io_error_limit for the bcache device is reached, the
+>>>> bcache device gets stopped.
+>>> Oh, thanks for the informaiton.
+>>>
+>>> It sounds during md raid6 degrading and recovering, some I/O from bcache
+>>> might be failed, and after md raid6 degrades and recovers, the md device
+>>> continue to serve I/O request. Am I right ?
+>>>
+>>
+>> I think, the I/O errors logged by bcache are not real I/O errors,
+>> because the filesystem on top of the bcache device does not report any
+>> I/O errors unless the bcache device gets stopped by bcache due to too
+>> many errors (io_error_limit reached).
+>>
+>> I performed the following test:
+>>
+>> Starting with bcache on a healthy RAID6 with 4 disks (all attached and
+>> completely synced). cache_mode set to "none" to ensure data is read from
+>> the backing device. EXT4 filesystem on top of bcache mounted with two
+>> identical directories each containing 4GB of data on a system with 2GB
+>> of RAM to ensure data is not coming form the page cache. "diff -r dir1
+>> dir2" running in a loop to check for inconsistencies. Also
+>> io_error_limit has been raised to 1073741824 to ensure the bcache device
+>> does not get stopped due to too many io errors during the test.
+>>
+>> As long as all 4 disks attached to the RAID6 array, no messages get logged.
+>>
+>> Once one disk is removed from the RAID6 array using
+>>   mdadm --fail /dev/md0 /dev/sde1
+>> the kernel log gets filled with the
+>>
+>> bcache: bch_count_backing_io_errors() md0: IO error on backing device,
+>> unrecoverable
+>>
+>> messages. However neither the EXT4 filesystem logs any corruptions nor
+>> does the diff comparing the two directories report any inconsistencies.
+>>
+>> Adding the previously removed disk back to the RAID6 array, bcache stops
+>> reporting the above-mentioned error message once the re-added disk is
+>> fully synced and the RAID6 array is healthy again.
+>>
+>> If the I/O requests to the RAID6 device would actually fail, I would
+>> expect to see either EXT4 filesystem errors in the logs or at least diff
+>> reporting differences, but nothing gets logged in the kernel log expect
+>> the above-mentioned message from bcache.
+>>
+>> It seems bcache mistakenly classifies or at least counts some I/O
+>> requests as failed although they have not actually failed.
+>>
+>> By the way Linux 4.9 (from Debian stable) is most probably not affected.
+> Hi Thorsten,
+> 
+> Let me try to reproduce and check into. I will ask you for more
+> information later.
+> 
+> Very informative, thanks.
+> 
 
-Functionally, this doesn't change anything.
-The change is more cosmetic.
+Hello Cody.
 
-It only shrinks the static arrays by 1 byte each.
+I'm now running Linux 5.1 and still see the errors described above.
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/md/bcache/sysfs.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+I did some further investigations myself.
 
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index 17bae9c14ca0..0dfd9d4fb1c8 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -21,28 +21,24 @@ static const char * const bch_cache_modes[] = {
- 	"writethrough",
- 	"writeback",
- 	"writearound",
--	"none",
--	NULL
-+	"none"
- };
- 
- /* Default is 0 ("auto") */
- static const char * const bch_stop_on_failure_modes[] = {
- 	"auto",
--	"always",
--	NULL
-+	"always"
- };
- 
- static const char * const cache_replacement_policies[] = {
- 	"lru",
- 	"fifo",
--	"random",
--	NULL
-+	"random"
- };
- 
- static const char * const error_actions[] = {
- 	"unregister",
--	"panic",
--	NULL
-+	"panic"
- };
- 
- write_attribute(attach);
-@@ -333,7 +329,7 @@ STORE(__cached_dev)
- 		bch_cached_dev_run(dc);
- 
- 	if (attr == &sysfs_cache_mode) {
--		v = __sysfs_match_string(bch_cache_modes, -1, buf);
-+		v = sysfs_match_string(bch_cache_modes, buf);
- 		if (v < 0)
- 			return v;
- 
-@@ -344,7 +340,7 @@ STORE(__cached_dev)
- 	}
- 
- 	if (attr == &sysfs_stop_when_cache_set_failed) {
--		v = __sysfs_match_string(bch_stop_on_failure_modes, -1, buf);
-+		v = sysfs_match_string(bch_stop_on_failure_modes, buf);
- 		if (v < 0)
- 			return v;
- 
-@@ -794,7 +790,7 @@ STORE(__bch_cache_set)
- 			    0, UINT_MAX);
- 
- 	if (attr == &sysfs_errors) {
--		v = __sysfs_match_string(error_actions, -1, buf);
-+		v = sysfs_match_string(error_actions, buf);
- 		if (v < 0)
- 			return v;
- 
-@@ -1060,7 +1056,7 @@ STORE(__bch_cache)
- 	}
- 
- 	if (attr == &sysfs_cache_replacement_policy) {
--		v = __sysfs_match_string(cache_replacement_policies, -1, buf);
-+		v = sysfs_match_string(cache_replacement_policies, buf);
- 		if (v < 0)
- 			return v;
- 
+The affected bio have the bio_status field set to 10 (=BLK_STS_IOERR)
+and the bio_ops field set to 524288 (=REQ_RAHEAD).
+
+According to the comment in linux/blk_types.h such requests may fail.
+Quote from linux/blk_types.h:
+	__REQ_RAHEAD,           /* read ahead, can fail anytime */
+
+That would explain why no file system errors or corruptions occur,
+although bcache reports IO errors from the backing device.
+
+Thus I assume errors resulting from such read-ahead bio requests should
+not be counted/ignored by bcache.
+
+Kind regards
+Thorsten
+
+
+
+
+
 -- 
-2.17.1
-
+___
+ |        | /                 E-Mail: linux@thorsten-knabe.de
+ |horsten |/\nabe                WWW: http://linux.thorsten-knabe.de
