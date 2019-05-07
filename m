@@ -2,55 +2,55 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17B23148A9
-	for <lists+linux-bcache@lfdr.de>; Mon,  6 May 2019 13:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 542CD1577C
+	for <lists+linux-bcache@lfdr.de>; Tue,  7 May 2019 04:10:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725886AbfEFLEr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 6 May 2019 07:04:47 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46941 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbfEFLEr (ORCPT
+        id S1726063AbfEGCKw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 6 May 2019 22:10:52 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34747 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfEGCKv (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 6 May 2019 07:04:47 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j11so6551534pff.13
-        for <linux-bcache@vger.kernel.org>; Mon, 06 May 2019 04:04:46 -0700 (PDT)
+        Mon, 6 May 2019 22:10:51 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b3so7770766pfd.1
+        for <linux-bcache@vger.kernel.org>; Mon, 06 May 2019 19:10:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=JX24eddmN0PysCwtZg5z+sThgVmDmhRG6yJDkDEK7h4=;
-        b=bhc2qYgjJrR0AvR0gzcoj7I96z/ABkKuBPDdR9dF7ScbTudNoUJ4hy3B20pYONT/fq
-         U6KYIlAzg7sYeCpM6KAKcvTklRxbpEUhGheO6L2WYP7+A8xUAUZYAws6lX+iptK4hGJX
-         huo5VGj5CGsEZdOu/yzp3JUnhDN7VG59S794H8N1fJqfF0OfzmDQ+vWNAdZFqqG/7Jdk
-         PtM2OPHdGszgpJjl4yBKrUbkhrbp+K8Up+nDmnHIDfW1hKh2v8hoLRsVpfWhGCMlwp8p
-         1zcF/amCwqWzcsYnnTEM4WE2v7RSRtF2ALta3ZpFc2J3tbNK2Xp9MWA8B2uugItRYvGJ
-         sd+Q==
+        bh=nVFAFq8aLBiuZwmHrP39sUECbyTo2QoPecx7DKPZE2o=;
+        b=CdEZ7+Xe1SeI44wQej9IvC99sukgxD7PtWDQpKj+cQ+V0t2XrL3B8rBi2bslJyGIid
+         hY+HQ+jLTgZYr83+roTu9E2JSoHB+Dm1tSlNAnKEcCvDb2HbjVkNYL7m/hkrgfXURdrB
+         jqP0akz4QNRtnuTZG2Llx4Do/TB/TONl0AgQVprUceZO7SGAFCCNg8fYcLhHog9tjjTh
+         6QjA5B3jVaJDixzQ191jS9qDDlOW7wQFcg6oJzGADWcAZNYAVPooCr5MnIbZHZ0iUzyR
+         xSaA5J+PTeaufnUB+NSj9XJ8wvufdu7WOevHqnGWTRKtSv8rlReGwWK/1tS0UmgtGsJM
+         FNkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=JX24eddmN0PysCwtZg5z+sThgVmDmhRG6yJDkDEK7h4=;
-        b=o2nuqJyob/qMoRHdCC1CrfW2EaOy4RFHDqFoaYhbl+mAVpqZxa1kLRAV07MAf0QzyM
-         y2qlK6zcG6m6PvCMvuTpbfKGM8KRG0vYWMSdv65j3ngLEsinPeb+4nQOW3gJcwFuVH1e
-         JrKVFWP8NAwyDlADnEQYA/R4oZZ0CU0dzypEhyZd+ZrI4Zxxg1czdWaE41TC4cP1VH5I
-         Zg/ZxDahKYIW/9Z3ybXtPl8cCwxWL7pGhMjIV0U9c3i9QPU5EPwXc9x0I0qN8gC0/OrS
-         HWZ0zodp0z2Ih/vl2U/SncHfILBm28M195Vx+Eka2m2EJ/uhA2aWJo5U9cbqdf81nUCI
-         /K3A==
-X-Gm-Message-State: APjAAAWOjnts2inkiYgYMEhlt3e/o89yBroysL/Zu9hcJ//kTOd+3skN
-        ZbHKsMUJu0VOAea1ibiSoJZbAR9TZ/iFew==
-X-Google-Smtp-Source: APXvYqyF+yu+o7lhUAA57phSU5sK5gM/8dZ6npfrgPQ7KvDneG7Rs0D6JTi5zsVf1deluWsab3NNwA==
-X-Received: by 2002:a62:4281:: with SMTP id h1mr32272949pfd.162.1557140685409;
-        Mon, 06 May 2019 04:04:45 -0700 (PDT)
-Received: from localhost.localdomain ([61.181.149.218])
-        by smtp.gmail.com with ESMTPSA id p81sm17053600pfa.26.2019.05.06.04.04.42
+        bh=nVFAFq8aLBiuZwmHrP39sUECbyTo2QoPecx7DKPZE2o=;
+        b=dIwVqTJpHjA8+bnDvqhHQ7SPpV70R4RKtCbrgmBgSAwr8IQ54/hHQ8atdJY04e2NXJ
+         /ARL3/eqVJMF2Q9FlGp79XzT95XdcnEL+JQKYv5Munks81rQtXiu5CH9o02yBvdRIx3J
+         FRqF1YMYzlL+KMVAinLuQ1a6KxsmDBBt6IMMRo3j0eDRi07r+FznuIhfCgLmh/+ltugJ
+         mhXDSk6ckIY+SBle0a5+hGxHLXay753UE2vgXjNHPIz2uSxrhHYMncAg2BcMXWFl0dMJ
+         odGdqa5TlOO7ITd1Yp2Y4W1xMXx07JD+SSLhCHf3goU+YAlSF7eU1RYxpdhc+GvBI2h6
+         Efsw==
+X-Gm-Message-State: APjAAAUqCi8o3Rx9y+cNAaH6ny0z5EzFzZHiv8LQdX7XqKHKazkVIoDc
+        ZrCooX28BL+ttSPtg27+UDP1LNzHmjTBpQ==
+X-Google-Smtp-Source: APXvYqwN5PrBsiUllkYVpyxE7glLk6nv1yTsHuP7gnBL1OQ60YTJjKiUuX6INGnjwEflmyZilDVZQw==
+X-Received: by 2002:a65:66d2:: with SMTP id c18mr6089144pgw.427.1557195050720;
+        Mon, 06 May 2019 19:10:50 -0700 (PDT)
+Received: from iZrj9cbsg6tjakeeye9db1Z.localdomain ([47.88.58.177])
+        by smtp.gmail.com with ESMTPSA id r8sm14921693pfn.11.2019.05.06.19.10.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 May 2019 04:04:44 -0700 (PDT)
+        Mon, 06 May 2019 19:10:50 -0700 (PDT)
 From:   Xinwei Wei <xinweiwei90@gmail.com>
 To:     linux-bcache@vger.kernel.org
-Cc:     weixinwei <nkxiaowei@163.com>
+Cc:     Xinwei Wei <nkxiaowei@163.com>
 Subject: [PATCH 1/1] bcache-tools:Add blkdiscard if cache dev supports TRIM
-Date:   Mon,  6 May 2019 19:04:31 +0800
-Message-Id: <20190506110430.9487-1-xinweiwei90@gmail.com>
+Date:   Tue,  7 May 2019 10:10:23 +0800
+Message-Id: <20190507021022.3322-1-xinweiwei90@gmail.com>
 X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -58,8 +58,6 @@ Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
-
-From: weixinwei <nkxiaowei@163.com>
 
 Signed-off-by: Xinwei Wei <nkxiaowei@163.com>
 ---
