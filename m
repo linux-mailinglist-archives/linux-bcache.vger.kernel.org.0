@@ -2,290 +2,109 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A92A61809E
-	for <lists+linux-bcache@lfdr.de>; Wed,  8 May 2019 21:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFB5018ED9
+	for <lists+linux-bcache@lfdr.de>; Thu,  9 May 2019 19:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbfEHTn7 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 8 May 2019 15:43:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38404 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726751AbfEHTn7 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 8 May 2019 15:43:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7790BAC4E;
-        Wed,  8 May 2019 19:43:56 +0000 (UTC)
-Subject: Re: BUG: bcache failing on top of degraded RAID-6
-To:     Thorsten Knabe <linux@thorsten-knabe.de>
-Cc:     linux-bcache@vger.kernel.org
-References: <557659ec-3f41-d463-aa42-df33cb8d18b8@thorsten-knabe.de>
- <c11201ba-094a-db5b-4962-1dbafd377c85@suse.de>
- <0df416df-7cb7-05a4-e7ff-76da1d128560@thorsten-knabe.de>
- <efd60c92-e2f7-c07d-dc03-557eeee1ae3a@suse.de>
- <d8473b88-1f3c-145c-0ca8-e8c207f47d38@thorsten-knabe.de>
- <29b5552f-39b5-b0b9-80ec-cc4a32bcba78@suse.de>
- <3a5e949b-c51c-01ab-578c-ed4883522937@thorsten-knabe.de>
- <56663d65-02d3-2d55-9e90-d02987f61f7d@suse.de>
- <3153278c-0203-3ce5-5de3-40f08d409173@thorsten-knabe.de>
- <61323026-f168-b472-41f8-57c42a7fd0cc@suse.de>
- <63fc8271-f5a5-7fc3-9f4b-d8a610cf70b0@thorsten-knabe.de>
- <2515e3b2-1626-2206-add1-550a9dd34dee@suse.de>
- <2a444578-1828-763b-88ca-e1cda46864d2@thorsten-knabe.de>
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <3ac24c5b-05f5-560d-12d5-57acdb96e50a@suse.de>
-Date:   Thu, 9 May 2019 03:43:50 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        id S1726653AbfEIRVg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 9 May 2019 13:21:36 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41185 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbfEIRVg (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 9 May 2019 13:21:36 -0400
+Received: by mail-ed1-f66.google.com with SMTP id m4so2718478edd.8
+        for <linux-bcache@vger.kernel.org>; Thu, 09 May 2019 10:21:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rolffokkens-nl.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-transfer-encoding:content-language;
+        bh=mhj2IiOK5/1PSX4gv+vp9KU1onQsmoJsGeE6J1/uXuo=;
+        b=oejhAJc/NLdVNmSkuvl8x6dmywczBX7ruGGcUtW7EACSZN+Z/u9p2+TL1u4QeDIzJQ
+         9R3u4YlhyINTDFoz+zc5bU1rsuXw1Py7tNP73l/ft8PuLJaR6SsOOQ5Tc/ktZaItnlTD
+         C0OE/Mx/J4Jsz7Kf5yHxIaPSCj5J84IK8fKmMPvlyq3CnuMKikv+KDJToIAnkepofusR
+         5t7vLq/W0eeFa8aW6InUqyPTB7CsG+MeNi57+EOVMnMEHYEqguGzJ9kU8SEIdYvZBngO
+         tunqsYbX4ZzJVXKTWJk5vBuNHD3V2y2tZuhYsD6u5FU+GJLUsu8EnFL1ToVL0nEUk5cd
+         9psA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=mhj2IiOK5/1PSX4gv+vp9KU1onQsmoJsGeE6J1/uXuo=;
+        b=WIitKy9LPg3r2ZM+seZIfPAPgY4e9NZTh4XHueHTCDP6SzppC88uUOOYFT07PzdFJ/
+         W+Nc4FU7AIO0mCRAxlR8hxhxgfu45/wTV6qp1Ks8B2f+gYKF3Jx1JaMEwmhmF4laRJQm
+         01/Rm/BmLCwYhKOo0Gvg6EihC0tmTHTdmbN0Cioea0CvdebXmZx/eUBH9TCgDSCkUnyh
+         aGF9nBqmCgKg3Omy9FKaxjT5nASLI+h22HheHS7JiWNn1BKPN919W5HNhPOpdPyofb7a
+         coooIFENe8l8OMqD1Al9ndWV+JZaSxMm2Kur8rFi6BbTquuZHh60fzPcWShb/4tV2QCu
+         PKng==
+X-Gm-Message-State: APjAAAV+3tuQNdwvuPiyhWaDSa3+0qPXxf+MDfWGpwytESL28ZeUpmbS
+        OXlW4V/Ass91oP1F2Hu4E4JCyzSDngo=
+X-Google-Smtp-Source: APXvYqzw0jOZBllhsEfgH+0wlKJY1eTqkB3DZAlM0wTusfgrWcZwuO5IVbjTQJuJt53PK8N6NR7ysA==
+X-Received: by 2002:a17:906:6d99:: with SMTP id h25mr4439604ejt.187.1557422494498;
+        Thu, 09 May 2019 10:21:34 -0700 (PDT)
+Received: from home07.rolf-en-monique.lan ([89.188.16.145])
+        by smtp.gmail.com with ESMTPSA id e21sm396981ejd.15.2019.05.09.10.21.33
+        for <linux-bcache@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2019 10:21:33 -0700 (PDT)
+From:   Rolf Fokkens <rolf@rolffokkens.nl>
+Subject: Re: bcache & Fedora 30: massive corruption
+To:     linux-bcache@vger.kernel.org
+References: <dfa0b47d-a1c6-3faa-b377-48677502a794@rolffokkens.nl>
+Message-ID: <6d386198-49d0-495e-a8d1-1bc7d0191bee@rolffokkens.nl>
+Date:   Thu, 9 May 2019 19:21:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <2a444578-1828-763b-88ca-e1cda46864d2@thorsten-knabe.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <dfa0b47d-a1c6-3faa-b377-48677502a794@rolffokkens.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: nl-NL
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/5/8 11:58 下午, Thorsten Knabe wrote:
-> On 5/7/19 5:05 PM, Coly Li wrote:
->> On 2019/5/7 9:48 下午, Thorsten Knabe wrote:
->>> On 5/7/19 3:07 PM, Coly Li wrote:
->>>> On 2019/5/7 9:01 下午, Thorsten Knabe wrote:
->>>>> On 5/7/19 2:23 PM, Coly Li wrote:
->>>>>> On 2019/5/7 8:19 下午, Thorsten Knabe wrote:
->>>>>>> On 3/27/19 2:45 PM, Coly Li wrote:
->>>>>>>> On 2019/3/27 9:42 下午, Thorsten Knabe wrote:
->>>>>>>>> On 3/27/19 12:53 PM, Coly Li wrote:
->>>>>>>>>> On 2019/3/27 7:00 下午, Thorsten Knabe wrote:
->>>>>>>>>>> On 3/27/19 10:44 AM, Coly Li wrote:
->>>>>>>>>>>> On 2019/3/26 9:21 下午, Thorsten Knabe wrote:
->>>>>>>>>>>>> Hello,
->>>>>>>>>>>>>
->>>>>>>>>>>>> there seems to be a serious problem, when running bcache on top of a
->>>>>>>>>>>>> degraded RAID-6 (MD) array. The bcache device /dev/bcache0 disappears
->>>>>>>>>>>>> after a few I/O operations on the affected device and the kernel log
->>>>>>>>>>>>> gets filled with the following log message:
->>>>>>>>>>>>>
->>>>>>>>>>>>> bcache: bch_count_backing_io_errors() md0: IO error on backing device,
->>>>>>>>>>>>> unrecoverable
->>>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> It seems I/O request onto backing device failed. If the md raid6 device
->>>>>>>>>>>> is the backing device, does it go into read-only mode after degrade ?
->>>>>>>>>>>
->>>>>>>>>>> No, the RAID6 backing device is still in read-write mode after the disk
->>>>>>>>>>> has been removed from the RAID array. That's the way RAID6 is supposed
->>>>>>>>>>> to work.
->>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>>> Setup:
->>>>>>>>>>>>> Linux kernel: 5.1-rc2, 5.0.4, 4.19.0-0.bpo.2-amd64 (Debian backports)
->>>>>>>>>>>>> all affected
->>>>>>>>>>>>> bcache backing device: EXT4 filesystem -> /dev/bcache0 -> /dev/md0 ->
->>>>>>>>>>>>> /dev/sd[bcde]1
->>>>>>>>>>>>> bcache cache device: /dev/sdf1
->>>>>>>>>>>>> cache mode: writethrough, none and cache device detached are all
->>>>>>>>>>>>> affected, writeback and writearound has not been tested
->>>>>>>>>>>>> KVM for testing, first observed on real hardware (failing RAID device)
->>>>>>>>>>>>>
->>>>>>>>>>>>> As long as the RAID6 is healthy, bcache works as expected. Once the
->>>>>>>>>>>>> RAID6 gets degraded, for example by removing a drive from the array
->>>>>>>>>>>>> (mdadm --fail /dev/md0 /dev/sde1, mdadm --remove /dev/md0 /dev/sde1),
->>>>>>>>>>>>> the above-mentioned log messages appear in the kernel log and the bcache
->>>>>>>>>>>>> device /dev/bcache0 disappears shortly afterwards logging:
->>>>>>>>>>>>>
->>>>>>>>>>>>> bcache: bch_cached_dev_error() stop bcache0: too many IO errors on
->>>>>>>>>>>>> backing device md0
->>>>>>>>>>>>>
->>>>>>>>>>>>> to the kernel log.
->>>>>>>>>>>>>
->>>>>>>>>>>>> Increasing /sys/block/bcache0/bcache/io_error_limit to a very high value
->>>>>>>>>>>>> (1073741824) the bcache device /dev/bcache0 remains usable without any
->>>>>>>>>>>>> noticeable filesystem corruptions.
->>>>>>>>>>>>
->>>>>>>>>>>> If the backing device goes into read-only mode, bcache will take this
->>>>>>>>>>>> backing device as a failure status. The behavior is to stop the bcache
->>>>>>>>>>>> device of the failed backing device, to notify upper layer something
->>>>>>>>>>>> goes wrong.
->>>>>>>>>>>>
->>>>>>>>>>>> In writethough and writeback mode, bcache requires the backing device to
->>>>>>>>>>>> be writable.
->>>>>>>>>>>
->>>>>>>>>>> But, the degraded (one disk of the array missing) RAID6 device is still
->>>>>>>>>>> writable.
->>>>>>>>>>>
->>>>>>>>>>> Also after raising the io_error_limit of the bcache device to a very
->>>>>>>>>>> high value (1073741824 in my tests) I can use the bcache device on the
->>>>>>>>>>> degraded RAID6 array for hours reading and writing gigabytes of data,
->>>>>>>>>>> without getting any I/O errors or observing any filesystem corruptions.
->>>>>>>>>>> I'm just getting a lot of those
->>>>>>>>>>>
->>>>>>>>>>> bcache: bch_count_backing_io_errors() md0: IO error on backing device,
->>>>>>>>>>> unrecoverable
->>>>>>>>>>>
->>>>>>>>>>> messages in the kernel log.
->>>>>>>>>>>
->>>>>>>>>>> It seems that I/O requests for data that have been successfully
->>>>>>>>>>> recovered by the RAID6 from the redundant information stored on the
->>>>>>>>>>> additional disks are accidentally counted as failed I/O requests and
->>>>>>>>>>> when the configured io_error_limit for the bcache device is reached, the
->>>>>>>>>>> bcache device gets stopped.
->>>>>>>>>> Oh, thanks for the informaiton.
->>>>>>>>>>
->>>>>>>>>> It sounds during md raid6 degrading and recovering, some I/O from bcache
->>>>>>>>>> might be failed, and after md raid6 degrades and recovers, the md device
->>>>>>>>>> continue to serve I/O request. Am I right ?
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> I think, the I/O errors logged by bcache are not real I/O errors,
->>>>>>>>> because the filesystem on top of the bcache device does not report any
->>>>>>>>> I/O errors unless the bcache device gets stopped by bcache due to too
->>>>>>>>> many errors (io_error_limit reached).
->>>>>>>>>
->>>>>>>>> I performed the following test:
->>>>>>>>>
->>>>>>>>> Starting with bcache on a healthy RAID6 with 4 disks (all attached and
->>>>>>>>> completely synced). cache_mode set to "none" to ensure data is read from
->>>>>>>>> the backing device. EXT4 filesystem on top of bcache mounted with two
->>>>>>>>> identical directories each containing 4GB of data on a system with 2GB
->>>>>>>>> of RAM to ensure data is not coming form the page cache. "diff -r dir1
->>>>>>>>> dir2" running in a loop to check for inconsistencies. Also
->>>>>>>>> io_error_limit has been raised to 1073741824 to ensure the bcache device
->>>>>>>>> does not get stopped due to too many io errors during the test.
->>>>>>>>>
->>>>>>>>> As long as all 4 disks attached to the RAID6 array, no messages get logged.
->>>>>>>>>
->>>>>>>>> Once one disk is removed from the RAID6 array using
->>>>>>>>>   mdadm --fail /dev/md0 /dev/sde1
->>>>>>>>> the kernel log gets filled with the
->>>>>>>>>
->>>>>>>>> bcache: bch_count_backing_io_errors() md0: IO error on backing device,
->>>>>>>>> unrecoverable
->>>>>>>>>
->>>>>>>>> messages. However neither the EXT4 filesystem logs any corruptions nor
->>>>>>>>> does the diff comparing the two directories report any inconsistencies.
->>>>>>>>>
->>>>>>>>> Adding the previously removed disk back to the RAID6 array, bcache stops
->>>>>>>>> reporting the above-mentioned error message once the re-added disk is
->>>>>>>>> fully synced and the RAID6 array is healthy again.
->>>>>>>>>
->>>>>>>>> If the I/O requests to the RAID6 device would actually fail, I would
->>>>>>>>> expect to see either EXT4 filesystem errors in the logs or at least diff
->>>>>>>>> reporting differences, but nothing gets logged in the kernel log expect
->>>>>>>>> the above-mentioned message from bcache.
->>>>>>>>>
->>>>>>>>> It seems bcache mistakenly classifies or at least counts some I/O
->>>>>>>>> requests as failed although they have not actually failed.
->>>>>>>>>
->>>>>>>>> By the way Linux 4.9 (from Debian stable) is most probably not affected.
->>>>>>>> Hi Thorsten,
->>>>>>>>
->>>>>>>> Let me try to reproduce and check into. I will ask you for more
->>>>>>>> information later.
->>>>>>>>
->>>>>>>> Very informative, thanks.
->>>>>>>>
->>>>>>>
->>>>>>> Hello Cody.
->>>>>>>
->>>>>>> I'm now running Linux 5.1 and still see the errors described above.
->>>>>>>
->>>>>>> I did some further investigations myself.
->>>>>>>
->>>>>>> The affected bio have the bio_status field set to 10 (=BLK_STS_IOERR)
->>>>>>> and the bio_ops field set to 524288 (=REQ_RAHEAD).
->>>>>>>
->>>>>>> According to the comment in linux/blk_types.h such requests may fail.
->>>>>>> Quote from linux/blk_types.h:
->>>>>>> 	__REQ_RAHEAD,           /* read ahead, can fail anytime */
->>>>>>>
->>>>>>> That would explain why no file system errors or corruptions occur,
->>>>>>> although bcache reports IO errors from the backing device.
->>>>>>>
->>>>>>> Thus I assume errors resulting from such read-ahead bio requests should
->>>>>>> not be counted/ignored by bcache.
->>>>>>
->>>>>> Hi Thorsten,
->>>>>>
->>>>>> Do you mean should not be counted, or should not be ignored for
->>>>>> read-ahead bio failure ?
->>>>>>
->>>>>> Thanks.
->>>>>>
->>>>>>
->>>>>
->>>>> I'm far from being a Linux block IO subsystem expert.
->>>>> My assumption is that a block device has the option to fail read-ahead
->>>>> bio requests under certain circumstances, for example, if receiving the
->>>>> requested sectors is too expensive and that the MD RAID6 code makes use
->>>>> of that option when the RAID array is in a degraded state. But I'm just
->>>>> guessing.
->>>>>
->>>>> I'm not sure how such errors are handled correctly, probably they can
->>>>> simply be ignored completely, but should at least not contribute to the
->>>>> bcache error counter (dc->io_errors).
->>>>
->>>> Hi Thorsten,
->>>>
->>>> As you said "should at least not contribute to the
->>>>> bcache error counter (dc->io_errors)", the challenge is that I need a
->>>> method to distinguish a real device I/O failure or a md raid6 degraded
->>>> failure. So far I don't have idea how to make it.
->>>
->>> Maybe:
->>>
->>> --- linux-5.1/drivers/md/bcache/io.c-orig       2019-05-07
->>> 15:34:23.283543872 +0200
->>> +++ linux-5.1/drivers/md/bcache/io.c    2019-05-07 15:36:11.133543872 +0200
->>> @@ -58,6 +58,8 @@ void bch_count_backing_io_errors(struct
->>>
->>>         WARN_ONCE(!dc, "NULL pointer of struct cached_dev");
->>>
->>> +       if (bio && (bio->bi_opf & REQ_RAHEAD))
->>> +               return;
->>>         errors = atomic_add_return(1, &dc->io_errors);
->>>         if (errors < dc->error_limit)
->>>                 pr_err("%s: IO error on backing device, unrecoverable",
->>
-> 
-> Hi Cody.
-> 
->> I cannot do this. Because this is real I/O issued to backing device, if
->> it failed, it means something really wrong on backing device.
-> 
-> I have not found a definitive answer or documentation what the
-> REQ_RAHEAD flag is actually used for. However in my understanding, after
-> reading a lot of kernel source, it is used as an indication, that the
-> bio read request is unimportant for proper operation and may be failed
-> by the block device driver returning BLK_STS_IOERR, if it is too
-> expensive or requires too many additional resources.
-> 
-> At least the BTRFS and DRBD code do not take bio request IO errors that
-> are marked with the REQ_RAHEAD flag into account in their error
-> counters. Thus it is probably okay if such IO errors with the REQ_RAHEAD
-> flags set are not counted as errors by bcache too.
-> 
->>
->> Hmm, If raid6 may returns different error code in bio->bi_status, then
->> we can identify this is a failure caused by raid degrade, not a read
->> hardware or link failure. But now I am not familiar with raid456 code,
->> no idea how to change the md raid code (I assume you meant md raid6)...
-> 
-> I my assumptions above regarding the REQ_RAHEAD flag are correct, then
-> the RAID code is correct, because restoring data from the parity
-> information is a relatively expensive operation for read-ahead data,
-> that is possibly never actually needed.
+Hi,
 
+The reproducability is 100%. It's enough to only upgrade to a Fedora 30 
+kernel on a Fedora 29 system. The next reboot will probably be the last 
+reboot ever.
 
-Hi Thorsten,
+My Fedora bug report is here:
 
-Thank you for the informative hint. I agree with your idea, it seems
-ignoring I/O error of REQ_RAHEAD bios does not hurt. Let me think how to
-fix it by your suggestion.
+If it's gcc9 related, the cause may be somewhere between "Fedora's 
+decision to use gcc9" and "bcache needing a fix".
 
--- 
+Rolf
 
-Coly Li
+On 5/6/19 7:45 PM, Rolf Fokkens wrote:
+>
+> Hi,
+>
+> I helped in 2013 to get bcache-tools integrated in Fedora 21 
+> (https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/thread/UEGAUSP377TB3KMUO7XK42KREHOUDZPG/).
+>
+> Ever since it worked like a charm, and bcache laptops (we have several 
+> at work) survived upgrading to a next Fedora release flawlessly. Since 
+> Fedora 30 this has changed however: laptops using bcache mess up 
+> backing store big time. It seems as if the backing device is corrupted 
+> by random writes all over the place. It's hard to narrow down the 
+> cause of this issue, and I'm still in the process of trial and error. 
+> May be later on I'll have more info.
+>
+> Some info:
+>
+>   * The laptops are using writeback caching
+>   * The laptops have a bcache'd root file system
+>   * It seems like the issue is in the Fedora kernel 5.0.10 for Fedora
+>     30, but not kernel 5.0.10 for Fedora 29.
+>   * One notable difference between the Fedora 29 and Fedora 30 kernels
+>     is that Fedora 30 uses gcc 9 to build the kernel.
+>
+> As mentioned i'm still in the process of narrowing down the cause of 
+> the issue. But any suggestions are welcome.
+>
+> Rolf
+>
+
