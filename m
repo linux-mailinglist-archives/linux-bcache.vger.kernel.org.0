@@ -2,32 +2,33 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACE061F840
-	for <lists+linux-bcache@lfdr.de>; Wed, 15 May 2019 18:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 883CC20943
+	for <lists+linux-bcache@lfdr.de>; Thu, 16 May 2019 16:12:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbfEOQLF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 15 May 2019 12:11:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36324 "EHLO mx1.suse.de"
+        id S1726995AbfEPOMW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 16 May 2019 10:12:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40536 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726292AbfEOQLF (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 15 May 2019 12:11:05 -0400
+        id S1726909AbfEPOMW (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 16 May 2019 10:12:22 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 80679AB98;
-        Wed, 15 May 2019 16:11:03 +0000 (UTC)
-Subject: Re: Kernel bug message when registering cache devices
-To:     Jordan Patterson <jordanp@gmail.com>
-References: <CAHDOzW4gegWc8sM-gS9Ddnsbm1dhMUuHcwjuWP10fdxXwQ1OkA@mail.gmail.com>
-Cc:     linux-bcache@vger.kernel.org
+        by mx1.suse.de (Postfix) with ESMTP id 27F7EAC23;
+        Thu, 16 May 2019 14:12:20 +0000 (UTC)
+Subject: Re: Critical bug on bcache kernel module in Fedora 30
 From:   Coly Li <colyli@suse.de>
+To:     linux-bcache@vger.kernel.org
+Cc:     Pierre JUHEN <pierre.juhen@orange.fr>, kent.overstreet@gmail.com
+References: <8ca3ae08-95ce-eb3e-31e1-070b1a078c01@orange.fr>
+ <b0a824da-846a-7dc6-0274-3d55f22f9145@suse.de>
 Openpgp: preference=signencrypt
 Organization: SUSE Labs
-Message-ID: <aba0a684-383a-eb7a-a00d-036f5ec804bc@suse.de>
-Date:   Thu, 16 May 2019 00:10:55 +0800
+Message-ID: <5cdfb1f7-a4b5-0dff-ae86-e5b74515bda9@suse.de>
+Date:   Thu, 16 May 2019 22:12:13 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
  Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <CAHDOzW4gegWc8sM-gS9Ddnsbm1dhMUuHcwjuWP10fdxXwQ1OkA@mail.gmail.com>
+In-Reply-To: <b0a824da-846a-7dc6-0274-3d55f22f9145@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -36,88 +37,138 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/5/8 12:08 上午, Jordan Patterson wrote:
-> Hi:
+On 2019/5/13 1:11 上午, Coly Li wrote:
+> On 2019/5/12 1:30 上午, Pierre JUHEN wrote:
+>> Hi,
+>>
+>> I use bcache extensively on 3 PC, and I lost data on 2 of them after an
+>> attempt to migrate to Fedora 30.
+>>
+>> My configuration is almost the same on the 3 PCs :
+>>
+>> /boot/efi and /boot are native on the SSD, and there is a bache frontend.
+>>
+>> bcache backend is on a HDD or on a raid1 array.
+>>
+>> bcache device is the physical volume of an LVM volume group.
+>>
+>> Here is how to reproduce the problem :
+>>
+>> 1/ Create the storage configuration as explained above.
+>>
+>> 2/ Install Fedora 29 on a logical volume (ext4) and a swap logical volume.
+>>
+>> 3/ Update the installation (dnf update --refresh)
+>>
+>> 4/ Migrate to Fedora 30 in download mode (dnf system-upgrade
+>> --releasever=30 --allowerasing donwnload, then dnf system-upgrade reboot)
+>>
+>> 5/ try to prevent automatic reboot in Fedora 30 (for example in
+>> commenting out /boot/efi in /etc/fstab)
+>>
+>> 6/ reboot using Fedora 29 kernel and initramfs -> Everything is fine
+>>
+>> 7/ reboot using Fedora 30 kernel and initramfs -> Everything is
+>> corrupted, even unmounted volumes of the volume group
+>>
+>> I did the test case twice, the second time in downgrading bcache-tools
+>> to Fedora 29 -> same issue
+>>
+>> This means that's the problem is located in the bcache kernel module ;
+>> but since I guess it's the same code, the problem is probably linked to
+>> the building environment (gcc version ?)
+>>
+>> I reported the bug : https://bugzilla.redhat.com/show_bug.cgi?id=1707822
+>>
+>> But I thought it was not a kernel problem.
 > 
-> I upgraded my kernel to 5.1 yesterday and after about an hour, I got
-> some messages about timeouts on bcache_writeback.  After rebooting, I
-> get a kernel bug message when the init tries to register my cache
-> devices.  My setup consists of 4 bcache devices, each with a 6TB hard
-> drive for the backing device and 800GB ssd for the cache device.
+> On my development machine the GCC is still v7.3.1, for now I don't know
+> how to upgrade to GCC 9.1 yet.
 > 
-
-[snipped]
-
+> From the dmesg.lis file, it seems fc30 uses 5.0.11-300, so what is the
+> kernel version of fc29 ?
 > 
-> The kernel bug message when trying to reload after reboot (booting
-> from a USB key so I could get the log to a file):
-> 
-> [  241.374514] kernel BUG at drivers/md/bcache/extents.c:294!
-> [  241.374520] invalid opcode: 0000 [#1] SMP PTI
-> [  241.374523] CPU: 1 PID: 12951 Comm: bash Tainted: P           O
->  4.19.27-gentoo-r1 #1
-> [  241.374523] Hardware name: Supermicro X9DAi/X9DAi, BIOS 3.3 07/12/2018
-> [  241.374529] RIP: 0010:bch_extent_sort_fixup+0x293/0x49d [bcache]
-> [  241.374531] Code: 4c 8b 48 08 4d 89 d0 49 c1 e8 14 45 0f b7 c0 4d
-> 89 ce 4d 29 c6 48 39 d1 74 0b 49 89 ce 49 29 d6 4c 89 f2 eb 0d 4d 39
-> f3 75 02 <0f> 0b 48 89 fa 4c 29 ca 48 85 d2 0f 89 6e 01 00 00 4c 89 d2
-> 48 89
-> [  241.374532] RSP: 0018:ffffc900098b39a8 EFLAGS: 00010246
-> [  241.374533] RAX: ffff88882bba75a8 RBX: ffff88885c633000 RCX: 0000000000000000
-> [  241.374534] RDX: 0000000000000000 RSI: ffff88882bba8200 RDI: 0000000048044e58
-> [  241.374535] RBP: ffffc900098b3a08 R08: 0000000000000040 R09: 0000000048044e88
-> [  241.374536] R10: 9000001004000000 R11: 0000000048044e48 R12: ffffc900098b3a48
-> [  241.374536] R13: ffff88885c633020 R14: 0000000048044e48 R15: 0000000000000004
-> [  241.374538] FS:  00007fe781406740(0000) GS:ffff88887fc40000(0000)
-> knlGS:0000000000000000
-> [  241.374538] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  241.374539] CR2: 00005590ae11fe08 CR3: 000000085e206002 CR4: 00000000000606e0
-> [  241.374540] Call Trace:
-> [  241.374546]  ? bch_ptr_status+0x127/0x127 [bcache]
-> [  241.374548]  btree_mergesort+0x161/0x46b [bcache]
-> [  241.374551]  ? bch_cache_allocator_start+0x3d/0x3d [bcache]
-> [  241.374554]  __btree_sort+0xaf/0x19c [bcache]
-> [  241.374557]  bch_btree_node_read_done+0x20f/0x363 [bcache]
-> [  241.374560]  bch_btree_node_read+0x14e/0x184 [bcache]
-> [  241.374563]  ? __closure_wake_up+0x31/0x31 [bcache]
-> [  241.374566]  bch_btree_check_recurse+0x116/0x1e0 [bcache]
-> [  241.374569]  ? bch_extent_to_text+0xec/0x14c [bcache]
-> [  241.374572]  bch_btree_check+0xd3/0x14e [bcache]
-> [  241.374575]  ? wait_woken+0x68/0x68
-> [  241.374578]  run_cache_set+0x328/0x730 [bcache]
-> [  241.374582]  register_bcache+0x1290/0x1438 [bcache]
-> [  241.374586]  kernfs_fop_write+0xf4/0x136
-> [  241.374590]  __vfs_write+0x2e/0x13c
-> [  241.374592]  ? __alloc_fd+0x91/0x147
-> [  241.374594]  ? set_close_on_exec+0x25/0x50
-> [  241.374595]  vfs_write+0xc3/0x166
-> [  241.374596]  ksys_write+0x58/0xa6
-> [  241.374599]  do_syscall_64+0x57/0xe6
-> [  241.374603]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [  241.374605] RIP: 0033:0x7fe78155cbf8
-> [  241.374606] Code: 00 90 48 83 ec 38 64 48 8b 04 25 28 00 00 00 48
-> 89 44 24 28 31 c0 48 8d 05 e5 7a 0d 00 8b 00 85 c0 75 27 b8 01 00 00
-> 00 0f 05 <48> 3d 00 f0 ff ff 77 60 48 8b 4c 24 28 64 48 33 0c 25 28 00
-> 00 00
-> [  241.374607] RSP: 002b:00007ffcdca34870 EFLAGS: 00000246 ORIG_RAX:
-> 0000000000000001
-> [  241.374608] RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007fe78155cbf8
-> [  241.374609] RDX: 0000000000000009 RSI: 00005590ae915940 RDI: 0000000000000001
-> [  241.374609] RBP: 00005590ae915940 R08: 00005590ae943550 R09: 000000000000000a
-> [  241.374610] R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe781630760
-> [  241.374611] R13: 0000000000000009 R14: 00007fe78162b760 R15: 0000000000000009
-> [  241.374612] Modules linked in: bcache crc64 ipv6 cfg80211 rfkill
+> (And from dmesg.lis I don't see anything suspicious on bcache message,
+> no clue yet).
 
+Such problem is very easy to produce, only a few sequential I/Os may
+trigger a panic from bch_btree_iter_next_check().
 
-Yes, now I am to reproduce this problem too. After enable bcache debug,
-I can trigger a kernel panic when making filesystem on top of a bcache
-device.
+Here is content of my fio script,
+[global]
+lockmem=1
+direct=1
+ioengine=psync
 
-It seems when bcache code is compiled with gcc9, the bkey in a btree
-node is corrupted. Now I see some bkeys are not linear increasing in
-btree node, or its KEY_PTRS field is empty.
+[job1]
+filename=/dev/bcache0
+readwrite=write
+blocksize=4k
+iodepth=1
+numjobs=1
+io_size=64K
 
-This is strange, which is never happened before. Let me check why ....
+In my observation, 2 sequential I/Os may trigger this panic. Here is the
+kernel output when panic in bch_btree_iter_next_check() triggered,
+
+[  153.478620] bcache: bch_dump_bset() block 1 key 0/9:
+[  153.478621] bcache: bch_bkey_dump()  0x0:0x10 len 0x8 -> [check dev]
+[  153.478623] bcache: bch_bkey_dump()  bucket 7560168717
+[  153.478624] bcache: bch_bkey_dump()
+[  153.478624]
+[  153.478625] bcache: bch_dump_bset() block 1 key 3/9:
+[  153.478626] bcache: bch_bkey_dump()  0x0:0x18 len 0x8 -> [check dev]
+[  153.478627] bcache: bch_bkey_dump()  bucket 4400861924
+[  153.478628] bcache: bch_bkey_dump()
+[  153.478628]
+[  153.478629] bcache: bch_dump_bset() Key skipped backwards
+[  153.478629]
+[  153.478630] bcache: bch_dump_bset() block 1 key 6/9:
+[  153.478631] bcache: bch_bkey_dump()  0x0:0x10 len 0x8 -> [0:392192
+gen 1] dirty
+[  153.478632] bcache: bch_bkey_dump()  bucket 383
+[  153.478635] bcache: bch_bkey_dump()
+[  153.478635]
+[  153.532890] Kernel panic - not syncing: Key skipped backwards
+[  153.535924] CPU: 0 PID: 790 Comm: bcache_writebac Tainted: G        W
+        5.1.0+ #3
+[  153.539656] Hardware name: VMware, Inc. VMware Virtual Platform/440BX
+Desktop Reference Platform, BIOS 6.00 04/13/2018
+[  153.545002] Call Trace:
+[  153.546702]  dump_stack+0x85/0xc0
+[  153.548675]  panic+0x106/0x2da
+[  153.550560]  ? bch_ptr_invalid+0x10/0x10 [bcache]
+[  153.553178]  bch_btree_iter_next_filter.cold+0xff/0x12e [bcache]
+[  153.556117]  ? btree_insert_key+0x190/0x190 [bcache]
+[  153.558646]  bch_btree_map_keys_recurse+0x5c/0x190 [bcache]
+[  153.561557]  bch_btree_map_keys+0x177/0x1a0 [bcache]
+[  153.564085]  ? btree_insert_key+0x190/0x190 [bcache]
+[  153.566688]  ? dirty_init+0x80/0x80 [bcache]
+[  153.569224]  bch_refill_keybuf+0xcc/0x290 [bcache]
+[  153.571609]  ? finish_wait+0x90/0x90
+[  153.573525]  ? dirty_init+0x80/0x80 [bcache]
+[  153.575705]  bch_writeback_thread+0x3b9/0x5c0 [bcache]
+[  153.578527]  ? __kthread_parkme+0x58/0x80
+[  153.580662]  kthread+0x108/0x140
+[  153.582541]  ? read_dirty+0x620/0x620 [bcache]
+[  153.584998]  ? kthread_park+0x90/0x90
+[  153.586991]  ret_from_fork+0x3a/0x50
+[  153.589236] Kernel Offset: 0x12000000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[  153.594868] ---[ end Kernel panic - not syncing: Key skipped
+backwards ]---
+
+The panic happens in bch_writeback context, because bkeys in btree node
+is not in linear increasing order. Adjacent two sequential write
+requests is very common condition in bcache, such corrupted btree node
+is not reported in recent 2~3 years. Unless the kernel is compiled with
+gcc9...
+
+It is not clear to me why the key 0:0x10 appears in same btree node
+twice, and why there are 3 keys for two 4K write requests.
+
+If anyone may have any clue, please offer. Now I continue to check how
+this happens.
 
 Thanks.
 
