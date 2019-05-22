@@ -2,51 +2,101 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 148D825AED
-	for <lists+linux-bcache@lfdr.de>; Wed, 22 May 2019 01:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 995C226EE0
+	for <lists+linux-bcache@lfdr.de>; Wed, 22 May 2019 21:53:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbfEUXom (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 21 May 2019 19:44:42 -0400
-Received: from icebox.esperi.org.uk ([81.187.191.129]:34270 "EHLO
-        mail.esperi.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbfEUXom (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 21 May 2019 19:44:42 -0400
-Received: from loom (nix@sidle.srvr.nix [192.168.14.8])
-        by mail.esperi.org.uk (8.15.2/8.15.2) with ESMTP id x4LJi34D013274;
-        Tue, 21 May 2019 20:44:03 +0100
-From:   Nix <nix@esperi.org.uk>
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org, kent.overstreet@gmail.com,
-        Pierre JUHEN <pierre.juhen@orange.fr>,
-        Rolf Fokkens <rolf@rolffokkens.nl>
-Subject: Re: Critical bug on bcache kernel module in Fedora 30
-References: <8ca3ae08-95ce-eb3e-31e1-070b1a078c01@orange.fr>
-        <b0a824da-846a-7dc6-0274-3d55f22f9145@suse.de>
-        <5cdfb1f7-a4b5-0dff-ae86-e5b74515bda9@suse.de>
-        <cbd597ad-ed21-34ef-1fec-03fa943fd704@orange.fr>
-        <cefbcdf6-6ab6-6ab0-8afa-bcd4d85401a5@suse.de>
-        <9fc7c451-0507-b5c3-efc8-ab1baf7a1d44@suse.de>
-Emacs:  it's not slow --- it's stately.
-Date:   Wed, 22 May 2019 00:44:37 +0100
-In-Reply-To: <9fc7c451-0507-b5c3-efc8-ab1baf7a1d44@suse.de> (Coly Li's message
-        of "Tue, 21 May 2019 21:12:23 +0800")
-Message-ID: <878suzfk4a.fsf@esperi.org.uk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.50 (gnu/linux)
+        id S1731803AbfEVTZ5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 22 May 2019 15:25:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731795AbfEVTZ5 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 22 May 2019 15:25:57 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1165217D9;
+        Wed, 22 May 2019 19:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558553156;
+        bh=hBlKe4K4XFUtSs9+ogjc+xptZwgqZ4x7JVDLIJz+5so=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0EeycQYkAzVFfGpAXmEWtoJ5Gyaq2LBH3FlWFH+5YeeVX16X+OW3vT5+FllDUsQM8
+         WbRF3nAPj5iQ7ZkiM1/ZA5R456eGpl9XizjqbRzu/4zYzVGwFEgXb5VKpGqv6IjnKc
+         U7VDsQVTgIGV9qn/pzKhiBGWEae7GGokOCGgQlmo=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Shenghui Wang <shhuiw@foxmail.com>, Coly Li <colyli@suse.de>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-bcache@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.0 083/317] bcache: avoid potential memleak of list of journal_replay(s) in the CACHE_SYNC branch of run_cache_set
+Date:   Wed, 22 May 2019 15:19:44 -0400
+Message-Id: <20190522192338.23715-83-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
+References: <20190522192338.23715-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-DCC--Metrics: loom 1481; Body=5 Fuz1=5 Fuz2=5
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 21 May 2019, Coly Li uttered the following:
-> Also I try to analyze the assemble code of bcache, just find out the
-> generated assembly code between gcc9 and gcc7 is quite different. For
-> gcc9 there is a XXXX.cold part. So far I can not tell where the problem
-> is from yet.
+From: Shenghui Wang <shhuiw@foxmail.com>
 
-This is hot/cold partitioning. You can turn it off with
--fno-reorder-blocks-and-partition and see if that helps things (and if
-it doesn't, it should at least make stuff easier to compare).
+[ Upstream commit 95f18c9d1310730d075499a75aaf13bcd60405a7 ]
+
+In the CACHE_SYNC branch of run_cache_set(), LIST_HEAD(journal) is used
+to collect journal_replay(s) and filled by bch_journal_read().
+
+If all goes well, bch_journal_replay() will release the list of
+jounal_replay(s) at the end of the branch.
+
+If something goes wrong, code flow will jump to the label "err:" and leave
+the list unreleased.
+
+This patch will release the list of journal_replay(s) in the case of
+error detected.
+
+v1 -> v2:
+* Move the release code to the location after label 'err:' to
+  simply the change.
+
+Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/md/bcache/super.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 4dee119c36646..7adafe8488273 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1782,6 +1782,8 @@ static void run_cache_set(struct cache_set *c)
+ 	struct cache *ca;
+ 	struct closure cl;
+ 	unsigned int i;
++	LIST_HEAD(journal);
++	struct journal_replay *l;
+ 
+ 	closure_init_stack(&cl);
+ 
+@@ -1939,6 +1941,12 @@ static void run_cache_set(struct cache_set *c)
+ 	set_bit(CACHE_SET_RUNNING, &c->flags);
+ 	return;
+ err:
++	while (!list_empty(&journal)) {
++		l = list_first_entry(&journal, struct journal_replay, list);
++		list_del(&l->list);
++		kfree(l);
++	}
++
+ 	closure_sync(&cl);
+ 	/* XXX: test this, it's broken */
+ 	bch_cache_set_error(c, "%s", err);
+-- 
+2.20.1
+
