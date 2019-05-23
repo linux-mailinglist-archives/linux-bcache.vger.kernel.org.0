@@ -2,117 +2,74 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C52C26C07
-	for <lists+linux-bcache@lfdr.de>; Wed, 22 May 2019 21:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B951E28BF1
+	for <lists+linux-bcache@lfdr.de>; Thu, 23 May 2019 22:53:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731100AbfEVTcA (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 22 May 2019 15:32:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387705AbfEVTb7 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 22 May 2019 15:31:59 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1950821473;
-        Wed, 22 May 2019 19:31:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558553517;
-        bh=r76SnZdYsqqjxF7jn7OHOjD4pNqn91ObB4C4LK5uPms=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sgLotn9h9ZE2Euws+KkyCXU8PCK7X7ZtwWTjtXJBSFiTARlgOj8ev2p67l6vS5YVi
-         i82MgnsSijQ56cIL4EpiHWqZrwwCJ3JpuAWT/+ttUNmzvGeZ+aJ7xaDMQZxBKp1d7/
-         WS6xymqNMvTJwzOOqNl9fxZAl29myCjVwfvtoRhs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 21/92] bcache: avoid clang -Wunintialized warning
-Date:   Wed, 22 May 2019 15:30:16 -0400
-Message-Id: <20190522193127.27079-21-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190522193127.27079-1-sashal@kernel.org>
-References: <20190522193127.27079-1-sashal@kernel.org>
+        id S2387699AbfEWUx5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 23 May 2019 16:53:57 -0400
+Received: from toryburch.com ([198.23.132.45]:47134 "EHLO timesharemyths.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387647AbfEWUx5 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 23 May 2019 16:53:57 -0400
+To:     linux-bcache@vger.kernel.org
+Subject: Custom made logo products
+Message-ID: <05bed51584888cc6b0af2b693326f1dd@lucastirepros.com>
+Date:   Thu, 23 May 2019 14:58:06 +0200
+From:   "Stacy" <ryan@tanschmidit.tech>
+Reply-To: lucas@tanschmidit.tech
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; format=flowed; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi,
 
-[ Upstream commit 78d4eb8ad9e1d413449d1b7a060f50b6efa81ebd ]
+I am following up on my previous attempt to contact you.
+We wanted to check to see if you need any LOGO promotional products for
+your business?
 
-clang has identified a code path in which it thinks a
-variable may be unused:
+Our company manufactures USB Flash Drives that are custom printed with your
+logo.
+They make the perfect marketing tool for your business or organization.
 
-drivers/md/bcache/alloc.c:333:4: error: variable 'bucket' is used uninitialized whenever 'if' condition is false
-      [-Werror,-Wsometimes-uninitialized]
-                        fifo_pop(&ca->free_inc, bucket);
-                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/md/bcache/util.h:219:27: note: expanded from macro 'fifo_pop'
- #define fifo_pop(fifo, i)       fifo_pop_front(fifo, (i))
-                                ^~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/md/bcache/util.h:189:6: note: expanded from macro 'fifo_pop_front'
-        if (_r) {                                                       \
-            ^~
-drivers/md/bcache/alloc.c:343:46: note: uninitialized use occurs here
-                        allocator_wait(ca, bch_allocator_push(ca, bucket));
-                                                                  ^~~~~~
-drivers/md/bcache/alloc.c:287:7: note: expanded from macro 'allocator_wait'
-                if (cond)                                               \
-                    ^~~~
-drivers/md/bcache/alloc.c:333:4: note: remove the 'if' if its condition is always true
-                        fifo_pop(&ca->free_inc, bucket);
-                        ^
-drivers/md/bcache/util.h:219:27: note: expanded from macro 'fifo_pop'
- #define fifo_pop(fifo, i)       fifo_pop_front(fifo, (i))
-                                ^
-drivers/md/bcache/util.h:189:2: note: expanded from macro 'fifo_pop_front'
-        if (_r) {                                                       \
-        ^
-drivers/md/bcache/alloc.c:331:15: note: initialize the variable 'bucket' to silence this warning
-                        long bucket;
-                                   ^
+Looking for other items with your logo?   We can supply anything with your
+logo…
 
-This cannot happen in practice because we only enter the loop
-if there is at least one element in the list.
+Most Popular Items right now:
+- T-shirts, Hoodies
+- Table Covers printed with your brand
+- Pens
+- Water Bottles
+- Banners…
+- You name it we can make it and print on it for you!
 
-Slightly rearranging the code makes this clearer to both the
-reader and the compiler, which avoids the warning.
+Our USB Pricing is at an ALL TIME LOW.
+We offer low minimum quantities and all memory sizes.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/md/bcache/alloc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Over 150 Stock Models as well as 100 % custom shaped USB drives in the
+shape of your Logo or
+product or just about anything else you can imagine!
+Ask about our End of the Year Promotions!
 
-diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index 16c3390e5d9f3..d82ae445c9ee3 100644
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -324,10 +324,11 @@ static int bch_allocator_thread(void *arg)
- 		 * possibly issue discards to them, then we add the bucket to
- 		 * the free list:
- 		 */
--		while (!fifo_empty(&ca->free_inc)) {
-+		while (1) {
- 			long bucket;
- 
--			fifo_pop(&ca->free_inc, bucket);
-+			if (!fifo_pop(&ca->free_inc, bucket))
-+				break;
- 
- 			if (ca->discard) {
- 				mutex_unlock(&ca->set->bucket_lock);
--- 
-2.20.1
+We can pre-load your media files, images, presentations and files onto the
+drives for you.
+These are ideal handouts for trade shows, branding, corporate gifts and
+employees.
+
+* Please reply back and let me know what quantity and memory size you need
+for a Fast Quote!
+
+Are you a school or nonprofit?  Please let us know for even further
+discounts.
+
+Let us send you a quote!   We will EARN your business!
+
+Regards,
+
+Stacy Williams
+Custom Logo Products
+Whatsapp: +8617199402387
 
