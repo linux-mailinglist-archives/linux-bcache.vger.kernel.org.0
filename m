@@ -2,84 +2,84 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B416C34CA3
-	for <lists+linux-bcache@lfdr.de>; Tue,  4 Jun 2019 17:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A948C34CA5
+	for <lists+linux-bcache@lfdr.de>; Tue,  4 Jun 2019 17:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbfFDPxk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 4 Jun 2019 11:53:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60944 "EHLO mx1.suse.de"
+        id S1728184AbfFDPxn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 4 Jun 2019 11:53:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60984 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728030AbfFDPxk (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 4 Jun 2019 11:53:40 -0400
+        id S1728030AbfFDPxn (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 4 Jun 2019 11:53:43 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AAFB3AE8A;
-        Tue,  4 Jun 2019 15:53:38 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 07B3CAE8A;
+        Tue,  4 Jun 2019 15:53:42 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>,
-        stable@vger.kernel.org
-Subject: [PATCH 16/18] bcache: only set BCACHE_DEV_WB_RUNNING when cached device attached
-Date:   Tue,  4 Jun 2019 23:53:28 +0800
-Message-Id: <20190604155330.107927-1-colyli@suse.de>
+Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
+Subject: [PATCH 17/18] bcache: make bset_search_tree() be more understandable
+Date:   Tue,  4 Jun 2019 23:53:29 +0800
+Message-Id: <20190604155330.107927-2-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190604151624.105150-1-colyli@suse.de>
+In-Reply-To: <20190604155330.107927-1-colyli@suse.de>
 References: <20190604151624.105150-1-colyli@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+ <20190604155330.107927-1-colyli@suse.de>
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-When people set a writeback percent via sysfs file,
-  /sys/block/bcache<N>/bcache/writeback_percent
-current code directly sets BCACHE_DEV_WB_RUNNING to dc->disk.flags
-and schedules kworker dc->writeback_rate_update.
+The purpose of following code in bset_search_tree() is to avoid a branch
+instruction,
+ 994         if (likely(f->exponent != 127))
+ 995                 n = j * 2 + (((unsigned int)
+ 996                               (f->mantissa -
+ 997                                bfloat_mantissa(search, f))) >> 31);
+ 998         else
+ 999                 n = (bkey_cmp(tree_to_bkey(t, j), search) > 0)
+1000                         ? j * 2
+1001                         : j * 2 + 1;
 
-If there is no cache set attached to, the writebac kernel thread is
-not running indeed, running dc->writeback_rate_update does not make
-sense and may cause NULL pointer deference when reference cache set
-pointer inside update_writeback_rate().
+This piece of code is not very clear to understand, even when I tried to
+add code comment for it, I made mistake. This patch removes the implict
+bit operation and uses explicit branch to calculate next location in
+binary tree search.
 
-This patch checks whether the cache set point (dc->disk.c) is NULL in
-sysfs interface handler, and only set BCACHE_DEV_WB_RUNNING and
-schedule dc->writeback_rate_update when dc->disk.c is not NULL (it
-means the cache device is attached to a cache set).
-
-This problem might be introduced from initial bcache commit, but
-commit 3fd47bfe55b0 ("bcache: stop dc->writeback_rate_update properly")
-changes part of the orignal code piece, so I add 'Fixes: 3fd47bfe55b0'
-to indicate from which commit this patch can be applied.
-
-Fixes: 3fd47bfe55b0 ("bcache: stop dc->writeback_rate_update properly")
-Reported-by: Bjørn Forsman <bjorn.forsman@gmail.com>
 Signed-off-by: Coly Li <colyli@suse.de>
-Cc: stable@vger.kernel.org
 ---
- drivers/md/bcache/sysfs.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/md/bcache/bset.c | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index 129031663cc8..eb678e43ac00 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -430,8 +430,13 @@ STORE(bch_cached_dev)
- 			bch_writeback_queue(dc);
- 	}
+diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+index eedaf0f3e3f0..32e2e4d8fa6c 100644
+--- a/drivers/md/bcache/bset.c
++++ b/drivers/md/bcache/bset.c
+@@ -965,21 +965,10 @@ static struct bset_search_iter bset_search_tree(struct bset_tree *t,
+ 		j = n;
+ 		f = &t->tree[j];
  
-+	/*
-+	 * Only set BCACHE_DEV_WB_RUNNING when cached device attached to
-+	 * a cache set, otherwise it doesn't make sense.
-+	 */
- 	if (attr == &sysfs_writeback_percent)
--		if (!test_and_set_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
-+		if ((dc->disk.c != NULL) &&
-+		    (!test_and_set_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags)))
- 			schedule_delayed_work(&dc->writeback_rate_update,
- 				      dc->writeback_rate_update_seconds * HZ);
- 
+-		/*
+-		 * Similar bit trick, use subtract operation to avoid a branch
+-		 * instruction.
+-		 *
+-		 * n = (f->mantissa > bfloat_mantissa())
+-		 *	? j * 2
+-		 *	: j * 2 + 1;
+-		 *
+-		 * We need to subtract 1 from f->mantissa for the sign bit trick
+-		 * to work  - that's done in make_bfloat()
+-		 */
+ 		if (likely(f->exponent != 127))
+-			n = j * 2 + (((unsigned int)
+-				      (f->mantissa -
+-				       bfloat_mantissa(search, f))) >> 31);
++			n = (f->mantissa >= bfloat_mantissa(search, f))
++				? j * 2
++				: j * 2 + 1;
+ 		else
+ 			n = (bkey_cmp(tree_to_bkey(t, j), search) > 0)
+ 				? j * 2
 -- 
 2.16.4
 
