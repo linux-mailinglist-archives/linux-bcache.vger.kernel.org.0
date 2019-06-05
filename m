@@ -2,219 +2,178 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA11535C68
-	for <lists+linux-bcache@lfdr.de>; Wed,  5 Jun 2019 14:16:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5413C35D5C
+	for <lists+linux-bcache@lfdr.de>; Wed,  5 Jun 2019 14:57:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfFEMQr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 5 Jun 2019 08:16:47 -0400
-Received: from m15-8.126.com ([220.181.15.8]:31389 "EHLO m15-8.126.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727172AbfFEMQr (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 5 Jun 2019 08:16:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=8JXmm
-        vuF4FQI0bBgLnVFmkYSNtGUkfal23C+UsyMXb0=; b=DHcEzy00soZIo9F5rhJ+z
-        DNnrD5WnU+cDSn6sgC/lplqohMuNy4TzZHQ1CrCiyJxYqoHR287kgkJ9OJQZDiSm
-        oXnI6ynSND/nKKZa5X+CT3jRTWOM/POlbdgrbOzGsdyYkgQ5c4sM5biMzgCUDXk5
-        Mm21CDv1ypj0KUTV3YsnBc=
-Received: from nina_2011$126.com ( [111.202.148.42] ) by ajax-webmail-wmsvr8
- (Coremail) ; Wed, 5 Jun 2019 20:16:42 +0800 (CST)
-X-Originating-IP: [111.202.148.42]
-Date:   Wed, 5 Jun 2019 20:16:42 +0800 (CST)
-From:   nina <nina_2011@126.com>
-To:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
-Subject: Device IO error question
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version SP_ntes V3.5 build
- 20180927(cd7136b6) Copyright (c) 2002-2019 www.mailtech.cn 126com
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        id S1727996AbfFEM5g (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 5 Jun 2019 08:57:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47322 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727769AbfFEM5f (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 5 Jun 2019 08:57:35 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 30FEDAEBD;
+        Wed,  5 Jun 2019 12:57:34 +0000 (UTC)
+Subject: Re: Device IO error question
+To:     nina <nina_2011@126.com>
+References: <2b89ab95.72b9.16b2791e9ee.Coremail.nina_2011@126.com>
+Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Organization: SUSE Labs
+Message-ID: <70a612e4-4fb8-3746-5141-843045157af7@suse.de>
+Date:   Wed, 5 Jun 2019 20:57:28 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-Message-ID: <2b89ab95.72b9.16b2791e9ee.Coremail.nina_2011@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: CMqowADXJzyrsvdcO_IxAA--.45710W
-X-CM-SenderInfo: 5qlqtsisqriqqrswhudrp/1tbikQLKEFpD9RJJQAABs-
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+In-Reply-To: <2b89ab95.72b9.16b2791e9ee.Coremail.nina_2011@126.com>
+Content-Type: text/plain; charset=gbk
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-SGksIERlYXIgTXIKCndpdGggbGludXggNC4xNy4xMSwgSSBidWlsdCBhIGJjYWNoZSBlbnZpcm9u
-bWVudCwgb25lIG52bWUgYXMgYSBjYWNoZSBkZXZpY2UsIGFuZCBzaXggc2F0YSBhcyBhIGRldmlj
-ZS4gSXQgaXMgZm91bmQgdGhhdCBpZiBvbmUgc2F0YSBpbyBleGNlcHRpb24gY2F1c2VzIHRoZSBj
-YWNoZSB0byBiZSB1bmF2YWlsYWJsZSwgdGhlbiB0aGUgb3RoZXIgZml2ZSBzYXRhIGlzIGFsc28g
-a2lja2VkIG9mZi4gVGhlIGZvbGxvd2luZyBpcyB0aGUgZG1lc2cgbG9nLgpzZCAwOjI6NzowOiBb
-c2RpXSB0YWcjMiBGQUlMRUQgUmVzdWx0OiBob3N0Ynl0ZT1ESURfQkFEX1RBUkdFVCBkcml2ZXJi
-eXRlPURSSVZFUl9PSwpzZCAwOjI6NzowOiBbc2RpXSB0YWcjMjkgRkFJTEVEIFJlc3VsdDogaG9z
-dGJ5dGU9RElEX0JBRF9UQVJHRVQgZHJpdmVyYnl0ZT1EUklWRVJfT0sKc2QgMDoyOjc6MDogW3Nk
-aV0gdGFnIzIgQ0RCOiBSZWFkKDE2KSA4OCAwMCAwMCAwMCAwMCAwMCBjMiA4MiBmYSBiOCAwMCAw
-MCAwMCA0MCAwMCAwMApzZCAwOjI6NzowOiBbc2RpXSB0YWcjMjkgQ0RCOiBXcml0ZSgxNikgOGEg
-MDAgMDAgMDAgMDAgMDIgMzYgNGIgZGMgNzAgMDAgMDAgMDIgMDAgMDAgMDAKcHJpbnRfcmVxX2Vy
-cm9yOiBJL08gZXJyb3IsIGRldiBzZGksIHNlY3RvciAzMjYzMzYzNzY4CnByaW50X3JlcV9lcnJv
-cjogSS9PIGVycm9yLCBkZXYgc2RpLCBzZWN0b3IgOTUwMDg3NTg4OApzZCAwOjI6NzowOiBbc2Rp
-XSB0YWcjMTcgRkFJTEVEIFJlc3VsdDogaG9zdGJ5dGU9RElEX0JBRF9UQVJHRVQgZHJpdmVyYnl0
-ZT1EUklWRVJfT0sKc2QgMDoyOjc6MDogW3NkaV0gdGFnIzE3IENEQjogUmVhZCgxNikgODggMDAg
-MDAgMDAgMDAgMDEgOWIgNDggNjggMDAgMDAgMDAgMDIgMDAgMDAgMDAKcHJpbnRfcmVxX2Vycm9y
-OiBJL08gZXJyb3IsIGRldiBzZGksIHNlY3RvciA2OTAwMTgwOTkyCnByaW50X3JlcV9lcnJvcjog
-SS9PIGVycm9yLCBkZXYgc2RpLCBzZWN0b3IgNjk2OTI1NjMyMApzZCAwOjI6NzowOiBbc2RpXSB0
-YWcjNCBGQUlMRUQgUmVzdWx0OiBob3N0Ynl0ZT1ESURfQkFEX1RBUkdFVCBkcml2ZXJieXRlPURS
-SVZFUl9PSwpzZCAwOjI6NzowOiBbc2RpXSB0YWcjMSBGQUlMRUQgUmVzdWx0OiBob3N0Ynl0ZT1E
-SURfQkFEX1RBUkdFVCBkcml2ZXJieXRlPURSSVZFUl9PSwpzZCAwOjI6NzowOiBbc2RpXSB0YWcj
-NiBDREI6IFdyaXRlKDE2KSA4YSAwMCAwMCAwMCAwMCAwMiAzNiA0YiBkNiA3MCAwMCAwMCAwMiAw
-MCAwMCAwMApwcmludF9yZXFfZXJyb3I6IEkvTyBlcnJvciwgZGV2IHNkaSwgc2VjdG9yIDcxMDg1
-NTQ5NjAKYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9y
-IG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCnByaW50X3JlcV9lcnJvcjogSS9PIGVy
-cm9yLCBkZXYgc2RpLCBzZWN0b3IgOTUwMDg3NjQwMApzZCAwOjI6NzowOiBbc2RpXSB0YWcjNCBD
-REI6IFJlYWQoMTYpIDg4IDAwIDAwIDAwIDAwIDAwIDAxIDk0IDNkIGUwIDAwIDAwIDAxIGMwIDAw
-IDAwCnByaW50X3JlcV9lcnJvcjogSS9PIGVycm9yLCBkZXYgc2RpLCBzZWN0b3IgOTUwMDg3NDM1
-MgpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24g
-YmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKc2QgMDoyOjc6MDogW3NkaV0gdGFnIzggQ0RC
-OiBSZWFkKDE2KSA4OCAwMCAwMCAwMCAwMCAwMSBjNyBhMyAzZiBiMCAwMCAwMCAwMiAwMCAwMCAw
-MApiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24g
-YmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKc2QgMDoyOjc6MDogW3NkaV0gdGFnIzEgQ0RC
-OiBSZWFkKDE2KSA4OCAwMCAwMCAwMCAwMCAwMCBjMiA4MiBmOCBiOCAwMCAwMCAwMiAwMCAwMCAw
-MApiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24g
-YmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19p
-b19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxl
-CmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBi
-YWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lv
-X2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUK
-YmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJh
-Y2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9f
-ZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpi
-Y2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFj
-a2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19l
-cnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJj
-YWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNr
-aW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vy
-cm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNh
-Y2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tp
-bmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJy
-b3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2Fj
-aGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFja2lu
-ZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJv
-cnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNo
-ZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5n
-IGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9y
-cygpIHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hl
-OiBiY2hfY291bnRfYmFja2luZ19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcg
-ZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3Jz
-KCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6
-IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBk
-ZXZpY2UsIHVucmVjb3ZlcmFibGUKbWVnYXJhaWRfc2FzIDAwMDA6MDI6MDAuMDogc2Nhbm5pbmcg
-Zm9yIHNjc2kwLi4uCmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJ
-TyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6IGJjaF9jb3Vu
-dF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBkZXZpY2UsIHVu
-cmVjb3ZlcmFibGUKYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJvcnMoKSBzZGk6IElP
-IGVycm9yIG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNoZTogYmNoX2NvdW50
-X2JhY2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5y
-ZWNvdmVyYWJsZQptZWdhcmFpZF9zYXMgMDAwMDowMjowMC4wOiAxNTA4ICg1OTU4MzA5NDlzLzB4
-MDAwMS9GQVRBTCkgLSBWRCAwNy83IGlzIG5vdyBPRkZMSU5FCmJjYWNoZTogYmNoX2NvdW50X2Jh
-Y2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNv
-dmVyYWJsZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJy
-b3Igb24gYmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hlOiBiY2hfY291bnRfYmFj
-a2luZ19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292
-ZXJhYmxlCmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJv
-ciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNr
-aW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBkZXZpY2UsIHVucmVjb3Zl
-cmFibGUKYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9y
-IG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNoZTogYmNoX2NvdW50X2JhY2tp
-bmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVy
-YWJsZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Ig
-b24gYmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hlOiBiY2hfY291bnRfYmFja2lu
-Z19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJh
-YmxlCmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBv
-biBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5n
-X2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFi
-bGUKYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9u
-IGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdf
-aW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJs
-ZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24g
-YmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19p
-b19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxl
-CmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBi
-YWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lv
-X2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUK
-YmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJh
-Y2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9f
-ZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpi
-Y2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFj
-a2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19l
-cnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJj
-YWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNr
-aW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vy
-cm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNh
-Y2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tp
-bmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJy
-b3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2Fj
-aGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFja2lu
-ZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJv
-cnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNo
-ZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5n
-IGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9y
-cygpIHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hl
-OiBiY2hfY291bnRfYmFja2luZ19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcg
-ZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3Jz
-KCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6
-IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpIHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBk
-ZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJvcnMo
-KSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNoZTog
-YmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3JzKCkgc2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRl
-dmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygp
-IHNkaTogSU8gZXJyb3Igb24gYmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUKYmNhY2hlOiBi
-Y2hfY291bnRfYmFja2luZ19pb19lcnJvcnMoKSBzZGk6IElPIGVycm9yIG9uIGJhY2tpbmcgZGV2
-aWNlLCB1bnJlY292ZXJhYmxlCmJjYWNoZTogYmNoX2NvdW50X2JhY2tpbmdfaW9fZXJyb3JzKCkg
-c2RpOiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZQpiY2FjaGU6IGJj
-aF9jYWNoZWRfZGV2X2Vycm9yKCkgc3RvcCBiY2FjaGU3OiB0b28gbWFueSBJTyBlcnJvcnMgb24g
-YmFja2luZyBkZXZpY2Ugc2RpCmJjYWNoZTogYmNoX2NvdW50X2lvX2Vycm9ycygpIG52bWUxbjE6
-IElPIGVycm9yIG9uIHdyaXRpbmcgZGF0YSB0byBjYWNoZS4KYmNhY2hlOiBiY2hfY291bnRfaW9f
-ZXJyb3JzKCkgbnZtZTFuMTogSU8gZXJyb3Igb24gd3JpdGluZyBkYXRhIHRvIGNhY2hlLgpiY2Fj
-aGU6IGJjaF9jb3VudF9pb19lcnJvcnMoKSBudm1lMW4xOiBJTyBlcnJvciBvbiB3cml0aW5nIGRh
-dGEgdG8gY2FjaGUuCmJjYWNoZTogYmNoX2NvdW50X2lvX2Vycm9ycygpIG52bWUxbjE6IElPIGVy
-cm9yIG9uIHdyaXRpbmcgZGF0YSB0byBjYWNoZS4KYmNhY2hlOiBiY2hfY291bnRfaW9fZXJyb3Jz
-KCkgbnZtZTFuMTogSU8gZXJyb3Igb24gd3JpdGluZyBkYXRhIHRvIGNhY2hlLgpiY2FjaGU6IGJj
-aF9jb3VudF9pb19lcnJvcnMoKSBudm1lMW4xOiBJTyBlcnJvciBvbiB3cml0aW5nIGRhdGEgdG8g
-Y2FjaGUuCmJjYWNoZTogYmNoX2NvdW50X2lvX2Vycm9ycygpIG52bWUxbjE6IElPIGVycm9yIG9u
-IHdyaXRpbmcgZGF0YSB0byBjYWNoZS4KYmNhY2hlOiBiY2hfY2FjaGVfc2V0X2Vycm9yKCkgQ0FD
-SEVfU0VUX0lPX0RJU0FCTEUgYWxyZWFkeSBzZXQKYmNhY2hlOiBlcnJvciBvbiBiMWRkMjhjYi0x
-MGVjLTQ5MTUtOWI0OC04OGRlYjZhN2Y2MWI6Cm52bWUxbjE6IHRvbyBtYW55IElPIGVycm9ycyB3
-cml0aW5nIGRhdGEgdG8gY2FjaGUKLCBkaXNhYmxpbmcgY2FjaGluZwpiY2FjaGU6IGNvbmRpdGlv
-bmFsX3N0b3BfYmNhY2hlX2RldmljZSgpIHN0b3Bfd2hlbl9jYWNoZV9zZXRfZmFpbGVkIG9mIGJj
-YWNoZTYgaXMgImF1dG8iIGFuZCBjYWNoZSBpcyBkaXJ0eSwgc3RvcCBpdCB0byBhdm9pZCBwb3Rl
-bnRpYWwgZGF0YSBjb3JydXB0aW9uLgpiY2FjaGU6IGNvbmRpdGlvbmFsX3N0b3BfYmNhY2hlX2Rl
-dmljZSgpIHN0b3Bfd2hlbl9jYWNoZV9zZXRfZmFpbGVkIG9mIGJjYWNoZTcgaXMgImF1dG8iIGFu
-ZCBjYWNoZSBpcyBkaXJ0eSwgc3RvcCBpdCB0byBhdm9pZCBwb3RlbnRpYWwgZGF0YSBjb3JydXB0
-aW9uLgpiY2FjaGU6IGNvbmRpdGlvbmFsX3N0b3BfYmNhY2hlX2RldmljZSgpIHN0b3Bfd2hlbl9j
-YWNoZV9zZXRfZmFpbGVkIG9mIGJjYWNoZTggaXMgImF1dG8iIGFuZCBjYWNoZSBpcyBkaXJ0eSwg
-c3RvcCBpdCB0byBhdm9pZCBwb3RlbnRpYWwgZGF0YSBjb3JydXB0aW9uLgpiY2FjaGU6IGNvbmRp
-dGlvbmFsX3N0b3BfYmNhY2hlX2RldmljZSgpIHN0b3Bfd2hlbl9jYWNoZV9zZXRfZmFpbGVkIG9m
-IGJjYWNoZTkgaXMgImF1dG8iIGFuZCBjYWNoZSBpcyBkaXJ0eSwgc3RvcCBpdCB0byBhdm9pZCBw
-b3RlbnRpYWwgZGF0YSBjb3JydXB0aW9uLgpiY2FjaGU6IGNvbmRpdGlvbmFsX3N0b3BfYmNhY2hl
-X2RldmljZSgpIHN0b3Bfd2hlbl9jYWNoZV9zZXRfZmFpbGVkIG9mIGJjYWNoZTEwIGlzICJhdXRv
-IiBhbmQgY2FjaGUgaXMgZGlydHksIHN0b3AgaXQgdG8gYXZvaWQgcG90ZW50aWFsIGRhdGEgY29y
-cnVwdGlvbi4KYmNhY2hlOiBjb25kaXRpb25hbF9zdG9wX2JjYWNoZV9kZXZpY2UoKSBzdG9wX3do
-ZW5fY2FjaGVfc2V0X2ZhaWxlZCBvZiBiY2FjaGUxMSBpcyAiYXV0byIgYW5kIGNhY2hlIGlzIGRp
-cnR5LCBzdG9wIGl0IHRvIGF2b2lkIHBvdGVudGlhbCBkYXRhIGNvcnJ1cHRpb24uCmJjYWNoZTog
-Y2FjaGVkX2Rldl9kZXRhY2hfZmluaXNoKCkgQ2FjaGluZyBkaXNhYmxlZCBmb3Igc2RrCmJjYWNo
-ZTogY2FjaGVkX2Rldl9kZXRhY2hfZmluaXNoKCkgQ2FjaGluZyBkaXNhYmxlZCBmb3Igc2RoCmJj
-YWNoZTogY2FjaGVkX2Rldl9kZXRhY2hfZmluaXNoKCkgQ2FjaGluZyBkaXNhYmxlZCBmb3Igc2Rs
-CmJjYWNoZTogY2FjaGVkX2Rldl9kZXRhY2hfZmluaXNoKCkgQ2FjaGluZyBkaXNhYmxlZCBmb3Ig
-c2RqCmJjYWNoZTogY2FjaGVkX2Rldl9kZXRhY2hfZmluaXNoKCkgQ2FjaGluZyBkaXNhYmxlZCBm
-b3Igc2RtCnNkIDA6Mjo3OjA6IFNDU0kgZGV2aWNlIGlzIHJlbW92ZWQKbWVnYXJhaWRfc2FzIDAw
-MDA6MDI6MDAuMDogMTUxMiAoNTk1ODMxMTk4cy8weDAwMDQvQ1JJVCkgLSBFbmNsb3N1cmUgUEQg
-MjAoYyBOb25lL3AxKSBwaHkgYmFkIGZvciBzbG90IDcKYmNhY2hlOiBiY2FjaGVfZGV2aWNlX2Zy
-ZWUoKSBiY2FjaGUxMSBzdG9wcGVkCmJjYWNoZTogYmNhY2hlX2RldmljZV9mcmVlKCkgYmNhY2hl
-MTAgc3RvcHBlZApiY2FjaGU6IGJjYWNoZV9kZXZpY2VfZnJlZSgpIGJjYWNoZTkgc3RvcHBlZApi
-Y2FjaGU6IGJjYWNoZV9kZXZpY2VfZnJlZSgpIGJjYWNoZTggc3RvcHBlZApiY2FjaGU6IGJjYWNo
-ZV9kZXZpY2VfZnJlZSgpIGJjYWNoZTcgc3RvcHBlZApiY2FjaGU6IGJjYWNoZV9kZXZpY2VfZnJl
-ZSgpIGJjYWNoZTYgc3RvcHBlZApiY2FjaGU6IGNhY2hlX3NldF9mcmVlKCkgQ2FjaGUgc2V0IGIx
-ZGQyOGNiLTEwZWMtNDkxNS05YjQ4LTg4ZGViNmE3ZjYxYiB1bnJlZ2lzdGVyZWQKCkkgbG9va2Vk
-IGF0IHRoZSBiY2FjaGUgY29kZSBhbmQgZm91bmQgdGhhdCBpbiB0aGUgYmNoX2NhY2hlZF9kZXZf
-ZXJyb3IgZnVuY3Rpb24sIHRoZSBmbGFnIG9mIGNhY2hlX3NldCBpcyBzZXQgdG8gQ0FDSEVfU0VU
-X0lPX0RJU0FCTEUsIGJ1dCB0aGUgY29kZSB0byBjbGVhciB0aGlzIGZsYWcgaXMgbm90IGZvdW5k
-LCBhbmQgIGluIHRoZSBjbG9zdXJlX2Jpb19zdWJtaXQgZnVuY3Rpb24uIElmIHRoZSBmbGFncyBv
-ZiBjYWNoZV9zZXQgIGlzIENBQ0hFX1NFVF9JT19ESVNBQkxFLCB3aWxsIHRyaWdnZXIgY2FjaGUg
-SW8gZXJyb3IuCgpJcyB0aGUgZGVzaWduIG9mIGJjYWNoZSBsaWtlIHRoaXMsIG9yIGlzIG15IHVz
-ZSB3cm9uZz8KCkkgbG9vayBmb3J3YXJkIHRvIHlvdXIgcmVwbHkuIFRoYW5rIHlvdS4KCi0tTmlu
-YQ==
+On 2019/6/5 8:16 ÏÂÎç, nina wrote:
+> Hi, Dear Mr
+> 
+> with linux 4.17.11, I built a bcache environment, one nvme as a cache device, and six sata as a device. It is found that if one sata io exception causes the cache to be unavailable, then the other five sata is also kicked off. The following is the dmesg log.
+> sd 0:2:7:0: [sdi] tag#2 FAILED Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
+> sd 0:2:7:0: [sdi] tag#29 FAILED Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
+> sd 0:2:7:0: [sdi] tag#2 CDB: Read(16) 88 00 00 00 00 00 c2 82 fa b8 00 00 00 40 00 00
+> sd 0:2:7:0: [sdi] tag#29 CDB: Write(16) 8a 00 00 00 00 02 36 4b dc 70 00 00 02 00 00 00
+> print_req_error: I/O error, dev sdi, sector 3263363768
+> print_req_error: I/O error, dev sdi, sector 9500875888
+> sd 0:2:7:0: [sdi] tag#17 FAILED Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
+> sd 0:2:7:0: [sdi] tag#17 CDB: Read(16) 88 00 00 00 00 01 9b 48 68 00 00 00 02 00 00 00
+> print_req_error: I/O error, dev sdi, sector 6900180992
+> print_req_error: I/O error, dev sdi, sector 6969256320
+> sd 0:2:7:0: [sdi] tag#4 FAILED Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
+> sd 0:2:7:0: [sdi] tag#1 FAILED Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
+> sd 0:2:7:0: [sdi] tag#6 CDB: Write(16) 8a 00 00 00 00 02 36 4b d6 70 00 00 02 00 00 00
+> print_req_error: I/O error, dev sdi, sector 7108554960
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> print_req_error: I/O error, dev sdi, sector 9500876400
+> sd 0:2:7:0: [sdi] tag#4 CDB: Read(16) 88 00 00 00 00 00 01 94 3d e0 00 00 01 c0 00 00
+> print_req_error: I/O error, dev sdi, sector 9500874352
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> sd 0:2:7:0: [sdi] tag#8 CDB: Read(16) 88 00 00 00 00 01 c7 a3 3f b0 00 00 02 00 00 00
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> sd 0:2:7:0: [sdi] tag#1 CDB: Read(16) 88 00 00 00 00 00 c2 82 f8 b8 00 00 02 00 00 00
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> megaraid_sas 0000:02:00.0: scanning for scsi0...
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> megaraid_sas 0000:02:00.0: 1508 (595830949s/0x0001/FATAL) - VD 07/7 is now OFFLINE
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
+> bcache: bch_cached_dev_error() stop bcache7: too many IO errors on backing device sdi
+> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
+> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
+> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
+> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
+> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
+> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
+> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
+> bcache: bch_cache_set_error() CACHE_SET_IO_DISABLE already set
+> bcache: error on b1dd28cb-10ec-4915-9b48-88deb6a7f61b:
+> nvme1n1: too many IO errors writing data to cache
+> , disabling caching
+> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache6 is "auto" and cache is dirty, stop it to avoid potential data corruption.
+> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache7 is "auto" and cache is dirty, stop it to avoid potential data corruption.
+> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache8 is "auto" and cache is dirty, stop it to avoid potential data corruption.
+> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache9 is "auto" and cache is dirty, stop it to avoid potential data corruption.
+> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache10 is "auto" and cache is dirty, stop it to avoid potential data corruption.
+> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache11 is "auto" and cache is dirty, stop it to avoid potential data corruption.
+> bcache: cached_dev_detach_finish() Caching disabled for sdk
+> bcache: cached_dev_detach_finish() Caching disabled for sdh
+> bcache: cached_dev_detach_finish() Caching disabled for sdl
+> bcache: cached_dev_detach_finish() Caching disabled for sdj
+> bcache: cached_dev_detach_finish() Caching disabled for sdm
+> sd 0:2:7:0: SCSI device is removed
+> megaraid_sas 0000:02:00.0: 1512 (595831198s/0x0004/CRIT) - Enclosure PD 20(c None/p1) phy bad for slot 7
+> bcache: bcache_device_free() bcache11 stopped
+> bcache: bcache_device_free() bcache10 stopped
+> bcache: bcache_device_free() bcache9 stopped
+> bcache: bcache_device_free() bcache8 stopped
+> bcache: bcache_device_free() bcache7 stopped
+> bcache: bcache_device_free() bcache6 stopped
+> bcache: cache_set_free() Cache set b1dd28cb-10ec-4915-9b48-88deb6a7f61b unregistered
+> 
+> I looked at the bcache code and found that in the bch_cached_dev_error function, the flag of cache_set is set to CACHE_SET_IO_DISABLE, but the code to clear this flag is not found, and  in the closure_bio_submit function. If the flags of cache_set  is CACHE_SET_IO_DISABLE, will trigger cache Io error.
+> 
+> Is the design of bcache like this, or is my use wrong?
+> 
+> I look forward to your reply. Thank you.
+
+This problem is caused by commit 6147305c73e4 ("bcache: set
+CACHE_SET_IO_DISABLE in bch_cached_dev_error()")
+
+I will post a revert patch to revert this commit in 5.3 and CC
+stable@vger.kernel.org
+
+Thanks.
+
+Coly Li
+
+
+-- 
+
+Coly Li
