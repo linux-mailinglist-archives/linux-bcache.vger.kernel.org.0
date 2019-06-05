@@ -2,66 +2,61 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B733564E
-	for <lists+linux-bcache@lfdr.de>; Wed,  5 Jun 2019 07:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88653357A7
+	for <lists+linux-bcache@lfdr.de>; Wed,  5 Jun 2019 09:27:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbfFEFp0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 5 Jun 2019 01:45:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55270 "EHLO mx1.suse.de"
+        id S1726530AbfFEH1Z (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 5 Jun 2019 03:27:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41126 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725268AbfFEFp0 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 5 Jun 2019 01:45:26 -0400
+        id S1726477AbfFEH1Z (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 5 Jun 2019 03:27:25 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EFDEBAE16;
-        Wed,  5 Jun 2019 05:45:24 +0000 (UTC)
-Subject: Re: [PATCH 17/18] bcache: make bset_search_tree() be more
- understandable
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-References: <20190604151624.105150-1-colyli@suse.de>
- <20190604155330.107927-1-colyli@suse.de>
- <20190604155330.107927-2-colyli@suse.de>
- <20190605054335.GA7849@infradead.org>
+        by mx1.suse.de (Postfix) with ESMTP id C826CAE08;
+        Wed,  5 Jun 2019 07:27:23 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <9567486c-cef4-5b28-b12e-4b23760bd933@suse.de>
-Date:   Wed, 5 Jun 2019 13:45:18 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190605054335.GA7849@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+To:     linux-bcache@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
+Subject: [PATCH 0/6] fix for a race in btree_flush_write()
+Date:   Wed,  5 Jun 2019 15:27:12 +0800
+Message-Id: <20190605072718.121379-1-colyli@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/6/5 1:43 下午, Christoph Hellwig wrote:
->> -			n = j * 2 + (((unsigned int)
->> -				      (f->mantissa -
->> -				       bfloat_mantissa(search, f))) >> 31);
->> +			n = (f->mantissa >= bfloat_mantissa(search, f))
->> +				? j * 2
->> +				: j * 2 + 1;
-> 
-> If you really want to make it more readable a good old if else would
-> help a lot.
-> 
->>  		else
->>  			n = (bkey_cmp(tree_to_bkey(t, j), search) > 0)
->>  				? j * 2
-> 
-> Same here.
-> 
+There is a race happens in btree_flush_write() which may cause
+system hang or panic. This patch set is an effor to fix such race,
+and it is also necessary for the jouranl-no-space deadlock fixes. 
 
-Hi Christoph,
+Any review or comments is welcome.
 
-Thanks for the hint, will handle it soon.
-
--- 
+Thanks in advance.
 
 Coly Li
+---
+
+Coly Li (6):
+  bcache: Revert "bcache: fix high CPU occupancy during journal"
+  bcache: Revert "bcache: free heap cache_set->flush_btree in
+    bch_journal_free"
+  bcache: set largest seq to ja->seq[bucket_index] in
+    journal_read_bucket()
+  bcache: remove retry_flush_write from struct cache_set
+  bcache: fix race in btree_flush_write()
+  bcache: add reclaimed_journal_buckets to struct cache_set
+
+ drivers/md/bcache/bcache.h  |   4 +-
+ drivers/md/bcache/btree.c   |  15 +++++-
+ drivers/md/bcache/btree.h   |   2 +
+ drivers/md/bcache/journal.c | 111 ++++++++++++++++++++++++++++----------------
+ drivers/md/bcache/journal.h |   4 ++
+ drivers/md/bcache/sysfs.c   |  10 ++--
+ drivers/md/bcache/util.h    |   2 -
+ 7 files changed, 97 insertions(+), 51 deletions(-)
+
+-- 
+2.16.4
+
