@@ -2,178 +2,137 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5413C35D5C
-	for <lists+linux-bcache@lfdr.de>; Wed,  5 Jun 2019 14:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41168369C7
+	for <lists+linux-bcache@lfdr.de>; Thu,  6 Jun 2019 04:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbfFEM5g (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 5 Jun 2019 08:57:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47322 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727769AbfFEM5f (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 5 Jun 2019 08:57:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 30FEDAEBD;
-        Wed,  5 Jun 2019 12:57:34 +0000 (UTC)
-Subject: Re: Device IO error question
-To:     nina <nina_2011@126.com>
-References: <2b89ab95.72b9.16b2791e9ee.Coremail.nina_2011@126.com>
-Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <70a612e4-4fb8-3746-5141-843045157af7@suse.de>
-Date:   Wed, 5 Jun 2019 20:57:28 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <2b89ab95.72b9.16b2791e9ee.Coremail.nina_2011@126.com>
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1726636AbfFFCGX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 5 Jun 2019 22:06:23 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42169 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbfFFCGX (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 5 Jun 2019 22:06:23 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q10so464663pff.9
+        for <linux-bcache@vger.kernel.org>; Wed, 05 Jun 2019 19:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id;
+        bh=/CsAq+kapoIo+gjGlxHpLLSneYTgaxgCTJ76XAw2OoE=;
+        b=BJ+Uvx3RYPfMnk626bW665ClettSks3fhrTnVmwV3qES/ch8/pNx/DpGlBbTHsa6yI
+         RiLMtSRhgp4mJH8/ivnZ9OsaJ4FDX9yAMmPMzE+oxH5EFg1Yy4zBeBC1m9Qf4Reo8KmU
+         MRifdb5zj35PCtkjQAO0DqNXNS28LAwv6uWJ0gkJt+VQ6kKDx+fARk8swI6Z1QywWND8
+         MvWZNFvwJJFT7BeN5iFvP1rl4GdMJidKNAqAaNPsuhzleLcScqvQIc6fsbfpLqZ7rb3V
+         EeeS9kNtc8Gt/LbHRGYsDMN+RWXCFa+OsnyOQyvFJP5ZGrSiSC7cz/LY87mFEsW2wox3
+         Tggg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=/CsAq+kapoIo+gjGlxHpLLSneYTgaxgCTJ76XAw2OoE=;
+        b=t0gJrpxgJEG9vnHk3wnMFvsGl0v37Vd76urTjlsyuHawgxKwGL+V0vmzeCxJUA8NWv
+         MqxOJf2evLqkskFrA63VU7gWVRqRNThDPt300Iosi81yxj5PYw1ATVQ2kJzBr2jff2rU
+         VEU1lq365nH3DtAZZaA/4Apwr3w5+GmeTy6/yO4BLoGf1wznzhqVl6xIvfHmNd+r0ND9
+         NYD+Yq4J8wR5NwVg8nG5Qucal9VObRtOqxn7P0OomHqTGhpGmuQsAUK0mfuw9zXEUmZM
+         ZCh7L+6BOdsL+oxhKfX+PrEizNwUbfhEnvoCmwk6zbLmgZIKOzTqD1+i4eguGj5MVhvR
+         gWSg==
+X-Gm-Message-State: APjAAAWPNOOkOCBKiHPa9e4a52fDf0DImMICmlTs+qMqKtn5fKfH5Mc6
+        eAZEeHyMAPfE3qg88r9YbQiCHUY4HKNIqQ==
+X-Google-Smtp-Source: APXvYqxaEYMNaft2GICZ4IupU5NcRqrBmYIU3baNJDgudXV23UnN+fD3PMjE7rALehncPlb2OHeRkA==
+X-Received: by 2002:a65:63cd:: with SMTP id n13mr888230pgv.153.1559786782566;
+        Wed, 05 Jun 2019 19:06:22 -0700 (PDT)
+Received: from ip-172-31-33-21.ap-northeast-1.compute.internal (ec2-3-112-67-113.ap-northeast-1.compute.amazonaws.com. [3.112.67.113])
+        by smtp.gmail.com with ESMTPSA id x7sm221939pfa.125.2019.06.05.19.06.20
+        for <linux-bcache@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Jun 2019 19:06:21 -0700 (PDT)
+From:   Xinwei Wei <xinweiwei90@gmail.com>
+To:     linux-bcache@vger.kernel.org
+Subject: [PATCH 1/1] bcache-tools:Add blkdiscard for cache dev
+Date:   Thu,  6 Jun 2019 02:06:15 +0000
+Message-Id: <114c3049bf90d8e469e49edb307b27218166bcc8.1559729340.git.xinweiwei90@gmail.com>
+X-Mailer: git-send-email 2.18.1
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/6/5 8:16 ÏÂÎç, nina wrote:
-> Hi, Dear Mr
-> 
-> with linux 4.17.11, I built a bcache environment, one nvme as a cache device, and six sata as a device. It is found that if one sata io exception causes the cache to be unavailable, then the other five sata is also kicked off. The following is the dmesg log.
-> sd 0:2:7:0: [sdi] tag#2 FAILED Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
-> sd 0:2:7:0: [sdi] tag#29 FAILED Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
-> sd 0:2:7:0: [sdi] tag#2 CDB: Read(16) 88 00 00 00 00 00 c2 82 fa b8 00 00 00 40 00 00
-> sd 0:2:7:0: [sdi] tag#29 CDB: Write(16) 8a 00 00 00 00 02 36 4b dc 70 00 00 02 00 00 00
-> print_req_error: I/O error, dev sdi, sector 3263363768
-> print_req_error: I/O error, dev sdi, sector 9500875888
-> sd 0:2:7:0: [sdi] tag#17 FAILED Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
-> sd 0:2:7:0: [sdi] tag#17 CDB: Read(16) 88 00 00 00 00 01 9b 48 68 00 00 00 02 00 00 00
-> print_req_error: I/O error, dev sdi, sector 6900180992
-> print_req_error: I/O error, dev sdi, sector 6969256320
-> sd 0:2:7:0: [sdi] tag#4 FAILED Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
-> sd 0:2:7:0: [sdi] tag#1 FAILED Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
-> sd 0:2:7:0: [sdi] tag#6 CDB: Write(16) 8a 00 00 00 00 02 36 4b d6 70 00 00 02 00 00 00
-> print_req_error: I/O error, dev sdi, sector 7108554960
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> print_req_error: I/O error, dev sdi, sector 9500876400
-> sd 0:2:7:0: [sdi] tag#4 CDB: Read(16) 88 00 00 00 00 00 01 94 3d e0 00 00 01 c0 00 00
-> print_req_error: I/O error, dev sdi, sector 9500874352
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> sd 0:2:7:0: [sdi] tag#8 CDB: Read(16) 88 00 00 00 00 01 c7 a3 3f b0 00 00 02 00 00 00
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> sd 0:2:7:0: [sdi] tag#1 CDB: Read(16) 88 00 00 00 00 00 c2 82 f8 b8 00 00 02 00 00 00
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> megaraid_sas 0000:02:00.0: scanning for scsi0...
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> megaraid_sas 0000:02:00.0: 1508 (595830949s/0x0001/FATAL) - VD 07/7 is now OFFLINE
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_count_backing_io_errors() sdi: IO error on backing device, unrecoverable
-> bcache: bch_cached_dev_error() stop bcache7: too many IO errors on backing device sdi
-> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
-> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
-> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
-> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
-> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
-> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
-> bcache: bch_count_io_errors() nvme1n1: IO error on writing data to cache.
-> bcache: bch_cache_set_error() CACHE_SET_IO_DISABLE already set
-> bcache: error on b1dd28cb-10ec-4915-9b48-88deb6a7f61b:
-> nvme1n1: too many IO errors writing data to cache
-> , disabling caching
-> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache6 is "auto" and cache is dirty, stop it to avoid potential data corruption.
-> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache7 is "auto" and cache is dirty, stop it to avoid potential data corruption.
-> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache8 is "auto" and cache is dirty, stop it to avoid potential data corruption.
-> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache9 is "auto" and cache is dirty, stop it to avoid potential data corruption.
-> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache10 is "auto" and cache is dirty, stop it to avoid potential data corruption.
-> bcache: conditional_stop_bcache_device() stop_when_cache_set_failed of bcache11 is "auto" and cache is dirty, stop it to avoid potential data corruption.
-> bcache: cached_dev_detach_finish() Caching disabled for sdk
-> bcache: cached_dev_detach_finish() Caching disabled for sdh
-> bcache: cached_dev_detach_finish() Caching disabled for sdl
-> bcache: cached_dev_detach_finish() Caching disabled for sdj
-> bcache: cached_dev_detach_finish() Caching disabled for sdm
-> sd 0:2:7:0: SCSI device is removed
-> megaraid_sas 0000:02:00.0: 1512 (595831198s/0x0004/CRIT) - Enclosure PD 20(c None/p1) phy bad for slot 7
-> bcache: bcache_device_free() bcache11 stopped
-> bcache: bcache_device_free() bcache10 stopped
-> bcache: bcache_device_free() bcache9 stopped
-> bcache: bcache_device_free() bcache8 stopped
-> bcache: bcache_device_free() bcache7 stopped
-> bcache: bcache_device_free() bcache6 stopped
-> bcache: cache_set_free() Cache set b1dd28cb-10ec-4915-9b48-88deb6a7f61b unregistered
-> 
-> I looked at the bcache code and found that in the bch_cached_dev_error function, the flag of cache_set is set to CACHE_SET_IO_DISABLE, but the code to clear this flag is not found, and  in the closure_bio_submit function. If the flags of cache_set  is CACHE_SET_IO_DISABLE, will trigger cache Io error.
-> 
-> Is the design of bcache like this, or is my use wrong?
-> 
-> I look forward to your reply. Thank you.
+Signed-off-by: Xinwei Wei <xinweiwei90@gmail.com>
+---
+ make.c | 48 +++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 47 insertions(+), 1 deletion(-)
 
-This problem is caused by commit 6147305c73e4 ("bcache: set
-CACHE_SET_IO_DISABLE in bch_cached_dev_error()")
-
-I will post a revert patch to revert this commit in 5.3 and CC
-stable@vger.kernel.org
-
-Thanks.
-
-Coly Li
-
-
+diff --git a/make.c b/make.c
+index e5e7464..4244866 100644
+--- a/make.c
++++ b/make.c
+@@ -179,6 +179,48 @@ const char * const cache_replacement_policies[] = {
+ 	NULL
+ };
+ 
++int blkdiscard_all(char *path, int fd)
++{
++	printf("%s blkdiscard beginning...", path);
++	fflush(stdout);
++
++	uint64_t end, blksize, secsize, range[2];
++	struct stat sb;
++
++	range[0] = 0;
++	range[1] = ULLONG_MAX;
++
++	if (fstat(fd, &sb) == -1)
++		goto err;
++
++	if (!S_ISBLK(sb.st_mode))
++		goto err;
++
++	if (ioctl(fd, BLKGETSIZE64, &blksize))
++		goto err;
++
++	if (ioctl(fd, BLKSSZGET, &secsize))
++		goto err;
++
++	/* align range to the sector size */
++	range[0] = (range[0] + secsize - 1) & ~(secsize - 1);
++	range[1] &= ~(secsize - 1);
++
++	/* is the range end behind the end of the device ?*/
++	end = range[0] + range[1];
++	if (end < range[0] || end > blksize)
++		range[1] = blksize - range[0];
++
++	if (ioctl(fd, BLKDISCARD, &range))
++		goto err;
++
++	printf("done\n");
++	return 0;
++err:
++	printf("\r                                ");
++	return -1;
++}
++
+ static void write_sb(char *dev, unsigned int block_size,
+ 			unsigned int bucket_size,
+ 			bool writeback, bool discard, bool wipe_bcache,
+@@ -354,6 +396,10 @@ static void write_sb(char *dev, unsigned int block_size,
+ 		       sb.nr_in_set,
+ 		       sb.nr_this_dev,
+ 		       sb.first_bucket);
++
++		/* Attempting to discard cache device
++		 */
++		blkdiscard_all(dev, fd);
+ 		putchar('\n');
+ 	}
+ 
+@@ -429,7 +475,7 @@ int make_bcache(int argc, char **argv)
+ 	unsigned int i, ncache_devices = 0, nbacking_devices = 0;
+ 	char *cache_devices[argc];
+ 	char *backing_devices[argc];
+-	char label[SB_LABEL_SIZE];
++	char label[SB_LABEL_SIZE] = { 0 };
+ 	unsigned int block_size = 0, bucket_size = 1024;
+ 	int writeback = 0, discard = 0, wipe_bcache = 0, force = 0;
+ 	unsigned int cache_replacement_policy = 0;
 -- 
+2.18.1
 
-Coly Li
