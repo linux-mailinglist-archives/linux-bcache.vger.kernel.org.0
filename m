@@ -2,80 +2,41 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F9339B7B
-	for <lists+linux-bcache@lfdr.de>; Sat,  8 Jun 2019 09:11:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1164F39C62
+	for <lists+linux-bcache@lfdr.de>; Sat,  8 Jun 2019 12:22:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbfFHHLc (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 8 Jun 2019 03:11:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43550 "EHLO mx1.suse.de"
+        id S1726847AbfFHKWY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 8 Jun 2019 06:22:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35864 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726513AbfFHHLb (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 8 Jun 2019 03:11:31 -0400
+        id S1726692AbfFHKWX (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 8 Jun 2019 06:22:23 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ECCD3AEA0;
-        Sat,  8 Jun 2019 07:11:29 +0000 (UTC)
-Subject: Re: Critical bug on bcache kernel module in Fedora 30
-To:     Rolf Fokkens <rolf@rolffokkens.nl>, Nix <nix@esperi.org.uk>
-Cc:     linux-bcache@vger.kernel.org, kent.overstreet@gmail.com,
-        Pierre JUHEN <pierre.juhen@orange.fr>
-References: <8ca3ae08-95ce-eb3e-31e1-070b1a078c01@orange.fr>
- <b0a824da-846a-7dc6-0274-3d55f22f9145@suse.de>
- <5cdfb1f7-a4b5-0dff-ae86-e5b74515bda9@suse.de>
- <cbd597ad-ed21-34ef-1fec-03fa943fd704@orange.fr>
- <cefbcdf6-6ab6-6ab0-8afa-bcd4d85401a5@suse.de>
- <9fc7c451-0507-b5c3-efc8-ab1baf7a1d44@suse.de> <878suzfk4a.fsf@esperi.org.uk>
- <3340607a-bb62-0bc6-420f-8338283d31d7@rolffokkens.nl>
- <5d3209f4-25f1-723c-13e1-a639071964a6@rolffokkens.nl>
+        by mx1.suse.de (Postfix) with ESMTP id 0773DAEF1;
+        Sat,  8 Jun 2019 10:22:20 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <429373e0-6c17-0d56-6f7d-0c191ccaa9ae@suse.de>
-Date:   Sat, 8 Jun 2019 15:11:21 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <5d3209f4-25f1-723c-13e1-a639071964a6@rolffokkens.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+To:     linux-bcache@vger.kernel.org
+Cc:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Rolf Fokkens <rolf@rolffokkens.nl>, Nix <nix@esperi.org.uk>,
+        Pierre JUHEN <pierre.juhen@orange.fr>,
+        linux-block@vger.kernel.org
+Subject: [RFC PATCH] bcache: fix stack corruption by PRECEDING_KEY()
+Date:   Sat,  8 Jun 2019 18:22:04 +0800
+Message-Id: <20190608102204.60126-1-colyli@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/6/8 5:52 上午, Rolf Fokkens wrote:
-> Some potential progress: https://bugzilla.kernel.org/show_bug.cgi?id=203573
-> 
-> On 5/30/19 2:50 PM, Rolf Fokkens wrote:
->> Not being sure if people here follow the issue at Fedora I'd like to
->> pass a suggestion:
->> https://bugzilla.redhat.com/show_bug.cgi?id=1708315#c27
->>
->> On 5/22/19 1:44 AM, Nix wrote:
->>> On 21 May 2019, Coly Li uttered the following:
->>>> Also I try to analyze the assemble code of bcache, just find out the
->>>> generated assembly code between gcc9 and gcc7 is quite different. For
->>>> gcc9 there is a XXXX.cold part. So far I can not tell where the problem
->>>> is from yet.
->>> This is hot/cold partitioning. You can turn it off with
->>> -fno-reorder-blocks-and-partition and see if that helps things (and if
->>> it doesn't, it should at least make stuff easier to compare).
+Recently people report bcache code compiled with gcc9 is broken, one of
+the buggy behavior I observe is that two adjacent 4KB I/Os should merge
+into one but they don't. Finally it turns out to be a stack corruption
+caused by macro PRECEDING_KEY().
 
-Hi folks,
-
-From the above bugzilla.kernel.org links, it seems people are all on the
-same/correct track :-)
-
-I don't analyze the assembly code, because I can stably reproduce the
-problem: two adjacent keys don't merge. And I find the problem is from
-macro PRECEDING_KEY(), which misleading bch_btree_insert_key() when it
-calls bch_btree_iter_init(). Misleading means returned 'm' always
-indicates the inserting key is the first key in the btree node because
-prev in the while-loop is NULL.
-
-For the second adjacent key, obviously prev point should not be NULL, so
-the suspicious point is PRECEDING_KEY(), its code is,
+See how PRECEDING_KEY() is defined in bset.h,
 437 #define PRECEDING_KEY(_k)                                       \
 438 ({                                                              \
 439         struct bkey *_ret = NULL;                               \
@@ -91,66 +52,114 @@ the suspicious point is PRECEDING_KEY(), its code is,
 449         _ret;                                                   \
 450 })
 
-The problem is at line 442, KEY() announced a on-stack temporary
-variable in struct bkey {high = KEY_INODE(_k), low = KEY_OFFSET(_k), ptr
-= NULL}. But its life range is in line 442-447. When address of this
-on-stack variable returns from PRECEDING_KEY() and sent into
-bch_btree_iter_init(), this stack space of this on-stack variable is
-overwritten by stackframe of bch_btree_iter_init().
+At line 442, _ret points to address of a on-stack variable combined by
+KEY(), the life range of this on-stack variable is in line 442-446,
+once _ret is returned to bch_btree_insert_key(), the returned address
+points to an invalid stack address and this adress is overwritten in
+the following called bch_btree_iter_init(). Then argument 'search' of
+bch_btree_iter_init() points to some address inside stackframe of
+bch_btree_iter_init(), exact address depends on how the compiler
+allocates stack space. Now the stack is corrupted.
 
-To confirm the above suspicion, I modify bch_btree_insert_key() to not
-use PRECEDING_KEY(), and store the preceding key in a local variable of
-bch_btree_insert_key() like this,
+The fix is to avoid to allocate and return an on-stack variable only
+in range of PRECEDING_KEY(). This patch changes macro PRECEDING_KEY()
+to an inline function, and allocate another on-stack variable from
+function bch_btree_insert_key(), then the allocated memory address
+will be always valid in life range of bch_btree_insert_key().
 
-@@ -884,27 +894,78 @@ unsigned int bch_btree_insert_key(struct
-btree_keys *b, struct bkey *k,
-        struct bset *i = bset_tree_last(b)->data;
-        struct bkey *m, *prev = NULL;
-        struct btree_iter iter;
-+       struct bkey preceding_key = ZERO_KEY;
-+       struct bkey *preceding_key_p = NULL;
+NOTE: This is only a RFC patch for more people to test. During my
+test I find bcache code does not complain out-of-order bkeys in btree
+node anymore, but the adjacent keys still don't totally merge as
+expected (e.g. they should be merged into one single key). So now I
+still continue to check what needs to be fixed more.
 
-        BUG_ON(b->ops->is_extents && !KEY_SIZE(k));
+Signed-off-by: Coly Li <colyli@suse.de>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: Rolf Fokkens <rolf@rolffokkens.nl>
+Cc: Nix <nix@esperi.org.uk>
+Cc: Pierre JUHEN <pierre.juhen@orange.fr>
+Cc: linux-bcache@vger.kernel.org
+Cc: linux-block@vger.kernel.org
+---
+ drivers/md/bcache/bset.c | 16 +++++++++++++---
+ drivers/md/bcache/bset.h | 34 ++++++++++++++++++++--------------
+ 2 files changed, 33 insertions(+), 17 deletions(-)
 
--       m = bch_btree_iter_init(b, &iter, b->ops->is_extents
--                               ? PRECEDING_KEY(&START_KEY(k))
--                               : PRECEDING_KEY(k));
+diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+index 8f07fa6e1739..9422f3f1c682 100644
+--- a/drivers/md/bcache/bset.c
++++ b/drivers/md/bcache/bset.c
+@@ -887,12 +887,22 @@ unsigned int bch_btree_insert_key(struct btree_keys *b, struct bkey *k,
+ 	struct bset *i = bset_tree_last(b)->data;
+ 	struct bkey *m, *prev = NULL;
+ 	struct btree_iter iter;
++	struct bkey preceding_key_on_stack = ZERO_KEY;
++	struct bkey *preceding_key_p = &preceding_key_on_stack;
+ 
+ 	BUG_ON(b->ops->is_extents && !KEY_SIZE(k));
+ 
+-	m = bch_btree_iter_init(b, &iter, b->ops->is_extents
+-				? PRECEDING_KEY(&START_KEY(k))
+-				: PRECEDING_KEY(k));
++	/*
++	 * If k has preceding key, preceding_key_p will be set to address
++	 *  of k's preceding key; otherwise preceding_key_p will be set
++	 * to NULL inside preceding_key().
++	 */
++	if (b->ops->is_extents)
++		preceding_key(&START_KEY(k), preceding_key_p);
++	else
++		preceding_key(k, preceding_key_p);
 +
-+       if (b->ops->is_extents) {
-+               struct bkey tmp_k;
-+               tmp_k = START_KEY(k);
-+               if (KEY_INODE(&tmp_k) || KEY_OFFSET(&tmp_k)) {
-+                       preceding_key = KEY(KEY_INODE(&tmp_k),
-KEY_OFFSET(&tmp_k), 0);
-+
-+                       if (!preceding_key.low)
-+                               preceding_key.high--;
-+                       preceding_key.low--;
-+               }
-+               preceding_key_p = &preceding_key;
-+       } else {
-+               if (KEY_INODE(k) || KEY_OFFSET(k)) {
-+                       preceding_key = KEY(KEY_INODE(k), KEY_OFFSET(k), 0);
-+                       if (!preceding_key.low)
-+                               preceding_key.high--;
-+                       preceding_key.low--;
-+               }
-+               preceding_key_p = &preceding_key;
-+       }
-+
-+       m = bch_btree_iter_init(b, &iter, preceding_key_p);
-
-Now I can see the preceding key is reported and adjacent keys can be
-merged. So far my simple fio testing works fine, but I need to go
-through all locations where KEY() and PROCEDING_KEY() are used and find
-a proper way to fix.
-
-As I guessed this is a bcache bug and triggered by gcc9. I have no clear
-idea why it works fine before (maybe depends on some compiling option
-?), but definitely this code should be fixed.
-
-Thanks.
-
++	m = bch_btree_iter_init(b, &iter, preceding_key_p);
+ 
+ 	if (b->ops->insert_fixup(b, k, &iter, replace_key))
+ 		return status;
+diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
+index bac76aabca6d..6ab165dcb717 100644
+--- a/drivers/md/bcache/bset.h
++++ b/drivers/md/bcache/bset.h
+@@ -434,20 +434,26 @@ static inline bool bch_cut_back(const struct bkey *where, struct bkey *k)
+ 	return __bch_cut_back(where, k);
+ }
+ 
+-#define PRECEDING_KEY(_k)					\
+-({								\
+-	struct bkey *_ret = NULL;				\
+-								\
+-	if (KEY_INODE(_k) || KEY_OFFSET(_k)) {			\
+-		_ret = &KEY(KEY_INODE(_k), KEY_OFFSET(_k), 0);	\
+-								\
+-		if (!_ret->low)					\
+-			_ret->high--;				\
+-		_ret->low--;					\
+-	}							\
+-								\
+-	_ret;							\
+-})
++/*
++ * Pointer preceding_key_p points to a memory object to store preceding
++ * key of k. If the preceding key does not exist, set preceding_key_p to
++ * NULL. So the caller of preceding_key() needs to take care of memory
++ * which preceding_key_p pointed to before calling preceding_key().
++ * Currently the only caller of preceding_key() is bch_btree_insert_key(),
++ * and preceding_key_p points to an on-stack variable, so the memory
++ * release is handled by stackframe itself.
++ */
++static inline void preceding_key(struct bkey *k, struct bkey *preceding_key_p)
++{
++	if (KEY_INODE(k) || KEY_OFFSET(k)) {
++		*preceding_key_p = KEY(KEY_INODE(k), KEY_OFFSET(k), 0);
++		if (!preceding_key_p->low)
++			preceding_key_p->high--;
++		preceding_key_p->low--;
++	} else {
++		preceding_key_p = NULL;
++	}
++}
+ 
+ static inline bool bch_ptr_invalid(struct btree_keys *b, const struct bkey *k)
+ {
 -- 
+2.16.4
 
-Coly Li
