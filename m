@@ -2,112 +2,97 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 038963CE9F
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2019 16:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7FCC41A3E
+	for <lists+linux-bcache@lfdr.de>; Wed, 12 Jun 2019 04:08:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387767AbfFKO0s (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 11 Jun 2019 10:26:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41668 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387551AbfFKO0s (ORCPT
+        id S2406602AbfFLCH7 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 11 Jun 2019 22:07:59 -0400
+Received: from mail-lj1-f179.google.com ([209.85.208.179]:43716 "EHLO
+        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404880AbfFLCH7 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 11 Jun 2019 10:26:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ujK9xvqc/Khwr/vA4mMnQS5gEEU74b5dyLkwMVnQPDY=; b=QTsKv6O+qNziL76M31WriMxyG
-        PFfkMgwSeSdMilX9+E4LG9LiS3v3bMfIif8HUK6xYHuzU7qhoOVBmLr9TpDte4+VEXUTkepIcTesL
-        77fcy/NM7Wg4wjCAn7UOvujV4t3NgUDn5RGKkanJi+3e4MZ42BUIE35ESnUm439LZCg9/o+fVzmf0
-        /j5bd1szS4WHD80KMA5Q1f0uBTbS26GyPPZYyqWjST/WDgbONwrud6FeFXqTBIpMd/GrJ6AmCvo3e
-        Mtb1H7WqBhMLT/PrD8wKAHSNgf519a+4Okcf4P2t6B1DHX5GsrJtn8Oz7jdJQpAnlArlQqzBCVe8t
-        q1CMWvFeg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hahjZ-0004ZB-4A; Tue, 11 Jun 2019 14:26:45 +0000
-Date:   Tue, 11 Jun 2019 07:26:45 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Tue, 11 Jun 2019 22:07:59 -0400
+Received: by mail-lj1-f179.google.com with SMTP id 16so13583882ljv.10
+        for <linux-bcache@vger.kernel.org>; Tue, 11 Jun 2019 19:07:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zvcuGBw+4LQao88YFmzPADNOaa+2pmIz1aMFK+ndk6M=;
+        b=XcZ9B2oIjVRXTLHyuEPsLajuh6i76LN69nh3G8uioz1IkqIoBNiJmqBx/YkM+zyHPY
+         2G4ifYC/e/x616EYdSNIo03kIta8UGvL7gEmyY9zsCOwuEh0KIGgPW6cVGtYZOxKD6oY
+         Cr+IJ89IjBKKmulpfediz94KCA9DcxQ3obwPo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zvcuGBw+4LQao88YFmzPADNOaa+2pmIz1aMFK+ndk6M=;
+        b=rmpvJxDghWt3rScceq8A+8MNfJbgcsWG7sg9ecQZGfmgu2pMhxf1YdBCDd4rmUdj2f
+         coYp60Kog2CDRJOdKSF5KDwM3A7FWkk9lMxjuO7YH/fzUxHWjRlXYHYTRQ9TwL7PftD+
+         Oo6LMCoJ+vtDGadL7bI/wfAJrVE+DI3hGR8x2q33/kv0iRorjvP2WJZ96DVjmkqvpnCM
+         teE8Gzu9TQJGlwfVs6sZuwcwOhoCnSeSKO+ogpQFN9GI+WAt9pf/ry9nWDapJsencd6c
+         fQIDaN8rMenUwZjQ1MkS+7i6Afz/HnZWBh1E+cf5JkG/MJXIxS2oNz62YFMBmD6XecLQ
+         OIPQ==
+X-Gm-Message-State: APjAAAWG15s9DLUO47SptG83RH9Qnw7W5zo+FEZ3641i6JHl0GgwUJMw
+        sEsiLGIKbY3aq3c4PkLMJYbEVANvm1c=
+X-Google-Smtp-Source: APXvYqyTbsj2/MjcAkuT/t3mcwhAy6cS6uHYcQ61g6UeNUgFIQ4dhD2FaiUtNH/cjdMvZD9m52REIg==
+X-Received: by 2002:a2e:8696:: with SMTP id l22mr18767890lji.201.1560305277154;
+        Tue, 11 Jun 2019 19:07:57 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id z193sm1762330lfd.49.2019.06.11.19.07.56
+        for <linux-bcache@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Jun 2019 19:07:56 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id i21so13611250ljj.3
+        for <linux-bcache@vger.kernel.org>; Tue, 11 Jun 2019 19:07:56 -0700 (PDT)
+X-Received: by 2002:a2e:9c03:: with SMTP id s3mr26468187lji.209.1560305276220;
+ Tue, 11 Jun 2019 19:07:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611041045.GA14363@dread.disaster.area> <CAHk-=whDmeozRHUO0qM+2OeGw+=dkcjwGdsvms-x5Dz4y7Tzcw@mail.gmail.com>
+ <20190611071038.GC14363@dread.disaster.area>
+In-Reply-To: <20190611071038.GC14363@dread.disaster.area>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 11 Jun 2019 16:07:40 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wgBdTUvjYXKPr_wAAe_Z-hFgM2KMHcsK+b=3w5yMSJ9zw@mail.gmail.com>
+Message-ID: <CAHk-=wgBdTUvjYXKPr_wAAe_Z-hFgM2KMHcsK+b=3w5yMSJ9zw@mail.gmail.com>
+Subject: Re: bcachefs status update (it's done cooking; let's get this sucker merged)
+To:     Dave Chinner <david@fromorbit.com>
 Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-bcache@vger.kernel.org,
+        linux-bcache@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Zach Brown <zach.brown@ni.com>, Jens Axboe <axboe@kernel.dk>,
+        Zach Brown <zach.brown@ni.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Josef Bacik <josef@toxicpanda.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tejun Heo <tj@kernel.org>
-Subject: Re: bcachefs status update (it's done cooking; let's get this sucker
- merged)
-Message-ID: <20190611142644.GC32656@bombadil.infradead.org>
-References: <20190610191420.27007-1-kent.overstreet@gmail.com>
- <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
- <20190611011737.GA28701@kmo-pixel>
- <CAHk-=wizTF+NbMrSRG-bc-LyuT7PUJ1QRAR8q_anOd6mY+9Z4A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wizTF+NbMrSRG-bc-LyuT7PUJ1QRAR8q_anOd6mY+9Z4A@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 06:55:15PM -1000, Linus Torvalds wrote:
-> On Mon, Jun 10, 2019 at 3:17 PM Kent Overstreet
-> <kent.overstreet@gmail.com> wrote:
-> > > Why does the regular page lock (at a finer granularity) not suffice?
-> >
-> > Because the lock needs to prevent pages from being _added_ to the page cache -
-> > to do it with a page granularity lock it'd have to be part of the radix tree,
-> 
-> No, I understand that part, but I still think we should be able to do
-> the locking per-page rather than over the whole mapping.
-> 
-> When doing dio, you need to iterate over old existing pages anyway in
-> that range (otherwise the "no _new_ pages" part is kind of pointless
-> when there are old pages there), so my gut feel is that you might as
-> well at that point also "poison" the range you are doin dio on. With
-> the xarray changes, we might be better at handling ranges. That was
-> one of the arguments for the xarrays over the old radix tree model,
-> after all.
+On Mon, Jun 10, 2019 at 9:11 PM Dave Chinner <david@fromorbit.com> wrote:
+>
+> The same rwsem issues were seen on the mmap_sem, the shrinker rwsem,
+> in a couple of device drivers, and so on. i.e. This isn't an XFS
+> issue I'm raising here - I'm raising a concern about the lack of
+> validation of core infrastructure and it's suitability for
+> functionality extensions.
 
-We could do that -- if there are pages (or shadow entries) in the XArray,
-replace them with "lock entries".  I think we'd want the behaviour of
-faults / buffered IO be to wait on those entries being removed.  I think
-the DAX code is just about ready to switch over to lock entries instead
-of having a special DAX lock bit.
+I haven't actually seen the reports.
 
-The question is what to do when there are _no_ pages in the tree for a
-range that we're about to do DIO on.  This should be the normal case --
-as you say, DIO users typically have their own schemes for caching in
-userspace, and rather resent the other users starting to cache their
-file in the kernel.
+That said, I do think this should be improving. The random
+architecture-specific code is largely going away, and we'll have a
+unified rwsem.
 
-Adding lock entries in the page cache for every DIO starts to look pretty
-painful in terms of allocating radix tree nodes.  And it gets worse when
-you have sub-page-size DIOs -- do we embed a count in the lock entry?
-Or delay DIOs which hit in the same page as an existing DIO?
+It might obviously cause some pain initially, but I think long-term we
+should be much better off, at least avoiding the "on particular
+configurations" issue..
 
-And then I start to question the whole reasoning behind how we do mixed
-DIO and buffered IO; if there's a page in the page cache, why are we
-writing it out, then doing a direct IO instead of doing a memcpy to the
-page first, then writing the page back?
-
-IOW, move to a model where:
-
- - If i_dio_count is non-zero, buffered I/O waits for i_dio_count to
-   drop to zero before bringing pages in.
- - If i_pages is empty, DIOs increment i_dio_count, do the IO and
-   decrement i_dio_count.
- - If i_pages is not empty, DIO is implemented by doing buffered I/O
-   and waiting for the pages to finish writeback.
-
-(needs a slight tweak to ensure that new DIOs can't hold off a buffered
-I/O indefinitely)
+              Linus
