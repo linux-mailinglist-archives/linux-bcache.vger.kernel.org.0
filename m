@@ -2,89 +2,101 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3FA6437BC
-	for <lists+linux-bcache@lfdr.de>; Thu, 13 Jun 2019 17:01:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A090243BCA
+	for <lists+linux-bcache@lfdr.de>; Thu, 13 Jun 2019 17:32:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732629AbfFMPAu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 13 Jun 2019 11:00:50 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:13747 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732854AbfFMPAt (ORCPT
+        id S1727054AbfFMPbu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 13 Jun 2019 11:31:50 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41503 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbfFMPbt (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:00:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1560438049; x=1591974049;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=B/236jbkaiRrkc0lA3JhYQDl5t+iiEvCT4RzOYq7iYk=;
-  b=kBOpgLs/WwdQ5qgyUw0bUubiqyl0GG3DWqRYcnv1OeGnof/qbdlX2T/H
-   zBeUH9Y/vhE3L4zTaf8rZYN3CuoKNfGefV6dGXrTULeSkJYXbDvnq6e0/
-   mdcDYLw0ED2zb9qzSxI49GRoVU21lWRuTa7im9m+Oi7hVLb+AqUH53B9T
-   wLSWEX/AR4KBwouv4PNW97R9wwhLfi65WsrxjmAXis7xX7VaxtsBNSNZ5
-   +xA03f9PKtEh6wBiW53m1srmkWdZ/bEJ+fQdLP3d2ZZO7spFBojC5Fa/+
-   852huZDeOOyklG6mORMAZhta59GdSPbsd7MB+Ge8/UuHN7hOd+Cmt1YP9
-   g==;
-X-IronPort-AV: E=Sophos;i="5.63,369,1557158400"; 
-   d="scan'208";a="216832963"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 13 Jun 2019 23:00:48 +0800
-IronPort-SDR: EJ/q/CYe96umvfGn/a1qXmkKWG/MPfTGZG0uBMFUi0z3cnHtruwOkWTsL9IcPok+ypqf3r+boq
- DBMRXgZRbo1qAp9AyIYk6EY7zs1uKblom+X1C/974sUUsLoNTUqYViAuzF8K6OoSbrSlwVuNOY
- ODopYFdzvMxExQ+ingzUO3F0fe5Q4cXSmEtDidZVSxqrqvydipta8CPE+CP8qSLgXFBDBU5S0z
- eKh0meUiHiAg6rhxlu25Gw+YAfhcfFncAx5f2gj4Cg/nSOjNxlfFeLcRR0FX0kj1pPiOXijIAD
- B261B6CJs2lLEZZ3ninI/Wy+
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP; 13 Jun 2019 08:00:32 -0700
-IronPort-SDR: 7aK0vX8frD8+u/MtbTBVoK7pbwqBiQbprXpR2WVWZQx+qDw6LtiZR3jArM9y6vyLPeLEOdDAvq
- 1GajpKHJv+5s1gyfr3gRSfQT90nbHIKRSuAzKiB+yXSCot0X++QzT1EdQxGp4a9pKubsiUrSXE
- ALks+oMxUuesOyemLFB2hmXHZ6lK1PDWV61uHdkqHixNKc4t7bG+OMsWQuO+PvmJGyADAAsDw8
- C2xmtwJ4xC4PUyfaK7eMR26D/T+fFiyz3QMyIbZt97T8X4fSrP1FshIMM953YMTgfPotJ/5lOt
- GY0=
-Received: from cmercuryqemu.hgst.com ([10.202.65.32])
-  by uls-op-cesaip01.wdc.com with ESMTP; 13 Jun 2019 08:00:48 -0700
-From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-To:     linux-block@vger.kernel.org
+        Thu, 13 Jun 2019 11:31:49 -0400
+Received: by mail-pl1-f196.google.com with SMTP id s24so8286036plr.8;
+        Thu, 13 Jun 2019 08:31:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Sw+SllUv08twj2EAyMoEep+5QsSUddK0/P8AXJZORSo=;
+        b=hzq079ExytLwC9vLrLEvXTCDpk7cLCp2hMA5+K108avL1yOKx1PskaaBNLJIIe8HHm
+         yobIkivBIPy8wnPxxzNVBuvOIFHX0sFSLtd8JWOe6HqPXLjzSh6O+ueE1gWqAxzXNIHO
+         9ARlcO47D4t8oHP4Bslyc2n9DU9aDqKKKyTdP0Lg2AsPmiY94NgbTJQhGU2h2hx/Ewag
+         BsyPT5lz29AezBVfCTtISO9TDXmqW0YZoU1WuhqmAQgnQA4SHh/QEjPYsVkqRquw2e4a
+         oNzzBmWUGPxbsbK5moxe52TQpSICijDllCZ3eG3MXTYqpFcAlbcIKHdXUYAbArGAMh4n
+         NznQ==
+X-Gm-Message-State: APjAAAUhix+xdxLBAUikust4vTojxcwhQarbfU3SnjmEuiMTQSe63nNU
+        JwrrtWvqSEcQxKTcLtpgL1g=
+X-Google-Smtp-Source: APXvYqw4oamYkUwHgg92Z05hHQ0ZGYDNMbYqfHf5XI4ShcHflr22ojcnpivazqf3vnWipfEjMdywWw==
+X-Received: by 2002:a17:902:2e81:: with SMTP id r1mr88928480plb.0.1560439909030;
+        Thu, 13 Jun 2019 08:31:49 -0700 (PDT)
+Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
+        by smtp.gmail.com with ESMTPSA id 5sm161353pgi.28.2019.06.13.08.31.45
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Jun 2019 08:31:46 -0700 (PDT)
+Subject: Re: [PATCH 1/8] block: add a helper function to read nr_setcs
+To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        linux-block@vger.kernel.org
 Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-btrace@vger.kernel.org,
         kent.overstreet@gmail.com, jaegeuk@kernel.org,
-        damien.lemoal@wdc.com,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Subject: [PATCH 8/8] blktrace: use helper in blk_trace_setup_lba()
-Date:   Thu, 13 Jun 2019 07:59:55 -0700
-Message-Id: <20190613145955.4813-9-chaitanya.kulkarni@wdc.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190613145955.4813-1-chaitanya.kulkarni@wdc.com>
+        damien.lemoal@wdc.com
 References: <20190613145955.4813-1-chaitanya.kulkarni@wdc.com>
+ <20190613145955.4813-2-chaitanya.kulkarni@wdc.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <9abfc2b8-4496-db7a-fcbb-b52102a67f8e@acm.org>
+Date:   Thu, 13 Jun 2019 08:31:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190613145955.4813-2-chaitanya.kulkarni@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch updates the blk_trace_setup_lba() with newly introduced helper
-function to read the nr_sects from block device's hd_parts with the
-help if part_nr_sects_read() protected by appropriate locking.
+On 6/13/19 7:59 AM, Chaitanya Kulkarni wrote:
+> This patch introduces helper function to read the number of sectors
+> from struct block_device->bd_part member. For more details Please refer
+> to the comment in the include/linux/genhd.h for part_nr_sects_read().
+> 
+> Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+> ---
+>   include/linux/blkdev.h | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+> 
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 592669bcc536..1ae65107182a 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -1475,6 +1475,18 @@ static inline void put_dev_sector(Sector p)
+>   	put_page(p.v);
+>   }
+>   
+> +/* Helper function to read the bdev->bd_part->nr_sects */
+> +static inline sector_t bdev_nr_sects(struct block_device *bdev)
+> +{
+> +	sector_t nr_sects;
+> +
+> +	rcu_read_lock();
+> +	nr_sects = part_nr_sects_read(bdev->bd_part);
+> +	rcu_read_unlock();
+> +
+> +	return nr_sects;
+> +}
+> +
+>   int kblockd_schedule_work(struct work_struct *work);
+>   int kblockd_schedule_work_on(int cpu, struct work_struct *work);
+>   int kblockd_mod_delayed_work_on(int cpu, struct delayed_work *dwork, unsigned long delay);
+> 
 
-Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
----
- kernel/trace/blktrace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please explain what makes you think that part_nr_sects_read() must be 
+protected by an RCU read lock.
 
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index e1c6d79fb4cc..35ff49503b85 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -461,7 +461,7 @@ static void blk_trace_setup_lba(struct blk_trace *bt,
- 
- 	if (part) {
- 		bt->start_lba = part->start_sect;
--		bt->end_lba = part->start_sect + part->nr_sects;
-+		bt->end_lba = part->start_sect + bdev_nr_sects(bdev);
- 	} else {
- 		bt->start_lba = 0;
- 		bt->end_lba = -1ULL;
--- 
-2.19.1
+Thanks,
 
+Bart.
