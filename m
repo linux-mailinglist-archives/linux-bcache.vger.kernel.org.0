@@ -2,47 +2,47 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A42064378B
-	for <lists+linux-bcache@lfdr.de>; Thu, 13 Jun 2019 17:00:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66BB143791
+	for <lists+linux-bcache@lfdr.de>; Thu, 13 Jun 2019 17:00:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732786AbfFMO77 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 13 Jun 2019 10:59:59 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:13672 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732597AbfFMO76 (ORCPT
+        id S1732830AbfFMPAG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 13 Jun 2019 11:00:06 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:40636 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732823AbfFMPAF (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:59:58 -0400
+        Thu, 13 Jun 2019 11:00:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1560437998; x=1591973998;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=iNsQ5NpWou+/peRiS/VT81Ho4zjqhpsJT/Fx5Il06nY=;
-  b=T0cmd1/I7Vx2Bi1XjF1BXIv8HX5NSQPzZKA5Kv8J1W3UYZMoy5Yvf9dy
-   +WwcWT3Ip2J4RCenwvkQyKOETP6fQveOi/HovvJbHwoVNfxpCLZeLz/Gz
-   q84DCjep+Yh8CRzlT7aOFgw0Y20hF1Zs/4gdd6DCwzUY7tBpKjF/eDZNc
-   cLNhtFKSonNfLTm7PkzMZUb8lUNKxCeKDjqaXGqnDoy+4ZHkB6rD2NBeG
-   nQF4HPFVYbtrWhaenebGiWC7psJWqSAiolpQwKX8vcfbvnlTjg9ISvpWq
-   qA2m7eg/upUBSg5K69i0IfP8XgkMyHmWYsuP3Keb8S3iUdR9I33glVaHQ
-   A==;
+  t=1560438006; x=1591974006;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=VBC26O1p/NtpU2PjVzYsY1MQoQe3JQazvQ/PjsDbWN4=;
+  b=DGFia5/9yooq+Xom5nEK2BdrIDLzVHeN9GXtc9xh2Wqpl9v8evoZ/cfE
+   hhrzZB3wwifnRC1qSDDmj4rkWaHYfwVl+OTHwWD7Tn5wlCopN4c1KmHoN
+   TrAOTb1Ul713lPPdsxsemfr/e3mJD+VJUWI5o/4lMkQqJlDGwDvQs1/S2
+   wVgy4mAQdUT/syGtJ0hYEiMR+V6bYlo+m6s44Y+fzyd5R3FRgGfKooPwf
+   7nreCalimDbFeonXbrHP2obsKvnUsasOu8uWDB2P/n8VVFeGd7fP9Xkou
+   W68ImWj0N8vzKDj/a1iJ4nLCYckxcvXyjExU8/Ne9A587MLUWiUfoRPnl
+   w==;
 X-IronPort-AV: E=Sophos;i="5.63,369,1557158400"; 
-   d="scan'208";a="216832815"
+   d="scan'208";a="115418338"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 13 Jun 2019 22:59:58 +0800
-IronPort-SDR: 01FgScfzI0axFxrM5hHabP3Tk4cDkEq6aXszeGjY5vGyLdK2Nyrk849q2R9DqzPMDOIUm7d3nz
- G+DoUV3vtCmrgyEIRzllEOyflFD7J8Jv06aEth7g7eS+4BD+uQTg+L77lpE+mpIaVSHgGltSEb
- DkuBfXIYwniyN3evFA2KdBc7DripX37u0BgHQghWAlR2wwsbYGf64EMkuVvtYe1X+d9fEKvpZ+
- 2pc60Eb9TbyWYozUclotqcuUKyCeF/h3hWmbWHiChEXOdFCcfANjRCHQuvXbvq2sGFui1p4jFp
- D/E+Oe849lSejPMVDq0e4MxS
+  by ob1.hgst.iphmx.com with ESMTP; 13 Jun 2019 23:00:05 +0800
+IronPort-SDR: RihYE+Nz9olAJKOoBJ6gtR3ByXy0VuCdSKc/24Bz9BsAa5zeXBG+0ZrwPDiH+N4cNaxhftNGSH
+ KB5AAkX9n1T89ZqZSWVziNnOZGhoQPAo5AZHI6B1hI1aDZtIcB2qPJ4FIle/exLf24GYBcjCr4
+ hUzaDj3ynSH8KzZlLXBN3rqw8YVOrCYlJDfuN3Oi/kMtnFJqrGoVo0puSoB4JANrtLjf8kKuxs
+ G4MRUE7vhU5xUYpqEQebuCg3QQQNzReqnZee6mMxJG+xuyHFBvDuoazWJIvvjyOgD465UFh+lL
+ 0kVM9+he0HBNktxqQ1NMXtwC
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP; 13 Jun 2019 07:59:41 -0700
-IronPort-SDR: Hg/Q0JZLQxvyJ1ynw7GVVz6a2ZLmDTwy9CXYGG0iAc7/MfuIt/4GJDyQWZihOne+qI2H2HbHro
- uSQcmxrPYLZgchhnR6BVkp3AOH/g5wH+lNKLAgFLzaJmhrlL+uRZDI8wCu22AJMbqIlB6HUXgh
- 1MT5QSEw8fsSHXJFX+GBjhdbkE2a5sI4LGNASB7ZYDJv27Y8LyTz64pb9CaAwcZGBYAKn1gbNg
- fFgSascOHyaSxa+DrSdsHvq2LVKt5BycYVP3Ht/if2zZ5Vyak7nuPETcKjqUxLd8eYvoqKWI/8
- 8Wo=
+  by uls-op-cesaep01.wdc.com with ESMTP; 13 Jun 2019 07:59:48 -0700
+IronPort-SDR: h1RuY/8orlvoKCWmBZmvrXctNkzEu5YO4Th1rUP0mWjpFbDOMJv22E2X1f1BG0pD0VIUvGRF/K
+ wuMVQAxd8n91gbNYATRmm+EyCJTmPddVXOFOPAZhHDKlfVqRfiYiRpRWPDXBhNJiwHjdYzHe0E
+ IYnz6VNunrAGQflRnMo2mFcQKnS672rTQVYa+W8wn54lCwOeUqVvsqtoIEytv7ME75LBj+gSVX
+ nZsS+vZdZdh6kzMIDUlkCA3HuFTTbeCyCIaqLM1aTds/j/zJ2O0eAK/ylPue14nNlWiyq066wU
+ +XE=
 Received: from cmercuryqemu.hgst.com ([10.202.65.32])
-  by uls-op-cesaip01.wdc.com with ESMTP; 13 Jun 2019 07:59:57 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 13 Jun 2019 08:00:04 -0700
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     linux-block@vger.kernel.org
 Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
@@ -50,10 +50,12 @@ Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
         kent.overstreet@gmail.com, jaegeuk@kernel.org,
         damien.lemoal@wdc.com,
         Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Subject: [PATCH 0/8] block: use right accessor to read nr_sects
-Date:   Thu, 13 Jun 2019 07:59:47 -0700
-Message-Id: <20190613145955.4813-1-chaitanya.kulkarni@wdc.com>
+Subject: [PATCH 1/8] block: add a helper function to read nr_setcs
+Date:   Thu, 13 Jun 2019 07:59:48 -0700
+Message-Id: <20190613145955.4813-2-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190613145955.4813-1-chaitanya.kulkarni@wdc.com>
+References: <20190613145955.4813-1-chaitanya.kulkarni@wdc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
@@ -61,59 +63,38 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi,
+This patch introduces helper function to read the number of sectors
+from struct block_device->bd_part member. For more details Please refer
+to the comment in the include/linux/genhd.h for part_nr_sects_read().
 
-In the current block layer implementation including drivers and fs
-there are some places in the code where block device->hd_part->number
-of sectors is accessed directly without any locking. There is an
-existing accessor function present in the include/linux/genhd.h
-which should be used to read the bdev->hd_part->nr_sects
-with the help of appropriate locking.
+Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+---
+ include/linux/blkdev.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-From ${KERN_DIR}/include/linux/genhd.h:-
-<snip>
-714 /*
-715  * Any access of part->nr_sects which is not protected by partition
-716  * bd_mutex or gendisk bdev bd_mutex, should be done using this
-717  * accessor function.
-718  *
-719  * Code written along the lines of i_size_read() and i_size_write().
-720  * CONFIG_PREEMPT case optimizes the case of UP kernel with preemption
-721  * on.
-722  */
-723 static inline sector_t part_nr_sects_read(struct hd_struct *part)
-724 {
-<snip>
-
-This patch series introduces a helper function on the top of the
-part_nr_sects_read() with expected rcu locking and removes the direct
-accesses to the bdev->hd_part->nr_sects.
-
-This is based on :-
-1. Repo :- git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git.
-2. Branch :- for-next.
-
-Regards,
-Chaitanya
-
-Chaitanya Kulkarni (8):
-  block: add a helper function to read nr_setcs
-  blk-zoned: update blkdev_nr_zones() with helper
-  blk-zoned: update blkdev_report_zone() with helper
-  blk-zoned: update blkdev_reset_zones() with helper
-  bcache: update cached_dev_init() with helper
-  target/pscsi: use helper in pscsi_get_blocks()
-  f2fs: use helper in init_blkz_info()
-  blktrace: use helper in blk_trace_setup_lba()
-
- block/blk-zoned.c                  | 12 ++++++------
- drivers/md/bcache/super.c          |  2 +-
- drivers/target/target_core_pscsi.c |  2 +-
- fs/f2fs/super.c                    |  2 +-
- include/linux/blkdev.h             | 12 ++++++++++++
- kernel/trace/blktrace.c            |  2 +-
- 6 files changed, 22 insertions(+), 10 deletions(-)
-
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 592669bcc536..1ae65107182a 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1475,6 +1475,18 @@ static inline void put_dev_sector(Sector p)
+ 	put_page(p.v);
+ }
+ 
++/* Helper function to read the bdev->bd_part->nr_sects */
++static inline sector_t bdev_nr_sects(struct block_device *bdev)
++{
++	sector_t nr_sects;
++
++	rcu_read_lock();
++	nr_sects = part_nr_sects_read(bdev->bd_part);
++	rcu_read_unlock();
++
++	return nr_sects;
++}
++
+ int kblockd_schedule_work(struct work_struct *work);
+ int kblockd_schedule_work_on(int cpu, struct work_struct *work);
+ int kblockd_mod_delayed_work_on(int cpu, struct delayed_work *dwork, unsigned long delay);
 -- 
 2.19.1
 
