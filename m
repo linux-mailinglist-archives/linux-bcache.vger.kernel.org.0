@@ -2,93 +2,84 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BEB043EBC
-	for <lists+linux-bcache@lfdr.de>; Thu, 13 Jun 2019 17:53:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 553F043BBB
+	for <lists+linux-bcache@lfdr.de>; Thu, 13 Jun 2019 17:31:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729398AbfFMPwj (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 13 Jun 2019 11:52:39 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:36725 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731638AbfFMJJe (ORCPT
+        id S1729734AbfFMPbJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 13 Jun 2019 11:31:09 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:36535 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728627AbfFMLEv (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 13 Jun 2019 05:09:34 -0400
-Received: by mail-yw1-f68.google.com with SMTP id t126so8047359ywf.3
-        for <linux-bcache@vger.kernel.org>; Thu, 13 Jun 2019 02:09:33 -0700 (PDT)
+        Thu, 13 Jun 2019 07:04:51 -0400
+Received: by mail-qt1-f196.google.com with SMTP id p15so2604487qtl.3;
+        Thu, 13 Jun 2019 04:04:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=I2G6Z61Jyoq4eHQAlfAivrsm4bPEBXSycU3PSdmKD3c=;
-        b=BEOrvrAllJlgLye4RFRyp82Ry/5b12FiLvgvqeLjUP0OeyMbkVjphwIi0hjfkSn3K9
-         xjgNkqPSyCd1txp9qiMymZUR2TA03nbvNZtcZnYPHZipPejHYF3ESYKCb9+jjqBzsyl5
-         poPWiJPd3tu6tDKpEURh0slrlhpdM1Phx4eUvJeHSUa0JkRp9JfZRc16PrDXoOfKYCQH
-         svUTAUZLdoi1f+wOidpMtjFeZ5txG4c4APi+jAsN5lj0NZJGhk8WDmhnRS53/JCVWmj2
-         YG6YdmF6agcVK+/l+GzAwpT5jiaWcTs6xfxWD/1kcYELMkpdx6lypsLxySlU9rPUmX/B
-         P9HQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4Yitzb6kjU2aLOslqgMIWbRZiABA1TAj4ngzKLKr9wE=;
+        b=fCHp8RtsWnLh5ko2sLFxCylLJJXn5AyrEpNNv0SopTUgnr2jgVBnd43lKLr+xpyPpV
+         h3ZQm28Vp7iGmDdvvI9KDs/FtEVKPjoYayTPJv6SxgP7fbtGk1ZdUnViHx0mgPZ1VrtL
+         3dzOCvXC2fs9rqNnsSuF8v7p/31HZBR9Bdv7srVGoH+jwuvgQwGvG7GQCuU4duwtSrsW
+         irx9hUAsDR2J02ekNAGu4SJw4ZsDesWc8Zw3k5FJxMh0vUyZwRICS4Pd8aXXrvv4U4wB
+         dSIYKct0mX2+cXKjNsZE5YSeu+j+4JB0K8V7w8XbsOrN1wbc5MIy4U4n1UYKIcYAefmF
+         OKZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=I2G6Z61Jyoq4eHQAlfAivrsm4bPEBXSycU3PSdmKD3c=;
-        b=fp3vYAegK/lbQJW1jYW4ICw39cKydRU2Fy24SVssFBgm0uz+FErMgX9ryOjnnvQjcG
-         fZ+EB1c4EsyemgEUKIKHCR9fbxUrTxKXoc4397IM0ODWX/Nv/vxeTgnzb0NhRnR18vkg
-         Mb0ZN6ZQFVf1+0LybzHgMF2inq9xs9eFbGWSAEOlDqgVbgew4SOntuJnfei2Y11TSqEv
-         Tc2Expz2COPUwRc8pU9MbGQ/983v4Mk+RTvB5L5ranibwn2TW2RMsGJnsDKD8/ej544l
-         jwc5s1iZTL6hE6sAp3DwTpeukkD8C7/G+cbD2ffoXVMYpez/Tx+TwdcmKc1FpMijgWKB
-         VUZw==
-X-Gm-Message-State: APjAAAWMQgOkrDfwQ4NAnHXugonQYrtgbpMAZ+tkEQTJ7N6nd/uls+uI
-        0lDYELuA3wgZN0xuk5JQbwQSwQ==
-X-Google-Smtp-Source: APXvYqwSHFGr3kSToQZDrgRpOoOeojYZKZNmb5DDY0s4RCXOutEi7OxzS9r8u5+ecnrWkLOfV4LiBg==
-X-Received: by 2002:a81:a18b:: with SMTP id y133mr34060650ywg.239.1560416973175;
-        Thu, 13 Jun 2019 02:09:33 -0700 (PDT)
-Received: from [172.20.10.3] (mobile-166-172-57-221.mycingular.net. [166.172.57.221])
-        by smtp.gmail.com with ESMTPSA id x85sm1123231ywx.63.2019.06.13.02.09.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 02:09:32 -0700 (PDT)
-Subject: Re: [PATCH 0/2] bcache: two emergent fixes for Linux v5.2-rc5
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        rolf@rolffokkens.nl, pierre.juhen@orange.fr
-References: <20190609221335.24616-1-colyli@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d90c5b6a-f55a-abeb-fa2f-19e3d0e3b42e@kernel.dk>
-Date:   Thu, 13 Jun 2019 03:09:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4Yitzb6kjU2aLOslqgMIWbRZiABA1TAj4ngzKLKr9wE=;
+        b=UQ8RbFoa0y2XzbqIrDNTjtEFZXowX3EsDAUWlEeNAHxmFGM977PotZK34QGQkN/GyG
+         8tVdJDUUYhXYqPkUNQ/Ws2iQNN/R1qOp0Xjjm+UVgNeUf0hMoSHB/MlOP5bsqo12R0gI
+         zrXKoTrpAw5PjcCWfnjKU9zfgcnoq2P62/BnOFzVoKk5RbEArvbGUFN+k++ltojrdOGo
+         dD3SdnFXc9xNXSPFj6yT78AI2gVUkXAGNRTqN9NH538UcWi11BUFA/jyAUc+Yp1Yi1Ga
+         kC0BetcUwPRMlc00GsqbOXUYHZQp0Fm9G5JIS3A0cEI7UBMABQk2eb1RBYp0uH5Y6qm9
+         BGwQ==
+X-Gm-Message-State: APjAAAUyfj0yXbjqylDSR5ApZZxMa+dZI7z2FmxSWQIYmCAGSdVDF+sD
+        JLGZ46Bn9aEHOkqRUyPw3BIU5i3Qt/au
+X-Google-Smtp-Source: APXvYqxKem25yu2HU3N6YOMpfWBwfrpyww3WOxCrFTPTaSBVWq0llduc4WEKaj6v7esj8r8s/NKsbw==
+X-Received: by 2002:a0c:87ab:: with SMTP id 40mr2924212qvj.93.1560423890503;
+        Thu, 13 Jun 2019 04:04:50 -0700 (PDT)
+Received: from kmo-pixel (c-71-234-172-214.hsd1.vt.comcast.net. [71.234.172.214])
+        by smtp.gmail.com with ESMTPSA id r39sm1575102qtc.87.2019.06.13.04.04.48
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 04:04:49 -0700 (PDT)
+Date:   Thu, 13 Jun 2019 07:04:47 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcache@vger.kernel.org
+Subject: Re: [PATCH 10/12] bcache: move closures to lib/
+Message-ID: <20190613110447.GA15110@kmo-pixel>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <20190610191420.27007-11-kent.overstreet@gmail.com>
+ <20190613072841.GA7996@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20190609221335.24616-1-colyli@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613072841.GA7996@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 6/9/19 4:13 PM, Coly Li wrote:
-> Hi Jens,
+On Thu, Jun 13, 2019 at 12:28:41AM -0700, Christoph Hellwig wrote:
+> On Mon, Jun 10, 2019 at 03:14:18PM -0400, Kent Overstreet wrote:
+> > Prep work for bcachefs - being a fork of bcache it also uses closures
 > 
-> Here are two emergent fixes that we should have in Linux v5.2-rc5.
-> 
-> - bcache: fix stack corruption by PRECEDING_KEY()
->    This patch fixes a GCC9 compiled bcache panic problem, which is
->    reported by Fedora Core, Arch Linux and SUSE Leap Linux users whose
->    kernels are combiled with GCC9. This bug hides for long time since
->    v4.13 and triggered by the new GCC9.
->    When people upgrade their kernel to a GCC9 compiled kernel, this
->    bug may cause the metadata corruption. So we should have this fix
->    in upstream ASAP.
-> 
-> - bcache: only set BCACHE_DEV_WB_RUNNING when cached device attached
->    There are 2 users report bcache panic after changing writeback
->    percentage of an non-attached bcache device. Therefore I suggest
->    to have this fix upstream in this run.
-> 
-> Thank you in advance for taking care of these two fixes.
+> NAK.  This obsfucation needs to go away from bcache and not actually be
+> spread further, especially not as an API with multiple users which will
+> make it even harder to get rid of it.
 
-Applied, thanks.
+Christoph, you've made it plenty clear how much you dislike closures in the past
+but "I don't like it" is not remotely the kind of objection that is appropriate
+or useful for technical discussions, and that's pretty much all you've ever
+given.
 
--- 
-Jens Axboe
-
+If you really think that code should be gotten rid of, then maybe you should
+actually _look at what they do that's not covered by other kernel
+infrastructure_ and figure out something better. Otherwise... no one else seems
+to care all that much about closures, and you're not actually giving any
+technical feedback, so I'm not sure what you expect.
