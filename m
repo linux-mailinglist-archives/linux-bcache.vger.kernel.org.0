@@ -2,25 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9162745DD5
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:15:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B63945DD7
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:15:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbfFNNP2 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Jun 2019 09:15:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46216 "EHLO mx1.suse.de"
+        id S1728190AbfFNNPb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 14 Jun 2019 09:15:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46242 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727918AbfFNNP2 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:15:28 -0400
+        id S1727918AbfFNNPa (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:15:30 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D195EAF7B;
-        Fri, 14 Jun 2019 13:15:26 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id B0F28AF7B;
+        Fri, 14 Jun 2019 13:15:29 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [PATCH 23/29] bcache: improve error message in bch_cached_dev_run()
-Date:   Fri, 14 Jun 2019 21:13:52 +0800
-Message-Id: <20190614131358.2771-24-colyli@suse.de>
+Subject: [PATCH 24/29] bcache: make bset_search_tree() be more understandable
+Date:   Fri, 14 Jun 2019 21:13:53 +0800
+Message-Id: <20190614131358.2771-25-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190614131358.2771-1-colyli@suse.de>
 References: <20190614131358.2771-1-colyli@suse.de>
@@ -29,51 +29,68 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch adds more error message in bch_cached_dev_run() to indicate
-the exact reason why an error value is returned. Please notice when
-printing out the "is running already" message, pr_info() is used here,
-because in this case also -EBUSY is returned, the bcache device can
-continue to attach to the cache devince and run, so it won't be an
-error level message in kernel message.
+The purpose of following code in bset_search_tree() is to avoid a branch
+instruction,
+ 994         if (likely(f->exponent != 127))
+ 995                 n = j * 2 + (((unsigned int)
+ 996                               (f->mantissa -
+ 997                                bfloat_mantissa(search, f))) >> 31);
+ 998         else
+ 999                 n = (bkey_cmp(tree_to_bkey(t, j), search) > 0)
+1000                         ? j * 2
+1001                         : j * 2 + 1;
+
+This piece of code is not very clear to understand, even when I tried to
+add code comment for it, I made mistake. This patch removes the implict
+bit operation and uses explicit branch to calculate next location in
+binary tree search.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/super.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/md/bcache/bset.c | 30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 4a6406b53de1..026e2df358c3 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -926,13 +926,18 @@ int bch_cached_dev_run(struct cached_dev *dc)
- 		NULL,
- 	};
+diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+index eedaf0f3e3f0..2722e7f83de3 100644
+--- a/drivers/md/bcache/bset.c
++++ b/drivers/md/bcache/bset.c
+@@ -965,25 +965,17 @@ static struct bset_search_iter bset_search_tree(struct bset_tree *t,
+ 		j = n;
+ 		f = &t->tree[j];
  
--	if (dc->io_disable)
-+	if (dc->io_disable) {
-+		pr_err("I/O disabled on cached dev %s",
-+		       dc->backing_dev_name);
- 		return -EIO;
-+	}
+-		/*
+-		 * Similar bit trick, use subtract operation to avoid a branch
+-		 * instruction.
+-		 *
+-		 * n = (f->mantissa > bfloat_mantissa())
+-		 *	? j * 2
+-		 *	: j * 2 + 1;
+-		 *
+-		 * We need to subtract 1 from f->mantissa for the sign bit trick
+-		 * to work  - that's done in make_bfloat()
+-		 */
+-		if (likely(f->exponent != 127))
+-			n = j * 2 + (((unsigned int)
+-				      (f->mantissa -
+-				       bfloat_mantissa(search, f))) >> 31);
+-		else
+-			n = (bkey_cmp(tree_to_bkey(t, j), search) > 0)
+-				? j * 2
+-				: j * 2 + 1;
++		if (likely(f->exponent != 127)) {
++			if (f->mantissa >= bfloat_mantissa(search, f))
++				n = j * 2;
++			else
++				n = j * 2 + 1;
++		} else {
++			if (bkey_cmp(tree_to_bkey(t, j), search) > 0)
++				n = j * 2;
++			else
++				n = j * 2 + 1;
++		}
+ 	} while (n < t->size);
  
- 	if (atomic_xchg(&dc->running, 1)) {
- 		kfree(env[1]);
- 		kfree(env[2]);
- 		kfree(buf);
-+		pr_info("cached dev %s is running already",
-+		       dc->backing_dev_name);
- 		return -EBUSY;
- 	}
- 
-@@ -961,7 +966,7 @@ int bch_cached_dev_run(struct cached_dev *dc)
- 	if (sysfs_create_link(&d->kobj, &disk_to_dev(d->disk)->kobj, "dev") ||
- 	    sysfs_create_link(&disk_to_dev(d->disk)->kobj,
- 			      &d->kobj, "bcache")) {
--		pr_debug("error creating sysfs link");
-+		pr_err("Couldn't create bcache dev <-> disk sysfs symlinks");
- 		return -ENOMEM;
- 	}
- 
+ 	inorder = to_inorder(j, t);
 -- 
 2.16.4
 
