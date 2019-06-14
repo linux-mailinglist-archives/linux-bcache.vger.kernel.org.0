@@ -2,26 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B347D45DBB
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:14:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14B9445DBC
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:14:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbfFNNOs (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Jun 2019 09:14:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45800 "EHLO mx1.suse.de"
+        id S1728120AbfFNNOv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 14 Jun 2019 09:14:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45814 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727766AbfFNNOs (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:14:48 -0400
+        id S1727766AbfFNNOv (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:14:51 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4267AAE07;
-        Fri, 14 Jun 2019 13:14:47 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 601FCAE07;
+        Fri, 14 Jun 2019 13:14:50 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>,
-        stable@vger.kernel.org
-Subject: [PATCH 11/29] bcache: ignore read-ahead request failure on backing device
-Date:   Fri, 14 Jun 2019 21:13:40 +0800
-Message-Id: <20190614131358.2771-12-colyli@suse.de>
+Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
+Subject: [PATCH 12/29] bcache: add io error counting in write_bdev_super_endio()
+Date:   Fri, 14 Jun 2019 21:13:41 +0800
+Message-Id: <20190614131358.2771-13-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190614131358.2771-1-colyli@suse.de>
 References: <20190614131358.2771-1-colyli@suse.de>
@@ -30,53 +29,35 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-When md raid device (e.g. raid456) is used as backing device, read-ahead
-requests on a degrading and recovering md raid device might be failured
-immediately by md raid code, but indeed this md raid array can still be
-read or write for normal I/O requests. Therefore such failed read-ahead
-request are not real hardware failure. Further more, after degrading and
-recovering accomplished, read-ahead requests will be handled by md raid
-array again.
+When backing device super block is written by bch_write_bdev_super(),
+the bio complete callback write_bdev_super_endio() simply ignores I/O
+status. Indeed such write request also contribute to backing device
+health status if the request failed.
 
-For such condition, I/O failures of read-ahead requests don't indicate
-real health status (because normal I/O still be served), they should not
-be counted into I/O error counter dc->io_errors.
+This patch checkes bio->bi_status in write_bdev_super_endio(), if there
+is error, bch_count_backing_io_errors() will be called to count an I/O
+error to dc->io_errors.
 
-Since there is no simple way to detect whether the backing divice is a
-md raid device, this patch simply ignores I/O failures for read-ahead
-bios on backing device, to avoid bogus backing device failure on a
-degrading md raid array.
-
-Suggested-and-tested-by: Thorsten Knabe <linux@thorsten-knabe.de>
 Signed-off-by: Coly Li <colyli@suse.de>
-Cc: stable@vger.kernel.org
 ---
- drivers/md/bcache/io.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/md/bcache/super.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/io.c b/drivers/md/bcache/io.c
-index c25097968319..4d93f07f63e5 100644
---- a/drivers/md/bcache/io.c
-+++ b/drivers/md/bcache/io.c
-@@ -58,6 +58,18 @@ void bch_count_backing_io_errors(struct cached_dev *dc, struct bio *bio)
- 
- 	WARN_ONCE(!dc, "NULL pointer of struct cached_dev");
- 
-+	/*
-+	 * Read-ahead requests on a degrading and recovering md raid
-+	 * (e.g. raid6) device might be failured immediately by md
-+	 * raid code, which is not a real hardware media failure. So
-+	 * we shouldn't count failed REQ_RAHEAD bio to dc->io_errors.
-+	 */
-+	if (bio->bi_opf & REQ_RAHEAD) {
-+		pr_warn_ratelimited("%s: Read-ahead I/O failed on backing device, ignore",
-+				    dc->backing_dev_name);
-+		return;
-+	}
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index da9d6a63b81a..877113b62b0f 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -197,7 +197,9 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
+ static void write_bdev_super_endio(struct bio *bio)
+ {
+ 	struct cached_dev *dc = bio->bi_private;
+-	/* XXX: error checking */
 +
- 	errors = atomic_add_return(1, &dc->io_errors);
- 	if (errors < dc->error_limit)
- 		pr_err("%s: IO error on backing device, unrecoverable",
++	if (bio->bi_status)
++		bch_count_backing_io_errors(dc, bio);
+ 
+ 	closure_put(&dc->sb_write);
+ }
 -- 
 2.16.4
 
