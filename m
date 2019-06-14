@@ -2,25 +2,27 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9948545DC1
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:15:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C634245DC5
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:15:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbfFNNO7 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Jun 2019 09:14:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45890 "EHLO mx1.suse.de"
+        id S1727958AbfFNNPD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 14 Jun 2019 09:15:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45934 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728121AbfFNNO6 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:14:58 -0400
+        id S1728121AbfFNNPC (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:15:02 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 67485AE1F;
-        Fri, 14 Jun 2019 13:14:57 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 7E24BAE07;
+        Fri, 14 Jun 2019 13:15:01 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [PATCH 14/29] bcache: remove unnecessary prefetch() in bset_search_tree()
-Date:   Fri, 14 Jun 2019 21:13:43 +0800
-Message-Id: <20190614131358.2771-15-colyli@suse.de>
+Cc:     linux-block@vger.kernel.org,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Coly Li <colyli@suse.de>
+Subject: [PATCH 15/29] bcache: use sysfs_match_string() instead of __sysfs_match_string()
+Date:   Fri, 14 Jun 2019 21:13:44 +0800
+Message-Id: <20190614131358.2771-16-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190614131358.2771-1-colyli@suse.de>
 References: <20190614131358.2771-1-colyli@suse.de>
@@ -29,53 +31,96 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In function bset_search_tree(), when p >= t->size, t->tree[0] will be
-prefetched by the following code piece,
- 974                 unsigned int p = n << 4;
- 975
- 976                 p &= ((int) (p - t->size)) >> 31;
- 977
- 978                 prefetch(&t->tree[p]);
+From: Alexandru Ardelean <alexandru.ardelean@analog.com>
 
-The purpose of the above code is to avoid a branch instruction, but
-when p >= t->size, prefetch(&t->tree[0]) has no positive performance
-contribution at all. This patch avoids the unncessary prefetch by only
-calling prefetch() when p < t->size.
+The arrays (of strings) that are passed to __sysfs_match_string() are
+static, so use sysfs_match_string() which does an implicit ARRAY_SIZE()
+over these arrays.
 
+Functionally, this doesn't change anything.
+The change is more cosmetic.
+
+It only shrinks the static arrays by 1 byte each.
+
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/bset.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ drivers/md/bcache/sysfs.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
-index 8f07fa6e1739..aa2e4ab0fab9 100644
---- a/drivers/md/bcache/bset.c
-+++ b/drivers/md/bcache/bset.c
-@@ -960,22 +960,10 @@ static struct bset_search_iter bset_search_tree(struct bset_tree *t,
- 	unsigned int inorder, j, n = 1;
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 7a88ba4bfbfb..53f70f97241e 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -21,28 +21,24 @@ static const char * const bch_cache_modes[] = {
+ 	"writethrough",
+ 	"writeback",
+ 	"writearound",
+-	"none",
+-	NULL
++	"none"
+ };
  
- 	do {
--		/*
--		 * A bit trick here.
--		 * If p < t->size, (int)(p - t->size) is a minus value and
--		 * the most significant bit is set, right shifting 31 bits
--		 * gets 1. If p >= t->size, the most significant bit is
--		 * not set, right shifting 31 bits gets 0.
--		 * So the following 2 lines equals to
--		 *	if (p >= t->size)
--		 *		p = 0;
--		 * but a branch instruction is avoided.
--		 */
- 		unsigned int p = n << 4;
+ /* Default is 0 ("auto") */
+ static const char * const bch_stop_on_failure_modes[] = {
+ 	"auto",
+-	"always",
+-	NULL
++	"always"
+ };
  
--		p &= ((int) (p - t->size)) >> 31;
--
--		prefetch(&t->tree[p]);
-+		if (p < t->size)
-+			prefetch(&t->tree[p]);
+ static const char * const cache_replacement_policies[] = {
+ 	"lru",
+ 	"fifo",
+-	"random",
+-	NULL
++	"random"
+ };
  
- 		j = n;
- 		f = &t->tree[j];
+ static const char * const error_actions[] = {
+ 	"unregister",
+-	"panic",
+-	NULL
++	"panic"
+ };
+ 
+ write_attribute(attach);
+@@ -333,7 +329,7 @@ STORE(__cached_dev)
+ 		bch_cached_dev_run(dc);
+ 
+ 	if (attr == &sysfs_cache_mode) {
+-		v = __sysfs_match_string(bch_cache_modes, -1, buf);
++		v = sysfs_match_string(bch_cache_modes, buf);
+ 		if (v < 0)
+ 			return v;
+ 
+@@ -344,7 +340,7 @@ STORE(__cached_dev)
+ 	}
+ 
+ 	if (attr == &sysfs_stop_when_cache_set_failed) {
+-		v = __sysfs_match_string(bch_stop_on_failure_modes, -1, buf);
++		v = sysfs_match_string(bch_stop_on_failure_modes, buf);
+ 		if (v < 0)
+ 			return v;
+ 
+@@ -794,7 +790,7 @@ STORE(__bch_cache_set)
+ 			    0, UINT_MAX);
+ 
+ 	if (attr == &sysfs_errors) {
+-		v = __sysfs_match_string(error_actions, -1, buf);
++		v = sysfs_match_string(error_actions, buf);
+ 		if (v < 0)
+ 			return v;
+ 
+@@ -1058,7 +1054,7 @@ STORE(__bch_cache)
+ 	}
+ 
+ 	if (attr == &sysfs_cache_replacement_policy) {
+-		v = __sysfs_match_string(cache_replacement_policies, -1, buf);
++		v = sysfs_match_string(cache_replacement_policies, buf);
+ 		if (v < 0)
+ 			return v;
+ 
 -- 
 2.16.4
 
