@@ -2,91 +2,154 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD63445D9C
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6F145D9D
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:14:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbfFNNOF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Jun 2019 09:14:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45214 "EHLO mx1.suse.de"
+        id S1728012AbfFNNOK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 14 Jun 2019 09:14:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45250 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726874AbfFNNOE (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:14:04 -0400
+        id S1726874AbfFNNOJ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:14:09 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AB8A2AE07;
-        Fri, 14 Jun 2019 13:14:03 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 976D6AB8C;
+        Fri, 14 Jun 2019 13:14:07 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [PATCH 00/29] bcache candidate patches for Linux v5.3 
-Date:   Fri, 14 Jun 2019 21:13:29 +0800
-Message-Id: <20190614131358.2771-1-colyli@suse.de>
+Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>,
+        stable@vger.kernel.org, Tang Junhui <tang.junhui.linux@gmail.com>
+Subject: [PATCH 01/29] bcache: Revert "bcache: fix high CPU occupancy during journal"
+Date:   Fri, 14 Jun 2019 21:13:30 +0800
+Message-Id: <20190614131358.2771-2-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20190614131358.2771-1-colyli@suse.de>
+References: <20190614131358.2771-1-colyli@suse.de>
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi folks,
+This reverts commit c4dc2497d50d9c6fb16aa0d07b6a14f3b2adb1e0.
 
-Now I am testing the bcache patches for Linux v5.3, here I collect
-all previously posted patches for your information. Any code review
-and comment is welcome.
+This patch enlarges a race between normal btree flush code path and
+flush_btree_write(), which causes deadlock when journal space is
+exhausted. Reverts this patch makes the race window from 128 btree
+nodes to only 1 btree nodes.
 
-Thanks in advance.
-
-Coly Li
+Fixes: c4dc2497d50d ("bcache: fix high CPU occupancy during journal")
+Signed-off-by: Coly Li <colyli@suse.de>
+Cc: stable@vger.kernel.org
+Cc: Tang Junhui <tang.junhui.linux@gmail.com>
 ---
+ drivers/md/bcache/bcache.h  |  2 --
+ drivers/md/bcache/journal.c | 47 +++++++++++++++------------------------------
+ drivers/md/bcache/util.h    |  2 --
+ 3 files changed, 15 insertions(+), 36 deletions(-)
 
-Alexandru Ardelean (1):
-  bcache: use sysfs_match_string() instead of __sysfs_match_string()
-
-Coly Li (28):
-  bcache: Revert "bcache: fix high CPU occupancy during journal"
-  bcache: Revert "bcache: free heap cache_set->flush_btree in
-    bch_journal_free"
-  bcache: add code comments for journal_read_bucket()
-  bcache: set largest seq to ja->seq[bucket_index] in
-    journal_read_bucket()
-  bcache: remove retry_flush_write from struct cache_set
-  bcache: fix race in btree_flush_write()
-  bcache: add reclaimed_journal_buckets to struct cache_set
-  bcache: fix return value error in bch_journal_read()
-  Revert "bcache: set CACHE_SET_IO_DISABLE in bch_cached_dev_error()"
-  bcache: avoid flushing btree node in cache_set_flush() if io disabled
-  bcache: ignore read-ahead request failure on backing device
-  bcache: add io error counting in write_bdev_super_endio()
-  bcache: remove "XXX:" comment line from run_cache_set()
-  bcache: remove unnecessary prefetch() in bset_search_tree()
-  bcache: add return value check to bch_cached_dev_run()
-  bcache: remove unncessary code in bch_btree_keys_init()
-  bcache: check CACHE_SET_IO_DISABLE in allocator code
-  bcache: check CACHE_SET_IO_DISABLE bit in bch_journal()
-  bcache: more detailed error message to bcache_device_link()
-  bcache: add more error message in bch_cached_dev_attach()
-  bcache: shrink btree node cache after bch_btree_check()
-  bcache: improve error message in bch_cached_dev_run()
-  bcache: make bset_search_tree() be more understandable
-  bcache: add pendings_cleanup to stop pending bcache device
-  bcache: avoid a deadlock in bcache_reboot()
-  bcache: acquire bch_register_lock later in cached_dev_detach_finish()
-  bcache: acquire bch_register_lock later in cached_dev_free()
-  bcache: fix potential deadlock in cached_def_free()
-
- drivers/md/bcache/alloc.c     |   9 ++
- drivers/md/bcache/bcache.h    |   6 +-
- drivers/md/bcache/bset.c      |  61 ++++--------
- drivers/md/bcache/btree.c     |  19 +++-
- drivers/md/bcache/btree.h     |   2 +
- drivers/md/bcache/io.c        |  12 +++
- drivers/md/bcache/journal.c   | 141 +++++++++++++++++++--------
- drivers/md/bcache/journal.h   |   4 +
- drivers/md/bcache/super.c     | 218 +++++++++++++++++++++++++++++++++---------
- drivers/md/bcache/sysfs.c     |  63 ++++++++----
- drivers/md/bcache/util.h      |   2 -
- drivers/md/bcache/writeback.c |   4 +
- 12 files changed, 389 insertions(+), 152 deletions(-)
-
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index fdf75352e16a..e30a983a68cd 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -726,8 +726,6 @@ struct cache_set {
+ 
+ #define BUCKET_HASH_BITS	12
+ 	struct hlist_head	bucket_hash[1 << BUCKET_HASH_BITS];
+-
+-	DECLARE_HEAP(struct btree *, flush_btree);
+ };
+ 
+ struct bbio {
+diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+index 12dae9348147..621ebf5c62a5 100644
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -391,12 +391,6 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
+ }
+ 
+ /* Journalling */
+-#define journal_max_cmp(l, r) \
+-	(fifo_idx(&c->journal.pin, btree_current_write(l)->journal) < \
+-	 fifo_idx(&(c)->journal.pin, btree_current_write(r)->journal))
+-#define journal_min_cmp(l, r) \
+-	(fifo_idx(&c->journal.pin, btree_current_write(l)->journal) > \
+-	 fifo_idx(&(c)->journal.pin, btree_current_write(r)->journal))
+ 
+ static void btree_flush_write(struct cache_set *c)
+ {
+@@ -404,35 +398,25 @@ static void btree_flush_write(struct cache_set *c)
+ 	 * Try to find the btree node with that references the oldest journal
+ 	 * entry, best is our current candidate and is locked if non NULL:
+ 	 */
+-	struct btree *b;
+-	int i;
++	struct btree *b, *best;
++	unsigned int i;
+ 
+ 	atomic_long_inc(&c->flush_write);
+-
+ retry:
+-	spin_lock(&c->journal.lock);
+-	if (heap_empty(&c->flush_btree)) {
+-		for_each_cached_btree(b, c, i)
+-			if (btree_current_write(b)->journal) {
+-				if (!heap_full(&c->flush_btree))
+-					heap_add(&c->flush_btree, b,
+-						 journal_max_cmp);
+-				else if (journal_max_cmp(b,
+-					 heap_peek(&c->flush_btree))) {
+-					c->flush_btree.data[0] = b;
+-					heap_sift(&c->flush_btree, 0,
+-						  journal_max_cmp);
+-				}
++	best = NULL;
++
++	for_each_cached_btree(b, c, i)
++		if (btree_current_write(b)->journal) {
++			if (!best)
++				best = b;
++			else if (journal_pin_cmp(c,
++					btree_current_write(best)->journal,
++					btree_current_write(b)->journal)) {
++				best = b;
+ 			}
++		}
+ 
+-		for (i = c->flush_btree.used / 2 - 1; i >= 0; --i)
+-			heap_sift(&c->flush_btree, i, journal_min_cmp);
+-	}
+-
+-	b = NULL;
+-	heap_pop(&c->flush_btree, b, journal_min_cmp);
+-	spin_unlock(&c->journal.lock);
+-
++	b = best;
+ 	if (b) {
+ 		mutex_lock(&b->write_lock);
+ 		if (!btree_current_write(b)->journal) {
+@@ -870,8 +854,7 @@ int bch_journal_alloc(struct cache_set *c)
+ 	j->w[0].c = c;
+ 	j->w[1].c = c;
+ 
+-	if (!(init_heap(&c->flush_btree, 128, GFP_KERNEL)) ||
+-	    !(init_fifo(&j->pin, JOURNAL_PIN, GFP_KERNEL)) ||
++	if (!(init_fifo(&j->pin, JOURNAL_PIN, GFP_KERNEL)) ||
+ 	    !(j->w[0].data = (void *) __get_free_pages(GFP_KERNEL, JSET_BITS)) ||
+ 	    !(j->w[1].data = (void *) __get_free_pages(GFP_KERNEL, JSET_BITS)))
+ 		return -ENOMEM;
+diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
+index 1fbced94e4cc..c029f7443190 100644
+--- a/drivers/md/bcache/util.h
++++ b/drivers/md/bcache/util.h
+@@ -113,8 +113,6 @@ do {									\
+ 
+ #define heap_full(h)	((h)->used == (h)->size)
+ 
+-#define heap_empty(h)	((h)->used == 0)
+-
+ #define DECLARE_FIFO(type, name)					\
+ 	struct {							\
+ 		size_t front, back, size, mask;				\
 -- 
 2.16.4
 
