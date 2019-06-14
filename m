@@ -2,25 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC87145DCF
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8603C45DD1
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:15:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbfFNNPS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Jun 2019 09:15:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46102 "EHLO mx1.suse.de"
+        id S1728007AbfFNNPW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 14 Jun 2019 09:15:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46172 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727956AbfFNNPS (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:15:18 -0400
+        id S1727956AbfFNNPW (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:15:22 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1A85EAF7B;
-        Fri, 14 Jun 2019 13:15:17 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id E2747AE07;
+        Fri, 14 Jun 2019 13:15:20 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [PATCH 20/29] bcache: more detailed error message to bcache_device_link()
-Date:   Fri, 14 Jun 2019 21:13:49 +0800
-Message-Id: <20190614131358.2771-21-colyli@suse.de>
+Subject: [PATCH 21/29] bcache: add more error message in bch_cached_dev_attach()
+Date:   Fri, 14 Jun 2019 21:13:50 +0800
+Message-Id: <20190614131358.2771-22-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190614131358.2771-1-colyli@suse.de>
 References: <20190614131358.2771-1-colyli@suse.de>
@@ -29,44 +29,36 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch adds more accurate error message for specific
-ssyfs_create_link() call, to help debugging failure during
-bcache device start tup.
+This patch adds more error message for attaching cached device, this is
+helpful to debug code failure during bache device start up.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/super.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/md/bcache/super.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 74eb18b1af40..1fa3f4e26d02 100644
+index 1fa3f4e26d02..cf5673af3143 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -693,6 +693,7 @@ static void bcache_device_link(struct bcache_device *d, struct cache_set *c,
- {
- 	unsigned int i;
- 	struct cache *ca;
-+	int ret;
+@@ -1169,6 +1169,8 @@ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
+ 	down_write(&dc->writeback_lock);
+ 	if (bch_cached_dev_writeback_start(dc)) {
+ 		up_write(&dc->writeback_lock);
++		pr_err("Couldn't start writeback facilities for %s",
++		       dc->disk.disk->disk_name);
+ 		return -ENOMEM;
+ 	}
  
- 	for_each_cache(ca, d->c, i)
- 		bd_link_disk_holder(ca->bdev, d->disk);
-@@ -700,9 +701,13 @@ static void bcache_device_link(struct bcache_device *d, struct cache_set *c,
- 	snprintf(d->name, BCACHEDEVNAME_SIZE,
- 		 "%s%u", name, d->id);
+@@ -1182,6 +1184,8 @@ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
+ 	ret = bch_cached_dev_run(dc);
+ 	if (ret && (ret != -EBUSY)) {
+ 		up_write(&dc->writeback_lock);
++		pr_err("Couldn't run cached device %s",
++		       dc->backing_dev_name);
+ 		return ret;
+ 	}
  
--	WARN(sysfs_create_link(&d->kobj, &c->kobj, "cache") ||
--	     sysfs_create_link(&c->kobj, &d->kobj, d->name),
--	     "Couldn't create device <-> cache set symlinks");
-+	ret = sysfs_create_link(&d->kobj, &c->kobj, "cache");
-+	if (ret < 0)
-+		pr_err("Couldn't create device -> cache set symlink");
-+
-+	ret = sysfs_create_link(&c->kobj, &d->kobj, d->name);
-+	if (ret < 0)
-+		pr_err("Couldn't create cache set -> device symlink");
- 
- 	clear_bit(BCACHE_DEV_UNLINK_DONE, &d->flags);
- }
 -- 
 2.16.4
 
