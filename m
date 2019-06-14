@@ -2,25 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE52B45DD9
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01F4E45DDB
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbfFNNPd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Jun 2019 09:15:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46262 "EHLO mx1.suse.de"
+        id S1728003AbfFNNPg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 14 Jun 2019 09:15:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46276 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727996AbfFNNPd (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:15:33 -0400
+        id S1727918AbfFNNPg (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:15:36 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 12CA2AE07;
-        Fri, 14 Jun 2019 13:15:32 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id D442FAE07;
+        Fri, 14 Jun 2019 13:15:34 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [PATCH 25/29] bcache: add pendings_cleanup to stop pending bcache device
-Date:   Fri, 14 Jun 2019 21:13:54 +0800
-Message-Id: <20190614131358.2771-26-colyli@suse.de>
+Subject: [PATCH 26/29] bcache: avoid a deadlock in bcache_reboot()
+Date:   Fri, 14 Jun 2019 21:13:55 +0800
+Message-Id: <20190614131358.2771-27-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190614131358.2771-1-colyli@suse.de>
 References: <20190614131358.2771-1-colyli@suse.de>
@@ -29,103 +29,208 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-If a bcache device is in dirty state and its cache set is not
-registered, this bcache device will not appear in /dev/bcache<N>,
-and there is no way to stop it or remove the bcache kernel module.
+It is quite frequently to observe deadlock in bcache_reboot() happens
+and hang the system reboot process. The reason is, in bcache_reboot()
+when calling bch_cache_set_stop() and bcache_device_stop() the mutex
+bch_register_lock is held. But in the process to stop cache set and
+bcache device, bch_register_lock will be acquired again. If this mutex
+is held here, deadlock will happen inside the stopping process. The
+aftermath of the deadlock is, whole system reboot gets hung.
 
-This is an as-designed behavior, but sometimes people has to reboot
-whole system to release or stop the pending backing device.
+The fix is to avoid holding bch_register_lock for the following loops
+in bcache_reboot(),
+       list_for_each_entry_safe(c, tc, &bch_cache_sets, list)
+                bch_cache_set_stop(c);
 
-This sysfs interface may remove such pending bcache devices when
-write anything into the sysfs file manually.
+        list_for_each_entry_safe(dc, tdc, &uncached_devices, list)
+                bcache_device_stop(&dc->disk);
+
+A module range variable 'bcache_is_reboot' is added, it sets to true
+in bcache_reboot(). In register_bcache(), if bcache_is_reboot is checked
+to be true, reject the registration by returning -EBUSY immediately.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/super.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ drivers/md/bcache/super.c | 40 +++++++++++++++++++++++++++++++++++++++-
+ drivers/md/bcache/sysfs.c | 26 ++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 026e2df358c3..16ed617183f7 100644
+index 16ed617183f7..2928adfea743 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -2291,9 +2291,13 @@ static int register_cache(struct cache_sb *sb, struct page *sb_page,
+@@ -40,6 +40,7 @@ static const char invalid_uuid[] = {
  
- static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 			       const char *buffer, size_t size);
-+static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
-+					 struct kobj_attribute *attr,
-+					 const char *buffer, size_t size);
+ static struct kobject *bcache_kobj;
+ struct mutex bch_register_lock;
++bool bcache_is_reboot;
+ LIST_HEAD(bch_cache_sets);
+ static LIST_HEAD(uncached_devices);
  
- kobj_attribute_write(register,		register_bcache);
- kobj_attribute_write(register_quiet,	register_bcache);
-+kobj_attribute_write(pendings_cleanup,	bch_pending_bdevs_cleanup);
- 
- static bool bch_is_open_backing(struct block_device *bdev)
- {
-@@ -2418,6 +2422,56 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 	goto out;
- }
+@@ -49,6 +50,7 @@ static wait_queue_head_t unregister_wait;
+ struct workqueue_struct *bcache_wq;
+ struct workqueue_struct *bch_journal_wq;
  
 +
-+struct pdev {
-+	struct list_head list;
-+	struct cached_dev *dc;
-+};
+ #define BTREE_MAX_PAGES		(256 * 1024 / PAGE_SIZE)
+ /* limitation of partitions number on single bcache device */
+ #define BCACHE_MINORS		128
+@@ -2345,6 +2347,11 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 	if (!try_module_get(THIS_MODULE))
+ 		return -EBUSY;
+ 
++	/* For latest state of bcache_is_reboot */
++	smp_mb();
++	if (bcache_is_reboot)
++		return -EBUSY;
 +
-+static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
-+					 struct kobj_attribute *attr,
-+					 const char *buffer,
-+					 size_t size)
-+{
-+	LIST_HEAD(pending_devs);
-+	ssize_t ret = size;
-+	struct cached_dev *dc, *tdc;
-+	struct pdev *pdev, *tpdev;
-+	struct cache_set *c, *tc;
-+
-+	mutex_lock(&bch_register_lock);
-+	list_for_each_entry_safe(dc, tdc, &uncached_devices, list) {
-+		pdev = kmalloc(sizeof(struct pdev), GFP_KERNEL);
-+		if (!pdev)
-+			break;
-+		pdev->dc = dc;
-+		list_add(&pdev->list, &pending_devs);
-+	}
-+
-+	list_for_each_entry_safe(pdev, tpdev, &pending_devs, list) {
-+		list_for_each_entry_safe(c, tc, &bch_cache_sets, list) {
-+			char *pdev_set_uuid = pdev->dc->sb.set_uuid;
-+			char *set_uuid = c->sb.uuid;
-+
-+			if (!memcmp(pdev_set_uuid, set_uuid, 16)) {
-+				list_del(&pdev->list);
-+				kfree(pdev);
-+				break;
-+			}
-+		}
-+	}
-+	mutex_unlock(&bch_register_lock);
-+
-+	list_for_each_entry_safe(pdev, tpdev, &pending_devs, list) {
-+		pr_info("delete pdev %p", pdev);
-+		list_del(&pdev->list);
-+		bcache_device_stop(&pdev->dc->disk);
-+		kfree(pdev);
-+	}
-+
-+	return ret;
-+}
-+
+ 	path = kstrndup(buffer, size, GFP_KERNEL);
+ 	if (!path)
+ 		goto err;
+@@ -2474,6 +2481,9 @@ static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
+ 
  static int bcache_reboot(struct notifier_block *n, unsigned long code, void *x)
  {
++	if (bcache_is_reboot)
++		return NOTIFY_DONE;
++
  	if (code == SYS_DOWN ||
-@@ -2536,6 +2590,7 @@ static int __init bcache_init(void)
- 	static const struct attribute *files[] = {
- 		&ksysfs_register.attr,
- 		&ksysfs_register_quiet.attr,
-+		&ksysfs_pendings_cleanup.attr,
- 		NULL
- 	};
+ 	    code == SYS_HALT ||
+ 	    code == SYS_POWER_OFF) {
+@@ -2486,19 +2496,45 @@ static int bcache_reboot(struct notifier_block *n, unsigned long code, void *x)
+ 
+ 		mutex_lock(&bch_register_lock);
+ 
++		if (bcache_is_reboot)
++			goto out;
++
++		/* New registration is rejected since now */
++		bcache_is_reboot = true;
++		/*
++		 * Make registering caller (if there is) on other CPU
++		 * core know bcache_is_reboot set to true earlier
++		 */
++		smp_mb();
++
+ 		if (list_empty(&bch_cache_sets) &&
+ 		    list_empty(&uncached_devices))
+ 			goto out;
+ 
++		mutex_unlock(&bch_register_lock);
++
+ 		pr_info("Stopping all devices:");
+ 
++		/*
++		 * The reason bch_register_lock is not held to call
++		 * bch_cache_set_stop() and bcache_device_stop() is to
++		 * avoid potential deadlock during reboot, because cache
++		 * set or bcache device stopping process will acqurie
++		 * bch_register_lock too.
++		 *
++		 * We are safe here because bcache_is_reboot sets to
++		 * true already, register_bcache() will reject new
++		 * registration now. bcache_is_reboot also makes sure
++		 * bcache_reboot() won't be re-entered on by other thread,
++		 * so there is no race in following list iteration by
++		 * list_for_each_entry_safe().
++		 */
+ 		list_for_each_entry_safe(c, tc, &bch_cache_sets, list)
+ 			bch_cache_set_stop(c);
+ 
+ 		list_for_each_entry_safe(dc, tdc, &uncached_devices, list)
+ 			bcache_device_stop(&dc->disk);
+ 
+-		mutex_unlock(&bch_register_lock);
+ 
+ 		/*
+ 		 * Give an early chance for other kthreads and
+@@ -2626,6 +2662,8 @@ static int __init bcache_init(void)
+ 	bch_debug_init();
+ 	closure_debug_init();
+ 
++	bcache_is_reboot = false;
++
+ 	return 0;
+ err:
+ 	bcache_exit();
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 82a2fe8ac86b..4ab15442cab5 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -16,6 +16,8 @@
+ #include <linux/sort.h>
+ #include <linux/sched/clock.h>
+ 
++extern bool bcache_is_reboot;
++
+ /* Default is 0 ("writethrough") */
+ static const char * const bch_cache_modes[] = {
+ 	"writethrough",
+@@ -267,6 +269,10 @@ STORE(__cached_dev)
+ 	struct cache_set *c;
+ 	struct kobj_uevent_env *env;
+ 
++	/* no user space access if system is rebooting */
++	if (bcache_is_reboot)
++		return -EBUSY;
++
+ #define d_strtoul(var)		sysfs_strtoul(var, dc->var)
+ #define d_strtoul_nonzero(var)	sysfs_strtoul_clamp(var, dc->var, 1, INT_MAX)
+ #define d_strtoi_h(var)		sysfs_hatoi(var, dc->var)
+@@ -407,6 +413,10 @@ STORE(bch_cached_dev)
+ 	struct cached_dev *dc = container_of(kobj, struct cached_dev,
+ 					     disk.kobj);
+ 
++	/* no user space access if system is rebooting */
++	if (bcache_is_reboot)
++		return -EBUSY;
++
+ 	mutex_lock(&bch_register_lock);
+ 	size = __cached_dev_store(kobj, attr, buf, size);
+ 
+@@ -505,6 +515,10 @@ STORE(__bch_flash_dev)
+ 					       kobj);
+ 	struct uuid_entry *u = &d->c->uuids[d->id];
+ 
++	/* no user space access if system is rebooting */
++	if (bcache_is_reboot)
++		return -EBUSY;
++
+ 	sysfs_strtoul(data_csum,	d->data_csum);
+ 
+ 	if (attr == &sysfs_size) {
+@@ -740,6 +754,10 @@ STORE(__bch_cache_set)
+ 	struct cache_set *c = container_of(kobj, struct cache_set, kobj);
+ 	ssize_t v;
+ 
++	/* no user space access if system is rebooting */
++	if (bcache_is_reboot)
++		return -EBUSY;
++
+ 	if (attr == &sysfs_unregister)
+ 		bch_cache_set_unregister(c);
+ 
+@@ -859,6 +877,10 @@ STORE(bch_cache_set_internal)
+ {
+ 	struct cache_set *c = container_of(kobj, struct cache_set, internal);
+ 
++	/* no user space access if system is rebooting */
++	if (bcache_is_reboot)
++		return -EBUSY;
++
+ 	return bch_cache_set_store(&c->kobj, attr, buf, size);
+ }
+ 
+@@ -1044,6 +1066,10 @@ STORE(__bch_cache)
+ 	struct cache *ca = container_of(kobj, struct cache, kobj);
+ 	ssize_t v;
+ 
++	/* no user space access if system is rebooting */
++	if (bcache_is_reboot)
++		return -EBUSY;
++
+ 	if (attr == &sysfs_discard) {
+ 		bool v = strtoul_or_return(buf);
  
 -- 
 2.16.4
