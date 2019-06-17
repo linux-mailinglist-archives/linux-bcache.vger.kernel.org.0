@@ -2,193 +2,121 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1F4345DE1
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Jun 2019 15:15:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49F7A4779D
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2019 03:28:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727971AbfFNNPs (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Jun 2019 09:15:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46378 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727918AbfFNNPs (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:15:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EE780AE07;
-        Fri, 14 Jun 2019 13:15:44 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     linux-bcache@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [PATCH 29/29] bcache: fix potential deadlock in cached_def_free()
-Date:   Fri, 14 Jun 2019 21:13:58 +0800
-Message-Id: <20190614131358.2771-30-colyli@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190614131358.2771-1-colyli@suse.de>
-References: <20190614131358.2771-1-colyli@suse.de>
+        id S1727482AbfFQB2l (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 16 Jun 2019 21:28:41 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:7477 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727382AbfFQB2k (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 16 Jun 2019 21:28:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1560734920; x=1592270920;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WOSfb54lqjmAhpxKks8qtBjKEWXJ2gQPrUDSicl9Hnk=;
+  b=odLxXAgJaYjAEXRRwyMQ/I9BY2nl6W+bpx2qrf9IwAAceXodZI9Q9iWe
+   mtf8EH8EIF2grSduEBSAhxRTvkjJTKmJ1ntySMBI5LBrhMkKru0bgPMLH
+   KIstJkq4/2y2gGD87bicHQsXhla/Cz6jRYNs4Rq8f/ZszggS2l3n7kodD
+   RjYoJ0MKxY6A2YJdkzLB68F84HZd1HTqdRRqZiCnYPz6PVQw/MArRRXal
+   4r8NHvdeVyawkZMBQ7hmjL2Mbq5ay6IsxNCx1+6THLnCR/C5hJbkIO6Y8
+   aLfA58rL4yWVnzrwYlaXm54wQ2sxE3bbiZhNqNu4MFkwxwg/8Ci7lEIVR
+   A==;
+X-IronPort-AV: E=Sophos;i="5.63,383,1557158400"; 
+   d="scan'208";a="112362939"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Jun 2019 09:28:38 +0800
+IronPort-SDR: QIywSG0ORQ99aTQlVbeJUpsL8JRmU2xUkFm+m/4NI2C89tEtal45HKHxerz7SB9MmlyF4TUAnD
+ 1leOTQtO44x2D40aqQ+H8iijv/s3Ue76ksmZdYiclaObbQBdyo7nGLCV3vgzfzDgifJjpnc9vC
+ QhKEl/SEIrKg0jynJljpsFGq076ZJhpB4XEghl/j/kvt4l7hC4cQvcgrJ2DBg9CpPhrsNRy0/Y
+ dNWaBd4kfia6JgrRQykJAteH0nc8yqw4YXCeq/5O71hWWxuKAZpXqjDQZsUrkle+fvaljwkINd
+ 0OKnSAR8dOU5QXBIUXt90vKd
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 16 Jun 2019 18:28:16 -0700
+IronPort-SDR: e9yLg0KsgSb036ZBFYJzKWGhn1ix8M/H5PzEIyUOFfS07QOrE0pWNDucJOXjf30T3hcelF022T
+ 1OmpPhsces+x38eqUg8RuxI8MLfRDgOpCPMUpqMEuBWcx8xhjeerh91ux6CH/8zYyPKOFa3waU
+ kGr+ufS/GjwT23+Oi5RLlLnapCMksd3jpRcRXerdrcl3ZLb8zLsaktaO7Utipgi7qqFtMxUjkk
+ ZfMa5DuHWJDXTcbMkj5uaoSZdsTWocm+sWwp/usRMzZ7Y83ikPZzPtFcS5utABB2c3gDWjZ+Cd
+ /KM=
+Received: from cmercuryqemu.hgst.com ([10.202.65.32])
+  by uls-op-cesaip01.wdc.com with ESMTP; 16 Jun 2019 18:28:39 -0700
+From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+To:     linux-block@vger.kernel.org
+Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
+        linux-btrace@vger.kernel.org, kent.overstreet@gmail.com,
+        jaegeuk@kernel.org, damien.lemoal@wdc.com,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Subject: [PATCH V2 0/7] block: use right accessor to read nr_setcs
+Date:   Sun, 16 Jun 2019 18:28:25 -0700
+Message-Id: <20190617012832.4311-1-chaitanya.kulkarni@wdc.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-When enable lockdep and reboot system with a writeback mode bcache
-device, the following potential deadlock warning is reported by lockdep
-engine.
+Hi,
 
-[  101.536569][  T401] kworker/2:2/401 is trying to acquire lock:
-[  101.538575][  T401] 00000000bbf6e6c7 ((wq_completion)bcache_writeback_wq){+.+.}, at: flush_workqueue+0x87/0x4c0
-[  101.542054][  T401]
-[  101.542054][  T401] but task is already holding lock:
-[  101.544587][  T401] 00000000f5f305b3 ((work_completion)(&cl->work)#2){+.+.}, at: process_one_work+0x21e/0x640
-[  101.548386][  T401]
-[  101.548386][  T401] which lock already depends on the new lock.
-[  101.548386][  T401]
-[  101.551874][  T401]
-[  101.551874][  T401] the existing dependency chain (in reverse order) is:
-[  101.555000][  T401]
-[  101.555000][  T401] -> #1 ((work_completion)(&cl->work)#2){+.+.}:
-[  101.557860][  T401]        process_one_work+0x277/0x640
-[  101.559661][  T401]        worker_thread+0x39/0x3f0
-[  101.561340][  T401]        kthread+0x125/0x140
-[  101.562963][  T401]        ret_from_fork+0x3a/0x50
-[  101.564718][  T401]
-[  101.564718][  T401] -> #0 ((wq_completion)bcache_writeback_wq){+.+.}:
-[  101.567701][  T401]        lock_acquire+0xb4/0x1c0
-[  101.569651][  T401]        flush_workqueue+0xae/0x4c0
-[  101.571494][  T401]        drain_workqueue+0xa9/0x180
-[  101.573234][  T401]        destroy_workqueue+0x17/0x250
-[  101.575109][  T401]        cached_dev_free+0x44/0x120 [bcache]
-[  101.577304][  T401]        process_one_work+0x2a4/0x640
-[  101.579357][  T401]        worker_thread+0x39/0x3f0
-[  101.581055][  T401]        kthread+0x125/0x140
-[  101.582709][  T401]        ret_from_fork+0x3a/0x50
-[  101.584592][  T401]
-[  101.584592][  T401] other info that might help us debug this:
-[  101.584592][  T401]
-[  101.588355][  T401]  Possible unsafe locking scenario:
-[  101.588355][  T401]
-[  101.590974][  T401]        CPU0                    CPU1
-[  101.592889][  T401]        ----                    ----
-[  101.594743][  T401]   lock((work_completion)(&cl->work)#2);
-[  101.596785][  T401]                                lock((wq_completion)bcache_writeback_wq);
-[  101.600072][  T401]                                lock((work_completion)(&cl->work)#2);
-[  101.602971][  T401]   lock((wq_completion)bcache_writeback_wq);
-[  101.605255][  T401]
-[  101.605255][  T401]  *** DEADLOCK ***
-[  101.605255][  T401]
-[  101.608310][  T401] 2 locks held by kworker/2:2/401:
-[  101.610208][  T401]  #0: 00000000cf2c7d17 ((wq_completion)events){+.+.}, at: process_one_work+0x21e/0x640
-[  101.613709][  T401]  #1: 00000000f5f305b3 ((work_completion)(&cl->work)#2){+.+.}, at: process_one_work+0x21e/0x640
-[  101.617480][  T401]
-[  101.617480][  T401] stack backtrace:
-[  101.619539][  T401] CPU: 2 PID: 401 Comm: kworker/2:2 Tainted: G        W         5.2.0-rc4-lp151.20-default+ #1
-[  101.623225][  T401] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 04/13/2018
-[  101.627210][  T401] Workqueue: events cached_dev_free [bcache]
-[  101.629239][  T401] Call Trace:
-[  101.630360][  T401]  dump_stack+0x85/0xcb
-[  101.631777][  T401]  print_circular_bug+0x19a/0x1f0
-[  101.633485][  T401]  __lock_acquire+0x16cd/0x1850
-[  101.635184][  T401]  ? __lock_acquire+0x6a8/0x1850
-[  101.636863][  T401]  ? lock_acquire+0xb4/0x1c0
-[  101.638421][  T401]  ? find_held_lock+0x34/0xa0
-[  101.640015][  T401]  lock_acquire+0xb4/0x1c0
-[  101.641513][  T401]  ? flush_workqueue+0x87/0x4c0
-[  101.643248][  T401]  flush_workqueue+0xae/0x4c0
-[  101.644832][  T401]  ? flush_workqueue+0x87/0x4c0
-[  101.646476][  T401]  ? drain_workqueue+0xa9/0x180
-[  101.648303][  T401]  drain_workqueue+0xa9/0x180
-[  101.649867][  T401]  destroy_workqueue+0x17/0x250
-[  101.651503][  T401]  cached_dev_free+0x44/0x120 [bcache]
-[  101.653328][  T401]  process_one_work+0x2a4/0x640
-[  101.655029][  T401]  worker_thread+0x39/0x3f0
-[  101.656693][  T401]  ? process_one_work+0x640/0x640
-[  101.658501][  T401]  kthread+0x125/0x140
-[  101.660012][  T401]  ? kthread_create_worker_on_cpu+0x70/0x70
-[  101.661985][  T401]  ret_from_fork+0x3a/0x50
-[  101.691318][  T401] bcache: bcache_device_free() bcache0 stopped
+In the blk-zoned, bcache, f2fs and blktrace implementation
+block device->hd_part->number of sectors field is accessed directly
+without any appropriate locking or accessor function. There is
+an existing accessor function present in the in include/linux/genhd.h
+which should be used to read the bdev->hd_part->nr_sects.
 
-Here is how the above potential deadlock may happen in reboot/shutdown
-code path,
-1) bcache_reboot() is called firstly in the reboot/shutdown code path,
-   then in bcache_reboot(), bcache_device_stop() is called.
-2) bcache_device_stop() sets BCACHE_DEV_CLOSING on d->falgs, then call
-   closure_queue(&d->cl) to invoke cached_dev_flush(). And in turn
-   cached_dev_flush() calls cached_dev_free() via closure_at()
-3) In cached_dev_free(), after stopped writebach kthread
-   dc->writeback_thread, the kwork dc->writeback_write_wq is stopping by
-   destroy_workqueue().
-4) Inside destroy_workqueue(), drain_workqueue() is called. Inside
-   drain_workqueue(), flush_workqueue() is called. Then wq->lockdep_map
-   is acquired by lock_map_acquire() in flush_workqueue(). After the
-   lock acquired the rest part of flush_workqueue() just wait for the
-   workqueue to complete.
-5) Now we look back at writeback thread routine bch_writeback_thread(),
-   in the main while-loop, write_dirty() is called via continue_at() in
-   read_dirty_submit(), which is called via continue_at() in while-loop
-   level called function read_dirty(). Inside write_dirty() it may be
-   re-called on workqueeu dc->writeback_write_wq via continue_at().
-   It means when the writeback kthread is stopped in cached_dev_free()
-   there might be still one kworker queued on dc->writeback_write_wq
-   to execute write_dirty() again.
-6) Now this kworker is scheduled on dc->writeback_write_wq to run by
-   process_one_work() (which is called by worker_thread()). Before
-   calling the kwork routine, wq->lockdep_map is acquired.
-7) But wq->lockdep_map is acquired already in step 4), so a A-A lock
-   (lockdep terminology) scenario happens.
+From ${KERN_DIR}/include/linux/genhd.h:-
+<snip>
+714 /*
+715  * Any access of part->nr_sects which is not protected by partition
+716  * bd_mutex or gendisk bdev bd_mutex, should be done using this
+717  * accessor function.
+718  *
+719  * Code written along the lines of i_size_read() and i_size_write().
+720  * CONFIG_PREEMPT case optimizes the case of UP kernel with preemption
+721  * on.
+722  */
+723 static inline sector_t part_nr_sects_read(struct hd_struct *part)
+724 {
+<snip>
 
-Indeed on multiple cores syatem, the above deadlock is very rare to
-happen, just as the code comments in process_one_work() says,
-2263     * AFAICT there is no possible deadlock scenario between the
-2264     * flush_work() and complete() primitives (except for
-	   single-threaded
-2265     * workqueues), so hiding them isn't a problem.
+This patch series introduces a helper function on the top of the
+part_nr_sects_read() and removes the all direct accesses to the
+bdev->hd_part->nr_sects for blk-zoned.c.
 
-But it is still good to fix such lockdep warning, even no one running
-bcache on single core system.
+This series is based on :-
 
-The fix is simple. This patch solves the above potential deadlock by,
-- Do not destory workqueue dc->writeback_write_wq in cached_dev_free().
-- Flush and destory dc->writeback_write_wq in writebach kthread routine
-  bch_writeback_thread(), where after quit the thread main while-loop
-  and before cached_dev_put() is called.
+1. Repo :-
+   git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git.
+2. Branch :- for-next.
 
-By this fix, dc->writeback_write_wq will be stopped and destroy before
-the writeback kthread stopped, so the chance for a A-A locking on
-wq->lockdep_map is disappeared, such A-A deadlock won't happen
-any more.
+Regards,
+Chaitanya
 
-Signed-off-by: Coly Li <colyli@suse.de>
----
- drivers/md/bcache/super.c     | 2 --
- drivers/md/bcache/writeback.c | 4 ++++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Changes from V1:-
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index f376ba7e4d3f..06b4cc0cecce 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1228,8 +1228,6 @@ static void cached_dev_free(struct closure *cl)
- 
- 	if (!IS_ERR_OR_NULL(dc->writeback_thread))
- 		kthread_stop(dc->writeback_thread);
--	if (dc->writeback_write_wq)
--		destroy_workqueue(dc->writeback_write_wq);
- 	if (!IS_ERR_OR_NULL(dc->status_update_thread))
- 		kthread_stop(dc->status_update_thread);
- 
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 73f0efac2b9f..df0f4e5a051a 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -735,6 +735,10 @@ static int bch_writeback_thread(void *arg)
- 		}
- 	}
- 
-+	if (dc->writeback_write_wq) {
-+		flush_workqueue(dc->writeback_write_wq);
-+		destroy_workqueue(dc->writeback_write_wq);
-+	}
- 	cached_dev_put(dc);
- 	wait_for_kthread_stop();
- 
+1. Drop the target_pscsi patch. (Bart)
+2. Remove rcu locking which is not needed. (Bart)
+
+Chaitanya Kulkarni (7):
+  block: add a helper function to read nr_setcs
+  blk-zoned: update blkdev_nr_zones() with helper
+  blk-zoned: update blkdev_report_zone() with helper
+  blk-zoned: update blkdev_reset_zones() with helper
+  bcache: update cached_dev_init() with helper
+  f2fs: use helper in init_blkz_info()
+  blktrace: use helper in blk_trace_setup_lba()
+
+ block/blk-zoned.c         | 12 ++++++------
+ drivers/md/bcache/super.c |  2 +-
+ fs/f2fs/super.c           |  2 +-
+ include/linux/blkdev.h    | 10 ++++++++++
+ kernel/trace/blktrace.c   |  2 +-
+ 5 files changed, 19 insertions(+), 9 deletions(-)
+
 -- 
-2.16.4
+2.19.1
 
