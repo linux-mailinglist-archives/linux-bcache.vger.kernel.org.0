@@ -2,62 +2,62 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A01948964
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2019 18:56:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDD2C4896C
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2019 18:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbfFQQ4Y (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 17 Jun 2019 12:56:24 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:51156 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfFQQ4Y (ORCPT
+        id S1726362AbfFQQ5J (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 17 Jun 2019 12:57:09 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:51827 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfFQQ5J (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:56:24 -0400
+        Mon, 17 Jun 2019 12:57:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1560790584; x=1592326584;
+  t=1560790628; x=1592326628;
   h=from:to:cc:subject:date:message-id:references:
    content-transfer-encoding:mime-version;
-  bh=k9fcWox9dAUVMQcETYp7JP5EL1W50vIcCWQb9ipfkug=;
-  b=Jk2psbsE0H/FiTjRqLggqAmWIo4RCyRcVs1VCaaDmiiheyfxRrcd1q6m
-   WnZM47EDTPvkL1Etk8EM/+Z0qg+e/lwgpVXqDEh7iItB0t1Y9qUfuJoaN
-   GbyI9WQNnWvugRCXl+5fnGfD75oxR2Xc5zFmyHiv+xSyHtxyK4d2ebG/+
-   U3VdT2fR6P3CLskcMScpKISfVV+22UQYU9Ya7qM0ulZG+MUH3Opk0PsWg
-   n/FcyxXeQOiwyqirQfjKsIulD+Vh0qGHZnFkYZgUHElZNc8eMb7rFQ0/v
-   Xr0HFWKYyRr9ScYDekH9awrOZK44mVR6QbtxXYcPLiOW1CZtFOkROWBuM
-   A==;
+  bh=ZTFs1VQyVxdcUx53xPdgJmVbGFeeqXpKJw2Hx6bpFnM=;
+  b=rP06jrEO5JmSnGZGeJnOu9bt0puYJawUh4JSZOJ8XLlRj1Ag7CrDbn93
+   DnKD2vZAJU1HP+FcvLnPaxekENk6QDOCqAh+VMmB2aAHk+DxrqyyGKkgC
+   FKdemzrp3sEEh45EHEb7bB3S4pSm0oVwxIJWJxS2Ieg5y7Ld5kmS1KPbL
+   4gojVTnQmlrY0gjC6Bk/nERQqPPsxcP+DS4B8blafkf+1GZefErhCoMaq
+   OvY5BLdLkhPo6mxL8UXM1hfO+60p4+QCrMN68r+dUZYbhscznL/Khcm8b
+   BareEV9083bJLQap2KrJKcbgqDJGoHT0ircHp2zVzGjA8OulzqZmhZIQM
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.63,386,1557158400"; 
-   d="scan'208";a="115687368"
-Received: from mail-bl2nam02lp2053.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([104.47.38.53])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Jun 2019 00:56:14 +0800
+   d="scan'208";a="112024181"
+Received: from mail-cys01nam02lp2057.outbound.protection.outlook.com (HELO NAM02-CY1-obe.outbound.protection.outlook.com) ([104.47.37.57])
+  by ob1.hgst.iphmx.com with ESMTP; 18 Jun 2019 00:57:07 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QuPaF+5UAgO94w/KzXYSHH14QeBz0FkNyENBa0lm36A=;
- b=DDkpw0P1sK70ah0lGj+QzQ+YFdP5VYRpxqjiPVY62ZVm9D7eZbAmjIwztcvPUSDmD/1vIrid8Pq8LN/xgA00FsLJJyHsaiMQDIdGQYMscPElnWnh2k1HXS8vSgFTquXjDcC4gZOyvxX7G8S6i3q1LM6XpWjsICC0EzMhGPxdqKo=
+ bh=ZTFs1VQyVxdcUx53xPdgJmVbGFeeqXpKJw2Hx6bpFnM=;
+ b=Tyu57hi9vNxgwlPbAnhnn1HbbC8U+za2V1e1Gu+2ESRaGegasotKYHpFTiIc34re3BTpjbCvtYJOlZtd2w5rnZpYGgsV1QwYgHH5nLpwaj5lIB4eJ8dbL5kuNIzpgatPFEyBsdcf3DBgpGhF88v0stgW17CzCPQYVKG0KGnwHZM=
 Received: from BYAPR04MB5749.namprd04.prod.outlook.com (20.179.58.26) by
- BYAPR04MB4567.namprd04.prod.outlook.com (52.135.238.28) with Microsoft SMTP
+ BYAPR04MB4117.namprd04.prod.outlook.com (20.176.250.15) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.15; Mon, 17 Jun 2019 16:56:12 +0000
+ 15.20.1987.13; Mon, 17 Jun 2019 16:57:06 +0000
 Received: from BYAPR04MB5749.namprd04.prod.outlook.com
  ([fe80::fc2b:fcd4:7782:53d6]) by BYAPR04MB5749.namprd04.prod.outlook.com
  ([fe80::fc2b:fcd4:7782:53d6%7]) with mapi id 15.20.1987.012; Mon, 17 Jun 2019
- 16:56:12 +0000
+ 16:57:06 +0000
 From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-To:     Coly Li <colyli@suse.de>,
+To:     Bart Van Assche <bvanassche@acm.org>,
         "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-CC:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+CC:     "colyli@suse.de" <colyli@suse.de>,
+        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
         "linux-btrace@vger.kernel.org" <linux-btrace@vger.kernel.org>,
         "kent.overstreet@gmail.com" <kent.overstreet@gmail.com>,
         "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
         Damien Le Moal <Damien.LeMoal@wdc.com>
-Subject: Re: [PATCH V2 5/7] bcache: update cached_dev_init() with helper
-Thread-Topic: [PATCH V2 5/7] bcache: update cached_dev_init() with helper
-Thread-Index: AQHVJKwKnTXgLhfI30Cy3cQymORhzQ==
-Date:   Mon, 17 Jun 2019 16:56:11 +0000
-Message-ID: <BYAPR04MB5749C877C444A5A2144A921886EB0@BYAPR04MB5749.namprd04.prod.outlook.com>
+Subject: Re: [PATCH V2 0/7] block: use right accessor to read nr_setcs
+Thread-Topic: [PATCH V2 0/7] block: use right accessor to read nr_setcs
+Thread-Index: AQHVJKv/SVB4gCEUf0q3+CUlcI0YtQ==
+Date:   Mon, 17 Jun 2019 16:57:06 +0000
+Message-ID: <BYAPR04MB5749A60A077E1D976845264A86EB0@BYAPR04MB5749.namprd04.prod.outlook.com>
 References: <20190617012832.4311-1-chaitanya.kulkarni@wdc.com>
- <20190617012832.4311-6-chaitanya.kulkarni@wdc.com>
- <ae48b013-6e5f-1300-557e-1dbe0f4ad31c@suse.de>
+ <a7458a93-5dd2-ddd1-8466-9da95c4d3aff@acm.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -66,72 +66,45 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Chaitanya.Kulkarni@wdc.com; 
 x-originating-ip: [199.255.45.63]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 88d7d1d4-1e01-45c4-339e-08d6f344b3ef
+x-ms-office365-filtering-correlation-id: 0611ea86-8305-4259-94f1-08d6f344d485
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB4567;
-x-ms-traffictypediagnostic: BYAPR04MB4567:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB4117;
+x-ms-traffictypediagnostic: BYAPR04MB4117:
 wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <BYAPR04MB456736C88594942C9AAB803886EB0@BYAPR04MB4567.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3383;
+x-microsoft-antispam-prvs: <BYAPR04MB41179B3DED2ECEAA75FED98C86EB0@BYAPR04MB4117.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3044;
 x-forefront-prvs: 0071BFA85B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(346002)(136003)(39860400002)(199004)(189003)(7736002)(316002)(8936002)(305945005)(53936002)(3846002)(55016002)(229853002)(86362001)(6436002)(6116002)(5660300002)(446003)(186003)(73956011)(9686003)(76116006)(6246003)(66946007)(66066001)(66446008)(64756008)(486006)(66556008)(476003)(66476007)(33656002)(25786009)(72206003)(4326008)(74316002)(15650500001)(2906002)(81166006)(71190400001)(478600001)(8676002)(99286004)(7696005)(2501003)(26005)(68736007)(53546011)(71200400001)(102836004)(6506007)(76176011)(256004)(110136005)(14444005)(14454004)(52536014)(81156014)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4567;H:BYAPR04MB5749.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(376002)(136003)(346002)(199004)(189003)(66066001)(71190400001)(229853002)(6436002)(55016002)(71200400001)(74316002)(64756008)(305945005)(53936002)(81156014)(8936002)(81166006)(6116002)(9686003)(256004)(186003)(26005)(102836004)(7736002)(3846002)(8676002)(99286004)(53546011)(76176011)(6506007)(7696005)(73956011)(486006)(66946007)(476003)(446003)(33656002)(316002)(14454004)(52536014)(68736007)(2906002)(478600001)(4326008)(86362001)(2501003)(4744005)(66556008)(54906003)(5660300002)(25786009)(6246003)(72206003)(110136005)(66476007)(66446008)(76116006);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4117;H:BYAPR04MB5749.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: vlhzYq0cYNscYGrvIw/shCLZjaiwyS7dcWFEySAQvqxQiww5MO7x+hUnCgWY1VDT/ytLHyM858xdIGbLlBta4Z9LqrMyl/2bAk3cStyj09sUi4F2vJhf7UFUiR8gezvaXVhL+Gc2/jdppEfVj9wziYXrNQNuG2ArtFf+HCqwryWOaQH2hM3k5bOEM8sIiCGfnbnIU49fzrm1dYaDwgf05AnFcrS5I1mW4+4iYQT/7pqYmj1G1MOp1zmj+tcftz+apRgYbpvOci8wQxfkp7yXL7uABh5fHFKAZHDBEuoiTC+11TCmsYV/Wj8monsbq8X1iyNO1nRxBr4kcR76pyz23xFV+/GwhgERxBmTCuyQFwGtxByIa5w0JpqndtmvaJHf0F+D7OnKk1TkPKuUJjCJ6G3ZzuGWoQaXvLf5z9iFxAk=
-Content-Type: text/plain; charset="iso-2022-jp"
+x-microsoft-antispam-message-info: 74obm9wI4mPCAYK9vr9JDiX7RTDkNxpcgDbe02BESRPj9+8O1LRnOb4JonEwRhklH0PYrVxtqL5nNuiOeEAv0iZFJjCSSDZPUVlXYN0UiOP7ol9bGbeELWD02Seg2mq2jqyhQbTbL6wR5mLl6+ekxzM/BUVCl1cmuoAyZjFeFqmIBDcwTtEP67x8m8+qKpQ4WkatfaIivFxN05Bqy1poUvz8wGxu0vHZBLWZhznQN2OfsVV7mJdXxwSLRbHmyPCd7lErGVPra+4lUgUynuBPQgsCzqaHZ6Nsr2Rn4HlzkL1l9AGm0xjqcC/1AZM6MfHJhxaE0zCsHDCOPQ5y32JPfy031ij7ajaVY4RR+QbSUy7PNrj+K+NZA48r1nR16ymKkz2LgmmcdL47wH9IDuQMLE266Ae1dNEtegwGkYe+n3M=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88d7d1d4-1e01-45c4-339e-08d6f344b3ef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2019 16:56:12.0098
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0611ea86-8305-4259-94f1-08d6f344d485
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2019 16:57:06.5885
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: Chaitanya.Kulkarni@wdc.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4567
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4117
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 06/16/2019 11:54 PM, Coly Li wrote:=0A=
-> On 2019/6/17 9:28 =1B$B>e8a=1B(B, Chaitanya Kulkarni wrote:=0A=
->> In the bcache when initializing the device we don't actually use any=0A=
->> sort of locking when reading the number of sectors from the part. This=
-=0A=
->> patch updates the cached_dev_init() with newly introduced helper=0A=
->> function to read the nr_sects from block device's hd_parts with the help=
-=0A=
->> of part_nr_sects_read().=0A=
->>=0A=
->> Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>=0A=
+On 06/17/2019 08:45 AM, Bart Van Assche wrote:=0A=
+> On 6/16/19 6:28 PM, Chaitanya Kulkarni wrote:=0A=
+>> In the blk-zoned, bcache, f2fs and blktrace implementation=0A=
+>> block device->hd_part->number of sectors field is accessed directly=0A=
+>> without any appropriate locking or accessor function. There is=0A=
+>> an existing accessor function present in the in include/linux/genhd.h=0A=
+>> which should be used to read the bdev->hd_part->nr_sects.=0A=
 >=0A=
-> Acked-by: Coly Li <colyli@suse.de>=0A=
-=0A=
-Thanks Coly.=0A=
+> In the subject, "nr_setcs" should probably be changed into "nr_sects"?=0A=
 >=0A=
-> Thanks.=0A=
->=0A=
-> Coly Li=0A=
->=0A=
->> ---=0A=
->>   drivers/md/bcache/super.c | 2 +-=0A=
->>   1 file changed, 1 insertion(+), 1 deletion(-)=0A=
->>=0A=
->> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c=0A=
->> index 1b63ac876169..6a29ba89dae1 100644=0A=
->> --- a/drivers/md/bcache/super.c=0A=
->> +++ b/drivers/md/bcache/super.c=0A=
->> @@ -1263,7 +1263,7 @@ static int cached_dev_init(struct cached_dev *dc, =
-unsigned int block_size)=0A=
->>   			q->limits.raid_partial_stripes_expensive;=0A=
->>=0A=
->>   	ret =3D bcache_device_init(&dc->disk, block_size,=0A=
->> -			 dc->bdev->bd_part->nr_sects - dc->sb.data_offset);=0A=
->> +			 bdev_nr_sects(dc->bdev) - dc->sb.data_offset);=0A=
->>   	if (ret)=0A=
->>   		return ret;=0A=
->>=0A=
->>=0A=
+Yes, will fix it in next version.=0A=
+> Bart.=0A=
 >=0A=
 =0A=
