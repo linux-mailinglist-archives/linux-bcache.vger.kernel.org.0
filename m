@@ -2,74 +2,73 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06A2B47A39
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2019 08:54:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B6C47AEB
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2019 09:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbfFQGyB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 17 Jun 2019 02:54:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50554 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725778AbfFQGyB (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 17 Jun 2019 02:54:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6C4F9AC5A;
-        Mon, 17 Jun 2019 06:53:59 +0000 (UTC)
-Subject: Re: [PATCH V2 5/7] bcache: update cached_dev_init() with helper
-To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        linux-block@vger.kernel.org
-Cc:     linux-bcache@vger.kernel.org, linux-btrace@vger.kernel.org,
-        kent.overstreet@gmail.com, jaegeuk@kernel.org,
-        damien.lemoal@wdc.com
-References: <20190617012832.4311-1-chaitanya.kulkarni@wdc.com>
- <20190617012832.4311-6-chaitanya.kulkarni@wdc.com>
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <ae48b013-6e5f-1300-557e-1dbe0f4ad31c@suse.de>
-Date:   Mon, 17 Jun 2019 14:53:52 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.1
+        id S1726726AbfFQH2u (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 17 Jun 2019 03:28:50 -0400
+Received: from slot0.nejknio.cf ([89.32.41.233]:39556 "EHLO slot0.nejknio.cf"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726673AbfFQH2t (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 17 Jun 2019 03:28:49 -0400
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=nejknio.cf;
+ h=Content-Type:MIME-Version:Content-Transfer-Encoding:Content-Description:Subject:To:From:Date:Reply-To:Message-ID; i=trade1@nejknio.cf;
+ bh=73Xs4LxjK+lP+h5mKCyFyWTpkoQ=;
+ b=Yb4OEp2L9yhUKBAc+0XD6LnaCGtjg/s5hVLFjlVqkwymPSwz8THTQLWnDEtYV019ZKaDweWbx/4c
+   eMMNyZWv58Bfu2cblFp/O0ZBXpStXU7QL3RAR4wvlsU2/QbgxrYo0JsTscEgcVpaIYCucq4f/1Aj
+   148T93VWczhOKEPnxvDb72N8xz782rkgt3umUtWb2UxqpQYWN4d882XnzOAq21x3geIBjUsZQrRb
+   fFfjCAkX9Qo37C0JGea0HthEZxK/i4XNwNKmhBehktMaS9tF60O/RfVebkFjuHbHx9IQXujte5w/
+   R4FqAZsmZJyt8qzhs0GN6jTnGdbbwtdqm7usDw==
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=nejknio.cf;
+ b=VIfo+j57sxfJ6tteYtH74tGs8LEvWmBwAbQGYB9zqF5OQgzH/iBHfCPhujYZyYh8/nfzI4AsdK2h
+   G7JXPiXoTse9VCDK4ATPXfHabGkGYYMCbZLwQ+bd2V+NosMUBzlvFhy1fBt7uWJX51lH2tg4e6lW
+   vJapvB4pbnJo01hhN4Z5fkk3HIXx5/hQtbuAgZLufbg0oM96/dgyOWBv2KPyxgFLKl2q2YzqILOT
+   qpr15rjDY9X8YWzDDDC5WjQo4tLk8Dddh+N5v6wh0ahIwCoO1M+xEpg1HJB6jt0iKRlaggC01rpO
+   BSaX/9pRnbd3guj2IE2X4HA9qe3ehnpgz9zCOg==;
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-In-Reply-To: <20190617012832.4311-6-chaitanya.kulkarni@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: PRODUCT INQUIRY FOR EXPORT SHIPMENT
+To:     Recipients <trade1@nejknio.cf>
+From:   "Mark Maths" <trade1@nejknio.cf>
+Date:   Mon, 17 Jun 2019 10:08:41 +0300
+Reply-To: purchase_m.maths@aol.com
+Message-ID: <0.0.1.D6C.1D524DB736F3D04.0@slot0.nejknio.cf>
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/6/17 9:28 上午, Chaitanya Kulkarni wrote:
-> In the bcache when initializing the device we don't actually use any
-> sort of locking when reading the number of sectors from the part. This
-> patch updates the cached_dev_init() with newly introduced helper
-> function to read the nr_sects from block device's hd_parts with the help
-> of part_nr_sects_read().
-> 
-> Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Dear Sales team,
+ =
 
-Acked-by: Coly Li <colyli@suse.de>
+In furtherance to our market research, we have reviewed all your products t=
+ypes and we have finally interested in your product for our market here in =
 
-Thanks.
 
-Coly Li
+United State for your production. We introduce ourselves as Emilxa Tram SRL=
+, A general group of company located in the United State. =
 
-> ---
->  drivers/md/bcache/super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 1b63ac876169..6a29ba89dae1 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1263,7 +1263,7 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
->  			q->limits.raid_partial_stripes_expensive;
->  
->  	ret = bcache_device_init(&dc->disk, block_size,
-> -			 dc->bdev->bd_part->nr_sects - dc->sb.data_offset);
-> +			 bdev_nr_sects(dc->bdev) - dc->sb.data_offset);
->  	if (ret)
->  		return ret;
->  
-> 
+
+We are sourcing for new suppliers from your location =
+
+
+Kindly advice us if you accept new purchase orders, I will forward our PO f=
+or urgent order.
+
+Waiting for your response to send order. Reply to ( purchase_m.maths@aol.co=
+m)
+
+Best regards.
+Mark Maths
+Company Address:
+Emilxa Tram SRL Company Limited
+P.O. Box 978
+Road Town
+Tortola
+British Virgin Islands
+Contact information:
+Tel: +1 (284) 493 7235
+Email: purchase_m.maths@aol.com
+https://meridianbvi.com/contact-us/
