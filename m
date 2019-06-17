@@ -2,73 +2,68 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5B6C47AEB
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2019 09:28:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D2EB487BA
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2019 17:45:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbfFQH2u (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 17 Jun 2019 03:28:50 -0400
-Received: from slot0.nejknio.cf ([89.32.41.233]:39556 "EHLO slot0.nejknio.cf"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726673AbfFQH2t (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 17 Jun 2019 03:28:49 -0400
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=nejknio.cf;
- h=Content-Type:MIME-Version:Content-Transfer-Encoding:Content-Description:Subject:To:From:Date:Reply-To:Message-ID; i=trade1@nejknio.cf;
- bh=73Xs4LxjK+lP+h5mKCyFyWTpkoQ=;
- b=Yb4OEp2L9yhUKBAc+0XD6LnaCGtjg/s5hVLFjlVqkwymPSwz8THTQLWnDEtYV019ZKaDweWbx/4c
-   eMMNyZWv58Bfu2cblFp/O0ZBXpStXU7QL3RAR4wvlsU2/QbgxrYo0JsTscEgcVpaIYCucq4f/1Aj
-   148T93VWczhOKEPnxvDb72N8xz782rkgt3umUtWb2UxqpQYWN4d882XnzOAq21x3geIBjUsZQrRb
-   fFfjCAkX9Qo37C0JGea0HthEZxK/i4XNwNKmhBehktMaS9tF60O/RfVebkFjuHbHx9IQXujte5w/
-   R4FqAZsmZJyt8qzhs0GN6jTnGdbbwtdqm7usDw==
-DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=nejknio.cf;
- b=VIfo+j57sxfJ6tteYtH74tGs8LEvWmBwAbQGYB9zqF5OQgzH/iBHfCPhujYZyYh8/nfzI4AsdK2h
-   G7JXPiXoTse9VCDK4ATPXfHabGkGYYMCbZLwQ+bd2V+NosMUBzlvFhy1fBt7uWJX51lH2tg4e6lW
-   vJapvB4pbnJo01hhN4Z5fkk3HIXx5/hQtbuAgZLufbg0oM96/dgyOWBv2KPyxgFLKl2q2YzqILOT
-   qpr15rjDY9X8YWzDDDC5WjQo4tLk8Dddh+N5v6wh0ahIwCoO1M+xEpg1HJB6jt0iKRlaggC01rpO
-   BSaX/9pRnbd3guj2IE2X4HA9qe3ehnpgz9zCOg==;
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1727996AbfFQPpS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 17 Jun 2019 11:45:18 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36291 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727782AbfFQPpR (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 17 Jun 2019 11:45:17 -0400
+Received: by mail-pf1-f195.google.com with SMTP id r7so5910198pfl.3;
+        Mon, 17 Jun 2019 08:45:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Pv/KxcZ1ZiK/Sqm5k9mN21CuMOpUgWy/Q7SDEQvPYdc=;
+        b=SUtC/4illAeoPHsmzTlYFr92uFpP1naIQNm4rOjV4WR1JHuy9Dl0xiPxhJuUCMhpBd
+         avdHiTC2FxpK4jZnbjN3zb66twwHE6Jb1l+4bm7z6R4yIYe3jG/W2LjyC4NtJRV9ojAg
+         /ul+a7agF/memz/+7RpvACgbLHryuMoQJ6JnRUhW3VRz5nyxsXN0ww6Wh3Gn+RHSeRHw
+         BT0iHQ0oRzc+DxDNQcfUTom9n13km/3vKSnLVhvGsddN4HHqCSSJiEsz081EuF1+bWG8
+         9b8vPYCOI9WvCB1ScQFz5PyRkzRIr28buXLGwL8HS2TkZHRTbN7L+wD39kmxH5Da+oRg
+         x+QQ==
+X-Gm-Message-State: APjAAAVHSPJoV70w78Eszo2CQlFlLDx9l8LkOmfvjf2LuwPTtrG+0TMd
+        a2cReGRYbZZz8gY5EwACT+U=
+X-Google-Smtp-Source: APXvYqw6a6869azyLqamePdWnR3ha+3LFBcWhYmzW60zfYR0qpLuwvWTWqISdsgUuSCMIwTV423jFw==
+X-Received: by 2002:a62:b615:: with SMTP id j21mr7165832pff.190.1560786316959;
+        Mon, 17 Jun 2019 08:45:16 -0700 (PDT)
+Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
+        by smtp.gmail.com with ESMTPSA id 10sm11631016pfh.179.2019.06.17.08.45.15
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 08:45:16 -0700 (PDT)
+Subject: Re: [PATCH V2 0/7] block: use right accessor to read nr_setcs
+To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        linux-block@vger.kernel.org
+Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
+        linux-btrace@vger.kernel.org, kent.overstreet@gmail.com,
+        jaegeuk@kernel.org, damien.lemoal@wdc.com
+References: <20190617012832.4311-1-chaitanya.kulkarni@wdc.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <a7458a93-5dd2-ddd1-8466-9da95c4d3aff@acm.org>
+Date:   Mon, 17 Jun 2019 08:45:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: PRODUCT INQUIRY FOR EXPORT SHIPMENT
-To:     Recipients <trade1@nejknio.cf>
-From:   "Mark Maths" <trade1@nejknio.cf>
-Date:   Mon, 17 Jun 2019 10:08:41 +0300
-Reply-To: purchase_m.maths@aol.com
-Message-ID: <0.0.1.D6C.1D524DB736F3D04.0@slot0.nejknio.cf>
+In-Reply-To: <20190617012832.4311-1-chaitanya.kulkarni@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Dear Sales team,
- =
+On 6/16/19 6:28 PM, Chaitanya Kulkarni wrote:
+> In the blk-zoned, bcache, f2fs and blktrace implementation
+> block device->hd_part->number of sectors field is accessed directly
+> without any appropriate locking or accessor function. There is
+> an existing accessor function present in the in include/linux/genhd.h
+> which should be used to read the bdev->hd_part->nr_sects.
 
-In furtherance to our market research, we have reviewed all your products t=
-ypes and we have finally interested in your product for our market here in =
+In the subject, "nr_setcs" should probably be changed into "nr_sects"?
 
-
-United State for your production. We introduce ourselves as Emilxa Tram SRL=
-, A general group of company located in the United State. =
-
-
-We are sourcing for new suppliers from your location =
-
-
-Kindly advice us if you accept new purchase orders, I will forward our PO f=
-or urgent order.
-
-Waiting for your response to send order. Reply to ( purchase_m.maths@aol.co=
-m)
-
-Best regards.
-Mark Maths
-Company Address:
-Emilxa Tram SRL Company Limited
-P.O. Box 978
-Road Town
-Tortola
-British Virgin Islands
-Contact information:
-Tel: +1 (284) 493 7235
-Email: purchase_m.maths@aol.com
-https://meridianbvi.com/contact-us/
+Bart.
