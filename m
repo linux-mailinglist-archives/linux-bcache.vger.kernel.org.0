@@ -2,65 +2,228 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1E504F6E8
-	for <lists+linux-bcache@lfdr.de>; Sat, 22 Jun 2019 18:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C2DB4F8E2
+	for <lists+linux-bcache@lfdr.de>; Sun, 23 Jun 2019 01:16:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfFVQ2z (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 22 Jun 2019 12:28:55 -0400
-Received: from sonic301-3.consmr.mail.bf2.yahoo.com ([74.6.129.42]:35814 "EHLO
-        sonic301-3.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726276AbfFVQ2u (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 22 Jun 2019 12:28:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1561220929; bh=3fXYToOZXvh5MOJ1JSawYDThjnynC/Ekt2gucIg6zZg=; h=Date:From:Reply-To:Subject:From:Subject; b=FwrBLUl7u665XwQeVPTq5hUQ4Ptv5qPcwgE0MfCyAxPjQW66W+sBKlTITy95Xiak8M/9mL3k87XvuhuNYmdzjOXFqAsXXJ7ZeR0tr0xQhaR4qpp9+I79zHB4JVXDeOtUnrv/ni1DEn3m49tSMIml9+1SbDvUcui/xLYzcB7mOtvlwJJC6bBkcbOwJW8drH7WnSKYQVlUvO9PRg8+IWYABo4m/HoTrmg3JSd7+tfq1bmdsTjreC9G6uwJClVG1p8XyGEOijmNqXv9Ivunj8UzUvxVldTIg/taTAKdSlSG3i+xbnz28LKLpxSK2+M63p52Vf+hNJ0OycyVj1TkO+H8OQ==
-X-YMail-OSG: BClZlNgVM1mJa1pSUAMlnjmDwJQUKDn0osVKNVIeZ6AC0JZQ8NzrV_.P2vPToBw
- lk4l1yMYy0P1wu9iKWHPF1vwWtED.NCcY6jE.jXdELnZdUngnDzcX.f1Ik7TcPjN._6dUftCNvSG
- 0ilPDIIh6JKut3rld3EDzfXqVTEprJFL10dLfXEmdNXy8_9HzWnLN9Uxxh6FWr8nj4DbExyF48M8
- b8CzHn8AtWzh0fDjJqMRXb5UR1L1fHF.mq4wk_41bl8VHLLREhO8D9AiMB_Iou.TvP.xektI4Uzf
- lBotEg54S8nbe5a5a2eamKaLSiD6XaCIzSQkrGwkgk9qzk7J4361PG1C2lAWhSULJjGYH.uKi9SH
- 8omXh8MvwuZmVU7umqXbA4eIFWV8ruRR3qRFWtA.2B0Eer.D49EbNovsAu.wRPm8yYyL6YMdaoys
- 3vYAkjype1yPgR0gHAH3zObnNPMrtMzQfsTzcaha59dNYsVWPRo5EvcFgAIKXVIUqnKnooWuODru
- O4SgrdrM8PGEZGs5dJS.h.dJB3gwQ.0I1wf1Q_CLgJhbPMrumaMiWl3ifhN9G_CCxrGhRPRltqdB
- RyAvAXGENXKEJswzM.sYWHkLQyblOWaGX5TLKzeDGaJCZVu7CtZvQ0aNcyWtqrf4SAtE7MK9SqUH
- 7phABBxeBrGdyDkvdUQOX_EPh25.Hb3SncDKllMEIHjvEdwbQcMGmqMEDVCI8Jh0nfgpjh259ODl
- q.bGW_sz63_QvjPWXygjUQ4RzfXiei1bHIkvbkPAHc04dS.Qr8LP1Jyxp2QD0wtNtJgo5RScK99X
- P5NPqcNAR8eez8YgXpk3cKLQCR9JSylhL6QyUVACODhQSLMO_l73eEDpWzNQUeEQLrEwA53TFUO9
- BXx4lR26gADp4OeWMANR3pTNDn8J7Oc5G1l.tF8AqVFtdsoB5vgCdw0tzoX9_22cJzNNteihaN9H
- ktOSXaCeUY26x9DWNkYi7HTOCc9F4vHnioRwelB9Lv.KGDeGPUJBBPmfcn0xXC8MB2YTlUFeVHzN
- FJsHhvFz9eJx.VwEAdhJs3DHW6xmbj9a_RSOf.BoLPiAvMAdoBe_1sVY8nFOqhuBwpkbj17TOzIW
- ts0JEWafkyantIFw8kEnIr0AHDEAK4aB1fgOVS8TQpbEaj2tB4pKHPa4OOjXszQAPBozr7PYVj2f
- 6AcwHFYhcmsrFfliX20p43dgFMRY8GMXgvUWeegBAeAuOTxCoUC9WvAdL
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Sat, 22 Jun 2019 16:28:49 +0000
-Date:   Sat, 22 Jun 2019 16:28:46 +0000 (UTC)
-From:   "Miss.Fatima Yusuf" <fatimayusuf5@outlook.fr>
-Reply-To: miss.fmayusuf11@gmail.com
-Message-ID: <270302503.296556.1561220926635@mail.yahoo.com>
-Subject: From:Miss: Fatima Yusuf.
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+        id S1726402AbfFVXQ3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 22 Jun 2019 19:16:29 -0400
+Received: from mx.ewheeler.net ([66.155.3.69]:48950 "EHLO mx.ewheeler.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726365AbfFVXQ3 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 22 Jun 2019 19:16:29 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mx.ewheeler.net (Postfix) with ESMTP id 7F6A6A0692;
+        Sat, 22 Jun 2019 23:16:28 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id 4fDofOu3-nKt; Sat, 22 Jun 2019 23:16:27 +0000 (UTC)
+Received: from el7-dev.ewi (unknown [209.180.175.76])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id 58D7EA067D;
+        Sat, 22 Jun 2019 23:16:27 +0000 (UTC)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-block@vger.kernel.org, Eric Wheeler <git@linux.ewheeler.net>,
+        Eric Wheeler <bcache@linux.ewheeler.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+        linux-kernel@vger.kernel.org (open list),
+        linux-bcache@vger.kernel.org (open list:BCACHE (BLOCK LAYER CACHE))
+Subject: [PATCH] bcache: make stripe_size configurable and persistent for hardware raid5/6
+Date:   Sat, 22 Jun 2019 16:16:09 -0700
+Message-Id: <1561245371-10235-1-git-send-email-bcache@lists.ewheeler.net>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <d3f7fd44-9287-c7fa-ee95-c3b8a4d56c93@suse.de>
+References: <d3f7fd44-9287-c7fa-ee95-c3b8a4d56c93@suse.de>
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+From: Eric Wheeler <git@linux.ewheeler.net>
 
+While some drivers set queue_limits.io_opt (e.g., md raid5), there are
+currently no SCSI/RAID controller drivers that do.  Previously stripe_size
+and partial_stripes_expensive were read-only values and could not be
+tuned by users (eg, for hardware RAID5/6).
 
-From:Miss: Fatima Yusuf.
+This patch enables users to save the optimal IO size via sysfs through
+the backing device attributes stripe_size and partial_stripes_expensive
+into the bcache superblock.
 
-For sure this mail would definitely come to you as a surprise, but do take your good time to go through it, My name is Ms. Fatima Yusuf,i am from Ivory Coast.
+Superblock changes are backwards-compatable:
 
-I lost my parents a year and couple of months ago. My father was a serving director of the Agro-exporting board until his death. He was assassinated by his business partners.Before his death, he made a deposit of US$9.7 Million Dollars here in Cote d'ivoire which was for the purchase of cocoa processing machine and development of another factory before his untimely death.
+*  partial_stripes_expensive: One bit was used in the superblock flags field
 
-Being that this part of the world experiences political and crises time without number, there is no guarantee of lives and properties. I cannot invest this money here any long, despite the fact it had been my late father's industrial plans.
+*  stripe_size: There are eight 64-bit "pad" fields for future use in
+   the superblock which default to 0; from those, 32-bits are now used
+   to save the stripe_size and load at device registration time.
 
-I want you to do me a favor to receive this funds into your country or any safer place as the beneficiary, I have plans to invest this money in continuation with the investment vision of my late father, but not in this place again rather in your country. I have the vision of going into real estate and industrial production or any profitable business venture.
+Signed-off-by: Eric Wheeler <bcache@linux.ewheeler.net>
+---
+ Documentation/admin-guide/bcache.rst | 21 +++++++++++++++++++++
+ drivers/md/bcache/super.c            | 15 ++++++++++++++-
+ drivers/md/bcache/sysfs.c            | 33 +++++++++++++++++++++++++++++++--
+ include/uapi/linux/bcache.h          |  6 ++++--
+ 4 files changed, 70 insertions(+), 5 deletions(-)
 
-I will be ready to compensate you with 20% of the total Amount, now all my hope is banked on you and i really wants to invest this money in your country, where there is stability of Government, political and economic welfare.
+diff --git a/Documentation/admin-guide/bcache.rst b/Documentation/admin-guide/bcache.rst
+index c0ce64d..ef82022 100644
+--- a/Documentation/admin-guide/bcache.rst
++++ b/Documentation/admin-guide/bcache.rst
+@@ -420,6 +420,12 @@ dirty_data
+ label
+   Name of underlying device.
+ 
++partial_stripes_expensive
++  Flag to bcache that partial or unaligned stripe_size'd
++  writes to the backing device are expensive (e.g., RAID5/6 incur
++  read-copy-write). Writing this sysfs attribute updates the superblock
++  and also takes effect immediately.  See also stripe_size, below.
++
+ readahead
+   Size of readahead that should be performed.  Defaults to 0.  If set to e.g.
+   1M, it will round cache miss reads up to that size, but without overlapping
+@@ -458,6 +464,21 @@ stop
+   Write to this file to shut down the bcache device and close the backing
+   device.
+ 
++stripe_size
++  The stripe size in bytes of the backing device for optimial
++  write performance (also known as the "stride width"). This is set
++  automatically when using a device driver sets blk_limits_io_opt
++  (e.g., md, rbd, skd, zram, virtio_blk).  No hardware RAID controller
++  sets blk_limits_io_opt as of 2019-06-15, so configure this to suit
++  your needs.  Note that you must unregister and re-register the backing
++  device after making a change to stripe_size.
++
++  Where N is the number of data disks,
++    RAID5: stripe_size = (N-1)*RAID_CHUNK_SIZE.
++    RAID6: stripe_size = (N-2)*RAID_CHUNK_SIZE.
++
++  See also partial_stripes_expensive, above.
++
+ writeback_delay
+   When dirty data is written to the cache and it previously did not contain
+   any, waits some number of seconds before initiating writeback. Defaults to
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 1b63ac8..d0b9501 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -80,6 +80,7 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
+ 
+ 	sb->flags		= le64_to_cpu(s->flags);
+ 	sb->seq			= le64_to_cpu(s->seq);
++	sb->stripe_size		= le32_to_cpu(s->stripe_size);
+ 	sb->last_mount		= le32_to_cpu(s->last_mount);
+ 	sb->first_bucket	= le16_to_cpu(s->first_bucket);
+ 	sb->keys		= le16_to_cpu(s->keys);
+@@ -221,6 +222,7 @@ static void __write_super(struct cache_sb *sb, struct bio *bio)
+ 
+ 	out->flags		= cpu_to_le64(sb->flags);
+ 	out->seq		= cpu_to_le64(sb->seq);
++	out->stripe_size	= cpu_to_le32(sb->stripe_size);
+ 
+ 	out->last_mount		= cpu_to_le32(sb->last_mount);
+ 	out->first_bucket	= cpu_to_le16(sb->first_bucket);
+@@ -1258,7 +1260,18 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
+ 
+ 	dc->disk.stripe_size = q->limits.io_opt >> 9;
+ 
+-	if (dc->disk.stripe_size)
++	if (dc->sb.stripe_size) {
++		if (dc->disk.stripe_size &&
++		    dc->disk.stripe_size != dc->sb.stripe_size) {
++			pr_warn("superblock stripe_size (%d) overrides bdev stripe_size (%d)\n",
++				(int)dc->sb.stripe_size,
++				(int)dc->disk.stripe_size);
++		}
++
++		dc->disk.stripe_size = dc->sb.stripe_size;
++		dc->partial_stripes_expensive =
++			(unsigned int)BDEV_PARTIAL_STRIPES_EXPENSIVE(&dc->sb);
++	} else if (dc->disk.stripe_size)
+ 		dc->partial_stripes_expensive =
+ 			q->limits.raid_partial_stripes_expensive;
+ 
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index bfb437f..4ebca52 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -111,8 +111,8 @@
+ rw_attribute(writeback_rate_minimum);
+ read_attribute(writeback_rate_debug);
+ 
+-read_attribute(stripe_size);
+-read_attribute(partial_stripes_expensive);
++rw_attribute(stripe_size);
++rw_attribute(partial_stripes_expensive);
+ 
+ rw_attribute(synchronous);
+ rw_attribute(journal_delay_ms);
+@@ -343,6 +343,35 @@ static ssize_t bch_snprint_string_list(char *buf,
+ 		}
+ 	}
+ 
++	if (attr == &sysfs_stripe_size) {
++		int v = strtoul_or_return(buf);
++
++		if (v & 0x1FF) {
++			pr_err("stripe_size must be a muliple of 512-byte sectors");
++			return -EINVAL;
++		}
++
++		v >>= 9;
++
++		if (v != dc->sb.stripe_size) {
++			dc->sb.stripe_size = v;
++			pr_info("stripe_size=%d, re-register to take effect.",
++				v<<9);
++			bch_write_bdev_super(dc, NULL);
++		} else
++			pr_info("stripe_size is already set to %d.", v<<9);
++	}
++
++	if (attr == &sysfs_partial_stripes_expensive) {
++		int v = strtoul_or_return(buf);
++
++		if (v != BDEV_PARTIAL_STRIPES_EXPENSIVE(&dc->sb)) {
++			SET_BDEV_PARTIAL_STRIPES_EXPENSIVE(&dc->sb, v);
++			dc->partial_stripes_expensive = v;
++			bch_write_bdev_super(dc, NULL);
++		}
++	}
++
+ 	if (attr == &sysfs_stop_when_cache_set_failed) {
+ 		v = __sysfs_match_string(bch_stop_on_failure_modes, -1, buf);
+ 		if (v < 0)
+diff --git a/include/uapi/linux/bcache.h b/include/uapi/linux/bcache.h
+index 5d4f58e..ee60914 100644
+--- a/include/uapi/linux/bcache.h
++++ b/include/uapi/linux/bcache.h
+@@ -172,7 +172,9 @@ struct cache_sb {
+ 
+ 	__u64			flags;
+ 	__u64			seq;
+-	__u64			pad[8];
++	__u32			stripe_size;
++	__u32			pad_u32;
++	__u64			pad_u64[7];
+ 
+ 	union {
+ 	struct {
+@@ -230,7 +232,7 @@ static inline _Bool SB_IS_BDEV(const struct cache_sb *sb)
+ #define BDEV_STATE_CLEAN		1U
+ #define BDEV_STATE_DIRTY		2U
+ #define BDEV_STATE_STALE		3U
+-
++BITMASK(BDEV_PARTIAL_STRIPES_EXPENSIVE,	struct cache_sb, flags, 60, 1);
+ /*
+  * Magic numbers
+  *
+-- 
+1.8.3.1
 
-My greatest worry now is how to move out of this country because my uncle is threatening to kill me as he killed my father,Please do not let anybody hear about this, it is between me and you alone because of my security reason.
-
-I am waiting to hear from you.
-Yours Sincerely,
-Miss.Fatima Yusuf.
