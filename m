@@ -2,19 +2,19 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72C05502A1
-	for <lists+linux-bcache@lfdr.de>; Mon, 24 Jun 2019 09:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C408502B8
+	for <lists+linux-bcache@lfdr.de>; Mon, 24 Jun 2019 09:05:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbfFXHAI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 24 Jun 2019 03:00:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53966 "EHLO mx1.suse.de"
+        id S1727488AbfFXHFj (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 24 Jun 2019 03:05:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54712 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726077AbfFXHAI (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:00:08 -0400
+        id S1726340AbfFXHFj (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 24 Jun 2019 03:05:39 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 231F7AF99;
-        Mon, 24 Jun 2019 07:00:06 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id A9FDEAEEC;
+        Mon, 24 Jun 2019 07:05:37 +0000 (UTC)
 Subject: Re: [PATCH] bcache: make stripe_size configurable and persistent for
  hardware raid5/6
 To:     Eric Wheeler <bcache@lists.ewheeler.net>
@@ -30,8 +30,8 @@ References: <d3f7fd44-9287-c7fa-ee95-c3b8a4d56c93@suse.de>
 From:   Coly Li <colyli@suse.de>
 Openpgp: preference=signencrypt
 Organization: SUSE Labs
-Message-ID: <1185f3ad-ac4c-7f48-206f-22fdbbfe289e@suse.de>
-Date:   Mon, 24 Jun 2019 14:57:42 +0800
+Message-ID: <200638b0-7cba-38b4-20c4-b325f3cfe862@suse.de>
+Date:   Mon, 24 Jun 2019 15:05:27 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
  Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
