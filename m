@@ -2,118 +2,88 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A49F552082
-	for <lists+linux-bcache@lfdr.de>; Tue, 25 Jun 2019 03:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 644CF5565E
+	for <lists+linux-bcache@lfdr.de>; Tue, 25 Jun 2019 19:55:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729894AbfFYB7d (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 24 Jun 2019 21:59:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33656 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729601AbfFYB7d (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 24 Jun 2019 21:59:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 071ACAB5F;
-        Tue, 25 Jun 2019 01:59:31 +0000 (UTC)
-Subject: Re: [PATCH] bcache: make stripe_size configurable and persistent for
- hardware raid5/6
-To:     Eric Wheeler <bcache@lists.ewheeler.net>
-Cc:     linux-block@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:BCACHE (BLOCK LAYER CACHE)" <linux-bcache@vger.kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <d3f7fd44-9287-c7fa-ee95-c3b8a4d56c93@suse.de>
- <1561245371-10235-1-git-send-email-bcache@lists.ewheeler.net>
- <200638b0-7cba-38b4-20c4-b325f3cfe862@suse.de>
- <alpine.LRH.2.11.1906241800350.1114@mx.ewheeler.net>
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <8a9131dc-9bf7-a24a-f7b8-35e0c019e905@suse.de>
-Date:   Tue, 25 Jun 2019 09:59:23 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.2
+        id S1730392AbfFYRzA (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 25 Jun 2019 13:55:00 -0400
+Received: from mail-ua1-f49.google.com ([209.85.222.49]:41911 "EHLO
+        mail-ua1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbfFYRzA (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 25 Jun 2019 13:55:00 -0400
+Received: by mail-ua1-f49.google.com with SMTP id 34so7381579uar.8
+        for <linux-bcache@vger.kernel.org>; Tue, 25 Jun 2019 10:55:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=gdftPShtgtHD3PfvB9vRc7NQge9c73h+i9CIjxRDZfI=;
+        b=U7v4+UZzuPCl6jx8ogY/bCD1ADF29Mp8CWOU+gNJc+6Mkwog5pLqqzRlzW2/vTvgi/
+         LZAmBlFjuIiaFhCwvueZIsg3rBTr7Ecg8ApdeIuOOrXPyq3JdeJ+//S789R8cwHSrFOU
+         paMMHo0O9bKWy0LE1rnj6IEO9IMQov2Kd6r687cLjVFuN+L6Iy/wz3/oEKoMh76ZaClF
+         IkshOMi1/rLqBzwgyr0uWJL8cUApbwg2B50XxcGOSHxPBNHN/JS/zPIjDN8He5/jYs4d
+         WbyNLlV702EFlVVBYvwHod0LXnhZRhN4i+u2CaWt49Uex1uZjcZv4k3zPJEBPREHoBoQ
+         n9ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=gdftPShtgtHD3PfvB9vRc7NQge9c73h+i9CIjxRDZfI=;
+        b=JrCkJY4ex0MOoXqNCfIFskneLgPQMRPT//wbitapRi8k9GJ8veTXOlrSBHka8qnSCH
+         am+eQb2tvOiQ4XwyMfiyYLpyxIIFE8OFt4nV+l5YRlVfTssLWwQkq4B6/rEIPqM46m2m
+         K6M6sejJSg/B9GYgqiLSf3IFMPEthMAfQWWuuBJ7hd+zQx/nEDORaYwdvP03RB0cuvd6
+         nk+va96n9bALz+cn+VbWrw1324y+LU7ApfhLNPvnqc4mcJ57UmFtYPwUrfkXljnCDbO0
+         U2aSrQi074wtKVqz5Bn1PARMXPRo7TPDlGcJ4ESHzrU6Dd1rUQdkpnVtVPGeBpns6sxe
+         SV9A==
+X-Gm-Message-State: APjAAAV82q/ni08cbzLm+8vo6yQY7nVqUb5j2w/E8m8345SjZgKcC0LB
+        gqZvmhbIIWYtqaUgmqskTfRSxUpooLC4mC71bPF7/iVw
+X-Google-Smtp-Source: APXvYqz87rqB/QIfKhqOJYTXIWlggL+2r9djEn7+kkXjeNcme9PwPki1DtdcGrHMI97bW95BRamp4zpbAi2sCuw9iC0=
+X-Received: by 2002:a9f:2636:: with SMTP id 51mr55861142uag.16.1561485299474;
+ Tue, 25 Jun 2019 10:54:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.11.1906241800350.1114@mx.ewheeler.net>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Marc Smith <msmith626@gmail.com>
+Date:   Tue, 25 Jun 2019 13:54:48 -0400
+Message-ID: <CAH6h+hd5qZdosqavv_ABHKAgRviUidxH_s3HZtLz5Fntg4Y3+A@mail.gmail.com>
+Subject: I/O Reordering: Cache -> Backing Device
+To:     linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/6/25 2:14 上午, Eric Wheeler wrote:
-> On Mon, 24 Jun 2019, Coly Li wrote:
-> 
->> On 2019/6/23 7:16 上午, Eric Wheeler wrote:
->>> From: Eric Wheeler <git@linux.ewheeler.net>
->>>
->>> While some drivers set queue_limits.io_opt (e.g., md raid5), there are
->>> currently no SCSI/RAID controller drivers that do.  Previously stripe_size
->>> and partial_stripes_expensive were read-only values and could not be
->>> tuned by users (eg, for hardware RAID5/6).
->>>
->>> This patch enables users to save the optimal IO size via sysfs through
->>> the backing device attributes stripe_size and partial_stripes_expensive
->>> into the bcache superblock.
->>>
->>> Superblock changes are backwards-compatable:
->>>
->>> *  partial_stripes_expensive: One bit was used in the superblock flags field
->>>
->>> *  stripe_size: There are eight 64-bit "pad" fields for future use in
->>>    the superblock which default to 0; from those, 32-bits are now used
->>>    to save the stripe_size and load at device registration time.
->>>
->>> Signed-off-by: Eric Wheeler <bcache@linux.ewheeler.net>
->>
->> Hi Eric,
->>
->> In general I am OK with this patch. Since Peter comments lots of SCSI
->> RAID devices reports a stripe width, could you please list the hardware
->> raid devices which don't list stripe size ? Then we can make decision
->> whether it is necessary to have such option enabled.
-> 
-> Perhaps they do not set stripe_width using io_opt? I did a grep to see if 
-> any of them did, but I didn't see them. How is stripe_width indicated by 
-> RAID controllers? 
-> 
-> If they do set io_opt, then at least my Areca 1883 does not set io_opt as 
-> of 4.19.x. I also have a LSI MegaRAID 3108 which does not report io_opt as 
-> of 4.1.x, but that is an older kernel so maybe support has been added 
-> since then.
-> 
-> Martin,
-> 
-> Where would stripe_width be configured in the SCSI drivers? Is it visible 
-> through sysfs or debugfs so I can check my hardware support without 
-> hacking debugging the kernel?
-> 
->>
->> Another point is, this patch changes struct cache_sb, it is no problem
->> to change on-disk format. I plan to update the super block version soon,
->> to store more configuration persistently into super block. stripe_size
->> can be added to cache_sb with other on-disk changes.
-> 
+Hi,
 
-Hi Eric,
+I've been experimenting using bcache and MD RAID on Linux 4.14.91. I
+have a 12-disk RAID6 MD array as the backing device, and a decent NVMe
+SSD as the caching device. I'm testing using write-back mode.
 
-> Maybe bumping version makes sense, but even if you do not, this is safe to 
-> use on systems without bumping the version because the values are unused 
-> and default to 0.
+I've been able to tune the sequential_cutoff so when issuing full
+stripe writes to the bcache device, these bypass hitting the cache
+device and go right into the MD RAID6 array, which seems to be working
+nicely.
 
-Yes, I understand you, it works as you suggested. I need to think how to
-organize all options in struct cache_sb, stripe_size will be arranged
-then. And I will ask help to you for reviewing the changes of on-disk
-format.
+In the next experiment, when performing more random / sequential
+(mixed) writes, the cache device does a nice job of keeping up
+performance. However, when watching the data get flushed from the
+cache device to the backing device (the MD RAID6 volume), it doesn't
+seem the data is being written out as mostly full stripe writes. I get
+a lot of RMW's on the drives, so I don't believe I'm seeing these full
+stripe writes. I was sort of hoping/expecting bcache to do some
+re-ordering with this... there seem to be some knobs in bcache where
+it detects the full stripe size, and it knows partial stripe writes
+are expensive.
 
-Thanks.
+So I guess my question is if it's known that the data is not
+re-ordered using full stripe geometry in bcache, or perhaps this is
+just a tunable that I'm not seeing? It seems bcache has access to this
+data, but maybe this is a future item where it could be implemented?
 
-[snipped]
+The problem of course comes from the the sub-par performance when data
+is flushed from the cache device to the backing device... lots of
+read-modify-writes result in very poor write performance. If the I/O
+was pushed to the backing device as full stripe I/O's (or at least
+mostly) I'd expect to see better performance when flushing the cache.
 
--- 
+Thanks for your time.
 
-Coly Li
+--Marc
