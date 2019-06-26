@@ -2,36 +2,44 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0239055CC5
-	for <lists+linux-bcache@lfdr.de>; Wed, 26 Jun 2019 02:04:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EF5A55CDF
+	for <lists+linux-bcache@lfdr.de>; Wed, 26 Jun 2019 02:23:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbfFZAEd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 25 Jun 2019 20:04:33 -0400
-Received: from mx.ewheeler.net ([66.155.3.69]:46884 "EHLO mx.ewheeler.net"
+        id S1726086AbfFZAXL (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 25 Jun 2019 20:23:11 -0400
+Received: from mx.ewheeler.net ([66.155.3.69]:47178 "EHLO mx.ewheeler.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726539AbfFZAEd (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 25 Jun 2019 20:04:33 -0400
+        id S1725782AbfFZAXL (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 25 Jun 2019 20:23:11 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id 208EDA0692;
-        Wed, 26 Jun 2019 00:04:33 +0000 (UTC)
+        by mx.ewheeler.net (Postfix) with ESMTP id 439D3A0692;
+        Wed, 26 Jun 2019 00:23:10 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at ewheeler.net
 Received: from mx.ewheeler.net ([127.0.0.1])
         by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 6frgO5jbvjWG; Wed, 26 Jun 2019 00:04:32 +0000 (UTC)
+        with LMTP id XUUrvMZH-9KD; Wed, 26 Jun 2019 00:23:09 +0000 (UTC)
 Received: from mx.ewheeler.net (mx.ewheeler.net [66.155.3.69])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 63867A067D;
-        Wed, 26 Jun 2019 00:04:32 +0000 (UTC)
-Date:   Wed, 26 Jun 2019 00:04:32 +0000 (UTC)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id 769DFA067D;
+        Wed, 26 Jun 2019 00:23:09 +0000 (UTC)
+Date:   Wed, 26 Jun 2019 00:23:09 +0000 (UTC)
 From:   Eric Wheeler <bcache@lists.ewheeler.net>
 X-X-Sender: lists@mx.ewheeler.net
-To:     Marc Smith <msmith626@gmail.com>
-cc:     linux-bcache@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: Re: I/O Reordering: Cache -> Backing Device
-In-Reply-To: <CAH6h+hd5qZdosqavv_ABHKAgRviUidxH_s3HZtLz5Fntg4Y3+A@mail.gmail.com>
-Message-ID: <alpine.LRH.2.11.1906260001290.1114@mx.ewheeler.net>
-References: <CAH6h+hd5qZdosqavv_ABHKAgRviUidxH_s3HZtLz5Fntg4Y3+A@mail.gmail.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+cc:     Coly Li <colyli@suse.de>, linux-block@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        "open list\\:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list\\:BCACHE \\(BLOCK LAYER CACHE\\)" 
+        <linux-bcache@vger.kernel.org>
+Subject: Re: [PATCH] bcache: make stripe_size configurable and persistent
+ for hardware raid5/6
+In-Reply-To: <yq17e9ao9c3.fsf@oracle.com>
+Message-ID: <alpine.LRH.2.11.1906260005570.1114@mx.ewheeler.net>
+References: <d3f7fd44-9287-c7fa-ee95-c3b8a4d56c93@suse.de>        <1561245371-10235-1-git-send-email-bcache@lists.ewheeler.net>        <200638b0-7cba-38b4-20c4-b325f3cfe862@suse.de>        <alpine.LRH.2.11.1906241800350.1114@mx.ewheeler.net>
+ <yq17e9ao9c3.fsf@oracle.com>
 User-Agent: Alpine 2.11 (LRH 23 2013-08-11)
 MIME-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
@@ -40,53 +48,77 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, 25 Jun 2019, Marc Smith wrote:
-
-> Hi,
+On Mon, 24 Jun 2019, Martin K. Petersen wrote:
+> > Perhaps they do not set stripe_width using io_opt? I did a grep to see
+> > if any of them did, but I didn't see them. How is stripe_width
+> > indicated by RAID controllers?
 > 
-> I've been experimenting using bcache and MD RAID on Linux 4.14.91. I
-> have a 12-disk RAID6 MD array as the backing device, and a decent NVMe
-> SSD as the caching device. I'm testing using write-back mode.
+> The values are reported in the Block Limits VPD page for each SCSI block
+> device and are thus set by the SCSI disk driver. IOW, the RAID
+> controller device drivers have nothing to do with this.
 > 
-> I've been able to tune the sequential_cutoff so when issuing full
-> stripe writes to the bcache device, these bypass hitting the cache
-> device and go right into the MD RAID6 array, which seems to be working
-> nicely.
+> For RAID controllers specifically, the controller firmware will fill out
+> the VPD fields for each virtual SCSI disk when you configure a RAID
+> set. For pretty much everything else, the Block Limits come straight
+> from the device itself.
 > 
-> In the next experiment, when performing more random / sequential
-> (mixed) writes, the cache device does a nice job of keeping up
-> performance. However, when watching the data get flushed from the
-> cache device to the backing device (the MD RAID6 volume), it doesn't
-> seem the data is being written out as mostly full stripe writes. I get
-> a lot of RMW's on the drives, so I don't believe I'm seeing these full
-> stripe writes. I was sort of hoping/expecting bcache to do some
-> re-ordering with this... there seem to be some knobs in bcache where
-> it detects the full stripe size, and it knows partial stripe writes
-> are expensive.
+> Also note that these values aren't specific to RAID controllers at
+> all. Most new SCSI devices, including disk drives and SSDs, will fill
+> out the Block Limits VPD page one way or the other. Even some USB
+> storage devices are providing this page.
+
+Thanks, that makes sense.  Interesting about USB.
+
+> > If they do set io_opt, then at least my Areca 1883 does not set io_opt
+> > as of 4.19.x. I also have a LSI MegaRAID 3108 which does not report
+> > io_opt as of 4.1.x, but that is an older kernel so maybe support has
+> > been added since then.
 > 
-> So I guess my question is if it's known that the data is not
-> re-ordered using full stripe geometry in bcache, or perhaps this is
-> just a tunable that I'm not seeing? It seems bcache has access to this
-> data, but maybe this is a future item where it could be implemented?
+> I have several MegaRAIDs that all report it. But it depends on the
+> controller firmware.
 > 
-> The problem of course comes from the the sub-par performance when data
-> is flushed from the cache device to the backing device... lots of
-> read-modify-writes result in very poor write performance. If the I/O
-> was pushed to the backing device as full stripe I/O's (or at least
-> mostly) I'd expect to see better performance when flushing the cache.
+> > Is it visible through sysfs or debugfs so I can check my hardware
+> > support without hacking debugging the kernel?
+> 
+> To print the block device topology:
+> 
+>   # lsblk -t
+> 
+> or look up io_opt in sysfs:
+> 
+>   # grep . /sys/block/sdX/queue/optimal_io_size
+> 
+> You can also query a SCSI device's Block Limits directly:
+> 
+>   # sg_vpd -p bl /dev/sdX
 
-You could try turning up /sys/block/bcache0/bcache/writeback_percent .  
-Maybe there aren't enough contiguous regions in the writeback cache to 
-queue for write.
+Perfect, thank you for that.  I've tried the following controllers that I 
+have access to.  One worked (hspa/HP Gen8 Smart Array Controller), but the 
+others I tried are not providing VPDs:
 
-Coly,
+* LSI 2108 (Supermicro)
+* LSI 3108 (Dell)
+* Areca 1882
+* Areca 1883
+* Fibrechannel 8gbe connected to a Storwize 3700
 
-Do you know how the nr_stripes, stripe_sectors_dirty and 
-full_dirty_stripes bitmaps work together to make a best-effort of writing 
-full stripes to the disk, and maybe you can explain under what 
-circumstances partial stripes would be written?
+~]# sg_vpd -p bl /dev/sdb
+VPD page=0xb0
+fetching VPD page failed
 
+> If you want to tinker, you can simulate a SCSI disk with your choice of
+> io_opt:
+> 
+>   # modprobe scsi_debug opt_blks=N
+> 
+> where N is the number of logical blocks to report as being the optimal
+> I/O size.
 
---
-Eric Wheeler
+Neat, thanks for the hint!
 
+-Eric
+
+> 
+> -- 
+> Martin K. Petersen	Oracle Linux Engineering
+> 
