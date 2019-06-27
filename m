@@ -2,36 +2,34 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF691582BE
-	for <lists+linux-bcache@lfdr.de>; Thu, 27 Jun 2019 14:41:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60183582CB
+	for <lists+linux-bcache@lfdr.de>; Thu, 27 Jun 2019 14:45:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfF0MlE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 27 Jun 2019 08:41:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37434 "EHLO mx1.suse.de"
+        id S1726522AbfF0MpI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 27 Jun 2019 08:45:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37866 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726308AbfF0MlE (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 27 Jun 2019 08:41:04 -0400
+        id S1726441AbfF0MpI (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 27 Jun 2019 08:45:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 070E9AE8B;
-        Thu, 27 Jun 2019 12:41:03 +0000 (UTC)
-Subject: Re: I/O Reordering: Cache -> Backing Device
-To:     Vojtech Pavlik <vojtech@suse.com>
-Cc:     Eric Wheeler <bcache@lists.ewheeler.net>,
-        Marc Smith <msmith626@gmail.com>, linux-bcache@vger.kernel.org
-References: <CAH6h+hd5qZdosqavv_ABHKAgRviUidxH_s3HZtLz5Fntg4Y3+A@mail.gmail.com>
- <alpine.LRH.2.11.1906260001290.1114@mx.ewheeler.net>
- <10bdb5ec-ca74-33f9-7482-fa53046d51b9@suse.de>
- <20190627123433.GA15646@suse.cz>
+        by mx1.suse.de (Postfix) with ESMTP id 558F6AEB8;
+        Thu, 27 Jun 2019 12:45:06 +0000 (UTC)
+Subject: Re: [PATCH 06/29] bcache: fix race in btree_flush_write()
 From:   Coly Li <colyli@suse.de>
+To:     baiyaowei@cmss.chinamobile.com
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
+References: <20190614131358.2771-1-colyli@suse.de>
+ <20190614131358.2771-7-colyli@suse.de> <20190627091611.GA15287@byw>
+ <de7bb6aa-a1b1-8b35-82b7-d04fdd63c251@suse.de>
 Openpgp: preference=signencrypt
 Organization: SUSE Labs
-Message-ID: <24945937-a506-2af2-5852-abbde5b49864@suse.de>
-Date:   Thu, 27 Jun 2019 20:40:58 +0800
+Message-ID: <6d5912c7-a399-a7e6-a00a-4d37ce5dec55@suse.de>
+Date:   Thu, 27 Jun 2019 20:45:01 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
  Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190627123433.GA15646@suse.cz>
+In-Reply-To: <de7bb6aa-a1b1-8b35-82b7-d04fdd63c251@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -40,43 +38,91 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/6/27 8:34 下午, Vojtech Pavlik wrote:
-> On Thu, Jun 27, 2019 at 08:13:57PM +0800, Coly Li wrote:
-> 
->>> Do you know how the nr_stripes, stripe_sectors_dirty and 
->>> full_dirty_stripes bitmaps work together to make a best-effort of writing 
->>> full stripes to the disk, and maybe you can explain under what 
->>> circumstances partial stripes would be written?
->> Hi Eric,
+On 2019/6/27 7:47 下午, Coly Li wrote:
+> On 2019/6/27 5:16 下午, Yaowei Bai wrote:
+>> On Fri, Jun 14, 2019 at 09:13:35PM +0800, Coly Li wrote:
+>>> There is a race between mca_reap(), btree_node_free() and journal code
+>>> btree_flush_write(), which results very rare and strange deadlock or
+>>> panic and are very hard to reproduce.
+>>>
+>>> Let me explain how the race happens. In btree_flush_write() one btree
+>>> node with oldest journal pin is selected, then it is flushed to cache
+>>> device, the select-and-flush is a two steps operation. Between these two
+>>> steps, there are something may happen inside the race window,
+>>> - The selected btree node was reaped by mca_reap() and allocated to
+>>>   other requesters for other btree node.
+>>> - The slected btree node was selected, flushed and released by mca
+>>>   shrink callback bch_mca_scan().
+>>> When btree_flush_write() tries to flush the selected btree node, firstly
+>>> b->write_lock is held by mutex_lock(). If the race happens and the
+>>> memory of selected btree node is allocated to other btree node, if that
+>>> btree node's write_lock is held already, a deadlock very probably
+>>> happens here. A worse case is the memory of the selected btree node is
+>>> released, then all references to this btree node (e.g. b->write_lock)
+>>> will trigger NULL pointer deference panic.
+>>>
+>>> This race was introduced in commit cafe56359144 ("bcache: A block layer
+>>> cache"), and enlarged by commit c4dc2497d50d ("bcache: fix high CPU
+>>> occupancy during journal"), which selected 128 btree nodes and flushed
+>>> them one-by-one in a quite long time period.
+>>>
+>>> Such race is not easy to reproduce before. On a Lenovo SR650 server with
+>>> 48 Xeon cores, and configure 1 NVMe SSD as cache device, a MD raid0
+>>> device assembled by 3 NVMe SSDs as backing device, this race can be
+>>> observed around every 10,000 times btree_flush_write() gets called. Both
+>>> deadlock and kernel panic all happened as aftermath of the race.
+>>>
+>>> The idea of the fix is to add a btree flag BTREE_NODE_journal_flush. It
+>>> is set when selecting btree nodes, and cleared after btree nodes
+>>> flushed. Then when mca_reap() selects a btree node with this bit set,
+>>> this btree node will be skipped. Since mca_reap() only reaps btree node
+>>> without BTREE_NODE_journal_flush flag, such race is avoided.
+>>>
+>>> Once corner case should be noticed, that is btree_node_free(). It might
+>>> be called in some error handling code path. For example the following
+>>> code piece from btree_split(),
+>>> 	2149 err_free2:
+>>> 	2150         bkey_put(b->c, &n2->key);
+>>> 	2151         btree_node_free(n2);
+>>> 	2152         rw_unlock(true, n2);
+>>> 	2153 err_free1:
+>>> 	2154         bkey_put(b->c, &n1->key);
+>>> 	2155         btree_node_free(n1);
+>>> 	2156         rw_unlock(true, n1);
+>>> At line 2151 and 2155, the btree node n2 and n1 are released without
+>>> mac_reap(), so BTREE_NODE_journal_flush also needs to be checked here.
+>>> If btree_node_free() is called directly in such error handling path,
+>>> and the selected btree node has BTREE_NODE_journal_flush bit set, just
+>>> wait for 1 jiffy and retry again. In this case this btree node won't
+>>> be skipped, just retry until the BTREE_NODE_journal_flush bit cleared,
+>>> and free the btree node memory.
+>>>
+>>> Wait for 1 jiffy inside btree_node_free() does not hurt too much
+>>> performance here, the reasons are,
+>>> - Error handling code path is not frequently executed, and the race
+>>>   inside this cold path should be very rare. If the very rare race
+>>>   happens in the cold code path, waiting 1 jiffy should be acceptible.
+>>> - If bree_node_free() is called inside mca_reap(), it means the bit
+>>>   BTREE_NODE_journal_flush is checked already, no wait will happen here.
+>>>
+>>> Beside the above fix, the way to select flushing btree nodes is also
+>>> changed in this patch. Let me explain what changes in this patch.
 >>
->> I don't have satisfied answer to the above question. But if upper layers
->> don't issue I/Os with full stripe aligned, bcache cannot do anything
->> more than merging adjacent blocks. But for random I/Os, only a few part
->> of I/O requests can be merged, after writeback thread working for a
->> while, almost all writeback I/Os are small and not stripe-aligned, even
->> they are ordered by LBA address number.
->>
->> Thanks.
+>> Then this change should be split into another patch. :)
 > 
-
-Hi Vojtech,
-
-> I wonder if it'd make sense for bcache on stripe-oriented backing
-> devices to also try to readahead (or read-after) whole stripes from the
-> backing device so that they're present in the cache and then write out a
-> whole stripe even if the whole stripe isn't dirty.
+> Hi Bai,
 > 
-
-Let try it out. I assume if a write request hits a read-in cached full
-stripe, the clean full-stripe-size block will be split into clean and
-dirty part. But I don't fully understand the part of code so far, let me
-try and maybe there is chance to improve (e.g mark the whole stripe as
-dirty and write the whole stripe out).
-
-> Working with whole stripes on a RAID6 makes a huge performance difference.
+> Sure it makes sense. I also realize splitting it into two patches may be
+> helpful for long term kernel maintainers to backport patches without
+> breaking KABI.
 > 
+> I will send a two patches version in the for-5.3 submit.
 
-Thanks for the hint!
+I just realize KABI broken is unavoidable, but splitting this patch into
+two still makes sense, the performance optimization should not go into
+the race fix.
+
+Thanks.
 
 -- 
 
