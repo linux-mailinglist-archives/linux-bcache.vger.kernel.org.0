@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F19B2599F3
-	for <lists+linux-bcache@lfdr.de>; Fri, 28 Jun 2019 14:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 464EE599F6
+	for <lists+linux-bcache@lfdr.de>; Fri, 28 Jun 2019 14:02:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfF1MCd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 28 Jun 2019 08:02:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55390 "EHLO mx1.suse.de"
+        id S1727026AbfF1MCi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 28 Jun 2019 08:02:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55506 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726807AbfF1MCd (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:02:33 -0400
+        id S1727015AbfF1MCi (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 28 Jun 2019 08:02:38 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BA8CCB627;
-        Fri, 28 Jun 2019 12:02:31 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id BBCCEB62D;
+        Fri, 28 Jun 2019 12:02:36 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>, stable@vger.kernel.org
-Subject: [PATCH 35/37] bcache: fix race in btree_flush_write()
-Date:   Fri, 28 Jun 2019 19:59:58 +0800
-Message-Id: <20190628120000.40753-36-colyli@suse.de>
+        Coly Li <colyli@suse.de>
+Subject: [PATCH 36/37] bcache: performance improvement for btree_flush_write()
+Date:   Fri, 28 Jun 2019 19:59:59 +0800
+Message-Id: <20190628120000.40753-37-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190628120000.40753-1-colyli@suse.de>
 References: <20190628120000.40753-1-colyli@suse.de>
@@ -30,184 +30,185 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-There is a race between mca_reap(), btree_node_free() and journal code
-btree_flush_write(), which results very rare and strange deadlock or
-panic and are very hard to reproduce.
+This patch improves performance for btree_flush_write() in following
+ways,
+- Use another spinlock journal.flush_write_lock to replace the very
+  hot journal.lock. We don't have to use journal.lock here, selecting
+  candidate btree nodes takes a lot of time, hold journal.lock here will
+  block other jouranling threads and drop the overall I/O performance.
+- Only select flushing btree node from c->btree_cache list. When the
+  machine has a large system memory, mca cache may have a huge number of
+  cached btree nodes. Iterating all the cached nodes will take a lot
+  of CPU time, and most of the nodes on c->btree_cache_freeable and
+  c->btree_cache_freed lists are cleared and have need to flush. So only
+  travel mca list c->btree_cache to select flushing btree node should be
+  enough for most of the cases.
+- Don't iterate whole c->btree_cache list, only reversely select first
+  BTREE_FLUSH_NR btree nodes to flush. Iterate all btree nodes from
+  c->btree_cache and select the oldest journal pin btree nodes consumes
+  huge number of CPU cycles if the list is huge (push and pop a node
+  into/out of a heap is expensive). The last several dirty btree nodes
+  on the tail of c->btree_cache list are earlest allocated and cached
+  btree nodes, they are relative to the oldest journal pin btree nodes.
+  Therefore only flushing BTREE_FLUSH_NR btree nodes from tail of
+  c->btree_cache probably includes the oldest journal pin btree nodes.
 
-Let me explain how the race happens. In btree_flush_write() one btree
-node with oldest journal pin is selected, then it is flushed to cache
-device, the select-and-flush is a two steps operation. Between these two
-steps, there are something may happen inside the race window,
-- The selected btree node was reaped by mca_reap() and allocated to
-  other requesters for other btree node.
-- The slected btree node was selected, flushed and released by mca
-  shrink callback bch_mca_scan().
-When btree_flush_write() tries to flush the selected btree node, firstly
-b->write_lock is held by mutex_lock(). If the race happens and the
-memory of selected btree node is allocated to other btree node, if that
-btree node's write_lock is held already, a deadlock very probably
-happens here. A worse case is the memory of the selected btree node is
-released, then all references to this btree node (e.g. b->write_lock)
-will trigger NULL pointer deference panic.
+In my testing, the above change decreases 50%+ CPU consumption when
+journal space is full. Some times IOPS drops to 0 for 5-8 seconds,
+comparing blocking I/O for 120+ seconds in previous code, this is much
+better. Maybe there is room to improve in future, but at this momment
+the fix looks fine and performs well in my testing.
 
-This race was introduced in commit cafe56359144 ("bcache: A block layer
-cache"), and enlarged by commit c4dc2497d50d ("bcache: fix high CPU
-occupancy during journal"), which selected 128 btree nodes and flushed
-them one-by-one in a quite long time period.
-
-Such race is not easy to reproduce before. On a Lenovo SR650 server with
-48 Xeon cores, and configure 1 NVMe SSD as cache device, a MD raid0
-device assembled by 3 NVMe SSDs as backing device, this race can be
-observed around every 10,000 times btree_flush_write() gets called. Both
-deadlock and kernel panic all happened as aftermath of the race.
-
-The idea of the fix is to add a btree flag BTREE_NODE_journal_flush. It
-is set when selecting btree nodes, and cleared after btree nodes
-flushed. Then when mca_reap() selects a btree node with this bit set,
-this btree node will be skipped. Since mca_reap() only reaps btree node
-without BTREE_NODE_journal_flush flag, such race is avoided.
-
-Once corner case should be noticed, that is btree_node_free(). It might
-be called in some error handling code path. For example the following
-code piece from btree_split(),
-        2149 err_free2:
-        2150         bkey_put(b->c, &n2->key);
-        2151         btree_node_free(n2);
-        2152         rw_unlock(true, n2);
-        2153 err_free1:
-        2154         bkey_put(b->c, &n1->key);
-        2155         btree_node_free(n1);
-        2156         rw_unlock(true, n1);
-At line 2151 and 2155, the btree node n2 and n1 are released without
-mac_reap(), so BTREE_NODE_journal_flush also needs to be checked here.
-If btree_node_free() is called directly in such error handling path,
-and the selected btree node has BTREE_NODE_journal_flush bit set, just
-delay for 1 us and retry again. In this case this btree node won't
-be skipped, just retry until the BTREE_NODE_journal_flush bit cleared,
-and free the btree node memory.
-
-Fixes: cafe56359144 ("bcache: A block layer cache")
 Signed-off-by: Coly Li <colyli@suse.de>
-Reported-and-tested-by: kbuild test robot <lkp@intel.com>
-Cc: stable@vger.kernel.org
 ---
- drivers/md/bcache/btree.c   | 28 +++++++++++++++++++++++++++-
- drivers/md/bcache/btree.h   |  2 ++
- drivers/md/bcache/journal.c |  7 +++++++
- 3 files changed, 36 insertions(+), 1 deletion(-)
+ drivers/md/bcache/journal.c | 85 +++++++++++++++++++++++++++++++++------------
+ drivers/md/bcache/journal.h |  4 +++
+ 2 files changed, 67 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 846306c3a887..ba434d9ac720 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -35,7 +35,7 @@
- #include <linux/rcupdate.h>
- #include <linux/sched/clock.h>
- #include <linux/rculist.h>
--
-+#include <linux/delay.h>
- #include <trace/events/bcache.h>
- 
- /*
-@@ -659,12 +659,25 @@ static int mca_reap(struct btree *b, unsigned int min_order, bool flush)
- 		up(&b->io_mutex);
- 	}
- 
-+retry:
- 	/*
- 	 * BTREE_NODE_dirty might be cleared in btree_flush_btree() by
- 	 * __bch_btree_node_write(). To avoid an extra flush, acquire
- 	 * b->write_lock before checking BTREE_NODE_dirty bit.
- 	 */
- 	mutex_lock(&b->write_lock);
-+	/*
-+	 * If this btree node is selected in btree_flush_write() by journal
-+	 * code, delay and retry until the node is flushed by journal code
-+	 * and BTREE_NODE_journal_flush bit cleared by btree_flush_write().
-+	 */
-+	if (btree_node_journal_flush(b)) {
-+		pr_debug("bnode %p is flushing by journal, retry", b);
-+		mutex_unlock(&b->write_lock);
-+		udelay(1);
-+		goto retry;
-+	}
-+
- 	if (btree_node_dirty(b))
- 		__bch_btree_node_write(b, &cl);
- 	mutex_unlock(&b->write_lock);
-@@ -1081,7 +1094,20 @@ static void btree_node_free(struct btree *b)
- 
- 	BUG_ON(b == b->c->root);
- 
-+retry:
- 	mutex_lock(&b->write_lock);
-+	/*
-+	 * If the btree node is selected and flushing in btree_flush_write(),
-+	 * delay and retry until the BTREE_NODE_journal_flush bit cleared,
-+	 * then it is safe to free the btree node here. Otherwise this btree
-+	 * node will be in race condition.
-+	 */
-+	if (btree_node_journal_flush(b)) {
-+		mutex_unlock(&b->write_lock);
-+		pr_debug("bnode %p journal_flush set, retry", b);
-+		udelay(1);
-+		goto retry;
-+	}
- 
- 	if (btree_node_dirty(b)) {
- 		btree_complete_write(b, btree_current_write(b));
-diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
-index d1c72ef64edf..76cfd121a486 100644
---- a/drivers/md/bcache/btree.h
-+++ b/drivers/md/bcache/btree.h
-@@ -158,11 +158,13 @@ enum btree_flags {
- 	BTREE_NODE_io_error,
- 	BTREE_NODE_dirty,
- 	BTREE_NODE_write_idx,
-+	BTREE_NODE_journal_flush,
- };
- 
- BTREE_FLAG(io_error);
- BTREE_FLAG(dirty);
- BTREE_FLAG(write_idx);
-+BTREE_FLAG(journal_flush);
- 
- static inline struct btree_write *btree_current_write(struct btree *b)
- {
 diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index 1218e3cada3c..a1e3e1fcea6e 100644
+index a1e3e1fcea6e..8bcd8f1bf8cb 100644
 --- a/drivers/md/bcache/journal.c
 +++ b/drivers/md/bcache/journal.c
-@@ -430,6 +430,7 @@ static void btree_flush_write(struct cache_set *c)
- retry:
- 	best = NULL;
+@@ -419,47 +419,87 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
  
-+	mutex_lock(&c->bucket_lock);
- 	for_each_cached_btree(b, c, i)
- 		if (btree_current_write(b)->journal) {
- 			if (!best)
-@@ -442,15 +443,21 @@ static void btree_flush_write(struct cache_set *c)
+ static void btree_flush_write(struct cache_set *c)
+ {
+-	/*
+-	 * Try to find the btree node with that references the oldest journal
+-	 * entry, best is our current candidate and is locked if non NULL:
+-	 */
+-	struct btree *b, *best;
+-	unsigned int i;
++	struct btree *b, *t, *btree_nodes[BTREE_FLUSH_NR];
++	unsigned int i, n;
++
++	if (c->journal.btree_flushing)
++		return;
++
++	spin_lock(&c->journal.flush_write_lock);
++	if (c->journal.btree_flushing) {
++		spin_unlock(&c->journal.flush_write_lock);
++		return;
++	}
++	c->journal.btree_flushing = true;
++	spin_unlock(&c->journal.flush_write_lock);
+ 
+ 	atomic_long_inc(&c->flush_write);
+-retry:
+-	best = NULL;
++	memset(btree_nodes, 0, sizeof(btree_nodes));
++	n = 0;
+ 
+ 	mutex_lock(&c->bucket_lock);
+-	for_each_cached_btree(b, c, i)
+-		if (btree_current_write(b)->journal) {
+-			if (!best)
+-				best = b;
+-			else if (journal_pin_cmp(c,
+-					btree_current_write(best)->journal,
+-					btree_current_write(b)->journal)) {
+-				best = b;
+-			}
++	list_for_each_entry_safe_reverse(b, t, &c->btree_cache, list) {
++		if (btree_node_journal_flush(b))
++			pr_err("BUG: flush_write bit should not be set here!");
++
++		mutex_lock(&b->write_lock);
++
++		if (!btree_node_dirty(b)) {
++			mutex_unlock(&b->write_lock);
++			continue;
++		}
++
++		if (!btree_current_write(b)->journal) {
++			mutex_unlock(&b->write_lock);
++			continue;
  		}
  
- 	b = best;
-+	if (b)
-+		set_btree_node_journal_flush(b);
-+	mutex_unlock(&c->bucket_lock);
+-	b = best;
+-	if (b)
+ 		set_btree_node_journal_flush(b);
 +
- 	if (b) {
++		mutex_unlock(&b->write_lock);
++
++		btree_nodes[n++] = b;
++		if (n == BTREE_FLUSH_NR)
++			break;
++	}
+ 	mutex_unlock(&c->bucket_lock);
+ 
+-	if (b) {
++	for (i = 0; i < n; i++) {
++		b = btree_nodes[i];
++		if (!b) {
++			pr_err("BUG: btree_nodes[%d] is NULL", i);
++			continue;
++		}
++
++		/* safe to check without holding b->write_lock */
++		if (!btree_node_journal_flush(b)) {
++			pr_err("BUG: bnode %p: journal_flush bit cleaned", b);
++			continue;
++		}
++
  		mutex_lock(&b->write_lock);
  		if (!btree_current_write(b)->journal) {
-+			clear_bit(BTREE_NODE_journal_flush, &b->flags);
+ 			clear_bit(BTREE_NODE_journal_flush, &b->flags);
  			mutex_unlock(&b->write_lock);
- 			/* We raced */
- 			goto retry;
+-			/* We raced */
+-			goto retry;
++			pr_debug("bnode %p: written by others", b);
++			continue;
++		}
++
++		if (!btree_node_dirty(b)) {
++			clear_bit(BTREE_NODE_journal_flush, &b->flags);
++			mutex_unlock(&b->write_lock);
++			pr_debug("bnode %p: dirty bit cleaned by others", b);
++			continue;
  		}
  
  		__bch_btree_node_write(b, NULL);
-+		clear_bit(BTREE_NODE_journal_flush, &b->flags);
+ 		clear_bit(BTREE_NODE_journal_flush, &b->flags);
  		mutex_unlock(&b->write_lock);
  	}
++
++	spin_lock(&c->journal.flush_write_lock);
++	c->journal.btree_flushing = false;
++	spin_unlock(&c->journal.flush_write_lock);
  }
+ 
+ #define last_seq(j)	((j)->seq - fifo_used(&(j)->pin) + 1)
+@@ -881,6 +921,7 @@ int bch_journal_alloc(struct cache_set *c)
+ 	struct journal *j = &c->journal;
+ 
+ 	spin_lock_init(&j->lock);
++	spin_lock_init(&j->flush_write_lock);
+ 	INIT_DELAYED_WORK(&j->work, journal_write_work);
+ 
+ 	c->journal_delay_ms = 100;
+diff --git a/drivers/md/bcache/journal.h b/drivers/md/bcache/journal.h
+index 66f0facff84b..f2ea34d5f431 100644
+--- a/drivers/md/bcache/journal.h
++++ b/drivers/md/bcache/journal.h
+@@ -103,6 +103,8 @@ struct journal_write {
+ /* Embedded in struct cache_set */
+ struct journal {
+ 	spinlock_t		lock;
++	spinlock_t		flush_write_lock;
++	bool			btree_flushing;
+ 	/* used when waiting because the journal was full */
+ 	struct closure_waitlist	wait;
+ 	struct closure		io;
+@@ -154,6 +156,8 @@ struct journal_device {
+ 	struct bio_vec		bv[8];
+ };
+ 
++#define BTREE_FLUSH_NR	8
++
+ #define journal_pin_cmp(c, l, r)				\
+ 	(fifo_idx(&(c)->journal.pin, (l)) > fifo_idx(&(c)->journal.pin, (r)))
+ 
 -- 
 2.16.4
 
