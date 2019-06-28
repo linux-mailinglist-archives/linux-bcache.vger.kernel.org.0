@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A48F6599EF
-	for <lists+linux-bcache@lfdr.de>; Fri, 28 Jun 2019 14:02:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4116C599F1
+	for <lists+linux-bcache@lfdr.de>; Fri, 28 Jun 2019 14:02:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbfF1MCY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 28 Jun 2019 08:02:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55192 "EHLO mx1.suse.de"
+        id S1727014AbfF1MC1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 28 Jun 2019 08:02:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55284 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726807AbfF1MCY (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:02:24 -0400
+        id S1726807AbfF1MC1 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 28 Jun 2019 08:02:27 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0C863B62C;
-        Fri, 28 Jun 2019 12:02:23 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 92B87B636;
+        Fri, 28 Jun 2019 12:02:26 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
         Coly Li <colyli@suse.de>
-Subject: [PATCH 33/37] bcache: add comments for mutex_lock(&b->write_lock)
-Date:   Fri, 28 Jun 2019 19:59:56 +0800
-Message-Id: <20190628120000.40753-34-colyli@suse.de>
+Subject: [PATCH 34/37] bcache: remove retry_flush_write from struct cache_set
+Date:   Fri, 28 Jun 2019 19:59:57 +0800
+Message-Id: <20190628120000.40753-35-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190628120000.40753-1-colyli@suse.de>
 References: <20190628120000.40753-1-colyli@suse.de>
@@ -30,45 +30,73 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-When accessing or modifying BTREE_NODE_dirty bit, it is not always
-necessary to acquire b->write_lock. In bch_btree_cache_free() and
-mca_reap() acquiring b->write_lock is necessary, and this patch adds
-comments to explain why mutex_lock(&b->write_lock) is necessary for
-checking or clearing BTREE_NODE_dirty bit there.
+In struct cache_set, retry_flush_write is added for commit c4dc2497d50d
+("bcache: fix high CPU occupancy during journal") which is reverted in
+previous patch.
+
+Now it is useless anymore, and this patch removes it from bcache code.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/btree.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/md/bcache/bcache.h  | 1 -
+ drivers/md/bcache/journal.c | 1 -
+ drivers/md/bcache/sysfs.c   | 5 -----
+ 3 files changed, 7 deletions(-)
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 88e5aa3fbb07..846306c3a887 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -659,6 +659,11 @@ static int mca_reap(struct btree *b, unsigned int min_order, bool flush)
- 		up(&b->io_mutex);
- 	}
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index cb268d7c6cea..35396248a7d5 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -706,7 +706,6 @@ struct cache_set {
  
-+	/*
-+	 * BTREE_NODE_dirty might be cleared in btree_flush_btree() by
-+	 * __bch_btree_node_write(). To avoid an extra flush, acquire
-+	 * b->write_lock before checking BTREE_NODE_dirty bit.
-+	 */
- 	mutex_lock(&b->write_lock);
- 	if (btree_node_dirty(b))
- 		__bch_btree_node_write(b, &cl);
-@@ -782,6 +787,11 @@ void bch_btree_cache_free(struct cache_set *c)
- 	while (!list_empty(&c->btree_cache)) {
- 		b = list_first_entry(&c->btree_cache, struct btree, list);
+ 	atomic_long_t		reclaim;
+ 	atomic_long_t		flush_write;
+-	atomic_long_t		retry_flush_write;
  
-+		/*
-+		 * This function is called by cache_set_free(), no I/O
-+		 * request on cache now, it is unnecessary to acquire
-+		 * b->write_lock before clearing BTREE_NODE_dirty anymore.
-+		 */
- 		if (btree_node_dirty(b)) {
- 			btree_complete_write(b, btree_current_write(b));
- 			clear_bit(BTREE_NODE_dirty, &b->flags);
+ 	enum			{
+ 		ON_ERROR_UNREGISTER,
+diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+index 14a4e2c44de9..1218e3cada3c 100644
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -447,7 +447,6 @@ static void btree_flush_write(struct cache_set *c)
+ 		if (!btree_current_write(b)->journal) {
+ 			mutex_unlock(&b->write_lock);
+ 			/* We raced */
+-			atomic_long_inc(&c->retry_flush_write);
+ 			goto retry;
+ 		}
+ 
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index d62e28643109..701a386a954c 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -83,7 +83,6 @@ read_attribute(state);
+ read_attribute(cache_read_races);
+ read_attribute(reclaim);
+ read_attribute(flush_write);
+-read_attribute(retry_flush_write);
+ read_attribute(writeback_keys_done);
+ read_attribute(writeback_keys_failed);
+ read_attribute(io_errors);
+@@ -709,9 +708,6 @@ SHOW(__bch_cache_set)
+ 	sysfs_print(flush_write,
+ 		    atomic_long_read(&c->flush_write));
+ 
+-	sysfs_print(retry_flush_write,
+-		    atomic_long_read(&c->retry_flush_write));
+-
+ 	sysfs_print(writeback_keys_done,
+ 		    atomic_long_read(&c->writeback_keys_done));
+ 	sysfs_print(writeback_keys_failed,
+@@ -936,7 +932,6 @@ static struct attribute *bch_cache_set_internal_files[] = {
+ 	&sysfs_cache_read_races,
+ 	&sysfs_reclaim,
+ 	&sysfs_flush_write,
+-	&sysfs_retry_flush_write,
+ 	&sysfs_writeback_keys_done,
+ 	&sysfs_writeback_keys_failed,
+ 
 -- 
 2.16.4
 
