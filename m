@@ -2,128 +2,116 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60183582CB
-	for <lists+linux-bcache@lfdr.de>; Thu, 27 Jun 2019 14:45:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93B255999B
+	for <lists+linux-bcache@lfdr.de>; Fri, 28 Jun 2019 14:00:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbfF0MpI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 27 Jun 2019 08:45:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37866 "EHLO mx1.suse.de"
+        id S1726679AbfF1MAL (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 28 Jun 2019 08:00:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54042 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726441AbfF0MpI (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 27 Jun 2019 08:45:08 -0400
+        id S1726524AbfF1MAK (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 28 Jun 2019 08:00:10 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 558F6AEB8;
-        Thu, 27 Jun 2019 12:45:06 +0000 (UTC)
-Subject: Re: [PATCH 06/29] bcache: fix race in btree_flush_write()
+        by mx1.suse.de (Postfix) with ESMTP id DAED2B631;
+        Fri, 28 Jun 2019 12:00:08 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
-To:     baiyaowei@cmss.chinamobile.com
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-References: <20190614131358.2771-1-colyli@suse.de>
- <20190614131358.2771-7-colyli@suse.de> <20190627091611.GA15287@byw>
- <de7bb6aa-a1b1-8b35-82b7-d04fdd63c251@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <6d5912c7-a399-a7e6-a00a-4d37ce5dec55@suse.de>
-Date:   Thu, 27 Jun 2019 20:45:01 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <de7bb6aa-a1b1-8b35-82b7-d04fdd63c251@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+To:     axboe@kernel.dk
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Coly Li <colyli@suse.de>
+Subject: [PATCH 00/37] bcache patches for Linux v5.3
+Date:   Fri, 28 Jun 2019 19:59:23 +0800
+Message-Id: <20190628120000.40753-1-colyli@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/6/27 7:47 下午, Coly Li wrote:
-> On 2019/6/27 5:16 下午, Yaowei Bai wrote:
->> On Fri, Jun 14, 2019 at 09:13:35PM +0800, Coly Li wrote:
->>> There is a race between mca_reap(), btree_node_free() and journal code
->>> btree_flush_write(), which results very rare and strange deadlock or
->>> panic and are very hard to reproduce.
->>>
->>> Let me explain how the race happens. In btree_flush_write() one btree
->>> node with oldest journal pin is selected, then it is flushed to cache
->>> device, the select-and-flush is a two steps operation. Between these two
->>> steps, there are something may happen inside the race window,
->>> - The selected btree node was reaped by mca_reap() and allocated to
->>>   other requesters for other btree node.
->>> - The slected btree node was selected, flushed and released by mca
->>>   shrink callback bch_mca_scan().
->>> When btree_flush_write() tries to flush the selected btree node, firstly
->>> b->write_lock is held by mutex_lock(). If the race happens and the
->>> memory of selected btree node is allocated to other btree node, if that
->>> btree node's write_lock is held already, a deadlock very probably
->>> happens here. A worse case is the memory of the selected btree node is
->>> released, then all references to this btree node (e.g. b->write_lock)
->>> will trigger NULL pointer deference panic.
->>>
->>> This race was introduced in commit cafe56359144 ("bcache: A block layer
->>> cache"), and enlarged by commit c4dc2497d50d ("bcache: fix high CPU
->>> occupancy during journal"), which selected 128 btree nodes and flushed
->>> them one-by-one in a quite long time period.
->>>
->>> Such race is not easy to reproduce before. On a Lenovo SR650 server with
->>> 48 Xeon cores, and configure 1 NVMe SSD as cache device, a MD raid0
->>> device assembled by 3 NVMe SSDs as backing device, this race can be
->>> observed around every 10,000 times btree_flush_write() gets called. Both
->>> deadlock and kernel panic all happened as aftermath of the race.
->>>
->>> The idea of the fix is to add a btree flag BTREE_NODE_journal_flush. It
->>> is set when selecting btree nodes, and cleared after btree nodes
->>> flushed. Then when mca_reap() selects a btree node with this bit set,
->>> this btree node will be skipped. Since mca_reap() only reaps btree node
->>> without BTREE_NODE_journal_flush flag, such race is avoided.
->>>
->>> Once corner case should be noticed, that is btree_node_free(). It might
->>> be called in some error handling code path. For example the following
->>> code piece from btree_split(),
->>> 	2149 err_free2:
->>> 	2150         bkey_put(b->c, &n2->key);
->>> 	2151         btree_node_free(n2);
->>> 	2152         rw_unlock(true, n2);
->>> 	2153 err_free1:
->>> 	2154         bkey_put(b->c, &n1->key);
->>> 	2155         btree_node_free(n1);
->>> 	2156         rw_unlock(true, n1);
->>> At line 2151 and 2155, the btree node n2 and n1 are released without
->>> mac_reap(), so BTREE_NODE_journal_flush also needs to be checked here.
->>> If btree_node_free() is called directly in such error handling path,
->>> and the selected btree node has BTREE_NODE_journal_flush bit set, just
->>> wait for 1 jiffy and retry again. In this case this btree node won't
->>> be skipped, just retry until the BTREE_NODE_journal_flush bit cleared,
->>> and free the btree node memory.
->>>
->>> Wait for 1 jiffy inside btree_node_free() does not hurt too much
->>> performance here, the reasons are,
->>> - Error handling code path is not frequently executed, and the race
->>>   inside this cold path should be very rare. If the very rare race
->>>   happens in the cold code path, waiting 1 jiffy should be acceptible.
->>> - If bree_node_free() is called inside mca_reap(), it means the bit
->>>   BTREE_NODE_journal_flush is checked already, no wait will happen here.
->>>
->>> Beside the above fix, the way to select flushing btree nodes is also
->>> changed in this patch. Let me explain what changes in this patch.
->>
->> Then this change should be split into another patch. :)
-> 
-> Hi Bai,
-> 
-> Sure it makes sense. I also realize splitting it into two patches may be
-> helpful for long term kernel maintainers to backport patches without
-> breaking KABI.
-> 
-> I will send a two patches version in the for-5.3 submit.
+Hi Jens,
 
-I just realize KABI broken is unavoidable, but splitting this patch into
-two still makes sense, the performance optimization should not go into
-the race fix.
+Here are the bcache patches for Linux v5.3. All these patches are
+tested for a while and survived from my smoking and pressure testings.
 
-Thanks.
+This run we have Alexandru Ardelean contributes a clean up patch. The
+rested patches are from me, there is an important race fix has the
+following patches involved in,
+- bcache: Revert "bcache: free heap cache_set->flush_btree in
+  bch_journal_free"
+- bcache: Revert "bcache: fix high CPU occupancy during journal"
+- bcache: remove retry_flush_write from struct cache_set
+- bcache: fix race in btree_flush_write()
+- bcache: performance improvement for btree_flush_write()
+- bcache: add reclaimed_journal_buckets to struct cache_set
+On a Lenovo SR650 server (48 cores, 200G dram, 1T NVMe SSD as cache
+device and 12T NVMe SSD as backing device), without this fix, bcache
+can only run 40 around minutes before deadlock or panic happens. Now
+I don't observe any deadlock or panic for 5+ hours smoking test.
+
+Please pick them for Linux v5.3, and thank you in advance.
+
+Coly Li 
+---
+
+Alexandru Ardelean (1):
+  bcache: use sysfs_match_string() instead of __sysfs_match_string()
+
+Coly Li (36):
+  bcache: don't set max writeback rate if gc is running
+  bcache: check c->gc_thread by IS_ERR_OR_NULL in cache_set_flush()
+  bcache: fix return value error in bch_journal_read()
+  Revert "bcache: set CACHE_SET_IO_DISABLE in bch_cached_dev_error()"
+  bcache: avoid flushing btree node in cache_set_flush() if io disabled
+  bcache: ignore read-ahead request failure on backing device
+  bcache: add io error counting in write_bdev_super_endio()
+  bcache: remove unnecessary prefetch() in bset_search_tree()
+  bcache: add return value check to bch_cached_dev_run()
+  bcache: remove unncessary code in bch_btree_keys_init()
+  bcache: check CACHE_SET_IO_DISABLE in allocator code
+  bcache: check CACHE_SET_IO_DISABLE bit in bch_journal()
+  bcache: more detailed error message to bcache_device_link()
+  bcache: add more error message in bch_cached_dev_attach()
+  bcache: improve error message in bch_cached_dev_run()
+  bcache: remove "XXX:" comment line from run_cache_set()
+  bcache: make bset_search_tree() be more understandable
+  bcache: add pendings_cleanup to stop pending bcache device
+  bcache: fix mistaken sysfs entry for io_error counter
+  bcache: destroy dc->writeback_write_wq if failed to create
+    dc->writeback_thread
+  bcache: stop writeback kthread and kworker when bch_cached_dev_run()
+    failed
+  bcache: avoid a deadlock in bcache_reboot()
+  bcache: acquire bch_register_lock later in cached_dev_detach_finish()
+  bcache: acquire bch_register_lock later in cached_dev_free()
+  bcache: fix potential deadlock in cached_def_free()
+  bcache: add code comments for journal_read_bucket()
+  bcache: set largest seq to ja->seq[bucket_index] in
+    journal_read_bucket()
+  bcache: shrink btree node cache after bch_btree_check()
+  bcache: Revert "bcache: free heap cache_set->flush_btree in
+    bch_journal_free"
+  bcache: Revert "bcache: fix high CPU occupancy during journal"
+  bcache: only clear BTREE_NODE_dirty bit when it is set
+  bcache: add comments for mutex_lock(&b->write_lock)
+  bcache: remove retry_flush_write from struct cache_set
+  bcache: fix race in btree_flush_write()
+  bcache: performance improvement for btree_flush_write()
+  bcache: add reclaimed_journal_buckets to struct cache_set
+
+ drivers/md/bcache/alloc.c     |   9 ++
+ drivers/md/bcache/bcache.h    |   6 +-
+ drivers/md/bcache/bset.c      |  61 ++++--------
+ drivers/md/bcache/btree.c     |  53 ++++++++--
+ drivers/md/bcache/btree.h     |   2 +
+ drivers/md/bcache/io.c        |  12 +++
+ drivers/md/bcache/journal.c   | 141 ++++++++++++++++++--------
+ drivers/md/bcache/journal.h   |   4 +
+ drivers/md/bcache/super.c     | 227 ++++++++++++++++++++++++++++++++++--------
+ drivers/md/bcache/sysfs.c     |  67 +++++++++----
+ drivers/md/bcache/util.h      |   2 -
+ drivers/md/bcache/writeback.c |   8 ++
+ 12 files changed, 432 insertions(+), 160 deletions(-)
 
 -- 
+2.16.4
 
-Coly Li
