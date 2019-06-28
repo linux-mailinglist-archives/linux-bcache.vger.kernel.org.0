@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0CDF599A7
-	for <lists+linux-bcache@lfdr.de>; Fri, 28 Jun 2019 14:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1D91599A9
+	for <lists+linux-bcache@lfdr.de>; Fri, 28 Jun 2019 14:00:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfF1MAb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 28 Jun 2019 08:00:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54150 "EHLO mx1.suse.de"
+        id S1726900AbfF1MAf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 28 Jun 2019 08:00:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54192 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726837AbfF1MAb (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:00:31 -0400
+        id S1726837AbfF1MAf (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 28 Jun 2019 08:00:35 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2941BB631;
-        Fri, 28 Jun 2019 12:00:30 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 0ECE1B631;
+        Fri, 28 Jun 2019 12:00:34 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>
-Subject: [PATCH 05/37] bcache: avoid flushing btree node in cache_set_flush() if io disabled
-Date:   Fri, 28 Jun 2019 19:59:28 +0800
-Message-Id: <20190628120000.40753-6-colyli@suse.de>
+        Coly Li <colyli@suse.de>, stable@vger.kernel.org
+Subject: [PATCH 06/37] bcache: ignore read-ahead request failure on backing device
+Date:   Fri, 28 Jun 2019 19:59:29 +0800
+Message-Id: <20190628120000.40753-7-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190628120000.40753-1-colyli@suse.de>
 References: <20190628120000.40753-1-colyli@suse.de>
@@ -30,50 +30,53 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-When cache_set_flush() is called for too many I/O errors detected on
-cache device and the cache set is retiring, inside the function it
-doesn't make sense to flushing cached btree nodes from c->btree_cache
-because CACHE_SET_IO_DISABLE is set on c->flags already and all I/Os
-onto cache device will be rejected.
+When md raid device (e.g. raid456) is used as backing device, read-ahead
+requests on a degrading and recovering md raid device might be failured
+immediately by md raid code, but indeed this md raid array can still be
+read or write for normal I/O requests. Therefore such failed read-ahead
+request are not real hardware failure. Further more, after degrading and
+recovering accomplished, read-ahead requests will be handled by md raid
+array again.
 
-This patch checks in cache_set_flush() that whether CACHE_SET_IO_DISABLE
-is set. If yes, then avoids to flush the cached btree nodes to reduce
-more time and make cache set retiring more faster.
+For such condition, I/O failures of read-ahead requests don't indicate
+real health status (because normal I/O still be served), they should not
+be counted into I/O error counter dc->io_errors.
 
+Since there is no simple way to detect whether the backing divice is a
+md raid device, this patch simply ignores I/O failures for read-ahead
+bios on backing device, to avoid bogus backing device failure on a
+degrading md raid array.
+
+Suggested-and-tested-by: Thorsten Knabe <linux@thorsten-knabe.de>
 Signed-off-by: Coly Li <colyli@suse.de>
+Cc: stable@vger.kernel.org
 ---
- drivers/md/bcache/super.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ drivers/md/bcache/io.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index ba2ad093bc80..dc6702c2c4b6 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1553,13 +1553,17 @@ static void cache_set_flush(struct closure *cl)
- 	if (!IS_ERR_OR_NULL(c->root))
- 		list_add(&c->root->list, &c->btree_cache);
+diff --git a/drivers/md/bcache/io.c b/drivers/md/bcache/io.c
+index c25097968319..4d93f07f63e5 100644
+--- a/drivers/md/bcache/io.c
++++ b/drivers/md/bcache/io.c
+@@ -58,6 +58,18 @@ void bch_count_backing_io_errors(struct cached_dev *dc, struct bio *bio)
  
--	/* Should skip this if we're unregistering because of an error */
--	list_for_each_entry(b, &c->btree_cache, list) {
--		mutex_lock(&b->write_lock);
--		if (btree_node_dirty(b))
--			__bch_btree_node_write(b, NULL);
--		mutex_unlock(&b->write_lock);
--	}
+ 	WARN_ONCE(!dc, "NULL pointer of struct cached_dev");
+ 
 +	/*
-+	 * Avoid flushing cached nodes if cache set is retiring
-+	 * due to too many I/O errors detected.
++	 * Read-ahead requests on a degrading and recovering md raid
++	 * (e.g. raid6) device might be failured immediately by md
++	 * raid code, which is not a real hardware media failure. So
++	 * we shouldn't count failed REQ_RAHEAD bio to dc->io_errors.
 +	 */
-+	if (!test_bit(CACHE_SET_IO_DISABLE, &c->flags))
-+		list_for_each_entry(b, &c->btree_cache, list) {
-+			mutex_lock(&b->write_lock);
-+			if (btree_node_dirty(b))
-+				__bch_btree_node_write(b, NULL);
-+			mutex_unlock(&b->write_lock);
-+		}
- 
- 	for_each_cache(ca, c, i)
- 		if (ca->alloc_thread)
++	if (bio->bi_opf & REQ_RAHEAD) {
++		pr_warn_ratelimited("%s: Read-ahead I/O failed on backing device, ignore",
++				    dc->backing_dev_name);
++		return;
++	}
++
+ 	errors = atomic_add_return(1, &dc->io_errors);
+ 	if (errors < dc->error_limit)
+ 		pr_err("%s: IO error on backing device, unrecoverable",
 -- 
 2.16.4
 
