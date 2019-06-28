@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13D33599CD
-	for <lists+linux-bcache@lfdr.de>; Fri, 28 Jun 2019 14:01:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C00599CF
+	for <lists+linux-bcache@lfdr.de>; Fri, 28 Jun 2019 14:01:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfF1MBW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 28 Jun 2019 08:01:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54576 "EHLO mx1.suse.de"
+        id S1726988AbfF1MB0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 28 Jun 2019 08:01:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54600 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726957AbfF1MBW (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:01:22 -0400
+        id S1726957AbfF1MB0 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 28 Jun 2019 08:01:26 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5AD35B627;
-        Fri, 28 Jun 2019 12:01:21 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 718FAB627;
+        Fri, 28 Jun 2019 12:01:25 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
         Coly Li <colyli@suse.de>
-Subject: [PATCH 18/37] bcache: make bset_search_tree() be more understandable
-Date:   Fri, 28 Jun 2019 19:59:41 +0800
-Message-Id: <20190628120000.40753-19-colyli@suse.de>
+Subject: [PATCH 19/37] bcache: add pendings_cleanup to stop pending bcache device
+Date:   Fri, 28 Jun 2019 19:59:42 +0800
+Message-Id: <20190628120000.40753-20-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190628120000.40753-1-colyli@suse.de>
 References: <20190628120000.40753-1-colyli@suse.de>
@@ -30,68 +30,104 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The purpose of following code in bset_search_tree() is to avoid a branch
-instruction,
- 994         if (likely(f->exponent != 127))
- 995                 n = j * 2 + (((unsigned int)
- 996                               (f->mantissa -
- 997                                bfloat_mantissa(search, f))) >> 31);
- 998         else
- 999                 n = (bkey_cmp(tree_to_bkey(t, j), search) > 0)
-1000                         ? j * 2
-1001                         : j * 2 + 1;
+If a bcache device is in dirty state and its cache set is not
+registered, this bcache device will not appear in /dev/bcache<N>,
+and there is no way to stop it or remove the bcache kernel module.
 
-This piece of code is not very clear to understand, even when I tried to
-add code comment for it, I made mistake. This patch removes the implict
-bit operation and uses explicit branch to calculate next location in
-binary tree search.
+This is an as-designed behavior, but sometimes people has to reboot
+whole system to release or stop the pending backing device.
+
+This sysfs interface may remove such pending bcache devices when
+write anything into the sysfs file manually.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/bset.c | 30 +++++++++++-------------------
- 1 file changed, 11 insertions(+), 19 deletions(-)
+ drivers/md/bcache/super.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
-index 8af9509e78bd..08768796b543 100644
---- a/drivers/md/bcache/bset.c
-+++ b/drivers/md/bcache/bset.c
-@@ -975,25 +975,17 @@ static struct bset_search_iter bset_search_tree(struct bset_tree *t,
- 		j = n;
- 		f = &t->tree[j];
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index c53fe0f1629f..c4c4b2d99dc2 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2273,9 +2273,13 @@ static int register_cache(struct cache_sb *sb, struct page *sb_page,
  
--		/*
--		 * Similar bit trick, use subtract operation to avoid a branch
--		 * instruction.
--		 *
--		 * n = (f->mantissa > bfloat_mantissa())
--		 *	? j * 2
--		 *	: j * 2 + 1;
--		 *
--		 * We need to subtract 1 from f->mantissa for the sign bit trick
--		 * to work  - that's done in make_bfloat()
--		 */
--		if (likely(f->exponent != 127))
--			n = j * 2 + (((unsigned int)
--				      (f->mantissa -
--				       bfloat_mantissa(search, f))) >> 31);
--		else
--			n = (bkey_cmp(tree_to_bkey(t, j), search) > 0)
--				? j * 2
--				: j * 2 + 1;
-+		if (likely(f->exponent != 127)) {
-+			if (f->mantissa >= bfloat_mantissa(search, f))
-+				n = j * 2;
-+			else
-+				n = j * 2 + 1;
-+		} else {
-+			if (bkey_cmp(tree_to_bkey(t, j), search) > 0)
-+				n = j * 2;
-+			else
-+				n = j * 2 + 1;
+ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 			       const char *buffer, size_t size);
++static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
++					 struct kobj_attribute *attr,
++					 const char *buffer, size_t size);
+ 
+ kobj_attribute_write(register,		register_bcache);
+ kobj_attribute_write(register_quiet,	register_bcache);
++kobj_attribute_write(pendings_cleanup,	bch_pending_bdevs_cleanup);
+ 
+ static bool bch_is_open_backing(struct block_device *bdev)
+ {
+@@ -2400,6 +2404,56 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 	goto out;
+ }
+ 
++
++struct pdev {
++	struct list_head list;
++	struct cached_dev *dc;
++};
++
++static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
++					 struct kobj_attribute *attr,
++					 const char *buffer,
++					 size_t size)
++{
++	LIST_HEAD(pending_devs);
++	ssize_t ret = size;
++	struct cached_dev *dc, *tdc;
++	struct pdev *pdev, *tpdev;
++	struct cache_set *c, *tc;
++
++	mutex_lock(&bch_register_lock);
++	list_for_each_entry_safe(dc, tdc, &uncached_devices, list) {
++		pdev = kmalloc(sizeof(struct pdev), GFP_KERNEL);
++		if (!pdev)
++			break;
++		pdev->dc = dc;
++		list_add(&pdev->list, &pending_devs);
++	}
++
++	list_for_each_entry_safe(pdev, tpdev, &pending_devs, list) {
++		list_for_each_entry_safe(c, tc, &bch_cache_sets, list) {
++			char *pdev_set_uuid = pdev->dc->sb.set_uuid;
++			char *set_uuid = c->sb.uuid;
++
++			if (!memcmp(pdev_set_uuid, set_uuid, 16)) {
++				list_del(&pdev->list);
++				kfree(pdev);
++				break;
++			}
 +		}
- 	} while (n < t->size);
++	}
++	mutex_unlock(&bch_register_lock);
++
++	list_for_each_entry_safe(pdev, tpdev, &pending_devs, list) {
++		pr_info("delete pdev %p", pdev);
++		list_del(&pdev->list);
++		bcache_device_stop(&pdev->dc->disk);
++		kfree(pdev);
++	}
++
++	return ret;
++}
++
+ static int bcache_reboot(struct notifier_block *n, unsigned long code, void *x)
+ {
+ 	if (code == SYS_DOWN ||
+@@ -2518,6 +2572,7 @@ static int __init bcache_init(void)
+ 	static const struct attribute *files[] = {
+ 		&ksysfs_register.attr,
+ 		&ksysfs_register_quiet.attr,
++		&ksysfs_pendings_cleanup.attr,
+ 		NULL
+ 	};
  
- 	inorder = to_inorder(j, t);
 -- 
 2.16.4
 
