@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43893599CA
-	for <lists+linux-bcache@lfdr.de>; Fri, 28 Jun 2019 14:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13D33599CD
+	for <lists+linux-bcache@lfdr.de>; Fri, 28 Jun 2019 14:01:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbfF1MBS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 28 Jun 2019 08:01:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54552 "EHLO mx1.suse.de"
+        id S1726986AbfF1MBW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 28 Jun 2019 08:01:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54576 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726957AbfF1MBS (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 28 Jun 2019 08:01:18 -0400
+        id S1726957AbfF1MBW (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 28 Jun 2019 08:01:22 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8462BB627;
-        Fri, 28 Jun 2019 12:01:17 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 5AD35B627;
+        Fri, 28 Jun 2019 12:01:21 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
         Coly Li <colyli@suse.de>
-Subject: [PATCH 17/37] bcache: remove "XXX:" comment line from run_cache_set()
-Date:   Fri, 28 Jun 2019 19:59:40 +0800
-Message-Id: <20190628120000.40753-18-colyli@suse.de>
+Subject: [PATCH 18/37] bcache: make bset_search_tree() be more understandable
+Date:   Fri, 28 Jun 2019 19:59:41 +0800
+Message-Id: <20190628120000.40753-19-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20190628120000.40753-1-colyli@suse.de>
 References: <20190628120000.40753-1-colyli@suse.de>
@@ -30,29 +30,68 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In previous bcache patches for Linux v5.2, the failure code path of
-run_cache_set() is tested and fixed. So now the following comment
-line can be removed from run_cache_set(),
-	/* XXX: test this, it's broken */
+The purpose of following code in bset_search_tree() is to avoid a branch
+instruction,
+ 994         if (likely(f->exponent != 127))
+ 995                 n = j * 2 + (((unsigned int)
+ 996                               (f->mantissa -
+ 997                                bfloat_mantissa(search, f))) >> 31);
+ 998         else
+ 999                 n = (bkey_cmp(tree_to_bkey(t, j), search) > 0)
+1000                         ? j * 2
+1001                         : j * 2 + 1;
+
+This piece of code is not very clear to understand, even when I tried to
+add code comment for it, I made mistake. This patch removes the implict
+bit operation and uses explicit branch to calculate next location in
+binary tree search.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bcache/bset.c | 30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index e9e6d653bf70..c53fe0f1629f 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1979,7 +1979,7 @@ static int run_cache_set(struct cache_set *c)
- 	}
+diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+index 8af9509e78bd..08768796b543 100644
+--- a/drivers/md/bcache/bset.c
++++ b/drivers/md/bcache/bset.c
+@@ -975,25 +975,17 @@ static struct bset_search_iter bset_search_tree(struct bset_tree *t,
+ 		j = n;
+ 		f = &t->tree[j];
  
- 	closure_sync(&cl);
--	/* XXX: test this, it's broken */
-+
- 	bch_cache_set_error(c, "%s", err);
+-		/*
+-		 * Similar bit trick, use subtract operation to avoid a branch
+-		 * instruction.
+-		 *
+-		 * n = (f->mantissa > bfloat_mantissa())
+-		 *	? j * 2
+-		 *	: j * 2 + 1;
+-		 *
+-		 * We need to subtract 1 from f->mantissa for the sign bit trick
+-		 * to work  - that's done in make_bfloat()
+-		 */
+-		if (likely(f->exponent != 127))
+-			n = j * 2 + (((unsigned int)
+-				      (f->mantissa -
+-				       bfloat_mantissa(search, f))) >> 31);
+-		else
+-			n = (bkey_cmp(tree_to_bkey(t, j), search) > 0)
+-				? j * 2
+-				: j * 2 + 1;
++		if (likely(f->exponent != 127)) {
++			if (f->mantissa >= bfloat_mantissa(search, f))
++				n = j * 2;
++			else
++				n = j * 2 + 1;
++		} else {
++			if (bkey_cmp(tree_to_bkey(t, j), search) > 0)
++				n = j * 2;
++			else
++				n = j * 2 + 1;
++		}
+ 	} while (n < t->size);
  
- 	return -EIO;
+ 	inorder = to_inorder(j, t);
 -- 
 2.16.4
 
