@@ -2,71 +2,72 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C34B5ACAE
-	for <lists+linux-bcache@lfdr.de>; Sat, 29 Jun 2019 19:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F9D5B2E7
+	for <lists+linux-bcache@lfdr.de>; Mon,  1 Jul 2019 04:24:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfF2RXY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 29 Jun 2019 13:23:24 -0400
-Received: from lkcl.net ([217.147.94.29]:42415 "EHLO lkcl.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726837AbfF2RXY (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 29 Jun 2019 13:23:24 -0400
-X-Greylist: delayed 2287 seconds by postgrey-1.27 at vger.kernel.org; Sat, 29 Jun 2019 13:23:23 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lkcl.net; s=201607131;
-        h=Content-Type:Cc:To:Subject:Message-ID:Date:From:MIME-Version; bh=s/sTi+hASQyPaQRLVOOh9ET0ya6bVtdjcUHl64yNEJw=;
-        b=RKPqwaFSFIFMxHCBw4GHqMY/1g7FEz7d0qo3eSy8ZtoC7DxmMt9BSLvCKb5oZ9PmwTer3bGW1sgc1Yo+fJXcBI3Q4RSrGfZqhPAF4G0BKV3t6bwaoktseUAjQmbGjVlLm2BGnRSsPcHX9jwNWu4IPsi9pxRRoghqesCT8zjPfkI=;
-Received: from mail-lj1-f176.google.com ([209.85.208.176])
-        by lkcl.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <lkcl@lkcl.net>)
-        id 1hhGTS-0008P0-Rf; Sat, 29 Jun 2019 16:45:14 +0000
-Received: by mail-lj1-f176.google.com with SMTP id t28so8909104lje.9;
-        Sat, 29 Jun 2019 09:44:59 -0700 (PDT)
-X-Gm-Message-State: APjAAAXeYxu9TidZ+kwM0+MFIZCL45e0dxzD9Jul0xAThrxOt+UTUiD6
-        D82ieLKUDH2aL1MtJeSx2+FeZEFPsrSK6HnZLHs=
-X-Google-Smtp-Source: APXvYqyT3rBGT+21WQD3pj3PIsLlCJsWc/KxmRIzx71GAXDRlfDfgfqr73eWhFqOZ/B2TWPMlCqEQW13yM2ujHPob5E=
-X-Received: by 2002:a2e:94cb:: with SMTP id r11mr8821456ljh.212.1561826376022;
- Sat, 29 Jun 2019 09:39:36 -0700 (PDT)
+        id S1726712AbfGACYH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 30 Jun 2019 22:24:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34094 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726787AbfGACYH (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 30 Jun 2019 22:24:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 091FAAD14;
+        Mon,  1 Jul 2019 02:24:06 +0000 (UTC)
+Subject: Re: I/O Reordering: Cache -> Backing Device
+To:     Don Doerner <Don.Doerner@Quantum.Com>
+References: <BYAPR14MB27766E20D92C2A07217C2DF9FCFC0@BYAPR14MB2776.namprd14.prod.outlook.com>
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Organization: SUSE Labs
+Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
+Message-ID: <d06e4a83-c314-46b7-72ea-97e455acd69f@suse.de>
+Date:   Mon, 1 Jul 2019 10:23:59 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-From:   Luke Kenneth Casson Leighton <lkcl@lkcl.net>
-Date:   Sat, 29 Jun 2019 17:39:24 +0100
-X-Gmail-Original-Message-ID: <CAPweEDxufL1SHCh2ao7600fF9+aciMhr2V_5vxQN6S8r=u2W4g@mail.gmail.com>
-Message-ID: <CAPweEDxufL1SHCh2ao7600fF9+aciMhr2V_5vxQN6S8r=u2W4g@mail.gmail.com>
-Subject: Re: bcachefs status update (it's done cooking; let's get this sucker merged)
-To:     torvalds@linux-foundation.org
-Cc:     akpm@linux-foundation.org, axboe@kernel.dk,
-        darrick.wong@oracle.com, david@fromorbit.com, dchinner@redhat.com,
-        josef@toxicpanda.com, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, tj@kernel.org,
-        viro@zeniv.linux.org.uk, zach.brown@ni.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <BYAPR14MB27766E20D92C2A07217C2DF9FCFC0@BYAPR14MB2776.namprd14.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-hey linus, you made news again, all blown up and pointless again.
-you're doing great: you're being honest. remember the offer i made to
-put you in touch with my friend.
+On 2019/6/29 5:56 上午, Don Doerner wrote:
+> Hello,
+> I'm also interested in using bcache to facilitate stripe re-ass'y for the backing device.  I've done some experiments that dovetail with some of the traffic on this mailing list.  Specifically, in this message (https://www.spinics.net/lists/linux-bcache/msg07590.html), Eric suggested "...turning up /sys/block/bcache0/bcache/writeback_percent..." to increase the contiguous data in the cache.
+> My RAID-6 has a stripe size of 2.5MiB, and its bcache'ed with a few hundred GB of NVMe storage.  Here's my experiment:
+> * I made the cache a write back cache: echo writeback > /sys/block/bcache0/bcache/cache_mode
+> * I plugged the cache: echo 0 > /sys/block/bcache0/bcache/writeback_running
+> * I use a pathological I/O pattern, generated with 'fio': fio --bs=128K --direct=1 --rw=randwrite --ioengine=libaio --iodepth=1 --numjobs=1 --size=40G --name=/dev/bcache0.  I let it run to completion, at which point I believe I should have 40 GiB of sequential dirty data in cache, but not put there sequentially.  In essence, I should have ~16K complete stripes sitting in the cache, waiting to be written.
+> * I set stuff up to go like a bat: echo 0 > /sys/block/bcache0/bcache/writeback_percent; echo 0 > /sys/block/bcache0/bcache/writeback_delay; echo 2097152 > /sys/block/bcache0/bcache/writeback_rate
+> * And I unplugged the cache: echo 1 > /sys/block/bcache0/bcache/writeback_running
+> I then watched 'iostat', and saw that there were lots of read operations (statistically, after merging, about 1 read for every 7 writes) - more than I had expected... that's enough that I concluded it wasn't building full stripes.  It kinda looks like it's playing back a journal sorted in time then LBA, or something like that...
+> Any suggestions for improving (reducing) the ratio of reads to writes will be gratefully accepted!
 
-anecdotal story: andrew tridgell worked on the fujitsu sparc
-supercomputer a couple decades ago: it had a really weird DMA ring
-bus.
+Hi Don,
 
-* memory-to-memory copy (in the same core) was 10mbytes/sec
-* DMA memory-to-memory copy (in the same core) was 20mbytes/sec
-* memory-memory copy (across the ring bus i.e. to another machine) was
-100mbytes/sec
-* DMA memory-memory copy (across the ring bus) was *200* mbytes/sec.
+If the backing device has expensive stripe cost, the upper layer should
+issue I/Os with stripe size alignment, otherwise bcache cannot to too
+much to make the I/O to be stripe optimized.
 
-when andrew tried asking people, "hey everyone, we need a filesystem
-that can work really well on this fast parallel system", he had to
-continuously fend off "i got a great idea for in-core memory-to-memory
-cacheing!!!!" suggestions, because they *just would never work*.
+And you are right that bcache does not writeback in restrict LBA order,
+this is because the internal btree is trend to be appended only. The LBA
+ordering writeback happens in a reasonable small range, not in whole
+cached data, see commit 6e6ccc67b9c7 ("bcache: writeback: properly order
+backing device IO").
 
-the point being: caches aren't always "fast".
+And I agree with you again that "improving (reducing) the ratio of reads
+to writes will be gratefully accepted". Indeed not only reducing reads
+to writes ratio, but also increase the reads to writes throughput. This
+is something I want to improve, after I understand why the problem
+exists in bcache writeback code ...
 
-/salutes.
+Thanks.
 
-l.
+-- 
+
+Coly Li
