@@ -2,52 +2,52 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0B285D571
-	for <lists+linux-bcache@lfdr.de>; Tue,  2 Jul 2019 19:43:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F57F5D574
+	for <lists+linux-bcache@lfdr.de>; Tue,  2 Jul 2019 19:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbfGBRnD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 2 Jul 2019 13:43:03 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:35981 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbfGBRnD (ORCPT
+        id S1726732AbfGBRnN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 2 Jul 2019 13:43:13 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:21381 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbfGBRnN (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 2 Jul 2019 13:43:03 -0400
+        Tue, 2 Jul 2019 13:43:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1562089383; x=1593625383;
+  t=1562089393; x=1593625393;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=KhPmEM2AXyHo6PBofKblkM2Y3DIiKG3VMw18OQzTeBk=;
-  b=Ug4TLqxC0KGVG08uDgbCrr0hexkMv+2w6c9iobsMfSX4QGa8UrH7CrhD
-   jfHtfuh0BBR42AWQHfvywigpYiZ7ptFqL8LLwIfWLjqbbE8M94lPrZd/J
-   ib/SjfRnoC/tpFVfFF1BV0GFDOtwESfLSNJmr/EtXlMJdVMca7MkK7Wur
-   1Ukc0UMYAIBo38qxHoNjsR6mAOxf1bigGMSGkOlrNw7nqC0UUEoZEIQM3
-   iVdssbQsigrUSH+wmGhEXhRu6M5JBeD4/SpW7C1sWPyijtaqs82cCoO+J
-   RJxwGI6nRZRmPbaqqv82F3zBOCAJVXElqCa2ok7eHUAXXtfCo/2s/fRvf
+  bh=w3BrX382ONqjIyv6voYA3PkjU3CP+ICuSqh91zwGnoI=;
+  b=d2XsBQObSu2aqhe0KXX8g4JZ00dUjCzRB4d4cOeK6Joa7WddQ4tHLRRe
+   uhtvKFx/h8CrkrV58RauT77oXlGK4uf2yI/r6SdaNDpR5ax8tN9qH9lbQ
+   z9H/k+dZcfK0GFTvs1c719MkEHP29kzq4dNXi2+TgcPlA8bqCjwXMKaa7
+   Ah1wzRXhgnKep2ZdDq9FqRbXf8RQnl9UXoEEgjoDP+RE5yRXcdJ28NqD0
+   /q+wclz4g3nNslG1FTrULdcLzOaqWQ9B6hjDogkofimh+RC68PiZCBQ5k
+   JsN0bDdVAfzXxmtXAj/nsKR8S9KVsWZd+jMgCJFCswfIPrRm739hMLO1K
    w==;
-IronPort-SDR: Yjl9CEGFlkZmOZDGAJ6xa26XG05CCTsozXp47lNOPXuOdX9nVsmLVl2//7kZQSE1CeVVrrpTPX
- mBDyVf2mWrkH3+WvTgO+gjzB12XV5e8/M2U9o6pOd3s1dq30PfFs73c05JKdghRdc3uv4D6Ulc
- aNRcKJopq7vMx+7V0jz/ju9/lMqHNiXnUuC4GwhVONXfvfagfFHIrgdNAwdwlLcMvNsIwl5dfF
- OA/ijN1vx/nPPCgjHqdtuJteWw5S6z9l4sEyy9Kn28A2FDboiSxr5c3yHh6aJPelty0Jbfgi9N
- TTQ=
+IronPort-SDR: kQHWdR6+BzXWiMW45h0wwNnqiKWik8ExH/krQ93rCqgbX8JJDEKiY+6HcOGSX9KhDZ2y2HGaba
+ KWgHlN8QOpzyhUsRnXpJbcIK3SEdUJ0031yFZDJZKhEfsEdgGQKccGoMLlCO6KxUI3cjTBVsqY
+ PA1p6w6MtnICQT2RttMX1pn8gHIeFwRXUmG6eJkZKx/oyrY+OdEqOgylVxSJhew7s9182o6CUf
+ HfXgBQ/4T+godoXJiYLsoyng/yLLswPW9H/q01zNfWxv24zvDd1ADs85qN1PeT7ZorX04mxShP
+ WY8=
 X-IronPort-AV: E=Sophos;i="5.63,444,1557158400"; 
-   d="scan'208";a="112068337"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Jul 2019 01:43:03 +0800
-IronPort-SDR: fNa+i1iDFsNKXiyxjUp+ceLJnaKP5KTzBav/XIz9Q8xbn73GG8hrVSNxAjzHYVcd0rkcCJxFcW
- kes2Mqb5NEbtIDxT5SNeFQRm3BiKD5oSpr8hvvW2v1qo3dMTRAgc0qMtuK0Kcf3S+I+ZDD6aFR
- tzss84GsayDNozEoaqBvfG8A9M1qlAhMetKgqKHPvsogAWwngjHCKzZONVqupRHv2g0QvbDWv1
- BnDU61wfFBXQ44/DDDTwP8yYuqOQNvp98kSsK9jBBQfiW8NaEnOZNv1Ja0KcDcAmfhDWfzoave
- EJ8SgroiDx4vzR527pHVaZG4
+   d="scan'208";a="113690575"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Jul 2019 01:43:13 +0800
+IronPort-SDR: wv0T8P+g9Sk6hQpSfIyh4vRWZSmesrOA6O5zLHDLHCABJpMYxI1Uf1nOFyMLolISxYeNFdn15H
+ ftCsHuPzKDaZXsUTIVmoAjHk+1gyX7iXFJVyd/dFbhS4aTgx5MWEeZryQttKO2WmT6eDYmxUZX
+ aZ4AbF6HYQBtKNoF2Y9NvWQFSYvkgGE5j5wBz06Q7T1aYzpRByeff+F6o1MwluI3n7AZmtHu2F
+ FJJqOX6He5GO2d3eT6LwOn4H+EcuFPZgXUmguLJK1oTgfDHaoHIrTq+qlNzu1jfVCOlB4Vb/Qq
+ VKFGVDXAmQW0TJLjZzYxSrrj
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 02 Jul 2019 10:42:05 -0700
-IronPort-SDR: 6aWxaTBrk+Kvq4wIRr/d70nXsFtKx/h2jTgYTYDzRuzGUwI1dcEHM6gt3ZHnktHhEjb4/JCped
- 7e+xcGWb4ezwmmGHsb8fy4es9zxYPMfyLKqFtHBs89QcpmRPHcClv/6L9uTwE25km1MSTeHUNh
- QXgH2y1PN79zjwD/6RQNH5TySuXd3fIM+krOne5dzLallo/yzl5xKvgKrBEtFd2qULXFTmMcoJ
- 4llbiUV8AaOXSwXTCZ4YfFaNEH7P4FlfrSIC/kH4vx7TiGF3X84yZ+VK0d22WjDH7jZa8SWEP6
- qVo=
+  by uls-op-cesaep02.wdc.com with ESMTP; 02 Jul 2019 10:42:14 -0700
+IronPort-SDR: bTE73XoebtSY9BFEdgIbFq66JMRK553Gy4nlPM/489RzJLQKSuFC647ZNCgK6Pe5K2acESKa/v
+ GSyMegt22LTGo7l8BRZPNNAHwyUWFfcwLZUe3SLCb0DC8tf1ksFmAOjIdeAxS0flNdl1Vpk0Gh
+ lMrR6oroo8tPU1xiW0Zj+Yxt+Jry2cgDdCY4nPBcevgpALqZulp9n3CuGosdEVbiHNDUItK2WP
+ v3BZh8J6bSN6Ou8vYXB9xka6wKDRw21EZx8JHyPMbb3NO9B1CD5BW+/c8McPByloJrrt7CVnbS
+ N1c=
 Received: from cvenusqemu.hgst.com ([10.202.66.73])
-  by uls-op-cesaip02.wdc.com with ESMTP; 02 Jul 2019 10:43:02 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 02 Jul 2019 10:43:12 -0700
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     linux-block@vger.kernel.org
 Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
         roger.pau@citrix.com, bvanassche@acm.org,
         linux-scsi@vger.kernel.org,
         Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Subject: [PATCH V3 3/9] blk-zoned: update blkdev_report_zone() with helper
-Date:   Tue,  2 Jul 2019 10:42:29 -0700
-Message-Id: <20190702174236.3332-4-chaitanya.kulkarni@wdc.com>
+Subject: [PATCH V3 4/9] blk-zoned: update blkdev_reset_zones() with helper
+Date:   Tue,  2 Jul 2019 10:42:30 -0700
+Message-Id: <20190702174236.3332-5-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190702174236.3332-1-chaitanya.kulkarni@wdc.com>
 References: <20190702174236.3332-1-chaitanya.kulkarni@wdc.com>
@@ -68,44 +68,37 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch updates the blkdev_report_zone(s)() with newly introduced
+This patch updates the blkdev_reset_zones() with newly introduced
 helper function to read the nr_sects from block device's hd_parts with
 the help of part_nr_sects_read().
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- block/blk-zoned.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ block/blk-zoned.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/block/blk-zoned.c b/block/blk-zoned.c
-index 5051db35c3fd..9faf4488339d 100644
+index 9faf4488339d..e7f2874b5d37 100644
 --- a/block/blk-zoned.c
 +++ b/block/blk-zoned.c
-@@ -106,7 +106,7 @@ static bool blkdev_report_zone(struct block_device *bdev, struct blk_zone *rep)
- 		return false;
+@@ -229,7 +229,7 @@ int blkdev_reset_zones(struct block_device *bdev,
+ 	if (bdev_read_only(bdev))
+ 		return -EPERM;
  
- 	rep->start -= offset;
--	if (rep->start + rep->len > bdev->bd_part->nr_sects)
-+	if (rep->start + rep->len > bdev_nr_sects(bdev))
- 		return false;
+-	if (!nr_sectors || end_sector > bdev->bd_part->nr_sects)
++	if (!nr_sectors || end_sector > bdev_nr_sects(bdev))
+ 		/* Out of range */
+ 		return -EINVAL;
  
- 	if (rep->type == BLK_ZONE_TYPE_CONVENTIONAL)
-@@ -176,13 +176,13 @@ int blkdev_report_zones(struct block_device *bdev, sector_t sector,
- 	if (WARN_ON_ONCE(!bdev->bd_disk->fops->report_zones))
- 		return -EOPNOTSUPP;
+@@ -239,7 +239,7 @@ int blkdev_reset_zones(struct block_device *bdev,
+ 		return -EINVAL;
  
--	if (!*nr_zones || sector >= bdev->bd_part->nr_sects) {
-+	if (!*nr_zones || sector >= bdev_nr_sects(bdev)) {
- 		*nr_zones = 0;
- 		return 0;
- 	}
+ 	if ((nr_sectors & (zone_sectors - 1)) &&
+-	    end_sector != bdev->bd_part->nr_sects)
++	    end_sector != bdev_nr_sects(bdev))
+ 		return -EINVAL;
  
- 	nrz = min(*nr_zones,
--		  __blkdev_nr_zones(q, bdev->bd_part->nr_sects - sector));
-+		  __blkdev_nr_zones(q, bdev_nr_sects(bdev) - sector));
- 	ret = blk_report_zones(bdev->bd_disk, get_start_sect(bdev) + sector,
- 			       zones, &nrz, gfp_mask);
- 	if (ret)
+ 	blk_start_plug(&plug);
 -- 
 2.19.1
 
