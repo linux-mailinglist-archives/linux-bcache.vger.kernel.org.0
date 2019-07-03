@@ -2,99 +2,169 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F3B95DDBE
-	for <lists+linux-bcache@lfdr.de>; Wed,  3 Jul 2019 07:25:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D09F5DDDB
+	for <lists+linux-bcache@lfdr.de>; Wed,  3 Jul 2019 08:00:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726214AbfGCFZc (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 3 Jul 2019 01:25:32 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33448 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbfGCFZc (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 3 Jul 2019 01:25:32 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c14so572452plo.0;
-        Tue, 02 Jul 2019 22:25:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=r6I6wc5B3tGetonqRKuXvbIfduj5xwDTVPvTS3gafAE=;
-        b=CZQNmmjFRPz2c0ELVDfpA3j7aSVWE+5Qg1vfMOIG2VWjD9mJh1UaZP7ZQpUm45tT4I
-         G89/bEHPJDS+5bqZxR0gWH9CPLadIBhjLBtmwSVbNDQlvJJw4w4R+QnuH1Lm+6sibJvt
-         VWMU5qjzV4ZMyNpb71v+K4HBk94SUBZnTTJoTAt55EZg7HnXciFXunOBa93B+dqEOrNC
-         OVYuwGlsRiBHK07HQd8UIz35gbq+0al/pZfht/zKee9EjcZw9py+3HkGQ8SQ+fNzrxnk
-         Lt5R8PzTiN5nfhRKdxyySR177s69/YA/ZQt9f+kD1Gfw9Ouh3SKlNCp85vmzYGaek7Ha
-         cb7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r6I6wc5B3tGetonqRKuXvbIfduj5xwDTVPvTS3gafAE=;
-        b=DKlcwppa34IhGRzUecf4liXoMTzW6SCtjk6LmPvZLHQ4GhK9gWduSPZi2huCDTd3O/
-         yBjdxlUsrNQFsEduoy9dCtAeedX7DeQkFKj5ZPyl92xYroOXZjqWMNcisg180zM1KuzM
-         xmtHdDk825E7/nFFeC+hMxlm9/FmQnN9UD5xGNINfRwcdQOmGq9SNLk03AiBZF5PyKms
-         vZQsPfNFso+Tvm2b6J/ppjMmMP6+bys8mjjYSSvIODmD+oei+U883Gwbr8fj3poSAeGf
-         sRSLJ/AX8eMevYf/U0VpOyWBeIpw71eHtJLEfcEY4w7KrWyLFkONEMUNdNdnH27Lx2JR
-         PF0w==
-X-Gm-Message-State: APjAAAVBVw3Un3/AO3MoVLRm59jbyK5x0Er5eZq9okhkl11SDfBH0P3c
-        qU7/NrwzS9+oO/6+I8VOz5Y=
-X-Google-Smtp-Source: APXvYqyh2xiiI7N7Hxwuc+2RWnCTE22iy7sXtxhYXynsUmnx/rtn6Fz0u+M/S3UPLVrtIJWjrgu02g==
-X-Received: by 2002:a17:902:a612:: with SMTP id u18mr38729348plq.181.1562131531447;
-        Tue, 02 Jul 2019 22:25:31 -0700 (PDT)
-Received: from localhost ([123.213.206.190])
-        by smtp.gmail.com with ESMTPSA id h14sm770155pgn.51.2019.07.02.22.25.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Jul 2019 22:25:30 -0700 (PDT)
-Date:   Wed, 3 Jul 2019 14:25:28 +0900
-From:   Minwoo Im <minwoo.im.dev@gmail.com>
-To:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "colyli@suse.de" <colyli@suse.de>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-btrace@vger.kernel.org" <linux-btrace@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "kent.overstreet@gmail.com" <kent.overstreet@gmail.com>,
-        "yuchao0@huawei.com" <yuchao0@huawei.com>,
-        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "roger.pau@citrix.com" <roger.pau@citrix.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        Minwoo Im <minwoo.im.dev@gmail.com>
-Subject: Re: [PATCH V3 4/9] blk-zoned: update blkdev_reset_zones() with helper
-Message-ID: <20190703052528.GB21258@minwoo-desktop>
-References: <20190702174236.3332-1-chaitanya.kulkarni@wdc.com>
- <20190702174236.3332-5-chaitanya.kulkarni@wdc.com>
- <20190703002347.GE15705@minwoo-desktop>
- <DM6PR04MB5754D27FC41D86E2D419DD6C86FB0@DM6PR04MB5754.namprd04.prod.outlook.com>
+        id S1725999AbfGCGAi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 3 Jul 2019 02:00:38 -0400
+Received: from mout.gmx.net ([212.227.15.18]:53781 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725927AbfGCGAi (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 3 Jul 2019 02:00:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1562133598;
+        bh=S/DY2NTWdLYKO31PXPrp7YFpwyl+FDIxqIxLbaqbSR0=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=aanwjmWRAxHxx9WnAb9FVTY9ZyprnbMtIqZvw8g5dgQ6iuseMOmy0OW8hyl2ifKnV
+         bBbvH6ZLgsj5flXNgNC7HZE8HE1RwyUGpltqg+CnE9n0G2CgADAtkzgZGfDHae+3Ny
+         8Q+z7vY5Muv3qROEw7xlZmbt+OrGyejU2I9LE81I=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from t460-skr.localnet ([194.94.224.254]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MBmvH-1hr6td36D1-00ApIX; Wed, 03
+ Jul 2019 07:59:58 +0200
+From:   Stefan K <shadow_7@gmx.net>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcache@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong " <darrick.wong@oracle.com>,
+        Zach Brown <zach.brown@ni.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: bcachefs status update (it's done cooking; let's get this sucker merged)
+Date:   Wed, 03 Jul 2019 07:59:55 +0200
+Message-ID: <1728507.XaAQIF6Bjd@t460-skr>
+In-Reply-To: <20190610191420.27007-1-kent.overstreet@gmail.com>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <DM6PR04MB5754D27FC41D86E2D419DD6C86FB0@DM6PR04MB5754.namprd04.prod.outlook.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+X-Provags-ID: V03:K1:/gfEe+LZYgoqhk9YZ5m0893Kp2AyaRuZAI87SN9HVLgLmzlIOfL
+ 612WiSLxeeX/VjMW7cqE9kmrGPAbbKqmQRM9ayTjosrSKLDNrC1ALPO94jZzp8738vFYp2k
+ jGR/hP2xpOcw3jFCPQzdLOjcxsGbjm56J0hxUQKsq8kou/6xcADDNK6dug3GBSKFK/SQk57
+ SikMXSCQ9qitwSLLgZUyA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Cu8rqFBtn8Y=:6/+ByFTuR2gkkd9oqZx2ai
+ HZfhRFZNI8BDn7S/kp6+sHSwM5/cSWY9BSVMZV21oivcoRWnFGD9YFmc673Lvt9oMiMyo1y1R
+ yP8UcOSCLnDmPGLfg1VgsB5D8tQfyxN94DtojVGLnKCxHxlv8l4lmdPz6S3S7UMBu56Gpwqk0
+ dF5Maowi3G2swaLD3WS7/ZLi/vBi/hC1ORKc1Nx99+1CO7DjIgeEdJocHoyjZ0ZnbkgmvKFtN
+ 4fIIfu7MrMTC8Q9N0xGIhPTy7mZBEsGpYrtsmeQqnyow3lu5e4y6xxAlpLG8ER4A+6+Gj7nZ9
+ ydjuOCosZnabC6J05ECQ9c6nSnhF71E6Wejv8CKHqxAGqvkssJ2OAJoBCB6aQGxu/CTcYBAP9
+ mSjUVVyHq/hDKiDg3zoXBiHvEr2i67n0i3LYY1Uk5igq36JnVJDADxQ+VrYIgR28rpQ3sDVrn
+ LFs5QeNLVZtVbZN0zBgS+dYhsx+S+2R2VZLrfLiH5aAkXT7H06/uvmVlTIHqtMyr97yHjpdUQ
+ 21M2EdHoXdVvZstn8EfYpjIja2G/TmIpenof9jKZ2nkOh5ARHs/BdNzJ4DMTq12EZyewTmgGU
+ ncvY/ewo/uUbXIXiVbp3dvwVBIbd7PGFLa0R9GU91vHCIw/Qm4LohLygwtmhm+vkkBG101fZ0
+ 4Ir4yMF88YUjfw07NzyGp8Jxf0Fg82fPg7GMxE4EQcPmXLA/GNI4yknnFf2AEvcQHfhsCNT7I
+ r206trlfqWZ6jRNhAcTHZKCt4iwNKU7g0ml9F3A3JYX1es4+cEPKGM2jvE6yrqyav91kvX0IF
+ Fvmm2TZAf5UVUHK/TimL1Z4ayfot0tnVzYcIa4GLDI/qpWjSg3TX05xyDlUY58iEOl6vnLZLb
+ HyV1vFEVHagQ6Azj97uSQPc7wyN39EiFgAvzrfxpkaL8t0j4QNzEN2rYgvsss731GdBlht2Zv
+ zQeEBBYV7lz5rsFmjM3aLIVE2bAtDkNT1PMynjvngyYGoJeqy+okMnWiIHyIA4oc7oBxD0O6Y
+ oRDIomn75mx0LruxBBLf/JaDGhBw+v+U4wYhvjJo1Pf0Go05vBfZ2E3RUfM+SW3yRJc6zCEsv
+ dNPDXlJMLxUrBs=
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 19-07-03 02:29:33, Chaitanya Kulkarni wrote:
-> On 7/2/19 5:23 PM, Minwoo Im wrote:
-> > On 19-07-02 10:42:30, Chaitanya Kulkarni wrote:
-> >> This patch updates the blkdev_reset_zones() with newly introduced
-> >> helper function to read the nr_sects from block device's hd_parts with
-> >> the help of part_nr_sects_read().
-> > Chaitanya,
-> >
-> > Are the first three patches split for a special reason?  IMHO, it could
-> > be squashed into a single one.
-> >
-> > It looks good to me, by the way.
-> 
-> In the blk-zoned.c in this way it is easier to bisect if/when the problem
-> 
-> comes.
+Hello,
 
-Oh okay.  That makes sense.
+is there a chance to get this in Kernel 5.3?
+And thanks for this fs!
 
-Thanks, Chaitanya.
+
+On Monday, June 10, 2019 9:14:08 PM CEST Kent Overstreet wrote:
+> Last status update: https://lkml.org/lkml/2018/12/2/46
+>
+> Current status - I'm pretty much running out of things to polish and exc=
+uses to
+> keep tinkering. The core featureset is _done_ and the list of known outs=
+tanding
+> bugs is getting to be short and unexciting. The next big things on my to=
+do list
+> are finishing erasure coding and reflink, but there's no reason for merg=
+ing to
+> wait on those.
+>
+> So. Here's my bcachefs-for-review branch - this has the minimal set of p=
+atches
+> outside of fs/bcachefs/. My master branch has some performance optimizat=
+ions for
+> the core buffered IO paths, but those are fairly tricky and invasive so =
+I want
+> to hold off on those for now - this branch is intended to be more or les=
+s
+> suitable for merging as is.
+>
+> https://evilpiepirate.org/git/bcachefs.git/log/?h=3Dbcachefs-for-review
+>
+> The list of non bcachefs patches is:
+>
+> closures: fix a race on wakeup from closure_sync
+> closures: closure_wait_event()
+> bcache: move closures to lib/
+> bcache: optimize continue_at_nobarrier()
+> block: Add some exports for bcachefs
+> Propagate gfp_t when allocating pte entries from __vmalloc
+> fs: factor out d_mark_tmpfile()
+> fs: insert_inode_locked2()
+> mm: export find_get_pages()
+> mm: pagecache add lock
+> locking: SIX locks (shared/intent/exclusive)
+> Compiler Attributes: add __flatten
+>
+> Most of the patches are pretty small, of the ones that aren't:
+>
+>  - SIX locks have already been discussed, and seem to be pretty uncontro=
+versial.
+>
+>  - pagecache add lock: it's kind of ugly, but necessary to rigorously pr=
+event
+>    page cache inconsistencies with dio and other operations, in particul=
+ar
+>    racing vs. page faults - honestly, it's criminal that we still don't =
+have a
+>    mechanism in the kernel to address this, other filesystems are suscep=
+tible to
+>    these kinds of bugs too.
+>
+>    My patch is intentionally ugly in the hopes that someone else will co=
+me up
+>    with a magical elegant solution, but in the meantime it's an "it's ug=
+ly but
+>    it works" sort of thing, and I suspect in real world scenarios it's g=
+oing to
+>    beat any kind of range locking performance wise, which is the only
+>    alternative I've heard discussed.
+>
+>  - Propaget gfp_t from __vmalloc() - bcachefs needs __vmalloc() to respe=
+ct
+>    GFP_NOFS, that's all that is.
+>
+>  - and, moving closures out of drivers/md/bcache to lib/.
+>
+> The rest of the tree is 62k lines of code in fs/bcachefs. So, I obviousl=
+y won't
+> be mailing out all of that as patches, but if any code reviewers have
+> suggestions on what would make that go easier go ahead and speak up. The=
+ last
+> time I was mailing things out for review the main thing that came up was=
+ ioctls,
+> but the ioctl interface hasn't really changed since then. I'm pretty con=
+fident
+> in the on disk format stuff, which was the other thing that was mentione=
+d.
+>
+> ----------
+>
+> This has been a monumental effort over a lot of years, and I'm _really_ =
+happy
+> with how it's turned out. I'm excited to finally unleash this upon the w=
+orld.
+>
+
+
+
