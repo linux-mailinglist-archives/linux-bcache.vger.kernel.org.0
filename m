@@ -2,94 +2,77 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5296F5D587
-	for <lists+linux-bcache@lfdr.de>; Tue,  2 Jul 2019 19:43:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 745ED5D8A1
+	for <lists+linux-bcache@lfdr.de>; Wed,  3 Jul 2019 02:26:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfGBRnv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 2 Jul 2019 13:43:51 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:44441 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbfGBRnv (ORCPT
+        id S1727096AbfGCA0l (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 2 Jul 2019 20:26:41 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40800 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfGCA0k (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 2 Jul 2019 13:43:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1562089451; x=1593625451;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=mMR/hpYFy80l7odJC6OZkX7C/Iat9UiqQzK/zSp4tQc=;
-  b=VP2l2NDJxQaVVtPbjuwxZaMx/HlgE8wnuqCk0OdqBu92Gem3fpoGK7gO
-   6wfosra8u2TNrpQMdwee8kwbQZ5ncJDeOPUL3SRT1Zp21w1aV8fkP1AO8
-   NqahwXOpr/Wxyfbl6xjds+7Ks+CLwZgidOtcvZNce+Gd7ogTHZn1wh2P1
-   KuucLd9o5dzHrv4PSckmb/ywrQHIbccqyfUAkSMBIMDYKi8WySmlCtyA0
-   HupDGm62+B4Kp++WqkCCl2SRoRlcGF3rg8E5geGNHygrSgIhiizsH1oAe
-   oS6Al6HNExAlTVnljSreCMuPnxuWnqeFD7s+J5fg00dh0J06XZfecpjLn
-   g==;
-IronPort-SDR: Rxxu6cf6WwWdhuYIIirrUwZtP5uFnB3JN+/YJ6cGeF0ULosq4KG18HLuJEQNeVZCCUCx6vpvg0
- H45rXZvY5pogP4VUj71oNsJldmvVq6gIsudJ2T4M0ncw4KLUpNlCuQjKrqN10H5hkiaty33bdK
- aOv6WeB0zdLgxJAC0NNEx97GQwK2kXuOz4Ors2iOrX1lWGqirSQ6DQYY35fkYFDlTfo5KRPDde
- zuNuN37LoKUTv+dUd+cvibOp23jIBE74Ax0M5xIT8rzoyUYQKqY7qVD75r9eTcIRxxV+WjJKux
- Wlw=
-X-IronPort-AV: E=Sophos;i="5.63,444,1557158400"; 
-   d="scan'208";a="211924307"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Jul 2019 01:44:10 +0800
-IronPort-SDR: kfwnae2bo8FnkKJRSnxuzQFZalLGD64K20P4lQ/FjMhmxAi1SM5CrTG4RitQQF6F3KRhWKaUzv
- ux8K99snYNUwh5yACl7GDrHJpLdYYF78kWSgOqru4Rsp4hrqU0a6lYAdygYEJQFfPk8AWbDyny
- jo9QXn8sv/JpXZmDqJxCXSd+UgPFBC6Ae4bWVGOMxP+AGa8/q3RK+Mb719BHScQQWJUeb+GSPO
- i/STsvUo3WPuDJWO9QhcwNv1Ig3Dt95yFzo1RhUEguGWjpvijHjU4rbHulnUPFVzEaW5z8J2sc
- kHfo41cOhYpRez39RtQs3Gan
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 02 Jul 2019 10:42:49 -0700
-IronPort-SDR: ZZ3hK2bjvxPpoDYY3dGllgVu8h4y5aH5oKqXW08FxIs6lNu/zSn8Lq0Vc3CKh0UxLaxt9BwD0v
- 3fTd0ZB6CA1nNk66QTwybNGG7hulaPt/5JjQ4RaSIjxNw/RiC1ddUlmt5cVduRWWvDMc6DPeRv
- QY23K1dCOsFVfF6zsp2JXeQ1ammNVuRE1dwh/CDI01AburqpZV0KpfKqu1xuzoJfo0j+AG3k47
- ScfjN3W9uVeTshYH+ctIEZjqQRzreo7anBy5gwBbh5bWBmg6n07aXYscmGEGj90oNrBHWiocWt
- PF0=
-Received: from cvenusqemu.hgst.com ([10.202.66.73])
-  by uls-op-cesaip02.wdc.com with ESMTP; 02 Jul 2019 10:43:50 -0700
-From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-To:     linux-block@vger.kernel.org
-Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
-        linux-btrace@vger.kernel.org, xen-devel@lists.xenproject.org,
-        kent.overstreet@gmail.com, yuchao0@huawei.com, jaegeuk@kernel.org,
-        damien.lemoal@wdc.com, konrad.wilk@oracle.com,
-        roger.pau@citrix.com, bvanassche@acm.org,
-        linux-scsi@vger.kernel.org,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Subject: [COMPILE TEST ONLY PATCH V3 9/9] xen/blkback: use helper in vbd_sz()
-Date:   Tue,  2 Jul 2019 10:42:35 -0700
-Message-Id: <20190702174236.3332-10-chaitanya.kulkarni@wdc.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20190702174236.3332-1-chaitanya.kulkarni@wdc.com>
+        Tue, 2 Jul 2019 20:26:40 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w10so218242pgj.7;
+        Tue, 02 Jul 2019 17:26:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=G2YqfkEvAQAEaHiI4AbuUSgjkEW4+tXLhh4WWMs6JGc=;
+        b=tizq4CrVTABFZl6lnMuMEVk6tKI1qJnrWGFe4D/LjmvB+V/tTxAnsgpyrZ8ifIyQMT
+         DeSjjLtTF+MYi9fu+Udh57TbTdSonKNX1fyQwjbtUsQ1mNxyYGZ0tOg7kdONrRwWYHRU
+         /81FIsGttSimYEFso4N+gs0xCCAPgOYT7desTo5Us0nvxbySoSFC5NjbJlBLCdASlvYe
+         Z+BerYub+aib38bjlte4Y2MPUytGx4mmaBBg24mm2Se4RN4gJJ/BwU8sdjhBPIqh0JjG
+         vO+YziBW9IDARDb2dlpWDmQmaMHMRdAKP9RusLrskr5Z+0YQY4lT5v/jU4vBxDvMKwVO
+         ynBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=G2YqfkEvAQAEaHiI4AbuUSgjkEW4+tXLhh4WWMs6JGc=;
+        b=YcHjJbAoBwDOL91jJCesHPC+ll8kDFpBgsA2kdJsBTnplL3cuTZa9q18eiUdxRh71r
+         GoK4ciKg9u++p+g0i/hCwv7veIlbTKx1LnMlcsNppewnlhqzdtF58/shW7QUtFfijZa3
+         ZYWhc1XyGw8kOtC+pAvZb4XlCgotull7+GIVOtGVYzWYBQ5wNxc/I5x04ftOMDRaD6m3
+         rFU3O4gl3h1qD1W28l3y9ZOLVDMelAARSh9/5OX8xAJMrFwjY8yANMJrg06WkGFKZe/c
+         j2a61MopcbUMdiWey3LOK10cDOGK6R9hemWuivB9rp7sER4riDpMfXY48rR3JldH8Pk/
+         HXww==
+X-Gm-Message-State: APjAAAUGeytt7k7Ag4ies8iP4HBUz0oc/0POnehYsOLM8sL9w2Li/kVx
+        Jusd2/WjPuN60LYcaWHYGO8=
+X-Google-Smtp-Source: APXvYqy+IWFwh62Asy5np8pkDyBI/cyqwDN82970y6xL03Sfn32ecxy0iA6/KhMffPZM6PpjIKF3hg==
+X-Received: by 2002:a17:90a:1785:: with SMTP id q5mr8609557pja.106.1562113148665;
+        Tue, 02 Jul 2019 17:19:08 -0700 (PDT)
+Received: from localhost ([123.213.206.190])
+        by smtp.gmail.com with ESMTPSA id y5sm246107pgv.12.2019.07.02.17.19.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Jul 2019 17:19:07 -0700 (PDT)
+Date:   Wed, 3 Jul 2019 09:19:04 +0900
+From:   Minwoo Im <minwoo.im.dev@gmail.com>
+To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Cc:     linux-block@vger.kernel.org, colyli@suse.de,
+        linux-bcache@vger.kernel.org, linux-btrace@vger.kernel.org,
+        xen-devel@lists.xenproject.org, kent.overstreet@gmail.com,
+        yuchao0@huawei.com, jaegeuk@kernel.org, damien.lemoal@wdc.com,
+        konrad.wilk@oracle.com, roger.pau@citrix.com, bvanassche@acm.org,
+        linux-scsi@vger.kernel.org, Minwoo Im <minwoo.im.dev@gmail.com>
+Subject: Re: [PATCH V3 1/9] block: add a helper function to read nr_setcs
+Message-ID: <20190703001904.GB15705@minwoo-desktop>
 References: <20190702174236.3332-1-chaitanya.kulkarni@wdc.com>
+ <20190702174236.3332-2-chaitanya.kulkarni@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190702174236.3332-2-chaitanya.kulkarni@wdc.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch updates the vbd_sz() macro with newly introduced helper
-function to read the nr_sects from block device's hd_parts with the
-help of part_nr_sects_read().
+On 19-07-02 10:42:27, Chaitanya Kulkarni wrote:
+> This patch introduces helper function to read the number of sectors
+> from struct block_device->bd_part member. For more details Please refer
+> to the comment in the include/linux/genhd.h for part_nr_sects_read().
 
-Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
----
- drivers/block/xen-blkback/common.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Without bd_mutex locked, this helper seems useful to have.
 
-diff --git a/drivers/block/xen-blkback/common.h b/drivers/block/xen-blkback/common.h
-index 1d3002d773f7..f96cb8d1cb99 100644
---- a/drivers/block/xen-blkback/common.h
-+++ b/drivers/block/xen-blkback/common.h
-@@ -359,7 +359,7 @@ struct pending_req {
- 
- 
- #define vbd_sz(_v)	((_v)->bdev->bd_part ? \
--			 (_v)->bdev->bd_part->nr_sects : \
-+			  bdev_nr_sects((_v)->bdev) : \
- 			  get_capacity((_v)->bdev->bd_disk))
- 
- #define xen_blkif_get(_b) (atomic_inc(&(_b)->refcnt))
--- 
-2.19.1
-
+Reviewed-by: Minwoo Im <minwoo.im.dev@gmail.com>
