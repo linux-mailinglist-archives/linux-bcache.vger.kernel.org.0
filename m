@@ -2,73 +2,139 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B2085E74C
-	for <lists+linux-bcache@lfdr.de>; Wed,  3 Jul 2019 17:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3957D5EA59
+	for <lists+linux-bcache@lfdr.de>; Wed,  3 Jul 2019 19:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfGCPDb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 3 Jul 2019 11:03:31 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45458 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbfGCPDb (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 3 Jul 2019 11:03:31 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r1so1403676pfq.12;
-        Wed, 03 Jul 2019 08:03:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UpKw9Zxoxe8rge03LP2f6638eI4p8y0legXuCWEjCsI=;
-        b=ICppt5lQcaGL40MP1SDxZWfyOqWoiNJPn1viioHfqHinIW1hSNeOuOwgJDGYA5OIVx
-         l1PJ+JXCfjC04S3ZxA/2dyjVjb34vc5q4i/z6V1kPeMMnoaMidgtGjzagEEqiJw9pg5/
-         PRvRzDQJaahpjVW/xrhy+/PyNRusP2RzUTzy4iJiP3+i9FQGI1Q9+AmaG/G+Ccvv8ASx
-         99NQM61TL0AUnXNfAl3pLUGFqBH4i9O710nCA4qdz0NBYY9OO7XRlawjZa9OOdHWWP0u
-         jnBI40lY3GuxQamj/mkqFTibIbtapuq6clhjAxHuDsLCqUmeU83LhYxp8MKb+l53sa1z
-         /Y4Q==
-X-Gm-Message-State: APjAAAWaFZ8uBLxegWcwfZSvyVzNzJECrE3itJV/jyNBLcdS+BkdF4jT
-        6emqME+uy7NylDTuq8w8Bo5w1JFRfZs=
-X-Google-Smtp-Source: APXvYqyR83vJcx0j6MO8XREogh+x0eiGjMP5GA+fOFSvZ7wYxEQvReZcXoMSmjWhPLNI5xsp0sPuDQ==
-X-Received: by 2002:a17:90a:ff17:: with SMTP id ce23mr13281431pjb.47.1562166210114;
-        Wed, 03 Jul 2019 08:03:30 -0700 (PDT)
-Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id o13sm2450376pje.28.2019.07.03.08.03.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jul 2019 08:03:29 -0700 (PDT)
-Subject: Re: [PATCH V3 1/9] block: add a helper function to read nr_setcs
-To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        linux-block@vger.kernel.org
-Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
-        linux-btrace@vger.kernel.org, xen-devel@lists.xenproject.org,
-        kent.overstreet@gmail.com, yuchao0@huawei.com, jaegeuk@kernel.org,
-        damien.lemoal@wdc.com, konrad.wilk@oracle.com,
-        roger.pau@citrix.com, linux-scsi@vger.kernel.org
-References: <20190702174236.3332-1-chaitanya.kulkarni@wdc.com>
- <20190702174236.3332-2-chaitanya.kulkarni@wdc.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <26917678-fd82-b6c8-761e-220bc7d3b179@acm.org>
-Date:   Wed, 3 Jul 2019 08:03:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1727033AbfGCRVu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 3 Jul 2019 13:21:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49336 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727119AbfGCRVu (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 3 Jul 2019 13:21:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3FC2DABF1;
+        Wed,  3 Jul 2019 17:21:47 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 147E11E0D71; Wed,  3 Jul 2019 19:21:41 +0200 (CEST)
+Date:   Wed, 3 Jul 2019 19:21:41 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Boaz Harrosh <openosd@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-bcache@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Zach Brown <zach.brown@ni.com>, Jens Axboe <axboe@kernel.dk>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH] mm: Support madvise_willneed override by Filesystems
+Message-ID: <20190703172141.GD26423@quack2.suse.cz>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611011737.GA28701@kmo-pixel>
+ <20190611043336.GB14363@dread.disaster.area>
+ <20190612162144.GA7619@kmo-pixel>
+ <20190612230224.GJ14308@dread.disaster.area>
+ <20190619082141.GA32409@quack2.suse.cz>
+ <27171de5-430e-b3a8-16f1-7ce25b76c874@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190702174236.3332-2-chaitanya.kulkarni@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27171de5-430e-b3a8-16f1-7ce25b76c874@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 7/2/19 10:42 AM, Chaitanya Kulkarni wrote:
-> +/* Helper function to read the bdev->bd_part->nr_sects */
-> +static inline sector_t bdev_nr_sects(struct block_device *bdev)
-> +{
-> +	return part_nr_sects_read(bdev->bd_part);
-> +}
+On Wed 03-07-19 04:04:57, Boaz Harrosh wrote:
+> On 19/06/2019 11:21, Jan Kara wrote:
+> <>
+> > Yes, I have patch to make madvise(MADV_WILLNEED) go through ->fadvise() as
+> > well. I'll post it soon since the rest of the series isn't really dependent
+> > on it.
+> > 
+> > 								Honza
+> > 
+> 
+> Hi Jan
+> 
+> Funny I'm sitting on the same patch since LSF last. I need it too for other
+> reasons. I have not seen, have you pushed your patch yet?
+> (Is based on old v4.20)
 
-Is the comment above bdev_nr_sects() really useful or should it be left out?
+Your patch is wrong due to lock ordering. You should not call vfs_fadvise()
+under mmap_sem. So we need to do a similar dance like madvise_remove(). I
+have to get to writing at least XFS fix so that the madvise change gets
+used and post the madvise patch with it... Sorry it takes me so long.
 
-Thanks,
-
-Bart.
+								Honza
+> 
+> ~~~~~~~~~
+> From fddb38169e33d23060ddd444ba6f2319f76edc89 Mon Sep 17 00:00:00 2001
+> From: Boaz Harrosh <boazh@netapp.com>
+> Date: Thu, 16 May 2019 20:02:14 +0300
+> Subject: [PATCH] mm: Support madvise_willneed override by Filesystems
+> 
+> In the patchset:
+> 	[b833a3660394] ovl: add ovl_fadvise()
+> 	[3d8f7615319b] vfs: implement readahead(2) using POSIX_FADV_WILLNEED
+> 	[45cd0faae371] vfs: add the fadvise() file operation
+> 
+> Amir Goldstein introduced a way for filesystems to overide fadvise.
+> Well madvise_willneed is exactly as fadvise_willneed except it always
+> returns 0.
+> 
+> In this patch we call the FS vector if it exists.
+> 
+> NOTE: I called vfs_fadvise(..,POSIX_FADV_WILLNEED);
+>       (Which is my artistic preference)
+> 
+> I could also selectively call
+> 	if (file->f_op->fadvise)
+> 		return file->f_op->fadvise(..., POSIX_FADV_WILLNEED);
+> If we fear theoretical side effects. I don't mind either way.
+> 
+> CC: Amir Goldstein <amir73il@gmail.com>
+> CC: Miklos Szeredi <mszeredi@redhat.com>
+> Signed-off-by: Boaz Harrosh <boazh@netapp.com>
+> ---
+>  mm/madvise.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 6cb1ca93e290..6b84ddcaaaf2 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/swapops.h>
+>  #include <linux/shmem_fs.h>
+>  #include <linux/mmu_notifier.h>
+> +#include <linux/fadvise.h>
+>  
+>  #include <asm/tlb.h>
+>  
+> @@ -303,7 +304,8 @@ static long madvise_willneed(struct vm_area_struct *vma,
+>  		end = vma->vm_end;
+>  	end = ((end - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
+>  
+> -	force_page_cache_readahead(file->f_mapping, file, start, end - start);
+> +	vfs_fadvise(file, start << PAGE_SHIFT, (end - start) << PAGE_SHIFT,
+> +		    POSIX_FADV_WILLNEED);
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.20.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
