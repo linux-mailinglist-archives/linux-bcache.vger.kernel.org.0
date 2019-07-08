@@ -2,128 +2,129 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98F9E60E63
-	for <lists+linux-bcache@lfdr.de>; Sat,  6 Jul 2019 03:07:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05A7B6288E
+	for <lists+linux-bcache@lfdr.de>; Mon,  8 Jul 2019 20:47:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbfGFBHU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 5 Jul 2019 21:07:20 -0400
-Received: from mx.ewheeler.net ([66.155.3.69]:38752 "EHLO mx.ewheeler.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725983AbfGFBHU (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 5 Jul 2019 21:07:20 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id 95161A0692;
-        Sat,  6 Jul 2019 01:07:19 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id AzyfvBEis_0O; Sat,  6 Jul 2019 01:07:18 +0000 (UTC)
-Received: from mx.ewheeler.net (mx.ewheeler.net [66.155.3.69])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 8BB22A067D;
-        Sat,  6 Jul 2019 01:07:18 +0000 (UTC)
-Date:   Sat, 6 Jul 2019 01:07:15 +0000 (UTC)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-X-X-Sender: lists@mx.ewheeler.net
-To:     Don Doerner <Don.Doerner@Quantum.Com>
-cc:     Coly Li <colyli@suse.de>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        dm-devel@redhat.com
-Subject: RE: I/O Reordering: Cache -> Backing Device
-In-Reply-To: <BYAPR14MB277641CB1C17C53346C8FDD5FCF90@BYAPR14MB2776.namprd14.prod.outlook.com>
-Message-ID: <alpine.LRH.2.11.1907060102450.12361@mx.ewheeler.net>
-References: <BYAPR14MB27766E20D92C2A07217C2DF9FCFC0@BYAPR14MB2776.namprd14.prod.outlook.com> <d06e4a83-c314-46b7-72ea-97e455acd69f@suse.de> <BYAPR14MB277641CB1C17C53346C8FDD5FCF90@BYAPR14MB2776.namprd14.prod.outlook.com>
-User-Agent: Alpine 2.11 (LRH 23 2013-08-11)
-MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="-1690155773-992976465-1562375051=:12361"
+        id S1728109AbfGHSrS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 8 Jul 2019 14:47:18 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:31778 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbfGHSrS (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 8 Jul 2019 14:47:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1562611638; x=1594147638;
+  h=from:to:cc:subject:date:message-id;
+  bh=uTqlKG2ILdegr5sU0HeNGcEucdW/yuMkATM/4UkxKXI=;
+  b=g3eseQv0W4YXG0inP4P38HXzLLxU3zO4UM8SmhD8T2048If5/t9jeHp4
+   1enApGqox0vMdD2NQIEOfOWYuf6JUPAHB2MrQ5xfaDnKO2fG3LlfAmRqK
+   pzWILh7QZ1S+pS85L3yCwez1mmFhqM9tXbKi29rpGfH9hFPzlZLb38AUj
+   On4RBWNLtY0+KE/nUeawHuIN2F84b+3L+1TtHQnI2dPWMRSitQEpq7m78
+   5YjtmpyJPS8i4/wrahNNfn5rN7l4fVBdiJMxuzw1rzMyM+5aBA4TzSJKg
+   PyAwmcQuTONeONels4KSkM9vOJaz0HatSctngSjcVI9eT0Xj/YtVOKPWA
+   w==;
+IronPort-SDR: iysNOEKNLkycsspqSXRbasfKRhkOP5oUrYLAhttJ4GgbWyj+7XvLKfPCMOT/DlPzn15vOzGUJw
+ B6VVFgv75S1oz5UqNvVit2kOO1Y3HBq6O297mzZnL4lS/hXbbiMUJ9DZ23MyR7VMyd0akmHrbj
+ yl0+1IwYXYbQbdrwAkp117jAnxI9sNVvigHz1sUruNTrRr8wfPPqrrkGfYK1MMV28gzuoCy3jm
+ 5v9tPXURt9ZLuRhkBCR8ndKKgDmeFHNAGRnSugAX6p6NJAPnIHrIIk9QS6XGzQhRJSAJNnlNjz
+ AfY=
+X-IronPort-AV: E=Sophos;i="5.63,466,1557158400"; 
+   d="scan'208";a="117296098"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 09 Jul 2019 02:47:17 +0800
+IronPort-SDR: HQxiRXPiluO+i1amhrFwbMts8nmX41sYgDekJoXvHkInAGxUg6LxdDkQkhDbPdFWvOOE+xen+C
+ noMeYqT89T6g80q0Tms6mS4Wwi6/AEcyNXhgrZKIXGIDTX2sJc+gPUmFcjuN2CDNGXquigZQAl
+ Cktc3ev+cQ5merTk1rsQCbDLuU62hmWXgrIGAQO6k8DawqH0GhLjzELjFVoOCwt6+4Pn/tZtfN
+ tfyzudrROgFvhL7Ls7vjH5GqYJnx75gAQUc656sY1WpjOZZwkzaYNBjxqpvyAbUojCr78xhyRP
+ 0w1+U//6VVL/u7Uis519uR2+
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 08 Jul 2019 11:46:05 -0700
+IronPort-SDR: eW86af4OthOZtKlcukw8hg5FI8z3Pyrc2gRdLV4x4bpMNy4sygCYPSfYDcM2B4QXsj4ILsUxuF
+ TQU3d19L1c5FTnZDXmSuL2XtMIjgw4+ea8vwSw8DmEbRevzLHYwgY1GdfVVK3SuKBCqem7cbn4
+ XSceRHtmXS96JKNQcd4ThjYOnlatcCPqKA495dVcxKVT6l/6xIuUjOo10IT/VyGg6hXSPR4ROm
+ 3eC68pRisrEJDHQJIq9cvRlSgSS4pR/SeWPXZj+HOmUCZYEiKJ64+r/aVfvhqfvINTloVQsnsJ
+ 61U=
+Received: from cvenusqemu.hgst.com ([10.202.66.73])
+  by uls-op-cesaip02.wdc.com with ESMTP; 08 Jul 2019 11:47:16 -0700
+From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+To:     linux-block@vger.kernel.org
+Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
+        linux-btrace@vger.kernel.org, xen-devel@lists.xenproject.org,
+        kent.overstreet@gmail.com, yuchao0@huawei.com, jaegeuk@kernel.org,
+        damien.lemoal@wdc.com, konrad.wilk@oracle.com,
+        roger.pau@citrix.com, bvanassche@acm.org,
+        linux-scsi@vger.kernel.org,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Subject: [PATCH V4 0/9] block: use right accessor to read nr_sects
+Date:   Mon,  8 Jul 2019 11:47:02 -0700
+Message-Id: <20190708184711.2984-1-chaitanya.kulkarni@wdc.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi,
 
----1690155773-992976465-1562375051=:12361
-Content-Type: TEXT/PLAIN; CHARSET=ISO-2022-JP
+In the blk-zoned, bcache, f2fs, target-pscsi, xen and blktrace
+implementation block device->hd_part->number of sectors field is
+accessed directly without any appropriate locking or accessor function. 
+There is an existing accessor function present in the in 
+include/linux/genhd.h which should be used to read the
+bdev->hd_part->nr_sects.
 
-[+cc dm-devel]
+From ${KERN_DIR}/include/linux/genhd.h:-
+<snip>
+714 /*
+715  * Any access of part->nr_sects which is not protected by partition
+716  * bd_mutex or gendisk bdev bd_mutex, should be done using this
+717  * accessor function.
+718  *
+719  * Code written along the lines of i_size_read() and i_size_write().
+720  * CONFIG_PREEMPT case optimizes the case of UP kernel with preemption
+721  * on.
+722  */
+723 static inline sector_t part_nr_sects_read(struct hd_struct *part)
+724 {
+<snip>
 
-> -----Original Message-----
-> From: linux-bcache-owner@vger.kernel.org <linux-bcache-owner@vger.kernel.org> On Behalf Of Coly Li
-> Sent: Sunday, 30 June, 2019 19:24
-> To: Don Doerner <Don.Doerner@Quantum.Com>
-> Cc: linux-bcache@vger.kernel.org
-> Subject: Re: I/O Reordering: Cache -> Backing Device
-> 
-> On 2019/6/29 5:56 上午, Don Doerner wrote:
-> > Hello, I'm also interested in using bcache to facilitate stripe 
-> > re-ass'y for the backing device.  I've done some experiments that 
-> > dovetail with some of the traffic on this mailing list.  
-> > Specifically, in this message 
-> > (https://nam05.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.spinics.net%2Flists%2Flinux-bcache%2Fmsg07590.html&amp;data=02%7C01%7CDon.Doerner%40quantum.com%7Cafa50dd04a914f76bb7808d6fdcb338b%7C322a135f14fb4d72aede122272134ae0%7C1%7C0%7C636975446529502069&amp;sdata=nC3JhPL%2FC6B57uw4xjEkGnV48jd9DqHLf0MQL7AAErs%3D&amp;reserved=0), 
-> > Eric suggested "...turning up 
-> > /sys/block/bcache0/bcache/writeback_percent..." to increase the 
-> > contiguous data in the cache.
-> > My RAID-6 has a stripe size of 2.5MiB, and its bcache'ed with a few 
-> > hundred GB of NVMe storage.  Here's my experiment:
-> > * I made the cache a write back cache: echo writeback >
-> > /sys/block/bcache0/bcache/cache_mode
-> > * I plugged the cache: echo 0 >
-> > /sys/block/bcache0/bcache/writeback_running
-> > * I use a pathological I/O pattern, generated with 'fio': fio 
-> >   --bs=128K --direct=1 --rw=randwrite --ioengine=libaio --iodepth=1 
-> >   --numjobs=1 --size=40G --name=/dev/bcache0.  I let it run to 
-> >   completion, at which point I believe I should have 40 GiB of 
-> >   sequential dirty data in cache, but not put there sequentially.  In 
-> >   essence, I should have ~16K complete stripes sitting in the cache, 
-> >   waiting to be written.
-> > * I set stuff up to go like a bat: echo 0 >
-> > /sys/block/bcache0/bcache/writeback_percent; echo 0 >
-> > /sys/block/bcache0/bcache/writeback_delay; echo 2097152 >
-> > /sys/block/bcache0/bcache/writeback_rate
-> > * And I unplugged the cache: echo 1 >
-> > /sys/block/bcache0/bcache/writeback_running
-> > I then watched 'iostat', and saw that there were lots of read operations (statistically, after merging, about 1 read for every 7 writes) - more than I had expected... that's enough that I concluded it wasn't building full stripes.  It kinda looks like it's playing back a journal sorted in time then LBA, or something like that...
-> > Any suggestions for improving (reducing) the ratio of reads to writes will be gratefully accepted!
-> 
-> Hi Don,
-> 
-> If the backing device has expensive stripe cost, the upper layer should 
-> issue I/Os with stripe size alignment, otherwise bcache cannot to too 
-> much to make the I/O to be stripe optimized.
-> 
-> And you are right that bcache does not writeback in restrict LBA order, 
-> this is because the internal btree is trend to be appended only. The LBA 
-> ordering writeback happens in a reasonable small range, not in whole 
-> cached data, see commit 6e6ccc67b9c7 ("bcache: writeback: properly order 
-> backing device IO").
-> 
-> And I agree with you again that "improving (reducing) the ratio of reads 
-> to writes will be gratefully accepted". Indeed not only reducing reads 
-> to writes ratio, but also increase the reads to writes throughput. This 
-> is something I want to improve, after I understand why the problem 
-> exists in bcache writeback code ...
+This patch series introduces a helper function on the top of the
+part_nr_sects_read() and removes the all direct accesses to the
+bdev->hd_part->nr_sects.
 
+This series is based on :-
 
-dm-devel list:
+1. Repo :-
+   git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git.
+2. Branch :- for-next.
 
-Does dm-writecache do any attempt to merge IOs into the io_opt size?
+Please consider this for 5.3.
 
-If so, bcache might get some ideas by looking at that codebase for its 
-writeback thread.
+Changes from V3:-
 
---
-Eric Wheeler
+1. Get rid of the comment in the 1st patch for helper. (Bart)
 
+Chaitanya Kulkarni (9):
+  block: add a helper function to read nr_setcs
+  blk-zoned: update blkdev_nr_zones() with helper
+  blk-zoned: update blkdev_report_zone() with helper
+  blk-zoned: update blkdev_reset_zones() with helper
+  bcache: update cached_dev_init() with helper
+  f2fs: use helper in init_blkz_info()
+  blktrace: use helper in blk_trace_setup_lba()
+  target/pscsi: use helper in pscsi_get_blocks()
+  xen/blkback: use helper in vbd_sz()
 
-> 
-> Thanks.
-> 
-> --
-> 
-> Coly Li
-> The information contained in this transmission may be confidential. Any disclosure, copying, or further distribution of confidential information is not permitted unless such privilege is explicitly granted in writing by Quantum. Quantum reserves the right to have electronic communications, including email and attachments, sent across its networks filtered through security software programs and retain such messages in order to comply with applicable data security and retention requirements. Quantum is not responsible for the proper and complete transmission of the substance of this communication or for any delay in its receipt.
-> 
----1690155773-992976465-1562375051=:12361--
+ block/blk-zoned.c                  | 12 ++++++------
+ drivers/block/xen-blkback/common.h |  2 +-
+ drivers/md/bcache/super.c          |  2 +-
+ drivers/target/target_core_pscsi.c |  2 +-
+ fs/f2fs/super.c                    |  2 +-
+ include/linux/blkdev.h             |  5 +++++
+ kernel/trace/blktrace.c            |  2 +-
+ 7 files changed, 16 insertions(+), 11 deletions(-)
+
+-- 
+2.17.0
+
