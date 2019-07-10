@@ -2,103 +2,179 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAF5D633B3
-	for <lists+linux-bcache@lfdr.de>; Tue,  9 Jul 2019 11:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E71B64466
+	for <lists+linux-bcache@lfdr.de>; Wed, 10 Jul 2019 11:31:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbfGIJxp (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 9 Jul 2019 05:53:45 -0400
-Received: from smtpbg507.qq.com ([203.205.250.51]:60442 "EHLO smtpbg.qq.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726126AbfGIJxp (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 9 Jul 2019 05:53:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1562666020;
-        bh=wFvQP6I4IYRiRn3obs1ZYJq0esRiTLIG0E9elYXCZ3A=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version;
-        b=feJtkgwbPD6NJ5ijAPBp7/8DosdjIA5B2JBxVqmUISQ8qbWrrWDbgovC7G11SpUGX
-         EvMwaUY5tfWMGwiPgbe/WgsVYNbcX+sNs/Szvg/qCMVywYixU21FGYldi3AcLKcYUm
-         Vs7OuPt3Bk9qsTOVLeJ3RUBA4KEwxH09g7MEIUiU=
-X-QQ-mid: esmtp5t1562665584tla8gjhnn
-Received: from localhost.localdomain (unknown [221.220.250.51])
-        by esmtp4.qq.com (ESMTP) with 
-        id ; Tue, 09 Jul 2019 17:46:23 +0800 (CST)
-X-QQ-SSF: 01010000000000F0FH4000000000000
-X-QQ-FEAT: 5GknEzJPEhs4Ux2yVnSJSBx62XLQcutflWPYl1G7OsWd+XqM1KI2js4IC21bs
-        I+I4PCLg42gOaIulhxSiK77nvcrGvJ3lKkPK/cB/6+xiQu2zOyw72RREtIbM98rOKiF87DS
-        Abxne5X7SGVudyf54iL0LX2q3FZT6z47wtTrVMMrY99NcJagqkup/2cuJLAYzYXnIFDbFd9
-        lZCpVJ+tIz/i3WhZ6fiz7P7wY/T6mypmqCH8YxkGH1vFc0WxtSUCC6MvwWG5xuw1Ese0rsk
-        SiDFKJfupGOfkQRGA/JPwlEHI=
-X-QQ-GoodBg: 0
-From:   Shenghui Wang <shhuiw@foxmail.com>
-To:     colyli@suse.de, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org
-Subject: [PATCH 2/2] bcache: remove ptr_available check in btree_ptr_bad_expensive
-Date:   Tue,  9 Jul 2019 17:46:06 +0800
-Message-Id: <20190709094606.15746-3-shhuiw@foxmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190709094606.15746-1-shhuiw@foxmail.com>
-References: <20190709094606.15746-1-shhuiw@foxmail.com>
+        id S1726250AbfGJJbW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 10 Jul 2019 05:31:22 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46728 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfGJJbW (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 10 Jul 2019 05:31:22 -0400
+Received: from mail-wm1-f69.google.com ([209.85.128.69])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <andrea.righi@canonical.com>)
+        id 1hl8wa-0008Np-5g
+        for linux-bcache@vger.kernel.org; Wed, 10 Jul 2019 09:31:20 +0000
+Received: by mail-wm1-f69.google.com with SMTP id f189so524194wme.5
+        for <linux-bcache@vger.kernel.org>; Wed, 10 Jul 2019 02:31:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=hHPquRzHtRgMtJsb7Rvs2e23qBtTkAoO0X1njgJaMYA=;
+        b=hFhPWneaHMoxP7qgrDxKCk4fADLoqzdMrft0W9lZG70nmuy3QxMyJW4U8OZv7J1tx8
+         gLnMO0G31AAXf/VzIcIZMOa9eHcjtHns6b0SLucrJEvTdiZjG7b/EIullP0Eyg8JENVg
+         ouBC877HV94wl/gO5QOfrKDSkoPLb2fkFzl2uLSHI6/a4Uwrq/pJoDwGzcdo7hUO4rx7
+         HzuxXcNGGXUzToC3GuL1KShnfifPdf2sUAMNEkktCwz0ITYwxbeH5ppptoit3TajPbU9
+         rjPd2e9X3DLGM1Z6UNSF/exgM8KJRUs4cLXgMl6wbH5KYP9ZIF7MOvUFcy7yXNkgdXl3
+         RIUw==
+X-Gm-Message-State: APjAAAXiq5ot5ai7IEzfgSZwWeQZEV9uPBw+4WQBqe0JIAwn+TnwOXpK
+        q2m1YbxpBVQab6177Z9MXFeSrFjRuBca6L/RKwL9CJJHx2DgxqRbIvqWe8yQkXt74l44FKkNH7u
+        KdwHynC5BtdV6aphJmvdysP2r76nHraQVz6ewrm3EWg==
+X-Received: by 2002:adf:de10:: with SMTP id b16mr40612wrm.296.1562751079581;
+        Wed, 10 Jul 2019 02:31:19 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqytLogyZohPzr1HFOmbE/x/1a7unmZGtecEIOhDViRcPJnLjsY03n0YB7/wA800VwKpDtmTzw==
+X-Received: by 2002:adf:de10:: with SMTP id b16mr40582wrm.296.1562751079307;
+        Wed, 10 Jul 2019 02:31:19 -0700 (PDT)
+Received: from localhost (host1-198-dynamic.8-87-r.retail.telecomitalia.it. [87.8.198.1])
+        by smtp.gmail.com with ESMTPSA id g12sm2220469wrv.9.2019.07.10.02.31.18
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 10 Jul 2019 02:31:18 -0700 (PDT)
+Date:   Wed, 10 Jul 2019 11:31:17 +0200
+From:   Andrea Righi <andrea.righi@canonical.com>
+To:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bcache: fix deadlock in bcache_allocator()
+Message-ID: <20190710093117.GA2792@xps-13>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtp:foxmail.com:bgweb:bgweb2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-btree_ptr_bad_expensive() is called by bch_btree_ptr_bad() only.
-Before the invocation, ptr_available() check already done in
-bch_btree_ptr_bad():
-'''
-	...
-	for (i = 0; i < KEY_PTRS(k); i++)
-		if (!ptr_available(b->c, k, i) ||
-		    ptr_stale(b->c, k, i))
-			return true;
+bcache_allocator() can call the following:
 
-	if (expensive_debug_checks(b->c) &&
-	    btree_ptr_bad_expensive(b, k))
-		return true;
-	...
-'''
-Remove redundant ptr_available() check in btree_ptr_bad_expensive().
+ bch_allocator_thread()
+  -> bch_prio_write()
+     -> bch_bucket_alloc()
+        -> wait on &ca->set->bucket_wait
 
-Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
+But the wake up event on bucket_wait is supposed to come from
+bch_allocator_thread() itself => deadlock:
+
+ [ 242.888435] INFO: task bcache_allocato:9015 blocked for more than 120 seconds.
+ [ 242.893786] Not tainted 4.20.0-042000rc3-generic #201811182231
+ [ 242.896669] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ [ 242.900428] bcache_allocato D 0 9015 2 0x80000000
+ [ 242.900434] Call Trace:
+ [ 242.900448] __schedule+0x2a2/0x880
+ [ 242.900455] ? __schedule+0x2aa/0x880
+ [ 242.900462] schedule+0x2c/0x80
+ [ 242.900480] bch_bucket_alloc+0x19d/0x380 [bcache]
+ [ 242.900503] ? wait_woken+0x80/0x80
+ [ 242.900519] bch_prio_write+0x190/0x340 [bcache]
+ [ 242.900530] bch_allocator_thread+0x482/0xd10 [bcache]
+ [ 242.900535] kthread+0x120/0x140
+ [ 242.900546] ? bch_invalidate_one_bucket+0x80/0x80 [bcache]
+ [ 242.900549] ? kthread_park+0x90/0x90
+ [ 242.900554] ret_from_fork+0x35/0x40
+
+Fix by making the call to bch_prio_write() non-blocking, so that
+bch_allocator_thread() never waits on itself.
+
+Moreover, make sure to wake up the garbage collector thread when
+bch_prio_write() is failing to allocate buckets.
+
+BugLink: https://bugs.launchpad.net/bugs/1784665
+Signed-off-by: Andrea Righi <andrea.righi@canonical.com>
 ---
- drivers/md/bcache/extents.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ drivers/md/bcache/alloc.c  |  6 +++++-
+ drivers/md/bcache/bcache.h |  2 +-
+ drivers/md/bcache/super.c  | 13 +++++++++----
+ 3 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/md/bcache/extents.c b/drivers/md/bcache/extents.c
-index 5a05407a8126..abcf783839c8 100644
---- a/drivers/md/bcache/extents.c
-+++ b/drivers/md/bcache/extents.c
-@@ -177,16 +177,15 @@ static bool btree_ptr_bad_expensive(struct btree *b, const struct bkey *k)
- 	struct bucket *g;
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index f8986effcb50..0797587600c7 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -377,7 +377,11 @@ static int bch_allocator_thread(void *arg)
+ 			if (!fifo_full(&ca->free_inc))
+ 				goto retry_invalidate;
  
- 	if (mutex_trylock(&b->c->bucket_lock)) {
--		for (i = 0; i < KEY_PTRS(k); i++)
--			if (ptr_available(b->c, k, i)) {
--				g = PTR_BUCKET(b->c, k, i);
--
--				if (KEY_DIRTY(k) ||
--				    g->prio != BTREE_PRIO ||
--				    (b->c->gc_mark_valid &&
--				     GC_MARK(g) != GC_MARK_METADATA))
--					goto err;
--			}
-+		for (i = 0; i < KEY_PTRS(k); i++) {
-+			g = PTR_BUCKET(b->c, k, i);
-+
-+			if (KEY_DIRTY(k) ||
-+			    g->prio != BTREE_PRIO ||
-+			    (b->c->gc_mark_valid &&
-+			     GC_MARK(g) != GC_MARK_METADATA))
-+				goto err;
+-			bch_prio_write(ca);
++			if (bch_prio_write(ca, false) < 0) {
++				ca->invalidate_needs_gc = 1;
++				wake_up_gc(ca->set);
++				goto retry_invalidate;
++			}
+ 		}
+ 	}
+ out:
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index fdf75352e16a..dc5106b21260 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -979,7 +979,7 @@ bool bch_cached_dev_error(struct cached_dev *dc);
+ __printf(2, 3)
+ bool bch_cache_set_error(struct cache_set *c, const char *fmt, ...);
+ 
+-void bch_prio_write(struct cache *ca);
++int bch_prio_write(struct cache *ca, bool wait);
+ void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent);
+ 
+ extern struct workqueue_struct *bcache_wq;
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 1b63ac876169..6598b457df1a 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -525,7 +525,7 @@ static void prio_io(struct cache *ca, uint64_t bucket, int op,
+ 	closure_sync(cl);
+ }
+ 
+-void bch_prio_write(struct cache *ca)
++int bch_prio_write(struct cache *ca, bool wait)
+ {
+ 	int i;
+ 	struct bucket *b;
+@@ -560,8 +560,12 @@ void bch_prio_write(struct cache *ca)
+ 		p->magic	= pset_magic(&ca->sb);
+ 		p->csum		= bch_crc64(&p->magic, bucket_bytes(ca) - 8);
+ 
+-		bucket = bch_bucket_alloc(ca, RESERVE_PRIO, true);
+-		BUG_ON(bucket == -1);
++		bucket = bch_bucket_alloc(ca, RESERVE_PRIO, wait);
++		if (bucket == -1) {
++			if (!wait)
++				return -ENOMEM;
++			BUG_ON(1);
 +		}
  
- 		mutex_unlock(&b->c->bucket_lock);
+ 		mutex_unlock(&ca->set->bucket_lock);
+ 		prio_io(ca, bucket, REQ_OP_WRITE, 0);
+@@ -589,6 +593,7 @@ void bch_prio_write(struct cache *ca)
+ 
+ 		ca->prio_last_buckets[i] = ca->prio_buckets[i];
  	}
++	return 0;
+ }
+ 
+ static void prio_read(struct cache *ca, uint64_t bucket)
+@@ -1903,7 +1908,7 @@ static int run_cache_set(struct cache_set *c)
+ 
+ 		mutex_lock(&c->bucket_lock);
+ 		for_each_cache(ca, c, i)
+-			bch_prio_write(ca);
++			bch_prio_write(ca, true);
+ 		mutex_unlock(&c->bucket_lock);
+ 
+ 		err = "cannot allocate new UUID bucket";
 -- 
 2.20.1
 
