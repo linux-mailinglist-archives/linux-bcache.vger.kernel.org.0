@@ -2,37 +2,37 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F066922B
-	for <lists+linux-bcache@lfdr.de>; Mon, 15 Jul 2019 16:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98A4A69320
+	for <lists+linux-bcache@lfdr.de>; Mon, 15 Jul 2019 16:42:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390999AbfGOOeI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 15 Jul 2019 10:34:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50654 "EHLO mail.kernel.org"
+        id S2392075AbfGOOkw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 15 Jul 2019 10:40:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391989AbfGOOeC (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:34:02 -0400
+        id S2404626AbfGOOkv (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:40:51 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 088BD204FD;
-        Mon, 15 Jul 2019 14:33:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D23721871;
+        Mon, 15 Jul 2019 14:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563201241;
-        bh=dc0s9BhvmSkVRg78pZTayKIR8WMQmOghBDfTgVaAZyM=;
+        s=default; t=1563201650;
+        bh=9pMykmicB67+hgy+/5R0rue7G0fOE4KEYkJN9cu59yk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PYLNKvvRl8Z9IARSdotia0GL/amfZGxKhvVVzcGARGqMW5wFHIDlO7GI8fDS30RUS
-         sds0tdl8qpzpLNioQBqTtVZKLB+8QW5VR9UFTMTL+AcVbs73XQUBhCrFGfWHIt57VX
-         2lZ72KcYVsZg+1iUcA/1hWAKf6zegnHe/4EJtqWM=
+        b=C4Vf/BZRSKUcmc7s+ZIvXICvNOIVM8QI0XJQ2g+6b3pJ1nnDpcYX4PiwE9Ipyb5vo
+         CPlhJSsVFru7zbDb2VhxtEOij0K4ccISby7h40ufri9l5icbmK0vVHzcbr9o6y+caQ
+         Zbpdm3yxYuOejhg0DycIQf/BSgmKTxgN0zo9VgTM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 088/105] bcache: check c->gc_thread by IS_ERR_OR_NULL in cache_set_flush()
-Date:   Mon, 15 Jul 2019 10:28:22 -0400
-Message-Id: <20190715142839.9896-88-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 64/73] bcache: check c->gc_thread by IS_ERR_OR_NULL in cache_set_flush()
+Date:   Mon, 15 Jul 2019 10:36:20 -0400
+Message-Id: <20190715143629.10893-64-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715142839.9896-1-sashal@kernel.org>
-References: <20190715142839.9896-1-sashal@kernel.org>
+In-Reply-To: <20190715143629.10893-1-sashal@kernel.org>
+References: <20190715143629.10893-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -152,10 +152,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 85a5afe01d39..1a270e2262f5 100644
+index 9f2588eaaf5f..c5bc3e5e921e 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -1402,7 +1402,7 @@ static void cache_set_flush(struct closure *cl)
+@@ -1405,7 +1405,7 @@ static void cache_set_flush(struct closure *cl)
  	kobject_put(&c->internal);
  	kobject_del(&c->kobj);
  
