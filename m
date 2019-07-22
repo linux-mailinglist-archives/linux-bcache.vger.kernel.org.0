@@ -2,81 +2,106 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EFD870202
-	for <lists+linux-bcache@lfdr.de>; Mon, 22 Jul 2019 16:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFF22706A7
+	for <lists+linux-bcache@lfdr.de>; Mon, 22 Jul 2019 19:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730701AbfGVOPh (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 22 Jul 2019 10:15:37 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41251 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730672AbfGVOPg (ORCPT
+        id S1731232AbfGVRWO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 22 Jul 2019 13:22:14 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:44577 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728233AbfGVRWN (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 22 Jul 2019 10:15:36 -0400
-Received: by mail-pg1-f196.google.com with SMTP id x15so7387416pgg.8
-        for <linux-bcache@vger.kernel.org>; Mon, 22 Jul 2019 07:15:36 -0700 (PDT)
+        Mon, 22 Jul 2019 13:22:13 -0400
+Received: by mail-vs1-f67.google.com with SMTP id v129so26698922vsb.11;
+        Mon, 22 Jul 2019 10:22:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=c0/FaTg6NjQepjbzLVFHN8PofHop9Vbm3ERiirMsPvU=;
-        b=ypAX0A/8c5Js4BXqU/PFo1onpNkeLR0Cy6r9y9LVOThDSfwyRKbt1D2aCbxkydbTyd
-         a7efLs28A1J4Cdr32qvu6SZNJ84bIr4fFd+dVO6Tbz5LcPj/663dqoAzXmfd8FlFEifC
-         YzefZNK7f0ghAotH/Haz0KROhQzZvJsGVbdPWHyHDL8f0DdqcqoQ2/ZprcIrq1z6ZOcv
-         lbIbWgQJOsk4CTtEitBAsRtToA8f2nEEi/6chVx4HJEi3O999SFtaRfEdUnrkPDjifVR
-         W5USaTvNnQg3pGL3pA9MPbKh6jAr5chXt0kKM2stqmS+NGsLyORmy0sRGjXdGD3+lAR3
-         9t6Q==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=RwZIBmGpe6Ch1OhMIQEtezoTZ92I3yKQeRZwjwn0rdg=;
+        b=juK0GCh0oGkF8/qRwfMrY4o0UWQT7ucEH7fpdfVlk9ZyzemrMFDoJrl3IxM6HwYfQg
+         GUa/3zrr3j1P/CczbEAu0wXPrIKSnGQiQupv+9X/2AS/7WuzgaTMTML/z1Zd817vfVFg
+         Pu6A8O63YCtKFubGdDAgY17XBKhEntxodyMgyueVWyzNMKMx8phdH/KBT1mzvKLXOmzT
+         LAzmyxvVDBRhcADNrafe6TJhODZTrsjIUBlCDyJO1iCXZvFJvtdIUlTP+ymkjwxIyngz
+         YyvDpfpksbKKksRkeLAMEH71pSgakrTgqGGh/QjZzuA+Wz4mizVqFDTOnw+OhcwRPQGL
+         cuxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=c0/FaTg6NjQepjbzLVFHN8PofHop9Vbm3ERiirMsPvU=;
-        b=Gj+/f+HAcrndkZ94yxF0yRjD+VdWBlsasstMCX8Ze0PXymIeD1K9MWh0fc0QJJlcSX
-         mFL4cw8DM+wxVhBpNKKTR+emy8DXpQ8KNGoGF/Uo42JEL8LIX5noBfUEa3mGKGDWets5
-         V+C0ntb2wbWbMXoyAweyFsmaDrcUJdFpHL2bLbreRpjkfIXJxoU0rC8W3bmRf6Anc/+s
-         cUuJGGiz2JPzwMUDmVLwRPEqy5FD8C9ojXLYMLVlUOUyHv6P8En41WxlB2pC5n4Vr+sl
-         1/+6kTt4tN0FiDWneTc8w/4SXW4YKgRxfZqJ3aPQXUx7F2Nk+HQci/X0b4roU9xkGJ8O
-         JmFg==
-X-Gm-Message-State: APjAAAVyV066KmF3r9LzUQErCrb7kMRSAeQ6nleuHL0Ww3tACoTx9u6O
-        SNJzvagd6aUwf3vCR8rO+3g=
-X-Google-Smtp-Source: APXvYqyhGYBy0xc2qHSl/XSLNKe0Ob8du2ZZfvYsm0rhU3P9HY+9iwmgy9n2zOCtdFXNW0nQpb0j+g==
-X-Received: by 2002:a62:6:: with SMTP id 6mr473460pfa.159.1563804936258;
-        Mon, 22 Jul 2019 07:15:36 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id 23sm43424819pfn.176.2019.07.22.07.15.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 07:15:35 -0700 (PDT)
-Subject: Re: [PATCH 1/1] bcache: fix possible memory leak in
- bch_cached_dev_run()
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=RwZIBmGpe6Ch1OhMIQEtezoTZ92I3yKQeRZwjwn0rdg=;
+        b=Fb68t9Brd2Dx69a418YpqASOolJ/k1t2jDlqrNiNINPYpU1HRYlFTGZ9+Vm/dzl/Hd
+         cro6vclkvtmj7MTzIGLaKMkWv2E4hVSTrbOxWqiB+3sEAQbZ2ET19MZZA7hLJmng8Shd
+         f2CpcCwQtTJWKZ2aWo4Xy0DGdeOEY3rrnjm7/KNFN3fEpjzwZRQBR55e0SgtS8cO9HA6
+         EcRGIqOU0KlR4nXggdzlW7FLSFrbKoOvSrTopbF55SEdhcHBDbsMGGweS1s4MzmJ06kh
+         EJXIsqWTuTdoFVx8Nk5qwstbOxHAjgWzXMc++RwSVH5zEvIYwQgw2hoxZcXaUago+9N6
+         mA1w==
+X-Gm-Message-State: APjAAAUUQNBH/AMQlpKqMnQFJHqLVd/1ybHBriV51j7Sj3001zMC7QjO
+        Cx88IKQ+hHchqVpZD01kIfpEZJE4nQ==
+X-Google-Smtp-Source: APXvYqx8dAyipHaafaWOQlEAfhjBgsxzkpXNAVrCHLUHFeuc5TzcqM/MAzIv6qbapb0UYqwjI8LFFg==
+X-Received: by 2002:a67:c113:: with SMTP id d19mr3770488vsj.89.1563816132534;
+        Mon, 22 Jul 2019 10:22:12 -0700 (PDT)
+Received: from kmo-pixel (c-71-234-172-214.hsd1.vt.comcast.net. [71.234.172.214])
+        by smtp.gmail.com with ESMTPSA id v5sm44538591vsi.24.2019.07.22.10.22.11
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 22 Jul 2019 10:22:11 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 13:22:09 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
 To:     Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Wei Yongjun <weiyongjun1@huawei.com>
-References: <20190722141236.103967-1-colyli@suse.de>
- <20190722141236.103967-2-colyli@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5bf3c44a-6594-47e2-e4d9-6f2d9b791e2a@kernel.dk>
-Date:   Mon, 22 Jul 2019 08:15:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcache@vger.kernel.org
+Subject: Re: [PATCH 12/12] closures: fix a race on wakeup from closure_sync
+Message-ID: <20190722172209.GA25176@kmo-pixel>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <20190610191420.27007-13-kent.overstreet@gmail.com>
+ <8381178e-4c1e-e0fe-430b-a459be1a9389@suse.de>
+ <48527b97-e39a-0791-e038-d9f2ec28943e@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20190722141236.103967-2-colyli@suse.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <48527b97-e39a-0791-e038-d9f2ec28943e@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 7/22/19 8:12 AM, Coly Li wrote:
-> From: Wei Yongjun <weiyongjun1@huawei.com>
+On Thu, Jul 18, 2019 at 03:46:46PM +0800, Coly Li wrote:
+> On 2019/7/16 6:47 下午, Coly Li wrote:
+> > Hi Kent,
+> > 
+> > On 2019/6/11 3:14 上午, Kent Overstreet wrote:
+> >> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+> > Acked-by: Coly Li <colyli@suse.de>
+> > 
+> > And also I receive report for suspicious closure race condition in
+> > bcache, and people ask for having this patch into Linux v5.3.
+> > 
+> > So before this patch gets merged into upstream, I plan to rebase it to
+> > drivers/md/bcache/closure.c at this moment. Of cause the author is you.
+> > 
+> > When lib/closure.c merged into upstream, I will rebase all closure usage
+> > from bcache to use lib/closure.{c,h}.
 > 
-> memory malloced in bch_cached_dev_run() and should be freed before
-> leaving from the error handling cases, otherwise it will cause
-> memory leak.
+> Hi Kent,
+> 
+> The race bug reporter replies me that the closure race bug is very rare
+> to reproduce, after applying the patch and testing, they are not sure
+> whether their closure race problem is fixed or not.
+> 
+> And I notice rcu_read_lock()/rcu_read_unlock() is used here, but it is
+> not clear to me what is the functionality of the rcu read lock in
+> closure_sync_fn(). I believe you have reason to use the rcu stuffs here,
+> could you please provide some hints to help me to understand the change
+> better ?
 
-Applied, thanks.
+The race was when a thread using closure_sync() notices cl->s->done == 1 before
+the thread calling closure_put() calls wake_up_process(). Then, it's possible
+for that thread to return and exit just before wake_up_process() is called - so
+we're trying to wake up a process that no longer exists.
 
--- 
-Jens Axboe
-
+rcu_read_lock() is sufficient to protect against this, as there's an rcu barrier
+somewhere in the process teardown path.
