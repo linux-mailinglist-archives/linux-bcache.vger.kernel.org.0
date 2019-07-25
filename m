@@ -2,126 +2,120 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F6A675F19
-	for <lists+linux-bcache@lfdr.de>; Fri, 26 Jul 2019 08:35:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9B8761F9
+	for <lists+linux-bcache@lfdr.de>; Fri, 26 Jul 2019 11:26:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725867AbfGZGfd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 26 Jul 2019 02:35:33 -0400
-Received: from mail-vs1-f42.google.com ([209.85.217.42]:46875 "EHLO
-        mail-vs1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbfGZGfd (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 26 Jul 2019 02:35:33 -0400
-Received: by mail-vs1-f42.google.com with SMTP id r3so35366073vsr.13
-        for <linux-bcache@vger.kernel.org>; Thu, 25 Jul 2019 23:35:33 -0700 (PDT)
+        id S1726082AbfGZJ0I (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 26 Jul 2019 05:26:08 -0400
+Received: from mtax.cdmx.gob.mx ([187.141.35.197]:14909 "EHLO mtaw.cdmx.gob.mx"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726007AbfGZJ0I (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 26 Jul 2019 05:26:08 -0400
+X-Greylist: delayed 2490 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Jul 2019 05:26:06 EDT
+X-NAI-Header: Modified by McAfee Email Gateway (4500)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=dihptPS7qzTnzYasf9qJX5UUwlifJwjKMMIJAa9qbkg=;
-        b=bxsc+JHoySM8mARIYk0v57YpMU1GzDPNbK0/QXKlX/BdTskhynRRcahC3gvu8wxRtv
-         4TY6BEknvlOqvC5FeIaO/mfCng22g+2//NLi/DI+SbGui7CXIVquYaXLqPQMK+0O9oI6
-         zhgYvDW+DXmAfjZKRQ3bixIyWkijGnCztOv8l+BTxICOIEPGNoqRQHgHNIIGrKfsANzD
-         KbSsIzMU5a5TBdorOfAY5RoKxaooXKMIqdTQaHlkInk6m4m+9Hr9GHxkg6nmd1CTrzxu
-         /gjIYTxUIHdRtnG4GQMbK/I7/xZBQEM6AiyWlRKjcFVlMH73aDmwkREv86hSvMyAciu1
-         bQpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=dihptPS7qzTnzYasf9qJX5UUwlifJwjKMMIJAa9qbkg=;
-        b=O7yADXE430yM62LV6JLPqyjaJYXbsqDx+SYVKwnctgKNYMkr/3hHgYE3v8X+bJbhSg
-         UV+qnNyZmWIQW/+Ktv2hDTDpQf4Vcoi/iYldz81Nn0ATYW13qq7C09lbKq6cemMA9k6Q
-         gooq4PuPHBgp6e8BhEyKqO50vwKcWVeeowKTx/XagFxyNW9WriEvzLaak1j8cB9XuLlX
-         QvSBE4qycpOd+An9rd+gkrLDpqBhrRvzMq/ZQlSFtISDeH0w8vWk5BByKH3MpZ086Rrk
-         XddUyjjEkEsyDxJ6r9ccsIPefByxNIB0VQLG4wJL2O3ifaVUTGWR4GJ2lpSPZCCLlx39
-         fkcQ==
-X-Gm-Message-State: APjAAAWCLOa5JMZ7vk2x3UQUNIsLalJnizq1N38dMVTv0atRUX9h6aDv
-        37lnHFbA/ASOHDIGJKQVFAlYZ4OGiLvmrtbRX7T8tver
-X-Google-Smtp-Source: APXvYqy500zJ4j1LOOlOaNqgPseB2abt4DBG0wllsYtYVFibrfS5PRu3PRIAbQd/8KXQWLN/83+lgTY40S55ImH0jQY=
-X-Received: by 2002:a67:d00d:: with SMTP id r13mr61279835vsi.100.1564122932507;
- Thu, 25 Jul 2019 23:35:32 -0700 (PDT)
+        d=cdmx.gob.mx; s=72359050-3965-11E6-920A-0192F7A2F08E;
+        t=1564096603; h=X-Virus-Scanned:Content-Type:
+         MIME-Version:Content-Transfer-Encoding:Content-Description:
+         Subject:To:From:Date:Reply-To:Message-Id:X-AnalysisOut:
+         X-AnalysisOut:X-AnalysisOut:X-AnalysisOut:
+         X-AnalysisOut:X-AnalysisOut:X-SAAS-TrackingID:
+         X-NAIMIME-Disclaimer:X-NAIMIME-Modified:X-NAI-Spam-Flag:
+         X-NAI-Spam-Threshold:X-NAI-Spam-Score:X-NAI-Spam-Rules:
+         X-NAI-Spam-Version; bh=aGk6f87fXnNN5ENmLP
+        ZKXpnoT96eMR2lex6QcziGiys=; b=Vf/veGBcCf9VNeXNXlkS
+        Kiv7Y5YvoRWifQAEYKR76u602KM3hm3NJRpwmi18RgEOKUI+/I
+        tlfusVJDfVgnAQUBRUGM5xvnFl2T0BEAqSMYGbn/TA7s7e00pI
+        cKwsAw14P6BNQgTb6/FAKjQJiLt/9a7GEZ5RMllj1rckFhXREk
+        0=
+Received: from correo.seciti.cdmx.gob.mx (gdf-correo.cdmx.gob.mx [10.250.102.17]) by mtaw.cdmx.gob.mx with smtp
+         id 2c31_7b04_75bb32da_6a5c_4994_853a_b03a1d721046;
+        Thu, 25 Jul 2019 18:16:41 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by gdf-correo.df.gob.mx (Postfix) with ESMTP id 05554131FF;
+        Thu, 25 Jul 2019 14:38:49 -0500 (CDT)
+Received: from correo.seciti.cdmx.gob.mx ([127.0.0.1])
+        by localhost (gdf-correo.df.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id md9O66ZX8CdZ; Thu, 25 Jul 2019 14:38:48 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+        by gdf-correo.df.gob.mx (Postfix) with ESMTP id 977149FF1;
+        Thu, 25 Jul 2019 12:28:51 -0500 (CDT)
+X-Virus-Scanned: amavisd-new at gdf-correo.df.gob.mx
+Received: from correo.seciti.cdmx.gob.mx ([127.0.0.1])
+        by localhost (gdf-correo.df.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id FCtZxjDKHlJ2; Thu, 25 Jul 2019 12:28:51 -0500 (CDT)
+Received: from DESKTOP-C54UF22.mshome.net (unknown [105.8.3.139])
+        by gdf-correo.df.gob.mx (Postfix) with ESMTPSA id 65A1C64CA;
+        Thu, 25 Jul 2019 11:06:48 -0500 (CDT)
+Content-Type: text/plain;
+  charset="utf-8"
 MIME-Version: 1.0
-From:   Mike <1100100@gmail.com>
-Date:   Fri, 26 Jul 2019 02:35:21 -0400
-Message-ID: <CAECVvTXrwhpjtHpXFv8m_EmcNT286nvZU5Gk_k5DGJyNbbM7VA@mail.gmail.com>
-Subject: make && make install bcachefs-tools errors
-To:     linux-bcache@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
+Content-Description: Mail message body
+Subject: =?utf-8?b?UmU6IOKCrCAyLDAwMCwwMDAuMDAgRXVybw==?=
+To:     Recipients <msotor@caprepol.cdmx.gob.mx>
+From:   "Richard Wahl" <msotor@caprepol.cdmx.gob.mx>
+Date:   Thu, 25 Jul 2019 09:07:08 -0700
+Reply-To: unitednationscouncilrefunds@gmail.com
+Message-Id: <20190725160648.65A1C64CA@gdf-correo.df.gob.mx>
+X-AnalysisOut: [v=2.2 cv=EfC4eLuC c=1 sm=1 tr=0 p=IzQKec_a9_kA:10 p=2OI1PN]
+X-AnalysisOut: [nC8JhL0FsIPBYA:9 p=UMYcPIyVhriN8jpzzWCu:22 a=KsSCQl7LcZej7]
+X-AnalysisOut: [7FuluUcQw==:117 a=F1qjfNPsUt6WITM/XvSgqg==:17 a=IkcTkHD0fZ]
+X-AnalysisOut: [MA:10 a=x7bEGLp0ZPQA:10 a=0o9FgrsRnhwA:10 a=vnREMb7VAAAA:8]
+X-AnalysisOut: [ a=CjxXgO3LAAAA:8 a=QEXdDO2ut3YA:10 a=4biAMdpfAvYA:10 a=jo]
+X-AnalysisOut: [czC66BiHYA:10]
+X-SAAS-TrackingID: a783a3d5.0.64136612.00-2265.106867809.s12p02m001.mxlogic.net
+X-NAIMIME-Disclaimer: 1
+X-NAIMIME-Modified: 1
+X-NAI-Spam-Flag: NO
+X-NAI-Spam-Threshold: 3
+X-NAI-Spam-Score: -5000
+X-NAI-Spam-Rules: 1 Rules triggered
+        WHITELISTED=-5000
+X-NAI-Spam-Version: 2.3.0.9418 : core <6598> : inlines <7127> : streams
+ <1828421> : uri <2872738>
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hello bcachefs,
-
-My first attempt at installing/configuring the filesystem on CentOS 7
-and it appears the tools install is throwing a few warnings and
-errors.  Can anyone confirm whether the errors indicate the install is
-broken; or, are the errors non-critical?
-
-Thanks for your help.
-
-~# make && make install
-cc -std=3Dgnu89 -O2 -g -MMD -Wall -Wno-pointer-sign -fno-strict-aliasing
--I. -Iinclude -Iraid -D_FILE_OFFSET_BITS=3D64 -D_GNU_SOURCE
--D_LGPL_SOURCE -DRCU_MEMBARRIER -DZSTD_STATIC_LINKING_ONLY
--DNO_BCACHEFS_CHARDEV -DNO_BCACHEFS_FS -DNO_BCACHEFS_SYSFS
--DVERSION_STRING=3D'"v0.1-72-g692eadd"'  -Wno-unused-but-set-variable
--I/usr/include/blkid -I/usr/include/uuid     -c -o crypto.o crypto.c
-cc -std=3Dgnu89 -O2 -g -MMD -Wall -Wno-pointer-sign -fno-strict-aliasing
--I. -Iinclude -Iraid -D_FILE_OFFSET_BITS=3D64 -D_GNU_SOURCE
--D_LGPL_SOURCE -DRCU_MEMBARRIER -DZSTD_STATIC_LINKING_ONLY
--DNO_BCACHEFS_CHARDEV -DNO_BCACHEFS_FS -DNO_BCACHEFS_SYSFS
--DVERSION_STRING=3D'"v0.1-72-g692eadd"'  -Wno-unused-but-set-variable
--I/usr/include/blkid -I/usr/include/uuid     -c -o libbcachefs.o
-libbcachefs.c
-libbcachefs.c: In function =E2=80=98bch2_super_write=E2=80=99:
-libbcachefs.c:315:9: warning: missing braces around initializer
-[-Wmissing-braces]
-  struct nonce nonce =3D { 0 };
-         ^
-libbcachefs.c:315:9: warning: (near initialization for =E2=80=98nonce.d=E2=
-=80=99)
-[-Wmissing-braces]
-cc -std=3Dgnu89 -O2 -g -MMD -Wall -Wno-pointer-sign -fno-strict-aliasing
--I. -Iinclude -Iraid -D_FILE_OFFSET_BITS=3D64 -D_GNU_SOURCE
--D_LGPL_SOURCE -DRCU_MEMBARRIER -DZSTD_STATIC_LINKING_ONLY
--DNO_BCACHEFS_CHARDEV -DNO_BCACHEFS_FS -DNO_BCACHEFS_SYSFS
--DVERSION_STRING=3D'"v0.1-72-g692eadd"'  -Wno-unused-but-set-variable
--I/usr/include/blkid -I/usr/include/uuid     -c -o libbcachefs/acl.o
-libbcachefs/acl.c
-cc -std=3Dgnu89 -O2 -g -MMD -Wall -Wno-pointer-sign -fno-strict-aliasing
--I. -Iinclude -Iraid -D_FILE_OFFSET_BITS=3D64 -D_GNU_SOURCE
--D_LGPL_SOURCE -DRCU_MEMBARRIER -DZSTD_STATIC_LINKING_ONLY
--DNO_BCACHEFS_CHARDEV -DNO_BCACHEFS_FS -DNO_BCACHEFS_SYSFS
--DVERSION_STRING=3D'"v0.1-72-g692eadd"'  -Wno-unused-but-set-variable
--I/usr/include/blkid -I/usr/include/uuid     -c -o
-libbcachefs/alloc_background.o libbcachefs/alloc_background.c
-cc -std=3Dgnu89 -O2 -g -MMD -Wall -Wno-pointer-sign -fno-strict-aliasing
--I. -Iinclude -Iraid -D_FILE_OFFSET_BITS=3D64 -D_GNU_SOURCE
--D_LGPL_SOURCE -DRCU_MEMBARRIER -DZSTD_STATIC_LINKING_ONLY
--DNO_BCACHEFS_CHARDEV -DNO_BCACHEFS_FS -DNO_BCACHEFS_SYSFS
--DVERSION_STRING=3D'"v0.1-72-g692eadd"'  -Wno-unused-but-set-variable
--I/usr/include/blkid -I/usr/include/uuid     -c -o
-libbcachefs/alloc_foreground.o libbcachefs/alloc_foreground.c
-libbcachefs/alloc_foreground.c: In function =E2=80=98__writepoint_find=E2=
-=80=99:
-libbcachefs/alloc_foreground.c:746:2: warning: implicit declaration of
-function =E2=80=98cds_hlist_for_each_entry_rcu_2=E2=80=99
-[-Wimplicit-function-declaration]
-  hlist_for_each_entry_rcu(wp, head, node)
-  ^
-libbcachefs/alloc_foreground.c:746:37: error: =E2=80=98node=E2=80=99 undecl=
-ared (first
-use in this function)
-  hlist_for_each_entry_rcu(wp, head, node)
-                                     ^
-libbcachefs/alloc_foreground.c:746:37: note: each undeclared
-identifier is reported only once for each function it appears in
-libbcachefs/alloc_foreground.c:747:3: error: expected =E2=80=98;=E2=80=99 b=
-efore =E2=80=98if=E2=80=99
-   if (wp->write_point =3D=3D write_point)
-   ^
-make: *** [libbcachefs/alloc_foreground.o] Error 1
+TGllYmVyIEZyZXVuZCwKCkljaCBiaW4gSGVyciBSaWNoYXJkIFdhaGwgZGVyIE1lZ2EtR2V3aW5u
+ZXIgdm9uICQgNTMzTSBJbiBNZWdhIE1pbGxpb25zIEphY2twb3Qgc3BlbmRlIGljaCBhbiA1IHp1
+ZsOkbGxpZ2UgUGVyc29uZW4sIHdlbm4gU2llIGRpZXNlIEUtTWFpbCBlcmhhbHRlbiwgZGFubiB3
+dXJkZSBJaHJlIEUtTWFpbCBuYWNoIGVpbmVtIFNwaW5iYWxsIGF1c2dld8OkaGx0LiBJY2ggaGFi
+ZSBkZW4gZ3LDtsOfdGVuIFRlaWwgbWVpbmVzIFZlcm3DtmdlbnMgYXVmIGVpbmUgUmVpaGUgdm9u
+IFdvaGx0w6R0aWdrZWl0c29yZ2FuaXNhdGlvbmVuIHVuZCBPcmdhbmlzYXRpb25lbiB2ZXJ0ZWls
+dC4gSWNoIGhhYmUgbWljaCBmcmVpd2lsbGlnIGRhenUgZW50c2NoaWVkZW4sIElobmVuIGRlbiBC
+ZXRyYWcgdm9uIOKCrCAyLjAwMC4wMDAsMDAgenUgc3BlbmRlbiBlaW5lIGRlciBhdXNnZXfDpGhs
+dGVuIDUsIHVtIG1laW5lIEdld2lubmUgenUgw7xiZXJwcsO8ZmVuLCBmaW5kZW4gU2llIGF1ZiBt
+ZWluZXIgWW91IFR1YmUgU2VpdGUgdW50ZW4uCgpVSFIgTUlDSCBISUVSOiBodHRwczovL3d3dy55
+b3V0dWJlLmNvbS93YXRjaD92PXRuZTAyRXhORHJ3CgpEYXMgaXN0IGRlaW4gU3BlbmRlbmNvZGU6
+IFtERjAwNDMwMzQyMDE4XQoKQW50d29ydGVuIFNpZSBtaXQgZGVtIFNwZW5kZW5jb2RlIGF1ZiBk
+aWVzZSBFLU1haWw6IGFuZHJlYm90aGFAeWFob28uY29tCgpJY2ggaG9mZmUsIFNpZSB1bmQgSWhy
+ZSBGYW1pbGllIGdsw7xja2xpY2ggenUgbWFjaGVuLgoKR3LDvMOfZQoKSGVyciBSaWNoYXJkIFdh
+aGwKCgpMYSBpbmZvcm1hY2lvbiBjb250ZW5pZGEgZW4gZXN0ZSBjb3JyZW8sIGFzaSBjb21vIGxh
+IGNvbnRlbmlkYSBlbiBsb3MgZG9jdW1lbnRvcyBhbmV4b3MsIHB1ZWRlIGNvbnRlbmVyIGRhdG9z
+IHBlcnNvbmFsZXMsIHBvciBsbyBxdWUgc3UgZGlmdXNpb24gZXMgcmVzcG9uc2FiaWxpZGFkIGRl
+IHF1aWVuIGxvcyB0cmFuc21pdGUgeSBxdWllbiBsb3MgcmVjaWJlLCBlbiB0w6lybWlub3MgZGUg
+bG8gZGlzcHVlc3RvIHBvciBsYXMgZnJhY2Npb25lcyBJSSB5IFZJSSBkZWwgYXJ0aWN1bG8gNCwg
+dWx0aW1vIHBhcnJhZm8gZGVsIGFydGljdWxvIDgsIGFydGljdWxvIDM2IHBhcnJhZm8gSUksIDM4
+IGZyYWNjaW9uIEkgeSBkZW1hcyBhcGxpY2FibGVzIGRlIGxhIExleSBkZSBUcmFuc3BhcmVuY2lh
+IHkgQWNjZXNvIGEgbGEgSW5mb3JtYWNpb24gUHVibGljYSBkZWwgRGlzdHJpdG8gRmVkZXJhbC4N
+CkxvcyBEYXRvcyBQZXJzb25hbGVzIHNlIGVuY3VlbnRyYW4gcHJvdGVnaWRvcyBwb3IgbGEgTGV5
+IGRlIFByb3RlY2Npb24gZGUgRGF0b3MgUGVyc29uYWxlcyBkZWwgRGlzdHJpdG8gRmVkZXJhbCwg
+cG9yIGxvIHF1ZSBzdSBkaWZ1c2lvbiBzZSBlbmN1ZW50cmEgdHV0ZWxhZGEgZW4gc3VzIGFydGlj
+dWxvcyAyLCA1LCAxNiwgMjEsIDQxIHkgZGVtYXMgcmVsYXRpdm9zIHkgYXBsaWNhYmxlcywgZGVi
+aWVuZG8gc3VqZXRhcnNlIGVuIHN1IGNhc28sIGEgbGFzIGRpc3Bvc2ljaW9uZXMgcmVsYXRpdmFz
+IGEgbGEgY3JlYWNpb24sIG1vZGlmaWNhY2lvbiBvIHN1cHJlc2lvbiBkZSBkYXRvcyBwZXJzb25h
+bGVzIHByZXZpc3Rvcy4gQXNpbWlzbW8sIGRlYmVyYSBlc3RhcnNlIGEgbG8gc2XDsWFsYWRvIGVu
+IGxvcyBudW1lcmFsZXMgMSAsIDMsIDEyLCAxOCwgMTksIDIwLCAyMSwgMjMsIDI0LCAyOSwgMzUg
+eSBkZW1hcyBhcGxpY2FibGVzIGRlIGxvcyBMaW5lYW1pZW50b3MgcGFyYSBsYSBQcm90ZWNjaW9u
+IGRlIERhdG9zIFBlcnNvbmFsZXMgZW4gZWwgRGlzdHJpdG8gRmVkZXJhbC4NCkVuIGVsIHVzbyBk
+ZSBsYXMgdGVjbm9sb2dpYXMgZGUgbGEgaW5mb3JtYWNpb24geSBjb211bmljYWNpb25lcyBkZWwg
+R29iaWVybm8gZGVsIERpc3RyaXRvIEZlZGVyYWwsIGRlYmVyYSBvYnNlcnZhcnNlIHB1bnR1YWxt
+ZW50ZSBsbyBkaXNwdWVzdG8gcG9yIGxhIExleSBHb2JpZXJubyBFbGVjdHJvbmljbyBkZWwgRGlz
+dHJpdG8gRmVkZXJhbCwgbGEgbGV5IHBhcmEgaGFjZXIgZGUgbGEgQ2l1ZGFkIGRlIE1leGljbyB1
+bmEgQ2l1ZGFkIE1hcyBBYmllcnRhLCBlbCBhcGFydGFkbyAxMCBkZSBsYSBDaXJjdWxhciBVbm8g
+dmlnZW50ZSB5IGxhcyBOb3JtYXMgR2VuZXJhbGVzIHF1ZSBkZWJlcmFuIG9ic2VydmFyc2UgZW4g
+bWF0ZXJpYSBkZSBTZWd1cmlkYWQgZGUgbGEgSW5mb3JtYWNpb24gZW4gbGEgQWRtaW5pc3RyYWNp
+b24gUHVibGljYSBkZWwgRGlzdHJpdG8gRmVkZXJhbC4K
