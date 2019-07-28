@@ -2,128 +2,75 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A50F17794D
-	for <lists+linux-bcache@lfdr.de>; Sat, 27 Jul 2019 16:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 482197826E
+	for <lists+linux-bcache@lfdr.de>; Mon, 29 Jul 2019 01:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728865AbfG0Ojj (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 27 Jul 2019 10:39:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52474 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726370AbfG0Ojj (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 27 Jul 2019 10:39:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 296A0AF1F;
-        Sat, 27 Jul 2019 14:39:37 +0000 (UTC)
-Subject: Re: [PATCH 3/3] bcache: count cache_available_percent accurately
-To:     Yaowei Bai <baiyaowei@cmss.chinamobile.com>
-Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1564222799-10603-1-git-send-email-baiyaowei@cmss.chinamobile.com>
- <1564222799-10603-3-git-send-email-baiyaowei@cmss.chinamobile.com>
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <aff72e17-a36d-4bb8-28e2-49af07dc72ad@suse.de>
-Date:   Sat, 27 Jul 2019 22:39:30 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        id S1726183AbfG1XkL (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 28 Jul 2019 19:40:11 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37269 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbfG1XkL (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 28 Jul 2019 19:40:11 -0400
+Received: by mail-ot1-f66.google.com with SMTP id s20so60757654otp.4
+        for <linux-bcache@vger.kernel.org>; Sun, 28 Jul 2019 16:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=8HerNJ+KPshsmAFkEGOs3SrN9ygWfkRsx5jp23KpQmk=;
+        b=pR9JT8ojhlxNuQud6AHBaG2Dz7fuwySXNHxvLEBjP1vbiQI2fN62/FAtcxsQ9Fjhtb
+         OxkW+H1K/82N+UYnpM9/TzHx+x7ChqElPdZ9oj0PeLEaye07aC/DhmktSXt1q+iCY3wN
+         WhLQM4TeeRp+y5VAzHizaOuP1kbvJsOETpvN+Kvj3bSI54YPkKhM4Innvgr1U6hze/BF
+         3vBOlovc+5L3Q/bXw+6u7IpD9Y1eRt4LwtgHBy3KpCVrX6D9kXx2q8+q4L65OBJno4RX
+         22VGSaInzhb0mrPnRftfaqC85j0Cd5/PzE74V86gvRPdvI0BrOA/ZBjeeMAtERN520cX
+         lf8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=8HerNJ+KPshsmAFkEGOs3SrN9ygWfkRsx5jp23KpQmk=;
+        b=Sf8THi0FS/3fDFQ3YbywgjCoUuTG7neNmLOI9JwfDLp5UKX1UAIv5pM3fn2rXiEdYJ
+         cmjl0if19nqLlrCcl2qMmeRUVPKNXEfwKNi8g0Rkf/OMjmHi3eYQQLzkiXTn3YX36J6o
+         V+V6Bwd1kRwAbdWGPWbSb/hpSKZ1rdK3SttZaVHGZkHF7K+vWx8/eLUqpC/LPnE6A45w
+         n7iL6oZHyVYAF0fJJIvNdLd5J6DifOK4uXIJOxdltZX6JGrdcqDewqIrq70sS3jxnTRn
+         QVaY9YAnnueee90vTODTB4wslzKcucsAvmS89YzGvqjRqSVK0vZOvDTNs9aGZSaf3/ZF
+         tdBg==
+X-Gm-Message-State: APjAAAU3nbG6BjTKsgLxlLB5uPk/c5WIHEKM9qPKeMUPQ8FMamRGj0KE
+        TJfb3I9zs2MnYcd6OEzaAb1G7Z/x0SwzmJh/UAA=
+X-Google-Smtp-Source: APXvYqz1OBdDo5X2spBG+0OVg39hHQOy0nQUQ7lmGir+oEZ7IA8qKhhEpwCQx3hAEBikkmJxi2rcPtWTWNgBbY1K5rw=
+X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr29956985oti.122.1564357210819;
+ Sun, 28 Jul 2019 16:40:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1564222799-10603-3-git-send-email-baiyaowei@cmss.chinamobile.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a9d:7614:0:0:0:0:0 with HTTP; Sun, 28 Jul 2019 16:40:10
+ -0700 (PDT)
+Reply-To: williamrobert416@gmail.com
+From:   "Mr. Robert William" <omarmariam373@gmail.com>
+Date:   Mon, 29 Jul 2019 00:40:10 +0100
+Message-ID: <CA+FSRKDyoyu0LBU4qyjGgS7eHQG7ezO--vswckiU+6DyE42Dmg@mail.gmail.com>
+Subject: Its Urgent
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/7/27 6:19 下午, Yaowei Bai wrote:
-> The interface cache_available_percent is used to indicate how
-> many buckets in percent are available to be used to cache data
-> at a specific moment. It should include the unused and clean
-> buckets which we get from bch_btree_gc_finish function:
-> 
-> 	if (!GC_MARK(b) || GC_MARK(b) == GC_MARK_RECLAIMABLE)
-> 		 c->avail_nbuckets++;
-> 
-> However currently in the allocation code we didn't distinguish
-> these available buckets with the metadata and dirty buckets, we
-> just decrease the c->avail_nbuckets everytime we allocate a bucket,
-> and correct it after a gc completes. With this, in a read-only
-> scenario, you can observe that cache_available_percent bounces,
-> it first go down to a number, like 95, and then bounces back to
-> 100. It goes on and on, making users confused.
+-- 
+Hello,
 
-Hmm, I don't feel it could be confused, indeed I feel this is what is
-designed for, counting both data/meta data buckets allocation. We can
-document in admin-guide/bcache.rst, and notice people that even for
-read-only requests, buckets can also be allocated for metadata.
+I am Eng. Robert William, a retired Marine Engineer residing in
+Trinidad & Tobago.
+Unfortunately i am admitted to the hospital for a cancer (Sickness)
+over a year now,my doctor reported that i have only few months to pass
+away. Please i need your consent to invest my money (USD$1.8 Million)
+in any business of your
 
-Thanks.
+choice in your country before i die, i have no other relatives not
+even children because i lost my family in a fire disaster in 2005.
+Please i need your urgent and
 
-Coly Li
+kind response to enable me send you more information on how to contact
+my bank as my next of kin to process the fund into your bank account.
 
 
-> 
-> This patch fixes this problem by decreasing c->avail_nbuckets
-> only when allocate metadata and dirty buckets. With this patch,
-> cache_available_percent will always be accurate and avoid the
-> confusion.
-> 
-> Signed-off-by: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
-> ---
->  drivers/md/bcache/alloc.c   | 10 +++++-----
->  drivers/md/bcache/request.c |  9 ++++++++-
->  2 files changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-> index 609df38..dc7f6c2 100644
-> --- a/drivers/md/bcache/alloc.c
-> +++ b/drivers/md/bcache/alloc.c
-> @@ -443,17 +443,17 @@ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
->  		SET_GC_MARK(b, GC_MARK_METADATA);
->  		SET_GC_MOVE(b, 0);
->  		b->prio = BTREE_PRIO;
-> +
-> +		if (ca->set->avail_nbuckets > 0) {
-> +			ca->set->avail_nbuckets--;
-> +			bch_update_bucket_in_use(ca->set, &ca->set->gc_stats);
-> +		}
->  	} else {
->  		SET_GC_MARK(b, GC_MARK_RECLAIMABLE);
->  		SET_GC_MOVE(b, 0);
->  		b->prio = INITIAL_PRIO;
->  	}
->  
-> -	if (ca->set->avail_nbuckets > 0) {
-> -		ca->set->avail_nbuckets--;
-> -		bch_update_bucket_in_use(ca->set, &ca->set->gc_stats);
-> -	}
-> -
->  	return r;
->  }
->  
-> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index 41adcd1..b69bd8d 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -244,9 +244,16 @@ static void bch_data_insert_start(struct closure *cl)
->  		if (op->writeback) {
->  			SET_KEY_DIRTY(k, true);
->  
-> -			for (i = 0; i < KEY_PTRS(k); i++)
-> +			for (i = 0; i < KEY_PTRS(k); i++) {
->  				SET_GC_MARK(PTR_BUCKET(op->c, k, i),
->  					    GC_MARK_DIRTY);
-> +
-> +				if (op->c->avail_nbuckets > 0) {
-> +					op->c->avail_nbuckets--;
-> +					bch_update_bucket_in_use(op->c,
-> +								 &op->c->gc_stats);
-> +				}
-> +			}
->  		}
->  
->  		SET_KEY_CSUM(k, op->csum);
-> 
+Mr Robert William
