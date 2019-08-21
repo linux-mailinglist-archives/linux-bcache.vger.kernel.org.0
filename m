@@ -2,53 +2,53 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDD739720F
-	for <lists+linux-bcache@lfdr.de>; Wed, 21 Aug 2019 08:15:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4735197210
+	for <lists+linux-bcache@lfdr.de>; Wed, 21 Aug 2019 08:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbfHUGPH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 21 Aug 2019 02:15:07 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:47070 "EHLO
+        id S1727182AbfHUGPN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 21 Aug 2019 02:15:13 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:47078 "EHLO
         esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbfHUGPG (ORCPT
+        with ESMTP id S1727138AbfHUGPN (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 21 Aug 2019 02:15:06 -0400
+        Wed, 21 Aug 2019 02:15:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566368106; x=1597904106;
+  t=1566368113; x=1597904113;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=PRIc+qImYQi0sq4kI43ZLo0IJMblnfPTP0QUTy0nhdQ=;
-  b=GQISnMNeNMuW041BmfLoBVsft8JFH02FZJMfh2boo2rCfD3iM6LA8MO6
-   MZ5Do/9y2FQxXPD3CYWQlzOjj6ObEogXbusBxsMcaMyi5BuYbLzNQoc5L
-   +Esgjxjz6CPtVzt31hWjktJzAbd+T/fZR/UC6YAtmPF2eNGCGWb7yU6qs
-   zS1VQLAkhz2a8tFXFw6zZjdE2dSi8uHkdNms3gQGBTb/Z98/8NLijys6n
-   LK2J8iE6ZEgovFGdtmqWHuYuir8GKJqewnayI5s91nuh0BmKyOaNsJTMs
-   DkX+yQKx75c7nja9kO5hnw+Gctmi1o9PeV3yGRqaUZNnnGPIHLuPxfE4N
-   A==;
-IronPort-SDR: 8/A2c3tJUGm/VoBAofwLkUD3No5LVQQ+6VdhnPChhOGTfSvOi7iRPPQHE5Mda40M1mwHJtpHlH
- MlYB9A04CGLyu8tS0W4k89ByHmfVcinTLMz5FSEzl7l19MpQReqM8coqX6GM7zPmr3lvA/1IK5
- l5nb7pxZcHemf2Sp0EEl/3iaQFbQr/Np3tDPNizAtj+qmLQKe+KNDhpGzoeFh4mUhZjgMxiz7y
- h0d3VA7WnIwH/qvsyPoYUf4nxxYMxldqQXNGhk/pM7D6gFaSnvpdKqpxFDahEFnzBrh8E5ip8I
- Dyk=
+  bh=D8YDUL5tZ05jSVemJWK/Wkcu4fkxmHw2a5twadHpA8s=;
+  b=fvIMHJZmy7nxIAAoibjPzhsQguo6zFDc3jnb0nelgobqNC77sLaG5hGM
+   FIa8j7xHknUPE7ux6Ptgv097FD6W7cS7l2vGTF8Jsjn3fLfgWDySo8rU7
+   wxQZdG7vKNUdoaB5f2H3+RGyXkXkZgRAHZ3rxI2/tTkzQW91kcR30sunh
+   PZjAtFhltBYAFuJ1tODRVQBTeOtzGrUwzgMCp6ZuFpKJ00XUwRn0uSE4s
+   F41NhM7FdQ5z0uhzrcHQnj14HBVlqlh2DOl2gtEz+/ijvtKBpiwRdhrQa
+   aLQ9ge05xmrAwKwLwes6+JJBW3rRtagP0uRrxrXCuN8RB7hIbjvzrpEVN
+   w==;
+IronPort-SDR: h4xAvQC3q6mfo/XYh0NIxyMbppFaBpVOSt3TXAnbVcrpNhYUIpStxev0QyvHwTjoVQ7J0qbYC/
+ j5EKmfGyAuUYWsYJtDAoGZYMPIdKv5ijtG6UBqMXsDKLe8rc5UyrgOQ+jQ6anxmJEZAdVbaVeG
+ StAwf0e1k68eUZVPsFSI2tn7Odry6ngxGW3kRAGdvALN8dKz6xfE90ZifSZ84zMrTLuEIpT8sa
+ C80GVJCWP0xRE/dMO5le6JIxk2trN2rknWsUgFvb8vMbBNh+8qsNBFZB9D9b0J/QseanmShuXp
+ w0Q=
 X-IronPort-AV: E=Sophos;i="5.64,411,1559491200"; 
-   d="scan'208";a="222880836"
+   d="scan'208";a="222880857"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 21 Aug 2019 14:15:06 +0800
-IronPort-SDR: RFlkttASNNJpBMKKScjnW+y6mLIrc1+zu/C9ygjzVwAZZaimZBPdBlA3G+HHdC3T6JJPw5fsej
- bzb0+9tjE8JO7+ctVmlsB/PJRsXzI3Da4gp9VzJZj0pjVdMBRyxzhcUXmaAxOpjeSCEN39JRmD
- s8bGZaZYL1+mvJpAZo6JuiFfZylFjn834jxvXxA8+yPL3dU8nWqS6CMMSsZAoSu4+aeYIm6Ilt
- d+rLWxPERou0CIPsr5WTPApbqHToqkC17YPyRXZ7jXMLYOWDSLEQZxSxkh7IwKIo6w+KeE4fR5
- Yt3xLXnIgWes+AoiDWNt5XQi
+  by ob1.hgst.iphmx.com with ESMTP; 21 Aug 2019 14:15:12 +0800
+IronPort-SDR: Vi9f/McXNG7htf+Oiz487a2aFGqA5HqxQzYxDtCxAg9pcdi18lHp1G0xcRV5pgMkDm9XLKrQVv
+ YqCRPHP/m9tsZbs0nTtfyEgrnlCpemQIjHkrxxOPdI29BnNQkMtJx2DY72vRIRCWaVVSu7kgYE
+ 96rAnyR88fVxy+LkriHGzZxr48kx4w0lh1v6rmZv5fbV0/ObwPgymKJP367m+qB884ht3Hcgv4
+ eO8+k/zbSxtw+atpwL6svHcL1IOYLu5Vda1IFawyAtonAnx6kBNl5k3GxHtQoTrymTO/6BoXaq
+ 6BMsGNdad+h2mvKTsb+b6Jxq
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 23:12:28 -0700
-IronPort-SDR: 5OITIcW+05bA5Z40gygWOJU1w9CIPQ11BCkLaBNmFn3P/VNeT0sYheeUS/i1HqpgVD2aksn/0T
- 0jmTG7ojAxndIs1tRyw00R3Gt8qcdicEt+6yTPu8vzUU0i4fpKYySbuvVoWZd8g+Abko1qujuu
- j4MC7leRfkA7azGPBOWylw7p7ZKglYFk9SHsW8rLlacSj/f7OCusSE3BCYeePrmX6TOsUVfbkX
- bPUoBBhF6ojUMTV6YAgSaZKf0Yh8+8iUQCm0hYI5wPdi5onYmHP4f2i3PqgeIT3YLVaSFNafh4
- 3zA=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 23:12:34 -0700
+IronPort-SDR: BYJvRAQ6DwECniwHRLKaUr9x6qRGDsHdaIfg1ud9IVxV9yCvCNuNuKVUzzdBhpZt47I0lH4/y6
+ r8D53/P4Z9aK688Qqew0ezt7T/dj/JP9UbtCLxA9CqauIB04CofRKbjlP7H/hR6qwV2wLWIY73
+ tGseFCARD4wk5lDXH51RNjF4YV0l1IIhsgm3K/Cp29/2cpd8FPo2YMLKOYoeTxyJ07eENw5NDl
+ SHreBRLB3prhQjINcF9sFUTYXHo04Vn7uy1MBlNW+yKasuLS/7NJkLGl8Z0zDzbZJCuoLufFp4
+ AG8=
 WDCIronportException: Internal
 Received: from cvenusqemu.hgst.com ([10.202.66.73])
-  by uls-op-cesaip01.wdc.com with ESMTP; 20 Aug 2019 23:15:06 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 20 Aug 2019 23:15:12 -0700
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     linux-block@vger.kernel.org
 Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
@@ -58,9 +58,9 @@ Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
         roger.pau@citrix.com, bvanassche@acm.org,
         linux-scsi@vger.kernel.org,
         Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Subject: [PATCH V5 6/9] f2fs: use helper in init_blkz_info()
-Date:   Tue, 20 Aug 2019 23:14:20 -0700
-Message-Id: <20190821061423.3408-7-chaitanya.kulkarni@wdc.com>
+Subject: [PATCH V5 7/9] blktrace: use helper in blk_trace_setup_lba()
+Date:   Tue, 20 Aug 2019 23:14:21 -0700
+Message-Id: <20190821061423.3408-8-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190821061423.3408-1-chaitanya.kulkarni@wdc.com>
 References: <20190821061423.3408-1-chaitanya.kulkarni@wdc.com>
@@ -69,28 +69,28 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch updates the init_blkz_info() with newly introduced helper
-function to read the nr_sects from block device's hd_parts with the
-help of part_nr_sects_read().
+This patch updates the blk_trace_setup_lba() with newly introduced
+helper function to read the nr_sects from block device's hd_parts with
+the help of part_nr_sects_read().
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- fs/f2fs/super.c | 2 +-
+ kernel/trace/blktrace.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 78a1b873e48a..78f8f834aa44 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2775,7 +2775,7 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
- static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
- {
- 	struct block_device *bdev = FDEV(devi).bdev;
--	sector_t nr_sectors = bdev->bd_part->nr_sects;
-+	sector_t nr_sectors = bdev_nr_sects(bdev);
- 	sector_t sector = 0;
- 	struct blk_zone *zones;
- 	unsigned int i, nr_zones;
+diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+index 2d6e93ab0478..801f8c465bff 100644
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -461,7 +461,7 @@ static void blk_trace_setup_lba(struct blk_trace *bt,
+ 
+ 	if (part) {
+ 		bt->start_lba = part->start_sect;
+-		bt->end_lba = part->start_sect + part->nr_sects;
++		bt->end_lba = part->start_sect + bdev_nr_sects(bdev);
+ 	} else {
+ 		bt->start_lba = 0;
+ 		bt->end_lba = -1ULL;
 -- 
 2.17.0
 
