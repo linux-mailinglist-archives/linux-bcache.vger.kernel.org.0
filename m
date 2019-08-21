@@ -2,53 +2,53 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EAF1971FD
-	for <lists+linux-bcache@lfdr.de>; Wed, 21 Aug 2019 08:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F207C971FE
+	for <lists+linux-bcache@lfdr.de>; Wed, 21 Aug 2019 08:14:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbfHUGO2 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 21 Aug 2019 02:14:28 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:46971 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727766AbfHUGO1 (ORCPT
+        id S1727832AbfHUGOf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 21 Aug 2019 02:14:35 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:34498 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727766AbfHUGOf (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 21 Aug 2019 02:14:27 -0400
+        Wed, 21 Aug 2019 02:14:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566368067; x=1597904067;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tDUu6OfCZAgiE5vxUUEYM/lctnZ4+mN4P7Ofucvf8cQ=;
-  b=U3TeQ/kNaQEo/PP7G+aywy008U42TqagGyaR4u0t4WYD5mE5cutelY2C
-   UuZaw9uTdr9YO05YlNeWDauTg3mOUMg7fTb3HXVFUbzKSfRrLAPedB0ug
-   x4+anxeYg9bSjhN6/46HhwIM8nAHs84A/yQ6wsc+aqwdlZWzQCWzSfTNU
-   KiWwJNz/MCGNip3sn8vMHkuQBCyF9Ev54WkNXLhz+A3Zj/Ccv+ShkxRyn
-   FguTniEu31IkK6u5zCuPbQ1iTKDoH/wU74fIpLELRyfLquMW6CKHVjoGc
-   b/x50SjddGGEC4ILVqbrxVzizaQYIMIIuOjPk4Vt2DCLPAUin2RjDTSTG
-   g==;
-IronPort-SDR: LJ0R37Oh/N4BMTk3QCJLeOipE5+YAVfqop3RjJ/7N14C1rrm5wf1yx3yU2fczm5MzpjZUFGLND
- jp1MN+8NP195UREN36Vb0/RzHdQiHrUJq32AbaZuPuBEfwFUe1t0eXHpCCyy5MaUnvVSZgPx++
- l6L4IpyZeRQ/9vP64drs3KrLLW0m7zEI8JTiS32ydH12/JwV6Jxk3vO/P+Z3k2nT0dxdW9kdz8
- 0QDdrwSQLE0mxk+UGV53KehVJ0YzSlUPSONv8SfsYeM904T+FYKDu4rkpR5NtUCo9jdUMcF9jH
- d6A=
+  t=1566368074; x=1597904074;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=YxWj03mIGVcVbYKOln1UBPzCaYS0qRuFrw+e6W6O8fU=;
+  b=MaMiwGfRcNgMb7+ytBS3Va8PMKEOCH0BlzZE0NcmTMppBfMs2a4eL9Yt
+   LlqUkKVBkbdNaoCydPT9PzeCKEg7W0HHsQdchztkdxCLGbO0zNddy+MHN
+   rC4VzB3J0JOQnZmEzVY2CEZxpazoPaY1QQJjkimpfxqCbMHTFFAkHHeC0
+   tM8atciSbm2GmRE/y8rLcsbhLYdDHzZN7SN9TBNMQUd8788htt4hFGIY2
+   k6pBiHt2SR8SLc05p2kqdIifHyGTf6hOqQTQDpnsl13ys9O0QFjkoBc4M
+   BdX+qJWkkPJcBIv7hGasdC1WM/BuQSoDmFbhxizu+c8hhiLHwW6vUsuW+
+   Q==;
+IronPort-SDR: CgKU5uQFZOtXSnflEOa9Wxs+RJ2H0l+YiQq04NIRRiPSANXRhk4mzH4dB/m3raj2w44GTjkm4P
+ a/crukhRhFmiZcz8klbtG2imv91wSvGz+HJ3PKo51XZ17g+rRh1ClTO2EHTpt7Aaee6z70c45U
+ bcq022hcHPMPXjDOKRC4Ng4SlgJ9N3Bpy3v4W5y3AzgI/hCo52nprmQPTilc/66Ky8DbaXQRDa
+ GvXMqLUdeMNeEO/EIdCPghc7zsfqzSxYTOnlhDjorSvktcKnhLxHPtBTb/wFqWhM6NNF7pof0Q
+ Kn8=
 X-IronPort-AV: E=Sophos;i="5.64,411,1559491200"; 
-   d="scan'208";a="222880761"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 21 Aug 2019 14:14:26 +0800
-IronPort-SDR: /O7wFZQldCUIL+T8y8WVggEkv65ATU1bGJShtCI8CGyzmcODwY22mTfZsq1PmAlq095Ubqav5+
- 2w/sjO5AUPZ5c4DiNFevk5QEZF9RVaSSmd++C0s5IjDqIwoiTYw58aKIj1xQort+WLDVxg+vwr
- Y2w7nib7UP+cUWYFHATV1SIeU357dbpjxDwLXTHsr3Rq1aFZqHuSlPlC2S1V7h+VDNM7uYAz79
- j8MFySR3/9JkZQBFkLld8q0QJYTy2kpXTFP+JwbBbrNH97Riuw4K9SF6qW6P5hqouzIFGIoLHY
- x+4XICGaJizl7/S2rBhUZY6f
+   d="scan'208";a="117904641"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 21 Aug 2019 14:14:32 +0800
+IronPort-SDR: enE0E3BSbWZ0lvkP1xxRNohhL4LJHuEUalT42vk5hP124w4r4S3JRwtN3HrwfLSDL0Ftv8a6By
+ xpv4wuPtxypizvxVauvlYHuhmbJbnUAQ2+tUppy+naNEKGyOo5ZJdCkJ2RHH+N8dMakO0b4oH8
+ K1q9Jbmc7aX5KRCcpR1ctYV6EUKHGM3PGGxWp4vIXvwwDFxZY0jRlpy4Dm2SwC8D9v4FcY+qGD
+ x9Iz5yoJsSruk9FLMaPPScNpzYPEXrn7pwBibknNp1xOWPVzkEHOIM+iyfjM8aKaImOJjt0n3K
+ 3vVqLFTPT5mD6ElPXOvL/fQe
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 23:11:49 -0700
-IronPort-SDR: ZGZ6fU+fR5RzuuKyQ2BV7Qtj88cD9Ywgd0u1B2kvbxKN/qhuT5iNaowYnD43Mmvlu5PKoVZxFu
- EwuFv5WC4mXRvu1Ot2FMKpU7WEJTvW8+WuLi+qEjPsNYZ7a1WaPn3nzKPMvQTxa+AP6VJ7jrhh
- yDltPRtYNqQZHfK0/qhkoQE7+cYR6iw0FLrIjEhPi7rl5kCUe1BDydqeNMnl4XwqCi6Ihev3Rh
- 5960wvlRjEiKwa7McvK8/Zoh2N34Yk0PQUrrYQBNjhsSvbtu2ZY5ExsJRLBEA81+ZpGG/t3gaq
- ce4=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 23:11:54 -0700
+IronPort-SDR: J1I/5bgiTFIAu8nNl9kv6CSGMFr4yg0TlUcqLzMJdDy8EZZg8n4rfy/XPfR/JjpgmOnfkVltBx
+ ssjiOGwNssK5XXLGHSuoQGzY72APilAq4AuufFX7XHX3TUf6fMAFSvIG+S4BOIvcE8H6g4FFk4
+ w6w8aEGbtPr28z7XjcaeIOJwLHNeebOJOnfEd1HlWA5+RnjTkgiUj/gkJ7B08lWbk1QlQ2RUaA
+ iYA9zikhwLYCTW/T6a0mIofhJVPKp5ODf79l+YclGUXbyljEgCoXjsbem9ACoYAnj3ly4+ysyD
+ mtk=
 WDCIronportException: Internal
 Received: from cvenusqemu.hgst.com ([10.202.66.73])
-  by uls-op-cesaip01.wdc.com with ESMTP; 20 Aug 2019 23:14:26 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 20 Aug 2019 23:14:32 -0700
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     linux-block@vger.kernel.org
 Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
@@ -58,76 +58,44 @@ Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
         roger.pau@citrix.com, bvanassche@acm.org,
         linux-scsi@vger.kernel.org,
         Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Subject: [PATCH V5 0/9] block: use right accessor to read nr_sects
-Date:   Tue, 20 Aug 2019 23:14:14 -0700
-Message-Id: <20190821061423.3408-1-chaitanya.kulkarni@wdc.com>
+Subject: [PATCH V5 1/9] block: add a helper function to read nr_setcs
+Date:   Tue, 20 Aug 2019 23:14:15 -0700
+Message-Id: <20190821061423.3408-2-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190821061423.3408-1-chaitanya.kulkarni@wdc.com>
+References: <20190821061423.3408-1-chaitanya.kulkarni@wdc.com>
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi,
+This patch introduces helper function to read the number of sectors
+from struct block_device->bd_part member. For more details Please refer
+to the comment in the include/linux/genhd.h for part_nr_sects_read().
 
-In the blk-zoned, bcache, f2fs, target-pscsi, xen and blktrace
-implementation block device->hd_part->number of sectors field is
-accessed directly without any appropriate locking or accessor function. 
-There is an existing accessor function present in the in 
-include/linux/genhd.h which should be used to read the
-bdev->hd_part->nr_sects.
+Reviewed-by: Minwoo Im <minwoo.im.dev@gmail.com>
+Reviewed-by: Martin K. Petersen <martin.petersen@xxxxxxxxxx>
+Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+---
+ include/linux/blkdev.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-From ${KERN_DIR}/include/linux/genhd.h:-
-<snip>
-714 /*
-715  * Any access of part->nr_sects which is not protected by partition
-716  * bd_mutex or gendisk bdev bd_mutex, should be done using this
-717  * accessor function.
-718  *
-719  * Code written along the lines of i_size_read() and i_size_write().
-720  * CONFIG_PREEMPT case optimizes the case of UP kernel with preemption
-721  * on.
-722  */
-723 static inline sector_t part_nr_sects_read(struct hd_struct *part)
-724 {
-<snip>
-
-This patch series introduces a helper function on the top of the
-part_nr_sects_read() and removes the all direct accesses to the
-bdev->hd_part->nr_sects.
-
-This series is based on :-
-
-1. Repo :-
-   git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git.
-2. Branch :- for-next.
-
-Changes from V4:-
-
-1. Adjust code for latest branch.
-
-Chaitanya Kulkarni (9):
-  block: add a helper function to read nr_setcs
-  blk-zoned: update blkdev_nr_zones() with helper
-  blk-zoned: update blkdev_report_zone() with helper
-  blk-zoned: update blkdev_reset_zones() with helper
-  bcache: update cached_dev_init() with helper
-  f2fs: use helper in init_blkz_info()
-  blktrace: use helper in blk_trace_setup_lba()
-  target/pscsi: use helper in pscsi_get_blocks()
-  xen/blkback: use helper in vbd_sz()
-
- block/blk-zoned.c                  | 12 ++++++------
- drivers/block/xen-blkback/common.h |  2 +-
- drivers/md/bcache/super.c          |  2 +-
- drivers/target/target_core_pscsi.c |  2 +-
- fs/f2fs/super.c                    |  2 +-
- include/linux/blkdev.h             |  5 +++++
- kernel/trace/blktrace.c            |  2 +-
- 7 files changed, 16 insertions(+), 11 deletions(-)
-
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 4798bb25f1ee..aa5801c8ff73 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1468,6 +1468,11 @@ static inline void put_dev_sector(Sector p)
+ 	put_page(p.v);
+ }
+ 
++static inline sector_t bdev_nr_sects(struct block_device *bdev)
++{
++	return part_nr_sects_read(bdev->bd_part);
++}
++
+ int kblockd_schedule_work(struct work_struct *work);
+ int kblockd_schedule_work_on(int cpu, struct work_struct *work);
+ int kblockd_mod_delayed_work_on(int cpu, struct delayed_work *dwork, unsigned long delay);
 -- 
 2.17.0
 
