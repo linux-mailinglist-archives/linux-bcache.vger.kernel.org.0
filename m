@@ -2,99 +2,101 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEA0997216
-	for <lists+linux-bcache@lfdr.de>; Wed, 21 Aug 2019 08:15:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81EAC9732D
+	for <lists+linux-bcache@lfdr.de>; Wed, 21 Aug 2019 09:16:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfHUGPZ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 21 Aug 2019 02:15:25 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:37713 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727818AbfHUGPZ (ORCPT
+        id S1727877AbfHUHQY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 21 Aug 2019 03:16:24 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:48042 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727504AbfHUHQX (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 21 Aug 2019 02:15:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566368125; x=1597904125;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=uCmqVTMs+9n224hBF85AnzvmEf4HCe67ga81BlS6HHI=;
-  b=MhoLzyal7MPK3ctpoS9qPOM+HyTdph2/v2awfa8qpYPLcpSYATVrcy5q
-   twrsrWHD9zoBZJWwRqvB2m4NGOfg8LQS3h6o4zrLTZPz+l9F5dEnDKgUN
-   24EKwsldxhKr1Kv722M28/YTC9ddECMfuaiGM8RvbrG/h/djpL0p+hIB8
-   sd2unZLNqXzKVwtFFSrpCDtRhLLHOYOqtKwv/swIuOcQIwvjtdMJa+KdF
-   C7lxYTENDYscA1QfyIbZypb3fsCZGDS4jaDrGrELFDNrV0KiRdsPX9NLh
-   TbfN0rb1qT0puC2CPiewxTmOptI8a1j54f3NF4F/qRx3sEE8li2iq0x/q
-   A==;
-IronPort-SDR: 6/XICoeSWbHOQoldRyXAeykBwCQRKQRoaA0aDQQB1mHk/sEEfmCVfSHrwmWN9TkwFxngxWUKQb
- N6vBDDfXHERuJuZz2m1p5gASdBszbyLuhpbvJhym9+fGLnNcvo5RVHCy6XYVYKTDNl9XDsuG7m
- kw+GDhXwxwjEw4BAHvg/GOYKC5RmLH/FXF3+iGFzKU8gXHq7ki2JjLqpmMvMMQI3UbKnTo49Zd
- KOm7Q1EDJ4G8xrauOALESTLbD/6vcPeZ/D0zeQSc9QuT3OvRPZtOwkvtyoh4TMHpqO74bonbyP
- QQ4=
-X-IronPort-AV: E=Sophos;i="5.64,411,1559491200"; 
-   d="scan'208";a="117239112"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 21 Aug 2019 14:15:24 +0800
-IronPort-SDR: 0Ohb5ITSJVXJbUSWe7fW0QkaUZCAdmwPIXSREYCv6/y/OV8jK6RNUZIxRwUdK1yJEBU1d95pGA
- HzeGgAaS0JVi/sM9Qw0bxIIFHeJWePDpB4nGPvbBEXi9GFAZCR3Wq+fX1lwNcuXjKffKvEpPBv
- 3ymXJmwrtfQLKS7RQZ+Rd/rK7D97iB+WC98kppMbGKYkkUtA3kdMLWfLQG7V3SsgDwgJ1LtDN/
- rxoSIUYKAgSLdB9c8K1ZpdNfgTCEf69G0wGS/iWr0szlLKWYFZLqHMCF/UNe+HK2Al0/jJwpFK
- 67coq3AnDGhmi2S4qG9UoTY9
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 23:12:45 -0700
-IronPort-SDR: OdxGZ+ZIUZXNxHsyk4r1jitBzzOKbws59uKyfKyGqxJAsocaYs8oIxpzZfzjt5ML1whAzbLmaX
- RwM7I6UulMIpLElfhfQc5hYfBEAbff6XiTo6OdUg2IOOnMUz0R9KML2qvnTlEseLVHNS7pyeSc
- 9CTOUyji2b5zizhazjbzfCPSVvgrBe56YrLfQaH1Zt4rfNfxQIaRAfBPRZjR9OpapUegl1b+jL
- uJtoBjulj24n+tVENNu5L8VD++n13brc0PAUBMrQdHgf+PQ6TPFgyBzEVVQm4JhNIRu+VBGZP5
- OFY=
-WDCIronportException: Internal
-Received: from cvenusqemu.hgst.com ([10.202.66.73])
-  by uls-op-cesaip01.wdc.com with ESMTP; 20 Aug 2019 23:15:24 -0700
-From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-To:     linux-block@vger.kernel.org
-Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
-        linux-btrace@vger.kernel.org, xen-devel@lists.xenproject.org,
-        kent.overstreet@gmail.com, yuchao0@huawei.com, jaegeuk@kernel.org,
-        damien.lemoal@wdc.com, konrad.wilk@oracle.com,
-        roger.pau@citrix.com, bvanassche@acm.org,
-        linux-scsi@vger.kernel.org,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Subject: [COMPILE TESTED PATCH V5 9/9] xen/blkback: use helper in vbd_sz()
-Date:   Tue, 20 Aug 2019 23:14:23 -0700
-Message-Id: <20190821061423.3408-10-chaitanya.kulkarni@wdc.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20190821061423.3408-1-chaitanya.kulkarni@wdc.com>
-References: <20190821061423.3408-1-chaitanya.kulkarni@wdc.com>
+        Wed, 21 Aug 2019 03:16:23 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7L7Df0x087338;
+        Wed, 21 Aug 2019 07:16:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=yoJk5pi/dKjAmxPpNS+NE1o/QG3sQIDGWGQzUSCWyqs=;
+ b=k1yIGeAB0ZMGlaZxHMwKJBi8EYnSNWX3q78ePbvCVYyX0CqKID2N4/eoY3OcsJcyB+7E
+ bGtnUq1XZlrnrQ5znjirkiTdKSIjVbMm9Lhbyyu8yeTcRVweII9fgbhzKhLE0cv3+4ZI
+ E8VEi0m+/dsRNQ/khVTnq5J9+gK56RFe7suMrBZxEyTO6kd5RyzI24aw26rehrRhosdX
+ 0mttI6u7o4KHeIfObdK9Q5UZuAh77yDCybZFEX8UHcwK+5UnSjvlDgvGt4p7DvkZjmSa
+ bH3ThIiWMPFCiGcR56PBNEAzUBFauj5Wfm63E1eP7suhyqLMAKttRrbcAOKRiMH/6vaL 3A== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2ue9hpkbuj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Aug 2019 07:16:19 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7L7EIt3066875;
+        Wed, 21 Aug 2019 07:16:19 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2ugj7q453c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Aug 2019 07:16:19 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7L7GHDD018509;
+        Wed, 21 Aug 2019 07:16:18 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 21 Aug 2019 00:16:17 -0700
+Date:   Wed, 21 Aug 2019 10:16:11 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-bcache@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] bcache: Fix an error code in bch_dump_read()
+Message-ID: <20190821071611.GH26957@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9355 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908210078
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9355 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908210078
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch updates the vbd_sz() macro with newly introduced helper
-function to read the nr_sects from block device's hd_parts with the
-help of part_nr_sects_read().
+The copy_to_user() function returns the number of bytes remaining to be
+copied, but the intention here was to return -EFAULT if the copy fails.
 
-Acked-by: Roger Pau Monné <roger.pau@xxxxxxxxxx>
-Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Fixes: cafe56359144 ("bcache: A block layer cache")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/block/xen-blkback/common.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Another option to fix this bug would be to return the number of bytes
+which were successfully copied.  But probably -EFAULT is the right fix.
 
-diff --git a/drivers/block/xen-blkback/common.h b/drivers/block/xen-blkback/common.h
-index 1d3002d773f7..f96cb8d1cb99 100644
---- a/drivers/block/xen-blkback/common.h
-+++ b/drivers/block/xen-blkback/common.h
-@@ -359,7 +359,7 @@ struct pending_req {
+ drivers/md/bcache/debug.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/md/bcache/debug.c b/drivers/md/bcache/debug.c
+index 8b123be05254..336f43910383 100644
+--- a/drivers/md/bcache/debug.c
++++ b/drivers/md/bcache/debug.c
+@@ -178,10 +178,9 @@ static ssize_t bch_dump_read(struct file *file, char __user *buf,
+ 	while (size) {
+ 		struct keybuf_key *w;
+ 		unsigned int bytes = min(i->bytes, size);
+-		int err = copy_to_user(buf, i->buf, bytes);
  
+-		if (err)
+-			return err;
++		if (copy_to_user(buf, i->buf, bytes))
++			return -EFAULT;
  
- #define vbd_sz(_v)	((_v)->bdev->bd_part ? \
--			 (_v)->bdev->bd_part->nr_sects : \
-+			  bdev_nr_sects((_v)->bdev) : \
- 			  get_capacity((_v)->bdev->bd_disk))
- 
- #define xen_blkif_get(_b) (atomic_inc(&(_b)->refcnt))
+ 		ret	 += bytes;
+ 		buf	 += bytes;
 -- 
-2.17.0
+2.20.1
 
