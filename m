@@ -2,71 +2,92 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F86097E7F
-	for <lists+linux-bcache@lfdr.de>; Wed, 21 Aug 2019 17:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB0FC9936F
+	for <lists+linux-bcache@lfdr.de>; Thu, 22 Aug 2019 14:30:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729969AbfHUPU2 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 21 Aug 2019 11:20:28 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34561 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729958AbfHUPU1 (ORCPT
+        id S1727807AbfHVM3S (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 22 Aug 2019 08:29:18 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33281 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbfHVM3S (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 21 Aug 2019 11:20:27 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d3so1516817plr.1;
-        Wed, 21 Aug 2019 08:20:27 -0700 (PDT)
+        Thu, 22 Aug 2019 08:29:18 -0400
+Received: by mail-lj1-f195.google.com with SMTP id z17so5401578ljz.0
+        for <linux-bcache@vger.kernel.org>; Thu, 22 Aug 2019 05:29:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=aWwEGZ7IKPwlD1SyN53LweuoS+rG8j2WBRgPDxMagPA=;
+        b=CBK30xOBCbqge79iB+BSmOl1/UBUNw/fW53iv1ugREqP3NtdGp0hM077m2FAsPQBy3
+         w3QV+vK44ts/IzsauvvC0Uq4e97QhdCelT5I+8haU7L7j1z8hQEm0nAcIK1pG9a356vE
+         MVQH8FrWvqODZUy2pVI7zbI6YX9whnmosDJod0L2J3RIyFkwZO34P/gZr9chAYlSJF76
+         JKWH0nPKawXhBJJEi+bwl2CqH7GahnYg6fbPywoIoRgiZnwwLTWyAhEIdXcxEceyvBgo
+         Tz5pfYZRGerllO+U3o7RCkgB+RB3Bz59eXKVRhOXNl1m4PJYhCvAArg7mXlqnl4N4029
+         uP+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3MUq+62+q1BeUoRQx7zO7y16Wzsx2TMcCZIVUVIU9eY=;
-        b=sO1S5EA5j0t+D7clETxg7G+8UTnGgsYoQ7eFOh7/ZjshHnHibLdfWLL+NCMD3mS0Gd
-         ksTC6MMnSu3z5wdNlpgNupPC+G+/SyplDTlvD4olT7m2/aoLsogZBEeNiDKmfckgtqnH
-         TWbE8M/PdoRIux6hSXXPOtFpDUWt/MTd27+33LL3Q1jtnRpJWKIN7y55ClEkuVxZYtMv
-         ZiDj7w1GUB4lhaYd3YsPn6nx/tfVrFoqGNzYdIPAb+ailB3/rOGz3wFKXwvP5pGVA21M
-         JROmiCcE+UA5O/G/StE0U8zTeHhiW9wGUzKgBPRMsaafu89xxYtOfXyXy6vO+QMuO61H
-         D5yA==
-X-Gm-Message-State: APjAAAVjA/cbGLTJnhKdMBYocXgKkebWPrfbXiYZw4Z8jhD7C+j+1a/C
-        cHoR6+DHLbuYqGrvf674H7LmEjZO
-X-Google-Smtp-Source: APXvYqx6VTY8SvYnIPYD7H96skDVbqUBUIX20kmnwYVW6I6VpfiIPm7l7ctI4G1jHo6dMIyND4saiQ==
-X-Received: by 2002:a17:902:543:: with SMTP id 61mr34273025plf.20.1566400826268;
-        Wed, 21 Aug 2019 08:20:26 -0700 (PDT)
-Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id s72sm31859475pgc.92.2019.08.21.08.20.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2019 08:20:25 -0700 (PDT)
-Subject: Re: [PATCH V5 0/9] block: use right accessor to read nr_sects
-To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        linux-block@vger.kernel.org
-Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
-        linux-btrace@vger.kernel.org, xen-devel@lists.xenproject.org,
-        kent.overstreet@gmail.com, yuchao0@huawei.com, jaegeuk@kernel.org,
-        damien.lemoal@wdc.com, konrad.wilk@oracle.com,
-        roger.pau@citrix.com, linux-scsi@vger.kernel.org
-References: <20190821061423.3408-1-chaitanya.kulkarni@wdc.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <1aaf1d56-c1a2-957c-28b6-048f9965f412@acm.org>
-Date:   Wed, 21 Aug 2019 08:20:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=aWwEGZ7IKPwlD1SyN53LweuoS+rG8j2WBRgPDxMagPA=;
+        b=Uk6r5K++oEj0nobPkNF7DYzhUONAVbqs2qQDjmqiWTnJ1Rb6k3tNAHLVj2c+8m8w0B
+         MBYxd7VTMKWXPH1Aoey8tvlbvBldw2lAHvJvLqfzmbJpqWQozhPz7Ny5egiTh6HXBYhp
+         weDEeg2VBX1kmybGZqeRwCIPdJxO+rVqTFN+3Zi0oMfcrfhtAjf4YijxZ3hzdoAPYkY4
+         KIQVuoQ6fuyt2U5jrMJUbktrjtfSyxMgS64FKWnVaptXpjw34JwiI1Hy3ioY7VxEhHLr
+         k2y2feNFZ0isW69WGjzdTQrfe2ydBSb37iCgqNsLX6ym+Ke+iWL0lKnFouqnK0OI5DQ8
+         6myQ==
+X-Gm-Message-State: APjAAAUA4hIXtQ+Lp9PibCnyeuvFy+Mgnk4295Fq8cluwTsCxhUMrMLM
+        D2NxtxJEbpzfpnzKpiOJxSl15N6hXe/mfLryVjw=
+X-Google-Smtp-Source: APXvYqyDQLaMMy+qNzCCYRC/s3eVxIp4PbydsQfO41juS3Ia1InrY7lUl4DgBqtbkzE6Wax8fSwVpbf3z3iyWJ5tPkw=
+X-Received: by 2002:a05:651c:1111:: with SMTP id d17mr14599233ljo.87.1566476956388;
+ Thu, 22 Aug 2019 05:29:16 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190821061423.3408-1-chaitanya.kulkarni@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a19:dc4f:0:0:0:0:0 with HTTP; Thu, 22 Aug 2019 05:29:13
+ -0700 (PDT)
+Reply-To: eku.lawfirm@gmail.com
+From:   "Law firm(Eku and Associates)" <elenabaltach66@gmail.com>
+Date:   Thu, 22 Aug 2019 12:29:13 +0000
+Message-ID: <CAOGpsp7VLH8cM4p9eVB+U1QjvXj1rbHDFar+JOrA24+wVMVCSA@mail.gmail.com>
+Subject: MY $25,000,000.00 INVESTMENT PROPOSAL WITH YOU AND IN YOUR COUNTRY.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 8/20/19 11:14 PM, Chaitanya Kulkarni wrote:
-> In the blk-zoned, bcache, f2fs, target-pscsi, xen and blktrace
-> implementation block device->hd_part->number of sectors field is
-> accessed directly without any appropriate locking or accessor function.
-> There is an existing accessor function present in the in
-> include/linux/genhd.h which should be used to read the
-> bdev->hd_part->nr_sects.
+--=20
+Dear,
+With due respect this is not spam or Scam mail, because I have
+contacted you before and there was no response from you,I apologise if
+the contents of this mail are contrary to your moral ethics, which I
+feel may be of great disturbance to your person, but please treat this
+with absolute confidentiality, believing that this email reaches you
+in good faith. My contacting you is not a mistake or a coincidence
+because God can use any person known or unknown to accomplish great
+things.
+I am a lawyer and I have an investment business proposal to offer you.
+It is not official but should be considered as legal and confidential
+business. I have a customer's deposit of $US25 million dollars ready
+to be moved for investment if you can partner with us. We are ready to
+offer you 10% of this total amount as your compensation for supporting
+the transaction to completion. If you are interested to help me please
+reply me with your full details as stated below:
+(1) Your full names:
+(2) Your address:
+(3) Your occupation:
+(4) Your mobile telephone number:
+(5) Your nationality:
+(6) Your present location:
+(7) Your age:
+So that I will provide you more details on what to do and what is
+required for successful completion.
+Note: DO NOT REPLY ME IF YOU ARE NOT INTERESTED AND WITHOUT THE ABOVE
+MENTIONED DETAILS
 
-For the entire series:
-
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Sinc=C3=A8rement v=C3=B4tre,
+Avocat Etienne Eku Esq.(Lawfirm)
+Procureur principal. De Cabinet d=E2=80=99avocats de l=E2=80=99Afrique de l=
+=E2=80=99ouest.
+Skype:westafricalawfirm
