@@ -2,72 +2,77 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55887A69C7
-	for <lists+linux-bcache@lfdr.de>; Tue,  3 Sep 2019 15:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5035BA6AD6
+	for <lists+linux-bcache@lfdr.de>; Tue,  3 Sep 2019 16:09:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729171AbfICN0C (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 3 Sep 2019 09:26:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34526 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728860AbfICN0C (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 3 Sep 2019 09:26:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B21A5B11B;
-        Tue,  3 Sep 2019 13:26:01 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     axboe@kernel.dk
-Cc:     linux-bcache@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 3/3] closures: fix a race on wakeup from closure_sync
-Date:   Tue,  3 Sep 2019 21:25:45 +0800
-Message-Id: <20190903132545.30059-4-colyli@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190903132545.30059-1-colyli@suse.de>
+        id S1727107AbfICOJD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 3 Sep 2019 10:09:03 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41909 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfICOJD (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 3 Sep 2019 10:09:03 -0400
+Received: by mail-io1-f65.google.com with SMTP id j5so36152933ioj.8
+        for <linux-bcache@vger.kernel.org>; Tue, 03 Sep 2019 07:09:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DnQ6AaSqYo5ikPRrDlX6F1WW6RIy6QLGdJh3AvTo/vQ=;
+        b=j5UDLT6hThq5I1A80/yAGtbsZqX/1x7/TlZOD/E97hi6BfhzitX3dsOAOw9p+nqtRU
+         MtRILEcpj3FVsdwcNY7nXOqMxHaS8C7HunCsOLCUNqrgcyq09sAKCqo6hlOQ3XuB+STc
+         A0VJ0N5mP4emNUgn7OQtpAbxn2w9hz61APQxwi6rxwbPFt9598wB6e+L7mSYKAuj1uug
+         p0KyFWr8mivcxFxnAS8bVnyz7H0QnX4k3gkekAXmTL2olsATi8trYHqtQxzkfLj13Xyc
+         73EkmUunLFsQNFxwmhEIc1cAvrI4fj8MaMDg3UWny0LU5G8Pi0bJScfHMA9GT83i4mcr
+         lWuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DnQ6AaSqYo5ikPRrDlX6F1WW6RIy6QLGdJh3AvTo/vQ=;
+        b=fATlMcaBYRHZ10cxnHBgsqv3epiIb79E8kHA3HHZD85Lga+uXR19yAGrhcFkYoPBIF
+         6fJ1RAN4J3jKeDTQXwTEp+aSmSgn4Ws1izVKfs0g0ecdbNRJf5Vh2fDFBCzlC/DD9Gg4
+         eH6zm480L0WT2+jXeFHevO6dYnLN93yagih43wOOYXyw2ZaPBdOl3KHGnmSYaa1syH3e
+         NAJuDP+N8zuSA9vIk/mKORstzwTMF9e8taGToM8CVwEbAhnQoKA8DJroL2wPVIhXTyj4
+         +5EjAtEP502bkpw/k65O2hTqsArTMjHqPpO6mC926mZM7vbrJBztcd4jOeeNIvdH96C0
+         w2Xw==
+X-Gm-Message-State: APjAAAWBiEyA/0c0jt5cukKk8qsX0FE0aIeC8+GMgqPdlKjxAqCzAoCR
+        Qn5Qj9bv51DkVavZapSfXumzEd6jw4q0dg==
+X-Google-Smtp-Source: APXvYqx7NRab0rE1lDaB7bRsYy+qrQ1hHD7Y4eAmA/OZ32s1EQx0dIdMKQQ8gDMxYYNa+StT2PxAvw==
+X-Received: by 2002:a05:6638:1e5:: with SMTP id t5mr38292059jaq.79.1567519742045;
+        Tue, 03 Sep 2019 07:09:02 -0700 (PDT)
+Received: from [192.168.1.50] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id d9sm13713604ioo.15.2019.09.03.07.09.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Sep 2019 07:09:01 -0700 (PDT)
+Subject: Re: [PATCH 0/3] bcache patches for Linux v5.4
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org
 References: <20190903132545.30059-1-colyli@suse.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0a1dddf5-c0c9-97a7-e41c-a1f937d62616@kernel.dk>
+Date:   Tue, 3 Sep 2019 08:09:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190903132545.30059-1-colyli@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Kent Overstreet <kent.overstreet@gmail.com>
+On 9/3/19 7:25 AM, Coly Li wrote:
+> Hi Jens,
+> 
+> Most of bcache development is still in progress now, for Linux v5.3
+> we only have 3 patches to merge. Please take them.
 
-The race was when a thread using closure_sync() notices cl->s->done == 1
-before the thread calling closure_put() calls wake_up_process(). Then,
-it's possible for that thread to return and exit just before
-wake_up_process() is called - so we're trying to wake up a process that
-no longer exists.
+Applied for 5.4, thanks.
 
-rcu_read_lock() is sufficient to protect against this, as there's an rcu
-barrier somewhere in the process teardown path.
-
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-Acked-by: Coly Li <colyli@suse.de>
----
- drivers/md/bcache/closure.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/md/bcache/closure.c b/drivers/md/bcache/closure.c
-index 73f5319295bc..c12cd809ab19 100644
---- a/drivers/md/bcache/closure.c
-+++ b/drivers/md/bcache/closure.c
-@@ -105,8 +105,14 @@ struct closure_syncer {
- 
- static void closure_sync_fn(struct closure *cl)
- {
--	cl->s->done = 1;
--	wake_up_process(cl->s->task);
-+	struct closure_syncer *s = cl->s;
-+	struct task_struct *p;
-+
-+	rcu_read_lock();
-+	p = READ_ONCE(s->task);
-+	s->done = 1;
-+	wake_up_process(p);
-+	rcu_read_unlock();
- }
- 
- void __sched __closure_sync(struct closure *cl)
 -- 
-2.16.4
+Jens Axboe
 
