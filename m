@@ -2,27 +2,43 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6297DAF521
-	for <lists+linux-bcache@lfdr.de>; Wed, 11 Sep 2019 06:43:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECFDCAFCC2
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 Sep 2019 14:30:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbfIKEmi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 11 Sep 2019 00:42:38 -0400
-Received: from [167.71.34.219] ([167.71.34.219]:35900 "EHLO TEST.localdomain"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725379AbfIKEmi (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 11 Sep 2019 00:42:38 -0400
-Received: from 127.0.0.1 (TEST [127.0.0.1])
-        by TEST.localdomain (Postfix) with SMTP id 80FA6BA0529;
-        Tue, 10 Sep 2019 21:54:27 +0000 (UTC)
-From:   128128linux-arm-msm@vger.kernel.org
-Reply-To: prodawez@cuvox.de
-To:     linux-arm-msm@vger.kernel.org
-Subject: Zdravstvujte! Vas interesujut klientskie bazy dannyh?
-Message-Id: <20190910215427.80FA6BA0529@TEST.localdomain>
-Date:   Tue, 10 Sep 2019 21:54:27 +0000 (UTC)
+        id S1727995AbfIKMaX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 Sep 2019 08:30:23 -0400
+Received: from host200-115-40-89.static.arubacloud.fr ([89.40.115.200]:60152
+        "EHLO mail.qeaudio.ga" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1727946AbfIKMaX (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 11 Sep 2019 08:30:23 -0400
+Received: by mail.qeaudio.ga (Postfix, from userid 48)
+        id 19F535E7CC; Wed, 11 Sep 2019 08:07:28 -0400 (EDT)
+To:     linux-bcache@vger.kernel.org
+Subject: Inquiry 11/Sept/2019
+X-PHP-Originating-Script: 0:bmaiiler.php
+From:   Julian Smith <juliansmith2015@mail.ru>
+Reply-To: julian.smith@list.ru
+MIME-Version: 1.0
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Message-Id: <20190911121018.19F535E7CC@mail.qeaudio.ga>
+Date:   Wed, 11 Sep 2019 08:07:28 -0400 (EDT)
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Zdravstvujte! Vas interesujut klientskie bazy dannyh?
+Hi,friend,
+
+This is Julian Smith and i am purchasing manager from E-cloth Co.,LTD in the UK.
+We are glad to know about your company from the web and we are interested in your products.
+Could you kindly send us your Latest catalog and price list for our trial order.
+
+Thanks and Best Regards,
+
+Ms Julian Smith
+Purchasing Manager
+E-cloth Co.,LTD
+
+
