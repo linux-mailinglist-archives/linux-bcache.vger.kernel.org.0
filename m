@@ -2,47 +2,89 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50A7EB2F40
-	for <lists+linux-bcache@lfdr.de>; Sun, 15 Sep 2019 10:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DEA2BA45C
+	for <lists+linux-bcache@lfdr.de>; Sun, 22 Sep 2019 20:56:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbfIOIkU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 15 Sep 2019 04:40:20 -0400
-Received: from m15-57.126.com ([220.181.15.57]:58828 "EHLO m15-57.126.com"
+        id S2391505AbfIVSsQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 22 Sep 2019 14:48:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725497AbfIOIkU (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 15 Sep 2019 04:40:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=AkXUs
-        ddo997NBOtuq9nb0xT3pYYPQMjRSF77tv3pWA4=; b=kuew1T0s6o4pYwjb5U6nj
-        ns8DY39E+Yt1de0rGIC4GvzQtA2C2f1hONgvnULfJynFGNQH9PHuGe+SPj3cFi7+
-        MLIkf0MuaIDoDcerW7F2S99m6ia2zUoObmMSC8DgQQKrR0LvKL25+rYLSAwtGvYh
-        8UXdP0TGlx7KcbEAonVs1c=
-Received: from nina_2011$126.com ( [106.38.115.23] ) by ajax-webmail-wmsvr57
- (Coremail) ; Sun, 15 Sep 2019 16:40:15 +0800 (CST)
-X-Originating-IP: [106.38.115.23]
-Date:   Sun, 15 Sep 2019 16:40:15 +0800 (CST)
-From:   nina <nina_2011@126.com>
-To:     linux-bcache@vger.kernel.org
-Subject: A question about bcahe
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.10 build 20190724(ac680a23)
- Copyright (c) 2002-2019 www.mailtech.cn 126com
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        id S2388599AbfIVSsP (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:48:15 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1D692190F;
+        Sun, 22 Sep 2019 18:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569178094;
+        bh=Iz/rm/WQRpcIwAOXL0oPExQ24VLEz8gHHqZ2wCq1jig=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fbb1qxEm6tgn+KDd8EQGvTJ8lDzbD9Txk0F3Q7e3mLjhTwHUZ/4n2iWHeVHFrzj3G
+         UUwLYcSQcuDI7dNcE36jQRyxO4J64bWkyf2S1pV8EkJGTA8IZlpDXywyEdnC06at6r
+         j8RSPig32e7ihuJoVW//bLg+zFWM3B00r3AxnaHc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 159/203] closures: fix a race on wakeup from closure_sync
+Date:   Sun, 22 Sep 2019 14:43:05 -0400
+Message-Id: <20190922184350.30563-159-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
+References: <20190922184350.30563-1-sashal@kernel.org>
 MIME-Version: 1.0
-Message-ID: <1cbad178.1fe5.16d341465a7.Coremail.nina_2011@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: OcqowAD3_6_w+H1dnxVrAA--.19143W
-X-CM-SenderInfo: 5qlqtsisqriqqrswhudrp/1tbikhAxEFpD+IsPEgAAsU
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-CgpIaSwgRGVhciBNcgoKSSBoYXZlIGEgcXVlc3Rpb24gdG8gYXNrLiBOb3cgd2UgdXNlIGJjYWNo
-ZSBpbiB0aGlzIHNjZW5hcmlvOiAgb25lIG52bWUgYXMgY2FjaGUgYW5kIG11bHRpcGxlIFNBVEEg
-ZGlza3MgYXMgZGV2aWNlcywgYW5kIGF2ZyBmaWxlIHNpemUgMU1CLgpXaGF0IGlzIHRoZSByZWFz
-b25hYmxlIHJhdGlvIG9mIG52bWUgdG8gU0FUQSBkaXNro78KV2hhdCBpbmRpY2F0b3JzIHNob3Vs
-ZCBiZSB1c2VkIHRvIGp1ZGdlIHdoZXRoZXIgdGhlIHJhdGlvIGlzIHJlYXNvbmFibGUgb3Igbm90
-PwoKCkkgbG9vayBmb3J3YXJkIHRvIHlvdXIgcmVwbHkuIFRoYW5rIHlvdS4KLS1OaW5h
+From: Kent Overstreet <kent.overstreet@gmail.com>
+
+[ Upstream commit a22a9602b88fabf10847f238ff81fde5f906fef7 ]
+
+The race was when a thread using closure_sync() notices cl->s->done == 1
+before the thread calling closure_put() calls wake_up_process(). Then,
+it's possible for that thread to return and exit just before
+wake_up_process() is called - so we're trying to wake up a process that
+no longer exists.
+
+rcu_read_lock() is sufficient to protect against this, as there's an rcu
+barrier somewhere in the process teardown path.
+
+Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+Acked-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/md/bcache/closure.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/md/bcache/closure.c b/drivers/md/bcache/closure.c
+index 73f5319295bc9..c12cd809ab193 100644
+--- a/drivers/md/bcache/closure.c
++++ b/drivers/md/bcache/closure.c
+@@ -105,8 +105,14 @@ struct closure_syncer {
+ 
+ static void closure_sync_fn(struct closure *cl)
+ {
+-	cl->s->done = 1;
+-	wake_up_process(cl->s->task);
++	struct closure_syncer *s = cl->s;
++	struct task_struct *p;
++
++	rcu_read_lock();
++	p = READ_ONCE(s->task);
++	s->done = 1;
++	wake_up_process(p);
++	rcu_read_unlock();
+ }
+ 
+ void __sched __closure_sync(struct closure *cl)
+-- 
+2.20.1
+
