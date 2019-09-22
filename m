@@ -2,38 +2,38 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DEA2BA45C
-	for <lists+linux-bcache@lfdr.de>; Sun, 22 Sep 2019 20:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08420BAA32
+	for <lists+linux-bcache@lfdr.de>; Sun, 22 Sep 2019 21:53:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391505AbfIVSsQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 22 Sep 2019 14:48:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44964 "EHLO mail.kernel.org"
+        id S1731308AbfIVTXj (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 22 Sep 2019 15:23:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388599AbfIVSsP (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:48:15 -0400
+        id S2394136AbfIVSxV (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:53:21 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1D692190F;
-        Sun, 22 Sep 2019 18:48:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D1F221D80;
+        Sun, 22 Sep 2019 18:53:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178094;
+        s=default; t=1569178401;
         bh=Iz/rm/WQRpcIwAOXL0oPExQ24VLEz8gHHqZ2wCq1jig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fbb1qxEm6tgn+KDd8EQGvTJ8lDzbD9Txk0F3Q7e3mLjhTwHUZ/4n2iWHeVHFrzj3G
-         UUwLYcSQcuDI7dNcE36jQRyxO4J64bWkyf2S1pV8EkJGTA8IZlpDXywyEdnC06at6r
-         j8RSPig32e7ihuJoVW//bLg+zFWM3B00r3AxnaHc=
+        b=LMwvgSmkwr3ETE2KLlLmi6nDyeqv7VqXzSRK7TepkpJ0yA5qICr6PQL50Not/7lcE
+         kWFk08AGIVHDOP7FYt4RCLigleTjA8btv7MIDZqaTUEf9Cl71a5L0Yt7r0ABpU4OBc
+         NaACKRN7/mK8fLrjZ+budK1ywdDQNFoHG34pnqBM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
         Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 159/203] closures: fix a race on wakeup from closure_sync
-Date:   Sun, 22 Sep 2019 14:43:05 -0400
-Message-Id: <20190922184350.30563-159-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 144/185] closures: fix a race on wakeup from closure_sync
+Date:   Sun, 22 Sep 2019 14:48:42 -0400
+Message-Id: <20190922184924.32534-144-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
-References: <20190922184350.30563-1-sashal@kernel.org>
+In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
+References: <20190922184924.32534-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
