@@ -2,102 +2,98 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98C04D38B6
-	for <lists+linux-bcache@lfdr.de>; Fri, 11 Oct 2019 07:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 307C1D505F
+	for <lists+linux-bcache@lfdr.de>; Sat, 12 Oct 2019 16:23:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbfJKFgR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 11 Oct 2019 01:36:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34810 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726116AbfJKFgQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 11 Oct 2019 01:36:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0E4C9AD12;
-        Fri, 11 Oct 2019 05:36:15 +0000 (UTC)
-Subject: Re: [PATCH v3] bcache: fix deadlock in bcache_allocator
-To:     Andrea Righi <andrea.righi@canonical.com>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190807103806.GA15450@xps-13>
- <1360a7e6-9135-6f3e-fc30-0834779bcf69@suse.de>
- <20191010152124.GA25334@xps-13>
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <734d5e9b-cde0-07ec-3162-e502a73752b6@suse.de>
-Date:   Fri, 11 Oct 2019 13:36:09 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        id S1728399AbfJLOXy (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 12 Oct 2019 10:23:54 -0400
+Received: from mail-lf1-f43.google.com ([209.85.167.43]:43337 "EHLO
+        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727642AbfJLOXy (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 12 Oct 2019 10:23:54 -0400
+Received: by mail-lf1-f43.google.com with SMTP id u3so8935749lfl.10
+        for <linux-bcache@vger.kernel.org>; Sat, 12 Oct 2019 07:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=L0mDZV+IVRVsc/hohSVtpXPPLgYwSDor3yDAmFtvLz4=;
+        b=IRt6OkinxEDZn1ggk+SB8QPDv2hW3IxWepcN1KqEawtpsK8VOlrFo+x0mBO3gVfuq8
+         3NCRyJDPQCrq/G2FHnmHiKhkCg4w2P7nLObhSdMD6KJwRZU0hnBu1kb4ewvUKeqBX/75
+         FnReY7prdTfd0aPwKtzMpyyvrRmVpMWpxBIXn+PrNLxTH8Kgv6EB2rk6HGdQqW7xH93Z
+         6k9KW6+7q3iibGOvjP5yfM2V6/rsslf1EFY6XG9LMayzhf8TxgpZ7dqBmz6JdYilt2vt
+         hP1g/fT2yN41F/3SccPn2dnIaWF2bKx/DClibGbwmqNYayTMDW4WjfLNiKcE+SV04Cqv
+         8beQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=L0mDZV+IVRVsc/hohSVtpXPPLgYwSDor3yDAmFtvLz4=;
+        b=V4QYqRFCpqYZl2bQ3pD0Pn7jFy6Whfqyi9HL2/x6Jk/HzS4a0LkV9MaW/6D8mBO2kZ
+         30bs8GTQGp0Woj0VFyi6eYWSBQbl0ahNXNF4xGLY+MK5VqDndKN2AbfDc4WAgY+weHMN
+         slK8g9rBHLdSWb7kTQM+mDj7cNuOSH4Qiwohd3sxOl1DrkgO/XCqZhGVwzztBer9ADda
+         E+1mC3r8GXIf/wQ5IiT5tqH01s2f+Qv8eQr7YixYwa/yNZpJywq5wUy4yswPCf0ttL6C
+         ADZ618aT4WkSRwZc2qTWX7pbIaDWqzv7h0EDssOP5R5XwdBlID9Lrroq7enkKJu4kxji
+         oSdw==
+X-Gm-Message-State: APjAAAWdaiL+KT8dgr4H/FnVfNplcTM1hAG5uJ9YNJvxUka5Gwr0AKRk
+        93gyZ9rXNZscUt7G/o6hxFRVYR7rscnjVNXuZCf3Lwk1FPI=
+X-Google-Smtp-Source: APXvYqyawR37Q6vd1bVb+0oHmxv8G2dQ1oAIIYc7/kvz18GbcrNjqFLcUiiJp+K8TVor1J5PJasxLbPsIt3Ycabe8DM=
+X-Received: by 2002:a19:9114:: with SMTP id t20mr11112753lfd.143.1570890231601;
+ Sat, 12 Oct 2019 07:23:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191010152124.GA25334@xps-13>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+From:   Sergey Kolesnikov <rockingdemon@gmail.com>
+Date:   Sat, 12 Oct 2019 17:23:40 +0300
+Message-ID: <CAExpLJg86wKgY=1iPt6VMOiWbVKHU-TCQqWa0aD1OA-ype07sw@mail.gmail.com>
+Subject: Getting high cache_bypass_misses in my setup
+To:     linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/10/10 11:21 下午, Andrea Righi wrote:
-> On Wed, Aug 07, 2019 at 09:53:46PM +0800, Coly Li wrote:
->> On 2019/8/7 6:38 下午, Andrea Righi wrote:
->>> bcache_allocator can call the following:
->>>
->>>  bch_allocator_thread()
->>>   -> bch_prio_write()
->>>      -> bch_bucket_alloc()
->>>         -> wait on &ca->set->bucket_wait
->>>
->>> But the wake up event on bucket_wait is supposed to come from
->>> bch_allocator_thread() itself => deadlock:
->>>
->>> [ 1158.490744] INFO: task bcache_allocato:15861 blocked for more than 10 seconds.
->>> [ 1158.495929]       Not tainted 5.3.0-050300rc3-generic #201908042232
->>> [ 1158.500653] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->>> [ 1158.504413] bcache_allocato D    0 15861      2 0x80004000
->>> [ 1158.504419] Call Trace:
->>> [ 1158.504429]  __schedule+0x2a8/0x670
->>> [ 1158.504432]  schedule+0x2d/0x90
->>> [ 1158.504448]  bch_bucket_alloc+0xe5/0x370 [bcache]
->>> [ 1158.504453]  ? wait_woken+0x80/0x80
->>> [ 1158.504466]  bch_prio_write+0x1dc/0x390 [bcache]
->>> [ 1158.504476]  bch_allocator_thread+0x233/0x490 [bcache]
->>> [ 1158.504491]  kthread+0x121/0x140
->>> [ 1158.504503]  ? invalidate_buckets+0x890/0x890 [bcache]
->>> [ 1158.504506]  ? kthread_park+0xb0/0xb0
->>> [ 1158.504510]  ret_from_fork+0x35/0x40
->>>
->>> Fix by making the call to bch_prio_write() non-blocking, so that
->>> bch_allocator_thread() never waits on itself.
->>>
->>> Moreover, make sure to wake up the garbage collector thread when
->>> bch_prio_write() is failing to allocate buckets.
->>>
->>> BugLink: https://bugs.launchpad.net/bugs/1784665
->>> BugLink: https://bugs.launchpad.net/bugs/1796292
->>> Signed-off-by: Andrea Righi <andrea.righi@canonical.com>
->>
->> OK, I add this version into my for-test directory. Once you have a new
->> version, I will update it. Thanks.
->>
->> Coly Li
-> 
-> Hi Coly,
-> 
-> any news about this patch? We're still using it in Ubuntu and no errors
+Hello everyone.
 
-It has been testing on your side for quite long time, and I don't have
-better idea on the fix. It looks solid enough, and indeed I have it in
-my development patches already with more testing.
+I'm trying to get my bcache setup running, but having almost all my
+traffic bypassing the cache.
+Here are some stats that I have:
 
-> have been reported so far. Do you think we can add this to linux-next?
 
-Yes, this is my plan. It is in my testing queue with other developing
-patches.
+root@midnight:~# cat
+/sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/bypassed
+2.8G
+root@midnight:~# cat
+/sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_bypass_misses
+247956
+root@midnight:~# cat
+/sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_bypass_hits
+5597
+root@midnight:~# cat
+/sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_hits
+233
+root@midnight:~# cat
+/sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_misses
+243
 
-Thanks.
+And now for my machine setup.
+Running ubuntu 18.04 LTS with 5.0.0-31-lowlatency kernel.
+Cache device is a partition on NVMe PCI-e SSD with 4k logical and
+physical sector size.
+Backing device is LVM logical volume on a 3-drive MD RAID-0 with 64K
+stripe size, so it's optimal IO is 192K.
+I have aligned backing-dev data offset with
+make-bcache -B -o 15360 --writeback /dev/vm-vg/lvcachedvm-bdev
 
--- 
+I have tried all recommendations for routing traffic to SSD:
 
-Coly Li
+echo 0 > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/congested_read_threshold_us
+echo 0 > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/congested_write_threshold_us
+echo 0 > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/sequential_cutoff
+
+But I still get almost all traffic going to cache_bypass_misse. BTW,
+what does this stat mean? I don't get it from the in-kernel manual
+
+Any help?..
+
+Thank you.
+Best regards,
+Sergey E. Kolesnikov
