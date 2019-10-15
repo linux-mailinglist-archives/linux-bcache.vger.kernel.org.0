@@ -2,89 +2,46 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19105D7805
-	for <lists+linux-bcache@lfdr.de>; Tue, 15 Oct 2019 16:07:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52AD8D7AC3
+	for <lists+linux-bcache@lfdr.de>; Tue, 15 Oct 2019 18:04:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732457AbfJOOHo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 15 Oct 2019 10:07:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40886 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732435AbfJOOHo (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 15 Oct 2019 10:07:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DDA5AB2E9;
-        Tue, 15 Oct 2019 14:07:42 +0000 (UTC)
-Subject: Re: Getting high cache_bypass_misses in my setup
-To:     Sergey Kolesnikov <rockingdemon@gmail.com>,
-        linux-bcache@vger.kernel.org
-References: <CAExpLJg86wKgY=1iPt6VMOiWbVKHU-TCQqWa0aD1OA-ype07sw@mail.gmail.com>
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <18e5a2af-da70-60f6-6bd9-33f585b5971b@suse.de>
-Date:   Tue, 15 Oct 2019 22:07:38 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.0
+        id S2387697AbfJOQEP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 15 Oct 2019 12:04:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37172 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387630AbfJOQEP (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 15 Oct 2019 12:04:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FPH/RslDrB24iPPXAov8XCsMkgux/OZRPQ7rBf1jk+4=; b=f7SCrn5D2kFZJaU3VAVb5Knt3
+        jDkkudEBSKO1A9q6KJxdXqwwjT1Cql1+L5lTmx5nE/gabscNq0nkLwXxf/sbN4Ig+8qUWWdfc0Unj
+        Pl7Xl4B+7jcyjedMFr818Cu2yqjA59Ar+OACaIFfulnyv76jLaYc0BmvrS60LEan7/4r8zOC30UEf
+        c3pCuBdfIpxPBXdIFLzR+8UpuC+d5YF7cqPWoF91gPybmBC50Kt5ZFtW+8mJerYs04zkwqPykJN5x
+        n78X4HFaTeFPilfSd31nmxjcD1GEQDWSBlXhtxu97o2V/ZFm8c/UfpND2G6rbL4/Itzoab6wik5U8
+        5hLYPp60A==;
+Received: from [2001:4bb8:18c:d7b:c70:4a89:bc61:3] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iKPJ0-0002ay-9R; Tue, 15 Oct 2019 16:04:14 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
+Subject: bcache kbuild cleanups
+Date:   Tue, 15 Oct 2019 18:04:07 +0200
+Message-Id: <20191015160409.14250-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CAExpLJg86wKgY=1iPt6VMOiWbVKHU-TCQqWa0aD1OA-ype07sw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/10/12 10:23 下午, Sergey Kolesnikov wrote:
-> Hello everyone.
-> 
-> I'm trying to get my bcache setup running, but having almost all my
-> traffic bypassing the cache.
-> Here are some stats that I have:
-> 
-> 
-> root@midnight:~# cat
-> /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/bypassed
-> 2.8G
-> root@midnight:~# cat
-> /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_bypass_misses
-> 247956
-> root@midnight:~# cat
-> /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_bypass_hits
-> 5597
-> root@midnight:~# cat
-> /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_hits
-> 233
-> root@midnight:~# cat
-> /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_misses
-> 243
-> 
-> And now for my machine setup.
-> Running ubuntu 18.04 LTS with 5.0.0-31-lowlatency kernel.
-> Cache device is a partition on NVMe PCI-e SSD with 4k logical and
-> physical sector size.
-> Backing device is LVM logical volume on a 3-drive MD RAID-0 with 64K
-> stripe size, so it's optimal IO is 192K.
-> I have aligned backing-dev data offset with
-> make-bcache -B -o 15360 --writeback /dev/vm-vg/lvcachedvm-bdev
-> 
-> I have tried all recommendations for routing traffic to SSD:
-> 
-> echo 0 > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/congested_read_threshold_us
-> echo 0 > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/congested_write_threshold_us
-> echo 0 > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/sequential_cutoff
-> 
-> But I still get almost all traffic going to cache_bypass_misse. BTW,
-> what does this stat mean? I don't get it from the in-kernel manual
-> 
-> Any help?..
+Hi Coly,
 
-I have no much idea. The 4Kn SSD is totally new to me. Last time I saw
-Eric Wheeler reported 4Kn hard diver didn't work well as backing device,
-and I don't find an exact reason up to now. I am not able to say 4Kn is
-not supported or not, before I have such device to test...
-
--- 
-
-Coly Li
+this series removes a pointless cflags override and unused exports
+from bcache.
