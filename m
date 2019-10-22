@@ -2,75 +2,117 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF623E08B6
-	for <lists+linux-bcache@lfdr.de>; Tue, 22 Oct 2019 18:23:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F1FEE0C67
+	for <lists+linux-bcache@lfdr.de>; Tue, 22 Oct 2019 21:18:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729666AbfJVQXi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 22 Oct 2019 12:23:38 -0400
-Received: from mail1.g1.pair.com ([66.39.3.162]:17020 "EHLO mail1.g1.pair.com"
+        id S1732804AbfJVTSJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 22 Oct 2019 15:18:09 -0400
+Received: from mx.ewheeler.net ([66.155.3.69]:39860 "EHLO mx.ewheeler.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731132AbfJVQXh (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:23:37 -0400
-Received: from mail1.g1.pair.com (localhost [127.0.0.1])
-        by mail1.g1.pair.com (Postfix) with ESMTP id 0A7DD54744A;
-        Tue, 22 Oct 2019 12:23:37 -0400 (EDT)
-Received: from harpe.intellique.com (labo.djinux.com [82.225.196.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727851AbfJVTSJ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 22 Oct 2019 15:18:09 -0400
+X-Greylist: delayed 316 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Oct 2019 15:18:09 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mx.ewheeler.net (Postfix) with ESMTP id 4FAC2A0692;
+        Tue, 22 Oct 2019 19:12:53 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id VEQk0GTIhsk8; Tue, 22 Oct 2019 19:12:52 +0000 (UTC)
+Received: from mx.ewheeler.net (mx.ewheeler.net [66.155.3.69])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail1.g1.pair.com (Postfix) with ESMTPSA id 6CB1360B032;
-        Tue, 22 Oct 2019 12:23:36 -0400 (EDT)
-Date:   Tue, 22 Oct 2019 18:23:41 +0200
-From:   Emmanuel Florac <eflorac@intellique.com>
+        by mx.ewheeler.net (Postfix) with ESMTPSA id EEE0DA067D;
+        Tue, 22 Oct 2019 19:12:48 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 19:12:48 +0000 (UTC)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
+X-X-Sender: lists@mx.ewheeler.net
 To:     Coly Li <colyli@suse.de>
-Cc:     Teodor Milkov <tm@del.bg>, linux-bcache@vger.kernel.org
-Subject: Re: Very slow bcache-register: 6.4TB takes 10+ minutes
-Message-ID: <20191022182341.58739ca5@harpe.intellique.com>
-In-Reply-To: <224a181d-06a6-2517-865d-c71595487187@suse.de>
-References: <5008cd68-9ec5-5daf-3d56-25ea8b8a7736@del.bg>
-        <224a181d-06a6-2517-865d-c71595487187@suse.de>
-Organization: Intellique
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.31; x86_64-slackware-linux-gnu)
+cc:     Sergey Kolesnikov <rockingdemon@gmail.com>,
+        linux-bcache@vger.kernel.org
+Subject: Re: Getting high cache_bypass_misses in my setup
+In-Reply-To: <18e5a2af-da70-60f6-6bd9-33f585b5971b@suse.de>
+Message-ID: <alpine.LRH.2.11.1910221906210.25870@mx.ewheeler.net>
+References: <CAExpLJg86wKgY=1iPt6VMOiWbVKHU-TCQqWa0aD1OA-ype07sw@mail.gmail.com> <18e5a2af-da70-60f6-6bd9-33f585b5971b@suse.de>
+User-Agent: Alpine 2.11 (LRH 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- boundary="Sig_/s45qbEvwmyOluiMyTjw+WMZ"; protocol="application/pgp-signature"
+Content-Type: MULTIPART/MIXED; BOUNDARY="-1690155773-1709268097-1571771274=:25870"
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
---Sig_/s45qbEvwmyOluiMyTjw+WMZ
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Le Sun, 20 Oct 2019 14:34:25 +0800
-Coly Li <colyli@suse.de> =C3=A9crivait:
+---1690155773-1709268097-1571771274=:25870
+Content-Type: TEXT/PLAIN; CHARSET=ISO-2022-JP
 
-> So far we only have a single B+tree to contain and index all bkeys. If
-> the cached data is large, this could be slow. So I suggest to create
-> more partition and make individual cache set on each partition. In my
-> personal testing, I suggest the maximum cache set size as 2-4TB.
+On Tue, 15 Oct 2019, Coly Li wrote:
+> On 2019/10/12 10:23 下午, Sergey Kolesnikov wrote:
+> > Hello everyone.
+> > 
+> > I'm trying to get my bcache setup running, but having almost all my
+> > traffic bypassing the cache.
+> > Here are some stats that I have:
+> > 
+> > 
+> > root@midnight:~# cat
+> > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/bypassed
+> > 2.8G
+> > root@midnight:~# cat
+> > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_bypass_misses
+> > 247956
+> > root@midnight:~# cat
+> > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_bypass_hits
+> > 5597
+> > root@midnight:~# cat
+> > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_hits
+> > 233
+> > root@midnight:~# cat
+> > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/stats_total/cache_misses
+> > 243
+> > 
+> > And now for my machine setup.
+> > Running ubuntu 18.04 LTS with 5.0.0-31-lowlatency kernel.
+> > Cache device is a partition on NVMe PCI-e SSD with 4k logical and
+> > physical sector size.
+> > Backing device is LVM logical volume on a 3-drive MD RAID-0 with 64K
+> > stripe size, so it's optimal IO is 192K.
+> > I have aligned backing-dev data offset with
+> > make-bcache -B -o 15360 --writeback /dev/vm-vg/lvcachedvm-bdev
+> > 
+> > I have tried all recommendations for routing traffic to SSD:
+> > 
+> > echo 0 > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/congested_read_threshold_us
+> > echo 0 > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/congested_write_threshold_us
+> > echo 0 > /sys/fs/bcache/9820f407-457a-46e3-abc0-f2214d39b64c/bdev0/sequential_cutoff
+> > 
+> > But I still get almost all traffic going to cache_bypass_misse. BTW,
+> > what does this stat mean? I don't get it from the in-kernel manual
+> > 
+> > Any help?..
+> 
+> I have no much idea. The 4Kn SSD is totally new to me. Last time I saw
+> Eric Wheeler reported 4Kn hard diver didn't work well as backing device,
+> and I don't find an exact reason up to now. I am not able to say 4Kn is
+> not supported or not, before I have such device to test...
 
-Urgh. 2/4 TB is the size of common SSDs nowadays. A good use case for
-bcache would be caching a 100 TB RAID array with a couple of TB of
-SSDs. Too bad I have to fallback on using LVM cache instead.
+We pulled the 4Kn SSD configuration, it wasn't stable back in v4.1.  Not 
+sure if the problem has been fixed, but I don't think so.  
 
---=20
-------------------------------------------------------------------------
-Emmanuel Florac     |   Direction technique
-                    |   Intellique
-                    |	<eflorac@intellique.com>
-                    |   +33 1 78 94 84 02
-------------------------------------------------------------------------
+Here is the original thread:
 
---Sig_/s45qbEvwmyOluiMyTjw+WMZ
-Content-Type: application/pgp-signature
-Content-Description: Signature digitale OpenPGP
+https://www.spinics.net/lists/linux-bcache/msg05971.html
 
------BEGIN PGP SIGNATURE-----
+--
+Eric Wheeler
 
-iEYEARECAAYFAl2vLQ0ACgkQX3jQXNUicVZp2QCgtjT+HcqNpb1dCf30N1ukDP3h
-s74AoO74xv5GUr9VUmuqUH3bJBbdQub3
-=Fo7m
------END PGP SIGNATURE-----
 
---Sig_/s45qbEvwmyOluiMyTjw+WMZ--
+
+> 
+> -- 
+> 
+> Coly Li
+> 
+---1690155773-1709268097-1571771274=:25870--
