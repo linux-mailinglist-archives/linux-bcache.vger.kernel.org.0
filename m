@@ -2,88 +2,68 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 842C9E9418
-	for <lists+linux-bcache@lfdr.de>; Wed, 30 Oct 2019 01:21:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AD6CE9CB7
+	for <lists+linux-bcache@lfdr.de>; Wed, 30 Oct 2019 14:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbfJ3AVn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 29 Oct 2019 20:21:43 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53689 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726068AbfJ3AVn (ORCPT
+        id S1726321AbfJ3Ny1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 30 Oct 2019 09:54:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41520 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726284AbfJ3Ny1 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 29 Oct 2019 20:21:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572394902;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=sjdvnhncfNi/W+JuJj98kwA7XrsWnHo1724kW93jlUo=;
-        b=CQJbIYv/AKfGERbYwKBwfjV4g9wRnHqND4QxqIX6UIOx9U4VOuq3Ob2Kco32vkxnEtrWK4
-        8KDmxiBBj7e3a9nPAZz3HQUiJJg7/XU9ZTXMJEeZmrM8dba/rqdOs2dBLM0zjDxXylsfaz
-        6PphWQ3RgqnukIDjYkAAfDTPqnI5Ayo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-106-eKE4v4OgMmGUjrGEwm7oaw-1; Tue, 29 Oct 2019 20:21:38 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 403591800D7B;
-        Wed, 30 Oct 2019 00:21:37 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-20.pek2.redhat.com [10.72.8.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id EB53A5D6D4;
-        Wed, 30 Oct 2019 00:21:30 +0000 (UTC)
-Date:   Wed, 30 Oct 2019 08:21:26 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Wed, 30 Oct 2019 09:54:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Utihgzs6H+LFi2n+mj7RWlsvBJPK1GO6rym7XoHXdXE=; b=FdHA0ymcBQE/5UwLEdX15pSF1M
+        9j/JS2kVvK1xTC8JeIq4iJoKeVyPD1CHLF0vJLJcs9RgeLsQO/L8YpfgHTo9xtK8Rp34BkV0L41eo
+        EI18VlQt9JZHN0nHfdc2kEj0aZ/mt68246qsHVV4zArzZm6HjOKPxMku6hhNUQHf9KdNg7QB4cs/1
+        9Cki42lehQKKIe7svw4sW2QUK4hFwfDBKZWVQStnOVO0JPfr1BTW5xb/jUbtoy+bzSeicDwBJGBWJ
+        vNzN2YtWYbmf4weoKv9u55N7UF2UTMnkw37VgJWmUnq9q4wic6blfmV/KDrxqVEmEu7R2jQ0ywuli
+        AYMb3FDg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iPoQc-0006Y0-1R; Wed, 30 Oct 2019 13:54:26 +0000
+Date:   Wed, 30 Oct 2019 06:54:26 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
         Coly Li <colyli@suse.de>, Keith Busch <kbusch@kernel.org>,
         linux-bcache@vger.kernel.org
 Subject: Re: [PATCH V3] block: optimize for small block size IO
-Message-ID: <20191030002126.GA14423@ming.t460p>
+Message-ID: <20191030135426.GA24655@infradead.org>
 References: <20191029105125.12928-1-ming.lei@redhat.com>
  <20191029110425.GA4382@infradead.org>
+ <20191030002126.GA14423@ming.t460p>
 MIME-Version: 1.0
-In-Reply-To: <20191029110425.GA4382@infradead.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: eKE4v4OgMmGUjrGEwm7oaw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191030002126.GA14423@ming.t460p>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 04:04:25AM -0700, Christoph Hellwig wrote:
-> I still haven't seen an explanation why this simple thing doesn't work
-> just as well:
->=20
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index 48e6725b32ee..f3073700166f 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -309,6 +309,11 @@ void __blk_queue_split(struct request_queue *q, stru=
-ct bio **bio,
->  =09=09=09=09nr_segs);
->  =09=09break;
->  =09default:
-> +=09=09if ((*bio)->bi_vcnt =3D=3D 1 &&
-> +=09=09    (*bio)->bi_io_vec[0].bv_len <=3D PAGE_SIZE) {
-> +=09=09=09*nr_segs =3D 1;
-> +=09=09=09return;
-> +=09=09}
->  =09=09split =3D blk_bio_segment_split(q, *bio, &q->bio_split, nr_segs);
->  =09=09break;
->  =09}
+On Wed, Oct 30, 2019 at 08:21:26AM +0800, Ming Lei wrote:
+> > +		if ((*bio)->bi_vcnt == 1 &&
+> > +		    (*bio)->bi_io_vec[0].bv_len <= PAGE_SIZE) {
+> > +			*nr_segs = 1;
+> > +			return;
+> > +		}
+> >  		split = blk_bio_segment_split(q, *bio, &q->bio_split, nr_segs);
+> >  		break;
+> >  	}
+> 
+> This bio(*bio) may be a fast-cloned bio from somewhere(DM, MD, ...), so the above
+> check can't work sometime.
 
-This bio(*bio) may be a fast-cloned bio from somewhere(DM, MD, ...), so the=
- above
-check can't work sometime.
-
-
-thanks,
-Ming
-
+Please explain how it doesn't work.  In the worse case it will give us
+a false negastive, that is we don't take the fast path when in theory
+we could, but then again fast cloneѕ bios will have so much overhead
+that it should not matter.
