@@ -2,97 +2,109 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83DF8EA8D3
-	for <lists+linux-bcache@lfdr.de>; Thu, 31 Oct 2019 02:35:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED694EAD68
+	for <lists+linux-bcache@lfdr.de>; Thu, 31 Oct 2019 11:29:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfJaBdm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 30 Oct 2019 21:33:42 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:56318 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726336AbfJaBdm (ORCPT
+        id S1726922AbfJaK3L (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 31 Oct 2019 06:29:11 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:40479 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726867AbfJaK3L (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 30 Oct 2019 21:33:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572485620;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JOT5e0E88zWIKcVI9/G9U554lO8BRI016yaiVp/NwTw=;
-        b=YkJ7rDaL2xARgAAApFtXXgaknKALf0FaP3UBZ9m6uRDyPgc7M2dJXM7MUMqGv7fi9F4Vm9
-        3xenDwXKzolq4qyctur6+LFNSs0huTbg3siV/8MMJdlOu4w4NNRka6wUY1ppq29UVzNexP
-        TPBjegQHt8yQ4/PuMaM8CS8h1axTJo4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-150-bJNIYacrMKifuaSjoJlzqw-1; Wed, 30 Oct 2019 21:33:37 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 01CEA800D49;
-        Thu, 31 Oct 2019 01:33:36 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-21.pek2.redhat.com [10.72.8.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 304A460BE0;
-        Thu, 31 Oct 2019 01:33:29 +0000 (UTC)
-Date:   Thu, 31 Oct 2019 09:33:25 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Keith Busch <kbusch@kernel.org>,
-        linux-bcache@vger.kernel.org
-Subject: Re: [PATCH V3] block: optimize for small block size IO
-Message-ID: <20191031013325.GA12309@ming.t460p>
-References: <20191029105125.12928-1-ming.lei@redhat.com>
- <20191029110425.GA4382@infradead.org>
- <20191030002126.GA14423@ming.t460p>
- <20191030135426.GA24655@infradead.org>
+        Thu, 31 Oct 2019 06:29:11 -0400
+Received: by mail-qk1-f195.google.com with SMTP id y81so6414718qkb.7
+        for <linux-bcache@vger.kernel.org>; Thu, 31 Oct 2019 03:29:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kaishome.de; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ioRVVclOVd3ufE+VE82OhlhNUZArPoJLpbMZg4bTfDs=;
+        b=W0VFE2/kmmbMdOZA+ATw3VPhJOagKN3tYLsrmx00fnR1x1hfVyeQh87RfWmqeciNgi
+         YH2bxXy7qA9eJrZ7OOOtV/HyV9URpB7m6iU65oEF+XbRcF8CSpuHPekA6j0WJJ5xrtmJ
+         mb1rHtKsnzrbf6jgbALvTZyxlt1RzHgUPsUfg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ioRVVclOVd3ufE+VE82OhlhNUZArPoJLpbMZg4bTfDs=;
+        b=M8gy75ZDwlv9osCvebN7u8JCrudDMc3KIfcXtzE0CGcWu6cr1VzyKRkf9EYf0Tbg4Q
+         GZCr7igt2XoLaoHrAICJP1PKxlJSO5gtyCfNTb7ITSo4R5EirSGRjMtZ1Drlon8w42Js
+         MiIj/Vs4VN2Lf5muTCf9HTuwkbsfoHn9jd+cH35lw+EQ5xOQXelFRGsznp9sWAsnsLrE
+         aEHl9pjA3ceIzjqPasGkSg0ImOP6OW/Kpgar7s3k+tzSRbqmonIfXP7YBdd+azZpq/GY
+         0vUpnoYPErdnRpoZvoiq7q6rbLGegiyqi0rxqhNaIQPEDmQBNeZoFMplgMngLhZfReHJ
+         N5ag==
+X-Gm-Message-State: APjAAAWp0EMyWUgkajjy1vlgaRPOkSkkknsb8mo0tR6xCZsKCaHuNRZo
+        00A0YjTjHXBWAjihmBhCsPkzAnbbzgkPSpSDzLI6R3S2
+X-Google-Smtp-Source: APXvYqypglHFTRtxySzLRw9dWWYJnKBTx4Cg5ufN02wHaMbhXOvz6gOA3p3IRW0nEQzcuqXiuaWzZ1oKy8DHQLNr3IU=
+X-Received: by 2002:a37:9b4f:: with SMTP id d76mr4321245qke.439.1572517749913;
+ Thu, 31 Oct 2019 03:29:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191030135426.GA24655@infradead.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: bJNIYacrMKifuaSjoJlzqw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+References: <4d6fe8a0-ecae-738b-165b-ee66683a2df6@nuclearwinter.com>
+ <alpine.LRH.2.11.1910242322110.25870@mx.ewheeler.net> <fa7a7125-195f-a2ad-4b5e-287c02cd9327@suse.de>
+ <89f29562-409b-7b4e-e299-1c8e8db77ea5@nuclearwinter.com> <0b20203f-84c5-ce3e-e9e2-13600cb2d77c@suse.de>
+ <1a07d296-82ec-6fa6-bbd4-357a972c0e63@nuclearwinter.com> <CAC2ZOYsrwObbMD+2khsbpiM+e9FUCdiONNQbBMFt9Mx7aXpyZQ@mail.gmail.com>
+ <00dfeefe-73f8-eeb8-b256-a51b2002e9e3@nuclearwinter.com>
+In-Reply-To: <00dfeefe-73f8-eeb8-b256-a51b2002e9e3@nuclearwinter.com>
+From:   Kai Krakow <kai@kaishome.de>
+Date:   Thu, 31 Oct 2019 11:28:58 +0100
+Message-ID: <CAC2ZOYtap2wZzJWYqO36Hp9DbFjA4krNZsaPe8BU3fkDe0id0g@mail.gmail.com>
+Subject: Re: bcache writeback infinite loop?
+To:     Larkin Lowrey <llowrey@nuclearwinter.com>
+Cc:     Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 06:54:26AM -0700, Christoph Hellwig wrote:
-> On Wed, Oct 30, 2019 at 08:21:26AM +0800, Ming Lei wrote:
-> > > +=09=09if ((*bio)->bi_vcnt =3D=3D 1 &&
-> > > +=09=09    (*bio)->bi_io_vec[0].bv_len <=3D PAGE_SIZE) {
-> > > +=09=09=09*nr_segs =3D 1;
-> > > +=09=09=09return;
-> > > +=09=09}
-> > >  =09=09split =3D blk_bio_segment_split(q, *bio, &q->bio_split, nr_seg=
-s);
-> > >  =09=09break;
-> > >  =09}
-> >=20
-> > This bio(*bio) may be a fast-cloned bio from somewhere(DM, MD, ...), so=
- the above
-> > check can't work sometime.
->=20
-> Please explain how it doesn't work.  In the worse case it will give us
-> a false negastive, that is we don't take the fast path when in theory
-> we could, but then again fast clone=D1=95 bios will have so much overhead
-> that it should not matter.
+> On 10/30/2019 3:18 PM, Kai Krakow wrote:
+> >> I did a scrub with bcache running and 19 errors were found and corrected
+> >> using duplicate metadata. That seems encouraging.
+> > What kind of scrub? Did it affect bcache caching or backing device?
+>
+> btrfs scrub. Not sure what, if anything, was actually effected.
 
-In theory, we shouldn't use fast clone bio's .bi_vcnt, so far it is
-zero, in future fast clone bio's bi_vcnt might be used for other purpose.
-
-Also this bio may not a fast cloned bio, but it has been splitted(such
-as one 4k bio, and its front 512 byte is splitted out). It depends on
-if the remained bio needs to be splitted again. In reality, looks it
-won't be possible.
-
-In short, the above way is like a hack, but it should work in reality.
-
-I am fine with that, if comment of this usage is added.
+So this should do nothing about any loops you're facing in bcache.
+Bcache doesn't care about which FS it serves, it's just a bunch of
+data. No matter what you fix or reorganize in the background: It's
+still a bunch of data to bcache.
 
 
-Thanks,
-Ming
+> >> Unfortunately, I can't
+> >> seem to shut down bcache in order to test as you suggest. I can stop
+> >> bcache0 but I am unable to stop the cache device. I do the usual:
+> >>
+> >> echo 1 > /sys/fs/bcache/dc2877bc-d1b3-43fa-9f15-cad018e73bf6/stop
+> > I was seeing a similar issue. I'm not sure "stop" always works as
+> > expected. You should try "detach" instead. When it finished writeback
+> > eventually, it would detach cache from backing, and upon next mount
+> > they won't be attached to each other any longer and you should be able
+> > to unmount.
+> >
+> > If you cannot get rid of dirty data, you could also unregister bcache,
+> > then wipe the cache device, and then re-register and force-run the
+> > bcache backing device. Tho, discarding write-back data will eventually
+> > damage your FS. You should try switching to write-around first and see
+> > if you can convince bcache to write back data that way (maybe through
+> > a clean reboot after switching to write-around).
+>
+> Duh, yes, unregistering the backing device did what I needed.
 
+Sometimes it helps to just talk about it again. ;-)
+
+
+> I'm now
+> running a new scrub without the cache device. Interestingly, the initial
+> scrub speed with bcache ran at 900MB/s and without bcache it's 1400MB/s.
+
+Yes, I can confirm that bcache throughput performance has degraded a
+lot over time. Latency performance is still very good. But I was never
+sure if this comes from general kernel changes, btrfs, or bcache
+itself.
+
+
+> Thanks for the un-register tip!
+
+You're welcome.
+
+- Kai
