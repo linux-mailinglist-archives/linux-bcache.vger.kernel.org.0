@@ -2,109 +2,102 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED694EAD68
-	for <lists+linux-bcache@lfdr.de>; Thu, 31 Oct 2019 11:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04580EC4F7
+	for <lists+linux-bcache@lfdr.de>; Fri,  1 Nov 2019 15:48:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbfJaK3L (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 31 Oct 2019 06:29:11 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:40479 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbfJaK3L (ORCPT
+        id S1727027AbfKAOr7 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 1 Nov 2019 10:47:59 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33333 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727334AbfKAOr7 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 31 Oct 2019 06:29:11 -0400
-Received: by mail-qk1-f195.google.com with SMTP id y81so6414718qkb.7
-        for <linux-bcache@vger.kernel.org>; Thu, 31 Oct 2019 03:29:10 -0700 (PDT)
+        Fri, 1 Nov 2019 10:47:59 -0400
+Received: by mail-io1-f68.google.com with SMTP id n17so11192931ioa.0
+        for <linux-bcache@vger.kernel.org>; Fri, 01 Nov 2019 07:47:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kaishome.de; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ioRVVclOVd3ufE+VE82OhlhNUZArPoJLpbMZg4bTfDs=;
-        b=W0VFE2/kmmbMdOZA+ATw3VPhJOagKN3tYLsrmx00fnR1x1hfVyeQh87RfWmqeciNgi
-         YH2bxXy7qA9eJrZ7OOOtV/HyV9URpB7m6iU65oEF+XbRcF8CSpuHPekA6j0WJJ5xrtmJ
-         mb1rHtKsnzrbf6jgbALvTZyxlt1RzHgUPsUfg=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BeIbdkmxPYwA4T13HKBZg++DpXYrgkFvAhhSTcv15h0=;
+        b=x3fu0CfLHsE/1IOqYXE9YzRQkDhk39+9EECOmh09S8L0I3z+j0NrFMWCjly4vOQpk3
+         pcCK4u57bfyM7322Es9JyCAF7AnPtaYxB4CtUwOy58iXGK3kIinLJ2h0PGOlIYzt8v/r
+         oMlkb8SVWQtoQiqnY0uXP4riE0mfq3jsJwjucy0iucf8ykvieX6fn5vw01lk7WqI2ous
+         U6wFAaad92/uLe/9EvAt55Uf2AuHhF9Ujj/S8gzKrwhauBVH/1/6w9C8CbHP3tMJmjI0
+         m1SS50aPzyulvJOqYiNKOYDX/SKVASra4B5kGCIoUbsoX9bvBJ/KOBAQP1zJNrS7e4UC
+         /VvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ioRVVclOVd3ufE+VE82OhlhNUZArPoJLpbMZg4bTfDs=;
-        b=M8gy75ZDwlv9osCvebN7u8JCrudDMc3KIfcXtzE0CGcWu6cr1VzyKRkf9EYf0Tbg4Q
-         GZCr7igt2XoLaoHrAICJP1PKxlJSO5gtyCfNTb7ITSo4R5EirSGRjMtZ1Drlon8w42Js
-         MiIj/Vs4VN2Lf5muTCf9HTuwkbsfoHn9jd+cH35lw+EQ5xOQXelFRGsznp9sWAsnsLrE
-         aEHl9pjA3ceIzjqPasGkSg0ImOP6OW/Kpgar7s3k+tzSRbqmonIfXP7YBdd+azZpq/GY
-         0vUpnoYPErdnRpoZvoiq7q6rbLGegiyqi0rxqhNaIQPEDmQBNeZoFMplgMngLhZfReHJ
-         N5ag==
-X-Gm-Message-State: APjAAAWp0EMyWUgkajjy1vlgaRPOkSkkknsb8mo0tR6xCZsKCaHuNRZo
-        00A0YjTjHXBWAjihmBhCsPkzAnbbzgkPSpSDzLI6R3S2
-X-Google-Smtp-Source: APXvYqypglHFTRtxySzLRw9dWWYJnKBTx4Cg5ufN02wHaMbhXOvz6gOA3p3IRW0nEQzcuqXiuaWzZ1oKy8DHQLNr3IU=
-X-Received: by 2002:a37:9b4f:: with SMTP id d76mr4321245qke.439.1572517749913;
- Thu, 31 Oct 2019 03:29:09 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BeIbdkmxPYwA4T13HKBZg++DpXYrgkFvAhhSTcv15h0=;
+        b=olKfc+dFaLDJgDHAKV2QU70wkUoWCguqswrW3RSEEYfG/Yjnu+xayIV79at/CxxDZU
+         80j4UWJPuncYbYAiHY6x+NI6zl4cKMErDF43WflVb7AqLdkfORbknOsuQ3Ca6YaBn9Py
+         ITpWyRnnpa9zQGV0qPzrfgvy8rX5FA3+XjSQ7sIbSfrWNaWaTzgqyuYbfFTFYBBWCaG0
+         3G6oTKS03slI9VbrQTlZaF5/4c5JFgW+xdBbO+4fSPLu3wklHi7Yzxp/sJnv2Xuzs37M
+         EyaUMEHI49wJapYtHWJkW1ItWO3/i//ExdLyeD+liaJtWMreuPY5nMILL0DQwL33EEv1
+         pQOQ==
+X-Gm-Message-State: APjAAAVlp6tDjHSiD6cU4PuNsoFToSGt7CQmGgxe+/GTwE8UKxt3gedr
+        OGptN59wKTeR/XO5X0yl+9B1VZbzeeUr5Q==
+X-Google-Smtp-Source: APXvYqyhMKwJs1xFN3kgU68EyLOVs67imGeYdPZNcFQXrotVCpmsKpZr0o5GBDMpBcdir0kduiwLlw==
+X-Received: by 2002:a02:998a:: with SMTP id a10mr5143185jal.99.1572619677780;
+        Fri, 01 Nov 2019 07:47:57 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id v18sm250452ilg.43.2019.11.01.07.47.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Nov 2019 07:47:56 -0700 (PDT)
+Subject: Re: [PATCH V3] block: optimize for small block size IO
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Keith Busch <kbusch@kernel.org>, linux-bcache@vger.kernel.org
+References: <20191029105125.12928-1-ming.lei@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <f98f8fa3-8dc6-2316-200c-c3c4a920940e@kernel.dk>
+Date:   Fri, 1 Nov 2019 08:47:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <4d6fe8a0-ecae-738b-165b-ee66683a2df6@nuclearwinter.com>
- <alpine.LRH.2.11.1910242322110.25870@mx.ewheeler.net> <fa7a7125-195f-a2ad-4b5e-287c02cd9327@suse.de>
- <89f29562-409b-7b4e-e299-1c8e8db77ea5@nuclearwinter.com> <0b20203f-84c5-ce3e-e9e2-13600cb2d77c@suse.de>
- <1a07d296-82ec-6fa6-bbd4-357a972c0e63@nuclearwinter.com> <CAC2ZOYsrwObbMD+2khsbpiM+e9FUCdiONNQbBMFt9Mx7aXpyZQ@mail.gmail.com>
- <00dfeefe-73f8-eeb8-b256-a51b2002e9e3@nuclearwinter.com>
-In-Reply-To: <00dfeefe-73f8-eeb8-b256-a51b2002e9e3@nuclearwinter.com>
-From:   Kai Krakow <kai@kaishome.de>
-Date:   Thu, 31 Oct 2019 11:28:58 +0100
-Message-ID: <CAC2ZOYtap2wZzJWYqO36Hp9DbFjA4krNZsaPe8BU3fkDe0id0g@mail.gmail.com>
-Subject: Re: bcache writeback infinite loop?
-To:     Larkin Lowrey <llowrey@nuclearwinter.com>
-Cc:     Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191029105125.12928-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-> On 10/30/2019 3:18 PM, Kai Krakow wrote:
-> >> I did a scrub with bcache running and 19 errors were found and corrected
-> >> using duplicate metadata. That seems encouraging.
-> > What kind of scrub? Did it affect bcache caching or backing device?
->
-> btrfs scrub. Not sure what, if anything, was actually effected.
+On 10/29/19 4:51 AM, Ming Lei wrote:
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 48e6725b32ee..737bbec9e153 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -309,6 +309,10 @@ void __blk_queue_split(struct request_queue *q, struct bio **bio,
+>   				nr_segs);
+>   		break;
+>   	default:
+> +		if (!bio_flagged(*bio, BIO_MULTI_PAGE)) {
+> +			*nr_segs = 1;
+> +			return;
+> +		}
+>   		split = blk_bio_segment_split(q, *bio, &q->bio_split, nr_segs);
+>   		break;
+>   	}
 
-So this should do nothing about any loops you're facing in bcache.
-Bcache doesn't care about which FS it serves, it's just a bunch of
-data. No matter what you fix or reorganize in the background: It's
-still a bunch of data to bcache.
+Can we just make that:
 
+  	default:
+		if (!bio_flagged(*bio, BIO_MULTI_PAGE)) {
+			*nr_segs = 1;
+			split = NULL;
+		} else {
+  			split = blk_bio_segment_split(q, *bio, &q->bio_split,
+							nr_segs);
+		}
+  		break;
 
-> >> Unfortunately, I can't
-> >> seem to shut down bcache in order to test as you suggest. I can stop
-> >> bcache0 but I am unable to stop the cache device. I do the usual:
-> >>
-> >> echo 1 > /sys/fs/bcache/dc2877bc-d1b3-43fa-9f15-cad018e73bf6/stop
-> > I was seeing a similar issue. I'm not sure "stop" always works as
-> > expected. You should try "detach" instead. When it finished writeback
-> > eventually, it would detach cache from backing, and upon next mount
-> > they won't be attached to each other any longer and you should be able
-> > to unmount.
-> >
-> > If you cannot get rid of dirty data, you could also unregister bcache,
-> > then wipe the cache device, and then re-register and force-run the
-> > bcache backing device. Tho, discarding write-back data will eventually
-> > damage your FS. You should try switching to write-around first and see
-> > if you can convince bcache to write back data that way (maybe through
-> > a clean reboot after switching to write-around).
->
-> Duh, yes, unregistering the backing device did what I needed.
+Otherwise this looks fine to me, and the win is palatable.
 
-Sometimes it helps to just talk about it again. ;-)
+-- 
+Jens Axboe
 
-
-> I'm now
-> running a new scrub without the cache device. Interestingly, the initial
-> scrub speed with bcache ran at 900MB/s and without bcache it's 1400MB/s.
-
-Yes, I can confirm that bcache throughput performance has degraded a
-lot over time. Latency performance is still very good. But I was never
-sure if this comes from general kernel changes, btrfs, or bcache
-itself.
-
-
-> Thanks for the un-register tip!
-
-You're welcome.
-
-- Kai
