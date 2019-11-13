@@ -2,77 +2,106 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E62FA23A
-	for <lists+linux-bcache@lfdr.de>; Wed, 13 Nov 2019 03:03:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06FAEFA4CF
+	for <lists+linux-bcache@lfdr.de>; Wed, 13 Nov 2019 03:19:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731030AbfKMCCb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 12 Nov 2019 21:02:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59086 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730121AbfKMCCa (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:02:30 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11F4A21783;
-        Wed, 13 Nov 2019 02:02:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610549;
-        bh=jRkMy5qS/eVIHEWYR98ab5sYmGj8XzK7xyoKH2bdxUc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VvIAPzEsbQZA7BA2P0FfRc1yCM60+xNShCyCihyTIuurMEQCRGeS57YitDJNHGRmg
-         Hk8ZBOioQak6HQLIp62d9snhM2SJt8tnugikXLZIJJiYLLmkY9Iatu4c+r/TSKTwzB
-         dZiaBxMHhE0TQi9s978G7FRzXXlKBdvGIA6yIp7g=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Shenghui Wang <shhuiw@foxmail.com>, Coly Li <colyli@suse.de>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 34/48] bcache: recal cached_dev_sectors on detach
-Date:   Tue, 12 Nov 2019 21:01:17 -0500
-Message-Id: <20191113020131.13356-34-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113020131.13356-1-sashal@kernel.org>
-References: <20191113020131.13356-1-sashal@kernel.org>
+        id S1729175AbfKMCSm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 12 Nov 2019 21:18:42 -0500
+Received: from smtp12.dentaku.gol.com ([203.216.5.74]:31542 "EHLO
+        smtp12.dentaku.gol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729648AbfKMCSl (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 12 Nov 2019 21:18:41 -0500
+Received: from batzmaru.gol.ad.jp ([203.216.0.80])
+        by smtp12.dentaku.gol.com with esmtpa (Dentaku)
+        (envelope-from <chibi@gol.com>)
+        id 1iUiEu-0002JR-UH; Wed, 13 Nov 2019 11:18:38 +0900
+Date:   Wed, 13 Nov 2019 11:18:36 +0900
+From:   Christian Balzer <chibi@gol.com>
+To:     Tim Small <tim@buttersideup.com>
+Cc:     linux-bcache@vger.kernel.org
+Subject: Re: Several bugs/flaws in the current(?) bcache implementation
+Message-ID: <20191113111836.5ebf1c82@batzmaru.gol.ad.jp>
+In-Reply-To: <941fdfe3-20d5-8333-6aab-d3cd7f992e31@buttersideup.com>
+References: <20191111104219.6d12c4b6@batzmaru.gol.ad.jp>
+        <a138b451-0a3e-2646-111e-cd095699ab0e@suse.de>
+        <20191112101739.1c2517a4@batzmaru.gol.ad.jp>
+        <a3d675f1-2309-d3fc-12b9-2ffb38ca5965@suse.de>
+        <20191112153947.7acdc5a2@batzmaru.gol.ad.jp>
+        <941fdfe3-20d5-8333-6aab-d3cd7f992e31@buttersideup.com>
+Organization: Rakuten Communications
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV GOL (outbound)
+X-GOL-Outbound-Spam-Score: -1.9
+X-Abuse-Complaints: abuse@gol.com
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Shenghui Wang <shhuiw@foxmail.com>
 
-[ Upstream commit 46010141da6677b81cc77f9b47f8ac62bd1cbfd3 ]
+Hello,
 
-Recal cached_dev_sectors on cached_dev detached, as recal done on
-cached_dev attached.
+On Tue, 12 Nov 2019 08:54:21 +0000 Tim Small wrote:
 
-Update the cached_dev_sectors before bcache_device_detach called
-as bcache_device_detach will set bcache_device->c to NULL.
+> On 12/11/2019 06:39, Christian Balzer wrote:
+> >> From internal
+> >> customers and external users, the feedback of maximum writeback rate is
+> >> quite positive. This is the first time I realize not everyone wants it.
+> >>  
+> > The full speed (1TB/s) rate will result in initially high speeds (up to
+> > 280MBs) in most tests, but degrade (and cause load spikes -> alarms) later
+> > on, often resulting in it taking LONGER than if it had stuck with the
+> > 4MB/s minimum rate set.
+> > So yes, in my case something like a 32MB/s maximum rate would probably be
+> > perfect.  
+> 
+> 
+> I have some backup/archival targetted "drive-managed" SMR drives which
+> include a non-SMR magnetic storage cache area which can cause this sort
+> of behaviour.
+> 
+SMR! (makes signs to ward off evil! :)
 
-Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/md/bcache/super.c | 1 +
- 1 file changed, 1 insertion(+)
+> Sustained random writes make the drives fill their cache, and then
+> performance falls off a cliff, since the drive must start making many
+> read-modify-write passes in the SMR area.
+> 
+But yes, it's a decent enough analogy to a RAID controller with HW cache
+backed by a RAID6 on HDDs. 
+And every I/O system with caches experiences that cliff (all is great
+until it totally goes to hell in a handbasket), thus my hopes to avoid
+this needlessly. 
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index e420921460836..df8f1e69077f6 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -902,6 +902,7 @@ static void cached_dev_detach_finish(struct work_struct *w)
- 	bch_write_bdev_super(dc, &cl);
- 	closure_sync(&cl);
- 
-+	calc_cached_dev_sectors(dc->disk.c);
- 	bcache_device_detach(&dc->disk);
- 	list_move(&dc->list, &uncached_devices);
- 
+> e.g. this latency result:
+> 
+> https://www.storagereview.com/images/seagate_archive_8tb_sata_main_4kwrite_avglatency.png
+> 
+> (taken from https://www.storagereview.com/node/4665) - which illustrates
+> performance after the drive's non-SMR internal write cache area is full.
+> 
+> There is somewhat similar behaviour from some SSDs (plus the additional
+> potential problem of thermal throttling from sustained writes, and other
+> internal house-keeping operations):
+> 
+> https://www.tweaktown.com/image.php?image=images.tweaktown.com/content/8/8/8875_005_samsung-970-evo-plus-ssd-review-96-layer-refresh_full.png
+> 
+> 
+> Perhaps bcache could monitor backing store write latency and back-off to
+> avoid this condition?
+> 
+DRBD does a decent job in that area and while this sounds good I'm always
+worried about needless complexity in things that should be very simple (and
+thus less error prone) and fast.
+And since bcache is supposed to speed things UP, a complex code path may
+also prove counterproductive, as can be seen in things like Ceph.
+
+Regards,
+
+Christian
 -- 
-2.20.1
-
+Christian Balzer        Network/Systems Engineer                
+chibi@gol.com   	Rakuten Mobile Inc.
