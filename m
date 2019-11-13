@@ -2,101 +2,57 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B88AFAA89
-	for <lists+linux-bcache@lfdr.de>; Wed, 13 Nov 2019 07:59:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 589F0FAAC9
+	for <lists+linux-bcache@lfdr.de>; Wed, 13 Nov 2019 08:19:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726185AbfKMG76 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-bcache@lfdr.de>); Wed, 13 Nov 2019 01:59:58 -0500
-Received: from smtp12.dentaku.gol.com ([203.216.5.74]:23228 "EHLO
-        smtp12.dentaku.gol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbfKMG76 (ORCPT
+        id S1726263AbfKMHTY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 13 Nov 2019 02:19:24 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43564 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbfKMHTY (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 13 Nov 2019 01:59:58 -0500
-Received: from batzmaru.gol.ad.jp ([203.216.0.80])
-        by smtp12.dentaku.gol.com with esmtpa (Dentaku)
-        (envelope-from <chibi@gol.com>)
-        id 1iUmdB-0004QY-H9; Wed, 13 Nov 2019 15:59:57 +0900
-Date:   Wed, 13 Nov 2019 15:59:57 +0900
-From:   Christian Balzer <chibi@gol.com>
+        Wed, 13 Nov 2019 02:19:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qblZPMi7bp82k+FzJXnBEtzEKoETXaSzV1LL9zGjI08=; b=gKpHJbkJ5Hy/aFiu/MkjC9EAo
+        TluURmrkQB8RGTuI+559IXx6pS/6uv8CyHvu7XGavq0pspc542IXDSQCpHGENKzn/LCGYCf04lKt6
+        IeU6MwOBGMQtIcoCUw3+Wf8I/jJIrUQ8B6Hrq/ypgwxPv04aBtlOGeqVP/ZVtpRXGaE58DXv1Un50
+        CI6NZbSaaLY8pqTYqU6s/y0NFT17BbbSzDURJ/u19X11jstVTETOBn4LTp2kFLs0LOmkXNyezlkDw
+        myKN5X0KdjNVhdVp167PyXVHmsG++1diP1xanhzntOUrIeXU3zxZTupXpHhZAVZpXpwBGnnwVr2I1
+        G5dQluoFQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iUmvz-0008Nz-Fr; Wed, 13 Nov 2019 07:19:23 +0000
+Date:   Tue, 12 Nov 2019 23:19:23 -0800
+From:   Christoph Hellwig <hch@infradead.org>
 To:     Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org
-Subject: Re: Several bugs/flaws in the current(?) bcache implementation
-Message-ID: <20191113155957.72b4cfae@batzmaru.gol.ad.jp>
-In-Reply-To: <f10c7eaf-b803-d556-b2c5-81112dc31926@suse.de>
-References: <20191111104219.6d12c4b6@batzmaru.gol.ad.jp>
-        <a138b451-0a3e-2646-111e-cd095699ab0e@suse.de>
-        <20191112101739.1c2517a4@batzmaru.gol.ad.jp>
-        <a3d675f1-2309-d3fc-12b9-2ffb38ca5965@suse.de>
-        <20191112153947.7acdc5a2@batzmaru.gol.ad.jp>
-        <3016280c-58c8-77f3-f938-4e835ab8d6c2@suse.de>
-        <20191113151022.6c64d765@batzmaru.gol.ad.jp>
-        <f10c7eaf-b803-d556-b2c5-81112dc31926@suse.de>
-Organization: Rakuten Communications
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Cc:     axboe@kernel.dk, linux-bcache@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH 00/10] bcache patches for Linux v5.5
+Message-ID: <20191113071923.GB17875@infradead.org>
+References: <20191113053346.63536-1-colyli@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Virus-Scanned: ClamAV GOL (outbound)
-X-GOL-Outbound-Spam-Score: -1.9
-X-Abuse-Complaints: abuse@gol.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191113053346.63536-1-colyli@suse.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, 13 Nov 2019 14:49:21 +0800 Coly Li wrote:
-
-> On 2019/11/13 2:10 下午, Christian Balzer wrote:
-> > On Wed, 13 Nov 2019 11:44:50 +0800 Coly Li wrote:
-> > 
-> > [snip]  
-> >>
-> >> Hi Christian,
-> >>
-> >> Could you please try the attached patch in your environment ? Let's see
-> >> whether it makes things better on your side.
-> >>  
-> > 
-> > Don't have custom/handrolled kernels on those machines, but I'll give it a
-> > spin later.
-> > Looking at the code I'm sure it will work, as in not going to full speed
-> > when idle.
-> > 
-> > Is there any reason for this being a flag instead of actually setting the
-> > max writeback rate, as mentioned when comparing this to MD RAID min/max?
-> > 
-> > What this does now is having writeback_rate_minimum both as the min and max
-> > rate for non-dirty pressure flushing.
-> > Whereas most people who want to actually set these values would probably
-> > be interested in a min rate as it is now (to drain things effectively w/o
-> > going overboard) and a max rate that never should be exceeded even if the
-> > PDC thinks otherwise.  
+On Wed, Nov 13, 2019 at 01:33:36PM +0800, Coly Li wrote:
+> Hi Jens,
 > 
-> For the max writeback rate limit, so far it is handled by the PDC
-> controller. I will have a try whether I can make it myself before
-> anybody helps to post patch. But it is at quite low priority location in
-> my todo list, I need to complete other tasks firstly which are not easy
-> neither and spent a lot of time already.
+> This is the patches for Linux v5.5. The patches have been testing for
+> a while during my current development, they are ready to be merged.
 > 
-> I post the patch to upstream for Linux v5.5, and add Reported-by: tag
-> with your email address.
->
-Yes, I saw, thanks.
-No worries and hurry.
+> There are still other patches under testing, I will submit to you in
+> later runs if I feel they are solid enough in my testing.
 
-I can probably apply that patch fairly easily against 4.19.
-
-Regards,
-
-Christian
- 
-> Thanks.
-> -- 
-> 
-> Coly Li
-> 
-
-
--- 
-Christian Balzer        Network/Systems Engineer                
-chibi@gol.com   	Rakuten Mobile Inc.
+This seems to be missing my patches for the makefile cleanup and export
+removal that you acked a while ago.
