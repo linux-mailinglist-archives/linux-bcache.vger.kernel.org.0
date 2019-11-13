@@ -2,57 +2,81 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 589F0FAAC9
-	for <lists+linux-bcache@lfdr.de>; Wed, 13 Nov 2019 08:19:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93CB7FAB9C
+	for <lists+linux-bcache@lfdr.de>; Wed, 13 Nov 2019 09:03:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbfKMHTY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 13 Nov 2019 02:19:24 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43564 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbfKMHTY (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 13 Nov 2019 02:19:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qblZPMi7bp82k+FzJXnBEtzEKoETXaSzV1LL9zGjI08=; b=gKpHJbkJ5Hy/aFiu/MkjC9EAo
-        TluURmrkQB8RGTuI+559IXx6pS/6uv8CyHvu7XGavq0pspc542IXDSQCpHGENKzn/LCGYCf04lKt6
-        IeU6MwOBGMQtIcoCUw3+Wf8I/jJIrUQ8B6Hrq/ypgwxPv04aBtlOGeqVP/ZVtpRXGaE58DXv1Un50
-        CI6NZbSaaLY8pqTYqU6s/y0NFT17BbbSzDURJ/u19X11jstVTETOBn4LTp2kFLs0LOmkXNyezlkDw
-        myKN5X0KdjNVhdVp167PyXVHmsG++1diP1xanhzntOUrIeXU3zxZTupXpHhZAVZpXpwBGnnwVr2I1
-        G5dQluoFQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iUmvz-0008Nz-Fr; Wed, 13 Nov 2019 07:19:23 +0000
-Date:   Tue, 12 Nov 2019 23:19:23 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Coly Li <colyli@suse.de>
-Cc:     axboe@kernel.dk, linux-bcache@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH 00/10] bcache patches for Linux v5.5
-Message-ID: <20191113071923.GB17875@infradead.org>
-References: <20191113053346.63536-1-colyli@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191113053346.63536-1-colyli@suse.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        id S1727122AbfKMIDo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 13 Nov 2019 03:03:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51520 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725996AbfKMIDm (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 13 Nov 2019 03:03:42 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 94844ABD6;
+        Wed, 13 Nov 2019 08:03:40 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     axboe@kernel.dk
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Coly Li <colyli@suse.de>
+Subject: [PATCH v2 00/12] bcache patches for Linux v5.5
+Date:   Wed, 13 Nov 2019 16:03:14 +0800
+Message-Id: <20191113080326.69989-1-colyli@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 01:33:36PM +0800, Coly Li wrote:
-> Hi Jens,
-> 
-> This is the patches for Linux v5.5. The patches have been testing for
-> a while during my current development, they are ready to be merged.
-> 
-> There are still other patches under testing, I will submit to you in
-> later runs if I feel they are solid enough in my testing.
+Hi Jens,
 
-This seems to be missing my patches for the makefile cleanup and export
-removal that you acked a while ago.
+The second submit adds two missed patches from Christoph Hellwig.
+
+This is the patches for Linux v5.5. The patches have been testing for
+a while during my current development, they are ready to be merged.
+
+There are still other patches under testing, I will submit to you in
+later runs if I feel they are solid enough in my testing.
+
+Thanks for taking care of this.
+
+Coly Li
+
+---
+
+Andrea Righi (1):
+  bcache: fix deadlock in bcache_allocator
+
+Christoph Hellwig (2):
+  bcache: remove the extra cflags for request.o
+  bcache: don't export symbols
+
+Coly Li (8):
+  bcache: fix fifo index swapping condition in journal_pin_cmp()
+  bcache: fix static checker warning in bcache_device_free()
+  bcache: add more accurate error messages in read_super()
+  bcache: deleted code comments for dead code in bch_data_insert_keys()
+  bcache: add code comment bch_keylist_pop() and bch_keylist_pop_front()
+  bcache: add code comments in bch_btree_leaf_dirty()
+  bcache: add idle_max_writeback_rate sysfs interface
+  bcache: at least try to shrink 1 node in bch_mca_scan()
+
+Guoju Fang (1):
+  bcache: fix a lost wake-up problem caused by mca_cannibalize_lock
+
+ drivers/md/bcache/Makefile    |  2 --
+ drivers/md/bcache/alloc.c     |  5 +++-
+ drivers/md/bcache/bcache.h    |  4 +++-
+ drivers/md/bcache/bset.c      | 17 ++-----------
+ drivers/md/bcache/btree.c     | 45 ++++++++++++++++++++++++++++++----
+ drivers/md/bcache/closure.c   |  7 ------
+ drivers/md/bcache/journal.h   |  4 ----
+ drivers/md/bcache/request.c   | 12 ----------
+ drivers/md/bcache/super.c     | 56 +++++++++++++++++++++++++++++++------------
+ drivers/md/bcache/sysfs.c     |  7 ++++++
+ drivers/md/bcache/writeback.c |  4 ++++
+ 11 files changed, 102 insertions(+), 61 deletions(-)
+
+-- 
+2.16.4
+
