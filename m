@@ -2,42 +2,93 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0CB6FBDD2
-	for <lists+linux-bcache@lfdr.de>; Thu, 14 Nov 2019 03:24:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2088EFD6B1
+	for <lists+linux-bcache@lfdr.de>; Fri, 15 Nov 2019 08:01:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfKNCYR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 13 Nov 2019 21:24:17 -0500
-Received: from [211.53.128.215] ([211.53.128.215]:27318 "EHLO MAIL.isd.co.kr"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726098AbfKNCYR (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 13 Nov 2019 21:24:17 -0500
-Received: from 192.168.1.3 (217.217.179.17) by MAIL.isd.co.kr (10.10.10.22)
- with Microsoft SMTP Server id 14.3.123.3; Thu, 14 Nov 2019 11:23:45 +0900
-Date:   Thu, 14 Nov 2019 03:24:12 +0100
-From:   Peter Wong <choimj@isd.co.kr>
-Reply-To: Peter Wong <pw178484@gmail.com>
-To:     <linux-bcache@vger.kernel.org>
-Message-ID: <27310310.44335.1573698254535.JavaMail.cash@webmail.isd.co.kr>
-Subject: Investment opportunity
+        id S1727122AbfKOHBE convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-bcache@lfdr.de>); Fri, 15 Nov 2019 02:01:04 -0500
+Received: from azteca-comunicaciones.com ([191.102.66.70]:52361 "EHLO semo.net"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726958AbfKOHBE (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 15 Nov 2019 02:01:04 -0500
+Reply-To: yuval@free2312.com
+From:   "Yuval" <tstewart@semo.net>
+To:     linux-bcache@vger.kernel.org
+Subject: Business Proposal - Please Reply
+Date:   15 Nov 2019 02:01:03 -0500
+Message-ID: <20191115020103.16ED4567982D6A70@semo.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [217.217.179.17]
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Greetings,
+Hello
 
-Find attached email very confidential. reply for more details
+My name is Yuval Rose, a Client Relations officer at CoinMatic, A 
+crypto currency exchange company based in Canada and one of 
+Canada’s foremost Crypto-currency exchange platforms. I have an 
+urgent lucrative business opportunity for you. I got your details 
+on the internet when I was searching for a reliable person that 
+can handle this deal and I believe you can handle it because you 
+bears the same Last-Name with the dead investor of the business 
+am about to introduce to you. This is a private and confidential 
+message from me to you and I request that it be treated as such.
 
-Thanks.
-Peter Wong
+I am contacting you with respect to an urgent issue regarding a 
+Bitcoin account belonging to a deceased account holder, I got 
+your contact in my quest for a Partner to stand in as a Next of 
+Kin to the deceased account holder, this was from the last 
+details she sent in to the company regarding liquidation of her 
+BTC account, since you might be aware that BTC transactions are 
+mostly anonymous. I contacted you so that you can apply to my 
+company as a relative of the deceased in order to claim the fund. 
+This is as easy as ABC since my company already took a decision 
+that the entire fund would be credited to any relative that comes 
+up for claim before the end of December this year.
+
+The Bitcoin was sold and converted to cash at the request of the 
+late account holder for onward deposit to an account to be 
+advised by her. Upon liquidation, we waited for months for info 
+on the bank account for the deposit but never got a feedback. 
+Upon inquiry, it was confirmed that she passed away (died) after 
+a cancer related ailment.
+
+At a meeting held 2 weeks ago by my Company’s Management on the 
+matter, it was resolved that unless a Next of Kin or any relative 
+of the late account Holder comes forward for claim of the funds 
+on or before 30th of December 2019 (which is practically 
+impossible) the whole funds would be converted back to Bitcoin 
+and becomes part of the Company's portfolio.
+
+With the above in mind, I decided to quickly reach out to you so 
+that you can apply to my company for claim of this fund in the 
+capacity of a Next-of-Kin/Relative. Rest assured that this is a 
+straight forward process with no risks involved whatsoever. Start 
+to finish of the process with fund deposited in your nominated 
+bank account can be achieved within a space of 10 banking days or 
+less. All that I require from you is full cooperation and 
+sincerity.
+
+I am suggestion a sharing ratio of 50/50 split after fund is 
+credited to your account. We shall have to draft up an agreement 
+to that effect if agreed. If this is OK with you and wish to 
+continue with the claim process, I will draft a letter which you 
+would email to my Company as a formal request for claim of this 
+funds.
+
+I await your reply, please provide your private phone number in 
+your reply.
 
 
+Send reply to: yuval@free2312.com
 
 
-----------------------------------------------------
-This email was sent by the shareware version of Postman Professional.
+Best Regards
+Yuval
 
+
+Toronto-Canada
