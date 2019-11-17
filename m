@@ -2,39 +2,38 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97B82FF776
-	for <lists+linux-bcache@lfdr.de>; Sun, 17 Nov 2019 04:33:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C406FF778
+	for <lists+linux-bcache@lfdr.de>; Sun, 17 Nov 2019 04:34:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfKQDdl (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 16 Nov 2019 22:33:41 -0500
-Received: from mx.ewheeler.net ([173.205.220.69]:45438 "EHLO mx.ewheeler.net"
+        id S1726822AbfKQDeX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 16 Nov 2019 22:34:23 -0500
+Received: from mx.ewheeler.net ([173.205.220.69]:55140 "EHLO mx.ewheeler.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbfKQDdk (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 16 Nov 2019 22:33:40 -0500
-X-Greylist: delayed 355 seconds by postgrey-1.27 at vger.kernel.org; Sat, 16 Nov 2019 22:33:40 EST
+        id S1726814AbfKQDeX (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 16 Nov 2019 22:34:23 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id 001F3A0693;
-        Sun, 17 Nov 2019 03:33:30 +0000 (UTC)
+        by mx.ewheeler.net (Postfix) with ESMTP id 327ADA0694;
+        Sun, 17 Nov 2019 03:34:14 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at ewheeler.net
 Received: from mx.ewheeler.net ([127.0.0.1])
         by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id LChFcJfQCP_d; Sun, 17 Nov 2019 03:33:00 +0000 (UTC)
+        with LMTP id Dm2f_Cnp8rLV; Sun, 17 Nov 2019 03:33:52 +0000 (UTC)
 Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 26E39A0692;
-        Sun, 17 Nov 2019 03:33:00 +0000 (UTC)
-Date:   Sun, 17 Nov 2019 03:32:59 +0000 (UTC)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id 84F0CA0693;
+        Sun, 17 Nov 2019 03:33:50 +0000 (UTC)
+Date:   Sun, 17 Nov 2019 03:33:44 +0000 (UTC)
 From:   Eric Wheeler <bcache@lists.ewheeler.net>
 X-X-Sender: lists@mx.ewheeler.net
 To:     Coly Li <colyli@suse.de>
 cc:     axboe@kernel.dk, linux-bcache@vger.kernel.org,
-        linux-block@vger.kernel.org, Guoju Fang <fangguoju@gmail.com>
-Subject: Re: [PATCH 02/12] bcache: fix a lost wake-up problem caused by
- mca_cannibalize_lock
-In-Reply-To: <20191113080326.69989-3-colyli@suse.de>
-Message-ID: <alpine.LRH.2.11.1911170332430.23583@mx.ewheeler.net>
-References: <20191113080326.69989-1-colyli@suse.de> <20191113080326.69989-3-colyli@suse.de>
+        linux-block@vger.kernel.org,
+        Andrea Righi <andrea.righi@canonical.com>
+Subject: Re: [PATCH 07/12] bcache: fix deadlock in bcache_allocator
+In-Reply-To: <20191113080326.69989-8-colyli@suse.de>
+Message-ID: <alpine.LRH.2.11.1911170333320.23583@mx.ewheeler.net>
+References: <20191113080326.69989-1-colyli@suse.de> <20191113080326.69989-8-colyli@suse.de>
 User-Agent: Alpine 2.11 (LRH 23 2013-08-11)
 MIME-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
@@ -45,21 +44,43 @@ X-Mailing-List: linux-bcache@vger.kernel.org
 
 On Wed, 13 Nov 2019, Coly Li wrote:
 
-> From: Guoju Fang <fangguoju@gmail.com>
+> From: Andrea Righi <andrea.righi@canonical.com>
 > 
-> This patch fix a lost wake-up problem caused by the race between
-> mca_cannibalize_lock and bch_cannibalize_unlock.
+> bcache_allocator can call the following:
 > 
-> Consider two processes, A and B. Process A is executing
-> mca_cannibalize_lock, while process B takes c->btree_cache_alloc_lock
-> and is executing bch_cannibalize_unlock. The problem happens that after
-> process A executes cmpxchg and will execute prepare_to_wait. In this
-> timeslice process B executes wake_up, but after that process A executes
-> prepare_to_wait and set the state to TASK_INTERRUPTIBLE. Then process A
-> goes to sleep but no one will wake up it. This problem may cause bcache
-> device to dead.
+>  bch_allocator_thread()
+>   -> bch_prio_write()
+>      -> bch_bucket_alloc()
+>         -> wait on &ca->set->bucket_wait
 > 
-> Signed-off-by: Guoju Fang <fangguoju@gmail.com>
+> But the wake up event on bucket_wait is supposed to come from
+> bch_allocator_thread() itself => deadlock:
+> 
+> [ 1158.490744] INFO: task bcache_allocato:15861 blocked for more than 10 seconds.
+> [ 1158.495929]       Not tainted 5.3.0-050300rc3-generic #201908042232
+> [ 1158.500653] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [ 1158.504413] bcache_allocato D    0 15861      2 0x80004000
+> [ 1158.504419] Call Trace:
+> [ 1158.504429]  __schedule+0x2a8/0x670
+> [ 1158.504432]  schedule+0x2d/0x90
+> [ 1158.504448]  bch_bucket_alloc+0xe5/0x370 [bcache]
+> [ 1158.504453]  ? wait_woken+0x80/0x80
+> [ 1158.504466]  bch_prio_write+0x1dc/0x390 [bcache]
+> [ 1158.504476]  bch_allocator_thread+0x233/0x490 [bcache]
+> [ 1158.504491]  kthread+0x121/0x140
+> [ 1158.504503]  ? invalidate_buckets+0x890/0x890 [bcache]
+> [ 1158.504506]  ? kthread_park+0xb0/0xb0
+> [ 1158.504510]  ret_from_fork+0x35/0x40
+> 
+> Fix by making the call to bch_prio_write() non-blocking, so that
+> bch_allocator_thread() never waits on itself.
+> 
+> Moreover, make sure to wake up the garbage collector thread when
+> bch_prio_write() is failing to allocate buckets.
+> 
+> BugLink: https://bugs.launchpad.net/bugs/1784665
+> BugLink: https://bugs.launchpad.net/bugs/1796292
+> Signed-off-by: Andrea Righi <andrea.righi@canonical.com>
 > Signed-off-by: Coly Li <colyli@suse.de>
 
 Add cc stable?
@@ -68,74 +89,111 @@ Add cc stable?
 
 
 > ---
->  drivers/md/bcache/bcache.h |  1 +
->  drivers/md/bcache/btree.c  | 12 ++++++++----
->  drivers/md/bcache/super.c  |  1 +
->  3 files changed, 10 insertions(+), 4 deletions(-)
+>  drivers/md/bcache/alloc.c  |  5 ++++-
+>  drivers/md/bcache/bcache.h |  2 +-
+>  drivers/md/bcache/super.c  | 27 +++++++++++++++++++++------
+>  3 files changed, 26 insertions(+), 8 deletions(-)
 > 
+> diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+> index 6f776823b9ba..a1df0d95151c 100644
+> --- a/drivers/md/bcache/alloc.c
+> +++ b/drivers/md/bcache/alloc.c
+> @@ -377,7 +377,10 @@ static int bch_allocator_thread(void *arg)
+>  			if (!fifo_full(&ca->free_inc))
+>  				goto retry_invalidate;
+>  
+> -			bch_prio_write(ca);
+> +			if (bch_prio_write(ca, false) < 0) {
+> +				ca->invalidate_needs_gc = 1;
+> +				wake_up_gc(ca->set);
+> +			}
+>  		}
+>  	}
+>  out:
 > diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 013e35a9e317..3653faf3bf48 100644
+> index 3653faf3bf48..50241e045c70 100644
 > --- a/drivers/md/bcache/bcache.h
 > +++ b/drivers/md/bcache/bcache.h
-> @@ -582,6 +582,7 @@ struct cache_set {
->  	 */
->  	wait_queue_head_t	btree_cache_wait;
->  	struct task_struct	*btree_cache_alloc_lock;
-> +	spinlock_t		btree_cannibalize_lock;
+> @@ -978,7 +978,7 @@ bool bch_cached_dev_error(struct cached_dev *dc);
+>  __printf(2, 3)
+>  bool bch_cache_set_error(struct cache_set *c, const char *fmt, ...);
 >  
->  	/*
->  	 * When we free a btree node, we increment the gen of the bucket the
-> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-> index 00523cd1db80..39d7fc1ef1ee 100644
-> --- a/drivers/md/bcache/btree.c
-> +++ b/drivers/md/bcache/btree.c
-> @@ -910,15 +910,17 @@ static struct btree *mca_find(struct cache_set *c, struct bkey *k)
+> -void bch_prio_write(struct cache *ca);
+> +int bch_prio_write(struct cache *ca, bool wait);
+>  void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent);
 >  
->  static int mca_cannibalize_lock(struct cache_set *c, struct btree_op *op)
->  {
-> -	struct task_struct *old;
-> -
-> -	old = cmpxchg(&c->btree_cache_alloc_lock, NULL, current);
-> -	if (old && old != current) {
-> +	spin_lock(&c->btree_cannibalize_lock);
-> +	if (likely(c->btree_cache_alloc_lock == NULL)) {
-> +		c->btree_cache_alloc_lock = current;
-> +	} else if (c->btree_cache_alloc_lock != current) {
->  		if (op)
->  			prepare_to_wait(&c->btree_cache_wait, &op->wait,
->  					TASK_UNINTERRUPTIBLE);
-> +		spin_unlock(&c->btree_cannibalize_lock);
->  		return -EINTR;
->  	}
-> +	spin_unlock(&c->btree_cannibalize_lock);
->  
->  	return 0;
->  }
-> @@ -953,10 +955,12 @@ static struct btree *mca_cannibalize(struct cache_set *c, struct btree_op *op,
->   */
->  static void bch_cannibalize_unlock(struct cache_set *c)
->  {
-> +	spin_lock(&c->btree_cannibalize_lock);
->  	if (c->btree_cache_alloc_lock == current) {
->  		c->btree_cache_alloc_lock = NULL;
->  		wake_up(&c->btree_cache_wait);
->  	}
-> +	spin_unlock(&c->btree_cannibalize_lock);
->  }
->  
->  static struct btree *mca_alloc(struct cache_set *c, struct btree_op *op,
+>  extern struct workqueue_struct *bcache_wq;
 > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 20ed838e9413..ebb854ed05a4 100644
+> index 623fdaf10c4c..d1352fcc6ff2 100644
 > --- a/drivers/md/bcache/super.c
 > +++ b/drivers/md/bcache/super.c
-> @@ -1769,6 +1769,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
->  	sema_init(&c->sb_write_mutex, 1);
->  	mutex_init(&c->bucket_lock);
->  	init_waitqueue_head(&c->btree_cache_wait);
-> +	spin_lock_init(&c->btree_cannibalize_lock);
->  	init_waitqueue_head(&c->bucket_wait);
->  	init_waitqueue_head(&c->gc_wait);
->  	sema_init(&c->uuid_write_mutex, 1);
+> @@ -530,12 +530,29 @@ static void prio_io(struct cache *ca, uint64_t bucket, int op,
+>  	closure_sync(cl);
+>  }
+>  
+> -void bch_prio_write(struct cache *ca)
+> +int bch_prio_write(struct cache *ca, bool wait)
+>  {
+>  	int i;
+>  	struct bucket *b;
+>  	struct closure cl;
+>  
+> +	pr_debug("free_prio=%zu, free_none=%zu, free_inc=%zu",
+> +		 fifo_used(&ca->free[RESERVE_PRIO]),
+> +		 fifo_used(&ca->free[RESERVE_NONE]),
+> +		 fifo_used(&ca->free_inc));
+> +
+> +	/*
+> +	 * Pre-check if there are enough free buckets. In the non-blocking
+> +	 * scenario it's better to fail early rather than starting to allocate
+> +	 * buckets and do a cleanup later in case of failure.
+> +	 */
+> +	if (!wait) {
+> +		size_t avail = fifo_used(&ca->free[RESERVE_PRIO]) +
+> +			       fifo_used(&ca->free[RESERVE_NONE]);
+> +		if (prio_buckets(ca) > avail)
+> +			return -ENOMEM;
+> +	}
+> +
+>  	closure_init_stack(&cl);
+>  
+>  	lockdep_assert_held(&ca->set->bucket_lock);
+> @@ -545,9 +562,6 @@ void bch_prio_write(struct cache *ca)
+>  	atomic_long_add(ca->sb.bucket_size * prio_buckets(ca),
+>  			&ca->meta_sectors_written);
+>  
+> -	//pr_debug("free %zu, free_inc %zu, unused %zu", fifo_used(&ca->free),
+> -	//	 fifo_used(&ca->free_inc), fifo_used(&ca->unused));
+> -
+>  	for (i = prio_buckets(ca) - 1; i >= 0; --i) {
+>  		long bucket;
+>  		struct prio_set *p = ca->disk_buckets;
+> @@ -565,7 +579,7 @@ void bch_prio_write(struct cache *ca)
+>  		p->magic	= pset_magic(&ca->sb);
+>  		p->csum		= bch_crc64(&p->magic, bucket_bytes(ca) - 8);
+>  
+> -		bucket = bch_bucket_alloc(ca, RESERVE_PRIO, true);
+> +		bucket = bch_bucket_alloc(ca, RESERVE_PRIO, wait);
+>  		BUG_ON(bucket == -1);
+>  
+>  		mutex_unlock(&ca->set->bucket_lock);
+> @@ -594,6 +608,7 @@ void bch_prio_write(struct cache *ca)
+>  
+>  		ca->prio_last_buckets[i] = ca->prio_buckets[i];
+>  	}
+> +	return 0;
+>  }
+>  
+>  static void prio_read(struct cache *ca, uint64_t bucket)
+> @@ -1964,7 +1979,7 @@ static int run_cache_set(struct cache_set *c)
+>  
+>  		mutex_lock(&c->bucket_lock);
+>  		for_each_cache(ca, c, i)
+> -			bch_prio_write(ca);
+> +			bch_prio_write(ca, true);
+>  		mutex_unlock(&c->bucket_lock);
+>  
+>  		err = "cannot allocate new UUID bucket";
 > -- 
 > 2.16.4
 > 
