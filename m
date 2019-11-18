@@ -2,157 +2,130 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D0E1FF77B
-	for <lists+linux-bcache@lfdr.de>; Sun, 17 Nov 2019 04:35:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF599100841
+	for <lists+linux-bcache@lfdr.de>; Mon, 18 Nov 2019 16:29:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725959AbfKQDfO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 16 Nov 2019 22:35:14 -0500
-Received: from mx.ewheeler.net ([173.205.220.69]:59662 "EHLO mx.ewheeler.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbfKQDfO (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 16 Nov 2019 22:35:14 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id E5A0CA0693;
-        Sun, 17 Nov 2019 03:35:09 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id G3-pJBML2QD3; Sun, 17 Nov 2019 03:34:43 +0000 (UTC)
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 8D93AA0633;
-        Sun, 17 Nov 2019 03:34:43 +0000 (UTC)
-Date:   Sun, 17 Nov 2019 03:34:42 +0000 (UTC)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-X-X-Sender: lists@mx.ewheeler.net
-To:     Coly Li <colyli@suse.de>
-cc:     axboe@kernel.dk, linux-bcache@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH 09/12] bcache: add idle_max_writeback_rate sysfs
- interface
-In-Reply-To: <20191113080326.69989-10-colyli@suse.de>
-Message-ID: <alpine.LRH.2.11.1911170334140.23583@mx.ewheeler.net>
-References: <20191113080326.69989-1-colyli@suse.de> <20191113080326.69989-10-colyli@suse.de>
-User-Agent: Alpine 2.11 (LRH 23 2013-08-11)
+        id S1727239AbfKRP3S (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 18 Nov 2019 10:29:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37914 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726668AbfKRP3S (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 18 Nov 2019 10:29:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C47ACAE55;
+        Mon, 18 Nov 2019 15:29:16 +0000 (UTC)
+Subject: Re: [PATCH 01/12] bcache: fix fifo index swapping condition in
+ journal_pin_cmp()
+To:     axboe@kernel.dk
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
+References: <20191113080326.69989-1-colyli@suse.de>
+ <20191113080326.69989-2-colyli@suse.de>
+From:   Coly Li <colyli@suse.de>
+Organization: SUSE Labs
+Message-ID: <44e5bf57-4ff1-ed65-d198-722c925cee5d@suse.de>
+Date:   Mon, 18 Nov 2019 23:28:57 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20191113080326.69989-2-colyli@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, 13 Nov 2019, Coly Li wrote:
-
-> For writeback mode, if there is no regular I/O request for a while,
-> the writeback rate will be set to the maximum value (1TB/s for now).
-> This is good for most of the storage workload, but there are still
-> people don't what the maximum writeback rate in I/O idle time.
+On 2019/11/13 4:03 下午, Coly Li wrote:
+> Fifo structure journal.pin is implemented by a cycle buffer, if the back
+> index reaches highest location of the cycle buffer, it will be swapped
+> to 0. Once the swapping happens, it means a smaller fifo index might be
+> associated to a newer journal entry. So the btree node with oldest
+> journal entry won't be selected in bch_btree_leaf_dirty() to reference
+> the dirty B+tree leaf node. This problem may cause bcache journal won't
+> protect unflushed oldest B+tree dirty leaf node in power failure, and
+> this B+tree leaf node is possible to beinconsistent after reboot from
+> power failure.
 > 
-> This patch adds a sysfs interface file idle_max_writeback_rate to
-> permit people to disable maximum writeback rate. Then the minimum
-> writeback rate can be advised by writeback_rate_minimum in the
-> bcache device's sysfs interface.
+> This patch fixes the fifo index comparing logic in journal_pin_cmp(),
+> to avoid potential corrupted B+tree leaf node when the back index of
+> journal pin is swapped.
 > 
-> Reported-by: Christian Balzer <chibi@gol.com>
 > Signed-off-by: Coly Li <colyli@suse.de>
 
-This fixes a bug for Christian, add cc stable?
+Hi Jens,
 
--Eric
+Guoju Fang talked to me today, he told me this change was unnecessary
+and I was over-thought.
 
+Then I realize fifo_idx() uses a mask to handle the array index overflow
+condition, so the index swap in journal_pin_cmp() won't happen. And yes,
+Guoju and Kent are correct.
 
---
-Eric Wheeler
+Since you already applied this patch, can you please to remove this
+patch from your for-next branch ? This single patch does not break
+thing, but it is unecessary at this moment.
 
+Thanks.
 
+Coly Li
 
 > ---
->  drivers/md/bcache/bcache.h    | 1 +
->  drivers/md/bcache/super.c     | 1 +
->  drivers/md/bcache/sysfs.c     | 7 +++++++
->  drivers/md/bcache/writeback.c | 4 ++++
->  4 files changed, 13 insertions(+)
+>  drivers/md/bcache/btree.c   | 26 ++++++++++++++++++++++++++
+>  drivers/md/bcache/journal.h |  4 ----
+>  2 files changed, 26 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 50241e045c70..9198c1b480d9 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -724,6 +724,7 @@ struct cache_set {
->  	unsigned int		gc_always_rewrite:1;
->  	unsigned int		shrinker_disabled:1;
->  	unsigned int		copy_gc_enabled:1;
-> +	unsigned int		idle_max_writeback_rate_enabled:1;
+> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+> index ba434d9ac720..00523cd1db80 100644
+> --- a/drivers/md/bcache/btree.c
+> +++ b/drivers/md/bcache/btree.c
+> @@ -528,6 +528,32 @@ static void btree_node_write_work(struct work_struct *w)
+>  	mutex_unlock(&b->write_lock);
+>  }
 >  
->  #define BUCKET_HASH_BITS	12
->  	struct hlist_head	bucket_hash[1 << BUCKET_HASH_BITS];
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index d1352fcc6ff2..77e9869345e7 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1834,6 +1834,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
->  	c->congested_read_threshold_us	= 2000;
->  	c->congested_write_threshold_us	= 20000;
->  	c->error_limit	= DEFAULT_IO_ERROR_LIMIT;
-> +	c->idle_max_writeback_rate_enabled = 1;
->  	WARN_ON(test_and_clear_bit(CACHE_SET_IO_DISABLE, &c->flags));
->  
->  	return c;
-> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> index 627dcea0f5b6..733e2ddf3c78 100644
-> --- a/drivers/md/bcache/sysfs.c
-> +++ b/drivers/md/bcache/sysfs.c
-> @@ -134,6 +134,7 @@ rw_attribute(expensive_debug_checks);
->  rw_attribute(cache_replacement_policy);
->  rw_attribute(btree_shrinker_disabled);
->  rw_attribute(copy_gc_enabled);
-> +rw_attribute(idle_max_writeback_rate);
->  rw_attribute(gc_after_writeback);
->  rw_attribute(size);
->  
-> @@ -747,6 +748,8 @@ SHOW(__bch_cache_set)
->  	sysfs_printf(gc_always_rewrite,		"%i", c->gc_always_rewrite);
->  	sysfs_printf(btree_shrinker_disabled,	"%i", c->shrinker_disabled);
->  	sysfs_printf(copy_gc_enabled,		"%i", c->copy_gc_enabled);
-> +	sysfs_printf(idle_max_writeback_rate,	"%i",
-> +		     c->idle_max_writeback_rate_enabled);
->  	sysfs_printf(gc_after_writeback,	"%i", c->gc_after_writeback);
->  	sysfs_printf(io_disable,		"%i",
->  		     test_bit(CACHE_SET_IO_DISABLE, &c->flags));
-> @@ -864,6 +867,9 @@ STORE(__bch_cache_set)
->  	sysfs_strtoul_bool(gc_always_rewrite,	c->gc_always_rewrite);
->  	sysfs_strtoul_bool(btree_shrinker_disabled, c->shrinker_disabled);
->  	sysfs_strtoul_bool(copy_gc_enabled,	c->copy_gc_enabled);
-> +	sysfs_strtoul_bool(idle_max_writeback_rate,
-> +			   c->idle_max_writeback_rate_enabled);
+> +/* return true if journal pin 'l' is newer than 'r' */
+> +static bool journal_pin_cmp(struct cache_set *c,
+> +			    atomic_t *l,
+> +			    atomic_t *r)
+> +{
+> +	int l_idx, r_idx, f_idx, b_idx;
+> +	bool ret = false;
 > +
->  	/*
->  	 * write gc_after_writeback here may overwrite an already set
->  	 * BCH_DO_AUTO_GC, it doesn't matter because this flag will be
-> @@ -954,6 +960,7 @@ static struct attribute *bch_cache_set_internal_files[] = {
->  	&sysfs_gc_always_rewrite,
->  	&sysfs_btree_shrinker_disabled,
->  	&sysfs_copy_gc_enabled,
-> +	&sysfs_idle_max_writeback_rate,
->  	&sysfs_gc_after_writeback,
->  	&sysfs_io_disable,
->  	&sysfs_cutoff_writeback,
-> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-> index d60268fe49e1..4a40f9eadeaf 100644
-> --- a/drivers/md/bcache/writeback.c
-> +++ b/drivers/md/bcache/writeback.c
-> @@ -122,6 +122,10 @@ static void __update_writeback_rate(struct cached_dev *dc)
->  static bool set_at_max_writeback_rate(struct cache_set *c,
->  				       struct cached_dev *dc)
+> +	l_idx = fifo_idx(&(c)->journal.pin, (l));
+> +	r_idx = fifo_idx(&(c)->journal.pin, (r));
+> +	f_idx = (c)->journal.pin.front;
+> +	b_idx = (c)->journal.pin.back;
+> +
+> +	if (l_idx > r_idx)
+> +		ret = true;
+> +	/* in case fifo back pointer is swapped */
+> +	if (b_idx < f_idx) {
+> +		if (l_idx <= b_idx && r_idx >= f_idx)
+> +			ret = true;
+> +		else if (l_idx >= f_idx && r_idx <= b_idx)
+> +			ret = false;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static void bch_btree_leaf_dirty(struct btree *b, atomic_t *journal_ref)
 >  {
-> +	/* Don't sst max writeback rate if it is disabled */
-> +	if (!c->idle_max_writeback_rate_enabled)
-> +		return false;
-> +
->  	/* Don't set max writeback rate if gc is running */
->  	if (!c->gc_mark_valid)
->  		return false;
-> -- 
-> 2.16.4
-> 
+>  	struct bset *i = btree_bset_last(b);
+> diff --git a/drivers/md/bcache/journal.h b/drivers/md/bcache/journal.h
+> index f2ea34d5f431..06b3eaab7d16 100644
+> --- a/drivers/md/bcache/journal.h
+> +++ b/drivers/md/bcache/journal.h
+> @@ -157,10 +157,6 @@ struct journal_device {
+>  };
+>  
+>  #define BTREE_FLUSH_NR	8
+> -
+> -#define journal_pin_cmp(c, l, r)				\
+> -	(fifo_idx(&(c)->journal.pin, (l)) > fifo_idx(&(c)->journal.pin, (r)))
+> -
+>  #define JOURNAL_PIN	20000
+>  
+>  #define journal_full(j)						\
 > 
