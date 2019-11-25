@@ -2,253 +2,171 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8D5F108E1C
-	for <lists+linux-bcache@lfdr.de>; Mon, 25 Nov 2019 13:41:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFF32108FA6
+	for <lists+linux-bcache@lfdr.de>; Mon, 25 Nov 2019 15:12:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725916AbfKYMlK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 25 Nov 2019 07:41:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36594 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727408AbfKYMlK (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 25 Nov 2019 07:41:10 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AFB2CAF11
-        for <linux-bcache@vger.kernel.org>; Mon, 25 Nov 2019 12:41:07 +0000 (UTC)
-From:   colyli@suse.de
-To:     linux-bcache@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>
-Subject: [RFC PATCH v2] bcache: avoid unnecessary btree nodes flushing in btree_flush_write()
-Date:   Mon, 25 Nov 2019 20:40:47 +0800
-Message-Id: <20191125124047.52375-1-colyli@suse.de>
-X-Mailer: git-send-email 2.16.4
+        id S1727842AbfKYOMQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 25 Nov 2019 09:12:16 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:43845 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727666AbfKYOMP (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 25 Nov 2019 09:12:15 -0500
+Received: by mail-vs1-f67.google.com with SMTP id b16so10109753vso.10
+        for <linux-bcache@vger.kernel.org>; Mon, 25 Nov 2019 06:12:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=uDu43lOjeyVlmlVF+NxJZxd/xBxGqeyhLnYE7eJNQSU=;
+        b=RemYLND8YdQeORIV/goceG1wupp5+0LyaakcoguOVQT4B4tEK4r+MZspDovyrmoJ8+
+         uVi2ZUE4Xv/AO2WnwbZ0ogq+WKl+J5vEP23prQaFkqpkQD9tOG3BTRwNX0MMX6rpUxlf
+         TiCkRrPv3w2tw+bV2tWY1/DyTn4hyOokv/a3HHWsl0Dkqd9chYfJlZJliVN/vJzIc43o
+         ED+U2jFtIhbZLOs5yEc86bVvHuhm09ahX3a2Qg1kSb77uAhvAWhGT3q2Sg1lcsChNAAX
+         5yFhealL+ODkqTRAt1YxVee0s3beGkwYXUZrEV02JvoEMadNhiXICkWuTq7pyT9MHHiY
+         gosA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=uDu43lOjeyVlmlVF+NxJZxd/xBxGqeyhLnYE7eJNQSU=;
+        b=QgCAeAqOvVVi4OI102134IEl1+JnHDUe0pHiaf40VMe4ZpuAwvcHNTjEiYnCgzeV3T
+         OcnTqO4JEi/gg74+9sZboAD4XE1bYKqvEkI6W4XFjcA+/wSeLBqKlpfI1jjwBLM9H3nx
+         5nFXziuP8L45L3aqcn2lOOfkWq8xlbG6KGhNHX3fAKHTTzvdElhtwSVxDeLWPDUQw5uk
+         LoME43rk01XDiQrSQ2o/jjDxqFhZP0HedaFpPYPE23djXxJK7qNeKnOB3za0C+q9Mo35
+         v2osQcvbMZ663yD/rxcCy6WFYye4FrPHR+bj9POlx6V2zPMXUTZG5G7z4JF3AByVvXo3
+         nwZg==
+X-Gm-Message-State: APjAAAWJQFAtfikFT4lGaucJ4A1aTd7VKcTxmxSYOFCxZih9oxC85swK
+        NauX9UXvoUroZqyvB+I79L8XXst564Z5K6dDLEQ5mw==
+X-Google-Smtp-Source: APXvYqxXEPGkcQ/12TgHcqfF1J8+t86NQQWG9FxAZ8loULwuGtP17WG1UGYV3cIDjIJCUvwl3sFimbmPBuFhsgih8tI=
+X-Received: by 2002:a05:6102:536:: with SMTP id m22mr9428012vsa.114.1574691134100;
+ Mon, 25 Nov 2019 06:12:14 -0800 (PST)
+MIME-Version: 1.0
+References: <CAH6h+hdWRN-wG9_JJoCSfxs55jeTLzE5ia+DK19GPtJA59EXxQ@mail.gmail.com>
+ <497aac95-c9c9-61e7-edc1-c38154f1e881@suse.de>
+In-Reply-To: <497aac95-c9c9-61e7-edc1-c38154f1e881@suse.de>
+From:   Marc Smith <msmith626@gmail.com>
+Date:   Mon, 25 Nov 2019 09:12:02 -0500
+Message-ID: <CAH6h+hfjXxBSAJSfSEXnzB8OvYMELFeM0fNmmhZYPv_AvbTVkA@mail.gmail.com>
+Subject: Re: [ 186.758123] kernel BUG at drivers/md/bcache/writeback.c:324!
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+Thanks Coly; tested with Linux 5.4 and I am unable to reproduce this
+issue using that version.
 
-the commit 91be66e1318f ("bcache: performance improvement for
-btree_flush_write()") was an effort to flushing btree node with oldest
-btree node faster in following methods,
-- Only iterate dirty btree nodes in c->btree_cache, avoid scanning a lot
-  of clean btree nodes.
-- Take c->btree_cache as a LRU-like list, aggressively flushing all
-  dirty nodes from tail of c->btree_cache util the btree node with
-  oldest journal entry is flushed. This is to reduce the time of holding
-  c->bucket_lock.
+--Marc
 
-Guoju Fang and Shuang Li reported that they observe unexptected extra
-write I/Os on cache device after applying the above patch. Guoju Fang
-provideed more detailed diagnose information that the aggressive
-btree nodes flushing may cause 10x more btree nodes to flush in his
-workload. He points out when system memory is large enough to hold all
-btree nodes in memory, c->btree_cache is not a LRU-like list any more.
-Then the btree node with oldest journal entry is very probably not-
-close to the tail of c->btree_cache list. In such situation much more
-dirty btree nodes will be aggressively flushed before the target node
-is flushed. When slow SATA SSD is used as cache device, such over-
-aggressive flushing behavior will cause performance regression.
-
-After spending a lot of time on debug and diagnose, I find the real
-condition is more complicated, aggressive flushing dirty btree nodes
-from tail of c->btree_cache list is not a good solution.
-- When all btree nodes are cached in memory, c->btree_cache is not
-  a LRU-like list, the btree nodes with oldest journal entry won't
-  be close to the tail of the list.
-- There can be hundreds dirty btree nodes reference the oldest journal
-  entry, before flushing all the nodes the oldest journal entry cannot
-  be reclaimed.
-When the above two conditions mixed together, a simply flushing from
-tail of c->btree_cache list is really NOT a good idea.
-
-Fortunately there is still chance to make btree_flush_write() work
-better. Here is how this patch avoids unnecessary btree nodes flushing,
-- Only acquire c->journal.lock when getting oldest journal entry of
-  fifo c->journal.pin. In rested locations check the journal entries
-  locklessly, so their values can be changed on other cores
-  in parallel.
-- In loop list_for_each_entry_safe_reverse(), checking latest front
-  point of fifo c->journal.pin. If it is different from the original
-  point which we get with locking c->journal.lock, it means the oldest
-  journal entry is reclaim on other cores. At this moment, all selected
-  dirty nodes recorded in array btree_nodes[] are all flushed and clean
-  on other CPU cores, it is unncessary to iterate c->btree_cache any
-  longer. Just quit the list_for_each_entry_safe_reverse() loop and
-  the following for-loop will skip all the selected clean nodes.
-- Find a proper time to quit the list_for_each_entry_safe_reverse()
-  loop. Check the refcount value of orignial fifo front point, if the
-  value is larger than selected node number of btree_nodes[], it means
-  more matching btree nodes should be scanned. Otherwise it means no
-  more matching btee nodes in rest of c->btree_cache list, the loop
-  can be quit. If the original oldest journal entry is reclaimed and
-  fifo front point is updated, the refcount of original fifo front point
-  will be 0, then the loop will be quit too.
-- Not hold c->bucket_lock too long time. c->bucket_lock is also required
-  for space allocation for cached data, hold it for too long time will
-  block regular I/O requests. When iterating list c->btree_cache, even
-  there are a lot of maching btree nodes, in order to not holding
-  c->bucket_lock for too long time, only BTREE_FLUSH_NR nodes are
-  selected and to flush in following for-loop.
-With this patch, only btree nodes referencing oldest journal entry
-are flushed to cache device, no aggressive flushing for  unnecessary
-btree node any more. And in order to avoid blocking regluar I/O
-requests, each time when btree_flush_write() called, at most only
-BTREE_FLUSH_NR btree nodes are selected to flush, even there are more
-maching btree nodes in list c->btree_cache.
-
-At last, one more thing to explain: Why it is safe to read front point
-of c->journal.pin without holding c->journal.lock inside the
-list_for_each_entry_safe_reverse() loop ?
-
-Here is my answer: When reading the front point of fifo c->journal.pin,
-we don't need to know the exact value of front point, we just want to
-check whether the value is different from the original front point
-(which is accurate value because we get it while c->jouranl.lock is
-held). For such purpose, it works as expected without holding
-c->journal.lock. Even the front point is changed on other CPU core and
-not updated to local core, and current iterating btree node has
-identical journal entry local as original fetched fifo front point, it
-is still safe. Because after holding mutex b->write_lock (with memory
-barrier) this btree node can be found as clean and skipped, the loop
-will quite latter when iterate on next node of list c->btree_cache.    
-
-Reported-by: Guoju Fang <fangguoju@gmail.com>
-Reported-by: Shuang Li <psymon@bonuscloud.io>
-Signed-off-by: Coly Li <colyli@suse.de>
----
- drivers/md/bcache/journal.c | 80 ++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 75 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index be2a2a201603..224d85193897 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -417,10 +417,14 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
- 
- /* Journalling */
- 
-+#define nr_to_fifo_front(p, front_p, mask)	(((p) - (front_p)) & (mask))
-+
- static void btree_flush_write(struct cache_set *c)
- {
- 	struct btree *b, *t, *btree_nodes[BTREE_FLUSH_NR];
--	unsigned int i, n;
-+	unsigned int i, nr, ref_nr;
-+	atomic_t *fifo_front_p, *now_fifo_front_p;
-+	size_t mask;
- 
- 	if (c->journal.btree_flushing)
- 		return;
-@@ -433,12 +437,50 @@ static void btree_flush_write(struct cache_set *c)
- 	c->journal.btree_flushing = true;
- 	spin_unlock(&c->journal.flush_write_lock);
- 
-+	/* get the oldest journal entry and check its refcount */
-+	spin_lock(&c->journal.lock);
-+	fifo_front_p = &fifo_front(&c->journal.pin);
-+	ref_nr = atomic_read(fifo_front_p);
-+	if (ref_nr <= 0) {
-+		/*
-+		 * do nothing if no btree node references
-+		 * the oldest journal entry
-+		 */
-+		spin_unlock(&c->journal.lock);
-+		goto out;
-+	}
-+	spin_unlock(&c->journal.lock);
-+
-+	mask = c->journal.pin.mask;
-+	nr = 0;
- 	atomic_long_inc(&c->flush_write);
- 	memset(btree_nodes, 0, sizeof(btree_nodes));
--	n = 0;
- 
- 	mutex_lock(&c->bucket_lock);
- 	list_for_each_entry_safe_reverse(b, t, &c->btree_cache, list) {
-+		/*
-+		 * It is safe to get now_fifo_front_p without holding
-+		 * c->journal.lock here, because we don't need to know
-+		 * the exactly accurate value, just check whether the
-+		 * front pointer of c->journal.pin is changed.
-+		 */
-+		now_fifo_front_p = &fifo_front(&c->journal.pin);
-+		/*
-+		 * If the oldest journal entry is reclaimed and front
-+		 * pointer of c->journal.pin changes, it is unnecessary
-+		 * to scan c->btree_cache anymore, just quit the loop and
-+		 * flush out what we have already.
-+		 */
-+		if (now_fifo_front_p != fifo_front_p)
-+			break;
-+		/*
-+		 * quit this loop if all matching btree nodes are
-+		 * scanned and record in btree_nodes[] already.
-+		 */
-+		ref_nr = atomic_read(fifo_front_p);
-+		if (nr >= ref_nr)
-+			break;
-+
- 		if (btree_node_journal_flush(b))
- 			pr_err("BUG: flush_write bit should not be set here!");
- 
-@@ -454,17 +496,44 @@ static void btree_flush_write(struct cache_set *c)
- 			continue;
- 		}
- 
-+		/*
-+		 * Only select the btree node which exactly references
-+		 * the oldest journal entry.
-+		 *
-+		 * If the journal entry pointed by fifo_front_p is
-+		 * reclaimed in parallel, don't worry:
-+		 * - the list_for_each_xxx loop will quit when checking
-+		 *   next now_fifo_front_p.
-+		 * - If there are matched nodes recorded in btree_nodes[],
-+		 *   they are clean now (this is why and how the oldest
-+		 *   journal entry can be reclaimed). These selected nodes
-+		 *   will be ignored and skipped in the folowing for-loop.
-+		 */
-+		if (nr_to_fifo_front(btree_current_write(b)->journal,
-+				     fifo_front_p,
-+				     mask) != 0) {
-+			mutex_unlock(&b->write_lock);
-+			continue;
-+		}
-+
- 		set_btree_node_journal_flush(b);
- 
- 		mutex_unlock(&b->write_lock);
- 
--		btree_nodes[n++] = b;
--		if (n == BTREE_FLUSH_NR)
-+		btree_nodes[nr++] = b;
-+		/*
-+		 * To avoid holding c->bucket_lock too long time,
-+		 * only scan for BTREE_FLUSH_NR matched btree nodes
-+		 * at most. If there are more btree nodes reference
-+		 * the oldest journal entry, try to flush them next
-+		 * time when btree_flush_write() is called.
-+		 */
-+		if (nr == BTREE_FLUSH_NR)
- 			break;
- 	}
- 	mutex_unlock(&c->bucket_lock);
- 
--	for (i = 0; i < n; i++) {
-+	for (i = 0; i < nr; i++) {
- 		b = btree_nodes[i];
- 		if (!b) {
- 			pr_err("BUG: btree_nodes[%d] is NULL", i);
-@@ -497,6 +566,7 @@ static void btree_flush_write(struct cache_set *c)
- 		mutex_unlock(&b->write_lock);
- 	}
- 
-+out:
- 	spin_lock(&c->journal.flush_write_lock);
- 	c->journal.btree_flushing = false;
- 	spin_unlock(&c->journal.flush_write_lock);
--- 
-2.16.4
-
+On Mon, Nov 18, 2019 at 11:21 AM Coly Li <colyli@suse.de> wrote:
+>
+> On 2019/11/14 3:46 =E4=B8=8A=E5=8D=88, Marc Smith wrote:
+> > Hi,
+> >
+> > I'm using bcache on Linux 4.14.154 and I'm hitting a BUG_ON() in
+> > writeback.c, which occurs quite a bit on my systems (using write-back
+> > mode). This occurs typically after the backing device is assembled,
+> > and the bcache udev rule registers it. Here are the kernel messages
+> > when this occurs:
+> >
+> > [  186.463146] md: md126 stopped.
+> > [  186.475151] md/raid:md126: device sdc operational as raid disk 0
+> > [  186.475155] md/raid:md126: device sdn operational as raid disk 11
+> > [  186.475157] md/raid:md126: device sdm operational as raid disk 10
+> > [  186.475158] md/raid:md126: device sdl operational as raid disk 9
+> > [  186.475160] md/raid:md126: device sdk operational as raid disk 8
+> > [  186.475161] md/raid:md126: device sdj operational as raid disk 7
+> > [  186.475163] md/raid:md126: device sdi operational as raid disk 6
+> > [  186.475165] md/raid:md126: device sdh operational as raid disk 5
+> > [  186.475166] md/raid:md126: device sdg operational as raid disk 4
+> > [  186.475168] md/raid:md126: device sdf operational as raid disk 3
+> > [  186.475169] md/raid:md126: device sde operational as raid disk 2
+> > [  186.475170] md/raid:md126: device sdd operational as raid disk 1
+> > [  186.476349] md/raid:md126: raid level 6 active with 12 out of 12
+> > devices, algorithm 2
+> > [  186.487142] md126: detected capacity change from 0 to 12001083392000
+> > [  186.745889] bcache: register_bdev() registered backing device md126
+> > [  186.757725] bcache: bch_cached_dev_attach() Caching md126 as
+> > bcache0 on set 81c4d4e3-4feb-4f88-8fcb-00f367e69906
+> > [  186.758120] ------------[ cut here ]------------
+> > [  186.758123] kernel BUG at drivers/md/bcache/writeback.c:324!
+> > [  186.758128] invalid opcode: 0000 [#1] SMP NOPTI
+> > [  186.758301] Modules linked in: qla2xxx(O) bonding ntb_transport
+> > ntb_hw_switchtec(OE) cls_switchtec(OE) mlx5_ib mlx5_core bna ib_umad
+> > rdma_ucm rdma_cm iw_cm ib_uverbs ib_srp ib_cm iw_nes iw_cxgb4 cxgb4
+> > iw_cxgb3 ib_qib rdmavt mlx4_ib mlx4_core ib_mthca ib_core
+> > [  186.758741] CPU: 13 PID: 2109 Comm: bcache_writebac Tainted: G
+> >      OE   4.14.154-esos.prod #1
+> > [  186.758945] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+> > [  186.759101] task: ffff888327af0000 task.stack: ffffc90003014000
+> > [  186.759262] RIP: 0010:dirty_pred+0x17/0x21
+> > [  186.759391] RSP: 0018:ffffc90003017ca0 EFLAGS: 00010202
+> > [  186.759537] RAX: 9000001000200002 RBX: ffff888329840b90 RCX: 0000000=
+000000003
+> > [  186.760235] RDX: 0000000000000002 RSI: ffff888327b01f10 RDI: ffff888=
+329840b90
+> > [  186.760922] RBP: ffff888327b01f10 R08: 0000000000000000 R09: 000007f=
+fffffffff
+> > [  186.761603] R10: 0000000000000001 R11: 0000000000000001 R12: ffffc90=
+003017dd8
+> > [  186.762289] R13: 0000000000000000 R14: ffff88842b503800 R15: ffff888=
+42b5038c8
+> > [  186.762977] FS:  0000000000000000(0000) GS:ffff88842f540000(0000)
+> > knlGS:0000000000000000
+> > [  186.764185] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [  186.764856] CR2: 00007f5fd478ee80 CR3: 00000003af48a000 CR4: 0000000=
+0000006e0
+> > [  186.765541] Call Trace:
+> > [  186.766160]  refill_keybuf_fn+0x64/0x19b
+> > [  186.766799]  ? bch_btree_gc_finish+0x2b9/0x2b9
+> > [  186.767441]  bch_btree_map_keys_recurse+0x6a/0x140
+> > [  186.768983]  bch_btree_map_keys+0x98/0xfb
+> > [  186.769626]  ? bch_btree_gc_finish+0x2b9/0x2b9
+> > [  186.770269]  ? write_dirty+0xcb/0xcb
+> > [  186.770904]  bch_refill_keybuf+0xa0/0x1ab
+> > [  186.771544]  ? wait_woken+0x6a/0x6a
+> > [  186.772178]  ? write_dirty+0xcb/0xcb
+> > [  186.772812]  bch_writeback_thread+0x2a8/0x73d
+> > [  186.773458]  ? __switch_to+0x31b/0x342
+> > [  186.774096]  ? read_dirty_submit+0x55/0x55
+> > [  186.774744]  kthread+0x117/0x11f
+> > [  186.775369]  ? kthread_create_on_node+0x36/0x36
+> > [  186.776019]  ret_from_fork+0x35/0x40
+> > [  186.776656] Code: 5b be 01 00 00 20 48 c7 45 18 20 73 a2 81 5d e9
+> > 2d 0a ff ff 48 8b 06 8b 8f f8 f4 ff ff 48 89 c2 81 e2 ff ff 0f 00 48
+> > 39 d1 74 02 <0f> 0b 48 c1 e8 24 83 e0 01 c3 55 48 89 fd f0 ff 47 28 48
+> > 83 c7
+> > [  186.778552] RIP: dirty_pred+0x17/0x21 RSP: ffffc90003017ca0
+> > [  186.779240] ---[ end trace f9cfb637b4062277 ]---
+> >
+> >
+> > I had experienced this same issue on 4.14.120 as well. I noticed some
+> > bug fixes since that patch release so I updated to .154 but the issue
+> > still persists. Perhaps it's worth noting this kernel is built with
+> > GCC 9.x -- I saw another patch for a stack corruption issue involving
+> > GCC 9.x (4.14.128).
+> >
+> > The 4.14.154 kernel is vanilla from 'kernel.org' (not a distro variant)=
+.
+> >
+> > Any hints on where to start would be greatly appreciated.
+>
+> Hi Marc,
+>
+> This is new in my memory. v4.14.154 already has the fix "bcache: fix
+> stack corruption by PRECEDING_KEY()", so I guess this issue might be new.
+>
+> Is it possible to try Linux v5.3, or later kernel ? There are quite a
+> lot fixes from v4.14 to v5.3, if you may still observe the issue from
+> v5.3, I can try to look into it.
+>
+> Thanks.
+>
+> --
+>
+> Coly Li
