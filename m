@@ -2,89 +2,126 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A84A10E2D6
-	for <lists+linux-bcache@lfdr.de>; Sun,  1 Dec 2019 19:14:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9626A10E3A4
+	for <lists+linux-bcache@lfdr.de>; Sun,  1 Dec 2019 22:40:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfLASON (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 1 Dec 2019 13:14:13 -0500
-Received: from mtax.cdmx.gob.mx ([187.141.35.197]:14200 "EHLO mtax.cdmx.gob.mx"
+        id S1727129AbfLAVkQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 1 Dec 2019 16:40:16 -0500
+Received: from mx.ewheeler.net ([173.205.220.69]:35176 "EHLO mx.ewheeler.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726965AbfLASON (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 1 Dec 2019 13:14:13 -0500
-X-Greylist: delayed 6290 seconds by postgrey-1.27 at vger.kernel.org; Sun, 01 Dec 2019 13:14:12 EST
-X-NAI-Header: Modified by McAfee Email Gateway (4500)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cdmx.gob.mx; s=72359050-3965-11E6-920A-0192F7A2F08E;
-        t=1575217536; h=DKIM-Filter:X-Virus-Scanned:
-         Content-Type:MIME-Version:Content-Transfer-Encoding:
-         Content-Description:Subject:To:From:Date:Message-Id:
-         X-AnalysisOut:X-AnalysisOut:X-AnalysisOut:
-         X-AnalysisOut:X-AnalysisOut:X-SAAS-TrackingID:
-         X-NAI-Spam-Flag:X-NAI-Spam-Threshold:X-NAI-Spam-Score:
-         X-NAI-Spam-Rules:X-NAI-Spam-Version; bh=M
-        8rWdUYQ57RAYAgTWJQ4Rsch0kO0UXllaAVDzocOs4
-        8=; b=I6PC+bwKItaTmI6kBC26eOq9c+OYgkReK3m7F0XmmKnl
-        JmVczRDqz5cpa8Hbn4Av/w76lN2PwDyLhrz1TWCbjVloWnjmut
-        onvt9ji8ucTXqI/ArFPcI03o5T/uHD0SQU4OuQlGFhw7qblwoH
-        bF3lX73f62IfasUmWbyQg7eN6Vo=
-Received: from cdmx.gob.mx (correo.cdmx.gob.mx [10.250.108.150]) by mtax.cdmx.gob.mx with smtp
-        (TLS: TLSv1/SSLv3,256bits,ECDHE-RSA-AES256-GCM-SHA384)
-         id 1dee_5e7a_3657e7b4_bc3a_4d29_bf4a_cdb9c4009d3f;
-        Sun, 01 Dec 2019 10:25:35 -0600
+        id S1726982AbfLAVkQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 1 Dec 2019 16:40:16 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by cdmx.gob.mx (Postfix) with ESMTP id B0E2D1E2B69;
-        Sun,  1 Dec 2019 10:17:51 -0600 (CST)
-Received: from cdmx.gob.mx ([127.0.0.1])
-        by localhost (cdmx.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id FCXOaSfqbKFI; Sun,  1 Dec 2019 10:17:51 -0600 (CST)
-Received: from localhost (localhost [127.0.0.1])
-        by cdmx.gob.mx (Postfix) with ESMTP id 99C1A1E27BA;
-        Sun,  1 Dec 2019 10:12:44 -0600 (CST)
-DKIM-Filter: OpenDKIM Filter v2.9.2 cdmx.gob.mx 99C1A1E27BA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cdmx.gob.mx;
-        s=72359050-3965-11E6-920A-0192F7A2F08E; t=1575216764;
-        bh=M8rWdUYQ57RAYAgTWJQ4Rsch0kO0UXllaAVDzocOs48=;
-        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:To:
-         From:Date:Message-Id;
-        b=ZVTxI9028hCTiYVBO0Zi5aDznJBvEwxutsECRw6ZvrUYt2dots2nXV6udMBnKvrsy
-         0RGSHeZstBHt+IE5exGBtINSFjSiHRGDbahJxeB2lqe7dcyh+3OLKkMywXJPzomOT0
-         zP5GcoBHEoDXxvMvGLteHnidji1liGKpT0xv5mFs=
-X-Virus-Scanned: amavisd-new at cdmx.gob.mx
-Received: from cdmx.gob.mx ([127.0.0.1])
-        by localhost (cdmx.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id gMotwaSB5JSR; Sun,  1 Dec 2019 10:12:44 -0600 (CST)
-Received: from [192.168.0.104] (unknown [188.125.168.160])
-        by cdmx.gob.mx (Postfix) with ESMTPSA id A12981E2B21;
-        Sun,  1 Dec 2019 10:03:24 -0600 (CST)
-Content-Type: text/plain; charset="iso-8859-1"
+        by mx.ewheeler.net (Postfix) with ESMTP id 2BF18A0693;
+        Sun,  1 Dec 2019 21:40:15 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id YrZGrFGIhlXD; Sun,  1 Dec 2019 21:39:44 +0000 (UTC)
+Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id 839ACA0440;
+        Sun,  1 Dec 2019 21:39:39 +0000 (UTC)
+Date:   Sun, 1 Dec 2019 21:39:38 +0000 (UTC)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
+X-X-Sender: lists@mx.ewheeler.net
+To:     Eddie Chapman <eddie@ehuk.net>
+cc:     Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org
+Subject: Re: Backport bcache v5.4 to v4.19
+In-Reply-To: <ded403fa-7f78-69e9-9d12-d16114246b18@ehuk.net>
+Message-ID: <alpine.LRH.2.11.1912012137250.11561@mx.ewheeler.net>
+References: <alpine.LRH.2.11.1911302229090.31846@mx.ewheeler.net> <cf687ad0-ca8a-dd9a-5959-079762c7a7e5@suse.de> <ded403fa-7f78-69e9-9d12-d16114246b18@ehuk.net>
+User-Agent: Alpine 2.11 (LRH 23 2013-08-11)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Congratulations
-To:     Recipients <aac-styfe@cdmx.gob.mx>
-From:   "Bishop Johnr" <aac-styfe@cdmx.gob.mx>
-Date:   Sun, 01 Dec 2019 17:03:16 +0100
-Message-Id: <20191201160324.A12981E2B21@cdmx.gob.mx>
-X-AnalysisOut: [v=2.2 cv=R5pzIZZX c=1 sm=1 tr=0 p=6K-Ig8iNAUou4E5wYCEA:9 p]
-X-AnalysisOut: [=zRI05YRXt28A:10 a=T6zFoIZ12MK39YzkfxrL7A==:117 a=9152RP8M]
-X-AnalysisOut: [6GQqDhC/mI/QXQ==:17 a=8nJEP1OIZ-IA:10 a=pxVhFHJ0LMsA:10 a=]
-X-AnalysisOut: [pGLkceISAAAA:8 a=wPNLvfGTeEIA:10 a=M8O0W8wq6qAA:10 a=Ygvjr]
-X-AnalysisOut: [iKHvHXA2FhpO6d-:22]
-X-SAAS-TrackingID: e79e3ed5.0.72333790.00-2380.121909476.s12p02m001.mxlogic.net
-X-NAI-Spam-Flag: NO
-X-NAI-Spam-Threshold: 3
-X-NAI-Spam-Score: -5000
-X-NAI-Spam-Rules: 1 Rules triggered
-        WHITELISTED=-5000
-X-NAI-Spam-Version: 2.3.0.9418 : core <6686> : inlines <7165> : streams
- <1840193> : uri <2949748>
+Content-Type: MULTIPART/MIXED; BOUNDARY="-844282404-39253078-1575236379=:11561"
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Money was donated to you by Mr and Mrs Allen and Violet Large, just contact=
- them with this email for more information =
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+---844282404-39253078-1575236379=:11561
+Content-Type: TEXT/PLAIN; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+
+On Sun, 1 Dec 2019, Eddie Chapman wrote:
+> On 01/12/2019 08:45, Coly Li wrote:
+> > On 2019/12/1 6:34 上午, Eric Wheeler wrote:
+> > > Hi Coly,
+> > >
+> > > We use 4.19.y and there have been many performance and stability changes
+> > > since then.  I'm considering backporting the 5.4 version into 4.19 and
+> > > wondered:
+> > >
+> > > Are there any changes in bcache between 4.19 and 5.4 that depend on new
+> > > features elsewhere in the kernel, or should I basically be able to copy
+> > > the tree from 5.4 to 4.19 and fix minor compilation issues?
+> > >
+> > > Can you think of any issues that would arise from such a backport?
+> > 
+> > Hi Eric,
+> > 
+> > It should be OK to backport bcache patches from 5.4 to 4.19. I did
+> > similar thing for SUSE Enterprise kernel which were based on Linux 4.12
+> > code base, and the changes was tiny.
+> > 
+> > If you encounter problem during the backport, you may post the .rej file
+> > and maybe I can help.
+> 
+> Hi Eric, Coly,
+> 
+> I have been applying the list below to kernel.org 4.19.x latest stable and
+> using it on several production machines without any issues for months apart
+> from the newer ones of course.  Apart from the odd context adjust I don't
+> think any needed any modifying. My list used to be much bigger but a lot has
+> been backported already in 4.19.x stable so my list has gone down quite a lot
+> :-)
+
+Thanks Coly and Eddie for the feedback.  I just booted the patched 4.19.86 
+kernel, will let you know if I notice any issues.
+
+--
+Eric Wheeler
 
 
-EMail: allenandvioletlargeaward@gmail.com
+> 
+> Sorry I don't use git but if I run in my patches directory as it is currently
+> the list is:
+> 
+> egrep '^Subject' *.patch
+> 
+> 00a.patch:Subject: bcache: account size of buckets used in uuid write to
+> 00b.patch:Subject: bcache: fix typo in code comments of
+> closure_return_with_destructor()
+> 00c.patch:Subject: bcache: recal cached_dev_sectors on detach
+> 01.patch:Subject: bcache: remove unused bch_passthrough_cache
+> 02.patch:Subject: bcache: remove useless parameter of bch_debug_init()
+> 03.patch:Subject: bcache: use MAX_CACHES_PER_SET instead of magic number 8 in
+> 05.patch:Subject: bcache: do not check if debug dentry is ERR or NULL
+> explicitly on
+> 06.patch:Subject: bcache: do not mark writeback_running too early
+> 07.patch:Subject: bcache: cannot set writeback_running via sysfs if no
+> writeback
+> 08.patch:Subject: bcache: introduce force_wake_up_gc()
+> 09.patch:Subject: bcache: not use hard coded memset size in
+> 11.patch:Subject: bcache: fix input integer overflow of congested threshold
+> 13.patch:Subject: bcache: add sysfs_strtoul_bool() for setting bit-field
+> variables
+> 14.patch:Subject: bcache: use sysfs_strtoul_bool() to set bit-field variables
+> 15.patch:Subject: bcache: fix input overflow to writeback_delay
+> 17.patch:Subject: bcache: fix input overflow to journal_delay_ms
+> 18.patch:Subject: bcache: fix input overflow to cache set io_error_limit
+> 20.patch:Subject: bcache: fix crashes stopping bcache device before read miss
+> done
+> 22.patch:Subject: bcache: fix inaccurate result of unused buckets
+> 24.patch:Subject: bcache: add error check for calling register_bdev()
+> 26.patch:Subject: bcache: improve bcache_reboot()
+> 28.patch:Subject: bcache: fix wrong usage use-after-freed on keylist in
+> out_nocoalesce
+> 30.patch:Subject: [PATCH 07/12] bcache: fix deadlock in bcache_allocator
+> 
+> 
+---844282404-39253078-1575236379=:11561--
