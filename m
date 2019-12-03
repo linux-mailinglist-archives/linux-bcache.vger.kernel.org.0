@@ -2,101 +2,82 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 527AF10F08B
-	for <lists+linux-bcache@lfdr.de>; Mon,  2 Dec 2019 20:34:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B54FC10F5F5
+	for <lists+linux-bcache@lfdr.de>; Tue,  3 Dec 2019 04:52:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbfLBTeu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 2 Dec 2019 14:34:50 -0500
-Received: from mx.ewheeler.net ([173.205.220.69]:54947 "EHLO mx.ewheeler.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727976AbfLBTeu (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 2 Dec 2019 14:34:50 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id 5EF76A0440;
-        Mon,  2 Dec 2019 19:34:44 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id uRQNVO4LW8_g; Mon,  2 Dec 2019 19:34:23 +0000 (UTC)
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 1F97BA0693;
-        Mon,  2 Dec 2019 19:34:23 +0000 (UTC)
-Date:   Mon, 2 Dec 2019 19:34:12 +0000 (UTC)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-X-X-Sender: lists@mx.ewheeler.net
-To:     Coly Li <colyli@suse.de>
-cc:     kungf <wings.wyang@gmail.com>, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bcache: add REQ_FUA to avoid data lost in writeback
- mode
-In-Reply-To: <785fe04f-f841-3083-66db-53fab7bc0577@suse.de>
-Message-ID: <alpine.LRH.2.11.1912021932570.11561@mx.ewheeler.net>
-References: <20191202102409.3980-1-wings.wyang@gmail.com> <785fe04f-f841-3083-66db-53fab7bc0577@suse.de>
-User-Agent: Alpine 2.11 (LRH 23 2013-08-11)
-MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="-844282404-2137853158-1575315263=:11561"
+        id S1726482AbfLCDwp (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 2 Dec 2019 22:52:45 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38177 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbfLCDwp (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 2 Dec 2019 22:52:45 -0500
+Received: by mail-pl1-f195.google.com with SMTP id o8so1123913pls.5;
+        Mon, 02 Dec 2019 19:52:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=WFPxR8j8Ztw3QpWL9VkRXvZS+yt+ltqE6fy7Q8AVdEU=;
+        b=oDGWBbGaEAdv/Tjq+aQgC6JgVI+zjjUkguaejS3WXRSvTAjQuNmVZEIw8at6VqbZ/C
+         w22kRTOZ0dwKZRvBBRWpDodDadUcX71J61eSF8xaxQBAH3BgHC8YnA40iSo1QTjgDmEd
+         L49Egm4Ea4oOKoKM/rUtS9clmCglpfMoAQn0ueTlQTrJwEPSBaoK3Qcvh/kOVH32ePFK
+         Ta4x3WHPnKsBzzpIOATXki7MIxOJdIEfx3bmzOKLDkBU32syQVVCvIe787DzTRLh6hrr
+         QZTE6a/J5Mq8B+fb3MI+AK0190JQRhrRi39SYC6YqMUPDcazLgy7TY30ce8bWxMEeQUj
+         YtHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WFPxR8j8Ztw3QpWL9VkRXvZS+yt+ltqE6fy7Q8AVdEU=;
+        b=a3kLN8vI6mCC891RUbodSMmyUHtX5GbGi21uMJ6/4FpYIkr9mnCyaGaofjdGt8TqTi
+         jyAMpoTL5nySn+B6jthu+EtYN8t9upyxy5i0peDFaqSXYGHScs4gNyEttT2Hl8psFyzl
+         2rZGDca/9eFZv92OCMcsy+4nDZ7SOo/iKaj+JYze/JjsXWU/BVhEonFLbz8kvJTY2598
+         9PlFKLdctyZmxKq50GhQoXENSRP104/SlJXJsSQVXJgWZ4Y87b1ylWf8v8rajmz9e/6W
+         v1xIKe5XgIVhbQFN6pwPdue+1qihuuLtl5iSUNYoPV4MxhHqZpZuYFKsszr1NvKVg7G9
+         Zudg==
+X-Gm-Message-State: APjAAAUkXFecCZ1riDNLGiohUfuiyCQzI6O14RK+uVg8aEJJjmjAWTy6
+        CXjJmeZZ57g2yunZcmZROdI=
+X-Google-Smtp-Source: APXvYqzieSs1UI75yXehyUjLI9b+KyuJgvG4DNnaak5PZ4QOKccR85gkkaDwsfT2lzNyUfk2PbNyGA==
+X-Received: by 2002:a17:902:14f:: with SMTP id 73mr2953143plb.19.1575345165095;
+        Mon, 02 Dec 2019 19:52:45 -0800 (PST)
+Received: from localhost.localdomain (23.83.226.166.16clouds.com. [23.83.226.166])
+        by smtp.gmail.com with ESMTPSA id l9sm1111206pgh.34.2019.12.02.19.52.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Dec 2019 19:52:44 -0800 (PST)
+From:   Guoju Fang <fangguoju@gmail.com>
+To:     colyli@suse.de
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Guoju Fang <fangguoju@gmail.com>
+Subject: [PATCH] bcache: print written and keys in trace_bcache_btree_write
+Date:   Mon,  2 Dec 2019 22:48:41 -0500
+Message-Id: <1575344921-20254-1-git-send-email-fangguoju@gmail.com>
+X-Mailer: git-send-email 1.7.1
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+It's useful to dump written block and keys on btree write, this patch
+add them into trace_bcache_btree_write.
 
----844282404-2137853158-1575315263=:11561
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Signed-off-by: Guoju Fang <fangguoju@gmail.com>
+---
+ include/trace/events/bcache.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On Mon, 2 Dec 2019, Coly Li wrote:
-> On 2019/12/2 6:24 下午, kungf wrote:
-> > data may lost when in the follow scene of writeback mode:
-> > 1. client write data1 to bcache
-> > 2. client fdatasync
-> > 3. bcache flush cache set and backing device
-> > if now data1 was not writed back to backing, it was only guaranteed safe in cache.
-> > 4.then cache writeback data1 to backing with only REQ_OP_WRITE
-> > So data1 was not guaranteed in non-volatile storage,  it may lost if  power interruption 
-> > 
-> 
-> Hi,
-> 
-> Do you encounter such problem in real work load ? With bcache journal, I
-> don't see the possibility of data lost with your description.
-> 
-> Correct me if I am wrong.
-> 
-> Coly Li
+diff --git a/include/trace/events/bcache.h b/include/trace/events/bcache.h
+index e4526f8..0bddea6 100644
+--- a/include/trace/events/bcache.h
++++ b/include/trace/events/bcache.h
+@@ -275,7 +275,8 @@
+ 		__entry->keys	= b->keys.set[b->keys.nsets].data->keys;
+ 	),
+ 
+-	TP_printk("bucket %zu", __entry->bucket)
++	TP_printk("bucket %zu written block %u + %u",
++		__entry->bucket, __entry->block, __entry->keys)
+ );
+ 
+ DEFINE_EVENT(btree_node, bcache_btree_node_alloc,
+-- 
+1.8.3.1
 
-If this does become necessary, then we should have a sysfs or superblock 
-flag to disable FUA for those with RAID BBUs.
-
---
-Eric Wheeler
-
-
-
-
-> > Signed-off-by: kungf <wings.wyang@gmail.com>
-> > ---
-> >  drivers/md/bcache/writeback.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-> > index 4a40f9eadeaf..e5cecb60569e 100644
-> > --- a/drivers/md/bcache/writeback.c
-> > +++ b/drivers/md/bcache/writeback.c
-> > @@ -357,7 +357,7 @@ static void write_dirty(struct closure *cl)
-> >  	 */
-> >  	if (KEY_DIRTY(&w->key)) {
-> >  		dirty_init(w);
-> > -		bio_set_op_attrs(&io->bio, REQ_OP_WRITE, 0);
-> > +		bio_set_op_attrs(&io->bio, REQ_OP_WRITE | REQ_FUA, 0);
-> >  		io->bio.bi_iter.bi_sector = KEY_START(&w->key);
-> >  		bio_set_dev(&io->bio, io->dc->bdev);
-> >  		io->bio.bi_end_io	= dirty_endio;
-> > 
-> 
-> 
----844282404-2137853158-1575315263=:11561--
