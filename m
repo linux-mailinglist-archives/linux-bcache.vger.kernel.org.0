@@ -2,86 +2,111 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B707112994
-	for <lists+linux-bcache@lfdr.de>; Wed,  4 Dec 2019 11:55:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CA29112BC4
+	for <lists+linux-bcache@lfdr.de>; Wed,  4 Dec 2019 13:43:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfLDKzW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 4 Dec 2019 05:55:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52978 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727445AbfLDKzW (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 4 Dec 2019 05:55:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 50AA6B280;
-        Wed,  4 Dec 2019 10:55:20 +0000 (UTC)
-Subject: Re: [PATCH] bcache: add REQ_FUA to avoid data lost in writeback mode
-From:   Coly Li <colyli@suse.de>
-To:     Eric Wheeler <bcache@lists.ewheeler.net>
-Cc:     kungf <wings.wyang@gmail.com>, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191202102409.3980-1-wings.wyang@gmail.com>
- <785fe04f-f841-3083-66db-53fab7bc0577@suse.de>
- <alpine.LRH.2.11.1912021932570.11561@mx.ewheeler.net>
- <1a728329-1b12-0ebf-21a4-058ef6f65ead@suse.de>
-Organization: SUSE Labs
-Message-ID: <2d085823-57ac-dba9-6d2e-1cf01c949875@suse.de>
-Date:   Wed, 4 Dec 2019 18:55:08 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.2.2
+        id S1727726AbfLDMnM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 4 Dec 2019 07:43:12 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39623 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727815AbfLDMm6 (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 4 Dec 2019 07:42:58 -0500
+Received: by mail-qt1-f193.google.com with SMTP id g1so7565359qtj.6
+        for <linux-bcache@vger.kernel.org>; Wed, 04 Dec 2019 04:42:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=SWzs3svZdfoJNhQZue5B0UPApGf3QNVhTsPQAsjB3v0=;
+        b=AkbuvF8WWOeGkFuNbpEiUPeHs0D9XYCrvYJnn3sJBPk0l/N+bAJ+lU7by52a8c0/XL
+         X5y/+uJVi5SRPzgKpD7LZp2RSO63H/dWhNB+Sgv8CnTmnW6HnNvEkrD3pvFKiHue+ji0
+         Cyct4Vs7hozR5hYKDh8cJJMkT72K9aPHj93bK1Ew++bIIM698i5hGwNXpwVN8RyOlTlg
+         ekVZP06isuUhwZwFxkLwU0Sye3HMnEDkq9yUmWZzxA1JTm8RzibEufZxYTJilauyHwzc
+         pKJFDkaXtzzvkeOyU7ajhljX9QykaA8Ur2FHYJunK1Sxosbxld4ODKAYs9j7AB06Aipc
+         jW5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=SWzs3svZdfoJNhQZue5B0UPApGf3QNVhTsPQAsjB3v0=;
+        b=FxCEa3XDapuLydURGDGWVLvAk4/5QQXnrpVxtjCXOYL1Qplcegme4EaXJSA0MzwKBN
+         xEUjSL/dg2orNI27Oes6WpphIJ18d6GWWbJOQwxkhYhXftBY1Vax6uGLGXt+5jZAelSX
+         xEP0+YjpcFVL/B2K1riMzEWFhDe4rmGs7I+cSW7NHrz+6966EwApoAYBBrA221VpBxKz
+         23QcCH9kgBMN/hOk/lGwYWYzVRKbbEDeFgrQVmbwkeEeP2Wc1jn1gRebRvrhbA0VU8Jg
+         Nm/LDKgPFMP0A4X6fhPQJlCzb0Luk9Mw38u5ta9kq4BOnusy6Q2er+XaT0+i47ED5qNV
+         pCvA==
+X-Gm-Message-State: APjAAAV/AVk/N6dxJVi8AqeqfYxbxOjG63iJPRs06bX0ltDnLZYQfSSN
+        vgIHUAPC7w3vQowYbcNo9SQNYQr0KcWiMpMIzVI=
+X-Google-Smtp-Source: APXvYqzw3gCG5cnmI6368TWfhjS/+LLSHd6b95oZCOsPTpsAjIN23auDStB1pQ1PTnMah1qk6gl8uYsnTPaZ7k01uH0=
+X-Received: by 2002:ac8:4a81:: with SMTP id l1mr2434940qtq.357.1575463377714;
+ Wed, 04 Dec 2019 04:42:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1a728329-1b12-0ebf-21a4-058ef6f65ead@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac8:2f0c:0:0:0:0:0 with HTTP; Wed, 4 Dec 2019 04:42:57 -0800 (PST)
+Reply-To: moneygram.1820@outlook.fr
+From:   "Rev.Dr Emmanuel Okoye CEO Ecobank-benin" 
+        <westernunion.benin982@gmail.com>
+Date:   Wed, 4 Dec 2019 13:42:57 +0100
+Message-ID: <CAP=nHBJXiPmPL21x=_0BHWRk_3N3Yax+tTxcFi=t=AhN7g==1Q@mail.gmail.com>
+Subject: God has remembered your prayers I have already sent you Money Gram
+ payment of $5000.00 today, MG 1029-8096
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/12/3 10:21 下午, Coly Li wrote:
-> On 2019/12/3 3:34 上午, Eric Wheeler wrote:
->> On Mon, 2 Dec 2019, Coly Li wrote:
->>> On 2019/12/2 6:24 下午, kungf wrote:
->>>> data may lost when in the follow scene of writeback mode:
->>>> 1. client write data1 to bcache
->>>> 2. client fdatasync
->>>> 3. bcache flush cache set and backing device
->>>> if now data1 was not writed back to backing, it was only guaranteed safe in cache.
->>>> 4.then cache writeback data1 to backing with only REQ_OP_WRITE
->>>> So data1 was not guaranteed in non-volatile storage,  it may lost if  power interruption 
->>>>
->>>
->>> Hi,
->>>
->>> Do you encounter such problem in real work load ? With bcache journal, I
->>> don't see the possibility of data lost with your description.
->>>
->>> Correct me if I am wrong.
->>>
->>> Coly Li
->>
->> If this does become necessary, then we should have a sysfs or superblock 
->> flag to disable FUA for those with RAID BBUs.
-> 
-> Hi Eric,
-> 
-> I doubt it is necessary to add FUA tag for all writeback bios, it is
-> unnecessary. If power failure happens after dirty data written to
-> backing device and the bkey turns into clean, a following read request
-> will go to cache device because the LBA can be indexed no matter it is
-> dirty or clean. Unless the bkey is invalidated from the B+tree, read
-> will always go to cache device firstly in writeback mode. If a power
-> failure happens before the cached bkey turns from dirty to clean, just
-> an extra writeback bio flushed from cache device to backing device with
-> identical data. Comparing the FUA tag for all writeback bios (it will be
-> really slow), the extra writeback IOs after a power failure is more
-> acceptable to me.
+Attn, dear Beneficiary.
 
-Hi Eric,
+God has remembered your prayers
+I have already sent you Money Gram payment of $5000.00 today, MG 1029-8096
+This is because we have finally concluded to effect your transfer
+funds of $4.8,000.000usd
+through MONEY GRAM International Fund transfer Service
+Each payment will be sending to you by $5000.00 daily until the
+($4.8,000.000usd) is completely transferred
+we have this morning sent  MONEY GRAM payment of $5,000.00 in your name today
+So contact the MONEY GRAM Agent to pick up this first payment of $5000 now
 
-I come to realize what the problem is. Yes there is potential
-possibility.With FUA the writeback performance will be very low, it is
-quite tricky....
+Contact person Mrs. Alan Ude
+Dir. MONEY GRAM Service,Benin
+Phone number: +229 98856728
+E-mail: moneygram.1820@outlook.fr
 
-Coly Li
+Ask him to give you the complete mtcn, sender name, question and
+answer to enable you
+pick up the $5000.00 sent today,
+Also you are instructed to re-confirm your information's
+to Mrs.Alan Ude as listed below to avoid wrong transactions.
+
+(1Your Full name:............................................
+(2 Phone number.....................................................
+(3 Contact address:.....................................
+(4 Age:..................................................................
+(5 Country..............................................
+(6) Sex .................................................................
+(7) your occupation...........................................
+
+(8)Passport/By Attach or Drivers License Number:
+Contact Mrs. Alan Ude for your MONEY GRAM payment of $4.8,000.000usd
+Note please: I have paid service fees for you but the only money you
+are required
+to send to Mrs. Alan Ude is $90.00 only Transfer fee before you can
+pick up your transfer today.
+
+Send it to via Money Gram
+Receiver's Name-----Alan Ude
+Country----------Benin
+Address-----------Cotonou
+Quest--------Honest
+Ans-----------Trust
+
+I done all my best for you to receive your transfer now ok.
+We need your urgent reply
+Best Regards
+Rev.Dr Emmanuel Okoye
+CEO Ecobank-benin
+
+If we did not receive it urgent from you today,
+I will go ahead and release you funds to Mrs. Lyndia Ppaulson as your
+representative.
