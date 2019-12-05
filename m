@@ -2,111 +2,292 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA29112BC4
-	for <lists+linux-bcache@lfdr.de>; Wed,  4 Dec 2019 13:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6129011437C
+	for <lists+linux-bcache@lfdr.de>; Thu,  5 Dec 2019 16:25:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfLDMnM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 4 Dec 2019 07:43:12 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39623 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727815AbfLDMm6 (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:42:58 -0500
-Received: by mail-qt1-f193.google.com with SMTP id g1so7565359qtj.6
-        for <linux-bcache@vger.kernel.org>; Wed, 04 Dec 2019 04:42:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=SWzs3svZdfoJNhQZue5B0UPApGf3QNVhTsPQAsjB3v0=;
-        b=AkbuvF8WWOeGkFuNbpEiUPeHs0D9XYCrvYJnn3sJBPk0l/N+bAJ+lU7by52a8c0/XL
-         X5y/+uJVi5SRPzgKpD7LZp2RSO63H/dWhNB+Sgv8CnTmnW6HnNvEkrD3pvFKiHue+ji0
-         Cyct4Vs7hozR5hYKDh8cJJMkT72K9aPHj93bK1Ew++bIIM698i5hGwNXpwVN8RyOlTlg
-         ekVZP06isuUhwZwFxkLwU0Sye3HMnEDkq9yUmWZzxA1JTm8RzibEufZxYTJilauyHwzc
-         pKJFDkaXtzzvkeOyU7ajhljX9QykaA8Ur2FHYJunK1Sxosbxld4ODKAYs9j7AB06Aipc
-         jW5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=SWzs3svZdfoJNhQZue5B0UPApGf3QNVhTsPQAsjB3v0=;
-        b=FxCEa3XDapuLydURGDGWVLvAk4/5QQXnrpVxtjCXOYL1Qplcegme4EaXJSA0MzwKBN
-         xEUjSL/dg2orNI27Oes6WpphIJ18d6GWWbJOQwxkhYhXftBY1Vax6uGLGXt+5jZAelSX
-         xEP0+YjpcFVL/B2K1riMzEWFhDe4rmGs7I+cSW7NHrz+6966EwApoAYBBrA221VpBxKz
-         23QcCH9kgBMN/hOk/lGwYWYzVRKbbEDeFgrQVmbwkeEeP2Wc1jn1gRebRvrhbA0VU8Jg
-         Nm/LDKgPFMP0A4X6fhPQJlCzb0Luk9Mw38u5ta9kq4BOnusy6Q2er+XaT0+i47ED5qNV
-         pCvA==
-X-Gm-Message-State: APjAAAV/AVk/N6dxJVi8AqeqfYxbxOjG63iJPRs06bX0ltDnLZYQfSSN
-        vgIHUAPC7w3vQowYbcNo9SQNYQr0KcWiMpMIzVI=
-X-Google-Smtp-Source: APXvYqzw3gCG5cnmI6368TWfhjS/+LLSHd6b95oZCOsPTpsAjIN23auDStB1pQ1PTnMah1qk6gl8uYsnTPaZ7k01uH0=
-X-Received: by 2002:ac8:4a81:: with SMTP id l1mr2434940qtq.357.1575463377714;
- Wed, 04 Dec 2019 04:42:57 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:ac8:2f0c:0:0:0:0:0 with HTTP; Wed, 4 Dec 2019 04:42:57 -0800 (PST)
-Reply-To: moneygram.1820@outlook.fr
-From:   "Rev.Dr Emmanuel Okoye CEO Ecobank-benin" 
-        <westernunion.benin982@gmail.com>
-Date:   Wed, 4 Dec 2019 13:42:57 +0100
-Message-ID: <CAP=nHBJXiPmPL21x=_0BHWRk_3N3Yax+tTxcFi=t=AhN7g==1Q@mail.gmail.com>
-Subject: God has remembered your prayers I have already sent you Money Gram
- payment of $5000.00 today, MG 1029-8096
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        id S1729426AbfLEPZx (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 5 Dec 2019 10:25:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43228 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729145AbfLEPZx (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 5 Dec 2019 10:25:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F2CC2B2AE;
+        Thu,  5 Dec 2019 15:25:50 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     linux-bcache@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Hannes Reinecke <hare@suse.com>
+Subject: [RFC PATCH] bcache: enable zoned device support
+Date:   Thu,  5 Dec 2019 23:25:43 +0800
+Message-Id: <20191205152543.73885-1-colyli@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Attn, dear Beneficiary.
+This is a very basic zoned device support. With this patch, bcache
+device is able to,
+- Export zoned device attribution via sysfs
+- Response report zones request, e.g. by command 'blkzone report'
+But the bcache device is still NOT able to,
+- Response any zoned device management request or IOCTL command
 
-God has remembered your prayers
-I have already sent you Money Gram payment of $5000.00 today, MG 1029-8096
-This is because we have finally concluded to effect your transfer
-funds of $4.8,000.000usd
-through MONEY GRAM International Fund transfer Service
-Each payment will be sending to you by $5000.00 daily until the
-($4.8,000.000usd) is completely transferred
-we have this morning sent  MONEY GRAM payment of $5,000.00 in your name today
-So contact the MONEY GRAM Agent to pick up this first payment of $5000 now
+Here are the testings I have done,
+- read /sys/block/bcache0/queue/zoned, content is 'host-managed'
+- read /sys/block/bcache0/queue/nr_zones, content is number of zones
+  including all zone types.
+- read /sys/block/bcache0/queue/chunk_sectors, content is zone size
+  in sectors.
+- run 'blkzone report /dev/bcache0', all zones information displayed.
+- run 'blkzone reset /dev/bcache0', operation is rejected with error
+  information: "blkzone: /dev/bcache0: BLKRESETZONE ioctl failed:
+  Operation not supported"
+- Sequential writes by dd, I can see some zones' write pointer 'wptr'
+  values updated.
 
-Contact person Mrs. Alan Ude
-Dir. MONEY GRAM Service,Benin
-Phone number: +229 98856728
-E-mail: moneygram.1820@outlook.fr
+All of these are very basic testings, if you have better testing
+tools or cases, please offer me hint.
 
-Ask him to give you the complete mtcn, sender name, question and
-answer to enable you
-pick up the $5000.00 sent today,
-Also you are instructed to re-confirm your information's
-to Mrs.Alan Ude as listed below to avoid wrong transactions.
+Thanks in advance for your review and comments.
 
-(1Your Full name:............................................
-(2 Phone number.....................................................
-(3 Contact address:.....................................
-(4 Age:..................................................................
-(5 Country..............................................
-(6) Sex .................................................................
-(7) your occupation...........................................
+Signed-off-by: Coly Li <colyli@suse.de>
+CC: Damien Le Moal <damien.lemoal@wdc.com>
+CC: Hannes Reinecke <hare@suse.com>
+---
+ drivers/md/bcache/bcache.h  | 10 ++++++
+ drivers/md/bcache/request.c | 74 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/md/bcache/super.c   | 41 +++++++++++++++++++++++--
+ 3 files changed, 122 insertions(+), 3 deletions(-)
 
-(8)Passport/By Attach or Drivers License Number:
-Contact Mrs. Alan Ude for your MONEY GRAM payment of $4.8,000.000usd
-Note please: I have paid service fees for you but the only money you
-are required
-to send to Mrs. Alan Ude is $90.00 only Transfer fee before you can
-pick up your transfer today.
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 9198c1b480d9..77c2040c99ee 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -221,6 +221,7 @@ BITMASK(GC_MOVE, struct bucket, gc_mark, 15, 1);
+ struct search;
+ struct btree;
+ struct keybuf;
++struct bch_report_zones_args;
+ 
+ struct keybuf_key {
+ 	struct rb_node		node;
+@@ -277,6 +278,8 @@ struct bcache_device {
+ 			  struct bio *bio, unsigned int sectors);
+ 	int (*ioctl)(struct bcache_device *d, fmode_t mode,
+ 		     unsigned int cmd, unsigned long arg);
++	int (*report_zones)(struct bch_report_zones_args *args,
++			    unsigned int nr_zones);
+ };
+ 
+ struct io {
+@@ -743,6 +746,13 @@ struct bbio {
+ 	struct bio		bio;
+ };
+ 
++struct bch_report_zones_args {
++	struct bcache_device *bcache_device;
++	sector_t sector;
++	void *orig_data;
++	report_zones_cb orig_cb;
++};
++
+ #define BTREE_PRIO		USHRT_MAX
+ #define INITIAL_PRIO		32768U
+ 
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index 7555e4a93145..d82425300383 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -1162,6 +1162,19 @@ static blk_qc_t cached_dev_make_request(struct request_queue *q,
+ 		}
+ 	}
+ 
++	/*
++	 * zone management request may change the data layout and content
++	 * implicitly on backing device, which introduces unacceptible
++	 * inconsistency between the backing device and the cache device.
++	 * Therefore all zone management related request will be denied here.
++	 */
++	if (op_is_zone_mgmt(bio->bi_opf)) {
++		pr_err_ratelimited("zoned device management request denied.");
++		bio->bi_status = BLK_STS_NOTSUPP;
++		bio_endio(bio);
++		return BLK_QC_T_NONE;
++	}
++
+ 	generic_start_io_acct(q,
+ 			      bio_op(bio),
+ 			      bio_sectors(bio),
+@@ -1205,6 +1218,24 @@ static int cached_dev_ioctl(struct bcache_device *d, fmode_t mode,
+ 	if (dc->io_disable)
+ 		return -EIO;
+ 
++	/*
++	 * zone management ioctl commands may change the data layout
++	 * and content implicitly on backing device, which introduces
++	 * unacceptible inconsistency between the backing device and
++	 * the cache device. Therefore all zone management related
++	 * ioctl commands will be denied here.
++	 */
++	switch (cmd) {
++	case BLKRESETZONE:
++	case BLKOPENZONE:
++	case BLKCLOSEZONE:
++	case BLKFINISHZONE:
++		return -EOPNOTSUPP;
++	default:
++		/* Other commands fall through*/
++		break;
++	}
++
+ 	return __blkdev_driver_ioctl(dc->bdev, mode, cmd, arg);
+ }
+ 
+@@ -1233,6 +1264,48 @@ static int cached_dev_congested(void *data, int bits)
+ 	return ret;
+ }
+ 
++static int cached_dev_report_zones_cb(struct blk_zone *zone,
++				      unsigned int idx,
++				      void *data)
++{
++	struct bch_report_zones_args *args = data;
++	struct bcache_device *d = args->bcache_device;
++	struct cached_dev *dc = container_of(d, struct cached_dev, disk);
++	unsigned long data_offset = dc->sb.data_offset;
++
++	if (zone->start >= data_offset) {
++		zone->start -= data_offset;
++		zone->wp -= data_offset;
++	} else {
++		/*
++		 * Normally the first zone is conventional zone,
++		 * we don't need to worry about how to maintain
++		 * the write pointer.
++		 * But the zone->len is special, because the
++		 * sector 0 on bcache device is 8KB offset on
++		 * backing device indeed.
++		 */
++		zone->len -= data_offset;
++	}
++
++	return args->orig_cb(zone, idx, args->orig_data);
++}
++
++static int cached_dev_report_zones(struct bch_report_zones_args *args,
++				   unsigned int nr_zones)
++{
++	struct bcache_device *d = args->bcache_device;
++	struct cached_dev *dc = container_of(d, struct cached_dev, disk);
++	sector_t sector = args->sector + dc->sb.data_offset;
++
++	/* sector is real LBA of backing device */
++	return blkdev_report_zones(dc->bdev,
++				   sector,
++				   nr_zones,
++				   cached_dev_report_zones_cb,
++				   args);
++}
++
+ void bch_cached_dev_request_init(struct cached_dev *dc)
+ {
+ 	struct gendisk *g = dc->disk.disk;
+@@ -1241,6 +1314,7 @@ void bch_cached_dev_request_init(struct cached_dev *dc)
+ 	g->queue->backing_dev_info->congested_fn = cached_dev_congested;
+ 	dc->disk.cache_miss			= cached_dev_cache_miss;
+ 	dc->disk.ioctl				= cached_dev_ioctl;
++	dc->disk.report_zones			= cached_dev_report_zones;
+ }
+ 
+ /* Flash backed devices */
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 77e9869345e7..7222fcafaf50 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -672,10 +672,32 @@ static int ioctl_dev(struct block_device *b, fmode_t mode,
+ 	return d->ioctl(d, mode, cmd, arg);
+ }
+ 
++
++static int report_zones_dev(struct gendisk *disk,
++			    sector_t sector,
++			    unsigned int nr_zones,
++			    report_zones_cb cb,
++			    void *data)
++{
++	struct bcache_device *d = disk->private_data;
++	struct bch_report_zones_args args = {
++		.bcache_device = d,
++		.sector = sector,
++		.orig_data = data,
++		.orig_cb = cb,
++	};
++
++	if (d->report_zones)
++		return d->report_zones(&args, nr_zones);
++
++	return -EOPNOTSUPP;
++}
++
+ static const struct block_device_operations bcache_ops = {
+ 	.open		= open_dev,
+ 	.release	= release_dev,
+ 	.ioctl		= ioctl_dev,
++	.report_zones	= report_zones_dev,
+ 	.owner		= THIS_MODULE,
+ };
+ 
+@@ -808,7 +830,9 @@ static void bcache_device_free(struct bcache_device *d)
+ 	closure_debug_destroy(&d->cl);
+ }
+ 
+-static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
++static int bcache_device_init(struct cached_dev *dc,
++			      struct bcache_device *d,
++			      unsigned int block_size,
+ 			      sector_t sectors)
+ {
+ 	struct request_queue *q;
+@@ -882,6 +906,17 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+ 
+ 	blk_queue_write_cache(q, true, true);
+ 
++	/*
++	 * If this is for backing device registration, and it is an
++	 * zoned device (e.g. host-managed S.M.R. hard drive), set
++	 * up zoned device attribution properly for sysfs interface.
++	 */
++	if (dc && bdev_is_zoned(dc->bdev)) {
++		q->limits.zoned = bdev_zoned_model(dc->bdev);
++		q->nr_zones = blkdev_nr_zones(dc->bdev);
++		q->limits.chunk_sectors = bdev_zone_sectors(dc->bdev);
++	}
++
+ 	return 0;
+ 
+ err:
+@@ -1328,7 +1363,7 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
+ 		dc->partial_stripes_expensive =
+ 			q->limits.raid_partial_stripes_expensive;
+ 
+-	ret = bcache_device_init(&dc->disk, block_size,
++	ret = bcache_device_init(dc, &dc->disk, block_size,
+ 			 dc->bdev->bd_part->nr_sects - dc->sb.data_offset);
+ 	if (ret)
+ 		return ret;
+@@ -1445,7 +1480,7 @@ static int flash_dev_run(struct cache_set *c, struct uuid_entry *u)
+ 
+ 	kobject_init(&d->kobj, &bch_flash_dev_ktype);
+ 
+-	if (bcache_device_init(d, block_bytes(c), u->sectors))
++	if (bcache_device_init(NULL, d, block_bytes(c), u->sectors))
+ 		goto err;
+ 
+ 	bcache_device_attach(d, c, u - c->uuids);
+-- 
+2.16.4
 
-Send it to via Money Gram
-Receiver's Name-----Alan Ude
-Country----------Benin
-Address-----------Cotonou
-Quest--------Honest
-Ans-----------Trust
-
-I done all my best for you to receive your transfer now ok.
-We need your urgent reply
-Best Regards
-Rev.Dr Emmanuel Okoye
-CEO Ecobank-benin
-
-If we did not receive it urgent from you today,
-I will go ahead and release you funds to Mrs. Lyndia Ppaulson as your
-representative.
