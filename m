@@ -2,90 +2,170 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81AF6114FC2
-	for <lists+linux-bcache@lfdr.de>; Fri,  6 Dec 2019 12:27:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3404F11513A
+	for <lists+linux-bcache@lfdr.de>; Fri,  6 Dec 2019 14:43:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726195AbfLFL1z (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 6 Dec 2019 06:27:55 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:41518 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfLFL1y (ORCPT
+        id S1726201AbfLFNna (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 6 Dec 2019 08:43:30 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45291 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726195AbfLFNna (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 6 Dec 2019 06:27:54 -0500
-Received: by mail-qk1-f195.google.com with SMTP id g15so6169047qka.8;
-        Fri, 06 Dec 2019 03:27:54 -0800 (PST)
+        Fri, 6 Dec 2019 08:43:30 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 2so3357679pfg.12;
+        Fri, 06 Dec 2019 05:43:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4Z4CN9fWGotVCjAArImhBjXMRVm09OV2w4zsXX0KuWI=;
-        b=IXQBj90HIneMNtWZswYpWP98F7SqiEnWbRYoNYgYuPwA564LsMjy91pUKBE8JsOk3G
-         YP1ElfUQLeUbk8buj1sWYOfx4mYdiw/3cmYqpy+4smHkvmSncbNrdsRwjDBKhQRLXPoW
-         iJiD6IxTrUZ+iXvZsffhCJr3Z04m+5HliJmcRattN8ttoizgh/pJ5x8Kw3kM1zJ+wlyf
-         2Z7RGvL4MslV84zWF3tbtKWODwFbrVXF0m4AbgguIjwT0d8zpcHNaTbCCHLeuRWacnvU
-         7KHwAo2R5DlRkqPYCsGamfCiIuTenRMyIYh/ypzs7Vm8+uma9A3DQlLLeVw5b3xMhYSj
-         O6KA==
+        h=from:to:cc:subject:date:message-id;
+        bh=r1n5pvqLG2z6eBpv3libroUGed6tLBBxHVt4i5CbkMg=;
+        b=BvtZ6v/KAbAE1G23ShR8R/onH0EbwGsbCdIZyTcqVoVpP2x0wYJy1c1ScTeqpLY542
+         hYruSoVX0lAsq+Zf0jFUAms0t6XpJ1DDKaUE8gpXrgXQIsLm5SILHzrt0eg3UtRxUQ+M
+         LDEsaUA4DpyA/uJERYx6H5KsegMS6aRtweNy7Z8gFu9tHp3lMLNDYeLO3Az6kODH/k2K
+         /XX+DTAYze38hr6b4Pv2Q7S4vm9Ssm0cp9CdPBH7gNzGLI9XwxpFHoyVZTDRcTm3ep47
+         paLnXGxEzoC3PYqrTryTe2705gRc0dN0FrgpBpCXUfIMoIj1M2js9tiJIzWvXLuYzdIx
+         87PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4Z4CN9fWGotVCjAArImhBjXMRVm09OV2w4zsXX0KuWI=;
-        b=cDQ8i1P0AJRoNOMsvVSPYrLyYgi2bSmctTxLm7CwSUwSQZTnkyLy2q5OZvqIKZw/Pq
-         8B73p9YhOhiRzF2S13ooOopVThgqkcgtIf7WFXyLbCsm2UoafkhMLeyicHCaT6izBvz+
-         CW5sRCpME0axvcAfE4/Kukt9Ffd+E3Nr4Sj2xcflT4WsDic+6Nom9VyjXyeHs4LiyTMV
-         3wu2QSQKkjGYJVFrgAsEuvE3dZInHBpojSF8/bgHOaCG6F3aHkgyJ+gBui2AhV6Cp5+O
-         lZQzPcKsmwvgaf8rGqAymeWRg7poQ+9ahhwEpvyivIuk1TVbgx9RQ1V3ihNN7gJ9aBgO
-         FvVA==
-X-Gm-Message-State: APjAAAWt9y2T7Ph2VaD7ZtSn3Qw5S8BMYxCyHibipTQDKCIznVMSGeNB
-        qDt6Ed21p3kagKcKfIe67oPg+xDTDAQMev59XW0=
-X-Google-Smtp-Source: APXvYqxDRdt37tVsjBZYXB8vOj4FS3C7CElFjw3jGITmX7h0nzpalhYP1MKzASxn+VZ+9rfVZZ4xjOHAL3yCgjdhSms=
-X-Received: by 2002:a37:a613:: with SMTP id p19mr12855756qke.199.1575631673840;
- Fri, 06 Dec 2019 03:27:53 -0800 (PST)
-MIME-Version: 1.0
-References: <1575622543-22470-1-git-send-email-liangchen.linux@gmail.com> <20191206092713.GB7650@infradead.org>
-In-Reply-To: <20191206092713.GB7650@infradead.org>
-From:   Liang C <liangchen.linux@gmail.com>
-Date:   Fri, 6 Dec 2019 19:27:42 +0800
-Message-ID: <CAKhg4tKw9XbtMmUokYCus0H6ESkhrcxudT6wSgLwFa+kfwatzg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] [PATCH] bcache: cached_dev_free needs to put the sb page
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Coly Li <colyli@suse.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=r1n5pvqLG2z6eBpv3libroUGed6tLBBxHVt4i5CbkMg=;
+        b=gk7edtRVuYX0GemOAX4UYY3oAkaQ7ogkpNSx/eLDG4F4On0GlcJ25iRTH6DLV7n0zl
+         JYzB8v2TN/YQQZprBSV5ixK8kyczxUa3yX4oNTcHTFPh4yXFCGSH+6HtziD9x74W21yq
+         pyp3fLIaiUdlak7XBvh94ndkGDrrdX4urjAqxBjCXCVUMhoFqSKroe2PA0/702sD7iji
+         g3bHYAwadSoJe+WsnrBMue9fnjbt+/FblOHvw/ckx7iycX+Jo6p064GWGc/O3RzJ+yjG
+         Ei5CPFnu0BHDW3yN+E1fsTjfpVvRdyeaAzUMoDaJvrxnrVXYUH6jOyIzdIp76Mh4Uoa0
+         qhaw==
+X-Gm-Message-State: APjAAAWAo6rZ4G/T4x1l9cWwW/RLxOvmdURJYe3F1eJlrJTSS8MNDOjB
+        rlxD+M1meqvFTs18JQpP8AvrpiuJRxQ=
+X-Google-Smtp-Source: APXvYqw4SVt4XXbvzo+F0UIJa3Z8CxgI+x9x9WcadfupHaqHRA+LVzyRfltVNvxP0K/Ff6LIUiDUqw==
+X-Received: by 2002:a63:d544:: with SMTP id v4mr3462664pgi.288.1575639809712;
+        Fri, 06 Dec 2019 05:43:29 -0800 (PST)
+Received: from workstation.localdomain ([170.178.178.163])
+        by smtp.gmail.com with ESMTPSA id x7sm16297631pfa.107.2019.12.06.05.43.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Dec 2019 05:43:29 -0800 (PST)
+From:   Liang Chen <liangchen.linux@gmail.com>
+To:     colyli@suse.de
+Cc:     kent.overstreet@gmail.com, linux-kernel@vger.kernel.org,
+        linux-bcache@vger.kernel.org,
+        Liang Chen <liangchen.linux@gmail.com>
+Subject: [PATCH v2 2/2] [PATCH] bcache: __write_super to handle page sizes other than 4k
+Date:   Fri,  6 Dec 2019 21:43:14 +0800
+Message-Id: <1575639794-30056-1-git-send-email-liangchen.linux@gmail.com>
+X-Mailer: git-send-email 2.7.5
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Sure. I will make a patch to clean up all the occurrences of this
-usages later. Thanks.
+__write_super assumes super block data starts at offset 0 of the page
+read in with __bread from read_super, which is not true when page size
+is not 4k. We encountered the issue on system with 64K page size - commonly
+ seen on aarch64 architecture.
 
-On Fri, Dec 6, 2019 at 5:27 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Fri, Dec 06, 2019 at 04:55:42PM +0800, Liang Chen wrote:
-> > Same as cache device, the buffer page needs to be put while
-> > freeing cached_dev.  Otherwise a page would be leaked every
-> > time a cached_dev is stopped.
-> >
-> > Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
-> > ---
-> >  drivers/md/bcache/super.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> > index 77e9869345e7..a573ce1d85aa 100644
-> > --- a/drivers/md/bcache/super.c
-> > +++ b/drivers/md/bcache/super.c
-> > @@ -1275,6 +1275,9 @@ static void cached_dev_free(struct closure *cl)
-> >
-> >       mutex_unlock(&bch_register_lock);
-> >
-> > +     if (dc->sb_bio.bi_inline_vecs[0].bv_page)
-> > +             put_page(bio_first_page_all(&dc->sb_bio));
->
-> Using bio_first_page_all in the put_page call, but open coding it
-> for the check looks rather strange.
->
-> The cleanest thing here would be to just add a page pointer to the
-> cached device structure and use that instead of all the indirections.
+Instead of making any assumption on the offset of the data within the page,
+this patch calls __bread again to locate the data. That should not introduce
+an extra io since the page has been held when it's read in from read_super,
+and __write_super is not on performance critical code path.
+
+Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
+---
+ drivers/md/bcache/super.c | 56 ++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 50 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index a573ce1d85aa..a40eb6335cb8 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -207,15 +207,43 @@ static void write_bdev_super_endio(struct bio *bio)
+ 	closure_put(&dc->sb_write);
+ }
+ 
+-static void __write_super(struct cache_sb *sb, struct bio *bio)
++/*
++ * With 4k page size, the 4k super block will be read in at offset 0 of
++ * the cache page. But it's not the case with larger page sizes. For
++ * example, with 64k page size reading in a 4k size block will cause the
++ * cache page being divided into 16 equal sized buffers, and block 1
++ * to be put at offset 4K in the page.
++ * Thus locating the super block again is nessessary in order to be
++ * compatilbe with different page sizes. And the page is held since
++ * read_super, this __bread should not cause an extra io.
++ */
++static inline struct cache_sb *locate_bch_sb(struct block_device *bdev)
++{
++ 	struct cache_sb *s;
++	struct buffer_head *bh = __bread(bdev, 1, SB_SIZE);
++	if (!bh)
++		return NULL;
++	s = (struct cache_sb *)bh->b_data;
++
++	/* The page will still be held without this bh.*/
++	put_bh(bh);
++	return s;
++}
++
++static int __write_super(struct cache_sb *sb, struct bio *bio,
++			 struct block_device *bdev)
+ {
+-	struct cache_sb *out = page_address(bio_first_page_all(bio));
++	struct cache_sb *out;
+ 	unsigned int i;
+ 
++	out = locate_bch_sb(bdev);
++	if (!out)
++		goto out_locate;
++
+ 	bio->bi_iter.bi_sector	= SB_SECTOR;
+ 	bio->bi_iter.bi_size	= SB_SIZE;
+ 	bio_set_op_attrs(bio, REQ_OP_WRITE, REQ_SYNC|REQ_META);
+-	bch_bio_map(bio, NULL);
++	bch_bio_map(bio, out);
+ 
+ 	out->offset		= cpu_to_le64(sb->offset);
+ 	out->version		= cpu_to_le64(sb->version);
+@@ -240,6 +268,11 @@ static void __write_super(struct cache_sb *sb, struct bio *bio)
+ 		 sb->version, sb->flags, sb->seq);
+ 
+ 	submit_bio(bio);
++	return 0;
++
++out_locate:
++	pr_err("Couldn't locate super block, __write_super failed");
++	return -1;
+ }
+ 
+ static void bch_write_bdev_super_unlock(struct closure *cl)
+@@ -263,8 +296,13 @@ void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent)
+ 	bio->bi_private = dc;
+ 
+ 	closure_get(cl);
+-	/* I/O request sent to backing device */
+-	__write_super(&dc->sb, bio);
++	/* I/O request sent to backing device
++	 * Needs to put the clouser explicitly if __write_super failed,
++	 * because the bio is not submitted and write_bdev_super_endio
++	 * will not have a chance to put the closure.
++	 */
++	if(__write_super(&dc->sb, bio, dc->bdev))
++		closure_put(cl);
+ 
+ 	closure_return_with_destructor(cl, bch_write_bdev_super_unlock);
+ }
+@@ -312,7 +350,13 @@ void bcache_write_super(struct cache_set *c)
+ 		bio->bi_private = ca;
+ 
+ 		closure_get(cl);
+-		__write_super(&ca->sb, bio);
++		/* Needs to put the clouser explicitly if __write_super failed,
++		 * because the bio is not submitted and write_super_endio
++		 * will not have a chance to put the closure.
++		 */
++		if(__write_super(&ca->sb, bio, ca->bdev))
++			closure_put(cl);
++
+ 	}
+ 
+ 	closure_return_with_destructor(cl, bcache_write_super_unlock);
+-- 
+2.17.0
+
