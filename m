@@ -2,181 +2,84 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E666A114FB4
-	for <lists+linux-bcache@lfdr.de>; Fri,  6 Dec 2019 12:23:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 502DD114FB7
+	for <lists+linux-bcache@lfdr.de>; Fri,  6 Dec 2019 12:23:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbfLFLXF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 6 Dec 2019 06:23:05 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:46927 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfLFLXF (ORCPT
+        id S1726242AbfLFLXr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 6 Dec 2019 06:23:47 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33545 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbfLFLXr (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 6 Dec 2019 06:23:05 -0500
-Received: by mail-qv1-f66.google.com with SMTP id t9so2490054qvh.13;
-        Fri, 06 Dec 2019 03:23:04 -0800 (PST)
+        Fri, 6 Dec 2019 06:23:47 -0500
+Received: by mail-qk1-f194.google.com with SMTP id c124so6220900qkg.0;
+        Fri, 06 Dec 2019 03:23:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=pOhKmAov83NEpUrSVxB3iFgGYBsUzEH1/Lh5GTALM+8=;
-        b=KkHILgWEHIIY8JOjsTg5lfQAXMDItQdflJm/kpm8HYPJPinza5UphWlqljLveS0E7U
-         dDDebIjlm/SE5RU97IvLEXPcwiFv/PJOfE8HVLfA8EIY5N2Z1Gz6ECTaz/usfX3kt6yr
-         VT1KyNeZUtMoXaZXmtDz9GCuePoi///ZBvBSF1vTlY8mIkhDASH0fm8hE3AvFE8JkVPn
-         rAWbeiPfEsEFWI02QHKVr1cvnCHxrtPu9hOscowFnUhFi9k+odQYGEyWk/qDxNOLDHGP
-         Ra7t9JCjVrBewMs1L/DbZdbWBmD1nR6H/quVPMChZQeRS4H5Z76G72ytskWusliPrrN4
-         vqQg==
+         :cc;
+        bh=lCXoIWakRU3V5oXHzk/54lcFuPvdsHqcKCN0u+YlFk8=;
+        b=DUzVap8v4VirQVTep3A6dGYG+uytH67cmP4XN8Lne0knjj/yCEiW72bk2E3dXh5dic
+         Bs+Yq6xfOiNDdmmxipv39ecbcWapH/HGi9qxBZ84jeo3hBH1bFWvBnEICJeeOWN4MzoU
+         uVeUF8NZhXv2sBm+78UIrC53wY+mzPByWqmLYYp0hMfMz4kc09VVIH5Lu2K8C1zx/PwN
+         2qxBeqMsoeSLmM+HooR9qmaGTEcgmHJuSqB4z1bi4FY6FaMugCDvyq9/7pUSHXmmdpQv
+         U/Lisw/iHSVU+KX1csgzKA2I9r/xOaKEjC9H8ET8kGkmFi+pGy4Q3xLBHWiScb7M9AnZ
+         OULw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pOhKmAov83NEpUrSVxB3iFgGYBsUzEH1/Lh5GTALM+8=;
-        b=VxeXbCFPvaLiHPykmIjNmN2zke6YuRXwwrgquxuZ8Qu6KdgaQdJmXBJpRERWKmzzWb
-         KElpTvNaicpW58Xw+1bSegyxi8zT0h88DR1epzSDzLvcDido6iW/fM60qly1dOQclxIY
-         FU2Vu/8BAd2GoHVTQ2SEDHMmT4qNVaRE34t6rB0CITs01PAt3PQGBdVEdSxmqG3/rTgW
-         j3NDjof3gl22pikq7dtKltdjkTMSxIosrXiDFq60bs0Dj+NkqphLlRLWNp3EkIYR2IkD
-         j4hXh8e4owx0+kAyMdXvvCX339GgH7yNCpMIHHrA9IWMhPPhFDhUkHmCjkYPIt6/Ld4w
-         whtQ==
-X-Gm-Message-State: APjAAAW3RVvbUI6eDPa/KXzpJ7Ikh/LjYUmNvwFaPudLa0ZPBhuHlkhX
-        j58L/oVmqrAk9lI4Ash1g3cUY5G1PzotaYpGBW0=
-X-Google-Smtp-Source: APXvYqz+Cktvq5GfTyOtslWy2Az/k+VBSl45XPo0+ngZlbdrIsCsquMUB4m+F0mwMPYUuf4hz5rZ6SYtrQ7y6BFf0zE=
-X-Received: by 2002:a0c:f8c7:: with SMTP id h7mr11748652qvo.209.1575631384003;
- Fri, 06 Dec 2019 03:23:04 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=lCXoIWakRU3V5oXHzk/54lcFuPvdsHqcKCN0u+YlFk8=;
+        b=ahnGE1Rz7wDBvbZyi+QGUQlRQX2DeN1AkkP/vnURUwJnagD71leaJDv8G6gzLG41s3
+         1UVkA8ynDoiFse7MZlPCLKI/D9+mPHhVCTRkCd8F8VIjhmPczVggB8skOB+DYPUk1Fh4
+         Z8eEMR8KHDRlBjjxndh6WRP0r/HYGX5leJ//JIcKxF/WjZFmM2wOvfWYp/FWy20gIptZ
+         VVAkUttG7iXyclO1J/z00LNM4g/pnF0zWdXPJT1mSyq8spi0Qv4YWFaSmi+N9Gg2pGMN
+         BLlnmXRILtMwql6PzuXgayx8alMABagFwHJI2KJcnWoutXMCQ6xkcnvk4afup0mU6tlw
+         VbUQ==
+X-Gm-Message-State: APjAAAX+F6y3FJc8Dnjif2pIJnEf7LCS9sdyw+4twXi14D5jtd+TlQcB
+        rvSy7194JTy6lYER4q4gwCXqspOWkzcCWDrVNm0=
+X-Google-Smtp-Source: APXvYqwRiDdbmUlgkoJoWPMMG4F45AgSVaufe6gb3a6Zoiuoo1pW2O/Ry/R+iEpUq1NigQhTl50C69QiBbnq8WUZOnc=
+X-Received: by 2002:ae9:ee11:: with SMTP id i17mr10179649qkg.333.1575631426316;
+ Fri, 06 Dec 2019 03:23:46 -0800 (PST)
 MIME-Version: 1.0
 References: <1575622543-22470-1-git-send-email-liangchen.linux@gmail.com>
- <1575622543-22470-2-git-send-email-liangchen.linux@gmail.com> <e44b8bd9-470d-08af-be7f-a0808504772e@suse.de>
-In-Reply-To: <e44b8bd9-470d-08af-be7f-a0808504772e@suse.de>
+ <1575622543-22470-2-git-send-email-liangchen.linux@gmail.com> <20191206092336.GA7650@infradead.org>
+In-Reply-To: <20191206092336.GA7650@infradead.org>
 From:   Liang C <liangchen.linux@gmail.com>
-Date:   Fri, 6 Dec 2019 19:22:52 +0800
-Message-ID: <CAKhg4tLfZ8Gud7zFxkkVzn6uDwLYNZerxjGsdB=N9qDj4mwKFg@mail.gmail.com>
+Date:   Fri, 6 Dec 2019 19:23:35 +0800
+Message-ID: <CAKhg4t+LTwny9_xs4YWuSzz9oeqWK81=JRr8V92JTc0HSQ7ANQ@mail.gmail.com>
 Subject: Re: [PATCH 2/2] [PATCH] bcache: __write_super to handle page sizes
  other than 4k
-To:     Coly Li <colyli@suse.de>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
         linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Sure. will do in a follow up patch.
+Thanks for the advise.
+Yeah, calculating the offset based on the buffer size is possible. I
+just wanted to avoid making a dependency on some buffer head
+internal logic here, like the way it dividesthe page into equal sized
+buffers, and at the same time keep the patch less intrusive.
 
-On Fri, Dec 6, 2019 at 5:44 PM Coly Li <colyli@suse.de> wrote:
+On Fri, Dec 6, 2019 at 5:23 PM Christoph Hellwig <hch@infradead.org> wrote:
 >
-> On 2019/12/6 4:55 =E4=B8=8B=E5=8D=88, Liang Chen wrote:
+> On Fri, Dec 06, 2019 at 04:55:43PM +0800, Liang Chen wrote:
 > > __write_super assumes super block data starts at offset 0 of the page
 > > read in with __bread from read_super, which is not true when page size
-> > is not 4k. We encountered the issue on system with 64K page size - comm=
-only
+> > is not 4k. We encountered the issue on system with 64K page size - commonly
 > >  seen on aarch64 architecture.
 > >
-> > Instead of making any assumption on the offset of the data within the p=
-age,
-> > this patch calls __bread again to locate the data. That should not intr=
-oduce
-> > an extra io since the page has been held when it's read in from read_su=
-per,
+> > Instead of making any assumption on the offset of the data within the page,
+> > this patch calls __bread again to locate the data. That should not introduce
+> > an extra io since the page has been held when it's read in from read_super,
 > > and __write_super is not on performance critical code path.
-> >
-> > Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
 >
-> In general the patch is good for me. Just two minor requests I add them
-> in line the email.
->
-> Thanks.
->
-> > ---
-> >  drivers/md/bcache/super.c | 32 +++++++++++++++++++++++++++-----
-> >  1 file changed, 27 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> > index a573ce1d85aa..a39450c9bc34 100644
-> > --- a/drivers/md/bcache/super.c
-> > +++ b/drivers/md/bcache/super.c
-> > @@ -207,15 +207,27 @@ static void write_bdev_super_endio(struct bio *bi=
-o)
-> >       closure_put(&dc->sb_write);
-> >  }
-> >
-> > -static void __write_super(struct cache_sb *sb, struct bio *bio)
-> > +static int __write_super(struct cache_sb *sb, struct bio *bio,
-> > +                      struct block_device *bdev)
-> >  {
-> > -     struct cache_sb *out =3D page_address(bio_first_page_all(bio));
-> > +     struct cache_sb *out;
-> >       unsigned int i;
-> > +     struct buffer_head *bh;
-> > +
-> > +     /*
-> > +      * The page is held since read_super, this __bread * should not
-> > +      * cause an extra io read.
-> > +      */
-> > +     bh =3D __bread(bdev, 1, SB_SIZE);
-> > +     if (!bh)
-> > +             goto out_bh;
-> > +
-> > +     out =3D (struct cache_sb *) bh->b_data;
->
-> This is quite tricky here. Could you please to move this code piece into
-> an inline function and add code comments to explain why a read is
-> necessary for a write.
->
->
-> >
-> >       bio->bi_iter.bi_sector  =3D SB_SECTOR;
-> >       bio->bi_iter.bi_size    =3D SB_SIZE;
-> >       bio_set_op_attrs(bio, REQ_OP_WRITE, REQ_SYNC|REQ_META);
-> > -     bch_bio_map(bio, NULL);
-> > +     bch_bio_map(bio, bh->b_data);
-> >
-> >       out->offset             =3D cpu_to_le64(sb->offset);
-> >       out->version            =3D cpu_to_le64(sb->version);
-> > @@ -239,7 +251,14 @@ static void __write_super(struct cache_sb *sb, str=
-uct bio *bio)
-> >       pr_debug("ver %llu, flags %llu, seq %llu",
-> >                sb->version, sb->flags, sb->seq);
-> >
-> > +     /* The page will still be held without this bh.*/
-> > +     put_bh(bh);
-> >       submit_bio(bio);
-> > +     return 0;
-> > +
-> > +out_bh:
-> > +     pr_err("Couldn't read super block, __write_super failed");
-> > +     return -1;
-> >  }
-> >
-> >  static void bch_write_bdev_super_unlock(struct closure *cl)
-> > @@ -264,7 +283,8 @@ void bch_write_bdev_super(struct cached_dev *dc, st=
-ruct closure *parent)
-> >
-> >       closure_get(cl);
-> >       /* I/O request sent to backing device */
-> > -     __write_super(&dc->sb, bio);
-> > +     if(__write_super(&dc->sb, bio, dc->bdev))
-> > +             closure_put(cl);
-> >
-> >       closure_return_with_destructor(cl, bch_write_bdev_super_unlock);
-> >  }
-> > @@ -312,7 +332,9 @@ void bcache_write_super(struct cache_set *c)
-> >               bio->bi_private =3D ca;
-> >
-> >               closure_get(cl);
-> > -             __write_super(&ca->sb, bio);
-> > +             if(__write_super(&ca->sb, bio, ca->bdev))
->
-> And here, please add code comments for why closure_put() is necessary her=
-e.
->
-> > +                     closure_put(cl);
-> > +
-> >       }
-> >
-> >       closure_return_with_destructor(cl, bcache_write_super_unlock);
-> >
->
->
-> --
->
-> Coly Li
+> No need to use buffer heads here, you can just use offset_in_page
+> to calculate the offset.  Similarly I think the read side shouldn't
+> use buffer heads either (it is the only use of buffer heads in bcache!),
+> a siple read_cache_page should be all that is needed.
