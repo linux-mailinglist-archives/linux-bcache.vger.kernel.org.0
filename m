@@ -2,54 +2,52 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 502DD114FB7
-	for <lists+linux-bcache@lfdr.de>; Fri,  6 Dec 2019 12:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81AF6114FC2
+	for <lists+linux-bcache@lfdr.de>; Fri,  6 Dec 2019 12:27:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbfLFLXr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 6 Dec 2019 06:23:47 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:33545 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfLFLXr (ORCPT
+        id S1726195AbfLFL1z (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 6 Dec 2019 06:27:55 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41518 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfLFL1y (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 6 Dec 2019 06:23:47 -0500
-Received: by mail-qk1-f194.google.com with SMTP id c124so6220900qkg.0;
-        Fri, 06 Dec 2019 03:23:46 -0800 (PST)
+        Fri, 6 Dec 2019 06:27:54 -0500
+Received: by mail-qk1-f195.google.com with SMTP id g15so6169047qka.8;
+        Fri, 06 Dec 2019 03:27:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lCXoIWakRU3V5oXHzk/54lcFuPvdsHqcKCN0u+YlFk8=;
-        b=DUzVap8v4VirQVTep3A6dGYG+uytH67cmP4XN8Lne0knjj/yCEiW72bk2E3dXh5dic
-         Bs+Yq6xfOiNDdmmxipv39ecbcWapH/HGi9qxBZ84jeo3hBH1bFWvBnEICJeeOWN4MzoU
-         uVeUF8NZhXv2sBm+78UIrC53wY+mzPByWqmLYYp0hMfMz4kc09VVIH5Lu2K8C1zx/PwN
-         2qxBeqMsoeSLmM+HooR9qmaGTEcgmHJuSqB4z1bi4FY6FaMugCDvyq9/7pUSHXmmdpQv
-         U/Lisw/iHSVU+KX1csgzKA2I9r/xOaKEjC9H8ET8kGkmFi+pGy4Q3xLBHWiScb7M9AnZ
-         OULw==
+        bh=4Z4CN9fWGotVCjAArImhBjXMRVm09OV2w4zsXX0KuWI=;
+        b=IXQBj90HIneMNtWZswYpWP98F7SqiEnWbRYoNYgYuPwA564LsMjy91pUKBE8JsOk3G
+         YP1ElfUQLeUbk8buj1sWYOfx4mYdiw/3cmYqpy+4smHkvmSncbNrdsRwjDBKhQRLXPoW
+         iJiD6IxTrUZ+iXvZsffhCJr3Z04m+5HliJmcRattN8ttoizgh/pJ5x8Kw3kM1zJ+wlyf
+         2Z7RGvL4MslV84zWF3tbtKWODwFbrVXF0m4AbgguIjwT0d8zpcHNaTbCCHLeuRWacnvU
+         7KHwAo2R5DlRkqPYCsGamfCiIuTenRMyIYh/ypzs7Vm8+uma9A3DQlLLeVw5b3xMhYSj
+         O6KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lCXoIWakRU3V5oXHzk/54lcFuPvdsHqcKCN0u+YlFk8=;
-        b=ahnGE1Rz7wDBvbZyi+QGUQlRQX2DeN1AkkP/vnURUwJnagD71leaJDv8G6gzLG41s3
-         1UVkA8ynDoiFse7MZlPCLKI/D9+mPHhVCTRkCd8F8VIjhmPczVggB8skOB+DYPUk1Fh4
-         Z8eEMR8KHDRlBjjxndh6WRP0r/HYGX5leJ//JIcKxF/WjZFmM2wOvfWYp/FWy20gIptZ
-         VVAkUttG7iXyclO1J/z00LNM4g/pnF0zWdXPJT1mSyq8spi0Qv4YWFaSmi+N9Gg2pGMN
-         BLlnmXRILtMwql6PzuXgayx8alMABagFwHJI2KJcnWoutXMCQ6xkcnvk4afup0mU6tlw
-         VbUQ==
-X-Gm-Message-State: APjAAAX+F6y3FJc8Dnjif2pIJnEf7LCS9sdyw+4twXi14D5jtd+TlQcB
-        rvSy7194JTy6lYER4q4gwCXqspOWkzcCWDrVNm0=
-X-Google-Smtp-Source: APXvYqwRiDdbmUlgkoJoWPMMG4F45AgSVaufe6gb3a6Zoiuoo1pW2O/Ry/R+iEpUq1NigQhTl50C69QiBbnq8WUZOnc=
-X-Received: by 2002:ae9:ee11:: with SMTP id i17mr10179649qkg.333.1575631426316;
- Fri, 06 Dec 2019 03:23:46 -0800 (PST)
+        bh=4Z4CN9fWGotVCjAArImhBjXMRVm09OV2w4zsXX0KuWI=;
+        b=cDQ8i1P0AJRoNOMsvVSPYrLyYgi2bSmctTxLm7CwSUwSQZTnkyLy2q5OZvqIKZw/Pq
+         8B73p9YhOhiRzF2S13ooOopVThgqkcgtIf7WFXyLbCsm2UoafkhMLeyicHCaT6izBvz+
+         CW5sRCpME0axvcAfE4/Kukt9Ffd+E3Nr4Sj2xcflT4WsDic+6Nom9VyjXyeHs4LiyTMV
+         3wu2QSQKkjGYJVFrgAsEuvE3dZInHBpojSF8/bgHOaCG6F3aHkgyJ+gBui2AhV6Cp5+O
+         lZQzPcKsmwvgaf8rGqAymeWRg7poQ+9ahhwEpvyivIuk1TVbgx9RQ1V3ihNN7gJ9aBgO
+         FvVA==
+X-Gm-Message-State: APjAAAWt9y2T7Ph2VaD7ZtSn3Qw5S8BMYxCyHibipTQDKCIznVMSGeNB
+        qDt6Ed21p3kagKcKfIe67oPg+xDTDAQMev59XW0=
+X-Google-Smtp-Source: APXvYqxDRdt37tVsjBZYXB8vOj4FS3C7CElFjw3jGITmX7h0nzpalhYP1MKzASxn+VZ+9rfVZZ4xjOHAL3yCgjdhSms=
+X-Received: by 2002:a37:a613:: with SMTP id p19mr12855756qke.199.1575631673840;
+ Fri, 06 Dec 2019 03:27:53 -0800 (PST)
 MIME-Version: 1.0
-References: <1575622543-22470-1-git-send-email-liangchen.linux@gmail.com>
- <1575622543-22470-2-git-send-email-liangchen.linux@gmail.com> <20191206092336.GA7650@infradead.org>
-In-Reply-To: <20191206092336.GA7650@infradead.org>
+References: <1575622543-22470-1-git-send-email-liangchen.linux@gmail.com> <20191206092713.GB7650@infradead.org>
+In-Reply-To: <20191206092713.GB7650@infradead.org>
 From:   Liang C <liangchen.linux@gmail.com>
-Date:   Fri, 6 Dec 2019 19:23:35 +0800
-Message-ID: <CAKhg4t+LTwny9_xs4YWuSzz9oeqWK81=JRr8V92JTc0HSQ7ANQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] [PATCH] bcache: __write_super to handle page sizes
- other than 4k
+Date:   Fri, 6 Dec 2019 19:27:42 +0800
+Message-ID: <CAKhg4tKw9XbtMmUokYCus0H6ESkhrcxudT6wSgLwFa+kfwatzg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] [PATCH] bcache: cached_dev_free needs to put the sb page
 To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Coly Li <colyli@suse.de>,
         Kent Overstreet <kent.overstreet@gmail.com>,
@@ -60,26 +58,34 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Thanks for the advise.
-Yeah, calculating the offset based on the buffer size is possible. I
-just wanted to avoid making a dependency on some buffer head
-internal logic here, like the way it dividesthe page into equal sized
-buffers, and at the same time keep the patch less intrusive.
+Sure. I will make a patch to clean up all the occurrences of this
+usages later. Thanks.
 
-On Fri, Dec 6, 2019 at 5:23 PM Christoph Hellwig <hch@infradead.org> wrote:
+On Fri, Dec 6, 2019 at 5:27 PM Christoph Hellwig <hch@infradead.org> wrote:
 >
-> On Fri, Dec 06, 2019 at 04:55:43PM +0800, Liang Chen wrote:
-> > __write_super assumes super block data starts at offset 0 of the page
-> > read in with __bread from read_super, which is not true when page size
-> > is not 4k. We encountered the issue on system with 64K page size - commonly
-> >  seen on aarch64 architecture.
+> On Fri, Dec 06, 2019 at 04:55:42PM +0800, Liang Chen wrote:
+> > Same as cache device, the buffer page needs to be put while
+> > freeing cached_dev.  Otherwise a page would be leaked every
+> > time a cached_dev is stopped.
 > >
-> > Instead of making any assumption on the offset of the data within the page,
-> > this patch calls __bread again to locate the data. That should not introduce
-> > an extra io since the page has been held when it's read in from read_super,
-> > and __write_super is not on performance critical code path.
+> > Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
+> > ---
+> >  drivers/md/bcache/super.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> > index 77e9869345e7..a573ce1d85aa 100644
+> > --- a/drivers/md/bcache/super.c
+> > +++ b/drivers/md/bcache/super.c
+> > @@ -1275,6 +1275,9 @@ static void cached_dev_free(struct closure *cl)
+> >
+> >       mutex_unlock(&bch_register_lock);
+> >
+> > +     if (dc->sb_bio.bi_inline_vecs[0].bv_page)
+> > +             put_page(bio_first_page_all(&dc->sb_bio));
 >
-> No need to use buffer heads here, you can just use offset_in_page
-> to calculate the offset.  Similarly I think the read side shouldn't
-> use buffer heads either (it is the only use of buffer heads in bcache!),
-> a siple read_cache_page should be all that is needed.
+> Using bio_first_page_all in the put_page call, but open coding it
+> for the check looks rather strange.
+>
+> The cleanest thing here would be to just add a page pointer to the
+> cached device structure and use that instead of all the indirections.
