@@ -2,150 +2,170 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACCE5114DCB
-	for <lists+linux-bcache@lfdr.de>; Fri,  6 Dec 2019 09:56:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DDDC114E1C
+	for <lists+linux-bcache@lfdr.de>; Fri,  6 Dec 2019 10:23:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726116AbfLFI4K (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 6 Dec 2019 03:56:10 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:34377 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbfLFI4K (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 6 Dec 2019 03:56:10 -0500
-Received: by mail-pj1-f68.google.com with SMTP id j11so1359372pjs.1;
-        Fri, 06 Dec 2019 00:56:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6Ss3QtZcDjjNjMVmzVt9+Rd5w/z8fKvAe110pSWx1O0=;
-        b=Ddjhbs4cE6GzBEGCP53g36/q3g1cVmZB38V4NB7LzOdUSLpJdcMJnNtlG8Q3RFJFrV
-         /fveGj452sacVGAnUU4Kx+2VWvjtvVe8QEobBk+I0cng0I3Ls2DsOuId1+ezpE5aXTH+
-         xTZaEf3k2N02dwD5tFRQ1CgdskfFaoBOW4KlnkchukdNTpNUE0Gm1AT+Lfeu8lB6VF10
-         IUWHpDJGfRjSqTJK2KjhOX8fCliqT4s2i8RiQwzc0oftWHhhpsMFLefBqwwapDmJCXDW
-         a2SfLTf7ov9pOncBHAZ2Byafrfk6D09x3M0fu7xtuvFocp4nrME6iIBx3R/H0kbwps8f
-         3VFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6Ss3QtZcDjjNjMVmzVt9+Rd5w/z8fKvAe110pSWx1O0=;
-        b=qHVzSnfCHReYx+LCLsVdBZnVicO17v2Rfk5CYHQlhzXVHEhV6utFtyx7VXZ0tubYdc
-         GF7He3tS7nhk40ekbehjsEBpxhTDdqqxgm9kcTwlCtYIt9yIfWKYM9llyufAx3fE9ZWw
-         dRSmiIMf3iCzTnZ8xT6aDnPF6q75OcfCfw4kPFDdy1pybZXNvtH/blgb3B73iyHXb9ia
-         tTjvhnF6Z27l0efCQM5SHdRvMaSQ0NpSWXgIVgmytpX15FYlusRw5psxUvyki1w3BblB
-         pHnCJEofp/CVHHm5h+lQeVI4J1eU3vXdZpHHEKH+mswAwQZQB09guFPxa/ejCsYjkzJi
-         7seQ==
-X-Gm-Message-State: APjAAAVnq6yiWfO/U5snx1hvj/EstQTAS7T7j4JmfMEYJfF24XSQ4AxK
-        RfBRgAuOKR84TDROqVYYguo=
-X-Google-Smtp-Source: APXvYqxGD7sGHHQjspCqZa3sAiv/YiES/p3l0ywCzXx4EYKunT4mG3EYpQLdUilemREOwe3hdd8xOg==
-X-Received: by 2002:a17:90b:d85:: with SMTP id bg5mr13771030pjb.99.1575622570011;
-        Fri, 06 Dec 2019 00:56:10 -0800 (PST)
-Received: from workstation.localdomain ([170.178.178.163])
-        by smtp.gmail.com with ESMTPSA id u18sm14520599pgi.44.2019.12.06.00.56.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Dec 2019 00:56:09 -0800 (PST)
-From:   Liang Chen <liangchen.linux@gmail.com>
-To:     colyli@suse.de
-Cc:     kent.overstreet@gmail.com, linux-kernel@vger.kernel.org,
-        linux-bcache@vger.kernel.org,
-        Liang Chen <liangchen.linux@gmail.com>
-Subject: [PATCH 2/2] [PATCH] bcache: __write_super to handle page sizes other than 4k
-Date:   Fri,  6 Dec 2019 16:55:43 +0800
-Message-Id: <1575622543-22470-2-git-send-email-liangchen.linux@gmail.com>
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1575622543-22470-1-git-send-email-liangchen.linux@gmail.com>
-References: <1575622543-22470-1-git-send-email-liangchen.linux@gmail.com>
+        id S1726109AbfLFJXB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 6 Dec 2019 04:23:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38168 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726088AbfLFJXB (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 6 Dec 2019 04:23:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 06DB3B299;
+        Fri,  6 Dec 2019 09:22:57 +0000 (UTC)
+Subject: Re: [RFC PATCH] bcache: enable zoned device support
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>, Coly Li <colyli@suse.de>,
+        Eric Wheeler <bcache@lists.ewheeler.net>
+Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>
+References: <20191205152543.73885-1-colyli@suse.de>
+ <alpine.LRH.2.11.1912060012380.11561@mx.ewheeler.net>
+ <BYAPR04MB5816090B934A7CA17EFA688AE75F0@BYAPR04MB5816.namprd04.prod.outlook.com>
+ <a21ce3de-5591-198f-56bf-8dc3aee6c926@suse.de>
+ <66345af3-fad6-3079-1604-3b0e9d2779ce@suse.de>
+ <BYAPR04MB5816E7F7741B3DC8D1B3B759E75F0@BYAPR04MB5816.namprd04.prod.outlook.com>
+From:   Hannes Reinecke <hare@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+ azzYF4VRJsdl+d0MCaSy8mUh
+Message-ID: <c44e1f50-8c3e-fc30-8ead-2cc044350555@suse.de>
+Date:   Fri, 6 Dec 2019 10:22:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <BYAPR04MB5816E7F7741B3DC8D1B3B759E75F0@BYAPR04MB5816.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-__write_super assumes super block data starts at offset 0 of the page
-read in with __bread from read_super, which is not true when page size
-is not 4k. We encountered the issue on system with 64K page size - commonly
- seen on aarch64 architecture.
+On 12/6/19 8:42 AM, Damien Le Moal wrote:
+> On 2019/12/06 16:09, Hannes Reinecke wrote:
+[ .. ]
+>> So having bcache running on top of those will be a clear win.
+>> But in this scenario the cache device will be a normal device (typically
+>> an SSD), and we shouldn't need much modification here.
+> 
+> I agree. That should work mostly as is since the user will be zone aware
+> and already be issuing sequential writes. bcache write-through only
+> needs to follow the same pattern, not reordering any write, and
+> write-back only has to replay the same.
+> 
+Bcache really should just act as a block-based cache; the only trick
+here is to ensure to align the internal bcache buckets with zone sizes,
+so that in the optimal case only full zones will be written.
 
-Instead of making any assumption on the offset of the data within the page,
-this patch calls __bread again to locate the data. That should not introduce
-an extra io since the page has been held when it's read in from read_super,
-and __write_super is not on performance critical code path.
+>> In fact, a good testcase would be the btrfs patches which got posted
+>> earlier this week. With them you should be able to create a btrfs
+>> filesystem on the SMR drive, and use an SSD as a cache device.
+>> Getting this scenario to run would indeed be my primary goal, and I
+>> guess your patches should be more or less sufficient for that.
+> 
+> + Will need the zone revalidation and zone type & write lock bitmaps to
+> prevent reordering from the block IO stack, unless bcache is a BIO
+> driver ? My knowledge of bcache is limited. Would need to look into the
+> details a little more to be able to comment.
+> 
+bcache is a bio-based driver, so it won't do a request reordering itself.
+So from that perspective we should be fine.
 
-Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
----
- drivers/md/bcache/super.c | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
+>> 2) Using a SMR drive as a _cache_ device. This seems to be contrary to
+>> the above statement of SMR drive not being fast, but then the NVMe WG is
+>> working on a similar mechanism for flash devices called 'ZNS' (zoned
+>> namespaces). And for those it really would make sense to have bcache
+>> being able to handle zoned devices as a cache device.
+>> But this is to my understanding really in the early stages, with no real
+>> hardware being available. Damien might disagree, though :-)
+> 
+> Yes, that would be another potential use case and ZNS indeed could fit
+> this model, assuming that zone sizes align (multiples) between front and
+> back devices.
+> 
+Indeed, but I would defer to my friendly drive manufacturer to figure
+that out :-)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index a573ce1d85aa..a39450c9bc34 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -207,15 +207,27 @@ static void write_bdev_super_endio(struct bio *bio)
- 	closure_put(&dc->sb_write);
- }
- 
--static void __write_super(struct cache_sb *sb, struct bio *bio)
-+static int __write_super(struct cache_sb *sb, struct bio *bio,
-+			 struct block_device *bdev)
- {
--	struct cache_sb *out = page_address(bio_first_page_all(bio));
-+	struct cache_sb *out;
- 	unsigned int i;
-+	struct buffer_head *bh;
-+
-+	/*
-+	 * The page is held since read_super, this __bread * should not
-+	 * cause an extra io read.
-+	 */
-+	bh = __bread(bdev, 1, SB_SIZE);
-+	if (!bh)
-+		goto out_bh;
-+
-+	out = (struct cache_sb *) bh->b_data;
- 
- 	bio->bi_iter.bi_sector	= SB_SECTOR;
- 	bio->bi_iter.bi_size	= SB_SIZE;
- 	bio_set_op_attrs(bio, REQ_OP_WRITE, REQ_SYNC|REQ_META);
--	bch_bio_map(bio, NULL);
-+	bch_bio_map(bio, bh->b_data);
- 
- 	out->offset		= cpu_to_le64(sb->offset);
- 	out->version		= cpu_to_le64(sb->version);
-@@ -239,7 +251,14 @@ static void __write_super(struct cache_sb *sb, struct bio *bio)
- 	pr_debug("ver %llu, flags %llu, seq %llu",
- 		 sb->version, sb->flags, sb->seq);
- 
-+	/* The page will still be held without this bh.*/
-+	put_bh(bh);
- 	submit_bio(bio);
-+	return 0;
-+
-+out_bh:
-+	pr_err("Couldn't read super block, __write_super failed");
-+	return -1;
- }
- 
- static void bch_write_bdev_super_unlock(struct closure *cl)
-@@ -264,7 +283,8 @@ void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent)
- 
- 	closure_get(cl);
- 	/* I/O request sent to backing device */
--	__write_super(&dc->sb, bio);
-+	if(__write_super(&dc->sb, bio, dc->bdev))
-+		closure_put(cl);
- 
- 	closure_return_with_destructor(cl, bch_write_bdev_super_unlock);
- }
-@@ -312,7 +332,9 @@ void bcache_write_super(struct cache_set *c)
- 		bio->bi_private = ca;
- 
- 		closure_get(cl);
--		__write_super(&ca->sb, bio);
-+		if(__write_super(&ca->sb, bio, ca->bdev))
-+			closure_put(cl);
-+
- 	}
- 
- 	closure_return_with_destructor(cl, bcache_write_super_unlock);
+>> And the implementation is still on the works on the linux side, so it's
+>> more of a long-term goal.>
+>> But the first use-case is definitely something we should be looking at;
+>> SMR drives are available _and_ with large capacity, so any speedup there
+>> would be greatly appreciated.
+> 
+> Yes. And what I was talking about in my earlier email is actually a
+> third use case:
+> 3) SMR drive as backend + regular SSD as frontend and the resulting
+> bcache device advertising itself as a regular disk, hiding all the zone
+> & sequential write constraint to the user. Since bcache already has some
+> form of indirection table for cached blocks, I thought we could hijack
+> this to implement a sort of FTL that would allow serializing random
+> writes to the backend with the help of the frontend as a write staging
+> buffer. Doing so, we get full random write capability with the benefit
+> of "hot" blocks staying in the cache. But again, not knowing enough
+> details about bcache, I may be talking too lightly here. Not sure if
+> that is reasonably easily feasible with the current bcache code.
+> 
+That, however, will be tricky, as the underlying drive will _still_ have
+to contain a normal filesystem.
+While this mode of operation should be trivial for btrfs with the
+hmzoned patches, others like ext4 or xfs will be ... interesting.
+I wouldn't discount it out of hand, but there's a fair chance that it'll
+lead to intense cache-trashing as we'd need to cover up for random
+writes within zones, _and_ would have to read-in entire zones.
+But sure, worth a shot anyway.
+
+Once we get the btrfs case working, that it.
+
+Cheers,
+
+Hannes
 -- 
-2.17.0
-
+Dr. Hannes Reinecke		      Teamlead Storage & Networking
+hare@suse.de			                  +49 911 74053 688
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), GF: Felix Imendörffer
