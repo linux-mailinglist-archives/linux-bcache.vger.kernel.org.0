@@ -2,54 +2,105 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9D09116A59
-	for <lists+linux-bcache@lfdr.de>; Mon,  9 Dec 2019 10:59:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DA37116ADE
+	for <lists+linux-bcache@lfdr.de>; Mon,  9 Dec 2019 11:21:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfLIJ7U (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 9 Dec 2019 04:59:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60674 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726377AbfLIJ7U (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 9 Dec 2019 04:59:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D4F96ADAD;
-        Mon,  9 Dec 2019 09:59:18 +0000 (UTC)
-Subject: Re: bcache kbuild cleanups
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     kent.overstreet@gmail.com, liangchen.linux@gmail.com,
-        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-References: <20191209093829.19703-1-hch@lst.de>
-From:   Coly Li <colyli@suse.de>
-Organization: SUSE Labs
-Message-ID: <b19f677f-d8e5-44af-0575-d1fb74835c65@suse.de>
-Date:   Mon, 9 Dec 2019 17:59:13 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.2.2
+        id S1726687AbfLIKVU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 9 Dec 2019 05:21:20 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39052 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfLIKVU (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 9 Dec 2019 05:21:20 -0500
+Received: by mail-qk1-f194.google.com with SMTP id c16so4132805qko.6;
+        Mon, 09 Dec 2019 02:21:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=5wpZqct9zId1JMwIvIkTx98tJap0IvMG3KRrK6bEBDM=;
+        b=IEzijxr3E1MusXczAG2YYKgDDebdtwecdNChK8m0OZEuPTczGvG/jF8TIAj6eRHJbn
+         zGKRwTp/VOf6TQ4y52WYJZaFpC2mXgQTNWw/cQEdlOdzNkkuG3OkrE/taG3vtua5mPQx
+         vzXPMmV9ks6Nu8rrxwjMFew9TrRekYdQyaS5uz9nvWnjyt0lNHOImUh5uWPYcCKqYr6O
+         Ftvijxlneg7V9vTHmu3cGwn5idi4FUap9nZnjbartbHGqUgkBWWCm5lfdPe5mBZSolt2
+         KYajD2UnoEgw+wCTLOUGik1/3aob3g4MwpOJIbC76wuF/ZlEKrd+bhwdWVoIucJu+RK3
+         M8bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5wpZqct9zId1JMwIvIkTx98tJap0IvMG3KRrK6bEBDM=;
+        b=VMyvf86C8yJG+xn7gWOOdzghPOXXf2mQK68UzoBFQFugfCHM7VVXVka1+3+gnhr4gN
+         LjBoNNVfO0VUPgBL4X2RA0q1kWCrJpxX8SOHVuQJEw+Rmt/MHtdhVhOlKz2qnfU6tGqh
+         XhdEyEEhMgCl7SRdjxfzLvTyR8BSNahiuluxZc/LLd2Bz3+bwcEMLo8ILaObiIrDWUrh
+         oXP3dppHw6kMcd4uSidZz9sMKnQMAVkLKvtzepxbv/R/WK1Y12YK7XSRE8VggLteblAT
+         pmxifBVhSzBBlAWHRNX1iT6wIkJ4fyXJnqulfvqKR0FQfIVbHJTbzkHSN46iS6PMF4zx
+         J8kw==
+X-Gm-Message-State: APjAAAWUDsh12UFZWCB8705dCu2h7f25tduqg6xyFWVvh1dZXq+0HsgM
+        HVWxj1rSm528lQ143QQtyxI4oVH0ubHXook9QWI=
+X-Google-Smtp-Source: APXvYqyiNlRqsKmdsEqcVQgML3WflGAH6cHuImDpuJGUsALxjPRXGR5VclsRP4zcDT20/Ag5ILjgKv74utoPsvlBGKg=
+X-Received: by 2002:ae9:e30e:: with SMTP id v14mr25857560qkf.344.1575886878939;
+ Mon, 09 Dec 2019 02:21:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191209093829.19703-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1575622543-22470-1-git-send-email-liangchen.linux@gmail.com>
+ <1575622543-22470-2-git-send-email-liangchen.linux@gmail.com>
+ <e44b8bd9-470d-08af-be7f-a0808504772e@suse.de> <20191209073744.GB3852@infradead.org>
+ <dc01bf2c-4457-9658-c0a3-cbd4b7eff82b@suse.de>
+In-Reply-To: <dc01bf2c-4457-9658-c0a3-cbd4b7eff82b@suse.de>
+From:   Liang C <liangchen.linux@gmail.com>
+Date:   Mon, 9 Dec 2019 18:21:07 +0800
+Message-ID: <CAKhg4tL+A0aPMFxQt43EvzW4vH1p4T8XGMH5eKuT5_-ZvK5H5A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] [PATCH] bcache: __write_super to handle page sizes
+ other than 4k
+To:     Coly Li <colyli@suse.de>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2019/12/9 5:38 下午, Christoph Hellwig wrote:
-> Hi Coly and Liang,
-> 
-> can you review this series to sort out the bcache superblock reading for
-> larger page sizes?  I don't have bcache test setup so this is compile
-> tested only.
-> 
-Hi Christoph,
+No problem. I will change the patch to remove this extra read. Thanks.
 
-At first glance the patches are good. I will add them into my for-test
-directory and test with other development patches.
-
-Thanks for handling this.
-
--- 
-
-Coly Li
+On Mon, Dec 9, 2019 at 5:52 PM Coly Li <colyli@suse.de> wrote:
+>
+> On 2019/12/9 3:37 =E4=B8=8B=E5=8D=88, Christoph Hellwig wrote:
+> > On Fri, Dec 06, 2019 at 05:44:38PM +0800, Coly Li wrote:
+> >>>  {
+> >>> -   struct cache_sb *out =3D page_address(bio_first_page_all(bio));
+> >>> +   struct cache_sb *out;
+> >>>     unsigned int i;
+> >>> +   struct buffer_head *bh;
+> >>> +
+> >>> +   /*
+> >>> +    * The page is held since read_super, this __bread * should not
+> >>> +    * cause an extra io read.
+> >>> +    */
+> >>> +   bh =3D __bread(bdev, 1, SB_SIZE);
+> >>> +   if (!bh)
+> >>> +           goto out_bh;
+> >>> +
+> >>> +   out =3D (struct cache_sb *) bh->b_data;
+> >>
+> >> This is quite tricky here. Could you please to move this code piece in=
+to
+> >> an inline function and add code comments to explain why a read is
+> >> necessary for a write.
+> >
+> > A read is not nessecary.  He only added it because he was too fearful
+> > of calculating the data offset directly.  But calculating it directly
+> > is almost trivial and should just be done here.  Alternatively if that
+> > is still to hard just keep a pointer to the cache_sb around, which is
+> > how most file systems do it.
+> >
+> Copied, if Liang does not have time to handle this as your suggestion, I
+> will handle it.
+>
+> Thanks for the hint.
+>
+> --
+>
+> Coly Li
