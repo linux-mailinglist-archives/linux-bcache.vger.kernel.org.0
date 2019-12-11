@@ -2,74 +2,91 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2662A11B58D
-	for <lists+linux-bcache@lfdr.de>; Wed, 11 Dec 2019 16:54:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7425111B3C5
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 Dec 2019 16:44:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731801AbfLKPR6 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 11 Dec 2019 10:17:58 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36455 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731235AbfLKPR5 (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:17:57 -0500
-Received: by mail-qt1-f194.google.com with SMTP id k11so6567389qtm.3;
-        Wed, 11 Dec 2019 07:17:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XSyEpbaPokG867/3ubUmUtm6jKXW5rzJQg/EbiPjhi4=;
-        b=mqEB68h5cwRkQneshEFqEuVp6ajAXX07NsifjCFCUzb4sLj/5Josuh8ybzdPJQYNPq
-         nJrFY1B/qwecZNYWW4pA6FNGTgKVMMXfFGkws1RNT9cE32gFgvWXyJ94Yp/UbnS6T825
-         TbET/4uUgPaFyw3/E6OFEfKVAnCbl/eTDaF7ZEz72WvawC39UlhTayQ8qNMNJwVm9S5Z
-         AxiY0HzJ2ZVnD5QMVBP4Opix6asbBS1MRUIxOzS857zNVNIVuctLlkGPT0DEyDcnyx87
-         wjemeZOUJsYxtI6+MPXtSExkuDQnb2EeaI5J4Ue4OKYYCiU6uP9NriiSLbF5tP94po0v
-         HbxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XSyEpbaPokG867/3ubUmUtm6jKXW5rzJQg/EbiPjhi4=;
-        b=MryyKFBq9GnG91K5GiuU2IwSuOlgLFFR5/3Dqg1RJZGLfOMMnShOEKrsYHZZ9ZZ+NI
-         /dWVY8+eZNA2Mj+QFzdiZWkDfAJhkQ3b4KwNZMMpZEe1IaimjlsU5Xhl2vzAinDXSlIP
-         hf1jrTa5kCI9IdWmwQB7oO0zubmmL11ADhM4MyY11ZYEGg7v5u772RPwDReISX17sngT
-         61tG4RdBkspqahJwys+sNEcca+PgETjguDqrHtfNI1D6Yx8vNWAXIKYcKOIX3GQpiSd1
-         4ADcRgBSDo3rczbccUDhfPEA2/ZEvG3VykuiZB9Akc5zs/u9kLPRvnel926OjGOaRnPb
-         8mZw==
-X-Gm-Message-State: APjAAAXUDY/XbB2SRMWhjY6tKZt4hidIKTwlgXHJcOyUvMYLYkoiR58V
-        hqTH5Z+3jQIhmtJ6Wz1JEZtz22FOG58Jv1T81tU=
-X-Google-Smtp-Source: APXvYqxRSL9c0VQzF96BLc43OPSIAk830pM0oJYwLpIpze59iYWOUCDFgCatZK0JG1QynUUg3uymVmyS9L/M36mUCI4=
-X-Received: by 2002:ac8:2898:: with SMTP id i24mr3197998qti.259.1576077476110;
- Wed, 11 Dec 2019 07:17:56 -0800 (PST)
+        id S1732465AbfLKPnu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 Dec 2019 10:43:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33288 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732851AbfLKP1e (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:27:34 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B756422527;
+        Wed, 11 Dec 2019 15:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576078053;
+        bh=U84ZNHixRNIXDS9D0nb/oECrd87iSqTnflwQv0O7Tb0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GrTeXSFQRc+OTom7wiBkp3ARvYS9V3LJVf7kgDyBLiirOxxPPUprIrN2Pkuq9uRQE
+         SsL4bFhIZFryF7M+YPliVFdKHSCUO7aSZLjvypQ5AN5AfDXYFGJDB0XOF6rrD2vTu9
+         ZlU1SQIC57rmP543l1cDtIs1xy4REo18DuPUerKE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 46/79] bcache: at least try to shrink 1 node in bch_mca_scan()
+Date:   Wed, 11 Dec 2019 10:26:10 -0500
+Message-Id: <20191211152643.23056-46-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
+References: <20191211152643.23056-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20191209093829.19703-1-hch@lst.de> <b19f677f-d8e5-44af-0575-d1fb74835c65@suse.de>
-In-Reply-To: <b19f677f-d8e5-44af-0575-d1fb74835c65@suse.de>
-From:   Liang C <liangchen.linux@gmail.com>
-Date:   Wed, 11 Dec 2019 23:17:44 +0800
-Message-ID: <CAKhg4tJGWwm5cTkctuch-ACrDOLfLKK8HCCTcJZPF2iURc9rUg@mail.gmail.com>
-Subject: Re: bcache kbuild cleanups
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Coly Li <colyli@suse.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
- > Hi Coly and Liang,
- >
- > can you review this series to sort out the bcache superblock reading for
- > larger page sizes?  I don't have bcache test setup so this is compile
- > tested only.
- >
-Hi Christoph,
+From: Coly Li <colyli@suse.de>
 
-Thanks for making the patches. I looked through them, but didn't see
-where cache and cached_dev have their sb_disk assigned.
-That would be an issue when __write_super tries to add the
-corresponding page to the bio. Not sure if there is there anything I
-missed.
+[ Upstream commit 9fcc34b1a6dd4b8e5337e2b6ef45e428897eca6b ]
 
-Liang
+In bch_mca_scan(), the number of shrinking btree node is calculated
+by code like this,
+	unsigned long nr = sc->nr_to_scan;
+
+        nr /= c->btree_pages;
+        nr = min_t(unsigned long, nr, mca_can_free(c));
+variable sc->nr_to_scan is number of objects (here is bcache B+tree
+nodes' number) to shrink, and pointer variable sc is sent from memory
+management code as parametr of a callback.
+
+If sc->nr_to_scan is smaller than c->btree_pages, after the above
+calculation, variable 'nr' will be 0 and nothing will be shrunk. It is
+frequeently observed that only 1 or 2 is set to sc->nr_to_scan and make
+nr to be zero. Then bch_mca_scan() will do nothing more then acquiring
+and releasing mutex c->bucket_lock.
+
+This patch checkes whether nr is 0 after the above calculation, if 0
+is the result then set 1 to variable 'n'. Then at least bch_mca_scan()
+will try to shrink a single B+tree node.
+
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/md/bcache/btree.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 45f684689c357..bb40bd66a10e4 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -713,6 +713,8 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
+ 	 * IO can always make forward progress:
+ 	 */
+ 	nr /= c->btree_pages;
++	if (nr == 0)
++		nr = 1;
+ 	nr = min_t(unsigned long, nr, mca_can_free(c));
+ 
+ 	i = 0;
+-- 
+2.20.1
+
