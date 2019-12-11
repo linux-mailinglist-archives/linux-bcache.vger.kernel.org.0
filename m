@@ -2,38 +2,38 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7425111B3C5
-	for <lists+linux-bcache@lfdr.de>; Wed, 11 Dec 2019 16:44:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 557B611B19A
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 Dec 2019 16:32:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732465AbfLKPnu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 11 Dec 2019 10:43:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33288 "EHLO mail.kernel.org"
+        id S2387806AbfLKP3I (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 Dec 2019 10:29:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732851AbfLKP1e (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:27:34 -0500
+        id S2387804AbfLKP3G (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:29:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B756422527;
-        Wed, 11 Dec 2019 15:27:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CE9E208C3;
+        Wed, 11 Dec 2019 15:29:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078053;
-        bh=U84ZNHixRNIXDS9D0nb/oECrd87iSqTnflwQv0O7Tb0=;
+        s=default; t=1576078145;
+        bh=6wMgZwKLgEGkwTL+1Vd9LfABc3xDvEAKNMrFn8ElL7I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GrTeXSFQRc+OTom7wiBkp3ARvYS9V3LJVf7kgDyBLiirOxxPPUprIrN2Pkuq9uRQE
-         SsL4bFhIZFryF7M+YPliVFdKHSCUO7aSZLjvypQ5AN5AfDXYFGJDB0XOF6rrD2vTu9
-         ZlU1SQIC57rmP543l1cDtIs1xy4REo18DuPUerKE=
+        b=fh+HePk7mfpLL7kyHJlnQwSBOiNinoRGBe03h8YpaH+C2FxNDv9m/TwVpci7IgeEN
+         t127DdVBiRVoaJkU08ieomCodoFZ75ijKd5SsdKRGCSAn1rYLUxtnES9g9Yd9nWZSW
+         i+2Hl3fX1Dy2EZqhhyMN9Ysuh3VISIEA/ZEtgWzo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org,
         linux-raid@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 46/79] bcache: at least try to shrink 1 node in bch_mca_scan()
-Date:   Wed, 11 Dec 2019 10:26:10 -0500
-Message-Id: <20191211152643.23056-46-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 32/58] bcache: at least try to shrink 1 node in bch_mca_scan()
+Date:   Wed, 11 Dec 2019 10:28:05 -0500
+Message-Id: <20191211152831.23507-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
-References: <20191211152643.23056-1-sashal@kernel.org>
+In-Reply-To: <20191211152831.23507-1-sashal@kernel.org>
+References: <20191211152831.23507-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -75,10 +75,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 45f684689c357..bb40bd66a10e4 100644
+index 9406326216f17..96a6583e7b522 100644
 --- a/drivers/md/bcache/btree.c
 +++ b/drivers/md/bcache/btree.c
-@@ -713,6 +713,8 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
+@@ -685,6 +685,8 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
  	 * IO can always make forward progress:
  	 */
  	nr /= c->btree_pages;
