@@ -2,62 +2,49 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5CF11CFEB
-	for <lists+linux-bcache@lfdr.de>; Thu, 12 Dec 2019 15:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25B0611D112
+	for <lists+linux-bcache@lfdr.de>; Thu, 12 Dec 2019 16:34:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729766AbfLLOep (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 12 Dec 2019 09:34:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40132 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729761AbfLLOem (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 12 Dec 2019 09:34:42 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 265B9B289;
-        Thu, 12 Dec 2019 14:34:41 +0000 (UTC)
-To:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Shaoxiong Li <dahefanteng@gmail.com>,
-        Hannes Reinecke <hare@suse.de>, Ruediger Oertel <ro@suse.com>
-From:   Coly Li <colyli@suse.de>
-Subject: bcache works on s390 now
-Organization: SUSE Labs
-Message-ID: <fdf24e85-5f91-3dd8-6199-cf60ba8e125c@suse.de>
-Date:   Thu, 12 Dec 2019 22:33:56 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.2.2
+        id S1729097AbfLLPed (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 12 Dec 2019 10:34:33 -0500
+Received: from verein.lst.de ([213.95.11.211]:34433 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729013AbfLLPed (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 12 Dec 2019 10:34:33 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 4F2E368B05; Thu, 12 Dec 2019 16:34:30 +0100 (CET)
+Date:   Thu, 12 Dec 2019 16:34:30 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Liang C <liangchen.linux@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: bcache kbuild cleanups
+Message-ID: <20191212153430.GA10543@lst.de>
+References: <20191209093829.19703-1-hch@lst.de> <b19f677f-d8e5-44af-0575-d1fb74835c65@suse.de> <CAKhg4tJGWwm5cTkctuch-ACrDOLfLKK8HCCTcJZPF2iURc9rUg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKhg4tJGWwm5cTkctuch-ACrDOLfLKK8HCCTcJZPF2iURc9rUg@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi folks,
+On Wed, Dec 11, 2019 at 11:17:44PM +0800, Liang C wrote:
+>  > Hi Coly and Liang,
+>  >
+>  > can you review this series to sort out the bcache superblock reading for
+>  > larger page sizes?  I don't have bcache test setup so this is compile
+>  > tested only.
+>  >
+> Hi Christoph,
+> 
+> Thanks for making the patches. I looked through them, but didn't see
+> where cache and cached_dev have their sb_disk assigned.
+> That would be an issue when __write_super tries to add the
+> corresponding page to the bio. Not sure if there is there anything I
+> missed.
 
-After a long time effort, now bcache can work on s390 machine.
-
-The kernel part is ready since Linux v5.4, the bcache-tools should be
-updated too from,
-https://git.kernel.org/pub/scm/linux/kernel/git/colyli/bcache-tools.git/
-
-The update for bcache-tools-1.1 is necessary, it fixes a super block
-checksum issue which makes kernel code treats the registering device as
-broken.
-
-I only test bcache on a machine with vendir_id: IBM/S390, not sure
-whether it also works on s390x. If you have interest to deploy bcache on
-s390 or other big endian machines, I will appreciate if you may offer a
-result whether bcache works or not on your machine. Of cause if it does
-not work, I'd like to look into the problem and try to fix them.
-
-BTW. Since bcache-tools is not updated for quite a long time, now I
-start to take the maintenance of bcache-tools. And please permit me to
-thank Shaoxiong Li for contributing many useful patches.
-
-Just for your information.
--- 
-
-Coly Li
+Yes, that was missing.
