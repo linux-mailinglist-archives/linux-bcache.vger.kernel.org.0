@@ -2,117 +2,77 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F113711D12F
-	for <lists+linux-bcache@lfdr.de>; Thu, 12 Dec 2019 16:36:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 983AF11E133
+	for <lists+linux-bcache@lfdr.de>; Fri, 13 Dec 2019 10:54:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729496AbfLLPg0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 12 Dec 2019 10:36:26 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50074 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729260AbfLLPg0 (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 12 Dec 2019 10:36:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=QF6L0yxyDcOF3+3+TsggyBHwgdTNvnNGw8mW/jCUXEQ=; b=QfBZfZB/l0JZ5KK4BIJR4mLsu/
-        4jJf0sZ6IbaOUkrLtURFr6ihqWZEsw9NuztGneREcLhv4o+241AJyCwbmtLABCAZec1TEqJqnQxnR
-        4GjZDX+7SkVaccttqadNKRasjktliko2HGU4ZXXlzPVGebUm8LVnVQ14WVMX1acbn5nBkvAQ9jxqM
-        /4i6fzOsUA1Y3DvBIoO1OD+YdhyMsO/zA2r6ka48QzhFNkTyqI+2R22lJK0tHQh2FY47eoViw2cOs
-        Uw389Y1xYgWk1qO26jKy+dz4aG2/NJ52zOHl3J+9zcGKl10xjtN+NFpNcZqGJnVpdgu6ahNIOk9Hq
-        h5TRJ12Q==;
-Received: from [2001:4bb8:188:2b00:20e6:8b5a:ed96:f9da] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ifQVt-0007Kx-6d; Thu, 12 Dec 2019 15:36:25 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     colyli@suse.de
-Cc:     kent.overstreet@gmail.com, liangchen.linux@gmail.com,
-        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-Subject: [PATCH 7/7] bcache: use read_cache_page_gfp to read the superblock
-Date:   Thu, 12 Dec 2019 16:36:04 +0100
-Message-Id: <20191212153604.19540-8-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191212153604.19540-1-hch@lst.de>
-References: <20191212153604.19540-1-hch@lst.de>
+        id S1726382AbfLMJyC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 13 Dec 2019 04:54:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49336 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725747AbfLMJyC (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 13 Dec 2019 04:54:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 01BA6AFC2;
+        Fri, 13 Dec 2019 09:54:01 +0000 (UTC)
+Subject: Re: bcache works on s390 now
+To:     Coly Li <colyli@suse.de>,
+        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Shaoxiong Li <dahefanteng@gmail.com>,
+        Ruediger Oertel <ro@suse.com>
+References: <fdf24e85-5f91-3dd8-6199-cf60ba8e125c@suse.de>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <39582f6e-8103-a0a5-b000-5b05cd7917b0@suse.de>
+Date:   Fri, 13 Dec 2019 10:54:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
+In-Reply-To: <fdf24e85-5f91-3dd8-6199-cf60ba8e125c@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Avoid a pointless dependency on buffer heads in bcache by simply open
-coding reading a single page.  Also add a SB_OFFSET define for the
-byte offset of the superblock instead of using magic numbers.
+On 12/12/19 3:33 PM, Coly Li wrote:
+> Hi folks,
+> 
+> After a long time effort, now bcache can work on s390 machine.
+> 
+> The kernel part is ready since Linux v5.4, the bcache-tools should be
+> updated too from,
+> https://git.kernel.org/pub/scm/linux/kernel/git/colyli/bcache-tools.git/
+> 
+> The update for bcache-tools-1.1 is necessary, it fixes a super block
+> checksum issue which makes kernel code treats the registering device as
+> broken.
+> 
+> I only test bcache on a machine with vendir_id: IBM/S390, not sure
+> whether it also works on s390x. If you have interest to deploy bcache on
+> s390 or other big endian machines, I will appreciate if you may offer a
+> result whether bcache works or not on your machine. Of cause if it does
+> not work, I'd like to look into the problem and try to fix them.
+> 
+> BTW. Since bcache-tools is not updated for quite a long time, now I
+> start to take the maintenance of bcache-tools. And please permit me to
+> thank Shaoxiong Li for contributing many useful patches.
+> 
+> Just for your information.
+> 
+Congrats!
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/md/bcache/super.c   | 16 +++++++---------
- include/uapi/linux/bcache.h |  1 +
- 2 files changed, 8 insertions(+), 9 deletions(-)
+Now that is very good news indeed.
+I'll be sure to notify our contacts at IBM here. And we should get 
+together to figure out how a likely deployment on mainframe could look like.
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index c3bfbc813daf..7ebd355f51b1 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -15,7 +15,6 @@
- #include "writeback.h"
- 
- #include <linux/blkdev.h>
--#include <linux/buffer_head.h>
- #include <linux/debugfs.h>
- #include <linux/genhd.h>
- #include <linux/idr.h>
-@@ -64,13 +63,14 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
- {
- 	const char *err;
- 	struct cache_sb_disk *s;
--	struct buffer_head *bh = __bread(bdev, 1, SB_SIZE);
-+	struct page *page;
- 	unsigned int i;
- 
--	if (!bh)
-+	page = read_cache_page_gfp(bdev->bd_inode->i_mapping,
-+				   SB_OFFSET >> PAGE_SHIFT, GFP_KERNEL);
-+	if (IS_ERR(page))
- 		return "IO error";
--
--	s = (struct cache_sb_disk *)bh->b_data;
-+	s = page_address(page) + offset_in_page(SB_OFFSET);
- 
- 	sb->offset		= le64_to_cpu(s->offset);
- 	sb->version		= le64_to_cpu(s->version);
-@@ -188,12 +188,10 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
- 	}
- 
- 	sb->last_mount = (u32)ktime_get_real_seconds();
--	err = NULL;
--
--	get_page(bh->b_page);
- 	*res = s;
-+	return NULL;
- err:
--	put_bh(bh);
-+	put_page(page);
- 	return err;
- }
- 
-diff --git a/include/uapi/linux/bcache.h b/include/uapi/linux/bcache.h
-index 1d8b3a9fc080..9a1965c6c3d0 100644
---- a/include/uapi/linux/bcache.h
-+++ b/include/uapi/linux/bcache.h
-@@ -148,6 +148,7 @@ static inline struct bkey *bkey_idx(const struct bkey *k, unsigned int nr_keys)
- #define BCACHE_SB_MAX_VERSION		4
- 
- #define SB_SECTOR			8
-+#define SB_OFFSET			(SB_SECTOR << SECTOR_SHIFT)
- #define SB_SIZE				4096
- #define SB_LABEL_SIZE			32
- #define SB_JOURNAL_BUCKETS		256U
+Cheers,
+
+Hannes
 -- 
-2.20.1
-
+Dr. Hannes Reinecke            Teamlead Storage & Networking
+hare@suse.de                               +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
