@@ -2,52 +2,225 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E37DF12A5E2
-	for <lists+linux-bcache@lfdr.de>; Wed, 25 Dec 2019 05:34:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C4A312E329
+	for <lists+linux-bcache@lfdr.de>; Thu,  2 Jan 2020 07:41:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbfLYEeJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 24 Dec 2019 23:34:09 -0500
-Received: from mail.sajdowski.de ([2.59.135.178]:47664 "EHLO mail.sajdowski.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726347AbfLYEeJ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 24 Dec 2019 23:34:09 -0500
-X-Greylist: delayed 438 seconds by postgrey-1.27 at vger.kernel.org; Tue, 24 Dec 2019 23:34:08 EST
+        id S1726194AbgABGlP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 2 Jan 2020 01:41:15 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33212 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbgABGlO (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 2 Jan 2020 01:41:14 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 6so21460267pgk.0
+        for <linux-bcache@vger.kernel.org>; Wed, 01 Jan 2020 22:41:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:in-reply-to:from:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=N9RStK7jK31IMkYsK9Zmty0p4l3nirgKbh7bIe53dXM=;
+        b=DjMpV7H7Cdpqv92loVicQMFNBvX/o3CvXkX54DC/A8sYqj7HgJBU5ynOg45QEAgTfq
+         VWbZG7u38WQcekoJ82PxUG0KCofV479Y5WHuEnC1+jaXNQALSX5DlqYZuiqAyIkC2EUW
+         zqiZVErDwJBdVxWCXU8wuarMOuNollZZ6bKUrPAN+lyvhluDIkUTvT6QzySvLlWz7QTS
+         7L7KbAaLtUyHrAeuQn3hhC/3749ZNvXKsOoqV0aC+kShRrtTgOuCjL9Wpd1pYTgsfD2j
+         Nnv3JjJCrCMbkPAnMFAO0fMrDIclOu3er1RvgpS5HwMpn4zl2YTvLV2m1A9yWfKiKi92
+         NHKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:in-reply-to:from
+         :message-id:date:user-agent:mime-version:content-language
+         :content-transfer-encoding;
+        bh=N9RStK7jK31IMkYsK9Zmty0p4l3nirgKbh7bIe53dXM=;
+        b=fMRpNyf4ERX/Dc4iObhU2NrrMZvYMMVWIzOeA/3ZSav5H7k270IBVGJYSwncnLnElS
+         lZ0xFLn5vgERHfZaFRchi1LJjWEu5gPvlvtSygLOT/vNypXAS6qqxzH3fExPlXidjYmg
+         QzHGr9+oONS4tOeTaVDqe6V3AOTYiXvg1KArKIq7vLd+86JItoAdDUh6dQSq+5aUzAAJ
+         cCI+vY5o2P+IVl/guzy4fkzxSIWfXDpkv8xAaSk6elc9Fftg2Ct/3aBhfqj79LlCHIQn
+         IcZ6gJrtKKPsHjocFJroyCY1JLliS6re2eWzEvjOOhu/dYx0uGPHnKz/NAhmUqVRGcfs
+         eOaA==
+X-Gm-Message-State: APjAAAV2tJblLD6ThQlPXP7BHC5IWLqtH4Z+jraJ9Mkx7pL+chAv5Zvp
+        r1wxup1wyHTusN8eZX0Wcyk2dQy2Z5A=
+X-Google-Smtp-Source: APXvYqwVEnrGtsrUlWxXrQ7A04tZcTpfUGvGKKQv3+wNwZeIVek8X4gNTvjZBxv2Wua+FVD54m51EQ==
+X-Received: by 2002:aa7:94a4:: with SMTP id a4mr86600990pfl.178.1577947273711;
+        Wed, 01 Jan 2020 22:41:13 -0800 (PST)
+Received: from [0.0.0.0] (199.168.137.127.16clouds.com. [199.168.137.127])
+        by smtp.gmail.com with ESMTPSA id k21sm48817036pfa.63.2020.01.01.22.41.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Jan 2020 22:41:13 -0800 (PST)
+Subject: Re: [PATCH 3/7] bcache: rework error unwinding in register_bcache
+To:     Christoph Hellwig <hch@lst.de>, linux-bcache@vger.kernel.org
+References: <20191212153604.19540-1-hch@lst.de>
+ <20191212153604.19540-4-hch@lst.de>
+In-Reply-To: <20191212153604.19540-4-hch@lst.de>
+From:   guoju fang <fangguoju@gmail.com>
+Message-ID: <34f67cbf-a057-7d1a-e0fa-a4233df7a883@gmail.com>
+Date:   Thu, 2 Jan 2020 14:40:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pf-control.de;
-        s=2019; t=1577248009;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=AjxqZiLNvKw5rkNEJZP8a36CSCXFdex1ooNlmoLHRgU=;
-        b=jDVRnvdn3pxkgWlu2Sf67tshAwE2VoCYzSV6DA2xQtyqiCpnBIeouwdduab8dIy3LZdjwI
-        WKWVsRK7Hz7j9BzNsNGnrzfv1juLaxKtGKwXCYGjv+qN5ObQJlkwovYvMp9VFLiO/v6Hqr
-        oO5nI9s1A8W8bfJ0AukBjIIZ4j/vJ0ULi25WDkmPRQwVVzcy3M18MdYcUCie6wtH1Xednt
-        5pCy1r1BTL6ljA3cHIEOWX+sPnE3YZlnB3Pl7WyRQ1NuPvx1qRK2vhsd0Q2yWL7q4R7BBt
-        APgB9Ej3bDlPgYoBd5720bsIqtrK60xHzNjCziFSRGgYx40zHv79Jf3tlXUhkQ==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Wed, 25 Dec 2019 05:26:49 +0100
-From:   Jonny <johnny@store.pf-control.de>
-To:     linux-bcache@vger.kernel.org
-Subject: Cant set sequential_cutoff
-Message-ID: <758b3959ff2523615209506f9f23c2bb@store.pf-control.de>
-X-Sender: johnny@store.pf-control.de
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Bcache is up and seems running, bcache-state is clean.
+Hi Hellwig,
 
-cat /sys/block/bcache0/bcache/sequential_cutoff
-0.0k
+There's a bit problem in this patch, if try_module_get failed and then 
+goto label out, pr_info will access path that was not initialized. To 
+fix it, pr_info should be put before kfree(path).
 
-This should not return 0.0k?
-I tried to set it back to 4M, but get the following Error:
-
-echo 4M > /sys/block/bcache0/bcache/sequential_cutoff
-bash: echo: write error: Invalid argument
+Best Regards,
+Guoju.
 
 
-Thanks in Advance
+On 2019/12/12 23:36, Christoph Hellwig wrote:
+> Split the successful and error return path, and use one goto label for each
+> resource to unwind.  This also fixes some small errors like leaking the
+> module reference count in the reboot case (which seems entirely harmless)
+> or printing the wrong warning messages for early failures.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/md/bcache/super.c | 75 +++++++++++++++++++++++----------------
+>   1 file changed, 45 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index 3045f27e0d67..e8013e1b0a14 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -2375,29 +2375,33 @@ static bool bch_is_open(struct block_device *bdev)
+>   static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+>   			       const char *buffer, size_t size)
+>   {
+> -	ssize_t ret = -EINVAL;
+> -	const char *err = "cannot allocate memory";
+> -	char *path = NULL;
+> -	struct cache_sb *sb = NULL;
+> +	const char *err;
+> +	char *path;
+> +	struct cache_sb *sb;
+>   	struct block_device *bdev = NULL;
+> -	struct page *sb_page = NULL;
+> +	struct page *sb_page;
+> +	ssize_t ret;
+>   
+> +	ret = -EBUSY;
+>   	if (!try_module_get(THIS_MODULE))
+> -		return -EBUSY;
+> +		goto out;
+>   
+>   	/* For latest state of bcache_is_reboot */
+>   	smp_mb();
+>   	if (bcache_is_reboot)
+> -		return -EBUSY;
+> +		goto out_module_put;
+>   
+> +	ret = -ENOMEM;
+> +	err = "cannot allocate memory";
+>   	path = kstrndup(buffer, size, GFP_KERNEL);
+>   	if (!path)
+> -		goto err;
+> +		goto out_module_put;
+>   
+>   	sb = kmalloc(sizeof(struct cache_sb), GFP_KERNEL);
+>   	if (!sb)
+> -		goto err;
+> +		goto out_free_path;
+>   
+> +	ret = -EINVAL;
+>   	err = "failed to open device";
+>   	bdev = blkdev_get_by_path(strim(path),
+>   				  FMODE_READ|FMODE_WRITE|FMODE_EXCL,
+> @@ -2414,57 +2418,68 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+>   			if (!IS_ERR(bdev))
+>   				bdput(bdev);
+>   			if (attr == &ksysfs_register_quiet)
+> -				goto quiet_out;
+> +				goto done;
+>   		}
+> -		goto err;
+> +		goto out_free_sb;
+>   	}
+>   
+>   	err = "failed to set blocksize";
+>   	if (set_blocksize(bdev, 4096))
+> -		goto err_close;
+> +		goto out_blkdev_put;
+>   
+>   	err = read_super(sb, bdev, &sb_page);
+>   	if (err)
+> -		goto err_close;
+> +		goto out_blkdev_put;
+>   
+>   	err = "failed to register device";
+>   	if (SB_IS_BDEV(sb)) {
+>   		struct cached_dev *dc = kzalloc(sizeof(*dc), GFP_KERNEL);
+>   
+>   		if (!dc)
+> -			goto err_close;
+> +			goto out_put_sb_page;
+>   
+>   		mutex_lock(&bch_register_lock);
+>   		ret = register_bdev(sb, sb_page, bdev, dc);
+>   		mutex_unlock(&bch_register_lock);
+>   		/* blkdev_put() will be called in cached_dev_free() */
+> -		if (ret < 0)
+> -			goto err;
+> +		if (ret < 0) {
+> +			bdev = NULL;
+> +			goto out_put_sb_page;
+> +		}
+>   	} else {
+>   		struct cache *ca = kzalloc(sizeof(*ca), GFP_KERNEL);
+>   
+>   		if (!ca)
+> -			goto err_close;
+> +			goto out_put_sb_page;
+>   
+>   		/* blkdev_put() will be called in bch_cache_release() */
+> -		if (register_cache(sb, sb_page, bdev, ca) != 0)
+> -			goto err;
+> +		if (register_cache(sb, sb_page, bdev, ca) != 0) {
+> +			bdev = NULL;
+> +			goto out_put_sb_page;
+> +		}
+>   	}
+> -quiet_out:
+> -	ret = size;
+> -out:
+> -	if (sb_page)
+> -		put_page(sb_page);
+> +
+> +	put_page(sb_page);
+> +done:
+>   	kfree(sb);
+>   	kfree(path);
+>   	module_put(THIS_MODULE);
+> -	return ret;
+> -
+> -err_close:
+> -	blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
+> -err:
+> +	return size;
+> +
+> +out_put_sb_page:
+> +	put_page(sb_page);
+> +out_blkdev_put:
+> +	if (bdev)
+> +		blkdev_put(bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
+> +out_free_sb:
+> +	kfree(sb);
+> +out_free_path:
+> +	kfree(path);
+> +out_module_put:
+> +	module_put(THIS_MODULE);
+> +out:
+>   	pr_info("error %s: %s", path, err);
+> -	goto out;
+> +	return ret;
+>   }
+>   
+>   
+> 
