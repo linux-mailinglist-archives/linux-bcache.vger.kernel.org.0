@@ -2,225 +2,101 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C4A312E329
-	for <lists+linux-bcache@lfdr.de>; Thu,  2 Jan 2020 07:41:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B919012FD9D
+	for <lists+linux-bcache@lfdr.de>; Fri,  3 Jan 2020 21:19:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbgABGlP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 2 Jan 2020 01:41:15 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33212 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbgABGlO (ORCPT
+        id S1728688AbgACUTr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 3 Jan 2020 15:19:47 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:33788 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728177AbgACUTq (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 2 Jan 2020 01:41:14 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 6so21460267pgk.0
-        for <linux-bcache@vger.kernel.org>; Wed, 01 Jan 2020 22:41:14 -0800 (PST)
+        Fri, 3 Jan 2020 15:19:46 -0500
+Received: by mail-qv1-f67.google.com with SMTP id z3so16703010qvn.0
+        for <linux-bcache@vger.kernel.org>; Fri, 03 Jan 2020 12:19:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:in-reply-to:from:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=N9RStK7jK31IMkYsK9Zmty0p4l3nirgKbh7bIe53dXM=;
-        b=DjMpV7H7Cdpqv92loVicQMFNBvX/o3CvXkX54DC/A8sYqj7HgJBU5ynOg45QEAgTfq
-         VWbZG7u38WQcekoJ82PxUG0KCofV479Y5WHuEnC1+jaXNQALSX5DlqYZuiqAyIkC2EUW
-         zqiZVErDwJBdVxWCXU8wuarMOuNollZZ6bKUrPAN+lyvhluDIkUTvT6QzySvLlWz7QTS
-         7L7KbAaLtUyHrAeuQn3hhC/3749ZNvXKsOoqV0aC+kShRrtTgOuCjL9Wpd1pYTgsfD2j
-         Nnv3JjJCrCMbkPAnMFAO0fMrDIclOu3er1RvgpS5HwMpn4zl2YTvLV2m1A9yWfKiKi92
-         NHKw==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=40ACnQIUnpge54Cj+EODMXbGQ2AM0yGbootCDBdgIh0=;
+        b=AWCc/ylFmQ91zZEJrbKovcmODhKduqUVkKGxHK8uCtVvWppAnjCzAVhlqtuTB6Zv3H
+         fwGfadWPG5OWx3vtouAanI9rAb4+nCSTS9ougZHH94RmFVRXusGOhSeq6LcZbXUbpYke
+         LecHuReAxOHZIAlNr0puF8IN10taJseJbu/8dZmgE65qy44VHc90CsjCbMPz9YIW56uc
+         KAocddCq9fbTe+4eLEe4ukQAx3KuF/S8Bs/5ss0PU18bAsmodPObJCziaNGvW+fW97nj
+         vqPpR6NvW2UHqccwDYrcuioTdRRCTX8F5vGOe97A6Uj5iUQG4sbm5c76feOsNIPb/J8O
+         nOKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:in-reply-to:from
-         :message-id:date:user-agent:mime-version:content-language
-         :content-transfer-encoding;
-        bh=N9RStK7jK31IMkYsK9Zmty0p4l3nirgKbh7bIe53dXM=;
-        b=fMRpNyf4ERX/Dc4iObhU2NrrMZvYMMVWIzOeA/3ZSav5H7k270IBVGJYSwncnLnElS
-         lZ0xFLn5vgERHfZaFRchi1LJjWEu5gPvlvtSygLOT/vNypXAS6qqxzH3fExPlXidjYmg
-         QzHGr9+oONS4tOeTaVDqe6V3AOTYiXvg1KArKIq7vLd+86JItoAdDUh6dQSq+5aUzAAJ
-         cCI+vY5o2P+IVl/guzy4fkzxSIWfXDpkv8xAaSk6elc9Fftg2Ct/3aBhfqj79LlCHIQn
-         IcZ6gJrtKKPsHjocFJroyCY1JLliS6re2eWzEvjOOhu/dYx0uGPHnKz/NAhmUqVRGcfs
-         eOaA==
-X-Gm-Message-State: APjAAAV2tJblLD6ThQlPXP7BHC5IWLqtH4Z+jraJ9Mkx7pL+chAv5Zvp
-        r1wxup1wyHTusN8eZX0Wcyk2dQy2Z5A=
-X-Google-Smtp-Source: APXvYqwVEnrGtsrUlWxXrQ7A04tZcTpfUGvGKKQv3+wNwZeIVek8X4gNTvjZBxv2Wua+FVD54m51EQ==
-X-Received: by 2002:aa7:94a4:: with SMTP id a4mr86600990pfl.178.1577947273711;
-        Wed, 01 Jan 2020 22:41:13 -0800 (PST)
-Received: from [0.0.0.0] (199.168.137.127.16clouds.com. [199.168.137.127])
-        by smtp.gmail.com with ESMTPSA id k21sm48817036pfa.63.2020.01.01.22.41.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Jan 2020 22:41:13 -0800 (PST)
-Subject: Re: [PATCH 3/7] bcache: rework error unwinding in register_bcache
-To:     Christoph Hellwig <hch@lst.de>, linux-bcache@vger.kernel.org
-References: <20191212153604.19540-1-hch@lst.de>
- <20191212153604.19540-4-hch@lst.de>
-In-Reply-To: <20191212153604.19540-4-hch@lst.de>
-From:   guoju fang <fangguoju@gmail.com>
-Message-ID: <34f67cbf-a057-7d1a-e0fa-a4233df7a883@gmail.com>
-Date:   Thu, 2 Jan 2020 14:40:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=40ACnQIUnpge54Cj+EODMXbGQ2AM0yGbootCDBdgIh0=;
+        b=K4vit5WNT2aitmHyyzWqq6SaWuavkY3W+bUhhcztmsWVe/qNGXSfYSJafN/AL1exsH
+         C9zfDVic4e9M8vP9iCEpc3lTBD5QoGSMaOj9vBIyFVPT4Ufnfu+sLc9nkAwJNOYm3VoD
+         FRD2lbcrM4L32J5uNStgN31Z2Vp5Sb54Rj7a6v2ML9hUILalO91ur8y8e1kMeYeBlTN1
+         rR7S+Fd+pHOe5KyBA6Q4kjUzMPQEyVoPHpbg8Z+YNQq4TWpYc8QNcyWmDbnYq+iV3JyB
+         ipsKjG+sOsuC90jB6p73JYm5U8WTEoPDBSKqp+2f/aY9AeMRr7On5CQVeIYjGgLEouVh
+         /4jQ==
+X-Gm-Message-State: APjAAAUNRBNQEdIkd4ttGG1/4/iTztaG+bDMuDkAGqhe0ChE2jSf4aY+
+        bVvsTaAhg5aJqkSp18HR4CgmPzVkKNIR45Y9rMI=
+X-Google-Smtp-Source: APXvYqwTD0MzQRfSqMjBdpNUeZAJzfDvhrEGhXGCrMyvXGb//+N8M9ASxsqTbkQfP5NbaV7n6hKI5gEfY+hOjDS6Fyg=
+X-Received: by 2002:ad4:478b:: with SMTP id z11mr69635758qvy.185.1578082785331;
+ Fri, 03 Jan 2020 12:19:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ac8:4410:0:0:0:0:0 with HTTP; Fri, 3 Jan 2020 12:19:45 -0800 (PST)
+From:   "Rev.Dr Emmanuel Okoye CEO Ecobank-benin" 
+        <westernunion.benin982@gmail.com>
+Date:   Fri, 3 Jan 2020 21:19:45 +0100
+Message-ID: <CAP=nHBKxfmbdRg7q4-1jdSUL6+zok9agasMSrXV5CsEJEmZz3A@mail.gmail.com>
+Subject: I promise you must be happy today, God has uplifted you and your
+ family ok
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Hellwig,
+Dear Friend
 
-There's a bit problem in this patch, if try_module_get failed and then 
-goto label out, pr_info will access path that was not initialized. To 
-fix it, pr_info should be put before kfree(path).
+i hope all is well with you,if so, glory be to God almighty. I'm very
+happy to inform you, about my success in getting payment funds under
+the cooperation of a new partner from United States of
+America.Presently I am in uk for investment projects with my own share
+of the total sum. I didn't forget your past efforts. IMF finally
+approved your compensation payment funds this morning by prepaid (ATM)
+Debit card of US$12,500.000.00Million Dollars, Since you not received
+this payment yet, I was not certified
+but it is not your fault and not my fault, I hold nothing against
+you.than bank official whom has been detaining the transfer in the
+bank, trying to claim your funds by themselves.
 
-Best Regards,
-Guoju.
+Therefore, in appreciation of your effort I have raised an
+International prepaid (ATM) Debit card of US$12,500.000.00 in your
+favor as compensation to you.
 
+Now, i want you to contact my Diplomatic Agent, His name is Mike Benz
+on His  e-mail Address (mikebenz550@aol.com
 
-On 2019/12/12 23:36, Christoph Hellwig wrote:
-> Split the successful and error return path, and use one goto label for each
-> resource to unwind.  This also fixes some small errors like leaking the
-> module reference count in the reboot case (which seems entirely harmless)
-> or printing the wrong warning messages for early failures.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   drivers/md/bcache/super.c | 75 +++++++++++++++++++++++----------------
->   1 file changed, 45 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 3045f27e0d67..e8013e1b0a14 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -2375,29 +2375,33 @@ static bool bch_is_open(struct block_device *bdev)
->   static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->   			       const char *buffer, size_t size)
->   {
-> -	ssize_t ret = -EINVAL;
-> -	const char *err = "cannot allocate memory";
-> -	char *path = NULL;
-> -	struct cache_sb *sb = NULL;
-> +	const char *err;
-> +	char *path;
-> +	struct cache_sb *sb;
->   	struct block_device *bdev = NULL;
-> -	struct page *sb_page = NULL;
-> +	struct page *sb_page;
-> +	ssize_t ret;
->   
-> +	ret = -EBUSY;
->   	if (!try_module_get(THIS_MODULE))
-> -		return -EBUSY;
-> +		goto out;
->   
->   	/* For latest state of bcache_is_reboot */
->   	smp_mb();
->   	if (bcache_is_reboot)
-> -		return -EBUSY;
-> +		goto out_module_put;
->   
-> +	ret = -ENOMEM;
-> +	err = "cannot allocate memory";
->   	path = kstrndup(buffer, size, GFP_KERNEL);
->   	if (!path)
-> -		goto err;
-> +		goto out_module_put;
->   
->   	sb = kmalloc(sizeof(struct cache_sb), GFP_KERNEL);
->   	if (!sb)
-> -		goto err;
-> +		goto out_free_path;
->   
-> +	ret = -EINVAL;
->   	err = "failed to open device";
->   	bdev = blkdev_get_by_path(strim(path),
->   				  FMODE_READ|FMODE_WRITE|FMODE_EXCL,
-> @@ -2414,57 +2418,68 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->   			if (!IS_ERR(bdev))
->   				bdput(bdev);
->   			if (attr == &ksysfs_register_quiet)
-> -				goto quiet_out;
-> +				goto done;
->   		}
-> -		goto err;
-> +		goto out_free_sb;
->   	}
->   
->   	err = "failed to set blocksize";
->   	if (set_blocksize(bdev, 4096))
-> -		goto err_close;
-> +		goto out_blkdev_put;
->   
->   	err = read_super(sb, bdev, &sb_page);
->   	if (err)
-> -		goto err_close;
-> +		goto out_blkdev_put;
->   
->   	err = "failed to register device";
->   	if (SB_IS_BDEV(sb)) {
->   		struct cached_dev *dc = kzalloc(sizeof(*dc), GFP_KERNEL);
->   
->   		if (!dc)
-> -			goto err_close;
-> +			goto out_put_sb_page;
->   
->   		mutex_lock(&bch_register_lock);
->   		ret = register_bdev(sb, sb_page, bdev, dc);
->   		mutex_unlock(&bch_register_lock);
->   		/* blkdev_put() will be called in cached_dev_free() */
-> -		if (ret < 0)
-> -			goto err;
-> +		if (ret < 0) {
-> +			bdev = NULL;
-> +			goto out_put_sb_page;
-> +		}
->   	} else {
->   		struct cache *ca = kzalloc(sizeof(*ca), GFP_KERNEL);
->   
->   		if (!ca)
-> -			goto err_close;
-> +			goto out_put_sb_page;
->   
->   		/* blkdev_put() will be called in bch_cache_release() */
-> -		if (register_cache(sb, sb_page, bdev, ca) != 0)
-> -			goto err;
-> +		if (register_cache(sb, sb_page, bdev, ca) != 0) {
-> +			bdev = NULL;
-> +			goto out_put_sb_page;
-> +		}
->   	}
-> -quiet_out:
-> -	ret = size;
-> -out:
-> -	if (sb_page)
-> -		put_page(sb_page);
-> +
-> +	put_page(sb_page);
-> +done:
->   	kfree(sb);
->   	kfree(path);
->   	module_put(THIS_MODULE);
-> -	return ret;
-> -
-> -err_close:
-> -	blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
-> -err:
-> +	return size;
-> +
-> +out_put_sb_page:
-> +	put_page(sb_page);
-> +out_blkdev_put:
-> +	if (bdev)
-> +		blkdev_put(bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
-> +out_free_sb:
-> +	kfree(sb);
-> +out_free_path:
-> +	kfree(path);
-> +out_module_put:
-> +	module_put(THIS_MODULE);
-> +out:
->   	pr_info("error %s: %s", path, err);
-> -	goto out;
-> +	return ret;
->   }
->   
->   
-> 
+ask Him to send the Prepaid (ATM) Debit card to you. Bear in mind that
+the money is in Prepaid (ATM) Debit card, not cash, so you need to
+send to him,
+your full name
+address  where the prepaid (ATM) Debit card will be delivered to you,
+including your cell phone number. Finally, I left explicit
+instructions with him, on how to send the (ATM CARD) to you.
+
+The Prepaid (ATM) Debit card, will be send to you through my
+Diplomatic Agent Mr. Mike Benz immediately you contact him. So contact
+my Diplomatic Agent Mr. Mike Benz immediately you receive this letter.
+Below is his contact information:
+
+NAME : MIKE BENZ
+EMAIL ADDRESS: mikebenz550@aol.com
+Text Him, (256) 284-4886
+
+Request for Delivery of the Prepaid (ATM) Debit card  to you today.
+Note, please I have paid for the whole service fees for you, so the
+only money you will send to my Diplomatic Agent Mr. Mike Benz is
+$50.00 for your prepaid (ATM) Debit card DELIVERY FEE to your address
+ok.
+Let me know once you receive this Card at your address.
+Best regards,
+Rev.Dr, George Adadar
