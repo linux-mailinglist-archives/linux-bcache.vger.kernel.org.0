@@ -2,25 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C1A13159F
-	for <lists+linux-bcache@lfdr.de>; Mon,  6 Jan 2020 17:05:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6411315A0
+	for <lists+linux-bcache@lfdr.de>; Mon,  6 Jan 2020 17:05:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbgAFQFQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 6 Jan 2020 11:05:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42662 "EHLO mx2.suse.de"
+        id S1726548AbgAFQFU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 6 Jan 2020 11:05:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42678 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbgAFQFQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 6 Jan 2020 11:05:16 -0500
+        id S1726296AbgAFQFU (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 6 Jan 2020 11:05:20 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id AB4F9AD6F
-        for <linux-bcache@vger.kernel.org>; Mon,  6 Jan 2020 16:05:14 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id AD56CAD6F
+        for <linux-bcache@vger.kernel.org>; Mon,  6 Jan 2020 16:05:17 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>
-Subject: [RFC PATCH 4/7] bcache: add __bch_mca_scan() with parameter "bool reap_flush"
-Date:   Tue,  7 Jan 2020 00:04:53 +0800
-Message-Id: <20200106160456.45689-5-colyli@suse.de>
+Subject: [RFC PATCH 5/7] bcache: limit bcache btree node cache memory consumption by I/O throttle
+Date:   Tue,  7 Jan 2020 00:04:54 +0800
+Message-Id: <20200106160456.45689-6-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20200106160456.45689-1-colyli@suse.de>
 References: <20200106160456.45689-1-colyli@suse.de>
@@ -29,73 +29,212 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch renames original bch_mca_scan() to __bch_mca_scan() and add
-the third parameter "bool reap_flush". The parameter reap_flush is used
-when calling mca_reap() inside __bch_mca_scan() to indicate weather
-mca_reap() should flush or skip dirty btree node cache.
+Now most of obvious deadlock or panic problems in bcache are fixed, so
+bcache now can survie under very high I/O load until ... it consumpts
+all system memory for bcache btree node cache, and the system hangs or
+panics.
 
-bch_mca_scan() still exists but it changes to a wrapper of,
-	{return __bch_mca_scan(shrink, sc, false);}
+The bcache btree node cache is used to cache the bcace btree node from
+SSD to memory, when determine whether a data block is cached or not
+by indexing the btree, the speed can be much more fast by an in-memory
+search.
 
-bch_mca_scan() won't reap dirty btree node cache, by this change, it is
-possible to reap and shrink dirty btree node cache when calling
-__bch_mca_scan() with reap_flush set to true.
+Before this patch, there is no btree node cache memory limitation, just
+a slab shrinker callback registered to slab memory manager. If the I/O
+requests are coming faster than kernel memory management code to shrink
+the bcache btree node cache memory, it is possible for bcache to consume
+all available system memory for its btree node cache, and make whole
+system hang or panic. On high performance machine with many CPU cores,
+large memory size and SSD capanicity, it is often observed the whole
+system gets hung or panic afer 12+ hours high small random I/O load
+(e.g. 30K IOPS with 512 bytes random reads and writes).
 
-This is necessary for following changes which control memory consumption
-of bcache btree node cache by throttling regular I/O requests.
+This patch tries to limit bcache btree node cache memory consumption by
+I/O throttle. The idea is,
+1) Add kernel thread c->btree_cache_shrink_thread to shrink in-memory
+   cached btree nodes.
+2) Add a threshold c->btree_cache_threshold to limit number of in-memory
+   cached btree node, if c->btree_cache_used reaches the threshold, wake
+   up the shrink kernel thread to shrink in-memory cached btree nodes.
+3) In the shrink kernel thread, call __bch_mca_scan() with reap_flush
+   parameter set to true, then all candidate clean and dirty (flush to
+   SSD before reap) btree nodes will be shrunk.
+4) In the shrink kernel thread main loop, try to shrink 100 btree nodes
+   by calling __bch_mca_scan(). Inside __bch_mca_scan() c->bucket_lock
+   is held during shrinking all the 100 btree nodes. The shrinking will
+   stop until in-memory cached btree node number less than
+	c->btree_cache_threshold - MCA_SHRINK_DEFAULT_HYSTERESIS
+   MCA_SHRINK_DEFAULT_HYSTERESIS is used to avoid the shrinking kernel
+   thread is waken up too frequently, by default its value is 1000.
+
+The I/O throttle happens when __bch_mca_scan() is called in the while-
+loop inside the shrink kernel thread main loop.
+- Every time when __bch_mca_scan() is called, 100 btree nodes are about
+  to shrink. During __bch_mca_scan() shrinking all the btree nodes,
+  c->bucket_lock is held.
+- When a write request coming, bcache needs to allocate a SSD space for
+  the cached data with c->bucket_lock held. If __bch_mca_scan() is
+  executing to shrink btree node memory, the allocation operation has to
+  wait for c->bucket_lock.
+- When allocating in-memory btree node for new I/O request, mutex
+  c->bucket_lock is also required. If __bch_mca_scan() is running
+  new I/O request has to wait until the above 100 btree nodes are
+  shunk, then the new I/O request has chance to compete c->bucket_lock.
+Once c->bucket_lock is acquired inside shrink kernel thread, all other
+I/Os has to wait until the 100 in-memory btree node cache are shunk.
+Then the I/O requests are throttled by shrink kernel thread until all
+in-memory cached btree node number is less than,
+	c->btree_cache_threshold - MCA_SHRINK_DEFAULT_HYSTERESIS
+
+This is a simple but working method to limit bcache btree node cache
+memory consumption by I/O throttle.
+
+By default c->btree_cache_threshold is 15000, if the btree node size is
+2MB (default bucket size), it is around 30GB. It means if the bcache
+btree node cache accupies around 30GB memory, the shrink kernel thread
+will wake up and start to shrink the bcache in-memory btree node cache.
+
+30GB in-memory btree node cache is already big enough, it is reasonable
+for a default threshold. If there is report in fture that people do want
+to offer much more memory for bcache in-memory btree node cache, there
+will be a sysfs interface later for such configuration.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/btree.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/md/bcache/bcache.h |  3 +++
+ drivers/md/bcache/btree.c  | 63 ++++++++++++++++++++++++++++++++++++++++++++--
+ drivers/md/bcache/btree.h  |  3 +++
+ drivers/md/bcache/super.c  |  3 +++
+ 4 files changed, 70 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index def15a6b4f7b..cff62084271b 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -589,6 +589,9 @@ struct cache_set {
+ 	struct task_struct	*btree_cache_alloc_lock;
+ 	spinlock_t		btree_cannibalize_lock;
+ 
++	unsigned int		btree_cache_threshold;
++	struct task_struct	*btree_cache_shrink_thread;
++
+ 	/*
+ 	 * When we free a btree node, we increment the gen of the bucket the
+ 	 * node is in - but we can't rewrite the prios and gens until we
 diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index fa872df4e770..b37405aedf6e 100644
+index b37405aedf6e..ada17113482f 100644
 --- a/drivers/md/bcache/btree.c
 +++ b/drivers/md/bcache/btree.c
-@@ -699,8 +699,9 @@ static int mca_reap(struct btree *b, unsigned int min_order, bool flush)
- 	return -ENOMEM;
+@@ -835,13 +835,64 @@ void bch_btree_cache_free(struct cache_set *c)
+ 	mutex_unlock(&c->bucket_lock);
  }
  
--static unsigned long bch_mca_scan(struct shrinker *shrink,
--				  struct shrink_control *sc)
-+static unsigned long __bch_mca_scan(struct shrinker *shrink,
-+				    struct shrink_control *sc,
-+				    bool reap_flush)
- {
- 	struct cache_set *c = container_of(shrink, struct cache_set, shrink);
- 	struct btree *b, *t;
-@@ -738,7 +739,7 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
- 		if (nr <= 0)
- 			goto out;
- 
--		if (!mca_reap(b, 0, false)) {
-+		if (!mca_reap(b, 0, reap_flush)) {
- 			mca_data_free(b);
- 			rw_unlock(true, b);
- 			freed++;
-@@ -751,7 +752,7 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
- 		if (nr <= 0 || i >= btree_cache_used)
- 			goto out;
- 
--		if (!mca_reap(b, 0, false)) {
-+		if (!mca_reap(b, 0, reap_flush)) {
- 			mca_bucket_free(b);
- 			mca_data_free(b);
- 			rw_unlock(true, b);
-@@ -766,6 +767,12 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
- 	return freed * c->btree_pages;
- }
- 
-+static unsigned long bch_mca_scan(struct shrinker *shrink,
-+				  struct shrink_control *sc)
++#define MCA_SHRINK_DEFAULT_HYSTERESIS 1000
++static int bch_mca_shrink_thread(void *arg)
 +{
-+	return __bch_mca_scan(shrink, sc, false);
++
++	struct cache_set *c = arg;
++
++	while (!kthread_should_stop() &&
++	       !test_bit(CACHE_SET_IO_DISABLE, &c->flags)) {
++
++		set_current_state(TASK_INTERRUPTIBLE);
++		if (c->btree_cache_used < c->btree_cache_threshold ||
++		    c->shrinker_disabled ||
++		    c->btree_cache_alloc_lock) {
++			/* quit main loop if kthread should stop */
++			if (kthread_should_stop() ||
++			    test_bit(CACHE_SET_IO_DISABLE, &c->flags)) {
++				set_current_state(TASK_RUNNING);
++				break;
++			}
++			schedule_timeout(30*HZ);
++			continue;
++		}
++		set_current_state(TASK_RUNNING);
++
++		/* Now shrink mca cache memory */
++		while (!kthread_should_stop() &&
++		       !test_bit(CACHE_SET_IO_DISABLE, &c->flags) &&
++		       ((c->btree_cache_used + MCA_SHRINK_DEFAULT_HYSTERESIS) >=
++			c->btree_cache_threshold)) {
++				struct shrink_control sc;
++
++				sc.gfp_mask = GFP_KERNEL;
++				sc.nr_to_scan = 100 * c->btree_pages;
++				__bch_mca_scan(&c->shrink, &sc, true);
++				cond_resched();
++		} /* shrink loop done */
++	} /* kthread loop done */
++
++	wait_for_kthread_stop();
++	return 0;
 +}
 +
- static unsigned long bch_mca_count(struct shrinker *shrink,
- 				   struct shrink_control *sc)
+ int bch_btree_cache_alloc(struct cache_set *c)
  {
+ 	unsigned int i;
+ 
+-	for (i = 0; i < mca_reserve(c); i++)
+-		if (!mca_bucket_alloc(c, &ZERO_KEY, GFP_KERNEL))
++	c->btree_cache_shrink_thread =
++		kthread_create(bch_mca_shrink_thread, c, "bcache_mca_shrink");
++	if (IS_ERR_OR_NULL(c->btree_cache_shrink_thread))
++		return -ENOMEM;
++	c->btree_cache_threshold = BTREE_CACHE_THRESHOLD_DEFAULT;
++
++	for (i = 0; i < mca_reserve(c); i++) {
++		if (!mca_bucket_alloc(c, &ZERO_KEY, GFP_KERNEL)) {
++			kthread_stop(c->btree_cache_shrink_thread);
+ 			return -ENOMEM;
++		}
++	}
+ 
+ 	list_splice_init(&c->btree_cache,
+ 			 &c->btree_cache_freeable);
+@@ -961,6 +1012,14 @@ static struct btree *mca_alloc(struct cache_set *c, struct btree_op *op,
+ 	if (mca_find(c, k))
+ 		return NULL;
+ 
++	/*
++	 * If too many btree node cache allocated, wake up
++	 * the cache shrink thread to release btree node
++	 * cache memory.
++	 */
++	if (c->btree_cache_used >= c->btree_cache_threshold)
++		wake_up_process(c->btree_cache_shrink_thread);
++
+ 	/* btree_free() doesn't free memory; it sticks the node on the end of
+ 	 * the list. Check if there's any freed nodes there:
+ 	 */
+diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
+index f4dcca449391..3b1a423fb593 100644
+--- a/drivers/md/bcache/btree.h
++++ b/drivers/md/bcache/btree.h
+@@ -102,6 +102,9 @@
+ #include "bset.h"
+ #include "debug.h"
+ 
++/* For 2MB bucket, 15000 is around 30GB memory */
++#define BTREE_CACHE_THRESHOLD_DEFAULT 15000
++
+ struct btree_write {
+ 	atomic_t		*journal;
+ 
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 047d9881f529..dc9455ae81b9 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1662,6 +1662,9 @@ static void cache_set_flush(struct closure *cl)
+ 	if (!IS_ERR_OR_NULL(c->gc_thread))
+ 		kthread_stop(c->gc_thread);
+ 
++	if (!IS_ERR_OR_NULL(c->btree_cache_shrink_thread))
++		kthread_stop(c->btree_cache_shrink_thread);
++
+ 	if (!IS_ERR_OR_NULL(c->root))
+ 		list_add(&c->root->list, &c->btree_cache);
+ 
 -- 
 2.16.4
 
