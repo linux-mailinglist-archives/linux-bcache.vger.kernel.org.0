@@ -2,69 +2,94 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A24A51315A2
-	for <lists+linux-bcache@lfdr.de>; Mon,  6 Jan 2020 17:05:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07ED8131BE7
+	for <lists+linux-bcache@lfdr.de>; Mon,  6 Jan 2020 23:58:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbgAFQFY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 6 Jan 2020 11:05:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42694 "EHLO mx2.suse.de"
+        id S1726731AbgAFW6H (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 6 Jan 2020 17:58:07 -0500
+Received: from mx.ewheeler.net ([173.205.220.69]:37388 "EHLO mx.ewheeler.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbgAFQFY (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 6 Jan 2020 11:05:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B26C8AD6F
-        for <linux-bcache@vger.kernel.org>; Mon,  6 Jan 2020 16:05:22 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     linux-bcache@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>
-Subject: [RFC PATCH 7/7] bcache: add cond_resched() in bch_btree_node_get() if mca_alloc() fails
-Date:   Tue,  7 Jan 2020 00:04:56 +0800
-Message-Id: <20200106160456.45689-8-colyli@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200106160456.45689-1-colyli@suse.de>
-References: <20200106160456.45689-1-colyli@suse.de>
+        id S1726721AbgAFW6G (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 6 Jan 2020 17:58:06 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mx.ewheeler.net (Postfix) with ESMTP id 1A4BFA0633;
+        Mon,  6 Jan 2020 22:58:06 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id 6tA-PVALLdKP; Mon,  6 Jan 2020 22:57:45 +0000 (UTC)
+Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id BDF95A0440;
+        Mon,  6 Jan 2020 22:57:44 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net BDF95A0440
+Date:   Mon, 6 Jan 2020 22:57:40 +0000 (UTC)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
+X-X-Sender: lists@mx.ewheeler.net
+To:     Coly Li <colyli@suse.de>
+cc:     linux-bcache@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] bcache: back to cache all readahead I/Os
+In-Reply-To: <20200104065802.113137-1-colyli@suse.de>
+Message-ID: <alpine.LRH.2.11.2001062256450.2074@mx.ewheeler.net>
+References: <20200104065802.113137-1-colyli@suse.de>
+User-Agent: Alpine 2.11 (LRH 23 2013-08-11)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In bch_btree_node_get(), if mca_alloc() fails and returns NULL pointer,
-it means no memory to allocate and the code will go to retry label to
-call mca_alloc() again.
+On Sat, 4 Jan 2020, Coly Li wrote:
 
-When few system memory to allocate, it takes time for in-memory btree
-node cache shrink kthread to shrink the nodes, and same to the slab
-memory shrinker callback routines. Therefore directly go to retry label
-may just wast CPU cycles because the memory is still not available yet,
-and the code has to jump to retry label again.
+> In year 2007 high performance SSD was still expensive, in order to
+> save more space for real workload or meta data, the readahead I/Os
+> for non-meta data was bypassed and not cached on SSD.
+> 
+> In now days, SSD price drops a lot and people can find larger size
+> SSD with more comfortable price. It is unncessary to bypass normal
+> readahead I/Os to save SSD space for now.
+> 
+> This patch removes the code which checks REQ_RAHEAD tag of bio in
+> check_should_bypass(), then all readahead I/Os will be cached on SSD.
+> 
+> NOTE: this patch still keeps the checking of "REQ_META|REQ_PRIO" in
+> should_writeback(), because we still want to cache meta data I/Os
+> even they are asynchronized.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Coly Li <colyli@suse.de>
+> Cc: Eric Wheeler <bcache@linux.ewheeler.net>
 
-This patch adds cond_resched() before jumps to retry label, then there
-will be much less re-jump to retry label when memory allocation fails.
-it may relax the CPU cycles and give more time for shrink kthread and
-other slab memory shrink callback routines.
+Acked-by: Eric Wheeler <bcache@linux.ewheeler.net>
 
-Signed-off-by: Coly Li <colyli@suse.de>
----
- drivers/md/bcache/btree.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 48a097037da8..bd42b0b1af27 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -1081,8 +1081,10 @@ struct btree *bch_btree_node_get(struct cache_set *c, struct btree_op *op,
- 		b = mca_alloc(c, op, k, level);
- 		mutex_unlock(&c->bucket_lock);
- 
--		if (!b)
-+		if (!b) {
-+			cond_resched();
- 			goto retry;
-+		}
- 		if (IS_ERR(b))
- 			return b;
- 
--- 
-2.16.4
-
+> ---
+>  drivers/md/bcache/request.c | 9 ---------
+>  1 file changed, 9 deletions(-)
+> 
+> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+> index 73478a91a342..acc07c4f27ae 100644
+> --- a/drivers/md/bcache/request.c
+> +++ b/drivers/md/bcache/request.c
+> @@ -378,15 +378,6 @@ static bool check_should_bypass(struct cached_dev *dc, struct bio *bio)
+>  	     op_is_write(bio_op(bio))))
+>  		goto skip;
+>  
+> -	/*
+> -	 * Flag for bypass if the IO is for read-ahead or background,
+> -	 * unless the read-ahead request is for metadata
+> -	 * (eg, for gfs2 or xfs).
+> -	 */
+> -	if (bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND) &&
+> -	    !(bio->bi_opf & (REQ_META|REQ_PRIO)))
+> -		goto skip;
+> -
+>  	if (bio->bi_iter.bi_sector & (c->sb.block_size - 1) ||
+>  	    bio_sectors(bio) & (c->sb.block_size - 1)) {
+>  		pr_debug("skipping unaligned io");
+> -- 
+> 2.16.4
+> 
+> 
