@@ -2,25 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D326B13159C
-	for <lists+linux-bcache@lfdr.de>; Mon,  6 Jan 2020 17:05:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E2EB13159D
+	for <lists+linux-bcache@lfdr.de>; Mon,  6 Jan 2020 17:05:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbgAFQFI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 6 Jan 2020 11:05:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42626 "EHLO mx2.suse.de"
+        id S1726494AbgAFQFL (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 6 Jan 2020 11:05:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42642 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbgAFQFI (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 6 Jan 2020 11:05:08 -0500
+        id S1726296AbgAFQFL (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 6 Jan 2020 11:05:11 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B96B5AD6F
-        for <linux-bcache@vger.kernel.org>; Mon,  6 Jan 2020 16:05:06 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 8D47CAD6F
+        for <linux-bcache@vger.kernel.org>; Mon,  6 Jan 2020 16:05:09 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>
-Subject: [RFC PATCH 1/7] bcache: remove member accessed from struct btree
-Date:   Tue,  7 Jan 2020 00:04:50 +0800
-Message-Id: <20200106160456.45689-2-colyli@suse.de>
+Subject: [RFC PATCH 2/7] bcache: reap c->btree_cache_freeable from the tail in bch_mca_scan()
+Date:   Tue,  7 Jan 2020 00:04:51 +0800
+Message-Id: <20200106160456.45689-3-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20200106160456.45689-1-colyli@suse.de>
 References: <20200106160456.45689-1-colyli@suse.de>
@@ -29,77 +29,62 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The member 'accessed' of struct btree is used in bch_mca_scan() when
-shrinking btree node caches. The original idea is, if b->accessed is
-set, clean it and look at next btree node cache from c->btree_cache
-list, and only shrink the caches whose b->accessed is cleaned. Then
-only cold btree node cache will be shrunk.
+In order to skip the most recently freed btree node cahce, currently
+in bch_mca_scan() the first 3 caches in c->btree_cache_freeable list
+are skipped when shrinking bcache node caches in bch_mca_scan(). The
+related code in bch_mca_scan() is,
 
-But when I/O pressure is high, it is very probably that b->accessed
-of a btree node cache will be set again in bch_btree_node_get()
-before bch_mca_scan() selects it again. Then there is no chance for
-bch_mca_scan() to shrink enough memory back to slub or slab system.
+ 737 list_for_each_entry_safe(b, t, &c->btree_cache_freeable, list) {
+ 738         if (nr <= 0)
+ 739                 goto out;
+ 740
+ 741         if (++i > 3 &&
+ 742             !mca_reap(b, 0, false)) {
+             		lines free cache memory
+ 746         }
+ 747         nr--;
+ 748 }
 
-This patch removes member accessed from struct btree, then once a
-btree node ache is selected, it will be immediately shunk. By this
-change, bch_mca_scan() may release btree node cahce more efficiently.
+The problem is, if virtual memory code calls bch_mca_scan() and
+the calculated 'nr' is 1 or 2, then in the above loop, nothing will
+be shunk. In such case, if slub/slab manager calls bch_mca_scan()
+for many times with small scan number, it does not help to shrink
+cache memory and just wasts CPU cycles.
+
+This patch just selects btree node caches from tail of the
+c->btree_cache_freeable list, then the newly freed host cache can
+still be allocated by mca_alloc(), and at least 1 node can be shunk.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/btree.c | 8 ++------
- drivers/md/bcache/btree.h | 2 --
- 2 files changed, 2 insertions(+), 8 deletions(-)
+ drivers/md/bcache/btree.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 14d6c33b0957..357535a5c89c 100644
+index 357535a5c89c..c3a314deb09d 100644
 --- a/drivers/md/bcache/btree.c
 +++ b/drivers/md/bcache/btree.c
-@@ -754,14 +754,12 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
- 		b = list_first_entry(&c->btree_cache, struct btree, list);
- 		list_rotate_left(&c->btree_cache);
+@@ -734,17 +734,17 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
  
--		if (!b->accessed &&
+ 	i = 0;
+ 	btree_cache_used = c->btree_cache_used;
+-	list_for_each_entry_safe(b, t, &c->btree_cache_freeable, list) {
++	list_for_each_entry_safe_reverse(b, t, &c->btree_cache_freeable, list) {
+ 		if (nr <= 0)
+ 			goto out;
+ 
+-		if (++i > 3 &&
 -		    !mca_reap(b, 0, false)) {
 +		if (!mca_reap(b, 0, false)) {
- 			mca_bucket_free(b);
  			mca_data_free(b);
  			rw_unlock(true, b);
  			freed++;
--		} else
--			b->accessed = 0;
-+		}
- 	}
- out:
- 	mutex_unlock(&c->bucket_lock);
-@@ -1069,7 +1067,6 @@ struct btree *bch_btree_node_get(struct cache_set *c, struct btree_op *op,
- 	BUG_ON(!b->written);
- 
- 	b->parent = parent;
--	b->accessed = 1;
- 
- 	for (; i <= b->keys.nsets && b->keys.set[i].size; i++) {
- 		prefetch(b->keys.set[i].tree);
-@@ -1160,7 +1157,6 @@ struct btree *__bch_btree_node_alloc(struct cache_set *c, struct btree_op *op,
- 		goto retry;
+ 		}
+ 		nr--;
++		i++;
  	}
  
--	b->accessed = 1;
- 	b->parent = parent;
- 	bch_bset_init_next(&b->keys, b->keys.set->data, bset_magic(&b->c->sb));
- 
-diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
-index 76cfd121a486..f4dcca449391 100644
---- a/drivers/md/bcache/btree.h
-+++ b/drivers/md/bcache/btree.h
-@@ -121,8 +121,6 @@ struct btree {
- 	/* Key/pointer for this btree node */
- 	BKEY_PADDED(key);
- 
--	/* Single bit - set when accessed, cleared by shrinker */
--	unsigned long		accessed;
- 	unsigned long		seq;
- 	struct rw_semaphore	lock;
- 	struct cache_set	*c;
+ 	for (;  (nr--) && i < btree_cache_used; i++) {
 -- 
 2.16.4
 
