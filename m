@@ -2,175 +2,289 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68738133062
-	for <lists+linux-bcache@lfdr.de>; Tue,  7 Jan 2020 21:12:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78B42138170
+	for <lists+linux-bcache@lfdr.de>; Sat, 11 Jan 2020 14:42:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbgAGUMk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 7 Jan 2020 15:12:40 -0500
-Received: from mx.ewheeler.net ([173.205.220.69]:58115 "EHLO mx.ewheeler.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728369AbgAGUMj (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 7 Jan 2020 15:12:39 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id 040A9A0692;
-        Tue,  7 Jan 2020 20:12:34 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id cj8HNE1GhdJX; Tue,  7 Jan 2020 20:12:12 +0000 (UTC)
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id BF09DA0440;
-        Tue,  7 Jan 2020 20:12:07 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net BF09DA0440
-Date:   Tue, 7 Jan 2020 20:12:06 +0000 (UTC)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-X-X-Sender: lists@mx.ewheeler.net
-To:     Coly Li <colyli@suse.de>
-cc:     linux-bcache@vger.kernel.org
-Subject: Re: [RFC PATCH 5/7] bcache: limit bcache btree node cache memory
- consumption by I/O throttle
-In-Reply-To: <6450666d-de01-6250-d65a-e3ebec8c7260@suse.de>
-Message-ID: <alpine.LRH.2.11.2001072006270.2074@mx.ewheeler.net>
-References: <20200106160456.45689-1-colyli@suse.de> <20200106160456.45689-6-colyli@suse.de> <alpine.LRH.2.11.2001062306590.2074@mx.ewheeler.net> <6450666d-de01-6250-d65a-e3ebec8c7260@suse.de>
-User-Agent: Alpine 2.11 (LRH 23 2013-08-11)
+        id S1729404AbgAKNmm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 11 Jan 2020 08:42:42 -0500
+Received: from mail-qk1-f174.google.com ([209.85.222.174]:42928 "EHLO
+        mail-qk1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729294AbgAKNmm (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 11 Jan 2020 08:42:42 -0500
+Received: by mail-qk1-f174.google.com with SMTP id z14so4570173qkg.9
+        for <linux-bcache@vger.kernel.org>; Sat, 11 Jan 2020 05:42:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=HRMQiVBdklKBDBiAl/x6j6nfAuj4A7NLwCCquyY2v4Q=;
+        b=LiewV9valuN5YJaXX7rAzjatRjBkXtimoGJVW0lwxtApGxOyYl1/isOjdSB2TLoZ2x
+         oe+gbhFHDAxGmYrY4FIIFDRSfIr9GIJ/+Oo25E8l0Kj+fxn+ATJSZBqjCYA2tpkEuqHP
+         JbHHmDedDQfqa8w8zyt0Z+xzXsHf811pavBZ++nUSiMm0mUJomhlFJDQuGX12rP8LJEJ
+         lD0rPVhIIpK8B2gywcMpbRgaCXOTtOokl+Ptk7dtADHE22LspnDozxq1ooIHN+n/W+WN
+         OxXmXnk9sOZxRbVnqdMYFSl4vOLlt3iy82BExhdtFCKkdt+ptzc9S6l8y1zvzDIBDJku
+         I8CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=HRMQiVBdklKBDBiAl/x6j6nfAuj4A7NLwCCquyY2v4Q=;
+        b=OlI0yVwSk9qQMfp9/ZxR/STaYBfT+BwdSvHO6c74YlLakisAfz/P3lsWMzyffi55Qs
+         0c+gmBGEt4SJ5itnK6VzUcKWFjEnLNh0jIHXd78Y3QRNxPrP+AZo/TgTdFyqGGwNx/bc
+         oC5Cgo7+DhwYvTSfBbhf2UK+F6zFDLLHu8LF8s6fQfu6hDtnYltS37v7jSDESA2sv3qz
+         4sKDF1j+VuzVQiN9xFq60m6R1BTrq4Nd2/NgP3STHnSTQ6Otedgf7Znre0cMUmVA4T8V
+         43/gjlVDcJYod2Mez7pOeGERLsMC6usHYErXOj+37J/Ul9Sw/PewffsYbZevbQ8j0pEn
+         6VFQ==
+X-Gm-Message-State: APjAAAUvn+XRRwK3VIR2g3UWjVmFRicyn/yoqdQ0DFzs/RXVntf0z6UA
+        FswRXMCEKNBnn5WyEErJ5AQDqjCODh2TNJlpfysEUzuOA30=
+X-Google-Smtp-Source: APXvYqxNgL6+3K/EAQ99mNluI3O93nWDkjs+hII78Gg/cejCVmhuUBVsSHkeANBgJWKehE5II9xUtT8hQ1NooDNBrbU=
+X-Received: by 2002:ae9:eb56:: with SMTP id b83mr7911788qkg.123.1578750160748;
+ Sat, 11 Jan 2020 05:42:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="-844282404-478050418-1578427927=:2074"
+References: <CA+Z73LFJLiP7Z2_cDUsO4Om_8pdD6w1jTSGQB0jY5sL-+nw1Wg@mail.gmail.com>
+ <CA+Z73LGvXa_V8t=KYPkrmeJ-xmEXmz1uAnaT=Yj5AReZgLeqhg@mail.gmail.com> <alpine.LRH.2.11.2001062258320.2074@mx.ewheeler.net>
+In-Reply-To: <alpine.LRH.2.11.2001062258320.2074@mx.ewheeler.net>
+Reply-To: clodoaldo.pinto.neto@gmail.com
+From:   Clodoaldo Neto <clodoaldo.pinto.neto@gmail.com>
+Date:   Sat, 11 Jan 2020 10:42:29 -0300
+Message-ID: <CA+Z73LFDs0zGk+24r7XG=oXDZU=wV34GpvAODY96BFXZxrbdhw@mail.gmail.com>
+Subject: Re: Can't mount an encrypted backing device
+To:     Eric Wheeler <bcache@lists.ewheeler.net>
+Cc:     linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Jan 6, 2020 at 8:02 PM Eric Wheeler <bcache@lists.ewheeler.net> wro=
+te:
+>
+> On Sun, 5 Jan 2020, Clodoaldo Neto wrote:
+>
+> > I'm struggling to mount an encrypted backing device. The backing
+> > device is a RAID 1 array at /dev/md127 and the cache device is
+> > /dev/sdb1.
+> >
+> > # lsblk
+> > NAME                                          MAJ:MIN RM   SIZE RO
+> > TYPE  MOUNTPOINT
+> > sda                                             8:0    0 223.6G  0 disk
+> > =E2=94=9C=E2=94=80sda1                                          8:1    =
+0   700M  0 part  /boot
+> > =E2=94=9C=E2=94=80sda2                                          8:2    =
+0   700M  0
+> > part  /boot/efi
+> > =E2=94=9C=E2=94=80sda3                                          8:3    =
+0    26G  0 part
+> > =E2=94=82 =E2=94=94=E2=94=80luks-9793c78f-723c-4218-865f-83dbc4659192 2=
+53:1    0    26G  0 crypt [SWAP]
+> > =E2=94=94=E2=94=80sda4                                          8:4    =
+0   162G  0 part
+> >   =E2=94=94=E2=94=80luks-569b1153-2fab-4984-b1b6-c4a02ee206ef 253:0    =
+0   162G  0 crypt /
+> > sdb                                             8:16   0 111.8G  0 disk
+> > =E2=94=9C=E2=94=80sdb1                                          8:17   =
+0    40G  0 part
+> > =E2=94=94=E2=94=80sdb2                                          8:18   =
+0  71.8G  0 part
+> > sdc                                             8:32   0   1.8T  0 disk
+> > =E2=94=94=E2=94=80sdc1                                          8:33   =
+0   1.8T  0 part
+> >   =E2=94=94=E2=94=80md127                                       9:127  =
+0   1.8T  0 raid1
+> > sdd                                             8:48   0   1.8T  0 disk
+> > =E2=94=94=E2=94=80sdd1                                          8:49   =
+0   1.8T  0 part
+> >   =E2=94=94=E2=94=80md127                                       9:127  =
+0   1.8T  0 raid1
+> > sde                                             8:64   1  58.9G  0 disk
+> > =E2=94=9C=E2=94=80sde1                                          8:65   =
+1    20G  0 part
+> > =E2=94=94=E2=94=80sde2                                          8:66   =
+1  38.9G  0 part
+> > sr0                                            11:0    1  1024M  0 rom
+> >
+> > # blkid | grep -E "md127|sdb1"
+> > /dev/sdb1: UUID=3D"535bfa2d-4c6e-4c19-91b2-d292872a1877" TYPE=3D"bcache=
+"
+> > PARTLABEL=3D"Linux filesystem"
+> > PARTUUID=3D"505789f1-0523-4c62-bdb1-81bc0cc7bff1"
+> > /dev/md127: UUID=3D"b17ceaac-27ec-44d8-8bbb-235cfaa0c4a4" TYPE=3D"bcach=
+e"
+> >
+> > It was working right when I installed Fedora 31 yesterday but then I
+> > resized the caching partition and I can't make it work again.
+> >
+> > This is what I tried
+> >
+> > # wipefs -a /dev/sdb1
+> > /dev/sdb1: 16 bytes were erased at offset 0x00001018 (bcache): c6 85
+> > 73 f6 4e 1a 45 ca 82 65 f5 7f 48 ba 6d 81
+> >
+> > # make-bcache -C --writeback /dev/sdb1
+> > UUID:                   eb7d8e72-f24c-48ee-bad0-771afccca876
+> > Set UUID:               50e33260-4623-4374-9a61-c78b7d75280e
+> > version:                0
+> > nbuckets:               81920
+> > block_size:             1
+> > bucket_size:            1024
+> > nr_in_set:              1
+> > nr_this_dev:            0
+> > first_bucket:           1
+> >
+> > # ll /sys/fs/bcache/
+> > total 0
+> > drwxr-xr-x. 7 root root    0 Jan  5 18:34 50e33260-4623-4374-9a61-c78b7=
+d75280e
+> > --w-------. 1 root root 4096 Jan  5 17:39 pendings_cleanup
+> > --w-------. 1 root root 4096 Jan  5 18:03 register
+> > --w-------. 1 root root 4096 Jan  5 17:39 register_quiet
+> >
+> > # bcache-super-show /dev/sdb1
+> > sb.magic                ok
+> > sb.first_sector         8 [match]
+> > sb.csum                 C4CB62916B7825CE [match]
+> > sb.version              3 [cache device]
+> >
+> > dev.label               (empty)
+> > dev.uuid                eb7d8e72-f24c-48ee-bad0-771afccca876
+> > dev.sectors_per_block   1
+> > dev.sectors_per_bucket  1024
+> > dev.cache.first_sector  1024
+> > dev.cache.cache_sectors 83885056
+> > dev.cache.total_sectors 83886080
+> > dev.cache.ordered       yes
+> > dev.cache.discard       no
+> > dev.cache.pos           0
+> > dev.cache.replacement   0 [lru]
+> >
+> > cset.uuid               50e33260-4623-4374-9a61-c78b7d75280e
+> >
+> > # echo /dev/md127 > /sys/fs/bcache/register
+> > # echo 50e33260-4623-4374-9a61-c78b7d75280e > /sys/block/md127/bcache/a=
+ttach
+> > # blkid | grep bcache0
+> > /dev/bcache0: UUID=3D"7e2c0b40-8dec-4b13-8d00-b53b55160775" TYPE=3D"cry=
+pto_LUKS"
+> >
+> > # bcache-status
+> > --- bcache ---
+> > UUID                        50e33260-4623-4374-9a61-c78b7d75280e
+> > Block Size                  512 B
+> > Bucket Size                 512.00 KiB
+> > Congested?                  False
+> > Read Congestion             2.0ms
+> > Write Congestion            20.0ms
+> > Total Cache Size            40 GiB
+> > Total Cache Used            409.6 MiB   (1%)
+> > Total Cache Unused          40 GiB      (99%)
+> > Evictable Cache             40 GiB      (100%)
+> > Replacement Policy          [lru] fifo random
+> > Cache Mode                  writethrough [writeback] writearound none
+> > Total Hits                  9   (64%)
+> > Total Misses                5
+> > Total Bypass Hits           13  (16%)
+> > Total Bypass Misses         64
+> > Total Bypassed              308.00 KiB
+> >
+> > # lsblk
+> > NAME                                          MAJ:MIN RM   SIZE RO
+> > TYPE  MOUNTPOINT
+> > sda                                             8:0    0 223.6G  0 disk
+> > =E2=94=9C=E2=94=80sda1                                          8:1    =
+0   700M  0 part  /boot
+> > =E2=94=9C=E2=94=80sda2                                          8:2    =
+0   700M  0
+> > part  /boot/efi
+> > =E2=94=9C=E2=94=80sda3                                          8:3    =
+0    26G  0 part
+> > =E2=94=82 =E2=94=94=E2=94=80luks-9793c78f-723c-4218-865f-83dbc4659192 2=
+53:1    0    26G  0 crypt [SWAP]
+> > =E2=94=94=E2=94=80sda4                                          8:4    =
+0   162G  0 part
+> >   =E2=94=94=E2=94=80luks-569b1153-2fab-4984-b1b6-c4a02ee206ef 253:0    =
+0   162G  0 crypt /
+> > sdb                                             8:16   0 111.8G  0 disk
+> > =E2=94=9C=E2=94=80sdb1                                          8:17   =
+0    40G  0 part
+> > =E2=94=82 =E2=94=94=E2=94=80bcache0                                   2=
+52:0    0   1.8T  0 disk
+> > =E2=94=94=E2=94=80sdb2                                          8:18   =
+0  71.8G  0 part
+> > sdc                                             8:32   0   1.8T  0 disk
+> > =E2=94=94=E2=94=80sdc1                                          8:33   =
+0   1.8T  0 part
+> >   =E2=94=94=E2=94=80md127                                       9:127  =
+0   1.8T  0 raid1
+> >     =E2=94=94=E2=94=80bcache0                                 252:0    =
+0   1.8T  0 disk
+> > sdd                                             8:48   0   1.8T  0 disk
+> > =E2=94=94=E2=94=80sdd1                                          8:49   =
+0   1.8T  0 part
+> >   =E2=94=94=E2=94=80md127                                       9:127  =
+0   1.8T  0 raid1
+> >     =E2=94=94=E2=94=80bcache0                                 252:0    =
+0   1.8T  0 disk
+> > sde                                             8:64   1  58.9G  0 disk
+> > =E2=94=9C=E2=94=80sde1                                          8:65   =
+1    20G  0 part
+> > =E2=94=94=E2=94=80sde2                                          8:66   =
+1  38.9G  0 part
+> > sr0                                            11:0    1  1024M  0 rom
+> >
+> > # mount /dev/bcache0 /r
+> > mount: /r: unknown filesystem type 'crypto_LUKS'.
+> >
+> > # cryptsetup open /dev/bcache0 backing-device
+> > Enter passphrase for /dev/bcache0:
+> >
+> > # mount /dev/mapper/backing-device /r
+> > mount: /r: unknown filesystem type 'bcache'.
+>
+> I'm guessing that make-bcache was run upon /dev/mapper/backing-device at
+> some point in time. Hopefully it wasn't clobbered.
+>
+I guess you are right because /dev/mapper/backing-device is seen as a
+cache device:
 
----844282404-478050418-1578427927=:2074
-Content-Type: TEXT/PLAIN; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+# bcache-super-show /dev/mapper/backing-device
+sb.magic                ok
+sb.first_sector         8 [match]
+sb.csum                 D9C2336DD00A6E69 [match]
+sb.version              3 [cache device]
 
-On Tue, 7 Jan 2020, Coly Li wrote:
-> On 2020/1/7 7:08 上午, Eric Wheeler wrote:
-> > On Tue, 7 Jan 2020, Coly Li wrote:
-> > 
-> >> Now most of obvious deadlock or panic problems in bcache are fixed, so
-> >> bcache now can survie under very high I/O load until ... it consumpts
-> >> all system memory for bcache btree node cache, and the system hangs or
-> >> panics.
-> >>
-> >> The bcache btree node cache is used to cache the bcace btree node from
-> >> SSD to memory, when determine whether a data block is cached or not
-> >> by indexing the btree, the speed can be much more fast by an in-memory
-> >> search.
-> >>
-> >> Before this patch, there is no btree node cache memory limitation, just
-> >> a slab shrinker callback registered to slab memory manager. If the I/O
-> >> requests are coming faster than kernel memory management code to shrink
-> >> the bcache btree node cache memory, it is possible for bcache to consume
-> >> all available system memory for its btree node cache, and make whole
-> >> system hang or panic. On high performance machine with many CPU cores,
-> >> large memory size and SSD capanicity, it is often observed the whole
-> >> system gets hung or panic afer 12+ hours high small random I/O load
-> >> (e.g. 30K IOPS with 512 bytes random reads and writes).
-> >>
-> >> This patch tries to limit bcache btree node cache memory consumption by
-> >> I/O throttle. The idea is,
-> >> 1) Add kernel thread c->btree_cache_shrink_thread to shrink in-memory
-> >>    cached btree nodes.
-> >> 2) Add a threshold c->btree_cache_threshold to limit number of in-memory
-> >>    cached btree node, if c->btree_cache_used reaches the threshold, wake
-> >>    up the shrink kernel thread to shrink in-memory cached btree nodes.
-> >> 3) In the shrink kernel thread, call __bch_mca_scan() with reap_flush
-> >>    parameter set to true, then all candidate clean and dirty (flush to
-> >>    SSD before reap) btree nodes will be shrunk.
-> >> 4) In the shrink kernel thread main loop, try to shrink 100 btree nodes
-> >>    by calling __bch_mca_scan(). Inside __bch_mca_scan() c->bucket_lock
-> >>    is held during shrinking all the 100 btree nodes. The shrinking will
-> >>    stop until in-memory cached btree node number less than
-> >> 	c->btree_cache_threshold - MCA_SHRINK_DEFAULT_HYSTERESIS
-> >>    MCA_SHRINK_DEFAULT_HYSTERESIS is used to avoid the shrinking kernel
-> >>    thread is waken up too frequently, by default its value is 1000.
-> >>
-> >> The I/O throttle happens when __bch_mca_scan() is called in the while-
-> >> loop inside the shrink kernel thread main loop.
-> >> - Every time when __bch_mca_scan() is called, 100 btree nodes are about
-> >>   to shrink. During __bch_mca_scan() shrinking all the btree nodes,
-> >>   c->bucket_lock is held.
-> >> - When a write request coming, bcache needs to allocate a SSD space for
-> >>   the cached data with c->bucket_lock held. If __bch_mca_scan() is
-> >>   executing to shrink btree node memory, the allocation operation has to
-> >>   wait for c->bucket_lock.
-> >> - When allocating in-memory btree node for new I/O request, mutex
-> >>   c->bucket_lock is also required. If __bch_mca_scan() is running
-> >>   new I/O request has to wait until the above 100 btree nodes are
-> >>   shunk, then the new I/O request has chance to compete c->bucket_lock.
-> >> Once c->bucket_lock is acquired inside shrink kernel thread, all other
-> >> I/Os has to wait until the 100 in-memory btree node cache are shunk.
-> >> Then the I/O requests are throttled by shrink kernel thread until all
-> >> in-memory cached btree node number is less than,
-> >> 	c->btree_cache_threshold - MCA_SHRINK_DEFAULT_HYSTERESIS
-> >>
-> >> This is a simple but working method to limit bcache btree node cache
-> >> memory consumption by I/O throttle.
-> >>
-> >> By default c->btree_cache_threshold is 15000, if the btree node size is
-> >> 2MB (default bucket size), it is around 30GB. It means if the bcache
-> >> btree node cache accupies around 30GB memory, the shrink kernel thread
-> >> will wake up and start to shrink the bcache in-memory btree node cache.
-> >>
-> >> 30GB in-memory btree node cache is already big enough, it is reasonable
-> >> for a default threshold. If there is report in fture that people do want
-> >> to offer much more memory for bcache in-memory btree node cache, there
-> >> will be a sysfs interface later for such configuration.
-> > 
-> > Is there already a sysfs that shows what is currently used by the cache?
-> 
-> Yes, it is /sys/fs/bcache/<UUID>/btree_cache_size, it shows amount of
-> memory occupied by in-memory btree node cache.
-> 
-> So far I don't see the out-of-memory report from others, it seems only
-> myself notices and observes such issue. Therefore I am not sure whether
-> an extra interface for btree cache size threshold is necessary (we have
-> had a lot already).
+dev.label               (empty)
+dev.uuid                8022eea3-fcf0-40b8-850a-31e5f841d0bd
+dev.sectors_per_block   1
+dev.sectors_per_bucket  1024
+dev.cache.first_sector  1024
+dev.cache.cache_sectors 3774576640
+dev.cache.total_sectors 3774577664
+dev.cache.ordered       yes
+dev.cache.discard       no
+dev.cache.pos           0
+dev.cache.replacement   0 [lru]
 
+cset.uuid               4a63d2b5-1568-473d-925d-53306af2ba7c
 
-FYI, these are some of our btree_cache_size's:
+Is there a path to revert it? Like just formatting it to ext4?
 
- ~]# cat /sys/fs/bcache/*/btree_cache_size
-263.6M
-
- ~]# cat /sys/fs/bcache/*/btree_cache_size
-174.2M
-
- ~]# cat /sys/fs/bcache/*/btree_cache_size
-523.5M
-
- ~]# cat /sys/fs/bcache/*/btree_cache_size
-464.2M
-
- ~]# cat /sys/fs/bcache/*/btree_cache_size
-847.2M
-
- ~]# cat /sys/fs/bcache/*/btree_cache_size
-864.0M
-
- ~]# cat /sys/fs/bcache/*/btree_cache_size
-441.2M
-
- ~]# cat /sys/fs/bcache/*/btree_cache_size
-1.2G
-
-
---
-Eric Wheeler
-
-
-> 
-> 
-> [snipped]
-> 
-> -- 
-> 
-> Coly Li
-> 
----844282404-478050418-1578427927=:2074--
+> Try
+>
+> mount -t ext2 /dev/mapper/backing-device /r
+>          ^^^^ or whatever your original FS really was.
+>
+# mount /dev/mapper/backing-device /r
+mount: /r: unknown filesystem type 'bcache'.
+> --
+> Eric Wheeler
+>
+>
+> >
+> > What am I missing?
+> >
+> > Regards, Clodoaldo
+> >
