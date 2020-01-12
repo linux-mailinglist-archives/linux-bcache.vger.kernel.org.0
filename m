@@ -2,289 +2,86 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78B42138170
-	for <lists+linux-bcache@lfdr.de>; Sat, 11 Jan 2020 14:42:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A2FF138A1D
+	for <lists+linux-bcache@lfdr.de>; Mon, 13 Jan 2020 05:02:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729404AbgAKNmm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 11 Jan 2020 08:42:42 -0500
-Received: from mail-qk1-f174.google.com ([209.85.222.174]:42928 "EHLO
-        mail-qk1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729294AbgAKNmm (ORCPT
+        id S2387429AbgAMEC2 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 12 Jan 2020 23:02:28 -0500
+Received: from mail02.vodafone.es ([217.130.24.81]:56129 "EHLO
+        mail02.vodafone.es" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387415AbgAMEC2 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 11 Jan 2020 08:42:42 -0500
-Received: by mail-qk1-f174.google.com with SMTP id z14so4570173qkg.9
-        for <linux-bcache@vger.kernel.org>; Sat, 11 Jan 2020 05:42:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=HRMQiVBdklKBDBiAl/x6j6nfAuj4A7NLwCCquyY2v4Q=;
-        b=LiewV9valuN5YJaXX7rAzjatRjBkXtimoGJVW0lwxtApGxOyYl1/isOjdSB2TLoZ2x
-         oe+gbhFHDAxGmYrY4FIIFDRSfIr9GIJ/+Oo25E8l0Kj+fxn+ATJSZBqjCYA2tpkEuqHP
-         JbHHmDedDQfqa8w8zyt0Z+xzXsHf811pavBZ++nUSiMm0mUJomhlFJDQuGX12rP8LJEJ
-         lD0rPVhIIpK8B2gywcMpbRgaCXOTtOokl+Ptk7dtADHE22LspnDozxq1ooIHN+n/W+WN
-         OxXmXnk9sOZxRbVnqdMYFSl4vOLlt3iy82BExhdtFCKkdt+ptzc9S6l8y1zvzDIBDJku
-         I8CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=HRMQiVBdklKBDBiAl/x6j6nfAuj4A7NLwCCquyY2v4Q=;
-        b=OlI0yVwSk9qQMfp9/ZxR/STaYBfT+BwdSvHO6c74YlLakisAfz/P3lsWMzyffi55Qs
-         0c+gmBGEt4SJ5itnK6VzUcKWFjEnLNh0jIHXd78Y3QRNxPrP+AZo/TgTdFyqGGwNx/bc
-         oC5Cgo7+DhwYvTSfBbhf2UK+F6zFDLLHu8LF8s6fQfu6hDtnYltS37v7jSDESA2sv3qz
-         4sKDF1j+VuzVQiN9xFq60m6R1BTrq4Nd2/NgP3STHnSTQ6Otedgf7Znre0cMUmVA4T8V
-         43/gjlVDcJYod2Mez7pOeGERLsMC6usHYErXOj+37J/Ul9Sw/PewffsYbZevbQ8j0pEn
-         6VFQ==
-X-Gm-Message-State: APjAAAUvn+XRRwK3VIR2g3UWjVmFRicyn/yoqdQ0DFzs/RXVntf0z6UA
-        FswRXMCEKNBnn5WyEErJ5AQDqjCODh2TNJlpfysEUzuOA30=
-X-Google-Smtp-Source: APXvYqxNgL6+3K/EAQ99mNluI3O93nWDkjs+hII78Gg/cejCVmhuUBVsSHkeANBgJWKehE5II9xUtT8hQ1NooDNBrbU=
-X-Received: by 2002:ae9:eb56:: with SMTP id b83mr7911788qkg.123.1578750160748;
- Sat, 11 Jan 2020 05:42:40 -0800 (PST)
+        Sun, 12 Jan 2020 23:02:28 -0500
+IronPort-SDR: 4lEhIH9ZjvOusbJJlRLUBsNzK3DIgySb0cHgDgBRRfGRDlIPJZ0SfPgIDW6NMel46ZzKlaKapq
+ hJz0Us89KZqg==
+IronPort-PHdr: =?us-ascii?q?9a23=3At4yoDxYW7M0kmlgbwmdOxsb/LSx+4OfEezUN45?=
+ =?us-ascii?q?9isYplN5qZr8W8bnLW6fgltlLVR4KTs6sC17ON9fq+CCdevt6oizMrSNR0TR?=
+ =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
+ =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9vIhi6txvdu8gSjIdtK6s8yA?=
+ =?us-ascii?q?bCr2dVdehR2W5mP0+YkQzm5se38p5j8iBQtOwk+sVdT6j0fLk2QKJBAjg+PG?=
+ =?us-ascii?q?87+MPktR/YTQuS/XQcSXkZkgBJAwfe8h73WIr6vzbguep83CmaOtD2TawxVD?=
+ =?us-ascii?q?+/4apnVAPkhSEaPDI/923Zl9B/g7heoBOhvhBy3YnUYJuNNPp5ZKPSZ88aSn?=
+ =?us-ascii?q?RYUslPUSxNG5+xb5cTD+UbIelYr5fyp14Qohu4GQmgHf3gyjlRinHx2q061f?=
+ =?us-ascii?q?ouEAHf0AM+GdIFrXDYodvpOKsOVOy4yrTDwzfeYPNMwTrz5ojGcgo/r/+PQL?=
+ =?us-ascii?q?x/ftbex0Y0GgPZjFiftZDpMy+J2ugTtWWQ8upuVfioi24iswx/uCagxtsyhY?=
+ =?us-ascii?q?nTm4kaylfE9SN2wI0oItC4UFB0YcK6H5tKuSCaMI12Qsw5TmFooyY10aEJtY?=
+ =?us-ascii?q?SncygNzZQr3R7fa/+efoWO/xntV/6RLC9miH54er+znQu+/Ea8xuHmSMW530?=
+ =?us-ascii?q?xGoyRFn9TKq3sDzQbc6tKdRft45kqh3DGP2B3N5excOkA0kLbbK4Ymwr4tip?=
+ =?us-ascii?q?ofqUTDETHymEXxlKKWc18r+ums6+T9fLrmooOQOoBuhgHgNaQhh9awAeo/Mg?=
+ =?us-ascii?q?gIQWeX4/qz1Kb78U34RrVFkOE2n7HHvJzHJ8kXvLO1DgFJ3oo59RqyAC2q3d?=
+ =?us-ascii?q?oYkHUfKVJKYhOHj4znO1HUJ/D4CO+yg0yynzd32f/GJLPgApLLLnjMi7rhfa?=
+ =?us-ascii?q?195FVAxwYp0d9f4JdUBqsBIPLwQkPxrsDXDgclMwyoxObqENF91oIYWWKSDa?=
+ =?us-ascii?q?6VKbjdvkOS6e0zI+mDepQYuCjyK/c7/f7il3w5lkEHfamvw5QXbGq0HvN8I0?=
+ =?us-ascii?q?WWMjLQhYIFEGEXrk80R+XhiFCqTzFefTCxUrg66zV9D5ipXr3OXoS8vLvU5C?=
+ =?us-ascii?q?qnE4ceWWdABRjYCXr0ep+bXPEDaCGSOcVqujMBXLmlDYQm0Ef9mhX9zu9fI/?=
+ =?us-ascii?q?bZ4GUnspTsnIxt6vHejw418zNcD9+X2CeGSGQynmBeFGx+57x2vUEokwTL6q?=
+ =?us-ascii?q?N/mfENToQL6g=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GUIwBv6xtemCMYgtlNGBoBAQEBAQE?=
+ =?us-ascii?q?BAQEDAQEBAREBAQECAgEBAQGBewIBGAEBgS6BTVIgEpNQgU0fg0OLY4EAgx4?=
+ =?us-ascii?q?VhggTDIFbDQEBAQEBNQIBAYRATgEXgQ8kOgQNAgMNAQEFAQEBAQEFBAEBAhA?=
+ =?us-ascii?q?BAQEBAQYNCwYphUqCHQweAQQBAQEBAwMDAQEMAYNdBxkPOUpMAQ4BU4MEgks?=
+ =?us-ascii?q?BATOccgGNBA0NAoUdgkcECoEJgRojgTYBjBgagUE/gSMhgisIAYIBgn8BEgF?=
+ =?us-ascii?q?sgkiCWQSNQhIhgQeIKZgXgkEEdolMjAKCNwEPiAGEMQMQgkUPgQmIA4ROgX2?=
+ =?us-ascii?q?jN1eBDA16cTMagiYagSBPGA2IG44tQIEWEAJPiS6CMgEB?=
+X-IPAS-Result: =?us-ascii?q?A2GUIwBv6xtemCMYgtlNGBoBAQEBAQEBAQEDAQEBAREBA?=
+ =?us-ascii?q?QECAgEBAQGBewIBGAEBgS6BTVIgEpNQgU0fg0OLY4EAgx4VhggTDIFbDQEBA?=
+ =?us-ascii?q?QEBNQIBAYRATgEXgQ8kOgQNAgMNAQEFAQEBAQEFBAEBAhABAQEBAQYNCwYph?=
+ =?us-ascii?q?UqCHQweAQQBAQEBAwMDAQEMAYNdBxkPOUpMAQ4BU4MEgksBATOccgGNBA0NA?=
+ =?us-ascii?q?oUdgkcECoEJgRojgTYBjBgagUE/gSMhgisIAYIBgn8BEgFsgkiCWQSNQhIhg?=
+ =?us-ascii?q?QeIKZgXgkEEdolMjAKCNwEPiAGEMQMQgkUPgQmIA4ROgX2jN1eBDA16cTMag?=
+ =?us-ascii?q?iYagSBPGA2IG44tQIEWEAJPiS6CMgEB?=
+X-IronPort-AV: E=Sophos;i="5.69,427,1571695200"; 
+   d="scan'208";a="323746948"
+Received: from mailrel04.vodafone.es ([217.130.24.35])
+  by mail02.vodafone.es with ESMTP; 13 Jan 2020 05:02:10 +0100
+Received: (qmail 24109 invoked from network); 12 Jan 2020 05:00:19 -0000
+Received: from unknown (HELO 192.168.1.3) (quesosbelda@[217.217.179.17])
+          (envelope-sender <peterwong@hsbc.com.hk>)
+          by mailrel04.vodafone.es (qmail-ldap-1.03) with SMTP
+          for <linux-bcache@vger.kernel.org>; 12 Jan 2020 05:00:19 -0000
+Date:   Sun, 12 Jan 2020 06:00:18 +0100 (CET)
+From:   Peter Wong <peterwong@hsbc.com.hk>
+Reply-To: Peter Wong <peterwonghkhsbc@gmail.com>
+To:     linux-bcache@vger.kernel.org
+Message-ID: <18113969.460694.1578805219152.JavaMail.cash@217.130.24.55>
+Subject: Investment opportunity
 MIME-Version: 1.0
-References: <CA+Z73LFJLiP7Z2_cDUsO4Om_8pdD6w1jTSGQB0jY5sL-+nw1Wg@mail.gmail.com>
- <CA+Z73LGvXa_V8t=KYPkrmeJ-xmEXmz1uAnaT=Yj5AReZgLeqhg@mail.gmail.com> <alpine.LRH.2.11.2001062258320.2074@mx.ewheeler.net>
-In-Reply-To: <alpine.LRH.2.11.2001062258320.2074@mx.ewheeler.net>
-Reply-To: clodoaldo.pinto.neto@gmail.com
-From:   Clodoaldo Neto <clodoaldo.pinto.neto@gmail.com>
-Date:   Sat, 11 Jan 2020 10:42:29 -0300
-Message-ID: <CA+Z73LFDs0zGk+24r7XG=oXDZU=wV34GpvAODY96BFXZxrbdhw@mail.gmail.com>
-Subject: Re: Can't mount an encrypted backing device
-To:     Eric Wheeler <bcache@lists.ewheeler.net>
-Cc:     linux-bcache@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Mon, Jan 6, 2020 at 8:02 PM Eric Wheeler <bcache@lists.ewheeler.net> wro=
-te:
->
-> On Sun, 5 Jan 2020, Clodoaldo Neto wrote:
->
-> > I'm struggling to mount an encrypted backing device. The backing
-> > device is a RAID 1 array at /dev/md127 and the cache device is
-> > /dev/sdb1.
-> >
-> > # lsblk
-> > NAME                                          MAJ:MIN RM   SIZE RO
-> > TYPE  MOUNTPOINT
-> > sda                                             8:0    0 223.6G  0 disk
-> > =E2=94=9C=E2=94=80sda1                                          8:1    =
-0   700M  0 part  /boot
-> > =E2=94=9C=E2=94=80sda2                                          8:2    =
-0   700M  0
-> > part  /boot/efi
-> > =E2=94=9C=E2=94=80sda3                                          8:3    =
-0    26G  0 part
-> > =E2=94=82 =E2=94=94=E2=94=80luks-9793c78f-723c-4218-865f-83dbc4659192 2=
-53:1    0    26G  0 crypt [SWAP]
-> > =E2=94=94=E2=94=80sda4                                          8:4    =
-0   162G  0 part
-> >   =E2=94=94=E2=94=80luks-569b1153-2fab-4984-b1b6-c4a02ee206ef 253:0    =
-0   162G  0 crypt /
-> > sdb                                             8:16   0 111.8G  0 disk
-> > =E2=94=9C=E2=94=80sdb1                                          8:17   =
-0    40G  0 part
-> > =E2=94=94=E2=94=80sdb2                                          8:18   =
-0  71.8G  0 part
-> > sdc                                             8:32   0   1.8T  0 disk
-> > =E2=94=94=E2=94=80sdc1                                          8:33   =
-0   1.8T  0 part
-> >   =E2=94=94=E2=94=80md127                                       9:127  =
-0   1.8T  0 raid1
-> > sdd                                             8:48   0   1.8T  0 disk
-> > =E2=94=94=E2=94=80sdd1                                          8:49   =
-0   1.8T  0 part
-> >   =E2=94=94=E2=94=80md127                                       9:127  =
-0   1.8T  0 raid1
-> > sde                                             8:64   1  58.9G  0 disk
-> > =E2=94=9C=E2=94=80sde1                                          8:65   =
-1    20G  0 part
-> > =E2=94=94=E2=94=80sde2                                          8:66   =
-1  38.9G  0 part
-> > sr0                                            11:0    1  1024M  0 rom
-> >
-> > # blkid | grep -E "md127|sdb1"
-> > /dev/sdb1: UUID=3D"535bfa2d-4c6e-4c19-91b2-d292872a1877" TYPE=3D"bcache=
-"
-> > PARTLABEL=3D"Linux filesystem"
-> > PARTUUID=3D"505789f1-0523-4c62-bdb1-81bc0cc7bff1"
-> > /dev/md127: UUID=3D"b17ceaac-27ec-44d8-8bbb-235cfaa0c4a4" TYPE=3D"bcach=
-e"
-> >
-> > It was working right when I installed Fedora 31 yesterday but then I
-> > resized the caching partition and I can't make it work again.
-> >
-> > This is what I tried
-> >
-> > # wipefs -a /dev/sdb1
-> > /dev/sdb1: 16 bytes were erased at offset 0x00001018 (bcache): c6 85
-> > 73 f6 4e 1a 45 ca 82 65 f5 7f 48 ba 6d 81
-> >
-> > # make-bcache -C --writeback /dev/sdb1
-> > UUID:                   eb7d8e72-f24c-48ee-bad0-771afccca876
-> > Set UUID:               50e33260-4623-4374-9a61-c78b7d75280e
-> > version:                0
-> > nbuckets:               81920
-> > block_size:             1
-> > bucket_size:            1024
-> > nr_in_set:              1
-> > nr_this_dev:            0
-> > first_bucket:           1
-> >
-> > # ll /sys/fs/bcache/
-> > total 0
-> > drwxr-xr-x. 7 root root    0 Jan  5 18:34 50e33260-4623-4374-9a61-c78b7=
-d75280e
-> > --w-------. 1 root root 4096 Jan  5 17:39 pendings_cleanup
-> > --w-------. 1 root root 4096 Jan  5 18:03 register
-> > --w-------. 1 root root 4096 Jan  5 17:39 register_quiet
-> >
-> > # bcache-super-show /dev/sdb1
-> > sb.magic                ok
-> > sb.first_sector         8 [match]
-> > sb.csum                 C4CB62916B7825CE [match]
-> > sb.version              3 [cache device]
-> >
-> > dev.label               (empty)
-> > dev.uuid                eb7d8e72-f24c-48ee-bad0-771afccca876
-> > dev.sectors_per_block   1
-> > dev.sectors_per_bucket  1024
-> > dev.cache.first_sector  1024
-> > dev.cache.cache_sectors 83885056
-> > dev.cache.total_sectors 83886080
-> > dev.cache.ordered       yes
-> > dev.cache.discard       no
-> > dev.cache.pos           0
-> > dev.cache.replacement   0 [lru]
-> >
-> > cset.uuid               50e33260-4623-4374-9a61-c78b7d75280e
-> >
-> > # echo /dev/md127 > /sys/fs/bcache/register
-> > # echo 50e33260-4623-4374-9a61-c78b7d75280e > /sys/block/md127/bcache/a=
-ttach
-> > # blkid | grep bcache0
-> > /dev/bcache0: UUID=3D"7e2c0b40-8dec-4b13-8d00-b53b55160775" TYPE=3D"cry=
-pto_LUKS"
-> >
-> > # bcache-status
-> > --- bcache ---
-> > UUID                        50e33260-4623-4374-9a61-c78b7d75280e
-> > Block Size                  512 B
-> > Bucket Size                 512.00 KiB
-> > Congested?                  False
-> > Read Congestion             2.0ms
-> > Write Congestion            20.0ms
-> > Total Cache Size            40 GiB
-> > Total Cache Used            409.6 MiB   (1%)
-> > Total Cache Unused          40 GiB      (99%)
-> > Evictable Cache             40 GiB      (100%)
-> > Replacement Policy          [lru] fifo random
-> > Cache Mode                  writethrough [writeback] writearound none
-> > Total Hits                  9   (64%)
-> > Total Misses                5
-> > Total Bypass Hits           13  (16%)
-> > Total Bypass Misses         64
-> > Total Bypassed              308.00 KiB
-> >
-> > # lsblk
-> > NAME                                          MAJ:MIN RM   SIZE RO
-> > TYPE  MOUNTPOINT
-> > sda                                             8:0    0 223.6G  0 disk
-> > =E2=94=9C=E2=94=80sda1                                          8:1    =
-0   700M  0 part  /boot
-> > =E2=94=9C=E2=94=80sda2                                          8:2    =
-0   700M  0
-> > part  /boot/efi
-> > =E2=94=9C=E2=94=80sda3                                          8:3    =
-0    26G  0 part
-> > =E2=94=82 =E2=94=94=E2=94=80luks-9793c78f-723c-4218-865f-83dbc4659192 2=
-53:1    0    26G  0 crypt [SWAP]
-> > =E2=94=94=E2=94=80sda4                                          8:4    =
-0   162G  0 part
-> >   =E2=94=94=E2=94=80luks-569b1153-2fab-4984-b1b6-c4a02ee206ef 253:0    =
-0   162G  0 crypt /
-> > sdb                                             8:16   0 111.8G  0 disk
-> > =E2=94=9C=E2=94=80sdb1                                          8:17   =
-0    40G  0 part
-> > =E2=94=82 =E2=94=94=E2=94=80bcache0                                   2=
-52:0    0   1.8T  0 disk
-> > =E2=94=94=E2=94=80sdb2                                          8:18   =
-0  71.8G  0 part
-> > sdc                                             8:32   0   1.8T  0 disk
-> > =E2=94=94=E2=94=80sdc1                                          8:33   =
-0   1.8T  0 part
-> >   =E2=94=94=E2=94=80md127                                       9:127  =
-0   1.8T  0 raid1
-> >     =E2=94=94=E2=94=80bcache0                                 252:0    =
-0   1.8T  0 disk
-> > sdd                                             8:48   0   1.8T  0 disk
-> > =E2=94=94=E2=94=80sdd1                                          8:49   =
-0   1.8T  0 part
-> >   =E2=94=94=E2=94=80md127                                       9:127  =
-0   1.8T  0 raid1
-> >     =E2=94=94=E2=94=80bcache0                                 252:0    =
-0   1.8T  0 disk
-> > sde                                             8:64   1  58.9G  0 disk
-> > =E2=94=9C=E2=94=80sde1                                          8:65   =
-1    20G  0 part
-> > =E2=94=94=E2=94=80sde2                                          8:66   =
-1  38.9G  0 part
-> > sr0                                            11:0    1  1024M  0 rom
-> >
-> > # mount /dev/bcache0 /r
-> > mount: /r: unknown filesystem type 'crypto_LUKS'.
-> >
-> > # cryptsetup open /dev/bcache0 backing-device
-> > Enter passphrase for /dev/bcache0:
-> >
-> > # mount /dev/mapper/backing-device /r
-> > mount: /r: unknown filesystem type 'bcache'.
->
-> I'm guessing that make-bcache was run upon /dev/mapper/backing-device at
-> some point in time. Hopefully it wasn't clobbered.
->
-I guess you are right because /dev/mapper/backing-device is seen as a
-cache device:
+Greetings,
+Please read the attached investment proposal and reply for more details.
+Are you interested in loan?
+Sincerely: Peter Wong
 
-# bcache-super-show /dev/mapper/backing-device
-sb.magic                ok
-sb.first_sector         8 [match]
-sb.csum                 D9C2336DD00A6E69 [match]
-sb.version              3 [cache device]
 
-dev.label               (empty)
-dev.uuid                8022eea3-fcf0-40b8-850a-31e5f841d0bd
-dev.sectors_per_block   1
-dev.sectors_per_bucket  1024
-dev.cache.first_sector  1024
-dev.cache.cache_sectors 3774576640
-dev.cache.total_sectors 3774577664
-dev.cache.ordered       yes
-dev.cache.discard       no
-dev.cache.pos           0
-dev.cache.replacement   0 [lru]
 
-cset.uuid               4a63d2b5-1568-473d-925d-53306af2ba7c
 
-Is there a path to revert it? Like just formatting it to ext4?
+----------------------------------------------------
+This email was sent by the shareware version of Postman Professional.
 
-> Try
->
-> mount -t ext2 /dev/mapper/backing-device /r
->          ^^^^ or whatever your original FS really was.
->
-# mount /dev/mapper/backing-device /r
-mount: /r: unknown filesystem type 'bcache'.
-> --
-> Eric Wheeler
->
->
-> >
-> > What am I missing?
-> >
-> > Regards, Clodoaldo
-> >
