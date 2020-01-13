@@ -2,73 +2,70 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9520138B6D
-	for <lists+linux-bcache@lfdr.de>; Mon, 13 Jan 2020 06:52:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7B88139173
+	for <lists+linux-bcache@lfdr.de>; Mon, 13 Jan 2020 13:56:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732137AbgAMFw0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 13 Jan 2020 00:52:26 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40904 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbgAMFwZ (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 13 Jan 2020 00:52:25 -0500
-Received: by mail-oi1-f195.google.com with SMTP id c77so7195810oib.7
-        for <linux-bcache@vger.kernel.org>; Sun, 12 Jan 2020 21:52:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Rjbe3pVeMfYVPdmVklZ4b2stSqI32LIYp+bn/8NyJvk=;
-        b=El5YZgtDEXJCHEtZrRB1ujEJT5GnrR9nqQvx3oNXkD1KXWKAy5lE4fahagwXmNRBuY
-         Z373bCStdjZZAvrcMmyjZhqXNYKD7qS8gpQ1uKt4Zm/CJYofbOmd6y2KCfdaIf8lu4gx
-         e04Qq2Wd5k0QzXhgODgXLh9+BTAbr7mIJG1kvrHD2cB5892G2QaMtoQjZ8YbwAsn/v/R
-         qN1ulSwy8kLJzDOOwwvDkEa6g0paOaNUUW6lO8NcaOsOsQMTh2eV34LXY/bnRxfyDcL+
-         OFIAYoYpyWTxvo4nB11oXa8J2BNLiFXnr18VfN4DCPOmpXqWPT8f/9GzmZX8VWLxs4VK
-         s+8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Rjbe3pVeMfYVPdmVklZ4b2stSqI32LIYp+bn/8NyJvk=;
-        b=kHx1tYE4cgDUO8VLImMwMS/rtSsZ6lJxyJrhfxQAxhsY2SeXNbeh199d4HLW3K6PNB
-         yfCNctnuz7n9KV31gKZ5crSefDzOMKw8BxhUF9PkOgwv+t8jPQJUkuYOmIQ3Wt/2vjls
-         xws5+eCMXRYkhbco78P9yvOgUaIojNiQGCv8q1r5No196z9lI6NYGJI/INiAK+mnq5An
-         YULtdJIY/4fN4IFidAVOnKy3QhuuoSt6LJuECLKxTGhW0jjDhTKU3jzxabQRaoIvNLww
-         go0j1QesGFdxMDb5YvyI239/322qjuQjDqVIL6vh3ET3fK9IoEOWaQMtTUWIfZaGf1Om
-         1fRw==
-X-Gm-Message-State: APjAAAXeJjfe6ag2AWsuZXKkikg27K/Uf2zapGZ5UqQ3teiyGPl7H5g4
-        q09fIujlt0+H6jA1yCUJw7npC4u4CnQ7DaRYnBvacrMv
-X-Google-Smtp-Source: APXvYqy7JhGBt0ZjJ/1t4CT74GIhTuvbOMnCynReBbsGRcTAfZPwoiLBCe9XiPA9xaK1JAPmy14eucUMWI9DLkbKsUo=
-X-Received: by 2002:a54:4713:: with SMTP id k19mr11513430oik.113.1578894745174;
- Sun, 12 Jan 2020 21:52:25 -0800 (PST)
+        id S1726277AbgAMM4w (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 13 Jan 2020 07:56:52 -0500
+Received: from gw-hh2.hh.nde.ag ([85.183.17.20]:58126 "EHLO mail.nde.ag"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726074AbgAMM4w (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 13 Jan 2020 07:56:52 -0500
+X-Greylist: delayed 750 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Jan 2020 07:56:52 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.nde.ag (Postfix) with ESMTP id 2D6D32A;
+        Mon, 13 Jan 2020 13:44:21 +0100 (CET)
+X-Virus-Scanned: amavisd-new at hh.nde.ag
+Received: from mail.nde.ag ([127.0.0.1])
+        by localhost (hh2-mail.hh.nde.ag [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id yhxgccmx5cvl; Mon, 13 Jan 2020 13:44:15 +0100 (CET)
+Received: from www3.nde.ag (hh2-www.hh.nde.ag [192.168.32.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        by mail.nde.ag (Postfix) with ESMTPS id 683EB27;
+        Mon, 13 Jan 2020 13:44:15 +0100 (CET)
+Received: from hh2-www.hh.nde.ag (hh2-www.hh.nde.ag [192.168.32.4]) by
+ webmail.nde.ag (Horde Framework) with HTTPS; Mon, 13 Jan 2020 12:44:15 +0000
+Date:   Mon, 13 Jan 2020 12:44:15 +0000
+Message-ID: <20200113124415.Horde.G9hpYwu_fqvg2w0msexL3ri@webmail.nde.ag>
+From:   "Jens-U. Mozdzen" <jmozdzen@nde.ag>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org
+Subject: undo make-bcache (was: Re: Can't mount an encrypted backing device)
+References: <CA+Z73LFJLiP7Z2_cDUsO4Om_8pdD6w1jTSGQB0jY5sL-+nw1Wg@mail.gmail.com>
+ <CA+Z73LGvXa_V8t=KYPkrmeJ-xmEXmz1uAnaT=Yj5AReZgLeqhg@mail.gmail.com>
+ <65c05b80-679b-2ccb-1bd1-a9a6887c9c51@suse.de>
+In-Reply-To: <65c05b80-679b-2ccb-1bd1-a9a6887c9c51@suse.de>
+User-Agent: Horde Application Framework 5
+Accept-Language: de,en
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-Received: by 2002:a4a:41cb:0:0:0:0:0 with HTTP; Sun, 12 Jan 2020 21:52:24
- -0800 (PST)
-Reply-To: rickschaech@gmail.com
-From:   Rick Schaech <cathben72@gmail.com>
-Date:   Mon, 13 Jan 2020 01:52:24 -0400
-Message-ID: <CAEcBxO=TAnFn5LzizHa22hUC0Db5FuiZJF28m=yX3_9m--jRqg@mail.gmail.com>
-Subject: I wait for your swift response,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Dear, I'm Mr Rick Schaech, I am the General Account Auditor, Though i
-know we have not meet each other before but sometimes in life God have
-a reason of bringing two people from two different countries together
-as business partners or life partners.
+Hi Coly,
 
-My dear friend, I have the sum of 15.7 Million USD i wish to put in
-your name due to the death of my late client who died several years
-ago as his next of kin column still remain blank. Though the internet
-medium is highly abuse these days but am assuring you that this
-transaction is legitimate and I am contacting you that we may have a
-deal, note for your cooperation and collaboration 40% of the sum will
-be for you while the other 60% will be for me as well. I wait for your
-swift response for more details. please forward your response to my
-personal E-mail: rickschaech@gmail.com
+jumping in here, because I was looking for a way to revert from bcache  
+to plain device:
 
-Yours sincerely,
-Rick Schaech.
+Zitat von Coly Li <colyli@suse.de>:
+> The super block location of the backing disk is occupied by bcache. You
+> cannot mount the file system directly from the backing disk which is
+> formated as bcache backing device [...] (bcache offset all I/Os on  
+> bcache device 4KB behind the requesting
+> LBA on backing disk).
+
+Assuming that no caching device is associated with a backing device  
+(so the backing device is "clean" as in "containing all data blocks  
+with the current content"), could one convert the content of a backing  
+device to a "non-bcached device" by removing the first 4096 octets of  
+the backing device content?
+
+Something like "dd if=backingdev of=newdev skip_bytes=4096 ..."?
+
+Regards,
+J
+
