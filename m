@@ -2,72 +2,59 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA92139387
-	for <lists+linux-bcache@lfdr.de>; Mon, 13 Jan 2020 15:18:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 502A513AADB
+	for <lists+linux-bcache@lfdr.de>; Tue, 14 Jan 2020 14:25:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbgAMOSb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 13 Jan 2020 09:18:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38698 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726946AbgAMOSb (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:18:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 192E8ACCA;
-        Mon, 13 Jan 2020 14:18:30 +0000 (UTC)
-Subject: Re: undo make-bcache (was: Re: Can't mount an encrypted backing
- device)
-To:     "Jens-U. Mozdzen" <jmozdzen@nde.ag>
-Cc:     linux-bcache@vger.kernel.org
-References: <CA+Z73LFJLiP7Z2_cDUsO4Om_8pdD6w1jTSGQB0jY5sL-+nw1Wg@mail.gmail.com>
- <CA+Z73LGvXa_V8t=KYPkrmeJ-xmEXmz1uAnaT=Yj5AReZgLeqhg@mail.gmail.com>
- <65c05b80-679b-2ccb-1bd1-a9a6887c9c51@suse.de>
- <20200113124415.Horde.G9hpYwu_fqvg2w0msexL3ri@webmail.nde.ag>
-From:   Coly Li <colyli@suse.de>
-Organization: SUSE Labs
-Message-ID: <0c6c3fea-5580-3a71-264c-b383b5b4fe66@suse.de>
-Date:   Mon, 13 Jan 2020 22:18:14 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.4.1
+        id S1728831AbgANNZF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 14 Jan 2020 08:25:05 -0500
+Received: from icebox.esperi.org.uk ([81.187.191.129]:46326 "EHLO
+        mail.esperi.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728682AbgANNZF (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 14 Jan 2020 08:25:05 -0500
+X-Greylist: delayed 3049 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 Jan 2020 08:25:04 EST
+Received: from loom (nix@sidle.srvr.nix [192.168.14.8])
+        by mail.esperi.org.uk (8.15.2/8.15.2) with ESMTP id 00ECYALQ026352;
+        Tue, 14 Jan 2020 12:34:11 GMT
+From:   Nix <nix@esperi.org.uk>
+To:     Eric Wheeler <bcache@lists.ewheeler.net>
+Cc:     Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] bcache: back to cache all readahead I/Os
+References: <20200104065802.113137-1-colyli@suse.de>
+        <alpine.LRH.2.11.2001062256450.2074@mx.ewheeler.net>
+Emacs:  (setq software-quality (/ 1 number-of-authors))
+Date:   Tue, 14 Jan 2020 12:34:11 +0000
+In-Reply-To: <alpine.LRH.2.11.2001062256450.2074@mx.ewheeler.net> (Eric
+        Wheeler's message of "Mon, 6 Jan 2020 22:57:40 +0000 (UTC)")
+Message-ID: <87lfqa2p4s.fsf@esperi.org.uk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.50 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200113124415.Horde.G9hpYwu_fqvg2w0msexL3ri@webmail.nde.ag>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-DCC--Metrics: loom 1480; Body=4 Fuz1=4 Fuz2=4
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/1/13 8:44 下午, Jens-U. Mozdzen wrote:
-> Hi Coly,
-> 
-> jumping in here, because I was looking for a way to revert from bcache
-> to plain device:
-> 
-> Zitat von Coly Li <colyli@suse.de>:
->> The super block location of the backing disk is occupied by bcache. You
->> cannot mount the file system directly from the backing disk which is
->> formated as bcache backing device [...] (bcache offset all I/Os on
->> bcache device 4KB behind the requesting
->> LBA on backing disk).
-> 
-> Assuming that no caching device is associated with a backing device (so
-> the backing device is "clean" as in "containing all data blocks with the
-> current content"), could one convert the content of a backing device to
-> a "non-bcached device" by removing the first 4096 octets of the backing
-> device content?
-> 
-> Something like "dd if=backingdev of=newdev skip_bytes=4096 ..."?
+On 6 Jan 2020, Eric Wheeler spake thusly:
 
-Hi Jens-U,
+> On Sat, 4 Jan 2020, Coly Li wrote:
+>
+>> In year 2007 high performance SSD was still expensive, in order to
+>> save more space for real workload or meta data, the readahead I/Os
+>> for non-meta data was bypassed and not cached on SSD.
 
-you may try dmsetup to setup a linear device mapper target, and the map
-table just skipping the first 4KB (bcache superblock area). If you are
-lucky, I mean the real file system is not corrupted, the created device
-mapper target can be mounted directly.
+It's also because readahead data is more likely to be useless.
 
+>> In now days, SSD price drops a lot and people can find larger size
+>> SSD with more comfortable price. It is unncessary to bypass normal
+>> readahead I/Os to save SSD space for now.
 
--- 
+Doesn't this reduce the utility of the cache by polluting it with
+unnecessary content? It seems to me that we need at least a *litle*
+evidence that this change is beneficial. (I mean, it might be beneficial
+if on average the data that was read ahead is actually used.)
 
-Coly Li
+What happens to the cache hit rates when this change has been running
+for a while?
