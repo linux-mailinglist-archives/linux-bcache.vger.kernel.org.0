@@ -2,83 +2,80 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6796513D0D8
-	for <lists+linux-bcache@lfdr.de>; Thu, 16 Jan 2020 01:01:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5051713F373
+	for <lists+linux-bcache@lfdr.de>; Thu, 16 Jan 2020 19:44:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729841AbgAPABC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 15 Jan 2020 19:01:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42166 "EHLO mx2.suse.de"
+        id S2390196AbgAPRLQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 16 Jan 2020 12:11:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728931AbgAPABC (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 15 Jan 2020 19:01:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 451B3AD0F;
-        Thu, 16 Jan 2020 00:01:00 +0000 (UTC)
-Subject: Re: [PATCH] bcache: back to cache all readahead I/Os
-To:     Nix <nix@esperi.org.uk>
-Cc:     Eric Wheeler <bcache@lists.ewheeler.net>,
-        linux-bcache@vger.kernel.org, stable@vger.kernel.org
-References: <20200104065802.113137-1-colyli@suse.de>
- <alpine.LRH.2.11.2001062256450.2074@mx.ewheeler.net>
- <87lfqa2p4s.fsf@esperi.org.uk> <5af6593d-b6aa-74a7-0aae-e3c689cebc67@suse.de>
- <875zhc3ncu.fsf@esperi.org.uk>
-From:   Coly Li <colyli@suse.de>
-Organization: SUSE Labs
-Message-ID: <931567a8-a81d-a1cd-c7d8-7c193e61f79d@suse.de>
-Date:   Thu, 16 Jan 2020 08:00:53 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.4.1
+        id S2390192AbgAPRLQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:11:16 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96A30217F4;
+        Thu, 16 Jan 2020 17:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579194675;
+        bh=WCiw39Tah59CdpVA/+EIm3RhSrKpRK61nNnaXUtKFDY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=AKb5KuXjmp3n/qNUi9q9lVoV98aGv3kbDYWwHd6Z+ODmz1Ygf6wgviozUUrY9fIit
+         pVzgSybJZF7JiARid9eIgCawzugDFHuSnpp8WnY9x33f6qrlu7/NAEDtv6xEhxtFMo
+         neVojuXOUHKy43GxN7TsPNvRJMNz4fyRtY65r3sg=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>, Coly Li <colyli@suse.de>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-bcache@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 522/671] bcache: Fix an error code in bch_dump_read()
+Date:   Thu, 16 Jan 2020 12:02:40 -0500
+Message-Id: <20200116170509.12787-259-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
+References: <20200116170509.12787-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <875zhc3ncu.fsf@esperi.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/1/15 8:39 下午, Nix wrote:
-> On 15 Jan 2020, Coly Li stated:
-> 
->> I have two reports offline and directly to me, one is from an email
->> address of github and forwarded to me by Jens, one is from a China local
->> storage startup.
->>
->> The first report complains the desktop-pc benchmark is about 50% down
->> and the root cause is located on commit b41c9b0 ("bcache: update
->> bio->bi_opf bypass/writeback REQ_ flag hints").
->>
->> The second report complains their small file workload (mixed read and
->> write) has around 20%+ performance drop and the suspicious change is
->> also focused on the readahead restriction.
->>
->> The second reporter verifies this patch and confirms the performance
->> issue has gone. I don't know who is the first report so no response so far.
-> 
-> Hah! OK, looks like readahead is frequently-enough useful that caching
-> it is better than not caching it :) I guess the problem is that if you
-> don't cache it, it never gets cached at all even if it was useful, so
-> the next time round you'll end up having to readahead it again :/
-> 
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Yes, this is the problem. The bypassed data won't have chance to go into
-cache always.
+[ Upstream commit d66c9920c0cf984cf99cab5036fd5f3a1b7fba46 ]
 
+The copy_to_user() function returns the number of bytes remaining to be
+copied, but the intention here was to return -EFAULT if the copy fails.
 
-> One wonders what effect this will have on a bcache-atop-RAID: will we
-> end up caching whole stripes most of the time?
-> 
+Fixes: cafe56359144 ("bcache: A block layer cache")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/md/bcache/debug.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-In my I/O pressure testing, I have a raid0 backing device assembled by 3
-SSDs. From my observation, the whole stripe size won't be cached for
-small read/write requests. The stripe size alignment is handled in md
-raid layer, even md returns bio which stays in a stripe size memory
-chunk, bcache only takes bi_size part for its I/O.
-
-Thanks.
-
+diff --git a/drivers/md/bcache/debug.c b/drivers/md/bcache/debug.c
+index 8c53d874ada4..f6b60d5908f7 100644
+--- a/drivers/md/bcache/debug.c
++++ b/drivers/md/bcache/debug.c
+@@ -178,10 +178,9 @@ static ssize_t bch_dump_read(struct file *file, char __user *buf,
+ 	while (size) {
+ 		struct keybuf_key *w;
+ 		unsigned int bytes = min(i->bytes, size);
+-		int err = copy_to_user(buf, i->buf, bytes);
+ 
+-		if (err)
+-			return err;
++		if (copy_to_user(buf, i->buf, bytes))
++			return -EFAULT;
+ 
+ 		ret	 += bytes;
+ 		buf	 += bytes;
 -- 
+2.20.1
 
-Coly Li
