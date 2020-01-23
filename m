@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8391146F09
-	for <lists+linux-bcache@lfdr.de>; Thu, 23 Jan 2020 18:03:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EBE7146F0B
+	for <lists+linux-bcache@lfdr.de>; Thu, 23 Jan 2020 18:03:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730038AbgAWRDE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 23 Jan 2020 12:03:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51832 "EHLO mx2.suse.de"
+        id S1730047AbgAWRDG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 23 Jan 2020 12:03:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51858 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730037AbgAWRDE (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 23 Jan 2020 12:03:04 -0500
+        id S1730037AbgAWRDG (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 23 Jan 2020 12:03:06 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A4FB5AD73;
-        Thu, 23 Jan 2020 17:03:02 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 87F6CAC50;
+        Thu, 23 Jan 2020 17:03:04 +0000 (UTC)
 From:   colyli@suse.de
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Guoju Fang <fangguoju@gmail.com>, Coly Li <colyli@suse.de>
-Subject: [PATCH 13/17] bcache: print written and keys in trace_bcache_btree_write
-Date:   Fri, 24 Jan 2020 01:01:38 +0800
-Message-Id: <20200123170142.98974-14-colyli@suse.de>
+        Coly Li <colyli@suse.de>, stable@vger.kernel.org
+Subject: [PATCH 14/17] bcache: back to cache all readahead I/Os
+Date:   Fri, 24 Jan 2020 01:01:39 +0800
+Message-Id: <20200123170142.98974-15-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20200123170142.98974-1-colyli@suse.de>
 References: <20200123170142.98974-1-colyli@suse.de>
@@ -30,31 +30,50 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Guoju Fang <fangguoju@gmail.com>
+From: Coly Li <colyli@suse.de>
 
-It's useful to dump written block and keys on btree write, this patch
-add them into trace_bcache_btree_write.
+In year 2007 high performance SSD was still expensive, in order to
+save more space for real workload or meta data, the readahead I/Os
+for non-meta data was bypassed and not cached on SSD.
 
-Signed-off-by: Guoju Fang <fangguoju@gmail.com>
+In now days, SSD price drops a lot and people can find larger size
+SSD with more comfortable price. It is unncessary to bypass normal
+readahead I/Os to save SSD space for now.
+
+This patch removes the code which checks REQ_RAHEAD tag of bio in
+check_should_bypass(), then all readahead I/Os will be cached on SSD.
+
+NOTE: this patch still keeps the checking of "REQ_META|REQ_PRIO" in
+should_writeback(), because we still want to cache meta data I/Os
+even they are asynchronized.
+
+Cc: stable@vger.kernel.org
 Signed-off-by: Coly Li <colyli@suse.de>
+Acked-by: Eric Wheeler <bcache@linux.ewheeler.net>
 ---
- include/trace/events/bcache.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/md/bcache/request.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/include/trace/events/bcache.h b/include/trace/events/bcache.h
-index e4526f85c19d..0bddea663b3b 100644
---- a/include/trace/events/bcache.h
-+++ b/include/trace/events/bcache.h
-@@ -275,7 +275,8 @@ TRACE_EVENT(bcache_btree_write,
- 		__entry->keys	= b->keys.set[b->keys.nsets].data->keys;
- 	),
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index 73478a91a342..acc07c4f27ae 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -378,15 +378,6 @@ static bool check_should_bypass(struct cached_dev *dc, struct bio *bio)
+ 	     op_is_write(bio_op(bio))))
+ 		goto skip;
  
--	TP_printk("bucket %zu", __entry->bucket)
-+	TP_printk("bucket %zu written block %u + %u",
-+		__entry->bucket, __entry->block, __entry->keys)
- );
- 
- DEFINE_EVENT(btree_node, bcache_btree_node_alloc,
+-	/*
+-	 * Flag for bypass if the IO is for read-ahead or background,
+-	 * unless the read-ahead request is for metadata
+-	 * (eg, for gfs2 or xfs).
+-	 */
+-	if (bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND) &&
+-	    !(bio->bi_opf & (REQ_META|REQ_PRIO)))
+-		goto skip;
+-
+ 	if (bio->bi_iter.bi_sector & (c->sb.block_size - 1) ||
+ 	    bio_sectors(bio) & (c->sb.block_size - 1)) {
+ 		pr_debug("skipping unaligned io");
 -- 
 2.16.4
 
