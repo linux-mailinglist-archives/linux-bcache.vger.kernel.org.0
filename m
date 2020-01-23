@@ -2,102 +2,62 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65A7D146EEC
-	for <lists+linux-bcache@lfdr.de>; Thu, 23 Jan 2020 18:02:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E36A9146EEE
+	for <lists+linux-bcache@lfdr.de>; Thu, 23 Jan 2020 18:02:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729590AbgAWRCA (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 23 Jan 2020 12:02:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51092 "EHLO mx2.suse.de"
+        id S1729847AbgAWRCD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 23 Jan 2020 12:02:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51212 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728899AbgAWRCA (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 23 Jan 2020 12:02:00 -0500
+        id S1728899AbgAWRCD (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 23 Jan 2020 12:02:03 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 713A2AD78;
-        Thu, 23 Jan 2020 17:01:58 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id A1556B1D5;
+        Thu, 23 Jan 2020 17:02:01 +0000 (UTC)
 From:   colyli@suse.de
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>
-Subject: [PATCH 00/17] bcache patches for Linux v5.6
-Date:   Fri, 24 Jan 2020 01:01:25 +0800
-Message-Id: <20200123170142.98974-1-colyli@suse.de>
+        Liang Chen <liangchen.linux@gmail.com>,
+        Christoph Hellwig <hch@lst.de>, Coly Li <colyli@suse.de>
+Subject: [PATCH 01/17] bcache: cached_dev_free needs to put the sb page
+Date:   Fri, 24 Jan 2020 01:01:26 +0800
+Message-Id: <20200123170142.98974-2-colyli@suse.de>
 X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20200123170142.98974-1-colyli@suse.de>
+References: <20200123170142.98974-1-colyli@suse.de>
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Liang Chen <liangchen.linux@gmail.com>
 
-Hi Jens,
+Same as cache device, the buffer page needs to be put while
+freeing cached_dev.  Otherwise a page would be leaked every
+time a cached_dev is stopped.
 
-Here are the bcache patches for Linux v5.6.
-In this series, we have 5 contributors including me,
-- Ben Dooks and Guoju Fang contributes minor changes,
-- Liang Chen contributes a patch to fix a bcache super block page leak
-  issue.
-- Christoph Hellwig contributes a set of changes to improve the on-disk
-  format for super block I/O, and his patches pluses Liang Chen's patch
-  will make bcache supports kernel page size larger than 4KB. Now bcache
-  can work on machines (e.g. ARM64) which have 8KB or larger kernel page
-  size.
-- I fixes some minor issue from Christoph's patches. And there are
-  effort to make bcache shrink btree node cache more aggressive when
-  system memory usage is in pressure. There are two importent fixes for
-  performance regression (Cc to Linux-stable),
-  - Fix extra I/O when aggressively flushing dirty btree node pages in
-    bcache journal code. 
-  - Back to cache all readahead I/Os for small random I/Os.
-
-There are still some patches under testing. Once they passes my testing,
-I will submit them in following v5.6-rc versions.
-
-Please take these patches, and thank you in advance.
-
-Coly Li
+Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Coly Li <colyli@suse.de>
 ---
+ drivers/md/bcache/super.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Ben Dooks (Codethink) (1):
-  lib: crc64: include <linux/crc64.h> for 'crc64_be'
-
-Christoph Hellwig (6):
-  bcache: use a separate data structure for the on-disk super block
-  bcache: rework error unwinding in register_bcache
-  bcache: transfer the sb_page reference to register_{bdev,cache}
-  bcache: return a pointer to the on-disk sb from read_super
-  bcache: store a pointer to the on-disk sb in the cache and cached_dev
-    structures
-  bcache: use read_cache_page_gfp to read the superblock
-
-Coly Li (8):
-  bcache: properly initialize 'path' and 'err' in register_bcache()
-  bcache: fix use-after-free in register_bcache()
-  bcache: add code comments for state->pool in __btree_sort()
-  bcache: avoid unnecessary btree nodes flushing in btree_flush_write()
-  bcache: back to cache all readahead I/Os
-  bcache: remove member accessed from struct btree
-  bcache: reap c->btree_cache_freeable from the tail in bch_mca_scan()
-  bcache: reap from tail of c->btree_cache in bch_mca_scan()
-
-Guoju Fang (1):
-  bcache: print written and keys in trace_bcache_btree_write
-
-Liang Chen (1):
-  bcache: cached_dev_free needs to put the sb page
-
- drivers/md/bcache/bcache.h    |   2 +
- drivers/md/bcache/bset.c      |   5 ++
- drivers/md/bcache/btree.c     |  24 ++++----
- drivers/md/bcache/btree.h     |   2 -
- drivers/md/bcache/journal.c   |  80 +++++++++++++++++++++++--
- drivers/md/bcache/request.c   |   9 ---
- drivers/md/bcache/super.c     | 136 ++++++++++++++++++++++--------------------
- include/trace/events/bcache.h |   3 +-
- include/uapi/linux/bcache.h   |  52 ++++++++++++++++
- lib/crc64.c                   |   1 +
- 10 files changed, 218 insertions(+), 96 deletions(-)
-
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 77e9869345e7..a573ce1d85aa 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1275,6 +1275,9 @@ static void cached_dev_free(struct closure *cl)
+ 
+ 	mutex_unlock(&bch_register_lock);
+ 
++	if (dc->sb_bio.bi_inline_vecs[0].bv_page)
++		put_page(bio_first_page_all(&dc->sb_bio));
++
+ 	if (!IS_ERR_OR_NULL(dc->bdev))
+ 		blkdev_put(dc->bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
+ 
 -- 
 2.16.4
 
