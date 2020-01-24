@@ -2,106 +2,101 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B32F41475EE
-	for <lists+linux-bcache@lfdr.de>; Fri, 24 Jan 2020 02:14:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1790148C7E
+	for <lists+linux-bcache@lfdr.de>; Fri, 24 Jan 2020 17:49:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730305AbgAXBOY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 23 Jan 2020 20:14:24 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33652 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729151AbgAXBOY (ORCPT
+        id S2389373AbgAXQtE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 24 Jan 2020 11:49:04 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36630 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389186AbgAXQtE (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 23 Jan 2020 20:14:24 -0500
-Received: by mail-pf1-f195.google.com with SMTP id n7so255999pfn.0
-        for <linux-bcache@vger.kernel.org>; Thu, 23 Jan 2020 17:14:24 -0800 (PST)
+        Fri, 24 Jan 2020 11:49:04 -0500
+Received: by mail-ed1-f68.google.com with SMTP id j17so3047827edp.3
+        for <linux-bcache@vger.kernel.org>; Fri, 24 Jan 2020 08:49:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=d/C7aUYJTHQhwaao3+gD60wS4QAXQx/hM6I1wIffSJs=;
-        b=fzaaW/KZ9B8G71DauBM19VGPslUtbmlIYJKyYq7ZLBp7hAgRlB8x5Nt5mAK2+ai8xZ
-         ktZ2YPKJ5HoZIJVecr2xPjPLbKnpZ8ZENdvMQjXVDQect5BUXD2amTQp8Z60i5u10MGu
-         Vyvqg6hqC/jgdKlZ2bubRyMekAOoUL7wBvWrwt2FHGxVhXbGa3lc58JgfEUju1u17imP
-         BtZll8y4O7yvc+CtBnQn0IMnKxQKMLTMOhl4XQ7cR/bLcWpclAQiMZ07lHmAFvCeXemH
-         dpdmybADm8KYCBhH/EMneVoXA7fJLK6rmPKuL3Hx+yeb/w3THHLVPKiYNCnOvml21KJT
-         Khmg==
+        d=lyle-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=j/pCUkUXqt7IJRuIMfwIokzok7Si+AnLB+RYtRYMUPw=;
+        b=q+M5/Wbr2gTYL/RwnfBG6o+uBV20hu+ShB/5u1W0Uz93y0SkZrYr+o5m47rKfRCdVq
+         GzLicSRnHOP55u4tefuMTSMrfPzyqecPE/hIE0RQiriXzdXtPALIjhUSUc+pPWRGkTTT
+         JklX1WTyghosTYHOSYAAopSxiPc4IGe0S6I8O/5NNIY77Bdm5ogjsj54hYc6xJ5jMnq6
+         ohz/vIACAmgc9Bm1NNm/5NoqwLuXB/sZPfQA2lxvlHyfP3/+Mow5iiinfG/Upjo1BvDY
+         w2YMIM1ZRYorx9pUEMX179VAm74fOozvEHSLbhmX7N5h2pDjp0NcGxG8cka/hDhPPahc
+         NXNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=d/C7aUYJTHQhwaao3+gD60wS4QAXQx/hM6I1wIffSJs=;
-        b=tnIVxHTUSIjKkvAnBaMT0Dn0UA4vmvoSO0qZpecme8Re4m0g6Bv3FtOjEoR4uvywkk
-         pf60GTQx1Ibb/R+AbO4Hnh+OD8LifCDBSGZy+WQuGjbI5X31aAt8ciTI+ro7cNkbSgbv
-         hsp+SvMw38+ruuYzGyFz2PTLP5ZB7plsDHtVc4YXrYc15v5ffQvklm4B9HvQRPRPy5Hd
-         8/7Vvr3CiF9AiUEj1lYEZaXTLO11WdCTitTICT/8m5FP1GtaUIay4Xq3X9fWd0bBFpoq
-         kZUkPps5nPPijBoHEBOpmzye+73CQeQDMRSZynegR39DAfffv8gPEEbNEFHWx7RA6i1P
-         A3xw==
-X-Gm-Message-State: APjAAAUN/lvWIKaQtPzkqQOjbteS5vsnz7tuUiCG8fFxLZSOl5KdlO+E
-        +PYkbFGTQMR62b4mjfJ/NSeWfw==
-X-Google-Smtp-Source: APXvYqx720e+PGy1MaQyQL/p07/L46E8myHpIewE7Rg1kzPHTOVVKdsC8DRLM0DeGQr+4z7FsjUojw==
-X-Received: by 2002:aa7:9d87:: with SMTP id f7mr978368pfq.138.1579828463979;
-        Thu, 23 Jan 2020 17:14:23 -0800 (PST)
-Received: from [192.168.201.136] ([50.234.116.4])
-        by smtp.gmail.com with ESMTPSA id q6sm3770589pfh.127.2020.01.23.17.14.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2020 17:14:23 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=j/pCUkUXqt7IJRuIMfwIokzok7Si+AnLB+RYtRYMUPw=;
+        b=GXiwDgp2BeaVfmnYaNbFf++JUQRNpLfkmE2p44kuxyQi/g+DVZQk9gvCNW4ndXNO6e
+         1Y2G4yUrOrrjQlkpAvxxUrso5YYeJYCrMc5di35/1L/bzd2oxcCvECLBx/NjOI8ovrDH
+         uzG79ZzIV0xflOQ7ZOgNJLBEXkDTcR03qANNKV64blo1DqtZqqQxPE5bvqtnV6RA3hlY
+         b60+Dlv9kAEb6eAqDaZMH9/RiXH1h2Hci1BzYk26pgI1OAIkNTEKI1sXrWfFdE6U/Uc0
+         fFNxDcOG605xN53GvlKYJ9Fa4AKksovyYxypyj9Pq6JHwVCLTEtQW4twg6wCL3P/OSYr
+         MgYg==
+X-Gm-Message-State: APjAAAUD/XdlbU9J2gviMPiuODrB0Xnq/X/S+cbJjEOHqjym2/IaQsH9
+        mNiacSOrieJ+9XN1yjrUagu9KT2l+Ypd9gxmva/ge+Qj
+X-Google-Smtp-Source: APXvYqxHM6dnZ9+d3MhfdaXHEVzrjYeeX80fsXkv9h/1xIE8MmMgPBF2bcFvbExVRjnFjC4j64qY7rYyQQTD1ly0GSo=
+X-Received: by 2002:a17:906:1cd0:: with SMTP id i16mr2036189ejh.186.1579884542578;
+ Fri, 24 Jan 2020 08:49:02 -0800 (PST)
+MIME-Version: 1.0
+References: <20200123170142.98974-1-colyli@suse.de> <20200123170142.98974-15-colyli@suse.de>
+ <CAJ+L6qckUd+Kw8_jKov0dNnSiGxxvXSgc=2dPai+1ANaEdfWPQ@mail.gmail.com> <efdfdd2b-b22e-42d1-c642-6c398db6864c@suse.de>
+In-Reply-To: <efdfdd2b-b22e-42d1-c642-6c398db6864c@suse.de>
+From:   Michael Lyle <mlyle@lyle.org>
+Date:   Fri, 24 Jan 2020 08:48:23 -0800
+Message-ID: <CAJ+L6qdThUX-Lk5T7-_xw-8KTtR73-Cbxj+oSr0n_tmth5EM+A@mail.gmail.com>
 Subject: Re: [PATCH 14/17] bcache: back to cache all readahead I/Os
 To:     Coly Li <colyli@suse.de>
-Cc:     Michael Lyle <mlyle@lyle.org>,
+Cc:     Jens Axboe <axboe@kernel.dk>,
         linux-bcache <linux-bcache@vger.kernel.org>,
         linux-block@vger.kernel.org, stable <stable@vger.kernel.org>
-References: <20200123170142.98974-1-colyli@suse.de>
- <20200123170142.98974-15-colyli@suse.de>
- <CAJ+L6qckUd+Kw8_jKov0dNnSiGxxvXSgc=2dPai+1ANaEdfWPQ@mail.gmail.com>
- <efdfdd2b-b22e-42d1-c642-6c398db6864c@suse.de>
- <31f7f6b4-98ea-3cf6-44cc-a9ba67484eb0@kernel.dk>
- <6373da22-9dc1-9525-4048-2c533407c917@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6d72473b-db79-d32a-055c-05a34f2d2b12@kernel.dk>
-Date:   Thu, 23 Jan 2020 18:14:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <6373da22-9dc1-9525-4048-2c533407c917@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 1/23/20 5:49 PM, Coly Li wrote:
-> On 2020/1/24 2:31 上午, Jens Axboe wrote:
->> On 1/23/20 10:27 AM, Coly Li wrote:
->>> On 2020/1/24 1:19 上午, Michael Lyle wrote:
->>>> Hi Coly and Jens--
->>>>
->>>> One concern I have with this is that it's going to wear out
->>>> limited-lifetime SSDs a -lot- faster.  Was any thought given to making
->>>> this a tunable instead of just changing the behavior?  Even if we have
->>>> an anecdote or two that it seems to have increased performance for
->>>> some workloads, I don't expect it will have increased performance in
->>>> general and it may even be costly for some workloads (it all comes
->>>> down to what is more useful in the cache-- somewhat-recently readahead
->>>> data, or the data that it is displacing).
->>>
->>> Hi Mike,
->>>
->>> Copied. This is good suggestion, I will do it after I back from Lunar
->>> New Year vacation, and submit it with other tested patches in following
->>> v5.6-rc versions.
->>
->> Do you want me to just drop this patch for now from the series?
->>
-> Hi Jens,
-> 
-> OK, please drop this patch from this series. I will re-submit the patch
-> with sysfs interface later with other patches.
+Hi Coly---
 
-Sounds good, I queued up the rest for 5.6.
+Thank you for holding the patch.  I'm sorry for the late review (I was
+travelling).
 
--- 
-Jens Axboe
+(We sure have a lot of settings and a lot of code dealing with them
+all, which is unfortunate... but workloads / hardware used with bcache
+are so varied).
 
+Mike
+
+On Thu, Jan 23, 2020 at 9:28 AM Coly Li <colyli@suse.de> wrote:
+>
+> On 2020/1/24 1:19 =E4=B8=8A=E5=8D=88, Michael Lyle wrote:
+> > Hi Coly and Jens--
+> >
+> > One concern I have with this is that it's going to wear out
+> > limited-lifetime SSDs a -lot- faster.  Was any thought given to making
+> > this a tunable instead of just changing the behavior?  Even if we have
+> > an anecdote or two that it seems to have increased performance for
+> > some workloads, I don't expect it will have increased performance in
+> > general and it may even be costly for some workloads (it all comes
+> > down to what is more useful in the cache-- somewhat-recently readahead
+> > data, or the data that it is displacing).
+>
+> Hi Mike,
+>
+> Copied. This is good suggestion, I will do it after I back from Lunar
+> New Year vacation, and submit it with other tested patches in following
+> v5.6-rc versions.
+>
+> Thanks.
+>
+> Coly Li
+>
+> [snipped]
+>
+> --
+>
+> Coly Li
