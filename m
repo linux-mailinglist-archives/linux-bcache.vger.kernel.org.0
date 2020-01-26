@@ -2,101 +2,120 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1790148C7E
-	for <lists+linux-bcache@lfdr.de>; Fri, 24 Jan 2020 17:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26D9B1499A2
+	for <lists+linux-bcache@lfdr.de>; Sun, 26 Jan 2020 09:23:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389373AbgAXQtE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 24 Jan 2020 11:49:04 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36630 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389186AbgAXQtE (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 24 Jan 2020 11:49:04 -0500
-Received: by mail-ed1-f68.google.com with SMTP id j17so3047827edp.3
-        for <linux-bcache@vger.kernel.org>; Fri, 24 Jan 2020 08:49:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lyle-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=j/pCUkUXqt7IJRuIMfwIokzok7Si+AnLB+RYtRYMUPw=;
-        b=q+M5/Wbr2gTYL/RwnfBG6o+uBV20hu+ShB/5u1W0Uz93y0SkZrYr+o5m47rKfRCdVq
-         GzLicSRnHOP55u4tefuMTSMrfPzyqecPE/hIE0RQiriXzdXtPALIjhUSUc+pPWRGkTTT
-         JklX1WTyghosTYHOSYAAopSxiPc4IGe0S6I8O/5NNIY77Bdm5ogjsj54hYc6xJ5jMnq6
-         ohz/vIACAmgc9Bm1NNm/5NoqwLuXB/sZPfQA2lxvlHyfP3/+Mow5iiinfG/Upjo1BvDY
-         w2YMIM1ZRYorx9pUEMX179VAm74fOozvEHSLbhmX7N5h2pDjp0NcGxG8cka/hDhPPahc
-         NXNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=j/pCUkUXqt7IJRuIMfwIokzok7Si+AnLB+RYtRYMUPw=;
-        b=GXiwDgp2BeaVfmnYaNbFf++JUQRNpLfkmE2p44kuxyQi/g+DVZQk9gvCNW4ndXNO6e
-         1Y2G4yUrOrrjQlkpAvxxUrso5YYeJYCrMc5di35/1L/bzd2oxcCvECLBx/NjOI8ovrDH
-         uzG79ZzIV0xflOQ7ZOgNJLBEXkDTcR03qANNKV64blo1DqtZqqQxPE5bvqtnV6RA3hlY
-         b60+Dlv9kAEb6eAqDaZMH9/RiXH1h2Hci1BzYk26pgI1OAIkNTEKI1sXrWfFdE6U/Uc0
-         fFNxDcOG605xN53GvlKYJ9Fa4AKksovyYxypyj9Pq6JHwVCLTEtQW4twg6wCL3P/OSYr
-         MgYg==
-X-Gm-Message-State: APjAAAUD/XdlbU9J2gviMPiuODrB0Xnq/X/S+cbJjEOHqjym2/IaQsH9
-        mNiacSOrieJ+9XN1yjrUagu9KT2l+Ypd9gxmva/ge+Qj
-X-Google-Smtp-Source: APXvYqxHM6dnZ9+d3MhfdaXHEVzrjYeeX80fsXkv9h/1xIE8MmMgPBF2bcFvbExVRjnFjC4j64qY7rYyQQTD1ly0GSo=
-X-Received: by 2002:a17:906:1cd0:: with SMTP id i16mr2036189ejh.186.1579884542578;
- Fri, 24 Jan 2020 08:49:02 -0800 (PST)
+        id S1727346AbgAZIXJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 26 Jan 2020 03:23:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57558 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726443AbgAZIXJ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 26 Jan 2020 03:23:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 5E98BAD12;
+        Sun, 26 Jan 2020 08:23:06 +0000 (UTC)
+Subject: Re: Kernel panic after clearing stats
+To:     =?UTF-8?B?0KHQvtGA0L7QutC40L0g0JDRgNGC0LXQvCDQodC10YDQs9C10LXQstC40Yc=?= 
+        <a.sorokin@bank-hlynov.ru>,
+        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
+References: <DA4005F3-FCC5-4D1E-9D2D-146AADA0CD3A@bank-hlynov.ru>
+From:   Coly Li <colyli@suse.de>
+Organization: SUSE Labs
+Message-ID: <d9e773d0-7417-cfc9-8208-933f7b655196@suse.de>
+Date:   Sun, 26 Jan 2020 16:22:54 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200123170142.98974-1-colyli@suse.de> <20200123170142.98974-15-colyli@suse.de>
- <CAJ+L6qckUd+Kw8_jKov0dNnSiGxxvXSgc=2dPai+1ANaEdfWPQ@mail.gmail.com> <efdfdd2b-b22e-42d1-c642-6c398db6864c@suse.de>
-In-Reply-To: <efdfdd2b-b22e-42d1-c642-6c398db6864c@suse.de>
-From:   Michael Lyle <mlyle@lyle.org>
-Date:   Fri, 24 Jan 2020 08:48:23 -0800
-Message-ID: <CAJ+L6qdThUX-Lk5T7-_xw-8KTtR73-Cbxj+oSr0n_tmth5EM+A@mail.gmail.com>
-Subject: Re: [PATCH 14/17] bcache: back to cache all readahead I/Os
-To:     Coly Li <colyli@suse.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-bcache <linux-bcache@vger.kernel.org>,
-        linux-block@vger.kernel.org, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <DA4005F3-FCC5-4D1E-9D2D-146AADA0CD3A@bank-hlynov.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: base64
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Coly---
-
-Thank you for holding the patch.  I'm sorry for the late review (I was
-travelling).
-
-(We sure have a lot of settings and a lot of code dealing with them
-all, which is unfortunate... but workloads / hardware used with bcache
-are so varied).
-
-Mike
-
-On Thu, Jan 23, 2020 at 9:28 AM Coly Li <colyli@suse.de> wrote:
->
-> On 2020/1/24 1:19 =E4=B8=8A=E5=8D=88, Michael Lyle wrote:
-> > Hi Coly and Jens--
-> >
-> > One concern I have with this is that it's going to wear out
-> > limited-lifetime SSDs a -lot- faster.  Was any thought given to making
-> > this a tunable instead of just changing the behavior?  Even if we have
-> > an anecdote or two that it seems to have increased performance for
-> > some workloads, I don't expect it will have increased performance in
-> > general and it may even be costly for some workloads (it all comes
-> > down to what is more useful in the cache-- somewhat-recently readahead
-> > data, or the data that it is displacing).
->
-> Hi Mike,
->
-> Copied. This is good suggestion, I will do it after I back from Lunar
-> New Year vacation, and submit it with other tested patches in following
-> v5.6-rc versions.
->
-> Thanks.
->
-> Coly Li
->
-> [snipped]
->
-> --
->
-> Coly Li
+T24gMjAyMC8xLzIwIDk6MjIg5LiL5Y2ILCDQodC+0YDQvtC60LjQvSDQkNGA0YLQtdC8INCh
+0LXRgNCz0LXQtdCy0LjRhyB3cm90ZToNCj4gSGVsbG8uDQo+IEkgaGF2ZSBrZXJuZWwgcGFu
+aWMgYWZ0ZXIgY2xlYXJpbmcgc3RhdHMgb24ga2VybmVsIDUuNC4xMi4NCj4gU3RlcHMgdG8g
+cmVwcm9kdWNlOg0KPiAxLiBDcmVhdGUgbmV3IHNldDogbWFrZS1iY2FjaGUgLUIgL2Rldi9u
+dm1lMW4xIC1DIC9kZXYvc2RhIC0td2lwZS1iY2FjaGUNCj4gMi4gUnVuIGluIC9zeXMvZnMv
+YmNhY2hlLzx1dWlkPjogZWNobyAxID4gY2xlYXJfc3RhdHMgJiYgY2F0IHN0YXRzX2ZpdmVf
+bWludXRlL2NhY2hlX2J5cGFzc19oaXRzDQo+IA0KDQpDb3BpZWQsIG5vdyBJIGFtIGluIEx1
+bmFyIE5lYXIgWWVhciB2YWNhdGlvbiwgbGV0IG1lIGhhdmUgYSBsb29rIGxhdGVyDQphbmQg
+cmVzcG9uc2UgeW91Lg0KDQpUaGFua3MgZm9yIHRoZSByZXBvcnQuDQoNCj4gWzE0NjQwLjU4
+OTg0M10gQlVHOiBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlLCBhZGRyZXNzOiAw
+MDAwMDAwMDAwMDAwMDAwDQo+IFsxNDY0MC41OTEwMDZdICNQRjogc3VwZXJ2aXNvciByZWFk
+IGFjY2VzcyBpbiBrZXJuZWwgbW9kZQ0KPiBbMTQ2NDAuNTkyMTIzXSAjUEY6IGVycm9yX2Nv
+ZGUoMHgwMDAwKSAtIG5vdC1wcmVzZW50IHBhZ2UNCj4gWzE0NjQwLjU5MzIxN10gUEdEIDY4
+NDk4ZTA2NyBQNEQgNjg0OThlMDY3IFBVRCA1ZWRiMTkwNjcgUE1EIDANCj4gWzE0NjQwLjU5
+NDMzNV0gT29wczogMDAwMCBbIzFdIFNNUCBOT1BUSQ0KPiBbMTQ2NDAuNTk1NDI1XSBDUFU6
+IDMgUElEOiA0NTc4OCBDb21tOiBmaWxlIEtkdW1wOiBsb2FkZWQgTm90IHRhaW50ZWQgNS40
+LjEyLTEuZWw3Lng4Nl82NCAjMQ0KPiBbMTQ2NDAuNTk2NTI2XSBIYXJkd2FyZSBuYW1lOiBE
+ZWxsIEluYy4gUG93ZXJFZGdlIFI1MTUvMFk5Q0hYLCBCSU9TIDIuNC4xIDA1LzA0LzIwMTgN
+Cj4gWzE0NjQwLjU5NzYzNl0gUklQOiAwMDEwOnN5c2ZzX2tmX3NlcV9zaG93KzB4YWEvMHgx
+YTANCj4gWzE0NjQwLjU5ODc1NF0gQ29kZTogMDAgMDAgMDAgNDAgZjYgYzcgMDQgMGYgODUg
+YjggMDAgMDAgMDAgNDQgODkgYzkgMzEgYzAgYzEgZTkgMDMgNDEgZjYgYzEgMDQgZjMgNDgg
+YWIgNzUgN2QgNDEgZjYgYzEgMDIgNzUgNjUgNDEgODMgZTEgMDEgNzUgNGUgPDQ5PiA4YiAw
+NCAyNCA0OCA4NSBjMCA3NCA1MSA0OCA4YiAwZSA0YyA4OSBjNyA0OCA4YiA3MSA2MCBlOCBl
+ZSAzYg0KPiBbMTQ2NDAuNjAxMDM0XSBSU1A6IDAwMTg6ZmZmZmM5MDAwY2ZlN2RjOCBFRkxB
+R1M6IDAwMDEwMjQ2DQo+IFsxNDY0MC42MDIxNzJdIFJBWDogMDAwMDAwMDAwMDAwMDAwMCBS
+Qlg6IGZmZmY4ODg4MzYxZTQzMDAgUkNYOiAwMDAwMDAwMDAwMDAwMDAwDQo+IFsxNDY0MC42
+MDMzMThdIFJEWDogZmZmZjg4ODg0MDY0MzAwMCBSU0k6IGZmZmY4ODg3OWM3NmNmYzAgUkRJ
+OiBmZmZmODg4ODQwNjQ0MDAwDQo+IFsxNDY0MC42MDQ0NzRdIFJCUDogZmZmZmM5MDAwY2Zl
+N2RkOCBSMDg6IGZmZmY4ODkwMTY2ZTAxYzAgUjA5OiAwMDAwMDAwMDAwMDAwMDAwDQo+IFsx
+NDY0MC42MDU2MDddIFIxMDogMDAwMDAwMDAwMDAwMTAwMCBSMTE6IDAwMDAwMDAwMDAwMDAw
+MDAgUjEyOiAwMDAwMDAwMDAwMDAwMDAwDQo+IFsxNDY0MC42MDY3MjRdIFIxMzogZmZmZjg4
+ODg0Y2M3MjMwMCBSMTQ6IGZmZmY4ODg4MzYxZTQzMDAgUjE1OiAwMDAwMDAwMDAwMDAwMDAx
+DQo+IFsxNDY0MC42MDc4NDldIEZTOiAgMDAwMDdmYTNkODJjZjc0MCgwMDAwKSBHUzpmZmZm
+ODg4ODVmYWMwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDANCj4gWzE0NjQwLjYw
+ODk4NV0gQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAz
+Mw0KPiBbMTQ2NDAuNjEwMDk2XSBDUjI6IDAwMDAwMDAwMDAwMDAwMDAgQ1IzOiAwMDAwMDAw
+NWM2MjY4MDAwIENSNDogMDAwMDAwMDAwMDA0MDZlMA0KPiBbMTQ2NDAuNjExMjEzXSBDYWxs
+IFRyYWNlOg0KPiBbMTQ2NDAuNjEyMzMyXSAga2VybmZzX3NlcV9zaG93KzB4MjcvMHgzMA0K
+PiBbMTQ2NDAuNjEzNDM0XSAgc2VxX3JlYWQrMHgxNjEvMHgzZjANCj4gWzE0NjQwLjYxNDUx
+NF0gIGtlcm5mc19mb3BfcmVhZCsweDExZi8weDFiMA0KPiBbMTQ2NDAuNjE1NTkxXSAgX192
+ZnNfcmVhZCsweDFiLzB4NDANCj4gWzE0NjQwLjYxNjY2OF0gIHZmc19yZWFkKzB4OGUvMHgx
+NDANCj4gWzE0NjQwLjYxNzcyMl0gIGtzeXNfcmVhZCsweDYxLzB4ZDANCj4gWzE0NjQwLjYx
+ODc1OF0gIF9feDY0X3N5c19yZWFkKzB4MWEvMHgyMA0KPiBbMTQ2NDAuNjE5Nzc0XSAgZG9f
+c3lzY2FsbF82NCsweDYwLzB4MWMwDQo+IFsxNDY0MC42MjA3OTJdICBlbnRyeV9TWVNDQUxM
+XzY0X2FmdGVyX2h3ZnJhbWUrMHg0NC8weGE5DQo+IFsxNDY0MC42MjE4MDJdIFJJUDogMDAz
+MzoweDdmYTNkNzk5OTdlMA0KPiBbMTQ2NDAuNjIyNzk5XSBDb2RlOiAwYiAzMSBjMCA0OCA4
+MyBjNCAwOCBlOSBiZSBmZSBmZiBmZiA0OCA4ZCAzZCBiZiA4NSAwOSAwMCBlOCA4MiA2NSAw
+MiAwMCA2NiA5MCA4MyAzZCA5ZCA4NyAyZCAwMCAwMCA3NSAxMCBiOCAwMCAwMCAwMCAwMCAw
+ZiAwNSA8NDg+IDNkIDAxIGYwIGZmIGZmIDczIDMxIGMzIDQ4IDgzIGVjIDA4IGU4IDJlIGM3
+IDAxIDAwIDQ4IDg5IDA0IDI0DQo+IFsxNDY0MC42MjQ4NjFdIFJTUDogMDAyYjowMDAwN2Zm
+ZmQyMGI1ZDE4IEVGTEFHUzogMDAwMDAyNDYgT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAwMDAN
+Cj4gWzE0NjQwLjYyNTg5NV0gUkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDogMDAwMDdmYTNk
+ODI4NzAxMCBSQ1g6IDAwMDA3ZmEzZDc5OTk3ZTANCj4gWzE0NjQwLjYyNjk1M10gUkRYOiAw
+MDAwMDAwMDAwMDQwMDAwIFJTSTogMDAwMDdmYTNkODI4NzAxMCBSREk6IDAwMDAwMDAwMDAw
+MDAwMDMNCj4gWzE0NjQwLjYyNzk4OV0gUkJQOiAwMDAwMDAwMDAwMDAwMDAzIFIwODogZmZm
+ZmZmZmZmZmZmZmZmZiBSMDk6IDAwMDAwMDAwMDAwNDAwNDENCj4gWzE0NjQwLjYyOTAxNl0g
+UjEwOiAwMDAwN2ZmZmQyMGI1OWEwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAwMDAw
+MDAwMDE0NWZmMjANCj4gWzE0NjQwLjYzMDAzMl0gUjEzOiAwMDAwN2ZmZmQyMGI3NzEwIFIx
+NDogMDAwMDAwMDAwMDAwMDAwMCBSMTU6IDAwMDAwMDAwMDAwMDAwNGUNCj4gWzE0NjQwLjYz
+MTAzOV0gTW9kdWxlcyBsaW5rZWQgaW46IGJjYWNoZSBjcmM2NCBtcHQzc2FzIHJhaWRfY2xh
+c3Mgc2NzaV90cmFuc3BvcnRfc2FzIG1wdGN0bCBtcHRiYXNlIGRlbGxfcmJ1IHh0X25hdCB2
+ZXRoIHh0X01BU1FVRVJBREUgbmZfY29ubnRyYWNrX25ldGxpbmsgeHRfYWRkcnR5cGUgb3Zl
+cmxheSA4MDIxcSBnYXJwIG1ycCBib25kaW5nIGlwNnRfcnBmaWx0ZXIgaXA2dF9SRUpFQ1Qg
+bmZfcmVqZWN0X2lwdjYgaXB0X1JFSkVDVCBuZl9yZWplY3RfaXB2NCB4dF9jb25udHJhY2sg
+ZWJ0YWJsZV9uYXQgZWJ0YWJsZV9icm91dGUgaXA2dGFibGVfbmF0IGlwNnRhYmxlX21hbmds
+ZSBpcDZ0YWJsZV9zZWN1cml0eSBpcDZ0YWJsZV9yYXcgaXB0YWJsZV9uYXQgbmZfbmF0IGlw
+dGFibGVfbWFuZ2xlIGlwdGFibGVfc2VjdXJpdHkgaXB0YWJsZV9yYXcgbmZfY29ubnRyYWNr
+IG5mX2RlZnJhZ19pcHY2IG5mX2RlZnJhZ19pcHY0IGxpYmNyYzMyYyByZmtpbGwgaXBfc2V0
+IG5mbmV0bGluayBlYnRhYmxlX2ZpbHRlciBlYnRhYmxlcyBpcDZ0YWJsZV9maWx0ZXIgaXA2
+X3RhYmxlcyBpcHRhYmxlX2ZpbHRlciBhbWQ2NF9lZGFjX21vZCBlZGFjX21jZV9hbWQga3Zt
+X2FtZCBjY3Aga3ZtIGlycWJ5cGFzcyBkY2RiYXMgY3JjdDEwZGlmX3BjbG11bCBjcmMzMl9w
+Y2xtdWwgZ2hhc2hfY2xtdWxuaV9pbnRlbCBhZXNuaV9pbnRlbCBzcl9tb2QgY3J5cHRvX3Np
+bWQgY3J5cHRkIGNkcm9tIGpveWRldiBnbHVlX2hlbHBlciBpbnB1dF9sZWRzIHBjc3BrciBz
+ZyBpcG1pX3NpIGlwbWlfZGV2aW50ZiBpcG1pX21zZ2hhbmRsZXIgYWNwaV9wb3dlcl9tZXRl
+ciBzcDUxMDBfdGNvIGsxMHRlbXAgaTJjX3BpaXg0IGZhbTE1aF9wb3dlciBpcF90YWJsZXMg
+ZXh0NCBtYmNhY2hlIGpiZDIgdWFzIHVzYl9zdG9yYWdlIHNkX21vZCBhdGFfZ2VuZXJpYyBw
+YXRhX2FjcGkgbWdhZzIwMCBkcm1fa21zX2hlbHBlciBzeXNjb3B5YXJlYSBjcmMzMmNfaW50
+ZWwgc3lzZmlsbHJlY3Qgc3kNCj4gIHNpbWdibHQNCj4gWzE0NjQwLjYzMTA3OF0gIGZiX3N5
+c19mb3BzIGRybV92cmFtX2hlbHBlciB0dG0gc2VyaW9fcmF3IGRybSBpMmNfYWxnb19iaXQg
+YWhjaSBwYXRhX2F0aWl4cCBsaWJhaGNpIG52bWUgaXhnYmUgbGliYXRhIG1kaW8gYm54MiBt
+ZWdhcmFpZF9zYXMgcHRwIHBwc19jb3JlIG52bWVfY29yZSBkY2EgW2xhc3QgdW5sb2FkZWQ6
+IGJjYWNoZV0NCj4gWzE0NjQwLjY0MjM1OV0gQ1IyOiAwMDAwMDAwMDAwMDAwMDAwDQo+IA0K
+DQoNCi0tIA0KDQpDb2x5IExpDQo=
