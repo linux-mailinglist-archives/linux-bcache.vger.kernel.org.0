@@ -2,99 +2,143 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EA8E149FDC
-	for <lists+linux-bcache@lfdr.de>; Mon, 27 Jan 2020 09:28:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92B3114A7F1
+	for <lists+linux-bcache@lfdr.de>; Mon, 27 Jan 2020 17:21:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbgA0I17 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 27 Jan 2020 03:27:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53570 "EHLO mx2.suse.de"
+        id S1729636AbgA0QVJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 27 Jan 2020 11:21:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56792 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729058AbgA0I17 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 27 Jan 2020 03:27:59 -0500
+        id S1729600AbgA0QVJ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 27 Jan 2020 11:21:09 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 890DBB18C;
-        Mon, 27 Jan 2020 08:27:57 +0000 (UTC)
-Subject: Re: [bug report] bcache: avoid unnecessary btree nodes flushing in
- btree_flush_write()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-bcache@vger.kernel.org
-References: <20200127061740.kzggwhgxtmmwy34i@kili.mountain>
+        by mx2.suse.de (Postfix) with ESMTP id 7AC5DAF84;
+        Mon, 27 Jan 2020 16:21:06 +0000 (UTC)
+Subject: Re: Kernel panic after clearing stats
 From:   Coly Li <colyli@suse.de>
+To:     =?UTF-8?B?0KHQvtGA0L7QutC40L0g0JDRgNGC0LXQvCDQodC10YDQs9C10LXQstC40Yc=?= 
+        <a.sorokin@bank-hlynov.ru>
+References: <DA4005F3-FCC5-4D1E-9D2D-146AADA0CD3A@bank-hlynov.ru>
+ <d9e773d0-7417-cfc9-8208-933f7b655196@suse.de>
+Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
 Organization: SUSE Labs
-Message-ID: <aeb36731-1e1c-abb4-d59d-b16aea15dea7@suse.de>
-Date:   Mon, 27 Jan 2020 16:27:35 +0800
+Message-ID: <ffc3f8d3-76dd-d866-3f4e-fdb79e479105@suse.de>
+Date:   Tue, 28 Jan 2020 00:20:51 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200127061740.kzggwhgxtmmwy34i@kili.mountain>
+In-Reply-To: <d9e773d0-7417-cfc9-8208-933f7b655196@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: base64
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/1/27 2:17 下午, Dan Carpenter wrote:
-> Hello Coly Li,
-> 
-> The patch 2aa8c529387c: "bcache: avoid unnecessary btree nodes
-> flushing in btree_flush_write()" from Jan 24, 2020, leads to the
-> following static checker warning:
-> 
-> 	drivers/md/bcache/journal.c:444 btree_flush_write()
-> 	warn: 'ref_nr' unsigned <= 0
-> 
-
-Hi Dan,
-
-Thank you, I will submit the fix in following v5.6-rc version.
-
-BTW, now I use 0-DAY kernel test infrastructure from Intel and my local
-gcc -Wall to detect static issue. What is the tool you use to find such
-check-minus-value-to-unsigned prlbem ?
-
-Coly Li
-
-> drivers/md/bcache/journal.c
->    422  static void btree_flush_write(struct cache_set *c)
->    423  {
->    424          struct btree *b, *t, *btree_nodes[BTREE_FLUSH_NR];
->    425          unsigned int i, nr, ref_nr;
->                                     ^^^^^^
-> 
->    426          atomic_t *fifo_front_p, *now_fifo_front_p;
->    427          size_t mask;
->    428  
->    429          if (c->journal.btree_flushing)
->    430                  return;
->    431  
->    432          spin_lock(&c->journal.flush_write_lock);
->    433          if (c->journal.btree_flushing) {
->    434                  spin_unlock(&c->journal.flush_write_lock);
->    435                  return;
->    436          }
->    437          c->journal.btree_flushing = true;
->    438          spin_unlock(&c->journal.flush_write_lock);
->    439  
->    440          /* get the oldest journal entry and check its refcount */
->    441          spin_lock(&c->journal.lock);
->    442          fifo_front_p = &fifo_front(&c->journal.pin);
->    443          ref_nr = atomic_read(fifo_front_p);
->    444          if (ref_nr <= 0) {
->                     ^^^^^^^^^^^
-> Unsigned can't be less than zero.
-> 
->    445                  /*
->    446                   * do nothing if no btree node references
->    447                   * the oldest journal entry
->    448                   */
->    449                  spin_unlock(&c->journal.lock);
->    450                  goto out;
->    451          }
->    452          spin_unlock(&c->journal.lock);
-> 
-> regards,
-> dan carpenter
-> 
+T24gMjAyMC8xLzI2IDQ6MjIg5LiL5Y2ILCBDb2x5IExpIHdyb3RlOg0KPiBPbiAyMDIwLzEv
+MjAgOToyMiDkuIvljYgsINCh0L7RgNC+0LrQuNC9INCQ0YDRgtC10Lwg0KHQtdGA0LPQtdC1
+0LLQuNGHIHdyb3RlOg0KPj4gSGVsbG8uDQo+PiBJIGhhdmUga2VybmVsIHBhbmljIGFmdGVy
+IGNsZWFyaW5nIHN0YXRzIG9uIGtlcm5lbCA1LjQuMTIuDQo+PiBTdGVwcyB0byByZXByb2R1
+Y2U6DQo+PiAxLiBDcmVhdGUgbmV3IHNldDogbWFrZS1iY2FjaGUgLUIgL2Rldi9udm1lMW4x
+IC1DIC9kZXYvc2RhIC0td2lwZS1iY2FjaGUNCj4+IDIuIFJ1biBpbiAvc3lzL2ZzL2JjYWNo
+ZS88dXVpZD46IGVjaG8gMSA+IGNsZWFyX3N0YXRzICYmIGNhdCBzdGF0c19maXZlX21pbnV0
+ZS9jYWNoZV9ieXBhc3NfaGl0cw0KPj4NCj4gDQo+IENvcGllZCwgbm93IEkgYW0gaW4gTHVu
+YXIgTmVhciBZZWFyIHZhY2F0aW9uLCBsZXQgbWUgaGF2ZSBhIGxvb2sgbGF0ZXINCj4gYW5k
+IHJlc3BvbnNlIHlvdS4NCj4gDQo+IFRoYW5rcyBmb3IgdGhlIHJlcG9ydC4NCj4gDQo+PiBb
+MTQ2NDAuNTg5ODQzXSBCVUc6IGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UsIGFk
+ZHJlc3M6IDAwMDAwMDAwMDAwMDAwMDANCj4+IFsxNDY0MC41OTEwMDZdICNQRjogc3VwZXJ2
+aXNvciByZWFkIGFjY2VzcyBpbiBrZXJuZWwgbW9kZQ0KPj4gWzE0NjQwLjU5MjEyM10gI1BG
+OiBlcnJvcl9jb2RlKDB4MDAwMCkgLSBub3QtcHJlc2VudCBwYWdlDQo+PiBbMTQ2NDAuNTkz
+MjE3XSBQR0QgNjg0OThlMDY3IFA0RCA2ODQ5OGUwNjcgUFVEIDVlZGIxOTA2NyBQTUQgMA0K
+Pj4gWzE0NjQwLjU5NDMzNV0gT29wczogMDAwMCBbIzFdIFNNUCBOT1BUSQ0KPj4gWzE0NjQw
+LjU5NTQyNV0gQ1BVOiAzIFBJRDogNDU3ODggQ29tbTogZmlsZSBLZHVtcDogbG9hZGVkIE5v
+dCB0YWludGVkIDUuNC4xMi0xLmVsNy54ODZfNjQgIzENCj4+IFsxNDY0MC41OTY1MjZdIEhh
+cmR3YXJlIG5hbWU6IERlbGwgSW5jLiBQb3dlckVkZ2UgUjUxNS8wWTlDSFgsIEJJT1MgMi40
+LjEgMDUvMDQvMjAxOA0KPj4gWzE0NjQwLjU5NzYzNl0gUklQOiAwMDEwOnN5c2ZzX2tmX3Nl
+cV9zaG93KzB4YWEvMHgxYTANCj4+IFsxNDY0MC41OTg3NTRdIENvZGU6IDAwIDAwIDAwIDQw
+IGY2IGM3IDA0IDBmIDg1IGI4IDAwIDAwIDAwIDQ0IDg5IGM5IDMxIGMwIGMxIGU5IDAzIDQx
+IGY2IGMxIDA0IGYzIDQ4IGFiIDc1IDdkIDQxIGY2IGMxIDAyIDc1IDY1IDQxIDgzIGUxIDAx
+IDc1IDRlIDw0OT4gOGIgMDQgMjQgNDggODUgYzAgNzQgNTEgNDggOGIgMGUgNGMgODkgYzcg
+NDggOGIgNzEgNjAgZTggZWUgM2INCj4+IFsxNDY0MC42MDEwMzRdIFJTUDogMDAxODpmZmZm
+YzkwMDBjZmU3ZGM4IEVGTEFHUzogMDAwMTAyNDYNCj4+IFsxNDY0MC42MDIxNzJdIFJBWDog
+MDAwMDAwMDAwMDAwMDAwMCBSQlg6IGZmZmY4ODg4MzYxZTQzMDAgUkNYOiAwMDAwMDAwMDAw
+MDAwMDAwDQo+PiBbMTQ2NDAuNjAzMzE4XSBSRFg6IGZmZmY4ODg4NDA2NDMwMDAgUlNJOiBm
+ZmZmODg4NzljNzZjZmMwIFJESTogZmZmZjg4ODg0MDY0NDAwMA0KPj4gWzE0NjQwLjYwNDQ3
+NF0gUkJQOiBmZmZmYzkwMDBjZmU3ZGQ4IFIwODogZmZmZjg4OTAxNjZlMDFjMCBSMDk6IDAw
+MDAwMDAwMDAwMDAwMDANCj4+IFsxNDY0MC42MDU2MDddIFIxMDogMDAwMDAwMDAwMDAwMTAw
+MCBSMTE6IDAwMDAwMDAwMDAwMDAwMDAgUjEyOiAwMDAwMDAwMDAwMDAwMDAwDQo+PiBbMTQ2
+NDAuNjA2NzI0XSBSMTM6IGZmZmY4ODg4NGNjNzIzMDAgUjE0OiBmZmZmODg4ODM2MWU0MzAw
+IFIxNTogMDAwMDAwMDAwMDAwMDAwMQ0KPj4gWzE0NjQwLjYwNzg0OV0gRlM6ICAwMDAwN2Zh
+M2Q4MmNmNzQwKDAwMDApIEdTOmZmZmY4ODg4NWZhYzAwMDAoMDAwMCkga25sR1M6MDAwMDAw
+MDAwMDAwMDAwMA0KPj4gWzE0NjQwLjYwODk4NV0gQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAw
+MDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KPj4gWzE0NjQwLjYxMDA5Nl0gQ1IyOiAwMDAw
+MDAwMDAwMDAwMDAwIENSMzogMDAwMDAwMDVjNjI2ODAwMCBDUjQ6IDAwMDAwMDAwMDAwNDA2
+ZTANCj4+IFsxNDY0MC42MTEyMTNdIENhbGwgVHJhY2U6DQo+PiBbMTQ2NDAuNjEyMzMyXSAg
+a2VybmZzX3NlcV9zaG93KzB4MjcvMHgzMA0KPj4gWzE0NjQwLjYxMzQzNF0gIHNlcV9yZWFk
+KzB4MTYxLzB4M2YwDQo+PiBbMTQ2NDAuNjE0NTE0XSAga2VybmZzX2ZvcF9yZWFkKzB4MTFm
+LzB4MWIwDQo+PiBbMTQ2NDAuNjE1NTkxXSAgX192ZnNfcmVhZCsweDFiLzB4NDANCj4+IFsx
+NDY0MC42MTY2NjhdICB2ZnNfcmVhZCsweDhlLzB4MTQwDQo+PiBbMTQ2NDAuNjE3NzIyXSAg
+a3N5c19yZWFkKzB4NjEvMHhkMA0KPj4gWzE0NjQwLjYxODc1OF0gIF9feDY0X3N5c19yZWFk
+KzB4MWEvMHgyMA0KPj4gWzE0NjQwLjYxOTc3NF0gIGRvX3N5c2NhbGxfNjQrMHg2MC8weDFj
+MA0KPj4gWzE0NjQwLjYyMDc5Ml0gIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsw
+eDQ0LzB4YTkNCj4+IFsxNDY0MC42MjE4MDJdIFJJUDogMDAzMzoweDdmYTNkNzk5OTdlMA0K
+Pj4gWzE0NjQwLjYyMjc5OV0gQ29kZTogMGIgMzEgYzAgNDggODMgYzQgMDggZTkgYmUgZmUg
+ZmYgZmYgNDggOGQgM2QgYmYgODUgMDkgMDAgZTggODIgNjUgMDIgMDAgNjYgOTAgODMgM2Qg
+OWQgODcgMmQgMDAgMDAgNzUgMTAgYjggMDAgMDAgMDAgMDAgMGYgMDUgPDQ4PiAzZCAwMSBm
+MCBmZiBmZiA3MyAzMSBjMyA0OCA4MyBlYyAwOCBlOCAyZSBjNyAwMSAwMCA0OCA4OSAwNCAy
+NA0KPj4gWzE0NjQwLjYyNDg2MV0gUlNQOiAwMDJiOjAwMDA3ZmZmZDIwYjVkMTggRUZMQUdT
+OiAwMDAwMDI0NiBPUklHX1JBWDogMDAwMDAwMDAwMDAwMDAwMA0KPj4gWzE0NjQwLjYyNTg5
+NV0gUkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDogMDAwMDdmYTNkODI4NzAxMCBSQ1g6IDAw
+MDA3ZmEzZDc5OTk3ZTANCj4+IFsxNDY0MC42MjY5NTNdIFJEWDogMDAwMDAwMDAwMDA0MDAw
+MCBSU0k6IDAwMDA3ZmEzZDgyODcwMTAgUkRJOiAwMDAwMDAwMDAwMDAwMDAzDQo+PiBbMTQ2
+NDAuNjI3OTg5XSBSQlA6IDAwMDAwMDAwMDAwMDAwMDMgUjA4OiBmZmZmZmZmZmZmZmZmZmZm
+IFIwOTogMDAwMDAwMDAwMDA0MDA0MQ0KPj4gWzE0NjQwLjYyOTAxNl0gUjEwOiAwMDAwN2Zm
+ZmQyMGI1OWEwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAwMDAwMDAwMDE0NWZmMjAN
+Cj4+IFsxNDY0MC42MzAwMzJdIFIxMzogMDAwMDdmZmZkMjBiNzcxMCBSMTQ6IDAwMDAwMDAw
+MDAwMDAwMDAgUjE1OiAwMDAwMDAwMDAwMDAwMDRlDQo+PiBbMTQ2NDAuNjMxMDM5XSBNb2R1
+bGVzIGxpbmtlZCBpbjogYmNhY2hlIGNyYzY0IG1wdDNzYXMgcmFpZF9jbGFzcyBzY3NpX3Ry
+YW5zcG9ydF9zYXMgbXB0Y3RsIG1wdGJhc2UgZGVsbF9yYnUgeHRfbmF0IHZldGggeHRfTUFT
+UVVFUkFERSBuZl9jb25udHJhY2tfbmV0bGluayB4dF9hZGRydHlwZSBvdmVybGF5IDgwMjFx
+IGdhcnAgbXJwIGJvbmRpbmcgaXA2dF9ycGZpbHRlciBpcDZ0X1JFSkVDVCBuZl9yZWplY3Rf
+aXB2NiBpcHRfUkVKRUNUIG5mX3JlamVjdF9pcHY0IHh0X2Nvbm50cmFjayBlYnRhYmxlX25h
+dCBlYnRhYmxlX2Jyb3V0ZSBpcDZ0YWJsZV9uYXQgaXA2dGFibGVfbWFuZ2xlIGlwNnRhYmxl
+X3NlY3VyaXR5IGlwNnRhYmxlX3JhdyBpcHRhYmxlX25hdCBuZl9uYXQgaXB0YWJsZV9tYW5n
+bGUgaXB0YWJsZV9zZWN1cml0eSBpcHRhYmxlX3JhdyBuZl9jb25udHJhY2sgbmZfZGVmcmFn
+X2lwdjYgbmZfZGVmcmFnX2lwdjQgbGliY3JjMzJjIHJma2lsbCBpcF9zZXQgbmZuZXRsaW5r
+IGVidGFibGVfZmlsdGVyIGVidGFibGVzIGlwNnRhYmxlX2ZpbHRlciBpcDZfdGFibGVzIGlw
+dGFibGVfZmlsdGVyIGFtZDY0X2VkYWNfbW9kIGVkYWNfbWNlX2FtZCBrdm1fYW1kIGNjcCBr
+dm0gaXJxYnlwYXNzIGRjZGJhcyBjcmN0MTBkaWZfcGNsbXVsIGNyYzMyX3BjbG11bCBnaGFz
+aF9jbG11bG5pX2ludGVsIGFlc25pX2ludGVsIHNyX21vZCBjcnlwdG9fc2ltZCBjcnlwdGQg
+Y2Ryb20gam95ZGV2IGdsdWVfaGVscGVyIGlucHV0X2xlZHMgcGNzcGtyIHNnIGlwbWlfc2kg
+aXBtaV9kZXZpbnRmIGlwbWlfbXNnaGFuZGxlciBhY3BpX3Bvd2VyX21ldGVyIHNwNTEwMF90
+Y28gazEwdGVtcCBpMmNfcGlpeDQgZmFtMTVoX3Bvd2VyIGlwX3RhYmxlcyBleHQ0IG1iY2Fj
+aGUgamJkMiB1YXMgdXNiX3N0b3JhZ2Ugc2RfbW9kIGF0YV9nZW5lcmljIHBhdGFfYWNwaSBt
+Z2FnMjAwIGRybV9rbXNfaGVscGVyIHN5c2NvcHlhcmVhIGNyYzMyY19pbnRlbCBzeXNmaWxs
+cmVjdCBzeQ0KPj4gIHNpbWdibHQNCj4+IFsxNDY0MC42MzEwNzhdICBmYl9zeXNfZm9wcyBk
+cm1fdnJhbV9oZWxwZXIgdHRtIHNlcmlvX3JhdyBkcm0gaTJjX2FsZ29fYml0IGFoY2kgcGF0
+YV9hdGlpeHAgbGliYWhjaSBudm1lIGl4Z2JlIGxpYmF0YSBtZGlvIGJueDIgbWVnYXJhaWRf
+c2FzIHB0cCBwcHNfY29yZSBudm1lX2NvcmUgZGNhIFtsYXN0IHVubG9hZGVkOiBiY2FjaGVd
+DQo+PiBbMTQ2NDAuNjQyMzU5XSBDUjI6IDAwMDAwMDAwMDAwMDAwMDANCg0KVGhpcyBpcyBt
+eSBmYXVsdCwgdGhlIGJ1ZyB3YXMgaW50cm9kdWNlZCBieSBjb21taXQgODNmZjkzMThjNDRi
+YQ0KKCJiY2FjaGU6IG5vdCB1c2UgaGFyZCBjb2RlZCBtZW1zZXQgc2l6ZSBpbg0KYmNoX2Nh
+Y2hlX2FjY291bnRpbmdfY2xlYXIoKSIpLiBPYnZpb3VzbHkgSSBkaWQgaXQgaW4gYSB3cm9u
+ZyB3YXksIGFuZA0KY29ycnVwdGVkIHRoZSBtZW1vcnkgZm9sbG93aW5nIGFjYy0+dG90YWwu
+DQoNClRoZSBmaXggZm9yIHRoaXMgcGFuaWMgc2hvdWxkIGJlIGxpa2UgdGhpcywNCmRpZmYg
+LS1naXQgYS9kcml2ZXJzL21kL2JjYWNoZS9zdGF0cy5jIGIvZHJpdmVycy9tZC9iY2FjaGUv
+c3RhdHMuYw0KaW5kZXggYmExYzkzNzkxZDhkLi41MDNhYWZlMTg4ZGMgMTAwNjQ0DQotLS0g
+YS9kcml2ZXJzL21kL2JjYWNoZS9zdGF0cy5jDQorKysgYi9kcml2ZXJzL21kL2JjYWNoZS9z
+dGF0cy5jDQoNCiB2b2lkIGJjaF9jYWNoZV9hY2NvdW50aW5nX2NsZWFyKHN0cnVjdCBjYWNo
+ZV9hY2NvdW50aW5nICphY2MpDQogew0KLSAgICAgICBtZW1zZXQoJmFjYy0+dG90YWwuY2Fj
+aGVfaGl0cywNCi0gICAgICAgICAgICAgIDAsDQotICAgICAgICAgICAgICBzaXplb2Yoc3Ry
+dWN0IGNhY2hlX3N0YXRzKSk7DQorICAgICAgIGFjYy0+dG90YWwuY2FjaGVfaGl0cyA9IDA7
+DQorICAgICAgIGFjYy0+dG90YWwuY2FjaGVfbWlzc2VzID0gMDsNCisgICAgICAgYWNjLT50
+b3RhbC5jYWNoZV9ieXBhc3NfaGl0cyA9IDA7DQorICAgICAgIGFjYy0+dG90YWwuY2FjaGVf
+YnlwYXNzX21pc3NlcyA9IDA7DQorICAgICAgIGFjYy0+dG90YWwuY2FjaGVfcmVhZGFoZWFk
+cyA9IDA7DQorICAgICAgIGFjYy0+dG90YWwuY2FjaGVfbWlzc19jb2xsaXNpb25zID0gMDsN
+CisgICAgICAgYWNjLT50b3RhbC5zZWN0b3JzX2J5cGFzc2VkID0gMDsNCiB9DQoNCkkgd2ls
+bCBwb3N0IGEgcGF0Y2ggZm9yIHlvdXIgdGVzdGluZyBsYXRlciAob25jZSBJIG1heSBoYXZl
+IHRpbWUgdGhlDQpjb21wb3NlIGEgcGF0Y2ggYW5kIHRlc3QgaXQgZHVyaW5nIHRoZXNlIGRh
+eXMpLg0KDQpUaGFua3MgYWdhaW4gZm9yIHRoZSByZXBvcnQhDQoNCi0tIA0KDQpDb2x5IExp
+DQo=
