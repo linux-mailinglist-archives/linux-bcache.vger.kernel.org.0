@@ -2,103 +2,79 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BD5314F820
-	for <lists+linux-bcache@lfdr.de>; Sat,  1 Feb 2020 15:43:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCCA014F82B
+	for <lists+linux-bcache@lfdr.de>; Sat,  1 Feb 2020 15:58:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbgBAOnN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 1 Feb 2020 09:43:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59128 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726670AbgBAOnM (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 1 Feb 2020 09:43:12 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 08EADB197;
-        Sat,  1 Feb 2020 14:43:11 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     axboe@kernel.dk
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>
-Subject: [PATCH 5/5] bcache: check return value of prio_read()
-Date:   Sat,  1 Feb 2020 22:42:35 +0800
-Message-Id: <20200201144235.94110-6-colyli@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200201144235.94110-1-colyli@suse.de>
+        id S1726622AbgBAO6P (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 1 Feb 2020 09:58:15 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44748 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbgBAO6P (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 1 Feb 2020 09:58:15 -0500
+Received: by mail-pg1-f196.google.com with SMTP id x7so5205281pgl.11
+        for <linux-bcache@vger.kernel.org>; Sat, 01 Feb 2020 06:58:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=V+84GWr3lNxKTeqdrIO3Ly1rWoYrT/g923krQ6rxDLw=;
+        b=nttcNARINoiVnToJQunZTfaUhhCBA/lUHMZKSsL/PkfJQDSSmbsIzYDmu7Jy0+zWZS
+         Bib1xY7D1kZwY5XL/ggpmVqhw10/GXgDwV/LhiKMcvRT8n99ISMJSX6PP0Bc+4Mz9ArH
+         DjCQ/FjvH+aJXKjKOpKMmgjYKT2Abq/rrLrSXCUxT/MoytsQhT/mlocpypg7i5b7F22V
+         4mmWS9tBntu8EMIzywFqr6P1UiOK4MayR8mXM2aCRRykVQh58zHoXPQCnERgLLbJAzYt
+         ctIpXqASP4qjy8u0N1CgV6TYPlwvcBCcdpsufRu1QoXrps4DZu+uoGevjeyglWDwkvCV
+         F0iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=V+84GWr3lNxKTeqdrIO3Ly1rWoYrT/g923krQ6rxDLw=;
+        b=TWwFa5/o361FuQBKj9Rf027U74Ao1X12b3RKzukmAI9fRB/jY18ZJqPJVIA2ZJI4k5
+         lOArug/gzklbHMpAV7OWeKI7WdfwEXOyzVsAg2RgNiMsrNvY5osb6AdCYpddiPr6jsrh
+         hcm5gEcNqEEq60CXrKWtzNt6BhF2JlMB/wMujfUGR0NtbKSfInS3V09hvXTBojoZh8at
+         mpZoAQtKI+yg4CcW02NLxBYFMErwQ/rOZkvu/gGVRkLEkJes/6zvb+xf+KwcbGHBz6MW
+         NvarARPdNacEkVGb4g8HMWwsOx7V/GLaJqHY3mZ6BJ0sAQE/A0TOEzm+jHXeN8E/pb0Q
+         /qug==
+X-Gm-Message-State: APjAAAV8A5FPzmUMCFEB/ENqeKL7ZBUxmxKH6XKaEURof88E0lzt8WO2
+        uv4m5ujSjakVSYzEv+g7ki5lBg==
+X-Google-Smtp-Source: APXvYqy+LLvTgvNXz+iQuaKSqdszQer18XNv+HwNu+J3eA4SeYPHlNcmFIxZUipJFZqyTHWyJG79CQ==
+X-Received: by 2002:a63:ce55:: with SMTP id r21mr15390338pgi.156.1580569093462;
+        Sat, 01 Feb 2020 06:58:13 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id r3sm14648747pfg.145.2020.02.01.06.58.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Feb 2020 06:58:13 -0800 (PST)
+Subject: Re: [PATCH 0/5] bcache patches for Linux v5.6-rc1
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
 References: <20200201144235.94110-1-colyli@suse.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fee4f649-eb8a-e7af-70d6-ad75e9a4c8bc@kernel.dk>
+Date:   Sat, 1 Feb 2020 07:58:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200201144235.94110-1-colyli@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Now if prio_read() failed during starting a cache set, we can print
-out error message in run_cache_set() and handle the failure properly.
+On 2/1/20 7:42 AM, Coly Li wrote:
+> Hi Jens,
+> 
+> Here are the bcache patches for Linux v5.6-rc1. All the patches are
+> tested and survived my I/O pressure tests for 24+ hours intotal.
+> 
+> Please take them. Thank you in advance.
 
-Signed-off-by: Coly Li <colyli@suse.de>
----
- drivers/md/bcache/super.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+Applied for 5.6, thanks.
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 3dea1d5acd5c..2749daf09724 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -609,12 +609,13 @@ int bch_prio_write(struct cache *ca, bool wait)
- 	return 0;
- }
- 
--static void prio_read(struct cache *ca, uint64_t bucket)
-+static int prio_read(struct cache *ca, uint64_t bucket)
- {
- 	struct prio_set *p = ca->disk_buckets;
- 	struct bucket_disk *d = p->data + prios_per_bucket(ca), *end = d;
- 	struct bucket *b;
- 	unsigned int bucket_nr = 0;
-+	int ret = -EIO;
- 
- 	for (b = ca->buckets;
- 	     b < ca->buckets + ca->sb.nbuckets;
-@@ -627,11 +628,15 @@ static void prio_read(struct cache *ca, uint64_t bucket)
- 			prio_io(ca, bucket, REQ_OP_READ, 0);
- 
- 			if (p->csum !=
--			    bch_crc64(&p->magic, bucket_bytes(ca) - 8))
-+			    bch_crc64(&p->magic, bucket_bytes(ca) - 8)) {
- 				pr_warn("bad csum reading priorities");
-+				goto out;
-+			}
- 
--			if (p->magic != pset_magic(&ca->sb))
-+			if (p->magic != pset_magic(&ca->sb)) {
- 				pr_warn("bad magic reading priorities");
-+				goto out;
-+			}
- 
- 			bucket = p->next_bucket;
- 			d = p->data;
-@@ -640,6 +645,10 @@ static void prio_read(struct cache *ca, uint64_t bucket)
- 		b->prio = le16_to_cpu(d->prio);
- 		b->gen = b->last_gc = d->gen;
- 	}
-+
-+	ret = 0;
-+out:
-+	return ret;
- }
- 
- /* Bcache device */
-@@ -1873,8 +1882,10 @@ static int run_cache_set(struct cache_set *c)
- 		j = &list_entry(journal.prev, struct journal_replay, list)->j;
- 
- 		err = "IO error reading priorities";
--		for_each_cache(ca, c, i)
--			prio_read(ca, j->prio_bucket[ca->sb.nr_this_dev]);
-+		for_each_cache(ca, c, i) {
-+			if (prio_read(ca, j->prio_bucket[ca->sb.nr_this_dev]))
-+				goto err;
-+		}
- 
- 		/*
- 		 * If prio_read() fails it'll call cache_set_error and we'll
 -- 
-2.16.4
+Jens Axboe
 
