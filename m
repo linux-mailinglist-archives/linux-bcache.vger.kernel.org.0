@@ -2,38 +2,38 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BAA515E48E
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Feb 2020 17:36:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 812AF15E376
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Feb 2020 17:30:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405824AbgBNQYN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Feb 2020 11:24:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60916 "EHLO mail.kernel.org"
+        id S2406139AbgBNQaO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 14 Feb 2020 11:30:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405599AbgBNQYM (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:24:12 -0500
+        id S2406418AbgBNQ00 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:26:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 237E82476A;
-        Fri, 14 Feb 2020 16:24:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EDFA246FE;
+        Fri, 14 Feb 2020 16:26:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697452;
+        s=default; t=1581697586;
         bh=RQoQ8frxlbI1QjilHnH3/LmzPQ60HcJMzxc+C18UY60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sIMm4P02YtTpDd08G3z4cXkkvmTvG10Msji6l/Fm7koiVTTB6qJi35mjMUbdPRGoc
-         oPjFACIpR2cBdZx669ZAnaV454WsrL65gJla7uocv47dMQqepczPaWiD8hE4PjYY9i
-         UA8saW8uKe9rv77Dby89O/73uuE3/ta6dQAtpPak=
+        b=0wc5Bq/sIs6GLxu61NU0WVHIT42o3oF5eAEsXNUvypnqzdacXv5sGHRrKAj4GG4sM
+         qnFKAo3fciHoeuAqTP2XDTAWCDyqU02n8UPC22VY9IFAyCxj/U3KjI+lAvnmmBQyi5
+         ax6OhZxvtpyhD6zGYpFK0WJpIgVQPSOEngPmaDvk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>, kbuild test robot <lkp@intel.com>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 135/141] bcache: explicity type cast in bset_bkey_last()
-Date:   Fri, 14 Feb 2020 11:21:15 -0500
-Message-Id: <20200214162122.19794-135-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 097/100] bcache: explicity type cast in bset_bkey_last()
+Date:   Fri, 14 Feb 2020 11:24:21 -0500
+Message-Id: <20200214162425.21071-97-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
-References: <20200214162122.19794-1-sashal@kernel.org>
+In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
+References: <20200214162425.21071-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
