@@ -2,39 +2,39 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C2D615E8A8
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Feb 2020 18:02:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F7A15F01C
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Feb 2020 18:53:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392534AbgBNQQP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Feb 2020 11:16:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46982 "EHLO mail.kernel.org"
+        id S2388641AbgBNRwd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 14 Feb 2020 12:52:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392272AbgBNQQP (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:16:15 -0500
+        id S2388621AbgBNP6d (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:58:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEAA724682;
-        Fri, 14 Feb 2020 16:16:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 887F42467B;
+        Fri, 14 Feb 2020 15:58:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696974;
-        bh=HhQ4HBxToqOlP2WfNDtZs5pT2ABW7zoq0eEpp6vCOrA=;
+        s=default; t=1581695913;
+        bh=r9VGlkabVTr9GSTTMrDDChb7M40vvOC140rzj7v6A9M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OaUB5xaSsYhWBWrmP2rS6oMk5PihM8O4/oZ2Es7Xjx4KtvDk/mHfljMYtd3D5zABY
-         MuoOF3F4wwYrMB+HZ+jusUDr5Y32HzRxlVUCSV4k2toGYR9/5zWiDSesBpfdl9Dwx6
-         zOVMObgFPVDVQJcQAeMqW/wbdLDpyRVl+gK8Lmc4=
+        b=mKbHchnDYyPbuhcY+XbC9HIDddkw8WYsgrDl3EPaSPkWhkSVICgKgn2ivnwynWBrC
+         v+HEn6+ran6mw1BP1oo3XS8YAATPHD3vQIi2/QFiQD6MisqO5X51VORRQyDQ3EtyFW
+         FWoFojQSPFIFxUURb8mwP+s9i/N0Jg1amRVEdSwQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Liang Chen <liangchen.linux@gmail.com>,
         Christoph Hellwig <hch@lst.de>, Coly Li <colyli@suse.de>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 212/252] bcache: cached_dev_free needs to put the sb page
-Date:   Fri, 14 Feb 2020 11:11:07 -0500
-Message-Id: <20200214161147.15842-212-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 452/542] bcache: cached_dev_free needs to put the sb page
+Date:   Fri, 14 Feb 2020 10:47:24 -0500
+Message-Id: <20200214154854.6746-452-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
-References: <20200214161147.15842-1-sashal@kernel.org>
+In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
+References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -62,10 +62,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index c45d9ad010770..5b5cbfadd003d 100644
+index 77e9869345e70..a573ce1d85aae 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -1226,6 +1226,9 @@ static void cached_dev_free(struct closure *cl)
+@@ -1275,6 +1275,9 @@ static void cached_dev_free(struct closure *cl)
  
  	mutex_unlock(&bch_register_lock);
  
