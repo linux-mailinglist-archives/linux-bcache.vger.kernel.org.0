@@ -2,38 +2,38 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACE9115E86B
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Feb 2020 18:00:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B4A315E62A
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Feb 2020 17:47:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404330AbgBNQQv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Feb 2020 11:16:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47852 "EHLO mail.kernel.org"
+        id S2405300AbgBNQVF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 14 Feb 2020 11:21:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404035AbgBNQQu (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:16:50 -0500
+        id S2392927AbgBNQVE (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:21:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 069442469E;
-        Fri, 14 Feb 2020 16:16:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32FCF24755;
+        Fri, 14 Feb 2020 16:21:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697009;
-        bh=zgVsgEnnXQ7LrYe7AE7KvemzilGGhK+OX2oKdOz0gEs=;
+        s=default; t=1581697264;
+        bh=8FIpGAv38N3JOcE3mn8yy2om0YdEiQlkwbQpw79bDhg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c53EdDqO0xKavWIkFgxC8R0YjuYUBDDf16OqHE4a4g1w2nuy7VO4vCb/nvDLOcAqB
-         AInCDG9qJHsIlj7hW8KQZvn1IeDKH5uO92YNZoGC+HMkPId0rnNYo1Zii3peRc53JY
-         XQT4qLV0iIHrbCjsdOw7V33uTltZefe2LilhjNc0=
+        b=0FPqgVw1oUbbrfljE7e2KCWQXz0INbdzttjWluEP+M+x4I75KAU2CuThw4Ad1ihOH
+         0Y8ne3zt+BzUQh027VazpfoMsFHqKqQp0QxgTDRpQDtDIZrSTKJHsI0AVxC4iRuYM/
+         o/Z2p5JI3r+O/ZDnnvFEXA0Ji+t3u9B8qXBbJSio=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>, kbuild test robot <lkp@intel.com>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 240/252] bcache: explicity type cast in bset_bkey_last()
-Date:   Fri, 14 Feb 2020 11:11:35 -0500
-Message-Id: <20200214161147.15842-240-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 178/186] bcache: explicity type cast in bset_bkey_last()
+Date:   Fri, 14 Feb 2020 11:17:07 -0500
+Message-Id: <20200214161715.18113-178-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
-References: <20200214161147.15842-1-sashal@kernel.org>
+In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
+References: <20200214161715.18113-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -74,10 +74,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
-index c71365e7c1fac..a50dcfda656f5 100644
+index 8d1964b472e7e..0bfde500af196 100644
 --- a/drivers/md/bcache/bset.h
 +++ b/drivers/md/bcache/bset.h
-@@ -397,7 +397,8 @@ void bch_btree_keys_stats(struct btree_keys *b, struct bset_stats *state);
+@@ -381,7 +381,8 @@ void bch_btree_keys_stats(struct btree_keys *, struct bset_stats *);
  
  /* Bkey utility code */
  
@@ -85,7 +85,7 @@ index c71365e7c1fac..a50dcfda656f5 100644
 +#define bset_bkey_last(i)	bkey_idx((struct bkey *) (i)->d, \
 +					 (unsigned int)(i)->keys)
  
- static inline struct bkey *bset_bkey_idx(struct bset *i, unsigned int idx)
+ static inline struct bkey *bset_bkey_idx(struct bset *i, unsigned idx)
  {
 -- 
 2.20.1
