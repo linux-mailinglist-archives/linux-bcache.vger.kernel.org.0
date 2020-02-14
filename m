@@ -2,38 +2,39 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 812AF15E376
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Feb 2020 17:30:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E09E15EBA7
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Feb 2020 18:22:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406139AbgBNQaO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Feb 2020 11:30:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37052 "EHLO mail.kernel.org"
+        id S2391402AbgBNQKG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 14 Feb 2020 11:10:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406418AbgBNQ00 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:26:26 -0500
+        id S2391399AbgBNQKF (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EDFA246FE;
-        Fri, 14 Feb 2020 16:26:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1277124699;
+        Fri, 14 Feb 2020 16:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697586;
-        bh=RQoQ8frxlbI1QjilHnH3/LmzPQ60HcJMzxc+C18UY60=;
+        s=default; t=1581696604;
+        bh=2spouiENZlNYp3MJcPrlIyDeaNk6twYapLciEAA6zdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0wc5Bq/sIs6GLxu61NU0WVHIT42o3oF5eAEsXNUvypnqzdacXv5sGHRrKAj4GG4sM
-         qnFKAo3fciHoeuAqTP2XDTAWCDyqU02n8UPC22VY9IFAyCxj/U3KjI+lAvnmmBQyi5
-         ax6OhZxvtpyhD6zGYpFK0WJpIgVQPSOEngPmaDvk=
+        b=kXatV/Uhq4vJqzIW8RTuYC7wfVyKSxj1obImsHHYEPQgSqd27W0L3kxubaNkzBUB1
+         nLwi+wUTKE8LQZr8SIBwNVPmAXC5+AZpunUm9F3tB0xbN1ZwK+VikzbNqQmm6y2rVe
+         6gLQM8pkYMtDg1jR1VznrZxtKBaleIEB1M/Mz11Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>, kbuild test robot <lkp@intel.com>,
+Cc:     Liang Chen <liangchen.linux@gmail.com>,
+        Christoph Hellwig <hch@lst.de>, Coly Li <colyli@suse.de>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 097/100] bcache: explicity type cast in bset_bkey_last()
-Date:   Fri, 14 Feb 2020 11:24:21 -0500
-Message-Id: <20200214162425.21071-97-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 389/459] bcache: cached_dev_free needs to put the sb page
+Date:   Fri, 14 Feb 2020 11:00:39 -0500
+Message-Id: <20200214160149.11681-389-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
-References: <20200214162425.21071-1-sashal@kernel.org>
+In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
+References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -43,50 +44,37 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Liang Chen <liangchen.linux@gmail.com>
 
-[ Upstream commit 7c02b0055f774ed9afb6e1c7724f33bf148ffdc0 ]
+[ Upstream commit e8547d42095e58bee658f00fef8e33d2a185c927 ]
 
-In bset.h, macro bset_bkey_last() is defined as,
-    bkey_idx((struct bkey *) (i)->d, (i)->keys)
+Same as cache device, the buffer page needs to be put while
+freeing cached_dev.  Otherwise a page would be leaked every
+time a cached_dev is stopped.
 
-Parameter i can be variable type of data structure, the macro always
-works once the type of struct i has member 'd' and 'keys'.
-
-bset_bkey_last() is also used in macro csum_set() to calculate the
-checksum of a on-disk data structure. When csum_set() is used to
-calculate checksum of on-disk bcache super block, the parameter 'i'
-data type is struct cache_sb_disk. Inside struct cache_sb_disk (also in
-struct cache_sb) the member keys is __u16 type. But bkey_idx() expects
-unsigned int (a 32bit width), so there is problem when sending
-parameters via stack to call bkey_idx().
-
-Sparse tool from Intel 0day kbuild system reports this incompatible
-problem. bkey_idx() is part of user space API, so the simplest fix is
-to cast the (i)->keys to unsigned int type in macro bset_bkey_last().
-
-Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Coly Li <colyli@suse.de>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/bset.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/md/bcache/super.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
-index b935839ab79c6..f483041eed986 100644
---- a/drivers/md/bcache/bset.h
-+++ b/drivers/md/bcache/bset.h
-@@ -380,7 +380,8 @@ void bch_btree_keys_stats(struct btree_keys *, struct bset_stats *);
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 64999c7a8033f..b86cf72033401 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1274,6 +1274,9 @@ static void cached_dev_free(struct closure *cl)
  
- /* Bkey utility code */
+ 	mutex_unlock(&bch_register_lock);
  
--#define bset_bkey_last(i)	bkey_idx((struct bkey *) (i)->d, (i)->keys)
-+#define bset_bkey_last(i)	bkey_idx((struct bkey *) (i)->d, \
-+					 (unsigned int)(i)->keys)
++	if (dc->sb_bio.bi_inline_vecs[0].bv_page)
++		put_page(bio_first_page_all(&dc->sb_bio));
++
+ 	if (!IS_ERR_OR_NULL(dc->bdev))
+ 		blkdev_put(dc->bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
  
- static inline struct bkey *bset_bkey_idx(struct bset *i, unsigned idx)
- {
 -- 
 2.20.1
 
