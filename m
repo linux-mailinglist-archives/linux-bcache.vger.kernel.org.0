@@ -2,91 +2,84 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C56F15EF80
-	for <lists+linux-bcache@lfdr.de>; Fri, 14 Feb 2020 18:48:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 146BA15FD79
+	for <lists+linux-bcache@lfdr.de>; Sat, 15 Feb 2020 09:29:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388529AbgBNRsQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 14 Feb 2020 12:48:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44818 "EHLO mail.kernel.org"
+        id S1725901AbgBOI3G (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 15 Feb 2020 03:29:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42418 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389000AbgBNP7t (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:59:49 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72BAB2086A;
-        Fri, 14 Feb 2020 15:59:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695989;
-        bh=zgVsgEnnXQ7LrYe7AE7KvemzilGGhK+OX2oKdOz0gEs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EMI64wJv1M1IicyTFIEWFxv8grwZnPG1JnYBa6+GdhtD4adOzSciW83xBzpMDxgIx
-         ZYn85opqg/RvqB4SbNIY2k+GphlK/+MYbKbsfXc23uau6Esuv72HDURgD3shkuH5FU
-         kC0oKp8QBhNdGa14RcQ/D9oWskk1qlsW8X2iRT8o=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>, kbuild test robot <lkp@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 510/542] bcache: explicity type cast in bset_bkey_last()
-Date:   Fri, 14 Feb 2020 10:48:22 -0500
-Message-Id: <20200214154854.6746-510-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1725882AbgBOI3G (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 15 Feb 2020 03:29:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 20F13AE89;
+        Sat, 15 Feb 2020 08:29:05 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     linux-bcache@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
+Subject: [RFC PATCH 0/3] bcache: accelerate device registration speed 
+Date:   Sat, 15 Feb 2020 16:28:55 +0800
+Message-Id: <20200215082858.128025-1-colyli@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+Hi folks,
 
-[ Upstream commit 7c02b0055f774ed9afb6e1c7724f33bf148ffdc0 ]
+This series is an effort to accelerate bcache device registration
+speed. With this series the registration speed can be x3 ~ 7x times
+faster in my tests.
 
-In bset.h, macro bset_bkey_last() is defined as,
-    bkey_idx((struct bkey *) (i)->d, (i)->keys)
+Since Linux v5.6-rc1, the bcache code may survive more than 24+ horus
+on my testing machine (Lenovo SR650, 48 Cores, both NVMe SSDs as
+cache device and cached device). Before Linux v5.3, bcache code may
+only survive around 40 minutes then deadlock detected. After Linux v5.3,
+bcache code may survive 12+ hours then out-of-memory happens and whole
+system huang. Now in my testing bcache can survive from 24+ hours high
+randome write I/Os, and generate a very large internal btree. After a
+reboot, registring a single cached device and cache device may take
+55 minutes on my testing machine, this is too long time IMHO.
 
-Parameter i can be variable type of data structure, the macro always
-works once the type of struct i has member 'd' and 'keys'.
+I don't realize such problem because bcache could not work for so long
+time before. After look into the bcache registration code, I realize
+the bcache registration time is consumed by 3 steps,
+1) Check btree nodes
+   To check each key of all the btree nodes are valid and good.
+2) Journal replay
+   Replay all valid journal entries and insert them back to btree.
+3) Count dirty sectors
+   For a specific bcache device, iterate all btree keys and count
+   dirty sectors (or stripes) for it.
 
-bset_bkey_last() is also used in macro csum_set() to calculate the
-checksum of a on-disk data structure. When csum_set() is used to
-calculate checksum of on-disk bcache super block, the parameter 'i'
-data type is struct cache_sb_disk. Inside struct cache_sb_disk (also in
-struct cache_sb) the member keys is __u16 type. But bkey_idx() expects
-unsigned int (a 32bit width), so there is problem when sending
-parameters via stack to call bkey_idx().
+The step 2) is strictly linear order, no chance to speed up. But the
+step 1) and 3) accesses btree nodes in read-only more, they can be
+speed up by parallelized threads. This series try to create multiple
+threads to check btrees and count dirty sectors, from my testing
+it can speed up x3 ~ x7 times for bcache registration.
 
-Sparse tool from Intel 0day kbuild system reports this incompatible
-problem. bkey_idx() is part of user space API, so the simplest fix is
-to cast the (i)->keys to unsigned int type in macro bset_bkey_last().
+It will be helpful if you may test the patches and feed back me the
+result or problem. Currently I target these patchs for next merge
+window of Linux v5.7.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Thanks in advance.
+
+Coly Li
 ---
- drivers/md/bcache/bset.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
-index c71365e7c1fac..a50dcfda656f5 100644
---- a/drivers/md/bcache/bset.h
-+++ b/drivers/md/bcache/bset.h
-@@ -397,7 +397,8 @@ void bch_btree_keys_stats(struct btree_keys *b, struct bset_stats *state);
- 
- /* Bkey utility code */
- 
--#define bset_bkey_last(i)	bkey_idx((struct bkey *) (i)->d, (i)->keys)
-+#define bset_bkey_last(i)	bkey_idx((struct bkey *) (i)->d, \
-+					 (unsigned int)(i)->keys)
- 
- static inline struct bkey *bset_bkey_idx(struct bset *i, unsigned int idx)
- {
+Coly Li (3):
+  bcache: move macro btree() and btree_root() into btree.h
+  bcache: make bch_btree_check() to be multiple threads
+  bcache: make bch_sectors_dirty_init() to be multiple threads
+
+ drivers/md/bcache/btree.c     | 229 ++++++++++++++++++++++++++++++------------
+ drivers/md/bcache/btree.h     |  88 ++++++++++++++++
+ drivers/md/bcache/writeback.c | 156 +++++++++++++++++++++++++++-
+ drivers/md/bcache/writeback.h |  19 ++++
+ 4 files changed, 427 insertions(+), 65 deletions(-)
+
 -- 
-2.20.1
+2.16.4
 
