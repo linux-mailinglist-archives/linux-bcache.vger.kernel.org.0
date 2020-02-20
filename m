@@ -2,81 +2,99 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87168165AD8
-	for <lists+linux-bcache@lfdr.de>; Thu, 20 Feb 2020 11:00:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10CDB165E97
+	for <lists+linux-bcache@lfdr.de>; Thu, 20 Feb 2020 14:21:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbgBTKAD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 20 Feb 2020 05:00:03 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:50777 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726921AbgBTKAD (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 20 Feb 2020 05:00:03 -0500
-Received: by mail-pj1-f68.google.com with SMTP id r67so675212pjb.0
-        for <linux-bcache@vger.kernel.org>; Thu, 20 Feb 2020 02:00:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=xsUbPWAhYtsZRE8nHbpZ90/dMr+6ACJOvf/o3gzcGwM=;
-        b=AH5lieLCrIYw049wsVcDwlLl0GFlR2w/1SgXx54g1hDP93g885PAGbcDDTU7rxBupt
-         uXy0sugTIisxbGnADpyz4r58uq+g0yGeRRocFE0L+fCdOgnH/gQTA2I0Cw7ZfU79Szo7
-         0QzWlAvSWvEcqUKmQI/wkZSwkq0zQQLXlh3b01qhvhCXCWxG8ruZETTWmigLQl/Jrn7F
-         MrKyGUkQDq8RuwBmAt4fSA07sE7BnkgwF0W4ziFYGkE17ylImS4/abb+CfYxxiehhKQU
-         Uhyy5/WDX+r7X+y+EHAZO8emfVUn1c19lGHowMtUzM+DDy6/9ABBjA5YK0Dvp+0kbMu/
-         ESnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=xsUbPWAhYtsZRE8nHbpZ90/dMr+6ACJOvf/o3gzcGwM=;
-        b=gn2Ru9g8HW3oB5W2Wo0kYKRpin4LmbJBmRaU34E3uhByTAdlyWBb73ic3TmbqG3sIt
-         l70ikLO8h5XJ7bOgwjvrn1vdtWLSEJiAariia/fBXxt6wHU9TfUAc+saEQ1s1y3jMQJC
-         l9Y2HPEH2mxi7s3H2mzSfWVl5jglwDyI6IWkDhs6DpCRX2pM3W3q030Lq9m1lixqFhr8
-         pbwBlHbTpLqwZ6Stz632cCkoABpg2NyRinT7QM/KDv6ILINlSvvwD1+ohTi+bwQhG0SQ
-         lVVT9HmgQ++PKLIcWDEZC5Sm7tlssq8kB++Wob46lBF20SKxqBBcO0zdwEVDBXlhr/bS
-         SQFw==
-X-Gm-Message-State: APjAAAUQY33lBMdLAVNXEUo2joycijAVM/JL0rAVLl+wkvJS+rfBP8r1
-        j+nzgUUmsLQHhHqmtGN5LqU4AOecT9J/w5draqo=
-X-Google-Smtp-Source: APXvYqwA8n50tXWR5SrjNg4VsIIdMEvPrmm08xkMwa/OcOpLP6EegnFUnSqS92IPbY2xPKK8iKv6SxgPMbon4/ysPYA=
-X-Received: by 2002:a17:902:7b94:: with SMTP id w20mr30389882pll.257.1582192802907;
- Thu, 20 Feb 2020 02:00:02 -0800 (PST)
+        id S1727953AbgBTNVR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 20 Feb 2020 08:21:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41328 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727943AbgBTNVR (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 20 Feb 2020 08:21:17 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 36E2EABBD;
+        Thu, 20 Feb 2020 13:21:15 +0000 (UTC)
+Subject: Re: [PATCH 1/3] bcache: ignore pending signals when creating gc and
+ allocator thread
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     axboe@kernel.dk, linux-bcache@vger.kernel.org,
+        linux-block@vger.kernel.org
+References: <20200213141207.77219-1-colyli@suse.de>
+ <20200213141207.77219-2-colyli@suse.de>
+ <20200219163200.GA18377@infradead.org>
+From:   Coly Li <colyli@suse.de>
+Organization: SUSE Labs
+Message-ID: <1f6cd622-3476-068b-3593-f918ab011156@suse.de>
+Date:   Thu, 20 Feb 2020 21:20:49 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.5.0
 MIME-Version: 1.0
-Received: by 2002:a17:90a:90f:0:0:0:0 with HTTP; Thu, 20 Feb 2020 02:00:02
- -0800 (PST)
-Reply-To: cagesusan199@gmail.com
-From:   "Mrs. Susan S. Cage" <drgoodluckebelejonathan061@gmail.com>
-Date:   Thu, 20 Feb 2020 02:00:02 -0800
-Message-ID: <CALjo5=-rRrA1501A5OOVr2Q-Yun753shbPf_ZDKj87r8zs=TJw@mail.gmail.com>
-Subject: Attention:Beneficiary
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200219163200.GA18377@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+On 2020/2/20 12:32 上午, Christoph Hellwig wrote:
+> On Thu, Feb 13, 2020 at 10:12:05PM +0800, Coly Li wrote:
+>> +	/*
+>> +	 * In case previous btree check operation occupies too many
+>> +	 * system memory for bcache btree node cache, and the
+>> +	 * registering process is selected by OOM killer. Here just
+>> +	 * ignore the SIGKILL sent by OOM killer if there is, to
+>> +	 * avoid kthread_run() being failed by pending signals. The
+>> +	 * bcache registering process will exit after the registration
+>> +	 * done.
+>> +	 */
+>> +	if (signal_pending(current))
+>> +		flush_signals(current);
+>> +
+>> +	k = kthread_run(bch_allocator_thread, ca, "bcache_allocator");
+> 
+> This really needs to go into the kthread code itself instead of
+> requiring cargo culting in the callers.
+> 
+
+Hi Christoph,
+
+Correct me if I am wrong.
+
+If the signal is set before calling kthread_run(), kthread_run() will
+fail and return -EINTR as code comment of __kthread_create_on_node() says,
+
+ 315  /*
+ 316   * Wait for completion in killable state, for I might be chosen by
+ 317   * the OOM killer while kthreadd is trying to allocate memory for
+ 318   * new kernel thread.
+ 319   */
+ 320   if (unlikely(wait_for_completion_killable(&done))) {
+ 321       /*
+ 322       * If I was SIGKILLed before kthreadd (or new kernel thread)
+ 323       * calls complete(), leave the cleanup of this structure to
+ 324       * that thread.
+ 325       */
+ 326       if (xchg(&create->done, NULL))
+ 327             return ERR_PTR(-EINTR);
+ 328       /*
+ 329        * kthreadd (or new kernel thread) will call complete()
+ 330        * shortly.
+ 331        */
+ 332        wait_for_completion(&done);
+ 333   }
+
+So the caller of kthread_run(), in this case it is
+bch_cache_allocator_start() will receive -EINTR, and returns error to
+its caller bch_cache_set_alloc(). Then the registration will fail and
+ignore what the kthread routine does in parallel.
+
+Therefore I need to explicitly call pending_signal() before calling
+kthread_run().
+
+
 -- 
-Dearest Friend,
 
-Sorry for invading your privacy, my name is Susan S. Cage I am 81
-years, citizen of United States and presently in hospital undergoing
-chromatography for bronchogenic carcinomas (Lung cancer) which
-affected both Lungs. The doctors said I have few days to live because
-the cancer has now affected my brain.
-
-My late husband left Fifteen Million, Five Hundred British Pounds
-Sterling in my account, I want to transfer the money to you and I want
-you to use it as a donate for charitable and help the needy,
-motherless, less privileged and widows within your location.
-
-I need your assurance that you will use the fund for charity, once I a
-favorable reply from you, will inform my Bank through my lawyer to
-transfer the fund to you as my Next of Kin and Sole Beneficiary. Once
-I receive your response, I will inform my bank in writing through my
-lawyer.
-
-
-
-Thank you and God bless you.
-
-Mrs. Susan S. Cage
+Coly Li
