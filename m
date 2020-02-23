@@ -2,37 +2,37 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A02A7169503
-	for <lists+linux-bcache@lfdr.de>; Sun, 23 Feb 2020 03:35:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C72169487
+	for <lists+linux-bcache@lfdr.de>; Sun, 23 Feb 2020 03:31:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbgBWCeu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 22 Feb 2020 21:34:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51314 "EHLO mail.kernel.org"
+        id S1727637AbgBWCbO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 22 Feb 2020 21:31:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728110AbgBWCWV (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:22:21 -0500
+        id S1727980AbgBWCX3 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:23:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C889E20702;
-        Sun, 23 Feb 2020 02:22:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DD1F20702;
+        Sun, 23 Feb 2020 02:23:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424540;
-        bh=TkxtcHX/hfDE6kKJ2CzjP9PIAziqcd/Z3aylXr8hs0w=;
+        s=default; t=1582424608;
+        bh=lFkez4BwPFZEiyY8daJsLPtmtS941mquHO3XEQQhqyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KK8L4wxIVy4O+CZre/wV7sVd1dwsC3W6V+vUuNVssGo7l+jSJThUZXarUPIq7dxf6
-         pebZRlM1Gy42XWhJYQH0+dy7rP5oBhOkkdlNRmUOeiG8XIFr3xkHmixzSFlciNQk+w
-         EmRrmose4+l4ZXXqd6fQsdVEkGnnrn7ABCxHtaNU=
+        b=gXvTTBkGUMcBPsS8OzuaeGhQK2QVj+Srozbbi4buy/gjy7t02Kf+t3mDPnD0/Y3H+
+         z0GwLLE+rOGuRp+PyDoEG8B602oTWczdsTBiuZuskZGto0qhxjKQD4e11C1nVlTwEm
+         mCObqs60oKQQVBzsiN1uC1zYhaYQv2fQv98tspk8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 50/58] bcache: ignore pending signals when creating gc and allocator thread
-Date:   Sat, 22 Feb 2020 21:21:11 -0500
-Message-Id: <20200223022119.707-50-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 43/50] bcache: ignore pending signals when creating gc and allocator thread
+Date:   Sat, 22 Feb 2020 21:22:28 -0500
+Message-Id: <20200223022235.1404-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200223022119.707-1-sashal@kernel.org>
-References: <20200223022119.707-1-sashal@kernel.org>
+In-Reply-To: <20200223022235.1404-1-sashal@kernel.org>
+References: <20200223022235.1404-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -106,7 +106,7 @@ index a1df0d95151c6..8bc1faf71ff2f 100644
  		return PTR_ERR(k);
  
 diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 14d6c33b0957e..78f0711a25849 100644
+index 46a8b5a91c386..a6e05503b7723 100644
 --- a/drivers/md/bcache/btree.c
 +++ b/drivers/md/bcache/btree.c
 @@ -34,6 +34,7 @@
@@ -117,7 +117,7 @@ index 14d6c33b0957e..78f0711a25849 100644
  #include <linux/rculist.h>
  #include <linux/delay.h>
  #include <trace/events/bcache.h>
-@@ -1917,6 +1918,18 @@ static int bch_gc_thread(void *arg)
+@@ -1908,6 +1909,18 @@ static int bch_gc_thread(void *arg)
  
  int bch_gc_thread_start(struct cache_set *c)
  {
