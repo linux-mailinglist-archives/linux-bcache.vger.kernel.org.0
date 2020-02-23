@@ -2,37 +2,37 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D2FD1693FE
-	for <lists+linux-bcache@lfdr.de>; Sun, 23 Feb 2020 03:27:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A02A7169503
+	for <lists+linux-bcache@lfdr.de>; Sun, 23 Feb 2020 03:35:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbgBWCYh (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 22 Feb 2020 21:24:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54698 "EHLO mail.kernel.org"
+        id S1728150AbgBWCeu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 22 Feb 2020 21:34:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729334AbgBWCYg (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:24:36 -0500
+        id S1728110AbgBWCWV (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:22:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 591B722525;
-        Sun, 23 Feb 2020 02:24:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C889E20702;
+        Sun, 23 Feb 2020 02:22:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424676;
-        bh=a0c4B7PxUO8VOO83gnyibvpUAjvQ4+k9xvqYAPsf+Dg=;
+        s=default; t=1582424540;
+        bh=TkxtcHX/hfDE6kKJ2CzjP9PIAziqcd/Z3aylXr8hs0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CeIIoFQ4PdXpeIYZ/VPk52Os7olzjlDg2leTf6h6lanqzJvy1bA3/1PvRT1rLKjyQ
-         I/arwiV4ouu1B8qVLpgkOhv+Y/rZUR6lV1XRyWSjW057xc+a+BaIPGz1b1zP14XrC9
-         aeOruczLyLgva/7fwR4Wj/IOfHqDhicVX1Nw9JXI=
+        b=KK8L4wxIVy4O+CZre/wV7sVd1dwsC3W6V+vUuNVssGo7l+jSJThUZXarUPIq7dxf6
+         pebZRlM1Gy42XWhJYQH0+dy7rP5oBhOkkdlNRmUOeiG8XIFr3xkHmixzSFlciNQk+w
+         EmRrmose4+l4ZXXqd6fQsdVEkGnnrn7ABCxHtaNU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 20/21] bcache: ignore pending signals when creating gc and allocator thread
-Date:   Sat, 22 Feb 2020 21:24:10 -0500
-Message-Id: <20200223022411.2159-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 50/58] bcache: ignore pending signals when creating gc and allocator thread
+Date:   Sat, 22 Feb 2020 21:21:11 -0500
+Message-Id: <20200223022119.707-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200223022411.2159-1-sashal@kernel.org>
-References: <20200223022411.2159-1-sashal@kernel.org>
+In-Reply-To: <20200223022119.707-1-sashal@kernel.org>
+References: <20200223022119.707-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -70,7 +70,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 29 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index ada94a01e1423..9e85d44faeb49 100644
+index a1df0d95151c6..8bc1faf71ff2f 100644
 --- a/drivers/md/bcache/alloc.c
 +++ b/drivers/md/bcache/alloc.c
 @@ -67,6 +67,7 @@
@@ -81,7 +81,7 @@ index ada94a01e1423..9e85d44faeb49 100644
  #include <trace/events/bcache.h>
  
  #define MAX_OPEN_BUCKETS 128
-@@ -700,8 +701,21 @@ int bch_open_buckets_alloc(struct cache_set *c)
+@@ -733,8 +734,21 @@ int bch_open_buckets_alloc(struct cache_set *c)
  
  int bch_cache_allocator_start(struct cache *ca)
  {
@@ -106,7 +106,7 @@ index ada94a01e1423..9e85d44faeb49 100644
  		return PTR_ERR(k);
  
 diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 96a6583e7b522..d61c1a4937109 100644
+index 14d6c33b0957e..78f0711a25849 100644
 --- a/drivers/md/bcache/btree.c
 +++ b/drivers/md/bcache/btree.c
 @@ -34,6 +34,7 @@
@@ -115,9 +115,9 @@ index 96a6583e7b522..d61c1a4937109 100644
  #include <linux/sched/clock.h>
 +#include <linux/sched/signal.h>
  #include <linux/rculist.h>
- 
+ #include <linux/delay.h>
  #include <trace/events/bcache.h>
-@@ -1801,6 +1802,18 @@ static int bch_gc_thread(void *arg)
+@@ -1917,6 +1918,18 @@ static int bch_gc_thread(void *arg)
  
  int bch_gc_thread_start(struct cache_set *c)
  {
@@ -134,8 +134,8 @@ index 96a6583e7b522..d61c1a4937109 100644
 +		flush_signals(current);
 +
  	c->gc_thread = kthread_run(bch_gc_thread, c, "bcache_gc");
- 	if (IS_ERR(c->gc_thread))
- 		return PTR_ERR(c->gc_thread);
+ 	return PTR_ERR_OR_ZERO(c->gc_thread);
+ }
 -- 
 2.20.1
 
