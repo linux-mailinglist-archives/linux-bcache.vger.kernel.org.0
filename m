@@ -2,132 +2,70 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBD6B1775D0
-	for <lists+linux-bcache@lfdr.de>; Tue,  3 Mar 2020 13:19:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18F6A177B74
+	for <lists+linux-bcache@lfdr.de>; Tue,  3 Mar 2020 17:03:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbgCCMT0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 3 Mar 2020 07:19:26 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21039 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728348AbgCCMTZ (ORCPT
+        id S1729995AbgCCQDL (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 3 Mar 2020 11:03:11 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50658 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729680AbgCCQDL (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 3 Mar 2020 07:19:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583237964;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=x0gYh1Gq3IgWpR8EgGIFaXzLMc5OTSdWEEAIyNjE2pw=;
-        b=BU5ogcxeSolxSHCzvQ+Onr5NeUvJbl3EquoB/cs9sZhzv/0KMNniC/9RgTld3GTnivOfud
-        Z4wuy77uPLsLAwHPML1zLs+qN/TM/FfhgkflaEEjs3pHaDagIdIBpnc9LWyT5CeG19PI2v
-        Eq57cM7lXXrSMTbr24PdXvF6oUwL6xE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-461-iZY3IBUQNNuj3HWzRyzJqA-1; Tue, 03 Mar 2020 07:19:22 -0500
-X-MC-Unique: iZY3IBUQNNuj3HWzRyzJqA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3502C100550E;
-        Tue,  3 Mar 2020 12:19:21 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.70])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 9072E5C1D6;
-        Tue,  3 Mar 2020 12:19:19 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue,  3 Mar 2020 13:19:20 +0100 (CET)
-Date:   Tue, 3 Mar 2020 13:19:18 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
+        Tue, 3 Mar 2020 11:03:11 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a5so3886288wmb.0;
+        Tue, 03 Mar 2020 08:03:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6cZqu3E9qwQ8IPoe9SjNtyIoE9lo8mbH7ak38NmV4nA=;
+        b=UlwXEAXHEK7drZROOZtj6cF8p55t6O1hz4h/pSYNsYnuMOdEJIhZF5a/7VcaEhK3GZ
+         PATbZAFZTAUblFxs9201+urb8mjbRFcdWv9YzLWPi4hK7NJAj5TEd9d3cIA78Gfl/40M
+         Oefbzqs1Ade6wTMq4tiAduTcCO0PHIl+oQtGPv9Ct3R9JnIDX/UpvrtQS51QBp+OUgc2
+         0Ppr/Jf5FhZUYv7CONCpZ5y++wiv9dL4TKanlfpFMK/kyzDH4mpf2Uu5FQ2xuqoHjHrY
+         xe5jsem9efb2fAqly07QyS+A3CQxmpAzchOO5fpsgxv2gkxpSyUfcHyvsng+A3jyYjOV
+         +2nQ==
+X-Gm-Message-State: ANhLgQ36tj6XalON0uj+ihgXfCUG6oHXU8VXfGBjEFrKj/DcqapLTFRk
+        QeDzz+pQLx7CHBrVVNK0cNf/4qDfS6c=
+X-Google-Smtp-Source: ADFU+vtAui0vb0XSCCDXURHL23TZuPcyxH8PWxzLV8B/zZLm+upolIJdf0K8iOtdvHs+UeyJqXROKw==
+X-Received: by 2002:a05:600c:21da:: with SMTP id x26mr5164698wmj.66.1583251389685;
+        Tue, 03 Mar 2020 08:03:09 -0800 (PST)
+Received: from localhost (ip-37-188-163-134.eurotel.cz. [37.188.163.134])
+        by smtp.gmail.com with ESMTPSA id f17sm13788616wrm.3.2020.03.03.08.03.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 08:03:08 -0800 (PST)
+Date:   Tue, 3 Mar 2020 17:03:07 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Oleg Nesterov <oleg@redhat.com>
 Cc:     Coly Li <colyli@suse.de>, axboe@kernel.dk,
         linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
         hare@suse.de, mkoutny@suse.com
 Subject: Re: [PATCH 1/2] bcache: ignore pending signals in
  bcache_device_init()
-Message-ID: <20200303121918.GA27520@redhat.com>
+Message-ID: <20200303160307.GI4380@dhcp22.suse.cz>
 References: <20200302093450.48016-1-colyli@suse.de>
  <20200302093450.48016-2-colyli@suse.de>
  <20200302122748.GH4380@dhcp22.suse.cz>
  <20200302134919.GB9769@redhat.com>
  <20200303080544.GW4380@dhcp22.suse.cz>
+ <20200303121918.GA27520@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200303080544.GW4380@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <20200303121918.GA27520@redhat.com>
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 03/03, Michal Hocko wrote:
->
-> > > What is the actual valid usage of this function?
-> >
-> > I thinks it should die...
->
-> Can we simply deprecate it and add a big fat comment explaning why this
-> is wrong interface to use?
+On Tue 03-03-20 13:19:18, Oleg Nesterov wrote:
+[...]
+> but I am not sure this optmization makes sense.
 
-Michal, I am sorry for confusion.
+I would much rather start with a clarification on what should be use
+what shouldn't. Because as of now, people tend to copy patterns which
+are broken or simply do not make any sense at all.
 
-I have to take my words back, flush_signals() can be more convenient
-and faster for kthreads than kernel_deque_signal().
-
-However I still think it needs changes, see below.
-
-Even clear_tsk_thread_flag(SIGPENDING) doesn't look right in general,
-but recalc_sigpending() can make a difference. This probably needs
-more cleanups.
-
-> + * Kernel threads are not on the receiving end of signal delivery
-> + * unless they explicitly request that by allow_signal() and in that case
-> + * flush_signals is almost always a bug because signal should be processed
-> + * by kernel_dequeue_signal rather than dropping them on the floor.
-
-Yes, but kernel_dequeue_signal() differs. Say, it won't clear TIF_SIGPENDING
-if TIF_PATCH_PENDING is set. Again, probably this need more cleanups.
-
-Anyway, we can probably change flush_signals
-
-	void flush_signals(struct task_struct *t)
-	{
-		unsigned long flags;
-
-		// see the PF_KTHREAD check in __send_signal()
-		WARN_ON_ONCE(!list_empty(&t->pending.list) ||
-			     !list_empty(&t->signal->shared_pending.list));
-
-		spin_lock_irqsave(&t->sighand->siglock, flags);
-		// TODO: use recalc_sigpending()
-		clear_tsk_thread_flag(t, TIF_SIGPENDING);
-		sigemptyset(&t->pending.signal);
-		sigemptyset(&t->signal->shared_pending.signal);
-		spin_unlock_irqrestore(&t->sighand->siglock, flags);
-	}
-
-kernel_sigaction() doesn't need flush_sigqueue_mask() too.
-
-kernel_dequeue_signal() could just use next_signal(),
-
-	int kernel_dequeue_signal(void)
-	{
-		struct task_struct *task = current;
-		int ret;
-
-		spin_lock_irq(&task->sighand->siglock);
-		ret = next_signal(&task->pending, blocked);
-		if (!ret)
-			ret = next_signal(&task->signal->shared_pending, blocked);
-		if (sig_kernel_stop(ret))
-			task->jobctl |= JOBCTL_STOP_DEQUEUED;
-		recalc_sigpending();
-		spin_unlock_irq(&task->sighand->siglock);
-
-		return ret;
-	}
-
-but I am not sure this optmization makes sense.
-
-Oleg.
-
+-- 
+Michal Hocko
+SUSE Labs
