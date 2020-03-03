@@ -2,121 +2,110 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4F33176FF6
-	for <lists+linux-bcache@lfdr.de>; Tue,  3 Mar 2020 08:22:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05A371770B8
+	for <lists+linux-bcache@lfdr.de>; Tue,  3 Mar 2020 09:05:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbgCCHWX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 3 Mar 2020 02:22:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59622 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727340AbgCCHWX (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 3 Mar 2020 02:22:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 0755FB1C5;
-        Tue,  3 Mar 2020 07:22:21 +0000 (UTC)
+        id S1727738AbgCCIFs (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 3 Mar 2020 03:05:48 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39317 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727659AbgCCIFr (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 3 Mar 2020 03:05:47 -0500
+Received: by mail-wm1-f66.google.com with SMTP id j1so360188wmi.4;
+        Tue, 03 Mar 2020 00:05:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=VN8h+lNVWgJupwZ7sOqHZQrZrplobWHWydFd7tUhWVQ=;
+        b=JW1dmdeTaYEYlh/4d5poi49UMxcf63snIivKpHEDycZW8dp2PVzpiBH46xdKpZ+9M8
+         cR91g2QYT1HcVCMABi46x5h16F7sALD1THnjVd8EAlF5f7GEwfxveeJHENSVZFid3Sjk
+         qUB9Ye2k6ct7tvfWosd5DIgYSyNcfuCMjT6sUhlixs3a3Ke0AmcngBsYlPFonacBzRAJ
+         ir55DjjGVjPQMxpg8UZArUWoffZXabU1gUT9VhURi6NvmEkScSRVic9OxRmZlTrg8HJ3
+         +7Z47hjm2OOg11z0xE2X4vADjkWLJV8A8oziDhdesK0RIoxbiYqd1i/mDFpuAFUViLay
+         fGMg==
+X-Gm-Message-State: ANhLgQ1yjDsVEfethzOjRUBoWhWhQntUWLn47dPIIMxfieL6n9PNyQDh
+        uWR1/OYjWqcpAYN7QUDu/Kq3R0pG
+X-Google-Smtp-Source: ADFU+vvLJyjWPR1wVF+Ou2sWSs56ROHDul5N7S06Nse67CGwupqRTW4bBDR4X3SIU6KCrhBqlTJYnw==
+X-Received: by 2002:a7b:cbd6:: with SMTP id n22mr3066952wmi.118.1583222746120;
+        Tue, 03 Mar 2020 00:05:46 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id n3sm2857589wmc.27.2020.03.03.00.05.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 00:05:45 -0800 (PST)
+Date:   Tue, 3 Mar 2020 09:05:44 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Coly Li <colyli@suse.de>, axboe@kernel.dk,
+        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        hare@suse.de, mkoutny@suse.com
 Subject: Re: [PATCH 1/2] bcache: ignore pending signals in
  bcache_device_init()
-To:     Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Michal Hocko <mhocko@kernel.org>,
-        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        mkoutny@suse.com
+Message-ID: <20200303080544.GW4380@dhcp22.suse.cz>
 References: <20200302093450.48016-1-colyli@suse.de>
  <20200302093450.48016-2-colyli@suse.de>
- <20200302122748.GH4380@dhcp22.suse.cz> <20200302134919.GB9769@redhat.com>
- <48c6480a-3b26-fb7f-034d-923f9b8875f1@suse.de>
- <dfcd5b4d-592d-fe2a-5c25-ac22729b479e@kernel.dk>
- <2e4898f0-0c2b-9320-b925-456a85ebdea0@suse.de>
-From:   Hannes Reinecke <hare@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
- 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
- azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <3e6b36e3-72eb-30e4-c99d-40665ea31725@suse.de>
-Date:   Tue, 3 Mar 2020 08:22:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ <20200302122748.GH4380@dhcp22.suse.cz>
+ <20200302134919.GB9769@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <2e4898f0-0c2b-9320-b925-456a85ebdea0@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200302134919.GB9769@redhat.com>
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 3/2/20 6:32 PM, Coly Li wrote:
-> On 2020/3/3 1:19 上午, Jens Axboe wrote:
-[ ..
->> What if someone else tried to kill the startup? It'd be pretty
->> frustrating that it was impossible, just because signals were blocked or
->> flushed. The assumption that systemd is the ONLY task that would want to
->> kill it is flawed.
->>
+On Mon 02-03-20 14:49:19, Oleg Nesterov wrote:
+> On 03/02, Michal Hocko wrote:
+> >
+> > I cannot really comment on the bcache part because I am not familiar
+> > with the code.
 > 
-> Indeed now the bcache registration can not be killed. I guess it is
-> because the mutex lock held during the metadata checking.
-> Sure I will look at how to extend udevd timeout value now, and ask for
-> help later.
+> same here...
 > 
-Please check if the bcache registration really needs to be synchronous.
-What exactly do you gain from having a return value (which, seeing
-that's a simple write() to a sysfs attribute, is probably ignored anyway)?
-To my understanding, the bcache registration process creates the actual
-bcache device, which in itself will generate a udev event.
-So the existence of the bcache device will already signal a successful
-completion of the registration process.
-Hence it should be possible to shift the actual bcache registration to a
-kworker, and have the 'write()' call completed after schedule_work() (or
-equivalents) are called.
-That would circumvent the problem, no?
+> > > This patch calls flush_signals() in bcache_device_init() if there is
+> > > pending signal for current process. It avoids bcache registration
+> > > failure in system boot up time due to bcache udev rule timeout.
+> >
+> > this sounds like a wrong way to address the issue. Killing the udev
+> > worker is a userspace policy and the kernel shouldn't simply ignore it.
+> 
+> Agreed. If nothing else, if a userspace process has pending SIKILL then
+> flush_signals() is very wrong.
+> 
+> > Btw. Oleg, I have noticed quite a lot of flush_signals usage in the
+> > drivers land and I have really hard time to understand their purpose.
+> 
+> Heh. I bet most if not all users of flush_signals() are simply wrong.
+> 
+> > What is the actual valid usage of this function?
+> 
+> I thinks it should die...
 
-Cheers,
+Can we simply deprecate it and add a big fat comment explaning why this
+is wrong interface to use?
 
-Hannes
+So what about this?
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 9ad8dea93dbb..8a895e565e84 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -465,7 +465,13 @@ void flush_sigqueue(struct sigpending *queue)
+ }
+ 
+ /*
+- * Flush all pending signals for this kthread.
++ * Flush all pending signals for this kthread. Please note that this interface
++ * shouldn't be used and in fact it is DEPRECATED.
++ * Existing users should be double checked because most of them are likely
++ * obsolete. Kernel threads are not on the receiving end of signal delivery
++ * unless they explicitly request that by allow_signal() and in that case
++ * flush_signals is almost always a bug because signal should be processed
++ * by kernel_dequeue_signal rather than dropping them on the floor.
+  */
+ void flush_signals(struct task_struct *t)
+ {
 -- 
-Dr. Hannes Reinecke		           Kernel Storage Architect
-hare@suse.de			                  +49 911 74053 688
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), GF: Felix Imendörffer
+Michal Hocko
+SUSE Labs
