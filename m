@@ -2,52 +2,37 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C119E17D4FF
-	for <lists+linux-bcache@lfdr.de>; Sun,  8 Mar 2020 17:54:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8470517DF44
+	for <lists+linux-bcache@lfdr.de>; Mon,  9 Mar 2020 13:01:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbgCHQyy (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 8 Mar 2020 12:54:54 -0400
-Received: from www752.sakura.ne.jp ([59.106.19.202]:51631 "EHLO
-        www752.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbgCHQyy (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 8 Mar 2020 12:54:54 -0400
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www752.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 028FpOcR061613;
-        Mon, 9 Mar 2020 00:51:24 +0900 (JST)
-        (envelope-from postmaster@hokusetubad.sakura.ne.jp)
-Received: from www752.sakura.ne.jp (59.106.19.202)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp);
- Mon, 09 Mar 2020 00:51:24 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp)
-Received: from www752.sakura.ne.jp (localhost [127.0.0.1])
-        by www752.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 028FpOhF061610;
-        Mon, 9 Mar 2020 00:51:24 +0900 (JST)
-        (envelope-from postmaster@hokusetubad.sakura.ne.jp)
-Received: (from hokusetubad@localhost)
-        by www752.sakura.ne.jp (8.15.2/8.15.2/Submit) id 028FpOOQ061609;
-        Mon, 9 Mar 2020 00:51:24 +0900 (JST)
-        (envelope-from postmaster@hokusetubad.sakura.ne.jp)
-Message-Id: <202003081551.028FpOOQ061609@www752.sakura.ne.jp>
-X-Authentication-Warning: www752.sakura.ne.jp: hokusetubad set sender to postmaster@hokusetubad.sakura.ne.jp using -f
-Subject: BUSINESS PROPOSAL
-From:   postmaster@hokusetubad.sakura.ne.jp
-Reply-To: abulkareem461@gmail.com
-To:     nJreyes@midway.edu
+        id S1726449AbgCIMBW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 9 Mar 2020 08:01:22 -0400
+Received: from [61.60.216.169] ([61.60.216.169]:58554 "EHLO oa.philio-tech.com"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1726465AbgCIMBW (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 9 Mar 2020 08:01:22 -0400
+X-Greylist: delayed 66464 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Mar 2020 08:01:13 EDT
+Received: from User ([156.96.45.188])
+        (authenticated bits=0)
+        by oa.philio-tech.com (8.13.8/8.13.1) with ESMTP id 028HOHlG005868;
+        Mon, 9 Mar 2020 01:24:19 +0800
+Message-Id: <202003081724.028HOHlG005868@oa.philio-tech.com>
+Reply-To: <francoispiniault@gmail.com>
+From:   "Francois Pinault" <francioispinaul@gmail.com>
+Subject: Re:
+Date:   Sun, 8 Mar 2020 13:33:12 -0400
 MIME-Version: 1.0
-Date:   Mon, 09 Mar 2020 00:51:24 +0900
-Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Type: text/plain;
+        charset="Windows-1251"
 Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Dearest Friend
-
-I am Mr Abdul Kareem working with Emirate NBD Bank Dubai,United Arab Emirate as Finance Manager.
-I have a very profitable Business that concerns you and will benefit both of us after completion.
-Kindly get back to me for more details.
-Awaiting your response.
-Regards
-Abdul Kareem
+A donation was made in your favour by Francois Pinault, reply for more details.
