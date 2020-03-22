@@ -2,116 +2,89 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 434E318E70F
-	for <lists+linux-bcache@lfdr.de>; Sun, 22 Mar 2020 07:05:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FEA818EA06
+	for <lists+linux-bcache@lfdr.de>; Sun, 22 Mar 2020 17:07:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbgCVGFA (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 22 Mar 2020 02:05:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49126 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726502AbgCVGFA (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 22 Mar 2020 02:05:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id F13EBAB64;
-        Sun, 22 Mar 2020 06:04:58 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     axboe@kernel.dk
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Davidlohr Bueso <dave@stgolabs.net>
-Subject: [PATCH 7/7] bcache: optimize barrier usage for atomic operations
-Date:   Sun, 22 Mar 2020 14:03:05 +0800
-Message-Id: <20200322060305.70637-8-colyli@suse.de>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200322060305.70637-1-colyli@suse.de>
+        id S1725971AbgCVQHo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 22 Mar 2020 12:07:44 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34876 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbgCVQHo (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 22 Mar 2020 12:07:44 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 7so5872830pgr.2
+        for <linux-bcache@vger.kernel.org>; Sun, 22 Mar 2020 09:07:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Cllw+Acf1/zDGvW1OVmILYynNne/WJT+QGIYuOy4cYQ=;
+        b=XgrfzTMPyGWpYonyMLlkivFygz+4cfbqZuI6hehzYiLTyOo48DT/O1Rt1nIXmC7jrJ
+         cjSsmXXzyJGtUrNJ2Yta7qkNVD6/Z8xVtumU+RUVKrOxzKIdSghRgKAy+gylFCW4UUA0
+         +ZxX3IhOGpbWKJTkobZfkZ+nPuMUfE8gKMtWGzVzg05vTRi4d+i2E0yDKpROGFhk2KxH
+         svU2C8YxjO3132uzM8VG/nazrHRcbZDpOUUXZ0Qiyz04nUhNbv5nw9V3Ts5klUW8/zAc
+         6zIi20HgHAtL6tv7egc6F4mC3g6cBSN4HLCy9+VrE6iCYaBuYw/VORaMlON9tgIr17IJ
+         11qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Cllw+Acf1/zDGvW1OVmILYynNne/WJT+QGIYuOy4cYQ=;
+        b=OBEub0zJzycxdUW9VKf1J1Mpzk6cGwa7JEQSmycZhEazZ6XBT1gCYpbm+5GeaUwtgl
+         istcknRXY0ItNZI+dlldm4+ZuY4s21xU7wQM/nKc5YxQMzAZrHt6+h+jXxWfr2UHlMTa
+         Uj4o49k6o0aI/+IyIPIKzoQnJidctLrk1oEoXBuAVhJZpXULgpxh4mv01Ql2IyYHyPiv
+         gKjihivzDbqu0f1fet6s67kEI9tAIZpy21/uDPzpcQxKsURO9xHhl8CHXOqbpQV1hG++
+         47G13WeIsqJy+RrX7gz1+dMycMlYSydvyVbGi782l7iQ7REXsflCkCmLrcu8i4QWBYK8
+         RvUg==
+X-Gm-Message-State: ANhLgQ1X35AsPpIhr9dhG6V+njYHAH32YUZ8N/5QUL7Ojz91bt4Vp4BT
+        cxukJ0yOcVGknGAH2BB1s8mbcQ==
+X-Google-Smtp-Source: ADFU+vtM5c1iiEMd+6SFCOef+T/gmQuzEyQ+klThEpY51RCqUgDDJUtlavFz9g4MHcgdDXOCuPf5Zw==
+X-Received: by 2002:aa7:848b:: with SMTP id u11mr19717978pfn.76.1584893262820;
+        Sun, 22 Mar 2020 09:07:42 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id y15sm11099322pfc.206.2020.03.22.09.07.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Mar 2020 09:07:42 -0700 (PDT)
+Subject: Re: [PATCH 0/7] bcache patches for Linux v5.7-rc1
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
 References: <20200322060305.70637-1-colyli@suse.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <61344bad-e454-1827-c0bc-038f7e73dc16@kernel.dk>
+Date:   Sun, 22 Mar 2020 10:07:35 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200322060305.70637-1-colyli@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The idea of this patch is from Davidlohr Bueso, he posts a patch
-for bcache to optimize barrier usage for read-modify-write atomic
-bitops. Indeed such optimization can also apply on other locations
-where smp_mb() is used before or after an atomic operation.
+On 3/22/20 12:02 AM, Coly Li wrote:
+> Hi Jens,
+> 
+> These are bcache patches for Linux v5.7-rc1.
+> 
+> The major change is to make bcache btree check and dirty secrtors
+> counting being multithreaded, then the registration time can be
+> much less. My first four patches are for this purpose.
+> 
+> Davidlohr Bueso contributes a patch to optimize barrier usage for
+> atomic operations. By his inspiration I also compose a patch for
+> the rested locations to change.
+> 
+> Takashi Iwai contributes a helpful patch to avoid potential
+> buffer overflow in bcache sysfs code path.
+> 
+> Please take them, and thank you in advance.
 
-This patch replaces smp_mb() with smp_mb__before_atomic() or
-smp_mb__after_atomic() in btree.c and writeback.c,  where it is used
-to synchronize memory cache just earlier on other cores. Although
-the locations are not on hot code path, it is always not bad to mkae
-things a little better.
+Applied, thanks.
 
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
----
- drivers/md/bcache/btree.c     | 6 +++---
- drivers/md/bcache/writeback.c | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 74d66b641169..72856e5f23a3 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -1947,7 +1947,7 @@ static int bch_btree_check_thread(void *arg)
- 				 */
- 				atomic_set(&check_state->enough, 1);
- 				/* Update check_state->enough earlier */
--				smp_mb();
-+				smp_mb__after_atomic();
- 				goto out;
- 			}
- 			skip_nr--;
-@@ -1972,7 +1972,7 @@ static int bch_btree_check_thread(void *arg)
- out:
- 	info->result = ret;
- 	/* update check_state->started among all CPUs */
--	smp_mb();
-+	smp_mb__before_atomic();
- 	if (atomic_dec_and_test(&check_state->started))
- 		wake_up(&check_state->wait);
- 
-@@ -2031,7 +2031,7 @@ int bch_btree_check(struct cache_set *c)
- 	 */
- 	for (i = 0; i < check_state->total_threads; i++) {
- 		/* fetch latest check_state->enough earlier */
--		smp_mb();
-+		smp_mb__before_atomic();
- 		if (atomic_read(&check_state->enough))
- 			break;
- 
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 72ba6d015786..3f7641fb28d5 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -854,7 +854,7 @@ static int bch_dirty_init_thread(void *arg)
- 			else {
- 				atomic_set(&state->enough, 1);
- 				/* Update state->enough earlier */
--				smp_mb();
-+				smp_mb__after_atomic();
- 				goto out;
- 			}
- 			skip_nr--;
-@@ -873,7 +873,7 @@ static int bch_dirty_init_thread(void *arg)
- 
- out:
- 	/* In order to wake up state->wait in time */
--	smp_mb();
-+	smp_mb__before_atomic();
- 	if (atomic_dec_and_test(&state->started))
- 		wake_up(&state->wait);
- 
-@@ -932,7 +932,7 @@ void bch_sectors_dirty_init(struct bcache_device *d)
- 
- 	for (i = 0; i < state->total_threads; i++) {
- 		/* Fetch latest state->enough earlier */
--		smp_mb();
-+		smp_mb__before_atomic();
- 		if (atomic_read(&state->enough))
- 			break;
- 
 -- 
-2.25.0
+Jens Axboe
 
