@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 431B418E703
+	by mail.lfdr.de (Postfix) with ESMTP id DBD3718E705
 	for <lists+linux-bcache@lfdr.de>; Sun, 22 Mar 2020 07:04:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725997AbgCVGEk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 22 Mar 2020 02:04:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48966 "EHLO mx2.suse.de"
+        id S1726052AbgCVGEn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 22 Mar 2020 02:04:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48988 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbgCVGEk (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 22 Mar 2020 02:04:40 -0400
+        id S1725881AbgCVGEn (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 22 Mar 2020 02:04:43 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 00A7CAB64;
-        Sun, 22 Mar 2020 06:04:36 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 79B68ACA2;
+        Sun, 22 Mar 2020 06:04:40 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>
-Subject: [PATCH 1/7] bcache: move macro btree() and btree_root() into btree.h
-Date:   Sun, 22 Mar 2020 14:02:59 +0800
-Message-Id: <20200322060305.70637-2-colyli@suse.de>
+        Coly Li <colyli@suse.de>, Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH 2/7] bcache: add bcache_ prefix to btree_root() and btree() macros
+Date:   Sun, 22 Mar 2020 14:03:00 +0800
+Message-Id: <20200322060305.70637-3-colyli@suse.de>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200322060305.70637-1-colyli@suse.de>
 References: <20200322060305.70637-1-colyli@suse.de>
@@ -32,179 +32,109 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In order to accelerate bcache registration speed, the macro btree()
-and btree_root() will be referenced out of btree.c. This patch moves
-them from btree.c into btree.h with other relative function declaration
-in btree.h, for the following changes.
+This patch changes macro btree_root() and btree() to bcache_btree_root()
+and bcache_btree(), to avoid potential generic name clash in future.
 
+NOTE: for porduct kernel maintainers, this patch can be skipped if
+you feel the rename stuffs introduce inconvenince to patch backport.
+
+Suggested-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/btree.c | 60 +----------------------------------
- drivers/md/bcache/btree.h | 66 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 67 insertions(+), 59 deletions(-)
+ drivers/md/bcache/btree.c | 15 ++++++++-------
+ drivers/md/bcache/btree.h |  4 ++--
+ 2 files changed, 10 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index fa872df4e770..99cb201809af 100644
+index 99cb201809af..faf152524a16 100644
 --- a/drivers/md/bcache/btree.c
 +++ b/drivers/md/bcache/btree.c
-@@ -101,64 +101,6 @@
+@@ -1790,7 +1790,7 @@ static void bch_btree_gc(struct cache_set *c)
  
- #define insert_lock(s, b)	((b)->level <= (s)->lock)
+ 	/* if CACHE_SET_IO_DISABLE set, gc thread should stop too */
+ 	do {
+-		ret = btree_root(gc_root, c, &op, &writes, &stats);
++		ret = bcache_btree_root(gc_root, c, &op, &writes, &stats);
+ 		closure_sync(&writes);
+ 		cond_resched();
  
--/*
-- * These macros are for recursing down the btree - they handle the details of
-- * locking and looking up nodes in the cache for you. They're best treated as
-- * mere syntax when reading code that uses them.
-- *
-- * op->lock determines whether we take a read or a write lock at a given depth.
-- * If you've got a read lock and find that you need a write lock (i.e. you're
-- * going to have to split), set op->lock and return -EINTR; btree_root() will
-- * call you again and you'll have the correct lock.
-- */
--
--/**
-- * btree - recurse down the btree on a specified key
-- * @fn:		function to call, which will be passed the child node
-- * @key:	key to recurse on
-- * @b:		parent btree node
-- * @op:		pointer to struct btree_op
-- */
--#define btree(fn, key, b, op, ...)					\
--({									\
--	int _r, l = (b)->level - 1;					\
--	bool _w = l <= (op)->lock;					\
--	struct btree *_child = bch_btree_node_get((b)->c, op, key, l,	\
--						  _w, b);		\
--	if (!IS_ERR(_child)) {						\
--		_r = bch_btree_ ## fn(_child, op, ##__VA_ARGS__);	\
--		rw_unlock(_w, _child);					\
--	} else								\
--		_r = PTR_ERR(_child);					\
--	_r;								\
--})
--
--/**
-- * btree_root - call a function on the root of the btree
-- * @fn:		function to call, which will be passed the child node
-- * @c:		cache set
-- * @op:		pointer to struct btree_op
-- */
--#define btree_root(fn, c, op, ...)					\
--({									\
--	int _r = -EINTR;						\
--	do {								\
--		struct btree *_b = (c)->root;				\
--		bool _w = insert_lock(op, _b);				\
--		rw_lock(_w, _b, _b->level);				\
--		if (_b == (c)->root &&					\
--		    _w == insert_lock(op, _b)) {			\
--			_r = bch_btree_ ## fn(_b, op, ##__VA_ARGS__);	\
--		}							\
--		rw_unlock(_w, _b);					\
--		bch_cannibalize_unlock(c);				\
--		if (_r == -EINTR)					\
--			schedule();					\
--	} while (_r == -EINTR);						\
--									\
--	finish_wait(&(c)->btree_cache_wait, &(op)->wait);		\
--	_r;								\
--})
+@@ -1888,7 +1888,7 @@ static int bch_btree_check_recurse(struct btree *b, struct btree_op *op)
+ 			}
  
- static inline struct bset *write_block(struct btree *b)
- {
-@@ -2422,7 +2364,7 @@ int __bch_btree_map_nodes(struct btree_op *op, struct cache_set *c,
- 	return btree_root(map_nodes_recurse, c, op, from, fn, flags);
+ 			if (p)
+-				ret = btree(check_recurse, p, b, op);
++				ret = bcache_btree(check_recurse, p, b, op);
+ 
+ 			p = k;
+ 		} while (p && !ret);
+@@ -1903,7 +1903,7 @@ int bch_btree_check(struct cache_set *c)
+ 
+ 	bch_btree_op_init(&op, SHRT_MAX);
+ 
+-	return btree_root(check_recurse, c, &op);
++	return bcache_btree_root(check_recurse, c, &op);
  }
  
--static int bch_btree_map_keys_recurse(struct btree *b, struct btree_op *op,
-+int bch_btree_map_keys_recurse(struct btree *b, struct btree_op *op,
- 				      struct bkey *from, btree_map_keys_fn *fn,
- 				      int flags)
+ void bch_initial_gc_finish(struct cache_set *c)
+@@ -2343,7 +2343,7 @@ static int bch_btree_map_nodes_recurse(struct btree *b, struct btree_op *op,
+ 
+ 		while ((k = bch_btree_iter_next_filter(&iter, &b->keys,
+ 						       bch_ptr_bad))) {
+-			ret = btree(map_nodes_recurse, k, b,
++			ret = bcache_btree(map_nodes_recurse, k, b,
+ 				    op, from, fn, flags);
+ 			from = NULL;
+ 
+@@ -2361,7 +2361,7 @@ static int bch_btree_map_nodes_recurse(struct btree *b, struct btree_op *op,
+ int __bch_btree_map_nodes(struct btree_op *op, struct cache_set *c,
+ 			  struct bkey *from, btree_map_nodes_fn *fn, int flags)
  {
+-	return btree_root(map_nodes_recurse, c, op, from, fn, flags);
++	return bcache_btree_root(map_nodes_recurse, c, op, from, fn, flags);
+ }
+ 
+ int bch_btree_map_keys_recurse(struct btree *b, struct btree_op *op,
+@@ -2377,7 +2377,8 @@ int bch_btree_map_keys_recurse(struct btree *b, struct btree_op *op,
+ 	while ((k = bch_btree_iter_next_filter(&iter, &b->keys, bch_ptr_bad))) {
+ 		ret = !b->level
+ 			? fn(op, b, k)
+-			: btree(map_keys_recurse, k, b, op, from, fn, flags);
++			: bcache_btree(map_keys_recurse, k,
++				       b, op, from, fn, flags);
+ 		from = NULL;
+ 
+ 		if (ret != MAP_CONTINUE)
+@@ -2394,7 +2395,7 @@ int bch_btree_map_keys_recurse(struct btree *b, struct btree_op *op,
+ int bch_btree_map_keys(struct btree_op *op, struct cache_set *c,
+ 		       struct bkey *from, btree_map_keys_fn *fn, int flags)
+ {
+-	return btree_root(map_keys_recurse, c, op, from, fn, flags);
++	return bcache_btree_root(map_keys_recurse, c, op, from, fn, flags);
+ }
+ 
+ /* Keybuf code */
 diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
-index f4dcca449391..f37153db3f6c 100644
+index f37153db3f6c..19e30266070a 100644
 --- a/drivers/md/bcache/btree.h
 +++ b/drivers/md/bcache/btree.h
-@@ -260,6 +260,13 @@ void bch_initial_gc_finish(struct cache_set *c);
- void bch_moving_gc(struct cache_set *c);
- int bch_btree_check(struct cache_set *c);
- void bch_initial_mark_key(struct cache_set *c, int level, struct bkey *k);
-+typedef int (btree_map_keys_fn)(struct btree_op *op, struct btree *b,
-+				struct bkey *k);
-+int bch_btree_map_keys_recurse(struct btree *b, struct btree_op *op,
-+			       struct bkey *from, btree_map_keys_fn *fn,
-+			       int flags);
-+int bch_btree_map_keys(struct btree_op *op, struct cache_set *c,
-+		       struct bkey *from, btree_map_keys_fn *fn, int flags);
- 
- static inline void wake_up_gc(struct cache_set *c)
- {
-@@ -284,6 +291,65 @@ static inline void force_wake_up_gc(struct cache_set *c)
- 	wake_up_gc(c);
- }
- 
-+/*
-+ * These macros are for recursing down the btree - they handle the details of
-+ * locking and looking up nodes in the cache for you. They're best treated as
-+ * mere syntax when reading code that uses them.
-+ *
-+ * op->lock determines whether we take a read or a write lock at a given depth.
-+ * If you've got a read lock and find that you need a write lock (i.e. you're
-+ * going to have to split), set op->lock and return -EINTR; btree_root() will
-+ * call you again and you'll have the correct lock.
-+ */
-+
-+/**
-+ * btree - recurse down the btree on a specified key
-+ * @fn:		function to call, which will be passed the child node
-+ * @key:	key to recurse on
-+ * @b:		parent btree node
-+ * @op:		pointer to struct btree_op
-+ */
-+#define btree(fn, key, b, op, ...)					\
-+({									\
-+	int _r, l = (b)->level - 1;					\
-+	bool _w = l <= (op)->lock;					\
-+	struct btree *_child = bch_btree_node_get((b)->c, op, key, l,	\
-+						  _w, b);		\
-+	if (!IS_ERR(_child)) {						\
-+		_r = bch_btree_ ## fn(_child, op, ##__VA_ARGS__);	\
-+		rw_unlock(_w, _child);					\
-+	} else								\
-+		_r = PTR_ERR(_child);					\
-+	_r;								\
-+})
-+
-+/**
-+ * btree_root - call a function on the root of the btree
-+ * @fn:		function to call, which will be passed the child node
-+ * @c:		cache set
-+ * @op:		pointer to struct btree_op
-+ */
-+#define btree_root(fn, c, op, ...)					\
-+({									\
-+	int _r = -EINTR;						\
-+	do {								\
-+		struct btree *_b = (c)->root;				\
-+		bool _w = insert_lock(op, _b);				\
-+		rw_lock(_w, _b, _b->level);				\
-+		if (_b == (c)->root &&					\
-+		    _w == insert_lock(op, _b)) {			\
-+			_r = bch_btree_ ## fn(_b, op, ##__VA_ARGS__);	\
-+		}							\
-+		rw_unlock(_w, _b);					\
-+		bch_cannibalize_unlock(c);                              \
-+		if (_r == -EINTR)                                       \
-+			schedule();                                     \
-+	} while (_r == -EINTR);                                         \
-+									\
-+	finish_wait(&(c)->btree_cache_wait, &(op)->wait);               \
-+	_r;                                                             \
-+})
-+
- #define MAP_DONE	0
- #define MAP_CONTINUE	1
- 
+@@ -309,7 +309,7 @@ static inline void force_wake_up_gc(struct cache_set *c)
+  * @b:		parent btree node
+  * @op:		pointer to struct btree_op
+  */
+-#define btree(fn, key, b, op, ...)					\
++#define bcache_btree(fn, key, b, op, ...)				\
+ ({									\
+ 	int _r, l = (b)->level - 1;					\
+ 	bool _w = l <= (op)->lock;					\
+@@ -329,7 +329,7 @@ static inline void force_wake_up_gc(struct cache_set *c)
+  * @c:		cache set
+  * @op:		pointer to struct btree_op
+  */
+-#define btree_root(fn, c, op, ...)					\
++#define bcache_btree_root(fn, c, op, ...)				\
+ ({									\
+ 	int _r = -EINTR;						\
+ 	do {								\
 -- 
 2.25.0
 
