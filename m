@@ -2,150 +2,64 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A753F197A80
-	for <lists+linux-bcache@lfdr.de>; Mon, 30 Mar 2020 13:15:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 321F719C00A
+	for <lists+linux-bcache@lfdr.de>; Thu,  2 Apr 2020 13:19:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729271AbgC3LPw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 30 Mar 2020 07:15:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53442 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729263AbgC3LPv (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 30 Mar 2020 07:15:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id F4052AD08;
-        Mon, 30 Mar 2020 11:15:49 +0000 (UTC)
-Subject: Re: [PATCH 3/5] bcache: pass the make_request methods to
- blk_queue_make_request
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-References: <20200327083012.1618778-1-hch@lst.de>
- <20200327083012.1618778-4-hch@lst.de>
-From:   Coly Li <colyli@suse.de>
-Organization: SUSE Labs
-Message-ID: <f0214b2f-5472-4c55-1b06-fa2b2afd3948@suse.de>
-Date:   Mon, 30 Mar 2020 19:15:46 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.6.0
+        id S2388001AbgDBLTG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 2 Apr 2020 07:19:06 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38068 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728803AbgDBLTG (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 2 Apr 2020 07:19:06 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1jJxsF-0004zU-Tt; Thu, 02 Apr 2020 11:19:04 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bcache: remove redundant variables i and n
+Date:   Thu,  2 Apr 2020 12:19:03 +0100
+Message-Id: <20200402111903.514146-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20200327083012.1618778-4-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/3/27 4:30 下午, Christoph Hellwig wrote:
-> bcache is the only driver not actually passing its make_request
-> methods to blk_queue_make_request, but instead just sets them up
-> manually a little later.  Make bcache follow the common way of
-> setting up make_request based queues.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+From: Colin Ian King <colin.king@canonical.com>
 
-For the bcache part, it is fine for me.
+Variables i and n are being assigned but are never used. They are
+redundant and can be removed.
 
-Reviewed-by: Coly Li <colyli@suse.de>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/md/bcache/btree.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks.
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 72856e5f23a3..114d0d73d909 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -1907,10 +1907,8 @@ static int bch_btree_check_thread(void *arg)
+ 	struct btree_iter iter;
+ 	struct bkey *k, *p;
+ 	int cur_idx, prev_idx, skip_nr;
+-	int i, n;
+ 
+ 	k = p = NULL;
+-	i = n = 0;
+ 	cur_idx = prev_idx = 0;
+ 	ret = 0;
+ 
+-- 
+2.25.1
 
-Coly Li
-
-> ---
->  drivers/md/bcache/request.c |  7 ++-----
->  drivers/md/bcache/request.h |  3 +++
->  drivers/md/bcache/super.c   | 10 ++++++----
->  3 files changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index 820d8402a1dc..71a90fbec314 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -1161,8 +1161,7 @@ static void quit_max_writeback_rate(struct cache_set *c,
->  
->  /* Cached devices - read & write stuff */
->  
-> -static blk_qc_t cached_dev_make_request(struct request_queue *q,
-> -					struct bio *bio)
-> +blk_qc_t cached_dev_make_request(struct request_queue *q, struct bio *bio)
->  {
->  	struct search *s;
->  	struct bcache_device *d = bio->bi_disk->private_data;
-> @@ -1266,7 +1265,6 @@ void bch_cached_dev_request_init(struct cached_dev *dc)
->  {
->  	struct gendisk *g = dc->disk.disk;
->  
-> -	g->queue->make_request_fn		= cached_dev_make_request;
->  	g->queue->backing_dev_info->congested_fn = cached_dev_congested;
->  	dc->disk.cache_miss			= cached_dev_cache_miss;
->  	dc->disk.ioctl				= cached_dev_ioctl;
-> @@ -1301,8 +1299,7 @@ static void flash_dev_nodata(struct closure *cl)
->  	continue_at(cl, search_free, NULL);
->  }
->  
-> -static blk_qc_t flash_dev_make_request(struct request_queue *q,
-> -					     struct bio *bio)
-> +blk_qc_t flash_dev_make_request(struct request_queue *q, struct bio *bio)
->  {
->  	struct search *s;
->  	struct closure *cl;
-> diff --git a/drivers/md/bcache/request.h b/drivers/md/bcache/request.h
-> index c64dbd7a91aa..bb005c93dd72 100644
-> --- a/drivers/md/bcache/request.h
-> +++ b/drivers/md/bcache/request.h
-> @@ -37,7 +37,10 @@ unsigned int bch_get_congested(const struct cache_set *c);
->  void bch_data_insert(struct closure *cl);
->  
->  void bch_cached_dev_request_init(struct cached_dev *dc);
-> +blk_qc_t cached_dev_make_request(struct request_queue *q, struct bio *bio);
-> +
->  void bch_flash_dev_request_init(struct bcache_device *d);
-> +blk_qc_t flash_dev_make_request(struct request_queue *q, struct bio *bio);
->  
->  extern struct kmem_cache *bch_search_cache;
->  
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 0c3c5419c52b..5e38a167c85e 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -816,7 +816,7 @@ static void bcache_device_free(struct bcache_device *d)
->  }
->  
->  static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
-> -			      sector_t sectors)
-> +			      sector_t sectors, make_request_fn make_request_fn)
->  {
->  	struct request_queue *q;
->  	const size_t max_stripes = min_t(size_t, INT_MAX,
-> @@ -870,7 +870,7 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
->  	if (!q)
->  		return -ENOMEM;
->  
-> -	blk_queue_make_request(q, NULL);
-> +	blk_queue_make_request(q, make_request_fn);
->  	d->disk->queue			= q;
->  	q->queuedata			= d;
->  	q->backing_dev_info->congested_data = d;
-> @@ -1339,7 +1339,8 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
->  			q->limits.raid_partial_stripes_expensive;
->  
->  	ret = bcache_device_init(&dc->disk, block_size,
-> -			 dc->bdev->bd_part->nr_sects - dc->sb.data_offset);
-> +			 dc->bdev->bd_part->nr_sects - dc->sb.data_offset,
-> +			 cached_dev_make_request);
->  	if (ret)
->  		return ret;
->  
-> @@ -1451,7 +1452,8 @@ static int flash_dev_run(struct cache_set *c, struct uuid_entry *u)
->  
->  	kobject_init(&d->kobj, &bch_flash_dev_ktype);
->  
-> -	if (bcache_device_init(d, block_bytes(c), u->sectors))
-> +	if (bcache_device_init(d, block_bytes(c), u->sectors,
-> +			flash_dev_make_request))
->  		goto err;
->  
->  	bcache_device_attach(d, c, u - c->uuids);
-> 
