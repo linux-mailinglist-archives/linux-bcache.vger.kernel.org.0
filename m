@@ -2,81 +2,71 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 754321A064F
-	for <lists+linux-bcache@lfdr.de>; Tue,  7 Apr 2020 07:12:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 524C819EF4A
+	for <lists+linux-bcache@lfdr.de>; Mon,  6 Apr 2020 04:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbgDGFM5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 7 Apr 2020 01:12:57 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:46123 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbgDGFMm (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 7 Apr 2020 01:12:42 -0400
-Received: by mail-ua1-f65.google.com with SMTP id y17so822255uap.13
-        for <linux-bcache@vger.kernel.org>; Mon, 06 Apr 2020 22:12:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=38NlpNEbzNFWb7RFQtfvRASB+B576yw7dNc7pozf3pc=;
-        b=m9m/DCsFRus/zRmIuphflM5sHyenmkMN/TOEnECOGthbLJHVg8u2+iqtFZpNbyb2/k
-         2tLF//qwyXGtNVJKRleGUy+KbEtVjN+06Aw6FbGL98d5M/QEqB9c9SHaIsBPFlQYoUCh
-         Lj+P9EPUGdvyQRip4KeH3oSvDVhqDTV0IJcbcI66BzYP/b9Y/1y4LF++1q0teLhPl3GM
-         v15gBTxOBB8qvH4CNaCnwdm2sugBL+St8qIlm7SqBWweWj6hdsos1F0mjeWO8qJt64R9
-         xl3tya8AfljNAFdSOkZ4tC7INitomO8JQPFHHcp+JAODUsaup01At9KIYDntXEoTQZb0
-         DmdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=38NlpNEbzNFWb7RFQtfvRASB+B576yw7dNc7pozf3pc=;
-        b=AFBwr6bGU6eumn5+NQrEckKeO9zWUF1C+XrM0HdLv7UoKRNhoiapOvgHDaboqL+sdQ
-         wjJRIxjeMRpZb1HNYi7ST+koXYfbreWYTM4Fuw5pOYYPfDSZrpqy/xKlIGUervyisPff
-         K7Ot6995JANAfTslwX0cN3EccabBlrKQYwapIHQmxaPxb+qXcPdRcZFVderkaW5sUbTt
-         LbJ/eGFG+c8/ZzXgaWV4/7cS1PoLLr3QFBKR+oIQ7kDC1F+soLPbgHt+Qge2eAuXCzOw
-         d/AYPYszLT8nLqNoO8Qd3KJGi9FsaFPCURtN27OBTrPG0D0RkEXaYL81R9tjU2OUbfoL
-         sOVg==
-X-Gm-Message-State: AGi0PuZRE8yyZq/YkaRgc81D42XQWmQ6Q43tWZ68dG28bKgraz8dgXhe
-        itcCvr04SqNjwAOSC/xnTkuJsLQXRmh7UClNSkY=
-X-Google-Smtp-Source: APiQypIYXniGQUHEpASwiGNjKth4Cu9ElCz4yjrJ2uXbYBYunhfz0887D/TRydUbTstl7MwaeVftG8QxF1P80ST3qos=
-X-Received: by 2002:ab0:a9:: with SMTP id 38mr504317uaj.61.1586236361040; Mon,
- 06 Apr 2020 22:12:41 -0700 (PDT)
+        id S1726486AbgDFCZS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 5 Apr 2020 22:25:18 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12614 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726408AbgDFCZS (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 5 Apr 2020 22:25:18 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 92FEE7A9492A172FF0F7;
+        Mon,  6 Apr 2020 10:25:08 +0800 (CST)
+Received: from huawei.com (10.175.112.70) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.487.0; Mon, 6 Apr 2020
+ 10:25:02 +0800
+From:   Wang Hai <wanghai38@huawei.com>
+To:     <colyli@suse.de>, <kent.overstreet@gmail.com>
+CC:     <linux-bcache@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <wanghai38@huawei.com>
+Subject: [PATCH] bcache: remove set but not used variable 'i'
+Date:   Tue, 7 Apr 2020 07:36:47 -0400
+Message-ID: <1586259407-23673-1-git-send-email-wanghai38@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Received: by 2002:ab0:4929:0:0:0:0:0 with HTTP; Mon, 6 Apr 2020 22:12:40 -0700 (PDT)
-From:   SANDRA DEWI <dewisandra154@gmail.com>
-Date:   Tue, 7 Apr 2020 05:12:40 +0000
-Message-ID: <CABRVPWys0xe4CWBkaU0ZXQW+4d=tjDOjyo8cKohc5-VFkWPkcA@mail.gmail.com>
-Subject: whether this is your correct email address or not
-To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.112.70]
+X-CFilter-Loop: Reflected
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Dear ,Pastor
+Fixes gcc '-Wunused-but-set-variable' warning:
 
+drivers/md/bcache/btree.c: In function bch_btree_check_thread:
+drivers/md/bcache/btree.c:1910:6: warning:
+ variable ‘i’ set but not used [-Wunused-but-set-variable]
 
+It's not used since commit 8e7102273f59 ("bcache: make bch_btree_check()
+to be multithreaded"), so remove it.
 
-I have a client who is an oil business man and he made a fixed deposit
-of $26 million USD in my bank, where I am the director of the branch,
-My client died with his entire family in Jordanian
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wang Hai <wanghai38@huawei.com>
+---
+ drivers/md/bcache/btree.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-50% of the fund will be for the church  for the work of God,the
-balance 50% we share it in the ratio of 50/50. Meaning 50% to you and
-50% for me
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 72856e5..b962313 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -1907,10 +1907,10 @@ static int bch_btree_check_thread(void *arg)
+ 	struct btree_iter iter;
+ 	struct bkey *k, *p;
+ 	int cur_idx, prev_idx, skip_nr;
+-	int i, n;
++	int n;
+ 
+ 	k = p = NULL;
+-	i = n = 0;
++	n = 0;
+ 	cur_idx = prev_idx = 0;
+ 	ret = 0;
+ 
+-- 
+1.8.3.1
 
-intervention in the Syrian Civil War 2014 leaving behind no next of
-kin. I Propose to present you as next of kin to claim the funds, if
-interested reply me for full details and how we are to
-
-
-
-proceed to close this deal.
-
-
-
-
-Mrs. Sandra Dewi
-
-
-
-Email  mrsdewi@gmx.com
