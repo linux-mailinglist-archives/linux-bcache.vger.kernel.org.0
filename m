@@ -2,114 +2,92 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CA1F1B5EA9
-	for <lists+linux-bcache@lfdr.de>; Thu, 23 Apr 2020 17:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0211B63B4
+	for <lists+linux-bcache@lfdr.de>; Thu, 23 Apr 2020 20:27:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbgDWPIo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 23 Apr 2020 11:08:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49890 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728921AbgDWPIn (ORCPT
+        id S1730413AbgDWS1p (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 23 Apr 2020 14:27:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52822 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730281AbgDWS0v (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 23 Apr 2020 11:08:43 -0400
+        Thu, 23 Apr 2020 14:26:51 -0400
 Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 480E9C08E934
-        for <linux-bcache@vger.kernel.org>; Thu, 23 Apr 2020 08:08:43 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id w4so6705778ioc.6
-        for <linux-bcache@vger.kernel.org>; Thu, 23 Apr 2020 08:08:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54FCDC09B04D
+        for <linux-bcache@vger.kernel.org>; Thu, 23 Apr 2020 11:26:51 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id o127so7537992iof.0
+        for <linux-bcache@vger.kernel.org>; Thu, 23 Apr 2020 11:26:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=S0YFAaVW9uGpyIPdV24cufa1fusWbtOhedjvog9H8Ws=;
-        b=X6Zx5YlWzB21Tsfi5n5HO3/21sczmsH8tmzy+3TDi9Mpn3vjeZLyVjDjt7aDVgeqIb
-         QUu5y9hWWCNEKxIb66ityAp7Bx/UQsG5kqRlpcpMgjGCk+bQUGHiGS7+Gi10kRwkN78r
-         7xjIe1SJhncMerUEflHKvEkLPLVgYvoTwKFwMn11nYMpCUKdUEqvoYgcPKKzYaTt6R/p
-         0H23ajy9PIXVoZjQOO9+CKXpgxUqlml6zThPRb5RkL9hZOLVGipe9glnxYXfoyvOEISS
-         tvmDuGHlB19Vgib7BS/C4gWi/GGNziOjnl1MCAxpEs1TFiHRJ8pBQBgM6SmWLpwnDDvf
-         K7xA==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=DHzQtr3OkXyFWXbvXEU307GvVJtF7cl8Gt7nfdQPyE8=;
+        b=g40sBMuaO0eKdotmx6qgQBl63DKBmrekz5bvyEQHA4wVZtcqrxc+aFVgh/QD84O9VQ
+         7GeGJGwCstc5CQBYUut5JFB/SR9hiHRBoNucBdQ5+M/xcZE7LYnQNVriX94nlJDQQ53M
+         WWNnGuPMmJMtuCxOc6M3BOG48McWyi9pwkfv1qCbwmDhh95byI3UmcGK9ZJ59xQm/kqA
+         giNgZwxUHu+XTIAoqn/uu1orK63Ur+6hMBQW2TB101zb0oJ5HpVThkCq6id/TjpQtg27
+         HPMb1DcYsj7bM6wQaeV1UkPK6mgUhECRFNV10F5zDhvx1RXP4ikb8uuEIGMKOSNWVb51
+         vLew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=S0YFAaVW9uGpyIPdV24cufa1fusWbtOhedjvog9H8Ws=;
-        b=Szq7inUfTt522yqnXQ1fvj9eE1qurn5F7Hpn8eXWVZBp6p7A1L+bIpVm7ssRUQxaIK
-         IlLrSw+GxyL2zyzBu6BULhIWkMZvoJv9f6p2c39IA1QnU6c7Ut/a/58cnBqZUtmVYV1G
-         l826tzvc1vpmj5kmRWz1FXA9AtuACBgHXVQTVBT/G7WGIUi9EGp57vIjtUnBTq5nQFGY
-         OPSnQ1BQYNH6GeciKVZjn91785esVudYTfU+58WDAfS2y2vn8wiAJ4QsyW1kSx/Io1Yk
-         O3H2Ujbf7+iGFiN2CD+atBP2vYSVuD0MhNaCoxeC6Z0zznSPdjJUTlJgn5vINQfdpjf3
-         epjg==
-X-Gm-Message-State: AGi0PuZVx9dUEbnA61n5VacgNvccbj6m8U6wclznS0yavlts4ZLXgdhH
-        akpeMGLTP2jlbsVMl7NXqj4CTg==
-X-Google-Smtp-Source: APiQypI2Em9HQgr7tm7PL5rLKD7w9CJJmeSE0yYvepbX7ZuI9d+GWLxfjZHrBblOmS/FfoSf04NBPA==
-X-Received: by 2002:a05:6638:c44:: with SMTP id g4mr3508647jal.99.1587654522605;
-        Thu, 23 Apr 2020 08:08:42 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id p7sm910735iob.7.2020.04.23.08.08.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Apr 2020 08:08:41 -0700 (PDT)
-Subject: Re: Request For Suggestion: how to handle udevd timeout for bcache
- registration
-To:     Coly Li <colyli@suse.de>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
-Cc:     linux-block@vger.kernel.org
-References: <7c92cd67-8e62-7d55-c520-345c30513bfa@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <140de6d9-b5ff-0736-ddbd-5b9e1ae70f5b@kernel.dk>
-Date:   Thu, 23 Apr 2020 09:08:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=DHzQtr3OkXyFWXbvXEU307GvVJtF7cl8Gt7nfdQPyE8=;
+        b=hwS+uAV4KU1ZBl+mdDBopnwzk3YYcRe2MjKodvtgqCTYli4gMtv8krB5TGuwqWqOig
+         jUeXjvbMUywAJKRybX1zmOkuOa9F/f8LrdjBSA5guSV+rkhI92BwboQCje4DhWSCRurO
+         wfUvorwjnRa7qOnl5/kqwWuk+URfbXJXzVwi2W7tc+2allXMwqrMXF5/JUDs174erEXS
+         4ej4ZviYdK6hiTC/IxUHGYeBnuh4f6B2Tk+T2Ogrx638GHtUAHSKtzmVwJIBcCp+r75L
+         v64VBhTfENGXlhauh0yt9joQvG8uAzIrOcruLiA2C9e2bHppVwubZlJLlbNp855M63BG
+         lVlQ==
+X-Gm-Message-State: AGi0PuY3GkERH9/iTcfzAjuuc91N4RNvt6vFmmhk3jedRMhSS4C3gvvm
+        oo0Q1L7N/ALq5p+NpWWfMsGYXSDsun8oEXdqSQ==
+X-Google-Smtp-Source: APiQypKZ88CB7WlyCjo0k9+cU4PX0VcggKkKtzSKgRJHkcPGizF0yZXAjzEMBgo6XH4xzBXv0KAOMjPM9p1sgpp6/70=
+X-Received: by 2002:a5e:9416:: with SMTP id q22mr2547966ioj.93.1587666410194;
+ Thu, 23 Apr 2020 11:26:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7c92cd67-8e62-7d55-c520-345c30513bfa@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a02:c845:0:0:0:0:0 with HTTP; Thu, 23 Apr 2020 11:26:49
+ -0700 (PDT)
+Reply-To: boa.benin107@yahoo.com
+From:   "Mrs. Angella Michelle" <info.zennitbankplcnigerian@gmail.com>
+Date:   Thu, 23 Apr 2020 20:26:49 +0200
+Message-ID: <CABHzvr=N78snvtMHePMOa+RLFdcZEjXLPkuhkojt4VoZGNzBsQ@mail.gmail.com>
+Subject: Contact Bank of Africa-Benin to receive your payment funds transfer
+ amount of $12.800.000,00 Million USD,approved this morning by IMF.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 4/23/20 5:23 AM, Coly Li wrote:
-> Hi folk,
-> 
-> I want to listen to your suggestion on how to handle the udevd timeout
-> for bcache registration.
-> 
-> First of all let me introduce the background of this timeout problem.
-> 
-> Now the bcache registration is synchronized, the registering process
-> will be blocked until the whole registration done. In boot up time, such
-> registration can be initiated from a bcache udev rule. Normally it won't
-> be problem, but for very large cached data size there might be a large
-> internal btree on the cache device. During the registration checking all
-> the btree nodes may take 50+ minutes as a udev task, it exceeds 180
-> seconds timeout and udevd will kill it. The killing signal will make
-> kthread_create() fail during bcache initialization, then the automatic
-> bcache registration in boot up time will fail.
-> 
-> The above text describes the problem I need to solve: make boot up time
-> automatic bache registration always success no mater how long it will take.
-> 
-> I know there are several solutions to solve such problem, I do
-> appreciate if you may share the solution so that I may learn good ideas
-> from them.
-> 
-> Thank you in advance for the information sharing of my request of
-> suggestion.
-
-The way I see it, you have only two choices:
-
-1) Make the registration async (or lazy), so that starting the device is
-   fast, but the btree verification happens on-demand or in the
-   background.
-
-2) Increase udev timeout.
-
-That's about it, I don't think there's any clever tricks to be had, and
-I definitely don't want to go down the path of trying to work around the
-udev killing in the kernel.
-
--- 
-Jens Axboe
-
+Attn Dear.
+Contact Bank of Africa-Benin to receive your payment funds transfer amount =
+of
+$12.800.000,00 Million USD,approved this morning by IMF.
+Happy to inform you, we have finally deposited your payment funds
+$12.8 million us dollars with the Paying Bank of Africa-Benin
+to transfer the payment amount of $12.800,000,00 Million Us Dollars to you
+Contact the bank immediately you receive this email now.
+Director Bank of Africa-Benin: Dr. Festus Obiara
+Email id:  boa.benin107@yahoo.com
+Tel/mobile, (229) 62819378
+BOA-BENIN | GROUPE BANK OF AFRICA, boa-benin
+Avenue Jean-Paul II - 08 BP 0879 - Cotonou - B=C3=A9nin
+Phone:(229) 62819378.
+2020 GROUPE BANK OF AFRICA
+Be advised to re-confirm your bank details to this bank as listed.
+Your account Holder's name----------------
+Bank Name----------------------------------------------------------
+Bank address----------------------------------------------
+Account Numbers---------------------------------------
+Rounting-----------------------------------------------------------------
+Your direct Phone Numbers----------------------------------------------
+Note,I have paid the deposit and insurance fees for you
+But the only money you are to send to this bank is $150.00 us dollars
+Been for the wire transfer fees of your funds
+Contact Him now to receive your transfer deposited this morning
+I wait for your reply upon confirmation
+Mrs. Angella Michelle
+Editor, Zenith Bank- Companies Benin
+mrsa9389@gmail.com
