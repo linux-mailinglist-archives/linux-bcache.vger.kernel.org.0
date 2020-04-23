@@ -2,57 +2,56 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC0211B63B4
-	for <lists+linux-bcache@lfdr.de>; Thu, 23 Apr 2020 20:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B36E1B676D
+	for <lists+linux-bcache@lfdr.de>; Fri, 24 Apr 2020 01:06:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730413AbgDWS1p (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 23 Apr 2020 14:27:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52822 "EHLO
+        id S1726079AbgDWXGQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 23 Apr 2020 19:06:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730281AbgDWS0v (ORCPT
+        with ESMTP id S1726060AbgDWXGQ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 23 Apr 2020 14:26:51 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54FCDC09B04D
-        for <linux-bcache@vger.kernel.org>; Thu, 23 Apr 2020 11:26:51 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id o127so7537992iof.0
-        for <linux-bcache@vger.kernel.org>; Thu, 23 Apr 2020 11:26:51 -0700 (PDT)
+        Thu, 23 Apr 2020 19:06:16 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FF97C09B042
+        for <linux-bcache@vger.kernel.org>; Thu, 23 Apr 2020 16:06:16 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id o127so8449967iof.0
+        for <linux-bcache@vger.kernel.org>; Thu, 23 Apr 2020 16:06:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:reply-to:from:date:message-id:subject:to
          :content-transfer-encoding;
-        bh=DHzQtr3OkXyFWXbvXEU307GvVJtF7cl8Gt7nfdQPyE8=;
-        b=g40sBMuaO0eKdotmx6qgQBl63DKBmrekz5bvyEQHA4wVZtcqrxc+aFVgh/QD84O9VQ
-         7GeGJGwCstc5CQBYUut5JFB/SR9hiHRBoNucBdQ5+M/xcZE7LYnQNVriX94nlJDQQ53M
-         WWNnGuPMmJMtuCxOc6M3BOG48McWyi9pwkfv1qCbwmDhh95byI3UmcGK9ZJ59xQm/kqA
-         giNgZwxUHu+XTIAoqn/uu1orK63Ur+6hMBQW2TB101zb0oJ5HpVThkCq6id/TjpQtg27
-         HPMb1DcYsj7bM6wQaeV1UkPK6mgUhECRFNV10F5zDhvx1RXP4ikb8uuEIGMKOSNWVb51
-         vLew==
+        bh=XxMWRD1Qjqc2p2CUGYQBoYXXklvaZpXEeheRAvN0tL0=;
+        b=Uez4nGHvOnCy3hlFCLOMa08bKJ4l3yf0n8t1hWUXjx2YekupNABdThH+XFIS8lsRoI
+         UH2qV4YCRKvumFq7i5fnoYXvR5bEfFNteBYL5DU4j/det39BDtsHZ16BhbJnV5lwRXbT
+         ZCLKf8OudVpziHENLwTkmQ3F+I7Auj3WulRdP0hkjpOMnLiZS/J0N1NFeZT0tIb3Vt4P
+         AakX9m7NHrX30q8n4FvuQfMoSG1XDlvsjoiS11fgf+aqO0R0D13wE+BDKMWnC33uibDO
+         84RRscohI30gSioSOzk02fbkmHefp9+R1+4lGEEOAafu7D15OjsmdECWDtV0IhE3uXcb
+         xMCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:reply-to:from:date:message-id
          :subject:to:content-transfer-encoding;
-        bh=DHzQtr3OkXyFWXbvXEU307GvVJtF7cl8Gt7nfdQPyE8=;
-        b=hwS+uAV4KU1ZBl+mdDBopnwzk3YYcRe2MjKodvtgqCTYli4gMtv8krB5TGuwqWqOig
-         jUeXjvbMUywAJKRybX1zmOkuOa9F/f8LrdjBSA5guSV+rkhI92BwboQCje4DhWSCRurO
-         wfUvorwjnRa7qOnl5/kqwWuk+URfbXJXzVwi2W7tc+2allXMwqrMXF5/JUDs174erEXS
-         4ej4ZviYdK6hiTC/IxUHGYeBnuh4f6B2Tk+T2Ogrx638GHtUAHSKtzmVwJIBcCp+r75L
-         v64VBhTfENGXlhauh0yt9joQvG8uAzIrOcruLiA2C9e2bHppVwubZlJLlbNp855M63BG
-         lVlQ==
-X-Gm-Message-State: AGi0PuY3GkERH9/iTcfzAjuuc91N4RNvt6vFmmhk3jedRMhSS4C3gvvm
-        oo0Q1L7N/ALq5p+NpWWfMsGYXSDsun8oEXdqSQ==
-X-Google-Smtp-Source: APiQypKZ88CB7WlyCjo0k9+cU4PX0VcggKkKtzSKgRJHkcPGizF0yZXAjzEMBgo6XH4xzBXv0KAOMjPM9p1sgpp6/70=
-X-Received: by 2002:a5e:9416:: with SMTP id q22mr2547966ioj.93.1587666410194;
- Thu, 23 Apr 2020 11:26:50 -0700 (PDT)
+        bh=XxMWRD1Qjqc2p2CUGYQBoYXXklvaZpXEeheRAvN0tL0=;
+        b=HzODDXLrgm5xV6eok37gnYMcygP2IidMHF9fYnpVT0/DH9RtpXsnPsUPHQ2EZOoW0E
+         GuckZ53DfiNHKZnUYW3qY5WMKCgIJmMFD3/uTJY1Lnzd6USXLxIG8nzGnnbAUdACwMFc
+         xwFTtYoV0alFXcuEyZXvSV+5xOhoH7/EEvyqaKRzWBbgq5WrjVZgHVl3pKoY0lDxgMZl
+         5deUfY6cpmmgXDkssmw/HXrjHcOiMT8iqsbIAUOtkRXF10JNxC+U4p7vlC8y2V57Qdzq
+         FJqn2WoB0SGDoTXVW9dMVz53M4rY91YX16ueEhCQhDL0ygdSd2XXdev1k6hdVnz2ZuXr
+         BDng==
+X-Gm-Message-State: AGi0PuZt4TMKEWSbiIhyLIq1Q9ATeFebpAAyUUfzOIupDEgRQoc28yOh
+        AAphgZO6ILJXvzowbIpomU8u6v0Rib4i6zGGgMA=
+X-Google-Smtp-Source: APiQypLGnI/+ByqOXNrHYk5MMU0vyiAo0eGcSFgo28gbsLOZIsY77CmB/NocFoUG+gYAU0YfgmXxS2U7kLbeG7jnpBA=
+X-Received: by 2002:a05:6602:2e8a:: with SMTP id m10mr6072880iow.33.1587683175358;
+ Thu, 23 Apr 2020 16:06:15 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:c845:0:0:0:0:0 with HTTP; Thu, 23 Apr 2020 11:26:49
+Received: by 2002:a4f:e054:0:0:0:0:0 with HTTP; Thu, 23 Apr 2020 16:06:14
  -0700 (PDT)
-Reply-To: boa.benin107@yahoo.com
-From:   "Mrs. Angella Michelle" <info.zennitbankplcnigerian@gmail.com>
-Date:   Thu, 23 Apr 2020 20:26:49 +0200
-Message-ID: <CABHzvr=N78snvtMHePMOa+RLFdcZEjXLPkuhkojt4VoZGNzBsQ@mail.gmail.com>
-Subject: Contact Bank of Africa-Benin to receive your payment funds transfer
- amount of $12.800.000,00 Million USD,approved this morning by IMF.
+Reply-To: azimhashim011@gmail.com
+From:   Azim Hashim Premji <mrsjudyroger2344@gmail.com>
+Date:   Thu, 23 Apr 2020 16:06:14 -0700
+Message-ID: <CA+wP3nwx1ebztGv5uJEC9kswv6ZXpF7=re3ykpaYSoKb1EjSfA@mail.gmail.com>
+Subject: 
 To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -61,33 +60,25 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Attn Dear.
-Contact Bank of Africa-Benin to receive your payment funds transfer amount =
-of
-$12.800.000,00 Million USD,approved this morning by IMF.
-Happy to inform you, we have finally deposited your payment funds
-$12.8 million us dollars with the Paying Bank of Africa-Benin
-to transfer the payment amount of $12.800,000,00 Million Us Dollars to you
-Contact the bank immediately you receive this email now.
-Director Bank of Africa-Benin: Dr. Festus Obiara
-Email id:  boa.benin107@yahoo.com
-Tel/mobile, (229) 62819378
-BOA-BENIN | GROUPE BANK OF AFRICA, boa-benin
-Avenue Jean-Paul II - 08 BP 0879 - Cotonou - B=C3=A9nin
-Phone:(229) 62819378.
-2020 GROUPE BANK OF AFRICA
-Be advised to re-confirm your bank details to this bank as listed.
-Your account Holder's name----------------
-Bank Name----------------------------------------------------------
-Bank address----------------------------------------------
-Account Numbers---------------------------------------
-Rounting-----------------------------------------------------------------
-Your direct Phone Numbers----------------------------------------------
-Note,I have paid the deposit and insurance fees for you
-But the only money you are to send to this bank is $150.00 us dollars
-Been for the wire transfer fees of your funds
-Contact Him now to receive your transfer deposited this morning
-I wait for your reply upon confirmation
-Mrs. Angella Michelle
-Editor, Zenith Bank- Companies Benin
-mrsa9389@gmail.com
+--=20
+Hallo,
+
+Ich bin Azim Hashim Premji, ein indischer Wirtschaftsmagnat, Investor
+und Philanthrop. Ich bin der Vorsitzende von Wipro Limited. Ich habe
+25 Prozent meines pers=C3=B6nlichen Verm=C3=B6gens f=C3=BCr wohlt=C3=A4tige=
+ Zwecke
+verschenkt. Und ich habe auch zugesagt, den Rest von 25% in diesem
+Jahr 2020 an Einzelpersonen COVID-19 Financial zu verschenken. Ich
+habe beschlossen, 2.000.000 Euro an Sie zu spenden. Wenn Sie an meiner
+Spende interessiert sind, kontaktieren Sie mich f=C3=BCr weitere
+Informationen.
+
+Sie k=C3=B6nnen auch mehr =C3=BCber mich =C3=BCber den unten stehenden Link=
+ lesen
+
+http://en.wikipedia.org/wiki/Azim_Premji
+
+Herzlicher Gruss
+CEO Wipro Limited
+Azim Hashim Premji
+E-Mail: azimhashim011@gmail.com
