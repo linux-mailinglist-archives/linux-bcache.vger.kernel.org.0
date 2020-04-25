@@ -2,177 +2,86 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 604621B8450
-	for <lists+linux-bcache@lfdr.de>; Sat, 25 Apr 2020 09:53:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 351E31B8777
+	for <lists+linux-bcache@lfdr.de>; Sat, 25 Apr 2020 17:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbgDYHxr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 25 Apr 2020 03:53:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36162 "EHLO
+        id S1726125AbgDYPpg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 25 Apr 2020 11:45:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725837AbgDYHxr (ORCPT
+        by vger.kernel.org with ESMTP id S1726076AbgDYPpg (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 25 Apr 2020 03:53:47 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D66C09B049;
-        Sat, 25 Apr 2020 00:53:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=T8tQwPcvJ8L22/CgfVpdAP5ZKnnyuxv1LKNpOQCm/qY=; b=FJV8YV7YcQ923y2wN4PNhPD8TZ
-        rpvuvIMHIw0NnNrlYgx+6Q/fDz3zaGeqJ/xLVSS+LpuBzmj4przJn2Mfl4JwH3iNxfz7Bc0VjfqON
-        AgM26RH6PfIMfbMF27qA2qbb58rclbWLdVKryz+T9S0WmFYlTDKcUZYQqz9xlFYmuCfbvGxrQLcau
-        h2mSZxBuXTAQh7gLJOpNG+muRotqfLEgboHPhFZ8ac8EdXeqfmiZ0f/E/93Rmt+gPXI/mVYz8pjr9
-        42FSDBHsWjbgKsCuBZLoAuMc8sO2++sGCBX8yMEfKvmmEpSa/pHiHwAzlFZBk0PQJl3nCEbCaNmQy
-        9YHWu5zQ==;
-Received: from [2001:4bb8:193:f203:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jSFdC-0007dx-3k; Sat, 25 Apr 2020 07:53:46 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
+        Sat, 25 Apr 2020 11:45:36 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46355C09B04B
+        for <linux-bcache@vger.kernel.org>; Sat, 25 Apr 2020 08:45:36 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id t9so5187047pjw.0
+        for <linux-bcache@vger.kernel.org>; Sat, 25 Apr 2020 08:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WbXqUvy6Zx4jWra7/mKAUkU8JyHGv+EMw9mv1e/ZXrw=;
+        b=wA6w0yXnoRQod/x9kLNhbiBia/FHpGoN4xQViR4JBH8y01Ngws6t68NvQVilPaLZx2
+         xJ8vIdznCP+MwPFk8khyg9Dnz+lLcCtj3agOmaFX1EpIyhoxTy4HLil0x6mua7/yvGMt
+         uS2/H+3/kBL6nnbMDD0r515N0pxGXyEcLW1+xvH+xm0sJyoEHnshgNhAjnpoCmXDZiSe
+         qLlNf1VLRJmTlrMx33woZMj9ZerpbqLYpTsOeEJcGnm7SyM3wd4ynvkjiZsQK9fNgDKW
+         o3bV3ow/MslKyJPLXYeG4o2M5aiMMJ2iR9uPTQlp17n66iJH3swYfMTzxnJ8aSiFbP3a
+         smJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WbXqUvy6Zx4jWra7/mKAUkU8JyHGv+EMw9mv1e/ZXrw=;
+        b=ZRd4oT2hK6bHz0AIKKLDRkWid2Z3r31FZtTFzjgOlgnLS9PxF2278PlUkSqOfQibiK
+         Ti8acpPuZOLEBu/Uko5Y0ST0pUZKX7cnEwUDbg74LRmn5CavSGeNFVmKBFh9PZfWgieX
+         2U8OCRJq1lRu6XCmL56FnUHoG+JPALiWaBacsIKhc3s+O1NLPNGoWgE4CVRjcKCHmZJj
+         fhcks77wboxB3q0jtBh7YOaYCcUp+KYF64qDCAVHizoIug8CP7IvnJB2NZ/2dIMfFTVB
+         aYt6aebQRdFiyvXJkCt64FzpQNTSis3FqOVcQAFMlFvMEV20kkqsfl1e0Tl4abFuh2Mt
+         1jOQ==
+X-Gm-Message-State: AGi0PubpZD83Ec0GPbiv4pJS2GNHqAKzad6VuNa+O14UXIoUXrM9P5aA
+        eTnDAgKybeKaTi7EpZDbW/wQAw==
+X-Google-Smtp-Source: APiQypIlBZtsrMImuPudY2tg2Rzjk77JhIq2anQwrD+xO4v3/vehSA9N2sPj2aHncEr8sTNiiKhqHQ==
+X-Received: by 2002:a17:902:59cc:: with SMTP id d12mr7704421plj.237.1587829535828;
+        Sat, 25 Apr 2020 08:45:35 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id f21sm8454701pfn.71.2020.04.25.08.45.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 Apr 2020 08:45:35 -0700 (PDT)
+Subject: Re: avoid the ->make_request_fn indirect for blk-mq drivers
+To:     Christoph Hellwig <hch@lst.de>
 Cc:     dm-devel@redhat.com, linux-bcache@vger.kernel.org,
         linux-block@vger.kernel.org
-Subject: [PATCH 3/3] block: bypass ->make_request_fn for blk-mq drivers
-Date:   Sat, 25 Apr 2020 09:53:36 +0200
-Message-Id: <20200425075336.721021-4-hch@lst.de>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200425075336.721021-1-hch@lst.de>
 References: <20200425075336.721021-1-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <98cd7aac-e4ee-8de0-e7aa-0d3e1a2b20e0@kernel.dk>
+Date:   Sat, 25 Apr 2020 09:45:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200425075336.721021-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Call blk_mq_make_request when no ->make_request_fn is set.  This is
-safe now that blk_alloc_queue always sets up the pointer for make_request
-based drivers.  This avoids an indirect call in the blk-mq driver I/O
-fast path, which is rather expensive due to spectre mitigations.
+On 4/25/20 1:53 AM, Christoph Hellwig wrote:
+> Hi Jens,
+> 
+> this small series avoids an indirect call for every submitted bio that
+> eventually ends up being handled by blk-mq drivers.  Let me know what
+> you think.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/blk-core.c       | 26 +++++++++++++++++---------
- block/blk-mq.c         |  4 ++--
- drivers/md/dm.c        |  3 +++
- include/linux/blk-mq.h |  2 ++
- 4 files changed, 24 insertions(+), 11 deletions(-)
+I like it, I've been pondering something like this for a bit, but
+I like the simplicity of this one and changing it so that only
+non-regular make_request_fn is set.
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 311596d5dbc41..0e9e1c83e5e84 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1072,7 +1072,10 @@ blk_qc_t generic_make_request(struct bio *bio)
- 			/* Create a fresh bio_list for all subordinate requests */
- 			bio_list_on_stack[1] = bio_list_on_stack[0];
- 			bio_list_init(&bio_list_on_stack[0]);
--			ret = q->make_request_fn(q, bio);
-+			if (q->make_request_fn)
-+				ret = q->make_request_fn(q, bio);
-+			else
-+				ret = blk_mq_make_request(q, bio);
- 
- 			blk_queue_exit(q);
- 
-@@ -1112,9 +1115,7 @@ EXPORT_SYMBOL(generic_make_request);
-  *
-  * This function behaves like generic_make_request(), but does not protect
-  * against recursion.  Must only be used if the called driver is known
-- * to not call generic_make_request (or direct_make_request) again from
-- * its make_request function.  (Calling direct_make_request again from
-- * a workqueue is perfectly fine as that doesn't recurse).
-+ * to be blk-mq based.
-  */
- blk_qc_t direct_make_request(struct bio *bio)
- {
-@@ -1122,20 +1123,27 @@ blk_qc_t direct_make_request(struct bio *bio)
- 	bool nowait = bio->bi_opf & REQ_NOWAIT;
- 	blk_qc_t ret;
- 
-+	if (WARN_ON_ONCE(q->make_request_fn))
-+		goto io_error;
- 	if (!generic_make_request_checks(bio))
- 		return BLK_QC_T_NONE;
- 
- 	if (unlikely(blk_queue_enter(q, nowait ? BLK_MQ_REQ_NOWAIT : 0))) {
- 		if (nowait && !blk_queue_dying(q))
--			bio_wouldblock_error(bio);
--		else
--			bio_io_error(bio);
--		return BLK_QC_T_NONE;
-+			goto would_block;
-+		goto io_error;
- 	}
- 
--	ret = q->make_request_fn(q, bio);
-+	ret = blk_mq_make_request(q, bio);
- 	blk_queue_exit(q);
- 	return ret;
-+
-+would_block:
-+	bio_wouldblock_error(bio);
-+	return BLK_QC_T_NONE;
-+io_error:
-+	bio_io_error(bio);
-+	return BLK_QC_T_NONE;
- }
- EXPORT_SYMBOL_GPL(direct_make_request);
- 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 71d0894ce1c58..bcc3a2397d4ae 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1984,7 +1984,7 @@ static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
-  *
-  * Returns: Request queue cookie.
-  */
--static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
-+blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
- {
- 	const int is_sync = op_is_sync(bio->bi_opf);
- 	const int is_flush_fua = op_is_flush(bio->bi_opf);
-@@ -2096,6 +2096,7 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
- 
- 	return cookie;
- }
-+EXPORT_SYMBOL_GPL(blk_mq_make_request); /* only for request based dm */
- 
- void blk_mq_free_rqs(struct blk_mq_tag_set *set, struct blk_mq_tags *tags,
- 		     unsigned int hctx_idx)
-@@ -2955,7 +2956,6 @@ struct request_queue *blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
- 	INIT_LIST_HEAD(&q->requeue_list);
- 	spin_lock_init(&q->requeue_lock);
- 
--	q->make_request_fn = blk_mq_make_request;
- 	q->nr_requests = set->queue_depth;
- 
- 	/*
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index db9e461146531..0eb93da44ea2a 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1788,6 +1788,9 @@ static blk_qc_t dm_make_request(struct request_queue *q, struct bio *bio)
- 	int srcu_idx;
- 	struct dm_table *map;
- 
-+	if (dm_get_md_type(md) == DM_TYPE_REQUEST_BASED)
-+		return blk_mq_make_request(q, bio);
-+
- 	map = dm_get_live_table(md, &srcu_idx);
- 
- 	/* if we're suspended, we have to queue this io for later */
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 51fbf6f76593a..d7307795439a4 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -578,4 +578,6 @@ static inline void blk_mq_cleanup_rq(struct request *rq)
- 		rq->q->mq_ops->cleanup_rq(rq);
- }
- 
-+blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio);
-+
- #endif
+I'll apply this.
+
 -- 
-2.26.1
+Jens Axboe
 
