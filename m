@@ -2,39 +2,39 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24AF51B844D
-	for <lists+linux-bcache@lfdr.de>; Sat, 25 Apr 2020 09:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0253B1B844E
+	for <lists+linux-bcache@lfdr.de>; Sat, 25 Apr 2020 09:53:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbgDYHxm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 25 Apr 2020 03:53:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36142 "EHLO
+        id S1726139AbgDYHxp (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 25 Apr 2020 03:53:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725837AbgDYHxm (ORCPT
+        by vger.kernel.org with ESMTP id S1725837AbgDYHxo (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 25 Apr 2020 03:53:42 -0400
+        Sat, 25 Apr 2020 03:53:44 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E798C09B049;
-        Sat, 25 Apr 2020 00:53:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95F90C09B049;
+        Sat, 25 Apr 2020 00:53:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=FirIqiBriGoVpJstrt8fx7KLCwnx0rnqYAIeNgkdfk8=; b=Svsw2QPYkP5zLtHcPjS3qaheV0
-        ZUdjlYNzs/ynlLEt+BMIiLY74PiWQI88vStvXEM9Jau4GIlj8ww1Vb0FYIVD8LXttCHaipLJTv494
-        tJ6JcQaPENaeevrBkspchhW2RHR+k7WTjNzPxTQx95MQm55VirhJj2y6o8z3KCm3UZJW4IKYlxCnA
-        zZEB3yVeewX+ArzhR/aHRFN1xgKNvM4ugyP3jRPPD+5UtVy8rLBVE7gxxK/6gUb/5c2Pyyi5VrTn3
-        FcG1Gxovakw0jqMsuLZfTJZN/us3AYyBYzOPTnfaiJqI3hh6F7PGZX5Qg/R0fF/sJTlqRiTCx3PFP
-        hPslBe8w==;
+        bh=Gq24q7chHQ+azlEZ1mRSOxBwPGoxrPhSPTwhDW5nYSU=; b=Mpz5J1uIs4RxlfWwwG4n/S7DFE
+        R3W5dTyU5HiLA6H96GB4081JXGnUFw0+b7rYDo5Jxkx4za+3iA7tCJgweqb/8fbgsL5QrBraSqUmD
+        8Q/gLV5oTKCu7Fg7rhSDZf125mtyt/vIqMrizWF//jBXhRxMRmJM/nJ4pQZLOImNokRoFi8NxSbR/
+        ZGnp6rcWT6Hx4k7BGkk8Hf0CdSt/oBYe9Iramgtkv2RJzC8BtJVAhfz/FawjJdVyyMPvlnwTsOX2F
+        qEssm7ggo3yqb2uDFTB8NWfT8DCX5a523YFKOqjavsWKCIyuwXUUQJAoApj0gi53HLCUsienJwTrk
+        10sbtC4Q==;
 Received: from [2001:4bb8:193:f203:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jSFd7-0007d6-9G; Sat, 25 Apr 2020 07:53:41 +0000
+        id 1jSFd9-0007dT-M3; Sat, 25 Apr 2020 07:53:44 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     dm-devel@redhat.com, linux-bcache@vger.kernel.org,
         linux-block@vger.kernel.org
-Subject: [PATCH 1/3] bcache: remove a duplicate ->make_request_fn assignment
-Date:   Sat, 25 Apr 2020 09:53:34 +0200
-Message-Id: <20200425075336.721021-2-hch@lst.de>
+Subject: [PATCH 2/3] dm: remove the make_request_fn check in device_area_is_invalid
+Date:   Sat, 25 Apr 2020 09:53:35 +0200
+Message-Id: <20200425075336.721021-3-hch@lst.de>
 X-Mailer: git-send-email 2.26.1
 In-Reply-To: <20200425075336.721021-1-hch@lst.de>
 References: <20200425075336.721021-1-hch@lst.de>
@@ -46,27 +46,46 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The make_request_fn pointer should only be assigned by blk_alloc_queue.
-Fix a left over manual initialization.
-
-Fixes: ff27668ce809 ("bcache: pass the make_request methods to blk_queue_make_request")
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/md/bcache/request.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/md/dm-table.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index 71a90fbec314b..77d1a26975174 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -1372,7 +1372,6 @@ void bch_flash_dev_request_init(struct bcache_device *d)
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 0a2cc197f62b4..8277b959e00bd 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -279,7 +279,6 @@ static struct dm_dev_internal *find_device(struct list_head *l, dev_t dev)
+ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
+ 				  sector_t start, sector_t len, void *data)
  {
- 	struct gendisk *g = d->disk;
+-	struct request_queue *q;
+ 	struct queue_limits *limits = data;
+ 	struct block_device *bdev = dev->bdev;
+ 	sector_t dev_size =
+@@ -288,22 +287,6 @@ static int device_area_is_invalid(struct dm_target *ti, struct dm_dev *dev,
+ 		limits->logical_block_size >> SECTOR_SHIFT;
+ 	char b[BDEVNAME_SIZE];
  
--	g->queue->make_request_fn		= flash_dev_make_request;
- 	g->queue->backing_dev_info->congested_fn = flash_dev_congested;
- 	d->cache_miss				= flash_dev_cache_miss;
- 	d->ioctl				= flash_dev_ioctl;
+-	/*
+-	 * Some devices exist without request functions,
+-	 * such as loop devices not yet bound to backing files.
+-	 * Forbid the use of such devices.
+-	 */
+-	q = bdev_get_queue(bdev);
+-	if (!q || !q->make_request_fn) {
+-		DMWARN("%s: %s is not yet initialised: "
+-		       "start=%llu, len=%llu, dev_size=%llu",
+-		       dm_device_name(ti->table->md), bdevname(bdev, b),
+-		       (unsigned long long)start,
+-		       (unsigned long long)len,
+-		       (unsigned long long)dev_size);
+-		return 1;
+-	}
+-
+ 	if (!dev_size)
+ 		return 0;
+ 
 -- 
 2.26.1
 
