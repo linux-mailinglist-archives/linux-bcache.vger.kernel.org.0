@@ -2,26 +2,30 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A8601B8E3E
-	for <lists+linux-bcache@lfdr.de>; Sun, 26 Apr 2020 11:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF9FF1B8E40
+	for <lists+linux-bcache@lfdr.de>; Sun, 26 Apr 2020 11:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbgDZJft (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 26 Apr 2020 05:35:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58280 "EHLO mx2.suse.de"
+        id S1726117AbgDZJgn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 26 Apr 2020 05:36:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58476 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726117AbgDZJfs (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 26 Apr 2020 05:35:48 -0400
+        id S1726112AbgDZJgm (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 26 Apr 2020 05:36:42 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A1D05ACC4;
-        Sun, 26 Apr 2020 09:35:45 +0000 (UTC)
-Subject: Re: [PATCH 1/3] bcache: remove a duplicate ->make_request_fn
- assignment
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     dm-devel@redhat.com, linux-bcache@vger.kernel.org,
-        linux-block@vger.kernel.org
-References: <20200425075336.721021-1-hch@lst.de>
- <20200425075336.721021-2-hch@lst.de>
+        by mx2.suse.de (Postfix) with ESMTP id 00F74ACC4;
+        Sun, 26 Apr 2020 09:36:39 +0000 (UTC)
+Subject: Re: [PATCH V2] bcache: fix potential deadlock problem in
+ btree_gc_coalesce
+To:     Zhiqiang Liu <liuzhiqiang26@huawei.com>, kmo@daterainc.com,
+        linux-bcache@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "wubo (T)" <wubo40@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>,
+        Yanxiaodan <yanxiaodan@huawei.com>,
+        linfeilong <linfeilong@huawei.com>,
+        renxudong <renxudong1@huawei.com>
+References: <8a6f5fe3-33f9-48e2-e347-05781c3295fd@huawei.com>
 From:   Coly Li <colyli@suse.de>
 Autocrypt: addr=colyli@suse.de; keydata=
  mQINBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
@@ -66,50 +70,88 @@ Autocrypt: addr=colyli@suse.de; keydata=
  K0Jx4CEZubakJe+894sX6pvNFiI7qUUdB882i5GR3v9ijVPhaMr8oGuJ3kvwBIA8lvRBGVGn
  9xvzkQ8Prpbqh30I4NMp8MjFdkwCN6znBKPHdjNTwE5PRZH0S9J0o67IEIvHfH0eAWAsgpTz
  +jwc7VKH7vkvgscUhq/v1/PEWCAqh9UHy7R/jiUxwzw/288OpgO+i+2l11Y=
-Message-ID: <bbeb7895-78c3-da7b-78e8-e3a376146b2e@suse.de>
-Date:   Sun, 26 Apr 2020 17:35:41 +0800
+Message-ID: <e01be1b7-e59c-24e2-3923-917d27fa097a@suse.de>
+Date:   Sun, 26 Apr 2020 17:36:35 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200425075336.721021-2-hch@lst.de>
+In-Reply-To: <8a6f5fe3-33f9-48e2-e347-05781c3295fd@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/4/25 15:53, Christoph Hellwig wrote:
-> The make_request_fn pointer should only be assigned by blk_alloc_queue.
-> Fix a left over manual initialization.
+On 2020/4/26 16:06, Zhiqiang Liu wrote:
+> From: Zhiqiang Liu <liuzhiqiang26@huawei.com>
 > 
-> Fixes: ff27668ce809 ("bcache: pass the make_request methods to blk_queue_make_request")
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> coccicheck reports:
+>   drivers/md//bcache/btree.c:1538:1-7: preceding lock on line 1417
+> 
+> btree_gc_coalesce func is designed to coalesce two adjacent nodes in
+> new_nodes[GC_MERGE_NODES] and finally release one node. All nodes`write_lock,
+> new_nodes[i]->write_lock, are holded before coalescing adjacent nodes,
+> and them will be released after coalescing successfully.
+> 
+> However, if the coalescing process fails, such as no enough space of new_nodes[1]
+> to fit all of the remaining keys in new_nodes[0] and realloc keylist failed, we
+> will goto to out_nocoalesce tag directly without releasing new_nodes[i]->write_lock.
+> Then, a deadlock will occur after calling btree_node_free to free new_nodes[i],
+> which also try to acquire new_nodes[i]->write_lock.
+> 
+> Here, we add a new tag 'out_unlock_nocoalesce' before out_nocoalesce tag to release
+> new_nodes[i]->write_lock when coalescing process fails.
+> 
+> --
+> V1->V2: rewrite commit log (suggested by Coly Li) and rename the patch
+> 
+> Fixes: 2a285686c1 ("bcache: btree locking rework")
+> Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
 
-It looks good to me.
-
-Reviewed-by: Coly Li <colyli@suse.de>
+OK, I will add it to my for-test queue.
 
 Thanks.
 
 Coly Li
 
+
 > ---
->  drivers/md/bcache/request.c | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/md/bcache/btree.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index 71a90fbec314b..77d1a26975174 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -1372,7 +1372,6 @@ void bch_flash_dev_request_init(struct bcache_device *d)
->  {
->  	struct gendisk *g = d->disk;
->  
-> -	g->queue->make_request_fn		= flash_dev_make_request;
->  	g->queue->backing_dev_info->congested_fn = flash_dev_congested;
->  	d->cache_miss				= flash_dev_cache_miss;
->  	d->ioctl				= flash_dev_ioctl;
+> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+> index fa872df4e770..cad8b0b97e33 100644
+> --- a/drivers/md/bcache/btree.c
+> +++ b/drivers/md/bcache/btree.c
+> @@ -1447,7 +1447,7 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
+>  			if (__set_blocks(n1, n1->keys + n2->keys,
+>  					 block_bytes(b->c)) >
+>  			    btree_blocks(new_nodes[i]))
+> -				goto out_nocoalesce;
+> +				goto out_unlock_nocoalesce;
+> 
+>  			keys = n2->keys;
+>  			/* Take the key of the node we're getting rid of */
+> @@ -1476,7 +1476,7 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
+> 
+>  		if (__bch_keylist_realloc(&keylist,
+>  					  bkey_u64s(&new_nodes[i]->key)))
+> -			goto out_nocoalesce;
+> +			goto out_unlock_nocoalesce;
+> 
+>  		bch_btree_node_write(new_nodes[i], &cl);
+>  		bch_keylist_add(&keylist, &new_nodes[i]->key);
+> @@ -1522,6 +1522,10 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
+>  	/* Invalidated our iterator */
+>  	return -EINTR;
+> 
+> +out_unlock_nocoalesce:
+> +	for (i = 0; i < nodes; i++)
+> +		mutex_unlock(&new_nodes[i]->write_lock);
+> +
+>  out_nocoalesce:
+>  	closure_sync(&cl);
 > 
 
