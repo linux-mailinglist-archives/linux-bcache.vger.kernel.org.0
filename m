@@ -2,86 +2,109 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 351E31B8777
-	for <lists+linux-bcache@lfdr.de>; Sat, 25 Apr 2020 17:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F81A1B8DC5
+	for <lists+linux-bcache@lfdr.de>; Sun, 26 Apr 2020 10:06:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726125AbgDYPpg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 25 Apr 2020 11:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52558 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726076AbgDYPpg (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 25 Apr 2020 11:45:36 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46355C09B04B
-        for <linux-bcache@vger.kernel.org>; Sat, 25 Apr 2020 08:45:36 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id t9so5187047pjw.0
-        for <linux-bcache@vger.kernel.org>; Sat, 25 Apr 2020 08:45:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WbXqUvy6Zx4jWra7/mKAUkU8JyHGv+EMw9mv1e/ZXrw=;
-        b=wA6w0yXnoRQod/x9kLNhbiBia/FHpGoN4xQViR4JBH8y01Ngws6t68NvQVilPaLZx2
-         xJ8vIdznCP+MwPFk8khyg9Dnz+lLcCtj3agOmaFX1EpIyhoxTy4HLil0x6mua7/yvGMt
-         uS2/H+3/kBL6nnbMDD0r515N0pxGXyEcLW1+xvH+xm0sJyoEHnshgNhAjnpoCmXDZiSe
-         qLlNf1VLRJmTlrMx33woZMj9ZerpbqLYpTsOeEJcGnm7SyM3wd4ynvkjiZsQK9fNgDKW
-         o3bV3ow/MslKyJPLXYeG4o2M5aiMMJ2iR9uPTQlp17n66iJH3swYfMTzxnJ8aSiFbP3a
-         smJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WbXqUvy6Zx4jWra7/mKAUkU8JyHGv+EMw9mv1e/ZXrw=;
-        b=ZRd4oT2hK6bHz0AIKKLDRkWid2Z3r31FZtTFzjgOlgnLS9PxF2278PlUkSqOfQibiK
-         Ti8acpPuZOLEBu/Uko5Y0ST0pUZKX7cnEwUDbg74LRmn5CavSGeNFVmKBFh9PZfWgieX
-         2U8OCRJq1lRu6XCmL56FnUHoG+JPALiWaBacsIKhc3s+O1NLPNGoWgE4CVRjcKCHmZJj
-         fhcks77wboxB3q0jtBh7YOaYCcUp+KYF64qDCAVHizoIug8CP7IvnJB2NZ/2dIMfFTVB
-         aYt6aebQRdFiyvXJkCt64FzpQNTSis3FqOVcQAFMlFvMEV20kkqsfl1e0Tl4abFuh2Mt
-         1jOQ==
-X-Gm-Message-State: AGi0PubpZD83Ec0GPbiv4pJS2GNHqAKzad6VuNa+O14UXIoUXrM9P5aA
-        eTnDAgKybeKaTi7EpZDbW/wQAw==
-X-Google-Smtp-Source: APiQypIlBZtsrMImuPudY2tg2Rzjk77JhIq2anQwrD+xO4v3/vehSA9N2sPj2aHncEr8sTNiiKhqHQ==
-X-Received: by 2002:a17:902:59cc:: with SMTP id d12mr7704421plj.237.1587829535828;
-        Sat, 25 Apr 2020 08:45:35 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id f21sm8454701pfn.71.2020.04.25.08.45.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Apr 2020 08:45:35 -0700 (PDT)
-Subject: Re: avoid the ->make_request_fn indirect for blk-mq drivers
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dm-devel@redhat.com, linux-bcache@vger.kernel.org,
-        linux-block@vger.kernel.org
-References: <20200425075336.721021-1-hch@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <98cd7aac-e4ee-8de0-e7aa-0d3e1a2b20e0@kernel.dk>
-Date:   Sat, 25 Apr 2020 09:45:34 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1726117AbgDZIGj (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 26 Apr 2020 04:06:39 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37890 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726112AbgDZIGi (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 26 Apr 2020 04:06:38 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A4842D6E4359EE11E246;
+        Sun, 26 Apr 2020 16:06:35 +0800 (CST)
+Received: from [127.0.0.1] (10.166.215.235) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.487.0; Sun, 26 Apr 2020
+ 16:06:29 +0800
+To:     Coly Li <colyli@suse.de>, <kmo@daterainc.com>,
+        <linux-bcache@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "wubo (T)" <wubo40@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>,
+        Yanxiaodan <yanxiaodan@huawei.com>,
+        linfeilong <linfeilong@huawei.com>,
+        renxudong <renxudong1@huawei.com>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Subject: [PATCH V2] bcache: fix potential deadlock problem in
+ btree_gc_coalesce
+Message-ID: <8a6f5fe3-33f9-48e2-e347-05781c3295fd@huawei.com>
+Date:   Sun, 26 Apr 2020 16:06:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20200425075336.721021-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.166.215.235]
+X-CFilter-Loop: Reflected
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 4/25/20 1:53 AM, Christoph Hellwig wrote:
-> Hi Jens,
-> 
-> this small series avoids an indirect call for every submitted bio that
-> eventually ends up being handled by blk-mq drivers.  Let me know what
-> you think.
+From: Zhiqiang Liu <liuzhiqiang26@huawei.com>
 
-I like it, I've been pondering something like this for a bit, but
-I like the simplicity of this one and changing it so that only
-non-regular make_request_fn is set.
+coccicheck reports:
+  drivers/md//bcache/btree.c:1538:1-7: preceding lock on line 1417
 
-I'll apply this.
+btree_gc_coalesce func is designed to coalesce two adjacent nodes in
+new_nodes[GC_MERGE_NODES] and finally release one node. All nodes`write_lock,
+new_nodes[i]->write_lock, are holded before coalescing adjacent nodes,
+and them will be released after coalescing successfully.
+
+However, if the coalescing process fails, such as no enough space of new_nodes[1]
+to fit all of the remaining keys in new_nodes[0] and realloc keylist failed, we
+will goto to out_nocoalesce tag directly without releasing new_nodes[i]->write_lock.
+Then, a deadlock will occur after calling btree_node_free to free new_nodes[i],
+which also try to acquire new_nodes[i]->write_lock.
+
+Here, we add a new tag 'out_unlock_nocoalesce' before out_nocoalesce tag to release
+new_nodes[i]->write_lock when coalescing process fails.
+
+--
+V1->V2: rewrite commit log (suggested by Coly Li) and rename the patch
+
+Fixes: 2a285686c1 ("bcache: btree locking rework")
+Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+---
+ drivers/md/bcache/btree.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index fa872df4e770..cad8b0b97e33 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -1447,7 +1447,7 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
+ 			if (__set_blocks(n1, n1->keys + n2->keys,
+ 					 block_bytes(b->c)) >
+ 			    btree_blocks(new_nodes[i]))
+-				goto out_nocoalesce;
++				goto out_unlock_nocoalesce;
+
+ 			keys = n2->keys;
+ 			/* Take the key of the node we're getting rid of */
+@@ -1476,7 +1476,7 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
+
+ 		if (__bch_keylist_realloc(&keylist,
+ 					  bkey_u64s(&new_nodes[i]->key)))
+-			goto out_nocoalesce;
++			goto out_unlock_nocoalesce;
+
+ 		bch_btree_node_write(new_nodes[i], &cl);
+ 		bch_keylist_add(&keylist, &new_nodes[i]->key);
+@@ -1522,6 +1522,10 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
+ 	/* Invalidated our iterator */
+ 	return -EINTR;
+
++out_unlock_nocoalesce:
++	for (i = 0; i < nodes; i++)
++		mutex_unlock(&new_nodes[i]->write_lock);
++
+ out_nocoalesce:
+ 	closure_sync(&cl);
 
 -- 
-Jens Axboe
+2.19.1
+
 
