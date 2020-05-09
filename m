@@ -2,46 +2,63 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 637611CBB89
-	for <lists+linux-bcache@lfdr.de>; Sat,  9 May 2020 02:01:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 333D51CBEE7
+	for <lists+linux-bcache@lfdr.de>; Sat,  9 May 2020 10:24:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbgEIABm convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-bcache@lfdr.de>); Fri, 8 May 2020 20:01:42 -0400
-Received: from mail.itanhaem.sp.gov.br ([187.8.184.45]:53580 "EHLO
-        mail.itanhaem.sp.gov.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727878AbgEIABm (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 8 May 2020 20:01:42 -0400
-X-Greylist: delayed 522 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 May 2020 20:01:41 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.itanhaem.sp.gov.br (Postfix) with ESMTP id 7A4383E55E2;
-        Fri,  8 May 2020 20:51:42 -0300 (-03)
-Received: from mail.itanhaem.sp.gov.br ([127.0.0.1])
-        by localhost (mail.itanhaem.sp.gov.br [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id RDkOC3EzOamd; Fri,  8 May 2020 20:51:42 -0300 (-03)
-Received: from mail.itanhaem.sp.gov.br (localhost [127.0.0.1])
-        by mail.itanhaem.sp.gov.br (Postfix) with ESMTP id F2E603E547E;
-        Fri,  8 May 2020 20:51:33 -0300 (-03)
-Date:   Fri, 8 May 2020 20:51:33 -0300 (ART)
-From:   Barbara D Wilkins <endrigo.lsantos@itanhaem.sp.gov.br>
-Reply-To: "mrsbarbarawilkinsfunds.usa@gmail.com" 
-          <mrsbarbarawilkinsfunds.usa@gmail.com>
-Message-ID: <2042436495.980792.1588981893835.JavaMail.zimbra@itanhaem.sp.gov.br>
-Subject: 
+        id S1727812AbgEIIX7 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 9 May 2020 04:23:59 -0400
+Received: from verein.lst.de ([213.95.11.211]:56114 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727839AbgEIIX6 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 9 May 2020 04:23:58 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id DB7F368C7B; Sat,  9 May 2020 10:23:52 +0200 (CEST)
+Date:   Sat, 9 May 2020 10:23:52 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Jim Paris <jim@jtan.com>, Geoff Levand <geoff@infradead.org>,
+        Joshua Morris <josh.h.morris@us.ibm.com>,
+        Philip Kelleher <pjk1939@linux.ibm.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-m68k@lists.linux-m68k.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, drbd-dev@lists.linbit.com,
+        linux-block@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-bcache@vger.kernel.org,
+        linux-raid <linux-raid@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: remove a few uses of ->queuedata
+Message-ID: <20200509082352.GB21834@lst.de>
+References: <20200508161517.252308-1-hch@lst.de> <CAPcyv4j3gVqrZWCCc2Q-6JizGAQXW0b+R1BcvWCZOvzaukGLQg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [63.141.48.14]
-X-Mailer: Zimbra 8.7.11_GA_3865 (zclient/8.7.11_GA_3865)
-X-Authenticated-User: endrigo.lsantos@itanhaem.sp.gov.br
-Thread-Index: K8U/OLKB/YnKbyFSp2xWDE9rIHThEg==
-Thread-Topic: 
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4j3gVqrZWCCc2Q-6JizGAQXW0b+R1BcvWCZOvzaukGLQg@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+On Fri, May 08, 2020 at 11:04:45AM -0700, Dan Williams wrote:
+> On Fri, May 8, 2020 at 9:16 AM Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > Hi all,
+> >
+> > various bio based drivers use queue->queuedata despite already having
+> > set up disk->private_data, which can be used just as easily.  This
+> > series cleans them up to only use a single private data pointer.
+> 
+> ...but isn't the queue pretty much guaranteed to be cache hot and the
+> gendisk cache cold? I'm not immediately seeing what else needs the
+> gendisk in the I/O path. Is there another motivation I'm missing?
 
-
-Hallo,          Wir sind eine christliche Organisation, die gegründet wurde, um Menschen zu helfen, die Hilfe benötigen, beispielsweise finanzielle Hilfe. Wenn Sie also finanzielle Schwierigkeiten haben oder sich in einem finanziellen Chaos befinden und Geld benötigen, um Ihr eigenes Unternehmen zu gründen, oder wenn Sie einen Kredit benötigen Begleichen Sie Ihre Schulden oder zahlen Sie Ihre Rechnungen ab, gründen Sie ein gutes Geschäft oder es fällt Ihnen schwer, einen Kapitalkredit von lokalen Banken zu erhalten. Kontaktieren Sie uns noch heute per E-Mail:  Lassen Sie sich diese Gelegenheit also nicht entgehen weil Jesus gestern, heute und für immer derselbe ist. Bitte, diese sind für ernsthafte und gottesfürchtige Menschen.Dein Name:Darlehensbetrag:Leihdauer:Gültige Handynummer:Vielen Dank für Ihr Verständnis für Ihren Kontakt, während wir warten: mrsbarbarawilkinsfunds.usagmail.comGrüßeVerwaltung
+->private_data is right next to the ->queue pointer, pat0 and part_tbl
+which are all used in the I/O submission path (generic_make_request /
+generic_make_request_checks).  This is mostly a prep cleanup patch to
+also remove the pointless queue argument from ->make_request - then
+->queue is an extra dereference and extra churn.
