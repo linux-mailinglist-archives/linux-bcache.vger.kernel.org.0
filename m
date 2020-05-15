@@ -2,28 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BA5A1D562B
-	for <lists+linux-bcache@lfdr.de>; Fri, 15 May 2020 18:36:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF271D562E
+	for <lists+linux-bcache@lfdr.de>; Fri, 15 May 2020 18:36:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbgEOQg0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 15 May 2020 12:36:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47406 "EHLO mx2.suse.de"
+        id S1726204AbgEOQg3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 15 May 2020 12:36:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47488 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726168AbgEOQg0 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 15 May 2020 12:36:26 -0400
+        id S1726168AbgEOQg3 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 15 May 2020 12:36:29 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D4FE8AD66;
-        Fri, 15 May 2020 16:36:26 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 6D7D1AD4F;
+        Fri, 15 May 2020 16:36:30 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-block@vger.kernel.org, damien.lemoal@wdc.com, hare@suse.com,
         hch@lst.de, axboe@kernel.dk
-Cc:     linux-bcache@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [RFC PATCH 2/4] block: block: change REQ_OP_ZONE_RESET from 8 to 15
-Date:   Sat, 16 May 2020 00:31:55 +0800
-Message-Id: <20200515163157.72796-3-colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org, Coly Li <colyli@suse.de>
+Subject: [RFC PATCH 3/4] block: remove queue_is_mq restriction from blk_revalidate_disk_zones()
+Date:   Sat, 16 May 2020 00:31:56 +0800
+Message-Id: <20200515163157.72796-4-colyli@suse.de>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200515163157.72796-1-colyli@suse.de>
 References: <20200515163157.72796-1-colyli@suse.de>
@@ -34,60 +32,52 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-For a zoned device, e.g. host managed SMR hard drive, the request op
-REQ_OP_ZONE_RESET_ALL is to reset LBA of all zones' writer pointers to
-the start LBA of the zone they belong to. After all the write pointers
-are reset, all previously stored data is invalid and unaccessible.
-Therefore this op code changes on-disk data, belongs to WRITE request
-op code.
+The bcache driver is bio based and NOT request based multiqueued driver,
+if a zoned SMR hard drive is used as backing device of a bcache device,
+calling blk_revalidate_disk_zones() for the bcache device will fail due
+to the following check in blk_revalidate_disk_zones(),
+478       if (WARN_ON_ONCE(!queue_is_mq(q)))
+479             return -EIO;
 
-Similar to the problem of REQ_OP_ZONE_RESET, REQ_OP_ZONE_RESET is an
-even number 8, it means bios with REQ_OP_ZONE_RESET_ALL in bio->bi_opf
-will be treated as READ request by op_is_write().
+Now bcache is able to export the zoned information from the underlying
+zoned SMR drives and format zonefs on top of a bcache device, the
+resitriction that a zoned device should be multiqueued is unnecessary
+for now.
 
-Same problem will happen when bcache device is created on top of zoned
-device like host managed SMR hard drive, bcache driver should invalid
-all cached data for the REQ_OP_ZONE_RESET_ALL request, but this zone
-management bio is mistakenly treated as READ request and go into bcache
-read code path, which will cause undefined behavior.
+Although in commit ae58954d8734c ("block: don't handle bio based drivers
+in blk_revalidate_disk_zones") it is said that bio based drivers should
+not call blk_revalidate_disk_zones() and just manually update their own
+q->nr_zones, but this is inaccurate. The bio based drivers also need to
+set their zone size and initialize bitmaps for cnv and seq zones, it is
+necessary to call blk_revalidate_disk_zones() for bio based drivers.
 
-This patch changes REQ_OP_ZONE_RESET_ALL value from 8 to 15, this new
-odd number will make bcache driver handle this zone management bio in
-write request code path properly.
+This patch removes the above queue_is_mq() restriction to permit
+bcache driver calls blk_revalidate_disk_zones() for bcache device zoned
+information initialization.
 
-Fixes: e84e8f066395 ("block: add req op to reset all zones and flag")
+Fixes: ae58954d8734c ("block: don't handle bio based drivers in blk_revalidate_disk_zones")
 Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Cc: Christoph Hellwig <hch@lst.de>
 Cc: Damien Le Moal <damien.lemoal@wdc.com>
 Cc: Hannes Reinecke <hare@suse.com>
 Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- include/linux/blk_types.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ block/blk-zoned.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 8f7bc15a6de3..618032fa1b29 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -284,8 +284,6 @@ enum req_opf {
- 	REQ_OP_SECURE_ERASE	= 5,
- 	/* write the same sector many times */
- 	REQ_OP_WRITE_SAME	= 7,
--	/* reset all the zone present on the device */
--	REQ_OP_ZONE_RESET_ALL	= 8,
- 	/* write the zero filled sector many times */
- 	REQ_OP_WRITE_ZEROES	= 9,
- 	/* Open a zone */
-@@ -296,6 +294,8 @@ enum req_opf {
- 	REQ_OP_ZONE_FINISH	= 12,
- 	/* reset a zone write pointer */
- 	REQ_OP_ZONE_RESET	= 13,
-+	/* reset all the zone present on the device */
-+	REQ_OP_ZONE_RESET_ALL	= 15,
+diff --git a/block/blk-zoned.c b/block/blk-zoned.c
+index f87956e0dcaf..1e0708c68267 100644
+--- a/block/blk-zoned.c
++++ b/block/blk-zoned.c
+@@ -475,8 +475,6 @@ int blk_revalidate_disk_zones(struct gendisk *disk)
  
- 	/* SCSI passthrough using struct scsi_request */
- 	REQ_OP_SCSI_IN		= 32,
+ 	if (WARN_ON_ONCE(!blk_queue_is_zoned(q)))
+ 		return -EIO;
+-	if (WARN_ON_ONCE(!queue_is_mq(q)))
+-		return -EIO;
+ 
+ 	/*
+ 	 * Ensure that all memory allocations in this context are done as if
 -- 
 2.25.0
 
