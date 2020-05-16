@@ -2,29 +2,24 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4EB91D6131
-	for <lists+linux-bcache@lfdr.de>; Sat, 16 May 2020 15:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEC041D6137
+	for <lists+linux-bcache@lfdr.de>; Sat, 16 May 2020 15:13:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbgEPNFt (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 16 May 2020 09:05:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34670 "EHLO mx2.suse.de"
+        id S1726237AbgEPNN6 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 16 May 2020 09:13:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35870 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbgEPNFs (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 16 May 2020 09:05:48 -0400
+        id S1726202AbgEPNN6 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 16 May 2020 09:13:58 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 27FB3ABEC;
-        Sat, 16 May 2020 13:05:49 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 750EDABB2;
+        Sat, 16 May 2020 13:13:58 +0000 (UTC)
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     linux-block@vger.kernel.org, damien.lemoal@wdc.com, hare@suse.com,
-        axboe@kernel.dk, linux-bcache@vger.kernel.org, kbusch@kernel.org,
-        Hannes Reinecke <hare@suse.de>, Jens Axboe <axboe@fb.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Shaun Tancheff <shaun.tancheff@seagate.com>
+        axboe@kernel.dk, linux-bcache@vger.kernel.org, kbusch@kernel.org
 References: <20200516035434.82809-1-colyli@suse.de>
- <20200516035434.82809-2-colyli@suse.de> <20200516123801.GB13448@lst.de>
- <fc0fd3c9-ea46-7c62-2a57-abd64e79cd08@suse.de>
- <20200516125027.GA13730@lst.de>
+ <20200516035434.82809-4-colyli@suse.de> <20200516124020.GC13448@lst.de>
 From:   Coly Li <colyli@suse.de>
 Autocrypt: addr=colyli@suse.de; keydata=
  mQINBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
@@ -69,13 +64,14 @@ Autocrypt: addr=colyli@suse.de; keydata=
  K0Jx4CEZubakJe+894sX6pvNFiI7qUUdB882i5GR3v9ijVPhaMr8oGuJ3kvwBIA8lvRBGVGn
  9xvzkQ8Prpbqh30I4NMp8MjFdkwCN6znBKPHdjNTwE5PRZH0S9J0o67IEIvHfH0eAWAsgpTz
  +jwc7VKH7vkvgscUhq/v1/PEWCAqh9UHy7R/jiUxwzw/288OpgO+i+2l11Y=
-Subject: Re: [RFC PATCH v2 1/4] block: change REQ_OP_ZONE_RESET from 6 to 13
-Message-ID: <f57da1e7-1563-db1e-8730-8daca219cbe7@suse.de>
-Date:   Sat, 16 May 2020 21:05:39 +0800
+Subject: Re: [RFC PATCH v2 3/4] block: remove queue_is_mq restriction from
+ blk_revalidate_disk_zones()
+Message-ID: <d3fe49f1-d37b-689e-ae0e-078b1254d7e7@suse.de>
+Date:   Sat, 16 May 2020 21:13:50 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200516125027.GA13730@lst.de>
+In-Reply-To: <20200516124020.GC13448@lst.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -84,27 +80,36 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/5/16 20:50, Christoph Hellwig wrote:
-> On Sat, May 16, 2020 at 08:44:45PM +0800, Coly Li wrote:
->> Yes you are right, just like REQ_OP_DISCARD which does not transfer any
->> data but changes the data on device. If the request changes the stored
->> data, it does transfer data.
+On 2020/5/16 20:40, Christoph Hellwig wrote:
+> On Sat, May 16, 2020 at 11:54:33AM +0800, Coly Li wrote:
+>> The bcache driver is bio based and NOT request based multiqueued driver,
+>> if a zoned SMR hard drive is used as backing device of a bcache device,
+>> calling blk_revalidate_disk_zones() for the bcache device will fail due
+>> to the following check in blk_revalidate_disk_zones(),
+>> 478       if (WARN_ON_ONCE(!queue_is_mq(q)))
+>> 479             return -EIO;
+>>
+>> Now bcache is able to export the zoned information from the underlying
+>> zoned SMR drives and format zonefs on top of a bcache device, the
+>> resitriction that a zoned device should be multiqueued is unnecessary
+>> for now.
+>>
+>> Although in commit ae58954d8734c ("block: don't handle bio based drivers
+>> in blk_revalidate_disk_zones") it is said that bio based drivers should
+>> not call blk_revalidate_disk_zones() and just manually update their own
+>> q->nr_zones, but this is inaccurate. The bio based drivers also need to
+>> set their zone size and initialize bitmaps for cnv and seq zones, it is
+>> necessary to call blk_revalidate_disk_zones() for bio based drivers.
 > 
-> REQ_OP_DISCARD is a special case, because most implementation end up
-> transferring data, it just gets attached in the low-level driver.
+> Why would you need these bitmaps for bcache?  There is no reason to
+> serialize requests for stacking drivers, and you can already derive
+> if a zone is sequential or not from whatever internal information
+> you use.
+> 
+> So without a user that actually makes sense: NAK.
 > 
 
-Yes, REQ_OP_ZONE_RESET and REQ_OP_ZONE_RESET_ALL are quite similar to
-REQ_OP_DISCARD. Data read from the LBA range of reset zone is not
-suggested and the content is undefined.
-
-For bcache, similar to REQ_OP_DISCARD, REQ_OP_ZONE_RESET and
-REQ_OP_ZONE_RESET_ALL are handled in same way: If the backing device
-supports discard/zone_reset, and the operation successes, then cached
-data on SSD covered by the LBA range should be invalid, otherwise users
-will read outdated and garbage data.
-
-We should treat REQ_OP_ZONE_RESET and REQ_OP_ZONE_RESET_ALL being in
-WRITE direction.
+It is OK for me to set the zone_nr and zone size without calling
+blk_revalidate_disk_zones().
 
 Coly Li
