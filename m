@@ -2,173 +2,128 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D342C1D6EE4
-	for <lists+linux-bcache@lfdr.de>; Mon, 18 May 2020 04:32:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D478E1D7023
+	for <lists+linux-bcache@lfdr.de>; Mon, 18 May 2020 07:09:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbgERCc1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 17 May 2020 22:32:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55212 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726639AbgERCc1 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 17 May 2020 22:32:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 62A6AAE96;
-        Mon, 18 May 2020 02:32:26 +0000 (UTC)
-Subject: Re: [RFC PATCH v2 4/4] block: set bi_size to REQ_OP_ZONE_RESET bio
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        id S1726343AbgERFJ2 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 18 May 2020 01:09:28 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:10617 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbgERFJ1 (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 18 May 2020 01:09:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1589778567; x=1621314567;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=jniKQ7KenpPaVIeWxR/nKeX6MjkX1glXIyhjq8SKq64=;
+  b=lqqAhFfR24IvXYoGD0FN6CeEZJemykbHu2K4tpkhZkJg8hObYlVAUrPW
+   yY3sejXOWb4s5Y6GKRkXZOtdjUIxkxS4ESMNvlxJweXSY+OKxx2Nb8OY4
+   dcCKpgW6G8rK4OEtn52O6unUocev47CPGcsi4oC9lPxq2+J5oxDKXdvhl
+   gJpqkMsPPmq+k8Gc6i3LsZdIr649qn680q+oQ9uRERAbu0i6mpMghRmxg
+   VxGLVWGBJ+02qpXQi7ukcuuijWMerBAxR60pNDbJfl8yNnxp64sU4JUCv
+   OX+6TI3ONxRxvlWdJloKLH0kIqmYSXOXgWKtAssKAQ3IRNOLm/s4j3k0d
+   Q==;
+IronPort-SDR: yfbcf31rCBtUzj7GGbxnmtzsIH/otDigbUypAtrtanmXOBhP2Cl33f8XkFkT2g936ydD8F3zXg
+ VOXtFfCHcIzEmtlGtXk6QSlJKPTQYwucrgS3/dh5wcil5VK7gQQUpyCtdOb0TlVRBLYDXNFQYv
+ 3ohvLRUbsjQdIO7MEUJaffzUWoTFICnF04tNvG147MgIFAvFknoAegLpeJ3aULQWQsSCw1xME7
+ 5y2nXCBPpcXyOuLQuMVrgriaLqzj+yR2Om3+ulms++CgJVJj/+sOK5LE6pIeU3pIXGqevUMsR0
+ LL4=
+X-IronPort-AV: E=Sophos;i="5.73,406,1583164800"; 
+   d="scan'208";a="138249946"
+Received: from mail-bn7nam10lp2107.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.107])
+  by ob1.hgst.iphmx.com with ESMTP; 18 May 2020 13:09:25 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VGa0Vv+xtN1FGSYD4fMySfBKUJJGk6FOp1nkTGsAWCN6ZYNgXv4ia1slCFAufwltNmng+sH2tM/RgU88GnbXMcO5kmy3zRrpTd9qciG0QXCRtHcPh6PjPBHwJ+6NJeLWMRQYA2jdrO/97ZjB9DkWm5C7FWLjpj4gP8NCXUJvJN2E7zU4BTADElMfcO6EqpSLcWRfbGrajGw+TYGkIILN/ViqtawY2ae+iD0PFrnixcnK44pn4iXRfM+ZthQmQ2/zE2YFJ0o/QvRPcBXUYpVPtO6aokLVKSCcrZd04j89+bQAOrPZpGsDEBzDRZRNQ/vUY3UFAzkZ2XUohbHVEHQTvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jniKQ7KenpPaVIeWxR/nKeX6MjkX1glXIyhjq8SKq64=;
+ b=RhZhFi5QDFp4jtcQBDeZ3bCqTBxTrRXLOWqKpNYsMZjWbu/8uSNvN+AcHZBuSeDnpPh6mm6p2Cr5iEztU/VyIwgm7gLvproBdnpBlC3QTu7SCcQ/gAQ1s06nNJ6lDuA8RvkYJir37sK9GgGgEGTrV8oLhpH24Nq1X4wJj8JjKbRiH5b5i3+iPY7gVz4DETufr3fau9gD5GJcUjWGYPnuyDUiy3Ql5IOuafOMlK9FoL0/m0w7YBCs/wr6M0y8VXxCZQ7jlWCl2Q3UthcAcasFVRGc/vh7KcJVVUWhJmFHLOxHvs5OPMKlkxH42DJ45jXBdlfszLfpfyA4Ko7ztrif/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jniKQ7KenpPaVIeWxR/nKeX6MjkX1glXIyhjq8SKq64=;
+ b=wTxbp9UcLD6blaUzAbuZ3GzAwGtIQroyzI/D/Vy+Ry9dkK8V623luDqNKKBnLNK/odlJebdl6Mx5dDhqqG4CjqOH/iuaXFrpa03WFf5ziXNbxDtl+mudLbBiQGSWiDgwEJSkTaweKqZz7A0RX3qiMQaX/7CoaDxbFjj+vZup2yw=
+Received: from BYAPR04MB4965.namprd04.prod.outlook.com (2603:10b6:a03:4d::25)
+ by BYAPR04MB4549.namprd04.prod.outlook.com (2603:10b6:a03:5e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3000.25; Mon, 18 May
+ 2020 05:09:23 +0000
+Received: from BYAPR04MB4965.namprd04.prod.outlook.com
+ ([fe80::4d72:27c:c075:c5e6]) by BYAPR04MB4965.namprd04.prod.outlook.com
+ ([fe80::4d72:27c:c075:c5e6%7]) with mapi id 15.20.3000.033; Mon, 18 May 2020
+ 05:09:23 +0000
+From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>, Coly Li <colyli@suse.de>,
         "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
         "hare@suse.com" <hare@suse.com>, "hch@lst.de" <hch@lst.de>,
         "axboe@kernel.dk" <axboe@kernel.dk>
-Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+CC:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
         "kbusch@kernel.org" <kbusch@kernel.org>,
-        Ajay Joshi <Ajay.Joshi@wdc.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+        Hannes Reinecke <hare@suse.de>, Jens Axboe <axboe@fb.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Shaun Tancheff <shaun.tancheff@seagate.com>
+Subject: Re: [RFC PATCH v2 1/4] block: change REQ_OP_ZONE_RESET from 6 to 13
+Thread-Topic: [RFC PATCH v2 1/4] block: change REQ_OP_ZONE_RESET from 6 to 13
+Thread-Index: AQHWKzXNx0htYVAnNEmE+sJXY3ZbhA==
+Date:   Mon, 18 May 2020 05:09:23 +0000
+Message-ID: <BYAPR04MB4965F50C13415E486F519DC986B80@BYAPR04MB4965.namprd04.prod.outlook.com>
 References: <20200516035434.82809-1-colyli@suse.de>
- <20200516035434.82809-5-colyli@suse.de>
- <BY5PR04MB6900FDE1CD0D754084FCCA38E7B80@BY5PR04MB6900.namprd04.prod.outlook.com>
-From:   Coly Li <colyli@suse.de>
-Autocrypt: addr=colyli@suse.de; keydata=
- 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
-Message-ID: <4248690d-1be2-3da4-3dec-9d9f3216526e@suse.de>
-Date:   Mon, 18 May 2020 10:32:17 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <BY5PR04MB6900FDE1CD0D754084FCCA38E7B80@BY5PR04MB6900.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
+ <20200516035434.82809-2-colyli@suse.de>
+ <BY5PR04MB69005621AE920061F7FD383CE7B80@BY5PR04MB6900.namprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: wdc.com; dkim=none (message not signed)
+ header.d=none;wdc.com; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [199.255.45.62]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: aa6ae7c5-30df-4dfc-90c3-08d7fae9a11e
+x-ms-traffictypediagnostic: BYAPR04MB4549:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR04MB45499AC5AC21F0EBD44F140B86B80@BYAPR04MB4549.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 04073E895A
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ij8NsrbIpegiuBm0b/1vORHnewLWFzUM6TOnvx5JP5IVlqZ+nxIzv1VsUIWXhmzCDo0eI7yXwi1RPGiprSimpHHSC1JGXEfku+SS5EL4BbmXd+MHCVZbp4IALZdPzR6LcKzZ0R2g+E/zd0BWq3ep2YWi8kvuFm689VVFP0LEkcnQoTxLStG7aXd+JGv4EGr0naO6tUN0llhB4sX7+U/37B1JVQf6ng+zAwSM5qqcWv44JizYw9N+qXhzfQpAS+uo2IkiKcRneFVddlB+hy7UzyA1Cmdd7xrgLzxyjB92yi1kjneh0bDLYPrtMWpXeeR//hEAdOJAJxd5IDrG97AyyJ2DsCMV11xycdQzxtzrqjRvj5Ev0BwmCe9xoEjZBwLYVsjY6GDMLmBf/m8cOQBqCTC7d5Fh9waNqDQJ6q20whNqyida3Csi0LLNEbSjmVrM
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR04MB4965.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(39860400002)(136003)(366004)(346002)(376002)(396003)(4744005)(110136005)(7696005)(478600001)(53546011)(6506007)(316002)(4326008)(26005)(33656002)(54906003)(7416002)(52536014)(186003)(2906002)(5660300002)(8936002)(71200400001)(8676002)(66446008)(55016002)(9686003)(66946007)(86362001)(76116006)(66476007)(66556008)(64756008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: UIACVAM5V4WM/WZvVJSze/YVxb/fCyoYe65eOwZcLcmTCfMw+5x8tYE71CK/NKlfkglXXSBiKf/vol4C3pFIQuvOyjyelmnmhoYxeCKHIAlX3oMRdqX///dmXzy+/wjVaC5sBonFWREfdRiAfG/xpx+GukXqumrsfWFwJZoiCYFVEdS5kpVhhknB4giMdZe2B/Bscjbuj0y7kpzSz/d6/AcU2Z4fHIKxFI8X4aoDzwj69yNfozWgvWbbd9HXn1SgA/modQRo1WqgDT6F+YHCtSADXalcTd1RwZpoxmeB9oBxIxMyv+qnQNm3Xmug9nr3LvKzP2cclN++VTMJhuHNTICz/W+1Shhw3/cYlYhTTRLV6HOG2ILoD720192wTpC7T6pDPqYksdLZ5mLmDj0r16KTws12PzqZXPoTgxbAk6hh89zRV1MdZ2FZyUWoa/FQ45bkooVqjUM/8MWrMvY8Ey8qaO1mYQ9254JftI9k6NA=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa6ae7c5-30df-4dfc-90c3-08d7fae9a11e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 May 2020 05:09:23.2074
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4PQSe6saTyFbYJ4gK/l+/MfiETBM+H3yrH9HK4yl+oyA15RAWqMG5k6cQ6fTb8XUy6971ZE6ASnNPHjsLFTveWxEzcVbO1tywUMLSiSjNBE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4549
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/5/18 08:59, Damien Le Moal wrote:
-> On 2020/05/16 12:55, Coly Li wrote:
->> Now for zoned device, zone management ioctl commands are converted into
->> zone management bios and handled by blkdev_zone_mgmt(). There are 4 zone
->> management bios are handled, their op code is,
->> - REQ_OP_ZONE_RESET
->>   Reset the zone's writer pointer and empty all previously stored data.
->> - REQ_OP_ZONE_OPEN
->>   Open the zones in the specified sector range, no influence on data.
->> - REQ_OP_ZONE_CLOSE
->>   Close the zones in the specified sector range, no influence on data.
->> - REQ_OP_ZONE_FINISH
->>   Mark the zone as full, no influence on data.
->> All the zone management bios has 0 byte size, a.k.a their bi_size is 0.
->>
->> Exept for REQ_OP_ZONE_RESET request, zero length bio works fine for
->> other zone management bio, before the zoned device e.g. host managed SMR
->> hard drive can be created as a bcache device.
->>
->> When a bcache device (virtual block device to forward bios like md raid
->> drivers) can be created on top of the zoned device, and a fast SSD is
->> attached as a cache device, bcache driver may cache the frequent random
->> READ requests on fast SSD to accelerate hot data READ performance.
->>
->> When bcache driver receives a zone management bio for REQ_OP_ZONE_RESET
->> op, while forwarding the request to underlying zoned device e.g. host
->> managed SMR hard drive, it should also invalidate all cached data from
->> SSD for the resetting zone. Otherwise bcache will continue provide the
->> outdated cached data to READ request and cause potential data storage
->> inconsistency and corruption.
->>
->> In order to invalidate outdated data from SSD for the reset zone, bcache
->> needs to know not only the start LBA but also the range length of the
->> resetting zone. Otherwise, bcache won't be able to accurately invalidate
->> the outdated cached data.
->>
->> Is it possible to simply set the bi_size inside bcache driver? The
->> answer is NO. Although every REQ_OP_ZONE_RESET bio has exact length as
->> zone size or q->limits.chunk_sectors, it is possible that some other
->> layer stacking block driver (in the future) exists between bcache driver
->> and blkdev_zone_mgmt() where the zone management bio is made.
-> 
-> But bcache "knows" what underlying devices it is using, right ? So getting the
-> SMR drive zone size using blk_queue_zone_sectors(), bdev_zone_sectors() or by
-> directly accessing q->limits->chunk_sectors should not be a problem at all, no ?
-> 
->>
->> The best location to set bi_size is where the zone management bio is
->> composed in blkdev_zone_mgmt(), then no matter how this bio is split
->> before bcache driver receives it, bcache driver can always correctly
->> invalidate the resetting range.
->>
->> This patch sets the bi_size of REQ_OP_ZONE_RESET bio for each resetting
->> zone. Here REQ_OP_ZONE_RESET_ALL is special whose bi_size should be set
->> as capacity of whole drive size, then bcache can invalidate all cached
->> data from SSD for the zoned backing device.
-> 
-> NACK. The problem here is that struct bio_vec bv_len field and struct bvec_iter
-> bi_size field are both "unsigned int". So they can describe at most 4G x 512B =
-> 2TB ranges. For REQ_OP_ZONE_RESET_ALL, that is simply way too small (we already
-> are at 20TB capacity for SMR). One cannot issue a BIO with a length that is the
-> entire disk capacity.
-> 
-> I really think that bcache should handle the zone management ops as a special
-> case. I understand the goal of trying to minimize that by integrating them as
-> much as possible into the regular bcache IO path, but that really seems
-> dangerous to me. Since these operations will need remapping in bcache anyway
-> (for handling the first hidden zone containing the super block), all special
-> processing can be done under a single "if" which should not impact too much
-> performance of regular read/write commands in the hot path.
-> 
-> Device mapper has such code: see __split_and_process_bio() and its use of
-> op_is_zone_mgmt() function to handle zone management requests slightly
-> differently than other BIOs. That remove the need for relying on op_is_write()
-> direction (patch 1 and 2 in this series) for reset zones too, which in the end
-> will I think make your bcache code a lot more solid.
-> 
-
-Copied. I understand and agree with you and Christoph now. Let me
-reconstruct the bcache code and maybe the depended change of generic
-block layer code can be avoided.
-
-Damien and Christoph, thank you all for the comments.
-
-Coly Li
+On 5/17/20 5:33 PM, Damien Le Moal wrote:=0A=
+> As Chaitanya pointed out, this is already used. Please rebase on Jens=0A=
+> block/for-5.8/block branch.=0A=
+> =0A=
+> I do not see any problem with this change, but as Christoph commented, si=
+nce=0A=
+> zone reset does not transfer any data, I do not really see the necessity =
+for=0A=
+> this. Zone reset is indeed data-destructive, but it is not a "write" comm=
+and.=0A=
+> But following DISCARD and having the op number as an odd number is OK I t=
+hink.=0A=
+Let's keep reset consistent with discard and write-zeroes.=0A=
