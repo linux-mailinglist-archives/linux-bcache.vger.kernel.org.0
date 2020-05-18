@@ -2,182 +2,173 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D92E51D6E6B
-	for <lists+linux-bcache@lfdr.de>; Mon, 18 May 2020 03:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D342C1D6EE4
+	for <lists+linux-bcache@lfdr.de>; Mon, 18 May 2020 04:32:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbgERBHQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 17 May 2020 21:07:16 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:21728 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726665AbgERBHP (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 17 May 2020 21:07:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1589764035; x=1621300035;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=QGG5MmqSiNSgCJcZL+JRwtG40IsgsbFxQ33IERkqC9E=;
-  b=iG1sIl3Q0x03yvtUyFHhTA1UNB70FoAJo1OX7bGtVUdjPnAOngK1W+GH
-   C/WRZH0mwpvtrmuOSIXj7KIW0/v1rKsJ7He3yPsSHhXhj0Mr9V+OX+35U
-   mNTHif1MlMfBjeGrPdnhbK51nHwy5byq9QGPA+OdzKTVZbO6K6molaC05
-   uXztN3b2qapmUtKrQoITZjm2GtMAcv0SEKXx+09ETIfXXksZhAcGOe7A2
-   H0X+WLYffRcUk8AVEHq3GGSudyuiJjUWRKy/28TVnYjRvyomjf3asax+W
-   ngYXiYPDDrZVtiUD0Zm4aOUV9oInkA6Bo1xyP3wz1QJ2p0aFJAIEl7jL9
-   A==;
-IronPort-SDR: 5PwkEzeZPZnCuUakXqSVcUVRUZF/5qukIHBSqkdaLhWrCzxKnWkbjCzqezGd2QFx4n2tTx7uTK
- jOlSEtc4WjsA5mvn3bHSOoZqgdTHnXintWJeTgkxU0gdG3ZtwE9Gkwjata9Dg66XY4I9YDe5KU
- 3ZtQ3MHtk4CP2AW5fgWv0GlhVGnHhEGi7NWrtG8pXHTkOGm65Jw2qhpISjnxBbQ+B8XwtnRQ3Z
- bws60rGg8eqgxdRLRiwf/EQ6JjqemXr1Ka7lIfJnK/P1PZ4lZBrSvGzp2LExSK88XbNOGgOzOn
- CME=
-X-IronPort-AV: E=Sophos;i="5.73,405,1583164800"; 
-   d="scan'208";a="142245879"
-Received: from mail-dm6nam10lp2103.outbound.protection.outlook.com (HELO NAM10-DM6-obe.outbound.protection.outlook.com) ([104.47.58.103])
-  by ob1.hgst.iphmx.com with ESMTP; 18 May 2020 09:07:14 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZuNa/xRx1h6UR0pzNreum/ykdKGzZ0bWmDtOrdUh3N5ttmi1/4DM9xuAdHfYEK58POLkG46ynBOLetm7PxD8ckQ2dl5XPJt3CdXxUIM+rtAVovm/oROoDPYg9Lnj0q1jgMTt2LRPkNjZSD8XJF7u3m8ozKgC0dqDPcwL7ejL7fSb7dDW6pZXOH7oP283y/9VzLwWJk6XV5jAucGMFTjjoWxjIYXetCzgHuRX5ztvBVgqorViGA+Mu1Ns4FFWzum5GEKkUIo1LJ85NmzFAxmNoh3OtnaOmbndVAno2RIm6uG2MeLStGSkRbVirTWZBYMXyji0svfnAFbSHiLjYZtKIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z/1lJC5ph/lC6Vh6Xc0oUlSutdK0gB/Ju5sogmnkVvA=;
- b=cUOUDVywEifb4h94WYfFtMnMFwY/xB+s8zZgwyPygf3q5hQJHZfqeEVIvzaCPnLJg4H+fazXFv8YBJYICgkpk+Cm9detdwU1XUaGQ90xYigL0sORQkfnqT4qnsXKew0mN5D1N9Z1fc67eCY8w4YBjfDKHrw1vD+7JayCSK0W50l5u3J0osIooR5wxELHbQjzPaoUYYPRFcntpHoTvudgPuZ1m1ycP0LMvc2xnNfKD0Jg3ZbGvGbUMetd8mPrRM8H4eEOA+uIjvd8JeAms+AesWEXOkc8h0ip/vgPovoDSndKYhzYTyTewd4tGIUQ0jzOiGj6iam6bBbYebAuqR7DVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z/1lJC5ph/lC6Vh6Xc0oUlSutdK0gB/Ju5sogmnkVvA=;
- b=jONytGfsNwx3zfAFAwLErCikeYPm9sKV6PEtw5CIOToN2BcgFn1A9cshOedCC2YrpDpoIRtN+5zhu4EoRsd6cApW62x97t8zoeS3lC3ImiVPUEXghJFrTMMvubOxGZFjutSCDHvCcFy6eHBh5Fi7UIg4hK7SHPpnpvR39kL/myg=
-Received: from BY5PR04MB6900.namprd04.prod.outlook.com (2603:10b6:a03:229::20)
- by BY5PR04MB6293.namprd04.prod.outlook.com (2603:10b6:a03:1ef::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3000.27; Mon, 18 May
- 2020 01:07:13 +0000
-Received: from BY5PR04MB6900.namprd04.prod.outlook.com
- ([fe80::b574:3071:da2f:7606]) by BY5PR04MB6900.namprd04.prod.outlook.com
- ([fe80::b574:3071:da2f:7606%6]) with mapi id 15.20.3000.033; Mon, 18 May 2020
- 01:07:13 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Coly Li <colyli@suse.de>, Christoph Hellwig <hch@lst.de>
-CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "hare@suse.com" <hare@suse.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "kbusch@kernel.org" <kbusch@kernel.org>
-Subject: Re: [RFC PATCH v2 3/4] block: remove queue_is_mq restriction from
- blk_revalidate_disk_zones()
-Thread-Topic: [RFC PATCH v2 3/4] block: remove queue_is_mq restriction from
- blk_revalidate_disk_zones()
-Thread-Index: AQHWKzXQPn7ylq1QrUmRrc4/xaJzyQ==
-Date:   Mon, 18 May 2020 01:07:13 +0000
-Message-ID: <BY5PR04MB6900CEAF2B5C87BDF6101711E7B80@BY5PR04MB6900.namprd04.prod.outlook.com>
+        id S1726680AbgERCc1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 17 May 2020 22:32:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55212 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726639AbgERCc1 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 17 May 2020 22:32:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 62A6AAE96;
+        Mon, 18 May 2020 02:32:26 +0000 (UTC)
+Subject: Re: [RFC PATCH v2 4/4] block: set bi_size to REQ_OP_ZONE_RESET bio
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "hare@suse.com" <hare@suse.com>, "hch@lst.de" <hch@lst.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+        "kbusch@kernel.org" <kbusch@kernel.org>,
+        Ajay Joshi <Ajay.Joshi@wdc.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
 References: <20200516035434.82809-1-colyli@suse.de>
- <20200516035434.82809-4-colyli@suse.de> <20200516124020.GC13448@lst.de>
- <d3fe49f1-d37b-689e-ae0e-078b1254d7e7@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: suse.de; dkim=none (message not signed)
- header.d=none;suse.de; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [129.253.182.57]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e1b8a732-ea13-4428-fb2f-08d7fac7cc89
-x-ms-traffictypediagnostic: BY5PR04MB6293:
-x-microsoft-antispam-prvs: <BY5PR04MB6293AEA9B4FBF99037185C76E7B80@BY5PR04MB6293.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 04073E895A
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 5HM2A/zgJDjw4YwnJvY49zG52844jtU8Y4jft02DTvl/R7DL9z4/T9ZNRbmOVMyX1mjQLJukX1e3uXN3Dd8tcwftAZeD7xCOBEPBHhjckhtLxR6fLs+0Pwmdyfq52eK37iytPrAD5siXLK+I5BMBWMgyZbHkUAw+H8EjhgBxuzijvrt1aaopC4PIwoPiGLX6cEDHw6kZ3dZVZxDXHbhS/7f+MLHX+rzb/R899LRDleYB3COspmBsJfyEvb8daDPBRU5UKKXTCZfHBHrMquwqZgWW7dDX2bE1YxFYn2Zd4HaC5J4YwMQR9iAqGdBJVpkfr9Up0tLAIoYYJVKbceYY51dSWAns0KggE4H+Vx9o4vv33nhNCR+q+72J21a1H4GHwvDH9z/WTslfauM+WtDHPdJjPikA7GGyEdeVRN7kC4Z+XEUUAAHHU/sTuSA0PiwT
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR04MB6900.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(366004)(346002)(39860400002)(396003)(376002)(136003)(6506007)(186003)(26005)(8936002)(9686003)(478600001)(8676002)(86362001)(55016002)(33656002)(7696005)(53546011)(110136005)(71200400001)(2906002)(66946007)(316002)(76116006)(54906003)(5660300002)(64756008)(66476007)(4326008)(66556008)(66446008)(52536014);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: NpC57+38N31gd+Wm+/PD+CzMDQkYQcELaXRjPr/qepiWZ6yfxCC39VuILR/MP7n+aWn8dXJQ8rm40M8Zud0QW+BCw612mUtgGgjl7il/qreLTNFrirzeAoa5Xk9YpwRMDG+JhqfnSENE/vm9ux+qsTcjFw/e2PVpTNg+UBaLuwvmGGv239ohu9wot8XwhKoqUF8LYLPte3uS6ME5k8ZUJ5YgZRDfDoVgZzeGnJDPe8Y2ap5hVDGB6fx9GUk48BCfq/hWaM1n4YyMpWVB1SYoPg+fV8UOlIhfT2AaJvaF9fl645DNlPcKooHxek9YhgPGcKYeWjIeO69ep19FQWhXQI2DgGZMnX2RWa+hJozdRQE4EZ7FyGLQJxn5Ko/B1yHhhNQ4uri8nVlitYzURGL65uwnftvO1r9qsbPzOQiHyP+kjDxlXqFqlvB+3s3YZIH0IPVIMB3dZE2E3lgYfGvTWfEdwHmvtGXqBUptFeuijZ5rND5/mpZceP8qjnQlLxzs
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ <20200516035434.82809-5-colyli@suse.de>
+ <BY5PR04MB6900FDE1CD0D754084FCCA38E7B80@BY5PR04MB6900.namprd04.prod.outlook.com>
+From:   Coly Li <colyli@suse.de>
+Autocrypt: addr=colyli@suse.de; keydata=
+ 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
+Message-ID: <4248690d-1be2-3da4-3dec-9d9f3216526e@suse.de>
+Date:   Mon, 18 May 2020 10:32:17 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1b8a732-ea13-4428-fb2f-08d7fac7cc89
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 May 2020 01:07:13.1204
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: a2UjchzIUPkZGn3huUkjHCZ6vEe0Z20W/+EP9IvKVJ9mPv2ywrLDcDOfGqXALJJLbeyNZJ1rY+LcFoOtFAFA/w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR04MB6293
+In-Reply-To: <BY5PR04MB6900FDE1CD0D754084FCCA38E7B80@BY5PR04MB6900.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/05/16 22:14, Coly Li wrote:=0A=
-> On 2020/5/16 20:40, Christoph Hellwig wrote:=0A=
->> On Sat, May 16, 2020 at 11:54:33AM +0800, Coly Li wrote:=0A=
->>> The bcache driver is bio based and NOT request based multiqueued driver=
-,=0A=
->>> if a zoned SMR hard drive is used as backing device of a bcache device,=
-=0A=
->>> calling blk_revalidate_disk_zones() for the bcache device will fail due=
-=0A=
->>> to the following check in blk_revalidate_disk_zones(),=0A=
->>> 478       if (WARN_ON_ONCE(!queue_is_mq(q)))=0A=
->>> 479             return -EIO;=0A=
->>>=0A=
->>> Now bcache is able to export the zoned information from the underlying=
-=0A=
->>> zoned SMR drives and format zonefs on top of a bcache device, the=0A=
->>> resitriction that a zoned device should be multiqueued is unnecessary=
-=0A=
->>> for now.=0A=
->>>=0A=
->>> Although in commit ae58954d8734c ("block: don't handle bio based driver=
-s=0A=
->>> in blk_revalidate_disk_zones") it is said that bio based drivers should=
-=0A=
->>> not call blk_revalidate_disk_zones() and just manually update their own=
-=0A=
->>> q->nr_zones, but this is inaccurate. The bio based drivers also need to=
-=0A=
->>> set their zone size and initialize bitmaps for cnv and seq zones, it is=
-=0A=
->>> necessary to call blk_revalidate_disk_zones() for bio based drivers.=0A=
->>=0A=
->> Why would you need these bitmaps for bcache?  There is no reason to=0A=
->> serialize requests for stacking drivers, and you can already derive=0A=
->> if a zone is sequential or not from whatever internal information=0A=
->> you use.=0A=
->>=0A=
->> So without a user that actually makes sense: NAK.=0A=
->>=0A=
-> =0A=
-> It is OK for me to set the zone_nr and zone size without calling=0A=
-> blk_revalidate_disk_zones().=0A=
-=0A=
-Yes, no problem with that.=0A=
-=0A=
-This is how device mapper BIO based targets handle zoned devices. See=0A=
-dm_set_device_limits() which uses bdev_stack_limits() for handling chunk_se=
-ctors=0A=
-(zone size) and directly set q->limits.zoned to blk_queue_zoned_model(q) of=
- the=0A=
-the underlying device. For the number of zones, see dm_table_set_restrictio=
-ns()=0A=
-which uses blkdev_nr_zones(t->md->disk) to set q->nr_zones. Note that=0A=
-blkdev_nr_zones() uses the gendisk capacity of the logical device (the bcac=
-he=0A=
-device in your case) and the zone size, so both must be set first before ca=
-lling=0A=
-blkdev_nr_zones().=0A=
-=0A=
-=0A=
-> =0A=
-> Coly Li=0A=
-> =0A=
-=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+On 2020/5/18 08:59, Damien Le Moal wrote:
+> On 2020/05/16 12:55, Coly Li wrote:
+>> Now for zoned device, zone management ioctl commands are converted into
+>> zone management bios and handled by blkdev_zone_mgmt(). There are 4 zone
+>> management bios are handled, their op code is,
+>> - REQ_OP_ZONE_RESET
+>>   Reset the zone's writer pointer and empty all previously stored data.
+>> - REQ_OP_ZONE_OPEN
+>>   Open the zones in the specified sector range, no influence on data.
+>> - REQ_OP_ZONE_CLOSE
+>>   Close the zones in the specified sector range, no influence on data.
+>> - REQ_OP_ZONE_FINISH
+>>   Mark the zone as full, no influence on data.
+>> All the zone management bios has 0 byte size, a.k.a their bi_size is 0.
+>>
+>> Exept for REQ_OP_ZONE_RESET request, zero length bio works fine for
+>> other zone management bio, before the zoned device e.g. host managed SMR
+>> hard drive can be created as a bcache device.
+>>
+>> When a bcache device (virtual block device to forward bios like md raid
+>> drivers) can be created on top of the zoned device, and a fast SSD is
+>> attached as a cache device, bcache driver may cache the frequent random
+>> READ requests on fast SSD to accelerate hot data READ performance.
+>>
+>> When bcache driver receives a zone management bio for REQ_OP_ZONE_RESET
+>> op, while forwarding the request to underlying zoned device e.g. host
+>> managed SMR hard drive, it should also invalidate all cached data from
+>> SSD for the resetting zone. Otherwise bcache will continue provide the
+>> outdated cached data to READ request and cause potential data storage
+>> inconsistency and corruption.
+>>
+>> In order to invalidate outdated data from SSD for the reset zone, bcache
+>> needs to know not only the start LBA but also the range length of the
+>> resetting zone. Otherwise, bcache won't be able to accurately invalidate
+>> the outdated cached data.
+>>
+>> Is it possible to simply set the bi_size inside bcache driver? The
+>> answer is NO. Although every REQ_OP_ZONE_RESET bio has exact length as
+>> zone size or q->limits.chunk_sectors, it is possible that some other
+>> layer stacking block driver (in the future) exists between bcache driver
+>> and blkdev_zone_mgmt() where the zone management bio is made.
+> 
+> But bcache "knows" what underlying devices it is using, right ? So getting the
+> SMR drive zone size using blk_queue_zone_sectors(), bdev_zone_sectors() or by
+> directly accessing q->limits->chunk_sectors should not be a problem at all, no ?
+> 
+>>
+>> The best location to set bi_size is where the zone management bio is
+>> composed in blkdev_zone_mgmt(), then no matter how this bio is split
+>> before bcache driver receives it, bcache driver can always correctly
+>> invalidate the resetting range.
+>>
+>> This patch sets the bi_size of REQ_OP_ZONE_RESET bio for each resetting
+>> zone. Here REQ_OP_ZONE_RESET_ALL is special whose bi_size should be set
+>> as capacity of whole drive size, then bcache can invalidate all cached
+>> data from SSD for the zoned backing device.
+> 
+> NACK. The problem here is that struct bio_vec bv_len field and struct bvec_iter
+> bi_size field are both "unsigned int". So they can describe at most 4G x 512B =
+> 2TB ranges. For REQ_OP_ZONE_RESET_ALL, that is simply way too small (we already
+> are at 20TB capacity for SMR). One cannot issue a BIO with a length that is the
+> entire disk capacity.
+> 
+> I really think that bcache should handle the zone management ops as a special
+> case. I understand the goal of trying to minimize that by integrating them as
+> much as possible into the regular bcache IO path, but that really seems
+> dangerous to me. Since these operations will need remapping in bcache anyway
+> (for handling the first hidden zone containing the super block), all special
+> processing can be done under a single "if" which should not impact too much
+> performance of regular read/write commands in the hot path.
+> 
+> Device mapper has such code: see __split_and_process_bio() and its use of
+> op_is_zone_mgmt() function to handle zone management requests slightly
+> differently than other BIOs. That remove the need for relying on op_is_write()
+> direction (patch 1 and 2 in this series) for reset zones too, which in the end
+> will I think make your bcache code a lot more solid.
+> 
+
+Copied. I understand and agree with you and Christoph now. Let me
+reconstruct the bcache code and maybe the depended change of generic
+block layer code can be avoided.
+
+Damien and Christoph, thank you all for the comments.
+
+Coly Li
