@@ -2,22 +2,21 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF0EE1DD641
-	for <lists+linux-bcache@lfdr.de>; Thu, 21 May 2020 20:48:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 417111DDF2A
+	for <lists+linux-bcache@lfdr.de>; Fri, 22 May 2020 07:17:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729092AbgEUSsm convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-bcache@lfdr.de>); Thu, 21 May 2020 14:48:42 -0400
-Received: from mail.ihi-europower.eu ([89.1.23.210]:56144 "EHLO surry.net"
+        id S1726421AbgEVFRS convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-bcache@lfdr.de>); Fri, 22 May 2020 01:17:18 -0400
+Received: from mail.ihi-europower.eu ([89.1.23.210]:58423 "EHLO surry.net"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728551AbgEUSsm (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 21 May 2020 14:48:42 -0400
-X-Greylist: delayed 44662 seconds by postgrey-1.27 at vger.kernel.org; Thu, 21 May 2020 14:48:41 EDT
+        id S1726338AbgEVFRS (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 22 May 2020 01:17:18 -0400
 Reply-To: info@free221.com
 From:   "Mazer" <belvue@surry.net>
 To:     linux-bcache@vger.kernel.org
 Subject: Offer
-Date:   21 May 2020 20:48:40 +0200
-Message-ID: <20200521204840.D334D2ED9FF93C68@surry.net>
+Date:   22 May 2020 07:17:16 +0200
+Message-ID: <20200522071716.AFDEAAA9B173FDAB@surry.net>
 MIME-Version: 1.0
 Content-Type: text/plain;
         charset="utf-8"
