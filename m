@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAB381E2637
-	for <lists+linux-bcache@lfdr.de>; Tue, 26 May 2020 17:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E80E01E263B
+	for <lists+linux-bcache@lfdr.de>; Tue, 26 May 2020 17:59:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730348AbgEZP7x (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 26 May 2020 11:59:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46156 "EHLO mx2.suse.de"
+        id S1730512AbgEZP75 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 26 May 2020 11:59:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46210 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730337AbgEZP7x (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 26 May 2020 11:59:53 -0400
+        id S1727862AbgEZP75 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 26 May 2020 11:59:57 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 2991DAE44;
-        Tue, 26 May 2020 15:59:54 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 6BE1DAD2B;
+        Tue, 26 May 2020 15:59:58 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
         Coly Li <colyli@suse.de>
-Subject: [PATCH 3/5] bcache: fix refcount underflow in bcache_device_free()
-Date:   Tue, 26 May 2020 23:59:26 +0800
-Message-Id: <20200526155928.32036-4-colyli@suse.de>
+Subject: [PATCH 4/5] bcache: asynchronous devices registration
+Date:   Tue, 26 May 2020 23:59:27 +0800
+Message-Id: <20200526155928.32036-5-colyli@suse.de>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200526155928.32036-1-colyli@suse.de>
 References: <20200526155928.32036-1-colyli@suse.de>
@@ -32,86 +32,186 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The problematic code piece in bcache_device_free() is,
+When there is a lot of data cached on cache device, the bcach internal
+btree can take a very long to validate during the backing device and
+cache device registration. In my test, it may takes 55+ minutes to check
+all the internal btree nodes.
 
- 785 static void bcache_device_free(struct bcache_device *d)
- 786 {
- 787     struct gendisk *disk = d->disk;
- [snipped]
- 799     if (disk) {
- 800             if (disk->flags & GENHD_FL_UP)
- 801                     del_gendisk(disk);
- 802
- 803             if (disk->queue)
- 804                     blk_cleanup_queue(disk->queue);
- 805
- 806             ida_simple_remove(&bcache_device_idx,
- 807                               first_minor_to_idx(disk->first_minor));
- 808             put_disk(disk);
- 809         }
- [snipped]
- 816 }
+The problem is that the registration is invoked by udev rules and the
+udevd has 180 seconds timeout by default. If the btree node checking
+time is longer than udevd timeout, the registering  process will be
+killed by udevd with SIGKILL. If the registering process has pending
+sigal, creating kthread for bcache will fail and the device registration
+will fail. The result is, for bcache device which cached a lot of data
+on cache device, the bcache device node like /dev/bcache<N> won't create
+always due to the very long btree checking time.
 
-At line 808, put_disk(disk) may encounter kobject refcount of 'disk'
-being underflow.
+A solution to avoid the udevd 180 seconds timeout is to register devices
+in an asynchronous way. Which is, after writing cache or backing device
+path into /sys/fs/bcache/register_async, the kernel code will create a
+kworker and move all the btree node checking (for cache device) or dirty
+data counting (for cached device) in the kwork context. Then the kworder
+is scheduled on system_wq and the registration code just returned to
+user space udev rule task. By this asynchronous way, the udev task for
+bcache rule will complete in seconds, no matter how long time spent in
+the kworker context, it won't be killed by udevd for a timeout.
 
-Here is how to reproduce the issue,
-- Attche the backing device to a cache device and do random write to
-  make the cache being dirty.
-- Stop the bcache device while the cache device has dirty data of the
-  backing device.
-- Only register the backing device back, NOT register cache device.
-- The bcache device node /dev/bcache0 won't show up, because backing
-  device waits for the cache device shows up for the missing dirty
-  data.
-- Now echo 1 into /sys/fs/bcache/pendings_cleanup, to stop the pending
-  backing device.
-- After the pending backing device stopped, use 'dmesg' to check kernel
-  message, a use-after-free warning from KASA reported the refcount of
-  kobject linked to the 'disk' is underflow.
+After all the checking and counting are done asynchronously in the
+kworker, the bcache device will eventually be created successfully.
 
-The dropping refcount at line 808 in the above code piece is added by
-add_disk(d->disk) in bch_cached_dev_run(). But in the above condition
-the cache device is not registered, bch_cached_dev_run() has no chance
-to be called and the refcount is not added. The put_disk() for a non-
-added refcount of gendisk kobject triggers a underflow warning.
+This patch does the above chagne and add a register sysfs file
+/sys/fs/bcache/register_async. Writing the registering device path into
+this sysfs file will do the asynchronous registration.
 
-This patch checks whether GENHD_FL_UP is set in disk->flags, if it is
-not set then the bcache device was not added, don't call put_disk()
-and the the underflow issue can be avoided.
+The register_async interface is for very rare condition and won't be
+used for common users. In future I plan to make the asynchronous
+registration as default behavior, which depends on feedback for this
+patch.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/super.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/md/bcache/super.c | 100 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 100 insertions(+)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 467149f3bcc5..c68d42730ca0 100644
+index c68d42730ca0..90341cfb9f8b 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -797,15 +797,20 @@ static void bcache_device_free(struct bcache_device *d)
- 		bcache_device_detach(d);
+@@ -2329,6 +2329,7 @@ static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
  
- 	if (disk) {
--		if (disk->flags & GENHD_FL_UP)
-+		bool disk_added = false;
+ kobj_attribute_write(register,		register_bcache);
+ kobj_attribute_write(register_quiet,	register_bcache);
++kobj_attribute_write(register_async,	register_bcache);
+ kobj_attribute_write(pendings_cleanup,	bch_pending_bdevs_cleanup);
+ 
+ static bool bch_is_open_backing(struct block_device *bdev)
+@@ -2364,6 +2365,83 @@ static bool bch_is_open(struct block_device *bdev)
+ 	return bch_is_open_cache(bdev) || bch_is_open_backing(bdev);
+ }
+ 
++struct async_reg_args {
++	struct work_struct reg_work;
++	char *path;
++	struct cache_sb *sb;
++	struct cache_sb_disk *sb_disk;
++	struct block_device *bdev;
++};
 +
-+		if (disk->flags & GENHD_FL_UP) {
-+			disk_added = true;
- 			del_gendisk(disk);
++static void register_bdev_worker(struct work_struct *work)
++{
++	int fail = false;
++	struct async_reg_args *args =
++		container_of(work, struct async_reg_args, reg_work);
++	struct cached_dev *dc;
++
++	dc = kzalloc(sizeof(*dc), GFP_KERNEL);
++	if (!dc) {
++		fail = true;
++		put_page(virt_to_page(args->sb_disk));
++		blkdev_put(args->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
++		goto out;
++	}
++
++	mutex_lock(&bch_register_lock);
++	if (register_bdev(args->sb, args->sb_disk, args->bdev, dc) < 0)
++		fail = true;
++	mutex_unlock(&bch_register_lock);
++
++out:
++	if (fail)
++		pr_info("error %s: fail to register backing device\n",
++			args->path);
++	kfree(args->sb);
++	kfree(args->path);
++	kfree(args);
++	module_put(THIS_MODULE);
++}
++
++static void register_cache_worker(struct work_struct *work)
++{
++	int fail = false;
++	struct async_reg_args *args =
++		container_of(work, struct async_reg_args, reg_work);
++	struct cache *ca;
++
++	ca = kzalloc(sizeof(*ca), GFP_KERNEL);
++	if (!ca) {
++		fail = true;
++		put_page(virt_to_page(args->sb_disk));
++		blkdev_put(args->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
++		goto out;
++	}
++
++	/* blkdev_put() will be called in bch_cache_release() */
++	if (register_cache(args->sb, args->sb_disk, args->bdev, ca) != 0)
++		fail = true;
++
++out:
++	if (fail)
++		pr_info("error %s: fail to register cache device\n",
++			args->path);
++	kfree(args->sb);
++	kfree(args->path);
++	kfree(args);
++	module_put(THIS_MODULE);
++}
++
++static void register_device_aync(struct async_reg_args *args)
++{
++	if (SB_IS_BDEV(args->sb))
++		INIT_WORK(&args->reg_work, register_bdev_worker);
++	else
++		INIT_WORK(&args->reg_work, register_cache_worker);
++
++	queue_work(system_wq, &args->reg_work);
++}
++
+ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 			       const char *buffer, size_t size)
+ {
+@@ -2426,6 +2504,26 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 		goto out_blkdev_put;
+ 
+ 	err = "failed to register device";
++	if (attr == &ksysfs_register_async) {
++		/* register in asynchronous way */
++		struct async_reg_args *args =
++			kzalloc(sizeof(struct async_reg_args), GFP_KERNEL);
++
++		if (!args) {
++			ret = -ENOMEM;
++			err = "cannot allocate memory";
++			goto out_put_sb_page;
 +		}
++
++		args->path	= path;
++		args->sb	= sb;
++		args->sb_disk	= sb_disk;
++		args->bdev	= bdev;
++		register_device_aync(args);
++		/* No wait and returns to user space */
++		goto async_done;
++	}
++
+ 	if (SB_IS_BDEV(sb)) {
+ 		struct cached_dev *dc = kzalloc(sizeof(*dc), GFP_KERNEL);
  
- 		if (disk->queue)
- 			blk_cleanup_queue(disk->queue);
+@@ -2453,6 +2551,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 	kfree(sb);
+ 	kfree(path);
+ 	module_put(THIS_MODULE);
++async_done:
+ 	return size;
  
- 		ida_simple_remove(&bcache_device_idx,
- 				  first_minor_to_idx(disk->first_minor));
--		put_disk(disk);
-+		if (disk_added)
-+			put_disk(disk);
- 	}
- 
- 	bioset_exit(&d->bio_split);
+ out_put_sb_page:
+@@ -2668,6 +2767,7 @@ static int __init bcache_init(void)
+ 	static const struct attribute *files[] = {
+ 		&ksysfs_register.attr,
+ 		&ksysfs_register_quiet.attr,
++		&ksysfs_register_async.attr,
+ 		&ksysfs_pendings_cleanup.attr,
+ 		NULL
+ 	};
 -- 
 2.25.0
 
