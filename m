@@ -2,28 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 589471E1D98
-	for <lists+linux-bcache@lfdr.de>; Tue, 26 May 2020 10:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7007E1E1DA0
+	for <lists+linux-bcache@lfdr.de>; Tue, 26 May 2020 10:48:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbgEZIqf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 26 May 2020 04:46:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41962 "EHLO mx2.suse.de"
+        id S1729387AbgEZIsF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 26 May 2020 04:48:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42304 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727948AbgEZIqf (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 26 May 2020 04:46:35 -0400
+        id S1725771AbgEZIsF (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 26 May 2020 04:48:05 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 21725AF5C
-        for <linux-bcache@vger.kernel.org>; Tue, 26 May 2020 08:46:37 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 655BAAF36
+        for <linux-bcache@vger.kernel.org>; Tue, 26 May 2020 08:48:06 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>
-Subject: [PATCH 2/2] bcache: configure the asynchronous registertion to be experimental
-Date:   Tue, 26 May 2020 16:46:25 +0800
-Message-Id: <20200526084625.24989-3-colyli@suse.de>
+Subject: [PATCH] bcache: fix refcount underflow in bcache_device_free()
+Date:   Tue, 26 May 2020 16:47:47 +0800
+Message-Id: <20200526084747.25041-1-colyli@suse.de>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200526084625.24989-1-colyli@suse.de>
-References: <20200526084625.24989-1-colyli@suse.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
@@ -31,54 +29,86 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In order to avoid the experimental async registration interface to
-be treated as new kernel ABI for common users, this patch makes it
-as an experimental kernel configure BCACHE_ASYNC_REGISTRAION.
+The problematic code piece in bcache_device_free() is,
 
-This interface is for extreme large cached data situation, to make sure
-the bcache device can always created without the udev timeout issue. For
-normal users the async or sync registration does not make difference.
+ 785 static void bcache_device_free(struct bcache_device *d)
+ 786 {
+ 787     struct gendisk *disk = d->disk;
+ [snipped]
+ 799     if (disk) {
+ 800             if (disk->flags & GENHD_FL_UP)
+ 801                     del_gendisk(disk);
+ 802
+ 803             if (disk->queue)
+ 804                     blk_cleanup_queue(disk->queue);
+ 805
+ 806             ida_simple_remove(&bcache_device_idx,
+ 807                               first_minor_to_idx(disk->first_minor));
+ 808              put_disk(disk);
+ 809         }
+ [snipped]
+ 816 }
 
-In future when we decide to use the asynchronous registration as default
-behavior, this experimental interface may be removed.
+At line 808, put_disk(disk) may encounter kobject refcount of 'disk'
+being underflow.
+
+Here is how to reproduce the issue,
+- Attche the backing device to a cache device and do random write to
+  make the cache being dirty.
+- Stop the bcache device while the cache device has dirty data of the
+  backing device.
+- Only register the backing device back, NOT register cache device.
+- The bcache device node /dev/bcache0 won't show up, because backing
+  device waits for the cache device shows up for the missing dirty
+  data.
+- Now echo 1 into /sys/fs/bcache/pendings_cleanup, to stop the pending
+  backing device.
+- After the pending backing device stopped, use 'dmesg' to check kernel
+  message, a use-after-free warning from KASA reported the refcount of
+  kobject linked to the 'disk' is underflow.
+
+The dropping refcount at line 808 in the above code piece is added by
+add_disk(d->disk) in bch_cached_dev_run(). But in the above condition
+the cache device is not registered, bch_cached_dev_run() has no chance
+to be called and the refcount is not added. The put_disk() for a non-
+added refcount of gendisk kobject triggers a underflow warning.
+
+This patch checks whether GENHD_FL_UP is set in disk->flags, if it is
+not set then the bcache device was not added, don't call put_disk()
+and the the underflow issue can be avoided.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/Kconfig | 9 +++++++++
- drivers/md/bcache/super.c | 2 ++
- 2 files changed, 11 insertions(+)
+ drivers/md/bcache/super.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/bcache/Kconfig b/drivers/md/bcache/Kconfig
-index 6dfa653d30db..bf7dd96db9b3 100644
---- a/drivers/md/bcache/Kconfig
-+++ b/drivers/md/bcache/Kconfig
-@@ -26,3 +26,12 @@ config BCACHE_CLOSURES_DEBUG
- 	Keeps all active closures in a linked list and provides a debugfs
- 	interface to list them, which makes it possible to see asynchronous
- 	operations that get stuck.
-+
-+config BCACHE_ASYNC_REGISTRAION
-+	bool "Asynchronous device registration (EXPERIMENTAL)"
-+	depends on BCACHE
-+	help
-+	Add a sysfs file /sys/fs/bcache/register_async. Writing registering
-+	device path into this file will returns immediately and the real
-+	registration work is handled in kernel work queue in asynchronous
-+	way.
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 72480d3940f2..b563d046e9d8 100644
+index 467149f3bcc5..c68d42730ca0 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -2767,7 +2767,9 @@ static int __init bcache_init(void)
- 	static const struct attribute *files[] = {
- 		&ksysfs_register.attr,
- 		&ksysfs_register_quiet.attr,
-+#ifdef CONFIG_BCACHE_ASYNC_REGISTRAION
- 		&ksysfs_register_async.attr,
-+#endif
- 		&ksysfs_pendings_cleanup.attr,
- 		NULL
- 	};
+@@ -797,15 +797,20 @@ static void bcache_device_free(struct bcache_device *d)
+ 		bcache_device_detach(d);
+ 
+ 	if (disk) {
+-		if (disk->flags & GENHD_FL_UP)
++		bool disk_added = false;
++
++		if (disk->flags & GENHD_FL_UP) {
++			disk_added = true;
+ 			del_gendisk(disk);
++		}
+ 
+ 		if (disk->queue)
+ 			blk_cleanup_queue(disk->queue);
+ 
+ 		ida_simple_remove(&bcache_device_idx,
+ 				  first_minor_to_idx(disk->first_minor));
+-		put_disk(disk);
++		if (disk_added)
++			put_disk(disk);
+ 	}
+ 
+ 	bioset_exit(&d->bio_split);
 -- 
 2.25.0
 
