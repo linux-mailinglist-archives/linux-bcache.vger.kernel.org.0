@@ -2,27 +2,27 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6926C1EA3F4
-	for <lists+linux-bcache@lfdr.de>; Mon,  1 Jun 2020 14:34:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 288171EA77F
+	for <lists+linux-bcache@lfdr.de>; Mon,  1 Jun 2020 18:06:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725925AbgFAMeu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 1 Jun 2020 08:34:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48094 "EHLO mx2.suse.de"
+        id S1726218AbgFAQGV (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 1 Jun 2020 12:06:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43774 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbgFAMet (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 1 Jun 2020 08:34:49 -0400
+        id S1726073AbgFAQGU (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 1 Jun 2020 12:06:20 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 0190CAFDB;
-        Mon,  1 Jun 2020 12:34:47 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 83115ABCE;
+        Mon,  1 Jun 2020 16:06:19 +0000 (UTC)
 To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
         "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
 Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
         Hannes Reinecke <hare@suse.com>,
         Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
 References: <20200522121837.109651-1-colyli@suse.de>
- <20200522121837.109651-2-colyli@suse.de>
- <CY4PR04MB37519681E8730119C1C74A75E7B30@CY4PR04MB3751.namprd04.prod.outlook.com>
+ <20200522121837.109651-3-colyli@suse.de>
+ <CY4PR04MB37511266F1D87572D3C648CFE7B30@CY4PR04MB3751.namprd04.prod.outlook.com>
 From:   Coly Li <colyli@suse.de>
 Autocrypt: addr=colyli@suse.de; keydata=
  mQINBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
@@ -67,14 +67,14 @@ Autocrypt: addr=colyli@suse.de; keydata=
  K0Jx4CEZubakJe+894sX6pvNFiI7qUUdB882i5GR3v9ijVPhaMr8oGuJ3kvwBIA8lvRBGVGn
  9xvzkQ8Prpbqh30I4NMp8MjFdkwCN6znBKPHdjNTwE5PRZH0S9J0o67IEIvHfH0eAWAsgpTz
  +jwc7VKH7vkvgscUhq/v1/PEWCAqh9UHy7R/jiUxwzw/288OpgO+i+2l11Y=
-Subject: Re: [RFC PATCH v4 1/3] bcache: export bcache zone information for
- zoned backing device
-Message-ID: <1c124ebe-3f1c-6715-0c1b-245ae18ec012@suse.de>
-Date:   Mon, 1 Jun 2020 20:34:40 +0800
+Subject: Re: [RFC PATCH v4 2/3] bcache: handle zone management bios for bcache
+ device
+Message-ID: <825e0e6e-b783-c899-bc25-38a8f2e06385@suse.de>
+Date:   Tue, 2 Jun 2020 00:06:11 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <CY4PR04MB37519681E8730119C1C74A75E7B30@CY4PR04MB3751.namprd04.prod.outlook.com>
+In-Reply-To: <CY4PR04MB37511266F1D87572D3C648CFE7B30@CY4PR04MB3751.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -83,427 +83,223 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/5/25 09:10, Damien Le Moal wrote:
+On 2020/5/25 09:24, Damien Le Moal wrote:
 > On 2020/05/22 21:18, Coly Li wrote:
-[snip]>> zone files, 523 of them are for convential zones (1 zone is
-reserved
-> 
-> s/convential/conventional
-> 
->> for bcache super block and not reported), 51632 of them are for
->> sequential zones.
+>> Fortunately the zoned device management interface is designed to use
+>> bio operations, the bcache code just needs to do a little change to
+>> handle the zone management bios.
 >>
->> First run to read first 4KB from all the zone files with 50 processes,
->> it takes 5 minutes 55 seconds. Second run takes 12 seconds only because
->> all the read requests hit on cache device.
+>> Bcache driver needs to handle 5 zone management bios for now, all of
+>> them are handled by cached_dev_nodata() since their bi_size values
+>> are 0.
+>> - REQ_OP_ZONE_OPEN, REQ_OP_ZONE_CLOSE, REQ_OP_ZONE_FINISH:
+>>     The LBA conversion is already done in cached_dev_make_request(),
+>>   just simply send such zone management bios to backing device is
+>>   enough.
+>> - REQ_OP_ZONE_RESET, REQ_OP_ZONE_RESET_ALL:
+>>     If thre is cached data (clean or dirty) on cache device covered
+>>   by the LBA range of resetting zone(s), such cached data must be
+> 
+> The first part of the sentence is a little unclear... Did you mean:
+> 
+> If the cache device holds data of the target zones, cache invalidation is needed
+> before forwarding...
+
+It will be fixed in next version.
+
+> 
+>>   invalidate from the cache device before forwarding the zone reset
+>>   bios to the backing device. Otherwise data inconsistency or further
+>>   corruption may happen from the view of bcache device.
+>>     The difference of REQ_OP_ZONE_RESET_ALL and REQ_OP_ZONE_RESET is
+>>   when the zone management bio is to reset all zones, send all zones
+>>   number reported by the bcache device (s->d->disk->queue->nr_zones)
+>>   into bch_data_invalidate_zones() as parameter 'size_t nr_zones'. If
+>>   only reset a single zone, just set 1 as 'size_t nr_zones'.
+>>
+>> By supporting zone managememnt bios with this patch, now a bcache device
+> 
+> s/managememnt/management
 > 
 
-Hi Damien,
+It will be fixed in next version.
 
-> Did you write anything first to the bcache device ? Otherwise, all zonefs files
-> will be empty and there is not going to be any file access... Question though:
-> when writing to a bcache device with writethrough mode, does the data go to the
-> SSD cache too ? Or is it written only to the backend device ?
-> 
+>> can be formatted by zonefs, and the zones can be reset by truncate -s 0
+>> on the zone files under seq/ directory. Supporting REQ_OP_ZONE_RESET_ALL
+>> makes the whole disk zones reset much faster. In my testing on a 14TB
+>> zoned SMR hard drive, 1 by 1 resetting 51632 seq zones by sending
+>> REQ_OP_ZONE_RESET bios takes 4m34s, by sending a single
+>> REQ_OP_ZONE_RESET_ALL bio takes 12s, which is 22x times faster.
+>>
+>> REQ_OP_ZONE_RESET_ALL is supported by bcache only when the backing device
+>> supports it. So the bcache queue flag is set QUEUE_FLAG_ZONE_RESETALL on
+>> only when queue of backing device has such flag, which can be checked by
+>> calling blk_queue_zone_resetall() on backing device's request queue.
 
-Yes, I did. For all random and sequential zone files, I write 8KB on
-their head and read back 4KB from offset 0 of each zone files.
+The above part about REQ_OP_ZONE_RESET_ALL will be removed.
 
-In my test case, all data will first go into backing device, after
-completed they will be inserted into SSD. The order is guaranteed by
-bcache code.
 
 >>
->> 29 times faster is as expected for an ideal case when all READ I/Os hit
->> on NVMe cache device.
->>
->> Besides providing report_zones method of the bcache gendisk structure,
->> this patch also initializes the following zoned device attribution for
->> the bcache device,
->> - zones number: the total zones number minus reserved zone(s) for bcache
-> 
-> s/zones number/number of zones
-> 
->>   super block.
->> - zone size: same size as reported from the underlying zoned device
->> - zone mode: same mode as reported from the underlying zoned device
-> 
-> s/zone mode/zoned model
-> 
->> Currently blk_revalidate_disk_zones() does not accept non-mq drivers, so
->> all the above attribution are initialized mannally in bcache code.
-> 
-> s/mannally/manually
-> 
->>
->> This patch just provides the report_zones method only. Handling all zone
->> management commands will be addressed in following patches.
->>
-
-The above typos will be fixed in next version.
-
-
 >> Signed-off-by: Coly Li <colyli@suse.de>
 >> Cc: Damien Le Moal <damien.lemoal@wdc.com>
 >> Cc: Hannes Reinecke <hare@suse.com>
 >> Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 >> ---
 >> Changelog:
->> v4: the version without any generic block layer change.
->> v3: the version depends on other generic block layer changes.
->> v2: an improved version for comments.
->> v1: initial version.
->>  drivers/md/bcache/bcache.h  | 10 ++++
->>  drivers/md/bcache/request.c | 69 ++++++++++++++++++++++++++
->>  drivers/md/bcache/super.c   | 96 ++++++++++++++++++++++++++++++++++++-
->>  3 files changed, 174 insertions(+), 1 deletion(-)
+>> v2: an improved version without any generic block layer change.
+>> v1: initial version depends on other generic block layer changes.
 >>
->> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
->> index 74a9849ea164..0d298b48707f 100644
->> --- a/drivers/md/bcache/bcache.h
->> +++ b/drivers/md/bcache/bcache.h
-
-[snip]
+>>  drivers/md/bcache/request.c | 99 ++++++++++++++++++++++++++++++++++++-
+>>  drivers/md/bcache/super.c   |  2 +
+>>  2 files changed, 100 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+>> index 34f63da2338d..700b8ab5dec9 100644
+>> --- a/drivers/md/bcache/request.c
+>> +++ b/drivers/md/bcache/request.c
+>> @@ -1052,18 +1052,115 @@ static void cached_dev_write(struct cached_dev *dc, struct search *s)
+>>  	continue_at(cl, cached_dev_write_complete, NULL);
+>>  }
 >>  
 >> +/*
->> + * The callback routine to parse a specific zone from all reporting
->> + * zones. args->orig_cb() is the upper layer report zones callback,
->> + * which should be called after the LBA conversion.
->> + * Notice: all zones after zone 0 will be reported, including the
->> + * offlined zones, how to handle the different types of zones are
->> + * fully decided by upper layer who calss for reporting zones of
->> + * the bcache device.
+>> + * Invalidate the LBA range on cache device which is covered by the
+>> + * the resetting zones.
 >> + */
->> +static int cached_dev_report_zones_cb(struct blk_zone *zone,
->> +				      unsigned int idx,
->> +				      void *data)
+>> +static int bch_data_invalidate_zones(struct closure *cl,
+>> +				      size_t zone_sector,
+>> +				      size_t nr_zones)
 > 
-> I do not think you need the line break for the last argument.
-> 
+> No need for the line break after the second argument.
 
-OK, let me change the style.
-
->> +{
->> +	struct bch_report_zones_args *args = data;
->> +	struct bcache_device *d = args->bcache_device;
->> +	struct cached_dev *dc = container_of(d, struct cached_dev, disk);
->> +	unsigned long data_offset = dc->sb.data_offset;
->> +
->> +	/* Zone 0 should not be reported */
->> +	BUG_ON(zone->start < data_offset);
-> 
-> Wouldn't a WARN_ON_ONCE and return -EIO be better here ?
-
-Do it in next version.
-
-
-> 
->> +
->> +	/* convert back to LBA of the bcache device*/
->> +	zone->start -= data_offset;
->> +	zone->wp -= data_offset;
-> 
-> This has to be done depending on the zone type and zone condition: zone->wp is
-> "invalid" for conventional zones, and sequential zones that are full, read-only
-> or offline. So you need something like this:
-> 
-> 	/* Remap LBA to the bcache device */
-> 	zone->start -= data_offset;
-> 	switch(zone->cond) {
-> 	case BLK_ZONE_COND_NOT_WP:
-> 	case BLK_ZONE_COND_READONLY:
-> 	case BLK_ZONE_COND_FULL:
-> 	case BLK_ZONE_COND_OFFLINE:
-> 		break;
-> 	case BLK_ZONE_COND_EMPTY:
-> 		zone->wp = zone->start;
-> 		break;
-> 	default:
-> 		zone->wp -= data_offset;
-> 		break;
-> 	}
-> 
-> 	return args->orig_cb(zone, idx, args->orig_data);
-> 
-
-Hmm, do we have a unified spec to handle the wp on different zone
-condition ?
-
-In zonefs I see zone->wp sets to zone->start for,
-- BLK_ZONE_COND_OFFLINE
-- BLK_ZONE_COND_READONLY
-
-In sd_zbc.c, I see wp sets to end of the zone for
-- BLK_ZONE_COND_FULL
-
-And in dm.c I see zone->wp is set to zone->start for,
-- BLK_ZONE_COND_EMPTY
-
-It seems except for BLK_ZONE_COND_NOT_WP, for other conditions the
-writer pointer should be taken cared by device driver already.
-
-So I write such switch-case in the following way by the inspair of your
-comments,
-
-        /* Zone 0 should not be reported */
-        if(WARN_ON_ONCE(zone->start < data_offset))
-                return -EIO;
-
-        /* convert back to LBA of the bcache device*/
-        zone->start -= data_offset;
-        if (zone->cond != BLK_ZONE_COND_NOT_WP)
-                zone->wp -= data_offset;
-
-        switch (zone->cond) {
-        case BLK_ZONE_COND_NOT_WP:
-                /* No write pointer available */
-                break;
-        case BLK_ZONE_COND_EMPTY:
-        case BLK_ZONE_COND_READONLY:
-        case BLK_ZONE_COND_OFFLINE:
-                /*
-                 * If underlying device driver does not properly
-                 * set writer pointer, warn and fix it.
-                 */
-                if (WARN_ON_ONCE(zone->wp != zone->start))
-                        zone->wp = zone->start;
-                break;
-        case BLK_ZONE_COND_FULL:
-                /*
-                 * If underlying device driver does not properly
-                 * set writer pointer, warn and fix it.
-                 */
-                if (WARN_ON_ONCE(zone->wp != zone->start + zone->len))
-                        zone->wp = zone->start + zone->len;
-                break;
-        default:
-                break;
-        }
-
-        return args->orig_cb(zone, idx, args->orig_data);
-
-The above code converts zone->wp by minus data_offset for
-non-BLK_ZONE_COND_NOT_WP condition. And for other necessary conditions,
-I just check whether the underlying device driver updates write pointer
-properly (as I observed in other drivers), if not then drop a warning
-and fix the write pointer to the expected value.
-
-Now the write pointer is only fixed when it was wrong value. If the
-underlying device driver does not maintain the value properly, we figure
-out and fix it.
-
->> +
->> +	return args->orig_cb(zone, idx, args->orig_data);
->> +}
->> +
->> +static int cached_dev_report_zones(struct bch_report_zones_args *args,
->> +				   unsigned int nr_zones)
->> +{
->> +	struct bcache_device *d = args->bcache_device;
->> +	struct cached_dev *dc = container_of(d, struct cached_dev, disk);
->> +	/* skip zone 0 which is fully occupied by bcache super block */
->> +	sector_t sector = args->sector + dc->sb.data_offset;
->> +
->> +	/* sector is real LBA of backing device */
->> +	return blkdev_report_zones(dc->bdev,
->> +				   sector,
->> +				   nr_zones,
->> +				   cached_dev_report_zones_cb,
->> +				   args);
-> 
-> You could have multiple arguments on a couple of lines only here...
-> 
-
-Sure I change the style in next version.
-
->> +}
->> +
->>  void bch_cached_dev_request_init(struct cached_dev *dc)
->>  {
->>  	struct gendisk *g = dc->disk.disk;
->> @@ -1268,6 +1336,7 @@ void bch_cached_dev_request_init(struct cached_dev *dc)
->>  	g->queue->backing_dev_info->congested_fn = cached_dev_congested;
->>  	dc->disk.cache_miss			= cached_dev_cache_miss;
->>  	dc->disk.ioctl				= cached_dev_ioctl;
->> +	dc->disk.report_zones			= cached_dev_report_zones;
-> 
-> Why set this method unconditionally ? Should it be set only for a zoned bcache
-> device ? E.g.:
-> 	
-> 	if (bdev_is_zoned(bcache bdev))
-> 		dc->disk.report_zones = cached_dev_report_zones;
-> 
-
-Will fix it in next version. Thanks.
-
-
->>  }
->>  
->>  /* Flash backed devices */
->> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
->> index d98354fa28e3..d5da7ad5157d 100644
->> --- a/drivers/md/bcache/super.c
->> +++ b/drivers/md/bcache/super.c
->> @@ -679,10 +679,36 @@ static int ioctl_dev(struct block_device *b, fmode_t mode,
->>  	return d->ioctl(d, mode, cmd, arg);
->>  }
->>  
->> +static int report_zones_dev(struct gendisk *disk,
->> +			    sector_t sector,
->> +			    unsigned int nr_zones,
->> +			    report_zones_cb cb,
->> +			    void *data)
->> +{
->> +	struct bcache_device *d = disk->private_data;
->> +	struct bch_report_zones_args args = {
->> +		.bcache_device = d,
->> +		.sector = sector,
->> +		.orig_data = data,
->> +		.orig_cb = cb,
->> +	};
->> +
->> +	/*
->> +	 * only bcache device with backing device has
->> +	 * report_zones method, flash device does not.
->> +	 */
->> +	if (d->report_zones)
->> +		return d->report_zones(&args, nr_zones);
->> +
->> +	/* flash dev does not have report_zones method */
-> 
-> This comment is confusing. Report zones is called against the bcache device, not
-> against its components... In any case, if the bcache device is not zoned, the
-
-My fault. There are two kinds of bcache device for now, one is the
-bcache device with a backing device, one is the bcache device without a
-backing device. For the bcache device without backing device, its I/Os
-all go into the cache device (SSD). Now such bcache device is called
-flash device or flash only volume IMHO. Yes this is confusing, I need to
-fix it.
-
-
-> report_zones method will never be called by the block layer. So you probably
-> should just check that on entry:
-> 
-> 	if (WARN_ON_ONCE(!blk_queue_is_zoned(disk->queue))
-> 		return -EOPNOTSUPP;
-> 
-> 	return d->report_zones(&args, nr_zones);
-> 
->> +	return -EOPNOTSUPP;
->> +}
->> +
-
-Good point, I use it in next version.
-
-
->>  static const struct block_device_operations bcache_ops = {
->>  	.open		= open_dev,
->>  	.release	= release_dev,
->>  	.ioctl		= ioctl_dev,
->> +	.report_zones	= report_zones_dev,
->>  	.owner		= THIS_MODULE,
->>  };
-> 
-> Same here. It may be better to set the report zones method only for a zoned
-> bcache dev. So you will need an additional block_device_operations struct for
-> that type.
-> 
-> static const struct block_device_operations bcache_zoned_ops = {
->  	.open		= open_dev,
->  	.release	= release_dev,
->  	.ioctl		= ioctl_dev,
-> 	.report_zones	= report_zones_dev,
->  	.owner		= THIS_MODULE,
-> };
-> 
-
-I see you point. But the purpose of such coding style is to avoid an
-extra block_device_operations, just like ioctl_dev() does. Let's keep
-the existsing style at this moment, and may change it in future when
-necessary.
-
+Believe me, I tried hard to make them into 2 lines. But the second line
+is a bit longer, I try to persuade me to accept it but still quite
+uncomfortable for the unaligned tails. I choose to keep current aligned
+format ....
 
 [snipped]
->>  
->> +static inline int cached_dev_data_offset_check(struct cached_dev *dc)
->> +{
->> +	if (!bdev_is_zoned(dc->bdev))
->> +		return 0;
+
 >> +
->> +	/*
->> +	 * If the backing hard drive is zoned device, sb.data_offset
->> +	 * should be aligned to zone size, which is automatically
->> +	 * handled by 'bcache' util of bcache-tools. If the data_offset
->> +	 * is not aligned to zone size, it means the bcache-tools is
->> +	 * outdated.
->> +	 */
->> +	if (dc->sb.data_offset & (bdev_zone_sectors(dc->bdev) - 1)) {
->> +		pr_err("data_offset %llu is not aligned to zone size %llu, please update bcache-tools and re-make the zoned backing device.\n",
+>>  static void cached_dev_nodata(struct closure *cl)
+>>  {
+>>  	struct search *s = container_of(cl, struct search, cl);
+>>  	struct bio *bio = &s->bio.bio;
+>> +	int nr_zones = 1;
+>>  
+>>  	if (s->iop.flush_journal)
+>>  		bch_journal_meta(s->iop.c, cl);
+>>  
+>> -	/* If it's a flush, we send the flush to the backing device too */
+>> +	if (bio_op(bio) == REQ_OP_ZONE_RESET_ALL ||
+>> +	    bio_op(bio) == REQ_OP_ZONE_RESET) {
+>> +		int err = 0;
+>> +		/*
+>> +		 * If this is REQ_OP_ZONE_RESET_ALL bio, cached data
+>> +		 * covered by all zones should be invalidate from the
 > 
-> Long line... May be split the pr_err in 2 calls ?
+> s/invalidate/invalidated
 
-This is what I learned from md code style, which is don't split the
-error message into multiple lines. See the following commit,
-
-commit 9d48739ef19aa8ad6026fd312b3ed81b560c8579
-Author: NeilBrown <neilb@suse.com>
-Date:   Wed Nov 2 14:16:49 2016 +1100
-
-    md: change all printk() to pr_err() or pr_warn() etc.
-
-This is just a choice of code style, and I'd like to take the single
-line message for the following cited reason,
-
-    3/ When strings have been split onto multiple lines, rejoin into
-       a single string.
-       The cost of having lines > 80 chars is less than the cost of not
-       being able to easily search for a particular message.
-
+It will be fixed in next version.
 
 > 
->> +			dc->sb.data_offset, bdev_zone_sectors(dc->bdev));
->> +		return -EINVAL;
+>> +		 * cache device.
+>> +		 */
+>> +		if (bio_op(bio) == REQ_OP_ZONE_RESET_ALL)
+>> +			nr_zones = s->d->disk->queue->nr_zones;
+> 
+> Not: sending a REQ_OP_ZONE_RESET BIO to a conventional zone will be failed by
+> the disk... This is not allowed by the ZBC/ZAC specs. So invalidation the cache
+> for conventional zones is not really necessary. But as an initial support, I
+> think this is fine. This can be optimized later.
+>
+Copied, will think of how to optimized later. So far in my testing,
+resetting conventional zones may receive error and timeout from
+underlying drivers and bcache code just forwards such error to upper
+layer. What I see is the reset command hangs for a quite long time and
+failed. I will find a way to make the zone reset command on conventional
+zone fail immediately.
+
+
+>> +
+>> +		err = bch_data_invalidate_zones(
+>> +			cl, bio->bi_iter.bi_sector, nr_zones);
+>> +
+>> +		if (err < 0) {
+>> +			s->iop.status = errno_to_blk_status(err);
+>> +			/* debug, should be removed before post patch */
+>> +			bio->bi_status = BLK_STS_TIMEOUT;
+> 
+> You did not remove it :)
+
+Remove it in next version LOL
+
+> 
+>> +			/* set by bio_cnt_set() in do_bio_hook() */
+>> +			bio_put(bio);
+>> +			/*
+>> +			 * Invalidate cached data fails, don't send
+>> +			 * the zone reset bio to backing device and
+>> +			 * return failure. Otherwise potential data
+>> +			 * corruption on bcache device may happen.
+>> +			 */
+>> +			goto continue_bio_complete;
+>> +		}
+>> +
 >> +	}
 >> +
->> +	return 0;
->> +}
->> +
-[snipped]
-
->> + */
->> +static int bch_cached_dev_zone_init(struct cached_dev *dc)
->> +{
->> +	struct request_queue *d_q, *b_q;
->> +	enum blk_zoned_model mode;
+>> +	/*
+>> +	 * For flush or zone management bios, of cause
+>> +	 * they should be sent to backing device too.
+>> +	 */
+>>  	bio->bi_end_io = backing_request_endio;
+>>  	closure_bio_submit(s->iop.c, bio, cl);
 > 
-> To be clear, may be call this variable "model" ?
-
-Sure, it will be fixed in next version.
-
-
-[snipped]
->> +	if (mode != BLK_ZONED_NONE) {
->> +		d_q->limits.zoned = mode;
->> +		blk_queue_chunk_sectors(d_q, b_q->limits.chunk_sectors);
->> +		/*
->> +		 * (dc->sb.data_offset / q->limits.chunk_sectors) is the
->> +		 * zones number reserved for bcache super block. By default
->> +		 * it is set to 1 by bcache-tools.
->> +		 */
->> +		d_q->nr_zones = b_q->nr_zones -
->> +			(dc->sb.data_offset / d_q->limits.chunk_sectors);
+> You cannot submit a REQ_OP_ZONE_RESET_ALL to the backing dev here, at least not
+> unconditionally. The problem is that if the backing dev doe not have any
+> conventional zones at its LBA 0, REQ_OP_ZONE_RESET_ALL will really reset all
+> zones, including the first zone of the device that contains bcache super block.
+> So you will loose/destroy the bcache setup. You probably did not notice this
+> because your test drive has conventional zones at LBA 0 and reset all does not
+> have any effect on conventional zones...
 > 
-> Does this compile on 32bits arch ? Don't you need a do_div() here ?
+> The easy way to deal with this is to not set the QUEUE_FLAG_ZONE_RESETALL flag
+> for the bcache device queue. If it is not set, the block layer will
+> automatically issue only single zone REQ_OP_ZONE_RESET BIOs. That is slower,
+> yes, but that cannot be avoided when the backend disk does not have any
+> conventional zones. The QUEUE_FLAG_ZONE_RESETALL flag can be kept if the backend
+> disk first zone containing the bcache super block is a conventional zone.
 > 
 
-Yes, I wil fix it in next version.
+You are totally right. Finally I realize why zonefs does not use
+REQ_OP_ZONE_RESET_ALL and reset each non-conventional and non-offline
+and non-read-only zones one-by-one. Yes, I remove the support of
+REQ_OP_ZONE_RESET_ALL in next version.
 
-[snipped]
 
-Thank you for the very detailed review comments :-)
+>> +continue_bio_complete:
+>>  	continue_at(cl, cached_dev_bio_complete, NULL);
+>>  }
+>>  
+>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+>> index d5da7ad5157d..70c31950ec1b 100644
+>> --- a/drivers/md/bcache/super.c
+>> +++ b/drivers/md/bcache/super.c
+>> @@ -1390,6 +1390,8 @@ static int bch_cached_dev_zone_init(struct cached_dev *dc)
+>>  		 */
+>>  		d_q->nr_zones = b_q->nr_zones -
+>>  			(dc->sb.data_offset / d_q->limits.chunk_sectors);
+>> +		if (blk_queue_zone_resetall(b_q))
+>> +			blk_queue_flag_set(QUEUE_FLAG_ZONE_RESETALL, d_q);
+> 
+> See above comment.
+> 
+
+Removed in next version.
+
+>>  	}
+>>  
+>>  	return 0;
+>>
+
+Thank you for the detailed review comments.
 
 Coly Li
-
-
-
