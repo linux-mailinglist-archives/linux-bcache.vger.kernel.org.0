@@ -2,37 +2,37 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC1571F22F6
-	for <lists+linux-bcache@lfdr.de>; Tue,  9 Jun 2020 01:12:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 384D51F27DB
+	for <lists+linux-bcache@lfdr.de>; Tue,  9 Jun 2020 01:55:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbgFHXL0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 8 Jun 2020 19:11:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58250 "EHLO mail.kernel.org"
+        id S2387411AbgFHXYm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 8 Jun 2020 19:24:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728902AbgFHXLZ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:11:25 -0400
+        id S1731648AbgFHXYl (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 8 Jun 2020 19:24:41 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 538F020B80;
-        Mon,  8 Jun 2020 23:11:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D93120842;
+        Mon,  8 Jun 2020 23:24:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591657885;
-        bh=cxtuvjAdp9f4Te01/+BlbAfNdOyNnBZ251CMnNbZcN4=;
+        s=default; t=1591658680;
+        bh=FR0GBdXZRS3MESMaSu9Hju37YGFee3H+3/6KHSvEvTA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UXZE9uecEFG/RGV1hTcN/ZpNH6INmOv/mvA2v97cy0oMqxE0AfL/WcerD2RGhHLKU
-         oybdXOHZJq6ZbWnOPOsjBhm6LzU7D+27vHd0dfY7RnbrpxwcgGHMDbJlmioMpQV7qs
-         Na+Kew31n3rbNPZDP/M/oYCXI4zoIiynRzZN+iyE=
+        b=YXQRbD3QG+I8fZQyXPqAhzRmYviW4VPltqdN2vY1i8laMnz9J0Zskmw1NLDSKhwgY
+         crZoG08RtZ9fUwPB+9QUNJMeTQGyEis53qhYkXm7RxX+/70Kn5ydLR7Sbj6BGF37jv
+         bpjEcK3cqQ3tlvOyMI8Ma6h95HlvvDesRSF1fvLo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 241/274] bcache: fix refcount underflow in bcache_device_free()
-Date:   Mon,  8 Jun 2020 19:05:34 -0400
-Message-Id: <20200608230607.3361041-241-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 091/106] bcache: fix refcount underflow in bcache_device_free()
+Date:   Mon,  8 Jun 2020 19:22:23 -0400
+Message-Id: <20200608232238.3368589-91-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200608230607.3361041-1-sashal@kernel.org>
-References: <20200608230607.3361041-1-sashal@kernel.org>
+In-Reply-To: <20200608232238.3368589-1-sashal@kernel.org>
+References: <20200608232238.3368589-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -102,10 +102,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index d98354fa28e3..4d8bf731b118 100644
+index 5b5cbfadd003..68ebc2759c2e 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -797,7 +797,9 @@ static void bcache_device_free(struct bcache_device *d)
+@@ -775,7 +775,9 @@ static void bcache_device_free(struct bcache_device *d)
  		bcache_device_detach(d);
  
  	if (disk) {
@@ -116,7 +116,7 @@ index d98354fa28e3..4d8bf731b118 100644
  			del_gendisk(disk);
  
  		if (disk->queue)
-@@ -805,7 +807,8 @@ static void bcache_device_free(struct bcache_device *d)
+@@ -783,7 +785,8 @@ static void bcache_device_free(struct bcache_device *d)
  
  		ida_simple_remove(&bcache_device_idx,
  				  first_minor_to_idx(disk->first_minor));
