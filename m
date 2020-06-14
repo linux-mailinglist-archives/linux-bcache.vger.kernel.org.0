@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13CEA1F89B7
-	for <lists+linux-bcache@lfdr.de>; Sun, 14 Jun 2020 18:53:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A09871F89BC
+	for <lists+linux-bcache@lfdr.de>; Sun, 14 Jun 2020 18:53:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbgFNQxt (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 14 Jun 2020 12:53:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47062 "EHLO mx2.suse.de"
+        id S1726999AbgFNQxv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 14 Jun 2020 12:53:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47086 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726982AbgFNQxs (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 14 Jun 2020 12:53:48 -0400
+        id S1727069AbgFNQxu (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 14 Jun 2020 12:53:50 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 2C6D5AE00;
-        Sun, 14 Jun 2020 16:53:51 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 1EDFEAEB2;
+        Sun, 14 Jun 2020 16:53:53 +0000 (UTC)
 From:   colyli@suse.de
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Hannes Reinecke <hare@suse.de>
-Subject: [PATCH 3/4] bcache: use delayed kworker fo asynchronous devices registration
-Date:   Mon, 15 Jun 2020 00:53:32 +0800
-Message-Id: <20200614165333.124999-4-colyli@suse.de>
+        Coly Li <colyli@suse.de>
+Subject: [PATCH 4/4] bcache: pr_info() format clean up in bcache_device_init()
+Date:   Mon, 15 Jun 2020 00:53:33 +0800
+Message-Id: <20200614165333.124999-5-colyli@suse.de>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200614165333.124999-1-colyli@suse.de>
 References: <20200614165333.124999-1-colyli@suse.de>
@@ -34,76 +34,39 @@ X-Mailing-List: linux-bcache@vger.kernel.org
 
 From: Coly Li <colyli@suse.de>
 
-This patch changes the asynchronous registration kworker to a delayed
-kworker. There is probability queue_work() queues the async registration
-kworker to the same CPU (even though very little), then the process
-which writing sysfs interface to reigster bcache device may won't return
-immeidately. queue_delayed_work() in this patch will delay 10 jiffies
-before insert the kworker to run queue, which makes sure the registering
-process may always returns to user space in time.
+scripts/checkpatch.pl reports following warning for patch
+("bcache: check and adjust logical block size for backing devices"),
+    WARNING: quoted string split across lines
+    #146: FILE: drivers/md/bcache/super.c:896:
+    +  pr_info("%s: sb/logical block size (%u) greater than page size "
+    +	       "(%lu) falling back to device logical block size (%u)",
 
-Fixes: 9e23ccf8f0a22 ("bcache: asynchronous devices registration")
+There are two things to fix up,
+- The kernel message print should be in a single line.
+- pr_info() won't automatically add new line since v5.8, a '\n' should
+  be added.
+
+This patch just does the above cleanup in bcache_device_init().
+
 Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Hannes Reinecke <hare@suse.de>
 ---
- drivers/md/bcache/super.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/md/bcache/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 904ea9bbb5c4..a6e79083010a 100644
+index a6e79083010a..2014016f9a60 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -19,6 +19,7 @@
- #include <linux/genhd.h>
- #include <linux/idr.h>
- #include <linux/kthread.h>
-+#include <linux/workqueue.h>
- #include <linux/module.h>
- #include <linux/random.h>
- #include <linux/reboot.h>
-@@ -2380,7 +2381,7 @@ static bool bch_is_open(struct block_device *bdev)
- }
+@@ -893,8 +893,7 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+ 		 * This should only happen with BCACHE_SB_VERSION_BDEV.
+ 		 * Block/page size is checked for BCACHE_SB_VERSION_CDEV.
+ 		 */
+-		pr_info("%s: sb/logical block size (%u) greater than page size "
+-			"(%lu) falling back to device logical block size (%u)",
++		pr_info("%s: sb/logical block size (%u) greater than page size (%lu) falling back to device logical block size (%u)\n",
+ 			d->disk->disk_name, q->limits.logical_block_size,
+ 			PAGE_SIZE, bdev_logical_block_size(cached_bdev));
  
- struct async_reg_args {
--	struct work_struct reg_work;
-+	struct delayed_work reg_work;
- 	char *path;
- 	struct cache_sb *sb;
- 	struct cache_sb_disk *sb_disk;
-@@ -2391,7 +2392,7 @@ static void register_bdev_worker(struct work_struct *work)
- {
- 	int fail = false;
- 	struct async_reg_args *args =
--		container_of(work, struct async_reg_args, reg_work);
-+		container_of(work, struct async_reg_args, reg_work.work);
- 	struct cached_dev *dc;
- 
- 	dc = kzalloc(sizeof(*dc), GFP_KERNEL);
-@@ -2421,7 +2422,7 @@ static void register_cache_worker(struct work_struct *work)
- {
- 	int fail = false;
- 	struct async_reg_args *args =
--		container_of(work, struct async_reg_args, reg_work);
-+		container_of(work, struct async_reg_args, reg_work.work);
- 	struct cache *ca;
- 
- 	ca = kzalloc(sizeof(*ca), GFP_KERNEL);
-@@ -2449,11 +2450,12 @@ static void register_cache_worker(struct work_struct *work)
- static void register_device_aync(struct async_reg_args *args)
- {
- 	if (SB_IS_BDEV(args->sb))
--		INIT_WORK(&args->reg_work, register_bdev_worker);
-+		INIT_DELAYED_WORK(&args->reg_work, register_bdev_worker);
- 	else
--		INIT_WORK(&args->reg_work, register_cache_worker);
-+		INIT_DELAYED_WORK(&args->reg_work, register_cache_worker);
- 
--	queue_work(system_wq, &args->reg_work);
-+	/* 10 jiffies is enough for a delay */
-+	queue_delayed_work(system_wq, &args->reg_work, 10);
- }
- 
- static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
 -- 
 2.25.0
 
