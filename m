@@ -2,27 +2,21 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDD16201519
-	for <lists+linux-bcache@lfdr.de>; Fri, 19 Jun 2020 18:22:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87DA920395A
+	for <lists+linux-bcache@lfdr.de>; Mon, 22 Jun 2020 16:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393558AbgFSQSH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 19 Jun 2020 12:18:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38320 "EHLO mx2.suse.de"
+        id S1729429AbgFVO0j (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 22 Jun 2020 10:26:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47010 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390777AbgFSPCE (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 19 Jun 2020 11:02:04 -0400
+        id S1729414AbgFVO0e (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 22 Jun 2020 10:26:34 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 773BEADC1;
-        Fri, 19 Jun 2020 15:02:02 +0000 (UTC)
-To:     Joe Perches <joe@perches.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-References: <20200617222733.GA24156@embeddedor>
- <1c6adee3-bbad-dc88-3dd2-af823f279271@suse.de>
- <48589b2a3ec33a6504d23d166a32e7820d2e0b70.camel@perches.com>
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 0D8DBC1CA;
+        Mon, 22 Jun 2020 14:26:31 +0000 (UTC)
+To:     Marc Smith <msmith626@gmail.com>
+References: <CAH6h+hcikX895gU2mGC05MTw7BCdV+kPeqGgrSRPwKXe1hjw+g@mail.gmail.com>
 From:   Coly Li <colyli@suse.de>
 Autocrypt: addr=colyli@suse.de; keydata=
  mQINBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
@@ -67,13 +61,14 @@ Autocrypt: addr=colyli@suse.de; keydata=
  K0Jx4CEZubakJe+894sX6pvNFiI7qUUdB882i5GR3v9ijVPhaMr8oGuJ3kvwBIA8lvRBGVGn
  9xvzkQ8Prpbqh30I4NMp8MjFdkwCN6znBKPHdjNTwE5PRZH0S9J0o67IEIvHfH0eAWAsgpTz
  +jwc7VKH7vkvgscUhq/v1/PEWCAqh9UHy7R/jiUxwzw/288OpgO+i+2l11Y=
-Subject: Re: [PATCH][next] bcache: Use struct_size() in kzalloc()
-Message-ID: <dc039b66-5967-381b-ea84-b411b74578a4@suse.de>
-Date:   Fri, 19 Jun 2020 23:01:58 +0800
+Cc:     linux-bcache@vger.kernel.org
+Subject: Re: Small Cache Dev Tuning
+Message-ID: <b9961963-224a-ab6b-890b-3da73b5eb338@suse.de>
+Date:   Sat, 20 Jun 2020 22:15:02 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <48589b2a3ec33a6504d23d166a32e7820d2e0b70.camel@perches.com>
+In-Reply-To: <CAH6h+hcikX895gU2mGC05MTw7BCdV+kPeqGgrSRPwKXe1hjw+g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -82,64 +77,56 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/6/18 13:42, Joe Perches wrote:
-> On Thu, 2020-06-18 at 13:38 +0800, Coly Li wrote:
->> On 2020/6/18 06:27, Gustavo A. R. Silva wrote:
->>> Make use of the struct_size() helper instead of an open-coded version
->>> in order to avoid any potential type mistakes.
-> []
->>> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-> []
->>> -			io = kzalloc(sizeof(struct dirty_io) +
->>> -				     sizeof(struct bio_vec) *
->>> -				     DIV_ROUND_UP(KEY_SIZE(&w->key),
->>> -						  PAGE_SECTORS),
->>> +			io = kzalloc(struct_size(io, bio.bi_inline_vecs,
->>                                                      ^^^^^^^^^^^^^^^^^^
->>                                                      I like this :-)
->>
->>> +						DIV_ROUND_UP(KEY_SIZE(&w->key), PAGE_SECTORS)),
->>
->> The above line seems too long for 80 characters limitation. Does
->> checkpatch.pl complain for this ?
+On 2020/6/16 22:57, Marc Smith wrote:
+> Hi,
 > 
-> No.  checkpatch has changed:
+> I'm using bcache in Linux 5.4.45 and have been doing a number of
+> experiments, and tuning some of the knobs in bcache. I have a very
+> small cache device (~16 GiB) and I'm trying to make full use of it w/
+> bcache. I've increased the two module parameters to their maximum
+> values:
+> bch_cutoff_writeback=70
+> bch_cutoff_writeback_sync=90
+> 
 
-OK, then this patch is good for me.
+These two parameters are only for experimental purpose for people who
+want to research bcache writeback bahavior, I don't recommend/support to
+change the default value in meaningful deployment. A large number may
+cause unpredictable behavior e.g. deadlock or I/O hang. If you decide to
+change these values in your environment, you have to take the risk for
+the above negative situation.
 
-> 
-> From bdc48fa11e46f867ea4d75fa59ee87a7f48be144 Mon Sep 17 00:00:00 2001
-> From: Joe Perches <joe@perches.com>
-> Date: Fri, 29 May 2020 16:12:21 -0700
-> Subject: [PATCH] checkpatch/coding-style: deprecate 80-column warning
-> 
-> Yes, staying withing 80 columns is certainly still _preferred_.  But
-> it's not the hard limit that the checkpatch warnings imply, and other
-> concerns can most certainly dominate.
-> 
-> Increase the default limit to 100 characters.  Not because 100
-> characters is some hard limit either, but that's certainly a "what are
-> you doing" kind of value and less likely to be about the occasional
-> slightly longer lines.
-> 
-> Miscellanea:
-> 
->  - to avoid unnecessary whitespace changes in files, checkpatch will no
->    longer emit a warning about line length when scanning files unless
->    --strict is also used
-> 
->  - Add a bit to coding-style about alignment to open parenthesis
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 
-I see. My current monitor may display 4 terminal window with 85
-characters width, expending the limit to 100 characters means I probably
-have to change my current monitor with a good cause.
+> This certainly helps me allow more dirty data than what the defaults
+> are set to. But a couple other followup questions:
+> - Any additional recommended tuning/settings for small cache devices?
 
-Thank you, for such good change.
+Do not change the default values in your deployment.
+
+> - Is the soft threshold for dirty writeback data 70% so there is
+> always room for metadata on the cache device? Dangerous to try and
+> recompile with larger maximums?
+
+It is dangerous. People required such configurable value for research
+and study, it may cause deadlock if there is no room to allocate meta
+data. Setting {70, 90} is higher probably to trigger such deadlock.
+
+> - I'm still studying the code, but so far I don't see this, and wanted
+> to confirm that: The writeback thread doesn't look at congestion on
+> the backing device when flushing out data (and say pausing the
+> writeback thread as needed)? For spinning media, if lots of latency
+> sensitive reads are going directly to the backing device, and we're
+> flushing a lot of data from cache to backing, that hurts.
+
+This is quite tricky, the writeback I/O rate is controlled by a PD
+controller, when there are more regular I/Os coming, the writeback I/O
+will reduce to a minimum rate. But this is a try best effort, no real
+time throttle guaranteed.
+
+If you want to see in your workload which bch_cutoff_writeback or
+bch_cutoff_writeback_sync may finally hang your system, it is OK to
+change the default value for a research purpose. Otherwise please use
+the default value. I only look into related bug for the default value.
 
 Coly Li
-
-
 
