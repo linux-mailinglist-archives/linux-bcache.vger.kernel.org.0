@@ -2,26 +2,20 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF73120397C
-	for <lists+linux-bcache@lfdr.de>; Mon, 22 Jun 2020 16:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA0F20392B
+	for <lists+linux-bcache@lfdr.de>; Mon, 22 Jun 2020 16:26:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbgFVO0S (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 22 Jun 2020 10:26:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44630 "EHLO mx2.suse.de"
+        id S1729511AbgFVO0r (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 22 Jun 2020 10:26:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48246 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729303AbgFVO0R (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 22 Jun 2020 10:26:17 -0400
+        id S1729484AbgFVO0r (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 22 Jun 2020 10:26:47 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 79413C1D4;
-        Mon, 22 Jun 2020 14:26:14 +0000 (UTC)
-Subject: Re: [PATCH][next] bcache: movinggc: Use struct_size() helper in
- kzalloc()
-To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-References: <20200617223331.GA25794@embeddedor>
+        by mx2.suse.de (Postfix) with ESMTP id 73B58C1C7
+        for <linux-bcache@vger.kernel.org>; Mon, 22 Jun 2020 14:26:43 +0000 (UTC)
+To:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
 From:   Coly Li <colyli@suse.de>
 Autocrypt: addr=colyli@suse.de; keydata=
  mQINBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
@@ -66,54 +60,35 @@ Autocrypt: addr=colyli@suse.de; keydata=
  K0Jx4CEZubakJe+894sX6pvNFiI7qUUdB882i5GR3v9ijVPhaMr8oGuJ3kvwBIA8lvRBGVGn
  9xvzkQ8Prpbqh30I4NMp8MjFdkwCN6znBKPHdjNTwE5PRZH0S9J0o67IEIvHfH0eAWAsgpTz
  +jwc7VKH7vkvgscUhq/v1/PEWCAqh9UHy7R/jiUxwzw/288OpgO+i+2l11Y=
-Message-ID: <de0eb477-35a5-9849-55c5-1b782fc3cec3@suse.de>
-Date:   Sat, 20 Jun 2020 22:17:20 +0800
+Subject: Input requirement for persistent configuration items in bcache
+Message-ID: <fed4334c-6521-7f6f-712c-495975e9b1b7@suse.de>
+Date:   Mon, 22 Jun 2020 16:01:22 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200617223331.GA25794@embeddedor>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/6/18 06:33, Gustavo A. R. Silva wrote:
-> Make use of the struct_size() helper instead of an open-coded version
-> in order to avoid any potential type mistakes.
-> 
-> This code was detected with the help of Coccinelle and, audited and
-> fixed manually.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Hi folks,
 
-The patch looks good to me, and I assume you already test and verify the
-change. I will add them in my for-test directory.
+Recently I start to look at the bcache on-disk superblock extension. I
+still remember years ago people discussed adding some persistent
+configuration itesm on disk, to avoid setting them via sysfs interface
+every time after reboot.
 
-Thanks.
+While I am thinking about this, I do appreciate your help about the
+input on which configuration item should be stored in the on-disk
+superblock.
+
+Although I am probably not able to make every required input being
+persistent in the on-disk superblock, I believe your help may help me to
+decide a reasonable option set.
+
+Thank you all in advance.
 
 Coly Li
-
-> ---
->  drivers/md/bcache/movinggc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/movinggc.c b/drivers/md/bcache/movinggc.c
-> index 7891fb512736..b7dd2d75f58c 100644
-> --- a/drivers/md/bcache/movinggc.c
-> +++ b/drivers/md/bcache/movinggc.c
-> @@ -145,8 +145,8 @@ static void read_moving(struct cache_set *c)
->  			continue;
->  		}
->  
-> -		io = kzalloc(sizeof(struct moving_io) + sizeof(struct bio_vec)
-> -			     * DIV_ROUND_UP(KEY_SIZE(&w->key), PAGE_SECTORS),
-> +		io = kzalloc(struct_size(io, bio.bio.bi_inline_vecs,
-> +					 DIV_ROUND_UP(KEY_SIZE(&w->key), PAGE_SECTORS)),
->  			     GFP_KERNEL);
->  		if (!io)
->  			goto err;
-> 
-
