@@ -2,122 +2,72 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35BD72059E9
-	for <lists+linux-bcache@lfdr.de>; Tue, 23 Jun 2020 19:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9E29206D2C
+	for <lists+linux-bcache@lfdr.de>; Wed, 24 Jun 2020 08:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387484AbgFWRpG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 23 Jun 2020 13:45:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733075AbgFWRpF (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 23 Jun 2020 13:45:05 -0400
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EA1DC061573
-        for <linux-bcache@vger.kernel.org>; Tue, 23 Jun 2020 10:45:05 -0700 (PDT)
-Received: by mail-ua1-x936.google.com with SMTP id i8so7077942uak.9
-        for <linux-bcache@vger.kernel.org>; Tue, 23 Jun 2020 10:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WMNE+EUikYPB2Kza4fE7rkKTIWoLn17jrBC4Ga68OsE=;
-        b=k6H77HKeoW3/BfyStkI2vrzfpQLf1G5QgocnIm6QFYrDsWM5pBCBKSXbw5pBJYC0Cj
-         jXGLwlY4jz6tr8RtekMofa66eQ9I85YW6swTzt3uiyFUpodjdv7PwktBt8ZtBufP2U56
-         tDpjNL9cVYpVFSMA0lm17FvuqYZVhXSZPqfwIUYc+O/3ZwShsgwRW1PyCA+nZLkMKu22
-         5vF8r4ImP9MLs2/dQE270KFISPrk6adIbo3WQN/bLhQig34TFxwiSPR0YLSpF3mTfobk
-         B3OXm8BbLdNaKu5J9/QRyP5wYqviNBW+2Q/vpghLFpCLn0z3ABl0rX95YhjPmGqUpcNr
-         j84A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WMNE+EUikYPB2Kza4fE7rkKTIWoLn17jrBC4Ga68OsE=;
-        b=qEskxUCIP60eoVyrgRTcWaD13wrJC8uInkps3hO1zK7wyHtA5NRmyGWgdQ1ha3bpGu
-         UuVEGnUju7hnIQwJCmU6hZ3LAb6l/qNMMb0GFOQ16mIWnv0k2v5VQbGMoL36qRiENBZD
-         BSAMwDZ5072jsZMaKHYvUahrIXfJApb0mp/G2tFX/LbhkbxE4uL1oG9Y6g/VuukTuIGt
-         rGJXg8U/48dHpa7bd6JSxhu5wMOFjQ2JbDuf6+GiS65YYvudZQ59rWE/20kaOwPKrr5A
-         GuLag+jzP060I9kbmD4f0OTEQkvGa3IEDLKqLQi9WnQV58tIP6Tr4ic/5e68gBM34TG+
-         u4Zw==
-X-Gm-Message-State: AOAM530UeFm5fIxewmXsgBO8p5hDCyB9MRwnvA9gOWLREr4LMqBNbjMB
-        cw3UJPlpqMK7j0mtWgGAYFGdrZO7DI2W5UQXVQTSHae3
-X-Google-Smtp-Source: ABdhPJzpOOwc19zKphNp5h38XJ2ihowYji5RKSJfHQMOAw2xyZF6SXogZTjgkPn5JYTjxpqOA9yy7t9wbJalrKT2iek=
-X-Received: by 2002:a9f:2b42:: with SMTP id q2mr833473uaj.16.1592934304145;
- Tue, 23 Jun 2020 10:45:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAH6h+hcikX895gU2mGC05MTw7BCdV+kPeqGgrSRPwKXe1hjw+g@mail.gmail.com>
- <b9961963-224a-ab6b-890b-3da73b5eb338@suse.de>
-In-Reply-To: <b9961963-224a-ab6b-890b-3da73b5eb338@suse.de>
-From:   Marc Smith <msmith626@gmail.com>
-Date:   Tue, 23 Jun 2020 13:44:53 -0400
-Message-ID: <CAH6h+hdGgQpsAX_ub-QXdbTczSWv_0zO7yadhBn-rBu33om10Q@mail.gmail.com>
-Subject: Re: Small Cache Dev Tuning
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S2387981AbgFXG7H (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 24 Jun 2020 02:59:07 -0400
+Received: from smtp21.cstnet.cn ([159.226.251.21]:53872 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387606AbgFXG7H (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 24 Jun 2020 02:59:07 -0400
+X-Greylist: delayed 359 seconds by postgrey-1.27 at vger.kernel.org; Wed, 24 Jun 2020 02:59:06 EDT
+Received: from ubuntu.localdomain (unknown [124.16.136.99])
+        by APP-01 (Coremail) with SMTP id qwCowAAHwjBJ+PJeTHU5AA--.30479S2;
+        Wed, 24 Jun 2020 14:52:58 +0800 (CST)
+From:   Xu Wang <vulab@iscas.ac.cn>
+To:     colyli@suse.de, kent.overstreet@gmail.com
+Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bcache: journel: use for_each_clear_bit() to simplify the  code
+Date:   Wed, 24 Jun 2020 14:52:57 +0800
+Message-Id: <20200624065257.4051-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: qwCowAAHwjBJ+PJeTHU5AA--.30479S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4kGw18Cr4rKw15AF1DZFb_yoW3trcEkF
+        12qF4Svr43Jr17Zw48Cry8urZIv3sxur1kZF4xt39IkF98Xas3Gr40vryUtr48Zry0yFyD
+        J34UtrWFy3s0yjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb7AYjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4
+        A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+        vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY02Avz4vE14v_GF1l42xK82IY
+        c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
+        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF
+        0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
+        vE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
+        jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU0YXdUUUUUU==
+X-Originating-IP: [124.16.136.99]
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwIRA102YjeFPwAAsT
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Mon, Jun 22, 2020 at 10:26 AM Coly Li <colyli@suse.de> wrote:
->
-> On 2020/6/16 22:57, Marc Smith wrote:
-> > Hi,
-> >
-> > I'm using bcache in Linux 5.4.45 and have been doing a number of
-> > experiments, and tuning some of the knobs in bcache. I have a very
-> > small cache device (~16 GiB) and I'm trying to make full use of it w/
-> > bcache. I've increased the two module parameters to their maximum
-> > values:
-> > bch_cutoff_writeback=70
-> > bch_cutoff_writeback_sync=90
-> >
->
-> These two parameters are only for experimental purpose for people who
-> want to research bcache writeback bahavior, I don't recommend/support to
-> change the default value in meaningful deployment. A large number may
-> cause unpredictable behavior e.g. deadlock or I/O hang. If you decide to
-> change these values in your environment, you have to take the risk for
-> the above negative situation.
->
->
-> > This certainly helps me allow more dirty data than what the defaults
-> > are set to. But a couple other followup questions:
-> > - Any additional recommended tuning/settings for small cache devices?
->
-> Do not change the default values in your deployment.
->
-> > - Is the soft threshold for dirty writeback data 70% so there is
-> > always room for metadata on the cache device? Dangerous to try and
-> > recompile with larger maximums?
->
-> It is dangerous. People required such configurable value for research
-> and study, it may cause deadlock if there is no room to allocate meta
-> data. Setting {70, 90} is higher probably to trigger such deadlock.
->
-> > - I'm still studying the code, but so far I don't see this, and wanted
-> > to confirm that: The writeback thread doesn't look at congestion on
-> > the backing device when flushing out data (and say pausing the
-> > writeback thread as needed)? For spinning media, if lots of latency
-> > sensitive reads are going directly to the backing device, and we're
-> > flushing a lot of data from cache to backing, that hurts.
->
-> This is quite tricky, the writeback I/O rate is controlled by a PD
-> controller, when there are more regular I/Os coming, the writeback I/O
-> will reduce to a minimum rate. But this is a try best effort, no real
-> time throttle guaranteed.
->
-> If you want to see in your workload which bch_cutoff_writeback or
-> bch_cutoff_writeback_sync may finally hang your system, it is OK to
-> change the default value for a research purpose. Otherwise please use
-> the default value. I only look into related bug for the default value.
+Using for_each_clear_bit() to simplify the code.
 
-Okay, understood. Appreciate the guidance and information, thanks.
+Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
+---
+ drivers/md/bcache/journal.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---Marc
+diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+index 90aac4e2333f..b01c953e214c 100644
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -217,10 +217,7 @@ int bch_journal_read(struct cache_set *c, struct list_head *list)
+ 		 */
+ 		pr_debug("falling back to linear search\n");
+ 
+-		for (l = find_first_zero_bit(bitmap, ca->sb.njournal_buckets);
+-		     l < ca->sb.njournal_buckets;
+-		     l = find_next_zero_bit(bitmap, ca->sb.njournal_buckets,
+-					    l + 1))
++		for_each_clear_bit(l, bitmap, ca->sb.njournal_buckets)
+ 			if (read_bucket(l))
+ 				goto bsearch;
+ 
+-- 
+2.17.1
 
-
->
-> Coly Li
->
