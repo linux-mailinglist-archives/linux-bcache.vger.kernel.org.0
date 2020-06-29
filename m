@@ -2,32 +2,32 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7464420D890
-	for <lists+linux-bcache@lfdr.de>; Mon, 29 Jun 2020 22:09:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B994B20D895
+	for <lists+linux-bcache@lfdr.de>; Mon, 29 Jun 2020 22:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387486AbgF2TkO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 29 Jun 2020 15:40:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48036 "EHLO
+        id S2387555AbgF2TkP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 29 Jun 2020 15:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733177AbgF2TkL (ORCPT
+        with ESMTP id S1733202AbgF2TkM (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:40:11 -0400
+        Mon, 29 Jun 2020 15:40:12 -0400
 Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3D8C03E979;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF841C03E97A;
         Mon, 29 Jun 2020 12:40:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=jMtXd3+IgH5FKAFW7B3krAloHxKDCKtZ6481a42mweE=; b=izI9va37od/l74eLDK6Qd4n5+c
-        DRE5tLWFd6z0dh7FN+++zwj3vqA9hBSqXjItC+dGo1jQTiNXlNCOwNeuynBDUj4O0vv4wEvXD9xkA
-        1Lqve212q1u8S5/IjqOxXPzxIxXWaadH1PkDW/wrhUOY/mACP+lHeZT85YM/CigG5JmG82gX4yswL
-        RfDgh8pbd/ZyjWgGdAg7148oGPLMXP5IlWqnDTyMyVw/N0D30hWunCXzjPMCUTonoLYB3XTq2F8xe
-        dBLSroWnj5XPAyKyIbXf1d7S5LahAvykKyuFF6hWFRR+hZoSGHVSAwslOJwhs0F/6uveQ9FNxwMDD
-        ErEDmz7A==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=U8tCb4h17a0rL+ZZdq18PAV+yDbvWsH96GC5gLr1vuc=; b=nX6H72rwNYY0Uodz17aYP0bvqk
+        9gSPPIErWrLN9tgBHhvIIJkOaKgVsJo4ToReNXQeJGEcFnMtOneeM9lvCktfvClRYHDtNElRZj2F6
+        8v+5TR40P7wF9sVI6FNZgxu5kOa2TO9rd1Tk/CVbrQpxDd6MTudpLktSUdh658nMTs0t6pbT8L0DU
+        oLPd3ny9KNPaRYcpjp5BKqZJvHEO/AQA8V3gJ3oEvuI02EACAolGm1l5wddF6nve0W3P8jOwehhxt
+        HUK/Vlvd1nnX1ZKXj4mHlQgYSZ/JMOLFPBM2+5fH9Dc8Y+nLWvs6b4VA5Ugvca4/Jx5cC4ko7Xilx
+        7KEB9k7g==;
 Received: from [2001:4bb8:184:76e3:fcca:c8dc:a4bf:12fa] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jpzd6-0004EQ-9J; Mon, 29 Jun 2020 19:39:50 +0000
+        id 1jpzd9-0004Eg-CR; Mon, 29 Jun 2020 19:39:52 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     dm-devel@redhat.com, linux-kernel@vger.kernel.org,
@@ -36,10 +36,12 @@ Cc:     dm-devel@redhat.com, linux-kernel@vger.kernel.org,
         linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-nvme@lists.infradead.org,
         linux-s390@vger.kernel.org
-Subject: rename ->make_request_fn and move it to the block_device_operations
-Date:   Mon, 29 Jun 2020 21:39:27 +0200
-Message-Id: <20200629193947.2705954-1-hch@lst.de>
+Subject: [PATCH 01/20] nfblock: stop using ->queuedata
+Date:   Mon, 29 Jun 2020 21:39:28 +0200
+Message-Id: <20200629193947.2705954-2-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200629193947.2705954-1-hch@lst.de>
+References: <20200629193947.2705954-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
@@ -48,84 +50,35 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Jens,
+Instead of setting up the queuedata as well just use one private data
+field.
 
-this series moves the make_request_fn method into block_device_operations
-with the much more descriptive ->submit_bio name.  It then also gives
-generic_make_request a more descriptive name, and further optimize the
-path to issue to blk-mq, removing the need for the direct_make_request
-bypass.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/m68k/emu/nfblock.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Diffstat:
- Documentation/block/biodoc.rst                    |    2 
- Documentation/block/writeback_cache_control.rst   |    2 
- Documentation/fault-injection/fault-injection.rst |    2 
- Documentation/trace/ftrace.rst                    |    4 
- arch/m68k/emu/nfblock.c                           |    8 
- arch/xtensa/platforms/iss/simdisk.c               |    9 
- block/bio.c                                       |   14 -
- block/blk-cgroup.c                                |    2 
- block/blk-core.c                                  |  255 +++++++++-------------
- block/blk-crypto-fallback.c                       |    2 
- block/blk-crypto.c                                |    2 
- block/blk-merge.c                                 |   23 -
- block/blk-mq.c                                    |   12 -
- block/blk-throttle.c                              |    4 
- block/blk.h                                       |    5 
- block/bounce.c                                    |    2 
- drivers/block/brd.c                               |    5 
- drivers/block/drbd/drbd_int.h                     |    8 
- drivers/block/drbd/drbd_main.c                    |   12 -
- drivers/block/drbd/drbd_receiver.c                |    2 
- drivers/block/drbd/drbd_req.c                     |    8 
- drivers/block/drbd/drbd_worker.c                  |    2 
- drivers/block/null_blk_main.c                     |   19 +
- drivers/block/pktcdvd.c                           |   15 -
- drivers/block/ps3vram.c                           |   20 -
- drivers/block/rsxx/dev.c                          |   14 -
- drivers/block/umem.c                              |   11 
- drivers/block/zram/zram_drv.c                     |   14 -
- drivers/lightnvm/core.c                           |    8 
- drivers/lightnvm/pblk-init.c                      |   16 -
- drivers/lightnvm/pblk-read.c                      |    2 
- drivers/md/bcache/bcache.h                        |    2 
- drivers/md/bcache/btree.c                         |    2 
- drivers/md/bcache/request.c                       |   11 
- drivers/md/bcache/request.h                       |    4 
- drivers/md/bcache/super.c                         |   24 +-
- drivers/md/dm-cache-target.c                      |    6 
- drivers/md/dm-clone-target.c                      |   10 
- drivers/md/dm-crypt.c                             |    6 
- drivers/md/dm-delay.c                             |    2 
- drivers/md/dm-era-target.c                        |    2 
- drivers/md/dm-integrity.c                         |    4 
- drivers/md/dm-mpath.c                             |    2 
- drivers/md/dm-raid1.c                             |    2 
- drivers/md/dm-snap-persistent.c                   |    2 
- drivers/md/dm-snap.c                              |    6 
- drivers/md/dm-thin.c                              |    4 
- drivers/md/dm-verity-target.c                     |    2 
- drivers/md/dm-writecache.c                        |    2 
- drivers/md/dm-zoned-target.c                      |    2 
- drivers/md/dm.c                                   |   41 +--
- drivers/md/md-faulty.c                            |    4 
- drivers/md/md-linear.c                            |    4 
- drivers/md/md-multipath.c                         |    4 
- drivers/md/md.c                                   |    7 
- drivers/md/raid0.c                                |    8 
- drivers/md/raid1.c                                |   14 -
- drivers/md/raid10.c                               |   28 +-
- drivers/md/raid5.c                                |   10 
- drivers/nvdimm/blk.c                              |    5 
- drivers/nvdimm/btt.c                              |    5 
- drivers/nvdimm/pmem.c                             |    5 
- drivers/nvme/host/core.c                          |    1 
- drivers/nvme/host/multipath.c                     |   18 -
- drivers/nvme/host/nvme.h                          |    1 
- drivers/s390/block/dcssblk.c                      |   11 
- drivers/s390/block/xpram.c                        |    8 
- fs/buffer.c                                       |    5 
- include/linux/blk-mq.h                            |    2 
- include/linux/blkdev.h                            |   12 -
- include/linux/lightnvm.h                          |    3 
- 71 files changed, 387 insertions(+), 408 deletions(-)
+diff --git a/arch/m68k/emu/nfblock.c b/arch/m68k/emu/nfblock.c
+index c3a630440512e9..87e8b1700acd28 100644
+--- a/arch/m68k/emu/nfblock.c
++++ b/arch/m68k/emu/nfblock.c
+@@ -61,7 +61,7 @@ struct nfhd_device {
+ 
+ static blk_qc_t nfhd_make_request(struct request_queue *queue, struct bio *bio)
+ {
+-	struct nfhd_device *dev = queue->queuedata;
++	struct nfhd_device *dev = bio->bi_disk->private_data;
+ 	struct bio_vec bvec;
+ 	struct bvec_iter iter;
+ 	int dir, len, shift;
+@@ -122,7 +122,6 @@ static int __init nfhd_init_one(int id, u32 blocks, u32 bsize)
+ 	if (dev->queue == NULL)
+ 		goto free_dev;
+ 
+-	dev->queue->queuedata = dev;
+ 	blk_queue_logical_block_size(dev->queue, bsize);
+ 
+ 	dev->disk = alloc_disk(16);
+-- 
+2.26.2
+
