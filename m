@@ -2,104 +2,135 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2259020FBA6
-	for <lists+linux-bcache@lfdr.de>; Tue, 30 Jun 2020 20:22:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 184912106CF
+	for <lists+linux-bcache@lfdr.de>; Wed,  1 Jul 2020 10:59:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390751AbgF3SV6 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 30 Jun 2020 14:21:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32996 "EHLO
+        id S1728575AbgGAI7x (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 1 Jul 2020 04:59:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388193AbgF3SV5 (ORCPT
+        with ESMTP id S1726009AbgGAI7x (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 30 Jun 2020 14:21:57 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA811C03E97B
-        for <linux-bcache@vger.kernel.org>; Tue, 30 Jun 2020 11:21:56 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id b92so9831453pjc.4
-        for <linux-bcache@vger.kernel.org>; Tue, 30 Jun 2020 11:21:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9nMjhxRG610D6xAYb4aZ5VRp2i+EwPdQw1qks+ZgrLU=;
-        b=hwnoVOlqAmU5zhHyPngbwhlN1yE0Rso1wSEH5Cjpo1eHOGtwX+AR6fF4SKm61iSSaU
-         xiq7Si+fCLVLBMD4J7QWGIGpRMN22P7LkDW6XHYnqvsHwEiKJn/e7f4zxe/RH81FYZzf
-         6Qah7lhZ47GF32wkEdApitqRosxk7IcYLclUVGOXkeLM+pP0S9zvuPgq8PcNplpKOkyE
-         awjP1mt8uhAMtNOYRMd+Y1yvSZf+ZepFpwCbSYGQZlgNrN664rZd2V1H/xVqglgX5aPU
-         phGafx1o9DcWQXNw7D5cKE9cBpAhM0fImNVpDBnmceKAdk/tkJjCm50uuW5RXHV8UW9k
-         l/Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9nMjhxRG610D6xAYb4aZ5VRp2i+EwPdQw1qks+ZgrLU=;
-        b=HWyJKhAQumepxsFdClbqzA8hzvg4b2tsxpszxBMLAd2HpI3OeHlh6TU2SHsOzkXL/q
-         jU/1letU4gTqOwQDRNF7KzyhfMkLmyK+VH+6lxAFMEuL2MKwQ+LFMVT31bJtA8Mga9eL
-         U1TUAoWx8E4QY7f/r23OqWl/xX9xTJHq2LTcgzjCf8lt55DGtfWbIKHrS/ehfIcrdKCt
-         J9RUcv3xwGtEkKvEyVVzoAi4v84dw44r4WuZ6PpFd42cpEueHopsLW6jKjB0I9rKxdFz
-         wBYxpBiS6AAj1Y7sEKwH9EQoREEIcl6/v5Ny1nldLfPo0ft7Vz0yMRCE5KcvN6FEsgQR
-         2knA==
-X-Gm-Message-State: AOAM533pUE8yhpWcQeMDZi3UR1fUnniQ85Wzc3sNTLMs5zo6IYTrHoJL
-        PHjsHjiedQBuRB0M+Qn/wPt4RQ==
-X-Google-Smtp-Source: ABdhPJx1eVZzUauHavuDMn/utz58o2Sp76o2c6uyFezmO+u8oFk4qpnRUZKKvG8yetkSCycNIsxDcg==
-X-Received: by 2002:a17:90a:7409:: with SMTP id a9mr23663497pjg.107.1593541316394;
-        Tue, 30 Jun 2020 11:21:56 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:8c61:4113:50ea:3eb3:a39b? ([2605:e000:100e:8c61:4113:50ea:3eb3:a39b])
-        by smtp.gmail.com with ESMTPSA id 10sm3244047pfx.136.2020.06.30.11.21.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jun 2020 11:21:55 -0700 (PDT)
-Subject: Re: rename ->make_request_fn and move it to the
- block_device_operations
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-bcache@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-nvdimm@lists.01.org, linux-s390@vger.kernel.org,
-        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
-        drbd-dev@lists.linbit.com
-References: <20200629193947.2705954-1-hch@lst.de>
- <bd1443c0-be37-115b-1110-df6f0e661a50@kernel.dk>
- <6ddbe343-0fc2-58c8-3726-c4ba9952994f@kernel.dk>
- <20200630181928.GA7853@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f173ab34-53c4-0316-f755-240f00cc7075@kernel.dk>
-Date:   Tue, 30 Jun 2020 12:21:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Wed, 1 Jul 2020 04:59:53 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9ED6C061755;
+        Wed,  1 Jul 2020 01:59:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=NewiNZRcUdxKIYqGEwecM2/TYLTpV46Y4ANOh3AaYeY=; b=QNVRM5re/f5qDCO18Ck/0VAKzH
+        wSFtEOqRYRAr2bGYSrHkREAU4zNfXQfT7bHNCQ642gEiZ/kD2oIal+/v8s+/P9dhOIWy3R0yRohCO
+        1rlRel/VN1zwvxCbPcrdSCwjnFAJ76DOEFzjdw8gocpKGPw9hTrlqhEXUS6jKUXBJi+aCMwwqAMKe
+        2f20Vv7rUmHhXPpFgitTXcvrBCtCToFm2VVMUejE0AlRtmsGalyDZbcSj4MUlnywB8y4rCRgOUyXf
+        uHSD35Uugs7TKYbgEQzDDD/u88xlT4LzBhG3iAS0DjZuD4LH5lXU/zccIkKtU6gfC8EQ7iU6739gJ
+        g3f6e3JA==;
+Received: from [2001:4bb8:184:76e3:ea38:596b:3e9e:422a] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jqYar-00087G-2E; Wed, 01 Jul 2020 08:59:49 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-xtensa@linux-xtensa.org,
+        drbd-dev@lists.linbit.com, linuxppc-dev@lists.ozlabs.org,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-nvme@lists.infradead.org,
+        linux-s390@vger.kernel.org
+Subject: rename ->make_request_fn and move it to the block_device_operations v2
+Date:   Wed,  1 Jul 2020 10:59:27 +0200
+Message-Id: <20200701085947.3354405-1-hch@lst.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <20200630181928.GA7853@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 6/30/20 12:19 PM, Christoph Hellwig wrote:
-> On Tue, Jun 30, 2020 at 09:43:31AM -0600, Jens Axboe wrote:
->> On 6/30/20 7:57 AM, Jens Axboe wrote:
->>> On 6/29/20 1:39 PM, Christoph Hellwig wrote:
->>>> Hi Jens,
->>>>
->>>> this series moves the make_request_fn method into block_device_operations
->>>> with the much more descriptive ->submit_bio name.  It then also gives
->>>> generic_make_request a more descriptive name, and further optimize the
->>>> path to issue to blk-mq, removing the need for the direct_make_request
->>>> bypass.
->>>
->>> Looks good to me, and it's a nice cleanup as well. Applied.
->>
->> Dropped, insta-crashes with dm:
-> 
-> Hmm.  Can you send me what is at "submit_bio_noacct+0x1f6" from gdb?
-> Or your .config?
+Hi Jens,
 
-I'd have to apply and compile again. But it's a bad RIP, so I'm guessing
-it's ->submit_bio == NULL. Let me know if you really need it, and I can
-re-generate the OOPS and have the vmlinux too.
+this series moves the make_request_fn method into block_device_operations
+with the much more descriptive ->submit_bio name.  It then also gives
+generic_make_request a more descriptive name, and further optimize the
+path to issue to blk-mq, removing the need for the direct_make_request
+bypass.
 
--- 
-Jens Axboe
+Changes since v1:
+ - fix a null pointer dereference when dispatching from bio to request
+   based drivers
+ - clean up a few more comments
 
+Diffstat:
+ Documentation/block/biodoc.rst                    |    2 
+ Documentation/block/writeback_cache_control.rst   |    2 
+ Documentation/fault-injection/fault-injection.rst |    2 
+ Documentation/trace/ftrace.rst                    |    4 
+ arch/m68k/emu/nfblock.c                           |    8 
+ arch/xtensa/platforms/iss/simdisk.c               |    9 
+ block/bio.c                                       |   14 -
+ block/blk-cgroup.c                                |    2 
+ block/blk-core.c                                  |  255 +++++++++-------------
+ block/blk-crypto-fallback.c                       |    2 
+ block/blk-crypto.c                                |    2 
+ block/blk-merge.c                                 |   23 -
+ block/blk-mq.c                                    |   12 -
+ block/blk-throttle.c                              |    4 
+ block/blk.h                                       |    5 
+ block/bounce.c                                    |    2 
+ drivers/block/brd.c                               |    5 
+ drivers/block/drbd/drbd_int.h                     |    8 
+ drivers/block/drbd/drbd_main.c                    |   12 -
+ drivers/block/drbd/drbd_receiver.c                |    2 
+ drivers/block/drbd/drbd_req.c                     |    8 
+ drivers/block/drbd/drbd_worker.c                  |    2 
+ drivers/block/null_blk_main.c                     |   19 +
+ drivers/block/pktcdvd.c                           |   15 -
+ drivers/block/ps3vram.c                           |   20 -
+ drivers/block/rsxx/dev.c                          |   14 -
+ drivers/block/umem.c                              |   11 
+ drivers/block/zram/zram_drv.c                     |   14 -
+ drivers/lightnvm/core.c                           |    8 
+ drivers/lightnvm/pblk-init.c                      |   16 -
+ drivers/lightnvm/pblk-read.c                      |    2 
+ drivers/md/bcache/bcache.h                        |    2 
+ drivers/md/bcache/btree.c                         |    2 
+ drivers/md/bcache/request.c                       |   11 
+ drivers/md/bcache/request.h                       |    4 
+ drivers/md/bcache/super.c                         |   24 +-
+ drivers/md/dm-cache-target.c                      |    6 
+ drivers/md/dm-clone-target.c                      |   10 
+ drivers/md/dm-crypt.c                             |    6 
+ drivers/md/dm-delay.c                             |    2 
+ drivers/md/dm-era-target.c                        |    2 
+ drivers/md/dm-integrity.c                         |    4 
+ drivers/md/dm-mpath.c                             |    2 
+ drivers/md/dm-raid1.c                             |    2 
+ drivers/md/dm-snap-persistent.c                   |    2 
+ drivers/md/dm-snap.c                              |    6 
+ drivers/md/dm-thin.c                              |    4 
+ drivers/md/dm-verity-target.c                     |    2 
+ drivers/md/dm-writecache.c                        |    2 
+ drivers/md/dm-zoned-target.c                      |    2 
+ drivers/md/dm.c                                   |   41 +--
+ drivers/md/md-faulty.c                            |    4 
+ drivers/md/md-linear.c                            |    4 
+ drivers/md/md-multipath.c                         |    4 
+ drivers/md/md.c                                   |    7 
+ drivers/md/raid0.c                                |    8 
+ drivers/md/raid1.c                                |   14 -
+ drivers/md/raid10.c                               |   28 +-
+ drivers/md/raid5.c                                |   10 
+ drivers/nvdimm/blk.c                              |    5 
+ drivers/nvdimm/btt.c                              |    5 
+ drivers/nvdimm/pmem.c                             |    5 
+ drivers/nvme/host/core.c                          |    1 
+ drivers/nvme/host/multipath.c                     |   18 -
+ drivers/nvme/host/nvme.h                          |    1 
+ drivers/s390/block/dcssblk.c                      |   11 
+ drivers/s390/block/xpram.c                        |    8 
+ fs/buffer.c                                       |    5 
+ include/linux/blk-mq.h                            |    2 
+ include/linux/blkdev.h                            |   12 -
+ include/linux/lightnvm.h                          |    3 
+ 71 files changed, 387 insertions(+), 408 deletions(-)
