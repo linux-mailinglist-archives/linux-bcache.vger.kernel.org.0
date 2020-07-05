@@ -2,25 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C1880214DE4
-	for <lists+linux-bcache@lfdr.de>; Sun,  5 Jul 2020 18:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5AD6214DE6
+	for <lists+linux-bcache@lfdr.de>; Sun,  5 Jul 2020 18:04:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbgGEQEu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 5 Jul 2020 12:04:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39504 "EHLO mx2.suse.de"
+        id S1727109AbgGEQEx (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 5 Jul 2020 12:04:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39516 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727822AbgGEQEu (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 5 Jul 2020 12:04:50 -0400
+        id S1727773AbgGEQEx (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 5 Jul 2020 12:04:53 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 1F785ACFE;
-        Sun,  5 Jul 2020 16:04:49 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 40E62ACFE;
+        Sun,  5 Jul 2020 16:04:51 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [RFC PATCH 1/4] bcache-tools: comments offset for members of struct cache_sb
-Date:   Mon,  6 Jul 2020 00:04:37 +0800
-Message-Id: <20200705160440.5801-2-colyli@suse.de>
+Subject: [RFC PATCH 2/4] struct_offset: print offset of each member of the on-disk data structure
+Date:   Mon,  6 Jul 2020 00:04:38 +0800
+Message-Id: <20200705160440.5801-3-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200705160440.5801-1-colyli@suse.de>
 References: <20200705160440.5801-1-colyli@suse.de>
@@ -31,107 +31,108 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch adds code comments to mark the offset of each member from
-struct cache_sb. It is helpful for understand the super block on disk.
+This is a helper small program to print out the offset in bytes of each
+member of the on-disk data structure. Currently the member print lines
+are coded manually, hope latter it can be more intelligent to avoid the
+hard code.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- bcache.h | 64 ++++++++++++++++++++++++++++++--------------------------
- 1 file changed, 34 insertions(+), 30 deletions(-)
+ Makefile        |  4 +++-
+ struct_offset.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+), 1 deletion(-)
+ create mode 100644 struct_offset.c
 
-diff --git a/bcache.h b/bcache.h
-index c83f838..3fcf187 100644
---- a/bcache.h
-+++ b/bcache.h
-@@ -41,54 +41,58 @@ static const char bcache_magic[] = {
- #define SB_START		(SB_SECTOR * 512)
+diff --git a/Makefile b/Makefile
+index 2c326cf..b352d21 100644
+--- a/Makefile
++++ b/Makefile
+@@ -5,7 +5,7 @@ DRACUTLIBDIR=/lib/dracut
+ INSTALL=install
+ CFLAGS+=-O2 -Wall -g
  
- struct cache_sb {
--	uint64_t		csum;
--	uint64_t		offset;	/* sector where this sb was written */
--	uint64_t		version;
-+/*000*/	uint64_t		csum;
-+	/* sector where this sb was written */
-+/*008*/	uint64_t		offset;
-+/*010*/	uint64_t		version;
+-all: make-bcache probe-bcache bcache-super-show bcache-register bcache
++all: make-bcache probe-bcache bcache-super-show bcache-register bcache struct_offset
  
--	uint8_t			magic[16];
-+/*018*/	uint8_t			magic[16];
+ install: make-bcache probe-bcache bcache-super-show
+ 	$(INSTALL) -m0755 make-bcache bcache-super-show	bcache $(DESTDIR)${PREFIX}/sbin/
+@@ -22,6 +22,8 @@ clean:
  
--	uint8_t			uuid[16];
-+/*028*/	uint8_t			uuid[16];
- 	union {
--		uint8_t		set_uuid[16];
--		uint64_t	set_magic;
-+/*038*/		uint8_t		set_uuid[16];
-+/*038*/		uint64_t	set_magic;
- 	};
--	uint8_t			label[SB_LABEL_SIZE];
-+/*048*/	uint8_t			label[SB_LABEL_SIZE];
+ bcache-test: LDLIBS += `pkg-config --libs openssl` -lm
  
--	uint64_t		flags;
--	uint64_t		seq;
--	uint64_t		pad[8];
-+/*068*/	uint64_t		flags;
-+/*070*/	uint64_t		seq;
-+/*078*/	uint64_t		pad[8];
- 
- 	union {
- 	struct {
--		/* Cache devices */
--		uint64_t	nbuckets;	/* device size */
-+			/* Cache devices */
-+/*0b8*/		uint64_t	nbuckets;	/* device size */
- 
--		uint16_t	block_size;	/* sectors */
--		uint16_t	bucket_size;	/* sectors */
-+/*0c0*/		uint16_t	block_size;	/* sectors */
-+/*0c2*/		uint16_t	bucket_size;	/* sectors */
- 
--		uint16_t	nr_in_set;
--		uint16_t	nr_this_dev;
-+/*0c4*/		uint16_t	nr_in_set;
-+/*0c6*/		uint16_t	nr_this_dev;
- 	};
- 	struct {
--		/* Backing devices */
--		uint64_t	data_offset;
--
--		/*
--		 * block_size from the cache device section is still used by
--		 * backing devices, so don't add anything here until we fix
--		 * things to not need it for backing devices anymore
--		 */
-+			/* Backing devices */
-+/*0b8*/		uint64_t	data_offset;
++struct_offset: struct_offset.o
 +
-+			/*
-+			 * block_size from the cache device section is still
-+			 * used by backing devices, so don't add anything here
-+			 * until we fix things to not need it for backing
-+			 * devices anymore
-+			 */
- 	};
- 	};
- 
--	uint32_t		last_mount;	/* time_t */
-+/*0c8*/	uint32_t		last_mount;	/* time_t */
- 
--	uint16_t		first_bucket;
-+/*0cc*/	uint16_t		first_bucket;
- 	union {
--		uint16_t	njournal_buckets;
--		uint16_t	keys;
-+/*0ce*/		uint16_t	njournal_buckets;
-+/*0ce*/		uint16_t	keys;
- 	};
--	uint64_t		d[SB_JOURNAL_BUCKETS];	/* journal buckets */
-+	/* journal buckets */
-+/*0d0*/	uint64_t		d[SB_JOURNAL_BUCKETS];
-+/*8d0*/
- };
- 
- static inline bool SB_IS_BDEV(const struct cache_sb *sb)
+ make-bcache: LDLIBS += `pkg-config --libs uuid blkid smartcols`
+ make-bcache: CFLAGS += `pkg-config --cflags uuid blkid smartcols`
+ make-bcache: make.o crc64.o lib.o zoned.o
+diff --git a/struct_offset.c b/struct_offset.c
+new file mode 100644
+index 0000000..6061259
+--- /dev/null
++++ b/struct_offset.c
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Author: Coly Li <colyli@suse.de>
++ *
++ * Print out offset of each member of on-disk structure
++ */
++
++#include <stdio.h>
++#include <stddef.h>
++#include <inttypes.h>
++#include <stdbool.h>
++
++#include "bcache.h"
++
++
++#define OFF_SB(m)	offsetof(struct cache_sb, m)
++
++void print_cache_sb()
++{
++	printf("	  struct cache_sb {:\n");
++	printf("/* %3.3lx */         uint64_t		csum;\n", OFF_SB(csum));
++	printf("/* %3.3lx */         uint64_t		offset;\n", OFF_SB(offset));
++	printf("/* %3.3lx */         uint64_t		version;\n", OFF_SB(version));
++	printf("/* %3.3lx */         uint8_t		magic[6];\n", OFF_SB(magic));
++	printf("/* %3.3lx */         uint8_t		uuid[16];\n", OFF_SB(uuid));
++	printf("                  union {;\n");
++	printf("/* %3.3lx */         	uint8_t		set_uuid;\n", OFF_SB(set_uuid));
++	printf("/* %3.3lx */         	uint64_t	set_magic;\n", OFF_SB(set_magic));
++	printf("		  };\n");
++	printf("/* %3.3lx */         uint8_t		label[%u];\n", OFF_SB(label),
++							SB_LABEL_SIZE);
++	printf("/* %3.3lx */         uint64_t		flags;\n", OFF_SB(flags));
++	printf("/* %3.3lx */         uint64_t		seq;\n", OFF_SB(seq));
++	printf("/* %3.3lx */         uint64_t		pad[8];\n", OFF_SB(pad));
++	printf("                  union {\n");
++	printf("                  struct {\n");
++	printf("/* %3.3lx */         	uint64_t	nbuckets;\n", OFF_SB(nbuckets));
++	printf("/* %3.3lx */         	uint16_t	block_size;\n", OFF_SB(block_size));
++	printf("/* %3.3lx */         	uint16_t	bucket_size;\n", OFF_SB(bucket_size));
++	printf("/* %3.3lx */         	uint16_t	nr_in_set;\n", OFF_SB(nr_in_set));
++	printf("/* %3.3lx */         	uint16_t	nr_this_dev;\n", OFF_SB(nr_this_dev));
++	printf("                  };\n");
++	printf("                  struct {\n");
++	printf("/* %3.3lx */          	uint64_t	data_offset;\n", OFF_SB(data_offset));
++	printf("                  };\n");
++	printf("                  };\n");
++	printf("/* %3.3lx */         uint32_t		last_mount;\n", OFF_SB(last_mount));
++	printf("/* %3.3lx */         uint16_t		first_bucket;\n", OFF_SB(first_bucket));
++	printf("                  union {\n");
++	printf("/* %3.3lx */         	uint16_t	njournal_buckets;\n", OFF_SB(njournal_buckets));
++	printf("/* %3.3lx */         	uint16_t	keys;\n", OFF_SB(keys));
++	printf("                  };\n");
++	printf("/* %3.3lx */         uint64_t		d[%u];\n", OFF_SB(d), SB_JOURNAL_BUCKETS);
++	printf("/* %3.3lx */ }\n", OFF_SB(d) + sizeof(uint64_t) * SB_JOURNAL_BUCKETS);
++}
++
++int main(int argc, char *argv[])
++{
++	print_cache_sb();
++	return 0;
++}
 -- 
 2.26.2
 
