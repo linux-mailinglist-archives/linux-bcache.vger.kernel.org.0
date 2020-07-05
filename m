@@ -2,25 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24C40214DD3
-	for <lists+linux-bcache@lfdr.de>; Sun,  5 Jul 2020 17:56:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03C44214DD5
+	for <lists+linux-bcache@lfdr.de>; Sun,  5 Jul 2020 17:56:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbgGEP4j (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 5 Jul 2020 11:56:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38258 "EHLO mx2.suse.de"
+        id S1727892AbgGEP4l (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 5 Jul 2020 11:56:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38272 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727843AbgGEP4i (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 5 Jul 2020 11:56:38 -0400
+        id S1727843AbgGEP4k (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 5 Jul 2020 11:56:40 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 5B40BAC37;
-        Sun,  5 Jul 2020 15:56:37 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 736E6AC52;
+        Sun,  5 Jul 2020 15:56:39 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [RFC PATCH 12/16] bcache: handle cache set verify_ondisk properly for bucket size > 8MB
-Date:   Sun,  5 Jul 2020 23:55:57 +0800
-Message-Id: <20200705155601.5404-13-colyli@suse.de>
+Subject: [RFC PATCH 13/16] bcache: handle btree node memory allocation properly for bucket size > 8MB
+Date:   Sun,  5 Jul 2020 23:55:58 +0800
+Message-Id: <20200705155601.5404-14-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200705155601.5404-1-colyli@suse.de>
 References: <20200705155601.5404-1-colyli@suse.de>
@@ -31,62 +31,46 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In bch_btree_cache_alloc() when CONFIG_BCACHE_DEBUG is configured,
-allocate memory for c->verify_ondisk may fail if the bucket size > 8MB,
-which will require __get_free_pages() to allocate continuous pages
-with order > 11 (the default MAX_ORDER of Linux buddy allocator). Such
-over size allocation will fail, and cause 2 problems,
-- When CONFIG_BCACHE_DEBUG is configured,  bch_btree_verify() does not
-  work, because c->verify_ondisk is NULL and bch_btree_verify() returns
-  immediately.
-- bch_btree_cache_alloc() will fail due to c->verify_ondisk allocation
-  failed, then the whole cache device registration fails. And because of
-  this failure, the first problem of bch_btree_verify() has no chance to
-  be triggered.
+Currently the bcache internal btree node occupies a whole bucket. When
+loading the btree node from cache device into memory, mca_data_alloc()
+will call bch_btree_keys_alloc() to allocate memory for the whole bucket
+size, ilog2(b->c->btree_pages) is send to bch_btree_keys_alloc() as the
+parameter 'page_order'.
 
-This patch fixes the above problem by two means,
-1) If pages allocation of c->verify_ondisk fails, set it to NULL and
-   returns bch_btree_cache_alloc() with -ENOMEM.
-2) When calling __get_free_pages() to allocate c->verify_ondisk pages,
-   use ilog2(meta_bucket_pages(&c->sb)) to make sure ilog2() will always
-   generate a pages order <= MAX_ORDER (or CONFIG_FORCE_MAX_ZONEORDER).
-   Then the buddy system won't directly reject the allocation request.
+c->btree_pages is set as bucket_pages() in bch_cache_set_alloc(), for
+bucket size > 8MB, ilog2(b->c->btree_pages) is 12 for 4KB page size. By
+default the maximum page order __get_free_pages() accepts is MAX_ORDER
+(11), in this condition bch_btree_keys_alloc() will always fail.
+
+Because of other over-page-order allocation failure fails the cache
+device registration, such btree node allocation failure wasn't observed
+during runtime. After other blocking page allocation failures for bucket
+size > 8MB, this btree node allocation issue may trigger potentical risk
+e.g. infinite dead-loop to retry btree node allocation after failure.
+
+This patch fixes the potential problem by setting c->btree_pages to
+meta_bucket_pages() in bch_cache_set_alloc(). In the condition that
+bucket size > 8MB, meta_bucket_pages() will always return a number which
+won't exceed the maximum page order of the buddy allocator.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/btree.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/md/bcache/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 6548a601edf0..a9d59b6c7d85 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -738,7 +738,7 @@ void bch_btree_cache_free(struct cache_set *c)
- 	if (c->verify_data)
- 		list_move(&c->verify_data->list, &c->btree_cache);
- 
--	free_pages((unsigned long) c->verify_ondisk, ilog2(bucket_pages(c)));
-+	free_pages((unsigned long) c->verify_ondisk, ilog2(meta_bucket_pages(&c->sb)));
- #endif
- 
- 	list_splice(&c->btree_cache_freeable,
-@@ -785,7 +785,15 @@ int bch_btree_cache_alloc(struct cache_set *c)
- 	mutex_init(&c->verify_lock);
- 
- 	c->verify_ondisk = (void *)
--		__get_free_pages(GFP_KERNEL, ilog2(bucket_pages(c)));
-+		__get_free_pages(GFP_KERNEL, ilog2(meta_bucket_pages(&c->sb)));
-+	if (!c->verify_ondisk) {
-+		/*
-+		 * Don't worry about the mca_rereserve buckets
-+		 * allocated in previous for-loop, they will be
-+		 * handled properly in bch_cache_set_unregister().
-+		 */
-+		return -ENOMEM;
-+	}
- 
- 	c->verify_data = mca_bucket_alloc(c, &ZERO_KEY, GFP_KERNEL);
- 
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index b0e23012d6c1..2da6d5aa8c63 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1860,7 +1860,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+ 	c->nr_uuids		= meta_bucket_bytes(&c->sb) / sizeof(struct uuid_entry);
+ 	c->devices_max_used	= 0;
+ 	atomic_set(&c->attached_dev_nr, 0);
+-	c->btree_pages		= bucket_pages(c);
++	c->btree_pages		= meta_bucket_pages(&c->sb);
+ 	if (c->btree_pages > BTREE_MAX_PAGES)
+ 		c->btree_pages = max_t(int, c->btree_pages / 4,
+ 				       BTREE_MAX_PAGES);
 -- 
 2.26.2
 
