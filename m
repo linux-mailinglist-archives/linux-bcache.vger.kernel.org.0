@@ -2,97 +2,72 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F54721941E
-	for <lists+linux-bcache@lfdr.de>; Thu,  9 Jul 2020 01:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F3E32196C3
+	for <lists+linux-bcache@lfdr.de>; Thu,  9 Jul 2020 05:41:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726345AbgGHXOd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 8 Jul 2020 19:14:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46842 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbgGHXOc (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 8 Jul 2020 19:14:32 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86614C061A0B
-        for <linux-bcache@vger.kernel.org>; Wed,  8 Jul 2020 16:14:31 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id z5so80802pgb.6
-        for <linux-bcache@vger.kernel.org>; Wed, 08 Jul 2020 16:14:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qXlCDNHI0ZK15y0LOuAYzGPtynusnw7LtwDb5Yj2OtE=;
-        b=cMbzoT4XhkOdRuftJN/OiPsYT9RozDw+GuQh01xrUOP3mEW5tEUjydfcb4W+DKVzne
-         TFfUTMUinXgvBqCBfHGgOVgQJzkXgqOGy28APv540LEKujTVtjrvU97kbdrHqETQKtaw
-         RxfU1Mj6GTpbQeKCFE4jR13nkdUzsgeldvzxXoT9HJ1fzXpuM/Ep2USaPDxgdcyvZAzd
-         /jZjEoDC//LUR2Vf0Zhf0IGE23c90oPClyOfNFgWvDrq1zo1M5Bgvo6f9IqIwZwMBEpc
-         Bs9RuI54YBgJOxg3wIrkIpXX8DSkg4acxak06jwvZXv2M3RmK5zy1eWHCosB7prsXkuL
-         YrQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qXlCDNHI0ZK15y0LOuAYzGPtynusnw7LtwDb5Yj2OtE=;
-        b=scAoRqXyEq/wd/eFoGTC3OZB6Oft4eSwN9tYDrXc4ffBnCB4O2uaeOBL1ojgpyTCew
-         AyZd3delkFX7bufPigf5hqKJuC0O95c75WbqHI+sfXe9Y36pPiMLSM6CsVeMHcHmL6iK
-         dHd/idqLTQuuIzqBUvMpLon/6aZNdD+Ds2wytftecxqy7zP29qn0HHYXtC/GYiBZMDVI
-         BsZls+FM0mXuzUqxH2wZXzE+qeYQgyTX5ggkqdSK8v/QKsU2WnpNf114yvaxD5Ll1X1S
-         2L+IuIDrTaV/KsIKcGIrhawmOAmHURAckZBZyigruoev42v0iSxwDluu/TRsnmPbU9iD
-         K00g==
-X-Gm-Message-State: AOAM532H6f/fIELclLqlGBj30fPlgx1zka3cqbojr7iCZop/IDnfDxWa
-        2YVHSuwHpXc73q6RoAnEbJKvMA==
-X-Google-Smtp-Source: ABdhPJwxXRU58dnJ8SaVTE59SieM0UMi6WQspGfeG513juta/gCc2a5inFjMHD1HHOikaeJsZTW/MA==
-X-Received: by 2002:a63:7741:: with SMTP id s62mr50514486pgc.332.1594250070946;
-        Wed, 08 Jul 2020 16:14:30 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id n137sm721427pfd.194.2020.07.08.16.14.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jul 2020 16:14:30 -0700 (PDT)
-Subject: Re: remove dead bdi congestion leftovers
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Tejun Heo <tj@kernel.org>, dm-devel@redhat.com,
-        cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-        drbd-dev@lists.linbit.com, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20200701090622.3354860-1-hch@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b5d6df17-68af-d535-79e4-f95e16dd5632@kernel.dk>
-Date:   Wed, 8 Jul 2020 17:14:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200701090622.3354860-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1726117AbgGIDlN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 8 Jul 2020 23:41:13 -0400
+Received: from smtp23.cstnet.cn ([159.226.251.23]:33098 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726122AbgGIDlN (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 8 Jul 2020 23:41:13 -0400
+Received: from localhost (unknown [159.226.5.99])
+        by APP-03 (Coremail) with SMTP id rQCowABn6fhZkQZfXF2pAw--.36772S2;
+        Thu, 09 Jul 2020 11:39:06 +0800 (CST)
+From:   Xu Wang <vulab@iscas.ac.cn>
+To:     colyli@suse.de, kent.overstreet@gmail.com,
+        linux-bcache@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Xu Wang <vulab@iscas.ac.cn>
+Subject: [PATCH] bcache: writeback: Remove unneeded variable ret
+Date:   Thu,  9 Jul 2020 03:39:04 +0000
+Message-Id: <20200709033904.27391-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: rQCowABn6fhZkQZfXF2pAw--.36772S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrCr4fJw18uw4xXrW3uryDWrg_yoWxXrb_ur
+        1Yqa1vkFWFk3WkXw17A3WfZrWj934DZF10q3WSkr9xKF1Fy34xXrW8Zr4kJr1S9Fy8uF4D
+        Gw12qr4UAr1v9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb4xFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+        Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+        0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+        2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
+        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_
+        Gr4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+        WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI
+        7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+        1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8
+        JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JU4MKZUUU
+        UU=
+X-Originating-IP: [159.226.5.99]
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCAAMA102YRI8CwAAso
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 7/1/20 3:06 AM, Christoph Hellwig wrote:
-> Hi Jens,
-> 
-> we have a lot of bdi congestion related code that is left around without
-> any use.  This series removes it in preparation of sorting out the bdi
-> lifetime rules properly.
+Remove unneeded variable ret i.
 
-Please run series like this through a full compilation, for both this one
-and the previous series I had to fix up issues like this:
+Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
+---
+ drivers/md/bcache/writeback.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-drivers/md/bcache/request.c: In function ‘bch_cached_dev_request_init’:
-drivers/md/bcache/request.c:1233:18: warning: unused variable ‘g’ [-Wunused-variable]
- 1233 |  struct gendisk *g = dc->disk.disk;
-      |                  ^
-drivers/md/bcache/request.c: In function ‘bch_flash_dev_request_init’:
-drivers/md/bcache/request.c:1320:18: warning: unused variable ‘g’ [-Wunused-variable]
- 1320 |  struct gendisk *g = d->disk;
-      |                  ^
-
-Did the same here, applied it.
-
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index 1cf1e5016cb9..71801c086b82 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -825,10 +825,8 @@ static int bch_dirty_init_thread(void *arg)
+ 	struct btree_iter iter;
+ 	struct bkey *k, *p;
+ 	int cur_idx, prev_idx, skip_nr;
+-	int i;
+ 
+ 	k = p = NULL;
+-	i = 0;
+ 	cur_idx = prev_idx = 0;
+ 
+ 	bch_btree_iter_init(&c->root->keys, &iter, NULL);
 -- 
-Jens Axboe
+2.17.1
 
