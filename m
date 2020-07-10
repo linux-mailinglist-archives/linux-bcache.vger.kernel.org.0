@@ -2,128 +2,89 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F115221B64A
-	for <lists+linux-bcache@lfdr.de>; Fri, 10 Jul 2020 15:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E5A021C01A
+	for <lists+linux-bcache@lfdr.de>; Sat, 11 Jul 2020 00:47:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbgGJN01 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 10 Jul 2020 09:26:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50192 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbgGJN00 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 10 Jul 2020 09:26:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 8E585AD1E;
-        Fri, 10 Jul 2020 13:26:25 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-bcache@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-        Jan Kara <jack@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Vlastimil Babka <vbabka@suse.com>, stable@vger.kernel.org
-Subject: [PATCH 2/2] bcache: allocate meta data pages as compound pages
-Date:   Fri, 10 Jul 2020 21:26:10 +0800
-Message-Id: <20200710132610.11756-2-colyli@suse.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200710132610.11756-1-colyli@suse.de>
-References: <20200710132610.11756-1-colyli@suse.de>
+        id S1726496AbgGJWry (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 10 Jul 2020 18:47:54 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:37756 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726480AbgGJWrx (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 10 Jul 2020 18:47:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594421272;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=o54XITo/6OqPCLmpNBoTEabfaxYXChL2R+xYVOK2D8w=;
+        b=ZR9/gUDXjZS3e19ZKrFyggk2lBVxIGs0QF+rtrhoibCfWvUhGi6puwiIOmM3F9tExbzDsZ
+        S+Tm6OdCZDBl/ohTmP9KbwfF0BZWRLtE4Orv6MegnVw0eUXEioERtf6plTlrMgdAxQc90E
+        dO+W/WiVZ8ZxJIQu+0/l/d+1hda2VPM=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-42-s8E7U7W6Osy0wMzIXuZDGw-1; Fri, 10 Jul 2020 18:47:50 -0400
+X-MC-Unique: s8E7U7W6Osy0wMzIXuZDGw-1
+Received: by mail-qk1-f197.google.com with SMTP id u186so5499754qka.4
+        for <linux-bcache@vger.kernel.org>; Fri, 10 Jul 2020 15:47:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version;
+        bh=o54XITo/6OqPCLmpNBoTEabfaxYXChL2R+xYVOK2D8w=;
+        b=U0QIad9+auvwvOVzW9FLd9V66vAlFSEu3cKdu/oKQfmBtw8c0klSUIeI7BgStJ/TKc
+         eqODerJuMbWxMshR6NqfkMpG/tws1nftaF1kH677Fqn+eG48v1aqVbPUov//JJzn1ZUD
+         DbM63xXwYcNAJFOGuXlyLnA8uaMJtWg5F/wZvMqv+fndWWrakFXwzffqasp4WnD9FJd0
+         +pTFG3iZDmcwfItyQkzOlmV/btTPQzl0NpGM0+ItjHTtAgQJ0N6eCpOt9UCNZy+H+PMT
+         a9MQceuofHCSJgHv41plaJ5v2oiykstyPMNnkdauUHOViXmsICmbM8Y4oSIHO3t02Jxs
+         zGeQ==
+X-Gm-Message-State: AOAM532RaPedO5cQ+nSYyX3jNisOassI6JcmpPw5i0hqVISH7Oh0GJmY
+        4GokeFKS2NFjFbKgGn9QUqBM5c5U3UYMFFq+1o3AP3pJm1iJhROW5rn/seZBc4kh/No2ufzCaEX
+        89AGE989O8UJnHPM3cqnYvP3J
+X-Received: by 2002:a37:7242:: with SMTP id n63mr55395523qkc.143.1594421269974;
+        Fri, 10 Jul 2020 15:47:49 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw5aVdupJZ/N436IkABUiRFu1O6g8zBj54WTZtl8wVPJ9mBdxofbPYYNWVhZw6WGZJIdp34rg==
+X-Received: by 2002:a37:7242:: with SMTP id n63mr55395512qkc.143.1594421269720;
+        Fri, 10 Jul 2020 15:47:49 -0700 (PDT)
+Received: from crash (c-73-253-167-23.hsd1.ma.comcast.net. [73.253.167.23])
+        by smtp.gmail.com with ESMTPSA id a28sm8618845qko.45.2020.07.10.15.47.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jul 2020 15:47:49 -0700 (PDT)
+From:   Ken Raeburn <raeburn@redhat.com>
+To:     linux-bcache@vger.kernel.org
+Subject: bcache integer overflow for large devices w/small io_opt
+Date:   Fri, 10 Jul 2020 18:47:48 -0400
+Message-ID: <878sfrdm23.fsf@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-There are some meta data of bcache are allocated by multiple pages,
-and they are used as bio bv_page for I/Os to the cache device. for
-example cache_set->uuids, cache->disk_buckets, journal_write->data,
-bset_tree->data.
 
-For such meta data memory, all the allocated pages should be treated
-as a single memory block. Then the memory management and underlying I/O
-code can treat them more clearly.
+The long version is written up at
+https://bugzilla.redhat.com/show_bug.cgi?id=1783075 but the short
+version:
 
-This patch adds __GFP_COMP flag to all the location allocating >0 order
-pages for the above mentioned meta data. Then their pages are treated
-as compound pages now.
+There are devices out there which set q->limits.io_opt to small values
+like 4096 bytes, causing bcache to use that for the stripe size, but the
+device size could still be large enough that the computed stripe count
+is 2**32 or more. That value gets stuffed into a 32-bit (unsigned int)
+field, throwing away the high bits, and then that truncated value is
+range-checked and used. This can result in memory corruption or faults
+in some cases.
 
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: Jan Kara <jack@suse.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>
-Cc: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Cc: Vlastimil Babka <vbabka@suse.com>
-Cc: stable@vger.kernel.org
----
- drivers/md/bcache/bset.c    | 2 +-
- drivers/md/bcache/btree.c   | 2 +-
- drivers/md/bcache/journal.c | 4 ++--
- drivers/md/bcache/super.c   | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+The problem was brought up with us on Red Hat's VDO driver team by a
+bcache user on a 4.17.8 kernel, has been demonstrated in the Fedora
+5.3.15-300.fc31 kernel, and by inspection appears to be present in
+Linus's tree as of this morning.
 
-diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
-index 4995fcaefe29..67a2c47f4201 100644
---- a/drivers/md/bcache/bset.c
-+++ b/drivers/md/bcache/bset.c
-@@ -322,7 +322,7 @@ int bch_btree_keys_alloc(struct btree_keys *b,
- 
- 	b->page_order = page_order;
- 
--	t->data = (void *) __get_free_pages(gfp, b->page_order);
-+	t->data = (void *) __get_free_pages(__GFP_COMP|gfp, b->page_order);
- 	if (!t->data)
- 		goto err;
- 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 6548a601edf0..dd116c83de80 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -785,7 +785,7 @@ int bch_btree_cache_alloc(struct cache_set *c)
- 	mutex_init(&c->verify_lock);
- 
- 	c->verify_ondisk = (void *)
--		__get_free_pages(GFP_KERNEL, ilog2(bucket_pages(c)));
-+		__get_free_pages(GFP_KERNEL|__GFP_COMP, ilog2(bucket_pages(c)));
- 
- 	c->verify_data = mca_bucket_alloc(c, &ZERO_KEY, GFP_KERNEL);
- 
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index 90aac4e2333f..d8586b6ccb76 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -999,8 +999,8 @@ int bch_journal_alloc(struct cache_set *c)
- 	j->w[1].c = c;
- 
- 	if (!(init_fifo(&j->pin, JOURNAL_PIN, GFP_KERNEL)) ||
--	    !(j->w[0].data = (void *) __get_free_pages(GFP_KERNEL, JSET_BITS)) ||
--	    !(j->w[1].data = (void *) __get_free_pages(GFP_KERNEL, JSET_BITS)))
-+	    !(j->w[0].data = (void *) __get_free_pages(GFP_KERNEL|__GFP_COMP, JSET_BITS)) ||
-+	    !(j->w[1].data = (void *) __get_free_pages(GFP_KERNEL|__GFP_COMP, JSET_BITS)))
- 		return -ENOMEM;
- 
- 	return 0;
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 2014016f9a60..daa4626024a2 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1776,7 +1776,7 @@ void bch_cache_set_unregister(struct cache_set *c)
- }
- 
- #define alloc_bucket_pages(gfp, c)			\
--	((void *) __get_free_pages(__GFP_ZERO|gfp, ilog2(bucket_pages(c))))
-+	((void *) __get_free_pages(__GFP_ZERO|__GFP_COMP|gfp, ilog2(bucket_pages(c))))
- 
- struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
- {
--- 
-2.26.2
+The easy fix would be to keep the quotient in a 64-bit variable until
+it's validated, but that would simply limit the size of such devices as
+bcache backing storage (in this case, limiting VDO volumes to under 8
+TB). Is there a way to still be able to use larger devices? Perhaps
+scale up the stripe size from io_opt to the point where the stripe count
+falls in the allowed range?
+
+Ken Raeburn
+(Red Hat VDO driver developer)
 
