@@ -2,89 +2,125 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E5A021C01A
-	for <lists+linux-bcache@lfdr.de>; Sat, 11 Jul 2020 00:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 776B821C4D3
+	for <lists+linux-bcache@lfdr.de>; Sat, 11 Jul 2020 17:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbgGJWry (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 10 Jul 2020 18:47:54 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:37756 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726480AbgGJWrx (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 10 Jul 2020 18:47:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594421272;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type;
-        bh=o54XITo/6OqPCLmpNBoTEabfaxYXChL2R+xYVOK2D8w=;
-        b=ZR9/gUDXjZS3e19ZKrFyggk2lBVxIGs0QF+rtrhoibCfWvUhGi6puwiIOmM3F9tExbzDsZ
-        S+Tm6OdCZDBl/ohTmP9KbwfF0BZWRLtE4Orv6MegnVw0eUXEioERtf6plTlrMgdAxQc90E
-        dO+W/WiVZ8ZxJIQu+0/l/d+1hda2VPM=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-42-s8E7U7W6Osy0wMzIXuZDGw-1; Fri, 10 Jul 2020 18:47:50 -0400
-X-MC-Unique: s8E7U7W6Osy0wMzIXuZDGw-1
-Received: by mail-qk1-f197.google.com with SMTP id u186so5499754qka.4
-        for <linux-bcache@vger.kernel.org>; Fri, 10 Jul 2020 15:47:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version;
-        bh=o54XITo/6OqPCLmpNBoTEabfaxYXChL2R+xYVOK2D8w=;
-        b=U0QIad9+auvwvOVzW9FLd9V66vAlFSEu3cKdu/oKQfmBtw8c0klSUIeI7BgStJ/TKc
-         eqODerJuMbWxMshR6NqfkMpG/tws1nftaF1kH677Fqn+eG48v1aqVbPUov//JJzn1ZUD
-         DbM63xXwYcNAJFOGuXlyLnA8uaMJtWg5F/wZvMqv+fndWWrakFXwzffqasp4WnD9FJd0
-         +pTFG3iZDmcwfItyQkzOlmV/btTPQzl0NpGM0+ItjHTtAgQJ0N6eCpOt9UCNZy+H+PMT
-         a9MQceuofHCSJgHv41plaJ5v2oiykstyPMNnkdauUHOViXmsICmbM8Y4oSIHO3t02Jxs
-         zGeQ==
-X-Gm-Message-State: AOAM532RaPedO5cQ+nSYyX3jNisOassI6JcmpPw5i0hqVISH7Oh0GJmY
-        4GokeFKS2NFjFbKgGn9QUqBM5c5U3UYMFFq+1o3AP3pJm1iJhROW5rn/seZBc4kh/No2ufzCaEX
-        89AGE989O8UJnHPM3cqnYvP3J
-X-Received: by 2002:a37:7242:: with SMTP id n63mr55395523qkc.143.1594421269974;
-        Fri, 10 Jul 2020 15:47:49 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw5aVdupJZ/N436IkABUiRFu1O6g8zBj54WTZtl8wVPJ9mBdxofbPYYNWVhZw6WGZJIdp34rg==
-X-Received: by 2002:a37:7242:: with SMTP id n63mr55395512qkc.143.1594421269720;
-        Fri, 10 Jul 2020 15:47:49 -0700 (PDT)
-Received: from crash (c-73-253-167-23.hsd1.ma.comcast.net. [73.253.167.23])
-        by smtp.gmail.com with ESMTPSA id a28sm8618845qko.45.2020.07.10.15.47.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jul 2020 15:47:49 -0700 (PDT)
-From:   Ken Raeburn <raeburn@redhat.com>
-To:     linux-bcache@vger.kernel.org
-Subject: bcache integer overflow for large devices w/small io_opt
-Date:   Fri, 10 Jul 2020 18:47:48 -0400
-Message-ID: <878sfrdm23.fsf@redhat.com>
+        id S1728478AbgGKP20 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 11 Jul 2020 11:28:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44970 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728422AbgGKP20 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 11 Jul 2020 11:28:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 5B0CCACE1;
+        Sat, 11 Jul 2020 15:28:25 +0000 (UTC)
+To:     Ken Raeburn <raeburn@redhat.com>
+References: <878sfrdm23.fsf@redhat.com>
+From:   Coly Li <colyli@suse.de>
+Autocrypt: addr=colyli@suse.de; keydata=
+ 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
+Cc:     linux-bcache@vger.kernel.org
+Subject: Re: bcache integer overflow for large devices w/small io_opt
+Message-ID: <4baea764-ba86-e17d-5e75-6acf22f2bbea@suse.de>
+Date:   Sat, 11 Jul 2020 23:28:18 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <878sfrdm23.fsf@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+On 2020/7/11 06:47, Ken Raeburn wrote:
+> 
+> The long version is written up at
+> https://bugzilla.redhat.com/show_bug.cgi?id=1783075 but the short
+> version:
+> 
+> There are devices out there which set q->limits.io_opt to small values
+> like 4096 bytes, causing bcache to use that for the stripe size, but the
+> device size could still be large enough that the computed stripe count
+> is 2**32 or more. That value gets stuffed into a 32-bit (unsigned int)
+> field, throwing away the high bits, and then that truncated value is
+> range-checked and used. This can result in memory corruption or faults
+> in some cases.
+> 
+> The problem was brought up with us on Red Hat's VDO driver team by a
+> bcache user on a 4.17.8 kernel, has been demonstrated in the Fedora
+> 5.3.15-300.fc31 kernel, and by inspection appears to be present in
+> Linus's tree as of this morning.
+> 
+> The easy fix would be to keep the quotient in a 64-bit variable until
+> it's validated, but that would simply limit the size of such devices as
+> bcache backing storage (in this case, limiting VDO volumes to under 8
+> TB). Is there a way to still be able to use larger devices? Perhaps
+> scale up the stripe size from io_opt to the point where the stripe count
+> falls in the allowed range?
+> 
+> Ken Raeburn
+> (Red Hat VDO driver developer)
+> 
 
-The long version is written up at
-https://bugzilla.redhat.com/show_bug.cgi?id=1783075 but the short
-version:
+We cannot extend the bit width of nr_stripes, because
+d->full_dirty_stripes memory allocation depends on it.
 
-There are devices out there which set q->limits.io_opt to small values
-like 4096 bytes, causing bcache to use that for the stripe size, but the
-device size could still be large enough that the computed stripe count
-is 2**32 or more. That value gets stuffed into a 32-bit (unsigned int)
-field, throwing away the high bits, and then that truncated value is
-range-checked and used. This can result in memory corruption or faults
-in some cases.
+For the 18T volume, and stripe_size is 4KB, there are 4831838208
+stripes. Then size of d->full_dirty_stripes will be
+4831838208*sizeof(atomic_t) > 140GB. This is too large for kernel memory
+allocation.
 
-The problem was brought up with us on Red Hat's VDO driver team by a
-bcache user on a 4.17.8 kernel, has been demonstrated in the Fedora
-5.3.15-300.fc31 kernel, and by inspection appears to be present in
-Linus's tree as of this morning.
+Does it help of we have a option in bcache-tools to specify a
+stripe_size number to overwrite limit->io_opt ? Then you may specify a
+larger stripe size which may avoid nr_stripes overflow.
 
-The easy fix would be to keep the quotient in a 64-bit variable until
-it's validated, but that would simply limit the size of such devices as
-bcache backing storage (in this case, limiting VDO volumes to under 8
-TB). Is there a way to still be able to use larger devices? Perhaps
-scale up the stripe size from io_opt to the point where the stripe count
-falls in the allowed range?
+Thanks for the report.
 
-Ken Raeburn
-(Red Hat VDO driver developer)
+Coly Li
+
 
