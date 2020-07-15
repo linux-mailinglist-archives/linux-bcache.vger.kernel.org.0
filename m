@@ -2,25 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F4B6220480
-	for <lists+linux-bcache@lfdr.de>; Wed, 15 Jul 2020 07:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF719220482
+	for <lists+linux-bcache@lfdr.de>; Wed, 15 Jul 2020 07:46:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbgGOFq3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 15 Jul 2020 01:46:29 -0400
-Received: from [195.135.220.15] ([195.135.220.15]:38390 "EHLO mx2.suse.de"
+        id S1728672AbgGOFqb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 15 Jul 2020 01:46:31 -0400
+Received: from [195.135.220.15] ([195.135.220.15]:38426 "EHLO mx2.suse.de"
         rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1728666AbgGOFq3 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 15 Jul 2020 01:46:29 -0400
+        id S1728666AbgGOFqb (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 15 Jul 2020 01:46:31 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 92317AB7D;
-        Wed, 15 Jul 2020 05:46:30 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 8E48DAC20;
+        Wed, 15 Jul 2020 05:46:32 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [PATCH v2 04/17] bcache: disassemble the big if() checks in bch_cache_set_alloc()
-Date:   Wed, 15 Jul 2020 13:45:59 +0800
-Message-Id: <20200715054612.6349-5-colyli@suse.de>
+Subject: [PATCH v2 05/17] bcache: fix super block seq numbers comparision in register_cache_set()
+Date:   Wed, 15 Jul 2020 13:46:00 +0800
+Message-Id: <20200715054612.6349-6-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200715054612.6349-1-colyli@suse.de>
 References: <20200715054612.6349-1-colyli@suse.de>
@@ -31,81 +31,69 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In bch_cache_set_alloc() there is a big if() checks combined by 11 items
-together. When this big if() statement fails, it is difficult to tell
-exactly which item fails indeed.
+In register_cache_set(), c is pointer to struct cache_set, and ca is
+pointer to struct cache, if ca->sb.seq > c->sb.seq, it means this
+registering cache has up to date version and other members, the in-
+memory version and other members should be updated to the newer value.
 
-This patch disassembles this big if() checks into 11 single if() checks,
-which makes code debug more easier.
+But current implementation makes a cache set only has a single cache
+device, so the above assumption works well except for a special case.
+The execption is when a cache device new created and both ca->sb.seq and
+c->sb.seq are 0, because the super block is never flushed out yet. In
+the location for the following if() check,
+2156         if (ca->sb.seq > c->sb.seq) {
+2157                 c->sb.version           = ca->sb.version;
+2158                 memcpy(c->sb.set_uuid, ca->sb.set_uuid, 16);
+2159                 c->sb.flags             = ca->sb.flags;
+2160                 c->sb.seq               = ca->sb.seq;
+2161                 pr_debug("set version = %llu\n", c->sb.version);
+2162         }
+c->sb.version is not initialized yet and valued 0. When ca->sb.seq is 0,
+the if() check will fail (because both values are 0), and the cache set
+version, set_uuid, flags and seq won't be updated.
+
+The above problem is hiden for current code, because the bucket size is
+compatible among different super block version. And the next time when
+running cache set again, ca->sb.seq will be larger than 0 and cache set
+super block version will be updated properly.
+
+But if the large bucket feature is enabled,  sb->bucket_size is the low
+16bits of the bucket size. For a power of 2 value, when the actual
+bucket size exceeds 16bit width, sb->bucket_size will always be 0. Then
+read_super_basic() will fail because the if() check to
+is_power_of_2(sb->bucket_size) is false. This is how the long time
+hidden bug is triggered.
+
+This patch modifies the if() check to the following way,
+2156         if (ca->sb.seq > c->sb.seq || c->sb.seq == 0) {
+Then cache set's version, set_uuid, flags and seq will always be updated
+corectly including for a new created cache device.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/super.c | 52 ++++++++++++++++++++++++++++-----------
- 1 file changed, 37 insertions(+), 15 deletions(-)
+ drivers/md/bcache/super.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 2abeb3ba88be..1d5b2b3ad93a 100644
+index 1d5b2b3ad93a..0a51ea857e3f 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -1865,21 +1865,43 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
- 	iter_size = (sb->bucket_size / sb->block_size + 1) *
- 		sizeof(struct btree_iter_set);
- 
--	if (!(c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL)) ||
--	    mempool_init_slab_pool(&c->search, 32, bch_search_cache) ||
--	    mempool_init_kmalloc_pool(&c->bio_meta, 2,
--				sizeof(struct bbio) + sizeof(struct bio_vec) *
--				bucket_pages(c)) ||
--	    mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size) ||
--	    bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
--			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER) ||
--	    !(c->uuids = alloc_bucket_pages(GFP_KERNEL, c)) ||
--	    !(c->moving_gc_wq = alloc_workqueue("bcache_gc",
--						WQ_MEM_RECLAIM, 0)) ||
--	    bch_journal_alloc(c) ||
--	    bch_btree_cache_alloc(c) ||
--	    bch_open_buckets_alloc(c) ||
--	    bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages)))
-+	c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL);
-+	if (!c->devices)
-+		goto err;
-+
-+	if (mempool_init_slab_pool(&c->search, 32, bch_search_cache))
-+		goto err;
-+
-+	if (mempool_init_kmalloc_pool(&c->bio_meta, 2,
-+			sizeof(struct bbio) +
-+			sizeof(struct bio_vec) * bucket_pages(c)))
-+		goto err;
-+
-+	if (mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size))
-+		goto err;
-+
-+	if (bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
-+			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER))
-+		goto err;
-+
-+	c->uuids = alloc_bucket_pages(GFP_KERNEL, c);
-+	if (!c->uuids)
-+		goto err;
-+
-+	c->moving_gc_wq = alloc_workqueue("bcache_gc", WQ_MEM_RECLAIM, 0);
-+	if (!c->moving_gc_wq)
-+		goto err;
-+
-+	if (bch_journal_alloc(c))
-+		goto err;
-+
-+	if (bch_btree_cache_alloc(c))
-+		goto err;
-+
-+	if (bch_open_buckets_alloc(c))
-+		goto err;
-+
-+	if (bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages)))
+@@ -2146,7 +2146,14 @@ static const char *register_cache_set(struct cache *ca)
+ 	    sysfs_create_link(&c->kobj, &ca->kobj, buf))
  		goto err;
  
- 	c->congested_read_threshold_us	= 2000;
+-	if (ca->sb.seq > c->sb.seq) {
++	/*
++	 * A special case is both ca->sb.seq and c->sb.seq are 0,
++	 * such condition happens on a new created cache device whose
++	 * super block is never flushed yet. In this case c->sb.version
++	 * and other members should be updated too, otherwise we will
++	 * have a mistaken super block version in cache set.
++	 */
++	if (ca->sb.seq > c->sb.seq || c->sb.seq == 0) {
+ 		c->sb.version		= ca->sb.version;
+ 		memcpy(c->sb.set_uuid, ca->sb.set_uuid, 16);
+ 		c->sb.flags             = ca->sb.flags;
 -- 
 2.26.2
 
