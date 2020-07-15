@@ -2,76 +2,76 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CD21220556
-	for <lists+linux-bcache@lfdr.de>; Wed, 15 Jul 2020 08:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCA59220809
+	for <lists+linux-bcache@lfdr.de>; Wed, 15 Jul 2020 11:03:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728777AbgGOGpf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 15 Jul 2020 02:45:35 -0400
-Received: from [195.135.220.15] ([195.135.220.15]:55434 "EHLO mx2.suse.de"
+        id S1730148AbgGOJDN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 15 Jul 2020 05:03:13 -0400
+Received: from [195.135.220.15] ([195.135.220.15]:45508 "EHLO mx2.suse.de"
         rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbgGOGpf (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 15 Jul 2020 02:45:35 -0400
+        id S1729856AbgGOJDN (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 15 Jul 2020 05:03:13 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 9987BAC85;
-        Wed, 15 Jul 2020 06:45:36 +0000 (UTC)
-Subject: Re: [PATCH v2 08/17] bcache: struct cache_sb is only for in-memory
- super block now
-To:     Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org
+        by mx2.suse.de (Postfix) with ESMTP id CFAD2AF59;
+        Wed, 15 Jul 2020 09:03:12 +0000 (UTC)
+Subject: Re: [PATCH v2 01/17] bcache: add comments to mark member offset of
+ struct cache_sb_disk
+To:     Hannes Reinecke <hare@suse.de>, linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org
 References: <20200715054612.6349-1-colyli@suse.de>
- <20200715054612.6349-9-colyli@suse.de>
-From:   Hannes Reinecke <hare@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
- 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
- azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <18bb79b5-8a09-483e-b794-ec73bca5c943@suse.de>
-Date:   Wed, 15 Jul 2020 08:45:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ <20200715054612.6349-2-colyli@suse.de>
+ <668b8126-6a34-7029-dea4-2ad0ecc3915e@suse.de>
+From:   Coly Li <colyli@suse.de>
+Autocrypt: addr=colyli@suse.de; keydata=
+ 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
+Message-ID: <f48d11e2-bd17-ba6e-1bc1-b496929e5e59@suse.de>
+Date:   Wed, 15 Jul 2020 17:03:05 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200715054612.6349-9-colyli@suse.de>
+In-Reply-To: <668b8126-6a34-7029-dea4-2ad0ecc3915e@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -80,72 +80,95 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 7/15/20 7:46 AM, Coly Li wrote:
-> We have struct cache_sb_disk for on-disk super block already, it is
-> unnecessary to keep the in-memory super block format exactly mapping
-> to the on-disk struct layout.
-> 
-> This patch adds code comments to notice that struct cache_sb is not
-> exactly mapping to cache_sb_disk anymore, and removes the useless member
-> csum and pad[5].
-> 
-> Although struct cache_sb does not belong to uapi anymore, but there are
-> still some on-disk format related macros reference it and it is
-> unncessary to get rid of such dependency now. So struct cache_sb will
-> continue to stay in include/uapi/linux/bache.h for now.
-> 
-> Signed-off-by: Coly Li <colyli@suse.de>
-> ---
->  include/uapi/linux/bcache.h | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/uapi/linux/bcache.h b/include/uapi/linux/bcache.h
-> index 3c0aebb4a878..f5106c5939b0 100644
-> --- a/include/uapi/linux/bcache.h
-> +++ b/include/uapi/linux/bcache.h
-> @@ -216,8 +216,13 @@ struct cache_sb_disk {
->  /*8d0*/
->  };
->  
-> +/*
-> + * This is for in-memory bcache super block.
-> + * NOTE: cache_sb is NOT exactly mapping to cache_sb_disk anymore,
-> + *       the member size, ordering and even whole struct size may be
-> + *       different from cache_sb_disk now.
-> + */
->  struct cache_sb {
-> -	__u64			csum;
->  	__u64			offset;	/* sector where this sb was written */
->  	__u64			version;
->  
-> @@ -237,8 +242,6 @@ struct cache_sb {
->  	__u64			feature_incompat;
->  	__u64			feature_ro_compat;
->  
-> -	__u64			pad[5];
-> -
->  	union {
->  	struct {
->  		/* Cache devices */
-> @@ -246,7 +249,6 @@ struct cache_sb {
->  
->  		__u16		block_size;	/* sectors */
->  		__u16		bucket_size;	/* sectors */
-> -
->  		__u16		nr_in_set;
->  		__u16		nr_this_dev;
->  	};
-> 
-I would drop the 'anymore' from the description, as this implies it
-changed recently. But otherwise:
+On 2020/7/15 14:02, Hannes Reinecke wrote:
+> On 7/15/20 7:45 AM, Coly Li wrote:
+>> This patch adds comments to mark each member of struct cache_sb_disk,
+>> it is helpful to understand the bcache superblock on-disk layout.
+>>
+>> Signed-off-by: Coly Li <colyli@suse.de>
+>> ---
+>>   include/uapi/linux/bcache.h | 39 +++++++++++++++++++------------------
+>>   1 file changed, 20 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/include/uapi/linux/bcache.h b/include/uapi/linux/bcache.h
+>> index 9a1965c6c3d0..afbd1b56a661 100644
+>> --- a/include/uapi/linux/bcache.h
+>> +++ b/include/uapi/linux/bcache.h
+>> @@ -158,33 +158,33 @@ static inline struct bkey *bkey_idx(const struct
+>> bkey *k, unsigned int nr_keys)
+>>   #define BDEV_DATA_START_DEFAULT        16    /* sectors */
+>>     struct cache_sb_disk {
+>> -    __le64            csum;
+>> -    __le64            offset;    /* sector where this sb was written */
+>> -    __le64            version;
+>> +/*000*/    __le64            csum;
+>> +/*008*/    __le64            offset;    /* sector where this sb was
+>> written */
+>> +/*010*/    __le64            version;
+>>   -    __u8            magic[16];
+>> +/*018*/    __u8            magic[16];
+>>   -    __u8            uuid[16];
+>> +/*028*/    __u8            uuid[16];
+>>       union {
+>> -        __u8        set_uuid[16];
+>> +/*038*/        __u8        set_uuid[16];
+>>           __le64        set_magic;
+>>       };
+>> -    __u8            label[SB_LABEL_SIZE];
+>> +/*048*/    __u8            label[SB_LABEL_SIZE];
+>>   -    __le64            flags;
+>> -    __le64            seq;
+>> -    __le64            pad[8];
+>> +/*068*/    __le64            flags;
+>> +/*070*/    __le64            seq;
+>> +/*078*/    __le64            pad[8];
+>>         union {
+>>       struct {
+>>           /* Cache devices */
+>> -        __le64        nbuckets;    /* device size */
+>> +/*0b8*/        __le64        nbuckets;    /* device size */
+>>   -        __le16        block_size;    /* sectors */
+>> -        __le16        bucket_size;    /* sectors */
+>> +/*0c0*/        __le16        block_size;    /* sectors */
+>> +/*0c2*/        __le16        bucket_size;    /* sectors */
+>>   -        __le16        nr_in_set;
+>> -        __le16        nr_this_dev;
+>> +/*0c4*/        __le16        nr_in_set;
+>> +/*0c6*/        __le16        nr_this_dev;
+>>       };
+>>       struct {
+>>           /* Backing devices */
+>> @@ -198,14 +198,15 @@ struct cache_sb_disk {
+>>       };
+>>       };
+>>   -    __le32            last_mount;    /* time overflow in y2106 */
+>> +/*0c8*/    __le32            last_mount;    /* time overflow in y2106 */
+>>   -    __le16            first_bucket;
+>> +/*0cc*/    __le16            first_bucket;
+>>       union {
+>> -        __le16        njournal_buckets;
+>> +/*0ce*/        __le16        njournal_buckets;
+>>           __le16        keys;
+>>       };
+>> -    __le64            d[SB_JOURNAL_BUCKETS];    /* journal buckets */
+>> +/*0d0*/    __le64            d[SB_JOURNAL_BUCKETS];    /* journal
+>> buckets */
+>> +/*8d0*/
+>>   };
+>>     struct cache_sb {
+>>
+> Common practice is to place comments at the end; please don't use the
+> start of the line here.
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+Hi Hannes,
 
-Cheers,
+When I try to move the offset comment to the line end, I find it
+conflicts with normal code comment, e.g.
+   __le64            d[SB_JOURNAL_BUCKETS];    /* journal buckets */
 
-Hannes
--- 
-Dr. Hannes Reinecke		           Kernel Storage Architect
-hare@suse.de			                  +49 911 74053 688
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), GF: Felix Imendörffer
+I have to add the offset comment to the line start. I guess this is why
+ocfs2 code adds the offset comment at the line start.
+
+So finally I have to keep the offset comment on line start still...
+
+Coly Li
