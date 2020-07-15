@@ -2,25 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A275D220F5E
-	for <lists+linux-bcache@lfdr.de>; Wed, 15 Jul 2020 16:31:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87C81220F60
+	for <lists+linux-bcache@lfdr.de>; Wed, 15 Jul 2020 16:31:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728753AbgGOObE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 15 Jul 2020 10:31:04 -0400
-Received: from [195.135.220.15] ([195.135.220.15]:60102 "EHLO mx2.suse.de"
+        id S1728793AbgGOObG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 15 Jul 2020 10:31:06 -0400
+Received: from [195.135.220.15] ([195.135.220.15]:60118 "EHLO mx2.suse.de"
         rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1728739AbgGOObD (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 15 Jul 2020 10:31:03 -0400
+        id S1728739AbgGOObG (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 15 Jul 2020 10:31:06 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 7567EAEFC;
-        Wed, 15 Jul 2020 14:31:05 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 51DF1AEFC;
+        Wed, 15 Jul 2020 14:31:07 +0000 (UTC)
 From:   colyli@suse.de
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [PATCH v3 15/16] bcache: avoid extra memory allocation from mempool c->fill_iter
-Date:   Wed, 15 Jul 2020 22:30:14 +0800
-Message-Id: <20200715143015.14957-16-colyli@suse.de>
+Subject: [PATCH v3 16/16] bcache: avoid extra memory consumption in struct bbio for large bucket size
+Date:   Wed, 15 Jul 2020 22:30:15 +0800
+Message-Id: <20200715143015.14957-17-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200715143015.14957-1-colyli@suse.de>
 References: <20200715143015.14957-1-colyli@suse.de>
@@ -33,49 +33,87 @@ X-Mailing-List: linux-bcache@vger.kernel.org
 
 From: Coly Li <colyli@suse.de>
 
-Mempool c->fill_iter is used to allocate memory for struct btree_iter in
-bch_btree_node_read_done() to iterate all keys of a read-in btree node.
+Bcache uses struct bbio to do I/Os for meta data pages like uuids,
+disk_buckets, prio_buckets, and btree nodes.
 
-The allocation size is defined in bch_cache_set_alloc() by,
-  mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size))
-where iter_size is defined by a calculation,
-  (sb->bucket_size / sb->block_size + 1) * sizeof(struct btree_iter_set)
+Example writing a btree node onto cache device, the process is,
+- Allocate a struct bbio from mempool c->bio_meta.
+- Inside struct bbio embedded a struct bio, initialize bi_inline_vecs
+  for this embedded bio.
+- Call bch_bio_map() to map each meta data page to each bv from the
+  inlined  bi_io_vec table.
+- Call bch_submit_bbio() to submit the bio into underlying block layer.
+- When the I/O completed, only release the struct bbio, don't touch the
+  reference counter of the meta data pages.
 
-For 16bit width bucket_size the calculation is OK, but now the bucket
-size is extended to 32bit, the bucket size can be 2GB. By the above
-calculation, iter_size can be 2048 pages (order 11 is still accepted by
-buddy allocator).
+The struct bbio is defined as,
+738 struct bbio {
+739     unsigned int            submit_time_us;
+	[snipped]
+748     struct bio              bio;
+749 };
 
-But the actual size holds the bkeys in meta data bucket is limited to
-meta_bucket_pages() already, which is 16MB. By the above calculation,
-if replace sb->bucket_size by meta_bucket_pages() * PAGE_SECTORS, the
-result is 16 pages. This is the size large enough for the mempool
-allocation to struct btree_iter.
+Because struct bio is embedded at the end of struct bbio, therefore the
+actual size of struct bbio is sizeof(struct bio) + size of the embedded
+bio->bi_inline_vecs.
 
-Therefore in worst case every time mempool c->fill_iter allocates, at
-most 4080 pages are wasted and won't be used. Therefore this patch uses
-meta_bucket_pages() * PAGE_SECTORS to calculate the iter size in
-bch_cache_set_alloc(), to avoid extra memory allocation from mempool
-c->fill_iter.
+Now all the meta data bucket size are limited to meta_bucket_pages(), if
+the bucket size is large than meta_bucket_pages()*PAGE_SECTORS, rested
+space in the bucket is unused. Therefore the most used space in meta
+bucket is (1<<MAX_ORDER) pages, or (1<<CONFIG_FORCE_MAX_ZONEORDER) if it
+is configured.
+
+Therefore for large bucket size, it is unnecessary to calculate the
+allocation size of mempool c->bio_meta as,
+	mempool_init_kmalloc_pool(&c->bio_meta, 2,
+			sizeof(struct bbio) +
+			sizeof(struct bio_vec) * bucket_pages(c))
+It is too large, neither the Linux buddy allocator cannot allocate so
+much continuous pages, nor the extra allocated pages are wasted.
+
+This patch replace bucket_pages() to meta_bucket_pages() in two places,
+- In bch_cache_set_alloc(), when initialize mempool c->bio_meta, uses
+  sizeof(struct bbio) + sizeof(struct bio_vec) * bucket_pages(c) to set
+  the allocating object size.
+- In bch_bbio_alloc(), when calling bio_init() to set inline bvec talbe
+  bi_inline_bvecs, uses meta_bucket_pages() to indicate number of the
+  inline bio vencs number.
+
+Now the maximum size of embedded bio inside struct bbio exactly matches
+the limit of meta_bucket_pages(), no extra page wasted.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
+ drivers/md/bcache/io.c    | 2 +-
  drivers/md/bcache/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/md/bcache/io.c b/drivers/md/bcache/io.c
+index b25ee33b0d0b..a14a445618b4 100644
+--- a/drivers/md/bcache/io.c
++++ b/drivers/md/bcache/io.c
+@@ -26,7 +26,7 @@ struct bio *bch_bbio_alloc(struct cache_set *c)
+ 	struct bbio *b = mempool_alloc(&c->bio_meta, GFP_NOIO);
+ 	struct bio *bio = &b->bio;
+ 
+-	bio_init(bio, bio->bi_inline_vecs, bucket_pages(c));
++	bio_init(bio, bio->bi_inline_vecs, meta_bucket_pages(&c->sb));
+ 
+ 	return bio;
+ }
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index e0da52f8e8c9..90494c7dead8 100644
+index 90494c7dead8..cade3f09661d 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -1908,7 +1908,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
- 	INIT_LIST_HEAD(&c->btree_cache_freed);
- 	INIT_LIST_HEAD(&c->data_buckets);
+@@ -1920,7 +1920,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
  
--	iter_size = (sb->bucket_size / sb->block_size + 1) *
-+	iter_size = ((meta_bucket_pages(sb) * PAGE_SECTORS) / sb->block_size + 1) *
- 		sizeof(struct btree_iter_set);
+ 	if (mempool_init_kmalloc_pool(&c->bio_meta, 2,
+ 			sizeof(struct bbio) +
+-			sizeof(struct bio_vec) * bucket_pages(c)))
++			sizeof(struct bio_vec) * meta_bucket_pages(&c->sb)))
+ 		goto err;
  
- 	c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL);
+ 	if (mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size))
 -- 
 2.26.2
 
