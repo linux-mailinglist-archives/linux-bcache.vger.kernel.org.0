@@ -2,25 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50978220550
-	for <lists+linux-bcache@lfdr.de>; Wed, 15 Jul 2020 08:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CD21220556
+	for <lists+linux-bcache@lfdr.de>; Wed, 15 Jul 2020 08:45:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbgGOGoW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 15 Jul 2020 02:44:22 -0400
-Received: from [195.135.220.15] ([195.135.220.15]:55180 "EHLO mx2.suse.de"
+        id S1728777AbgGOGpf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 15 Jul 2020 02:45:35 -0400
+Received: from [195.135.220.15] ([195.135.220.15]:55434 "EHLO mx2.suse.de"
         rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbgGOGoV (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 15 Jul 2020 02:44:21 -0400
+        id S1725924AbgGOGpf (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 15 Jul 2020 02:45:35 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 5A252AC23;
-        Wed, 15 Jul 2020 06:44:22 +0000 (UTC)
-Subject: Re: [PATCH v2 07/17] bcache: move bucket related code into
- read_super_basic()
+        by mx2.suse.de (Postfix) with ESMTP id 9987BAC85;
+        Wed, 15 Jul 2020 06:45:36 +0000 (UTC)
+Subject: Re: [PATCH v2 08/17] bcache: struct cache_sb is only for in-memory
+ super block now
 To:     Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org
 References: <20200715054612.6349-1-colyli@suse.de>
- <20200715054612.6349-8-colyli@suse.de>
+ <20200715054612.6349-9-colyli@suse.de>
 From:   Hannes Reinecke <hare@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
@@ -66,12 +66,12 @@ Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
  ZtWlhGRERnDH17PUXDglsOA08HCls0PHx8itYsjYCAyETlxlLApXWdVl9YVwbQpQ+i693t/Y
  PGu8jotn0++P19d3JwXW8t6TVvBIQ1dRZHx1IxGLMn+CkDJMOmHAUMWTAXX2rf5tUjas8/v2
  azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <a42a88c5-2d00-be36-2adf-bbf4285096f9@suse.de>
-Date:   Wed, 15 Jul 2020 08:44:19 +0200
+Message-ID: <18bb79b5-8a09-483e-b794-ec73bca5c943@suse.de>
+Date:   Wed, 15 Jul 2020 08:45:33 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20200715054612.6349-8-colyli@suse.de>
+In-Reply-To: <20200715054612.6349-9-colyli@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -81,60 +81,64 @@ List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
 On 7/15/20 7:46 AM, Coly Li wrote:
-> Setting sb->first_bucket and checking sb->keys indeed are only for cache
-> device, it does not make sense to do them in read_super() for backing
-> device too.
+> We have struct cache_sb_disk for on-disk super block already, it is
+> unnecessary to keep the in-memory super block format exactly mapping
+> to the on-disk struct layout.
 > 
-> This patch moves the related code piece into read_super_basic()
-> explicitly for cache device and avoid the confusion.
+> This patch adds code comments to notice that struct cache_sb is not
+> exactly mapping to cache_sb_disk anymore, and removes the useless member
+> csum and pad[5].
+> 
+> Although struct cache_sb does not belong to uapi anymore, but there are
+> still some on-disk format related macros reference it and it is
+> unncessary to get rid of such dependency now. So struct cache_sb will
+> continue to stay in include/uapi/linux/bache.h for now.
 > 
 > Signed-off-by: Coly Li <colyli@suse.de>
 > ---
->  drivers/md/bcache/super.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>  include/uapi/linux/bcache.h | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 071509590e1e..4c97d8c4a878 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -66,12 +66,17 @@ static const char *read_super_basic(struct cache_sb *sb,  struct block_device *b
->  	const char *err;
->  	unsigned int i;
+> diff --git a/include/uapi/linux/bcache.h b/include/uapi/linux/bcache.h
+> index 3c0aebb4a878..f5106c5939b0 100644
+> --- a/include/uapi/linux/bcache.h
+> +++ b/include/uapi/linux/bcache.h
+> @@ -216,8 +216,13 @@ struct cache_sb_disk {
+>  /*8d0*/
+>  };
 >  
-> +	sb->first_bucket= le16_to_cpu(s->first_bucket);
->  	sb->nbuckets	= le64_to_cpu(s->nbuckets);
->  	sb->bucket_size	= le16_to_cpu(s->bucket_size);
+> +/*
+> + * This is for in-memory bcache super block.
+> + * NOTE: cache_sb is NOT exactly mapping to cache_sb_disk anymore,
+> + *       the member size, ordering and even whole struct size may be
+> + *       different from cache_sb_disk now.
+> + */
+>  struct cache_sb {
+> -	__u64			csum;
+>  	__u64			offset;	/* sector where this sb was written */
+>  	__u64			version;
 >  
->  	sb->nr_in_set	= le16_to_cpu(s->nr_in_set);
->  	sb->nr_this_dev	= le16_to_cpu(s->nr_this_dev);
+> @@ -237,8 +242,6 @@ struct cache_sb {
+>  	__u64			feature_incompat;
+>  	__u64			feature_ro_compat;
 >  
-> +	err = "Too many journal buckets";
-> +	if (sb->keys > SB_JOURNAL_BUCKETS)
-> +		goto err;
-> +
->  	err = "Too many buckets";
->  	if (sb->nbuckets > LONG_MAX)
->  		goto err;
-> @@ -155,7 +160,6 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
->  	sb->flags		= le64_to_cpu(s->flags);
->  	sb->seq			= le64_to_cpu(s->seq);
->  	sb->last_mount		= le32_to_cpu(s->last_mount);
-> -	sb->first_bucket	= le16_to_cpu(s->first_bucket);
->  	sb->keys		= le16_to_cpu(s->keys);
->  
->  	for (i = 0; i < SB_JOURNAL_BUCKETS; i++)
-> @@ -172,10 +176,6 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
->  	if (memcmp(sb->magic, bcache_magic, 16))
->  		goto err;
->  
-> -	err = "Too many journal buckets";
-> -	if (sb->keys > SB_JOURNAL_BUCKETS)
-> -		goto err;
+> -	__u64			pad[5];
 > -
->  	err = "Bad checksum";
->  	if (s->csum != csum_set(s))
->  		goto err;
+>  	union {
+>  	struct {
+>  		/* Cache devices */
+> @@ -246,7 +249,6 @@ struct cache_sb {
+>  
+>  		__u16		block_size;	/* sectors */
+>  		__u16		bucket_size;	/* sectors */
+> -
+>  		__u16		nr_in_set;
+>  		__u16		nr_this_dev;
+>  	};
 > 
+I would drop the 'anymore' from the description, as this implies it
+changed recently. But otherwise:
+
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,
