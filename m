@@ -2,28 +2,28 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1597224172
-	for <lists+linux-bcache@lfdr.de>; Fri, 17 Jul 2020 19:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 754F1224177
+	for <lists+linux-bcache@lfdr.de>; Fri, 17 Jul 2020 19:08:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbgGQRIo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 17 Jul 2020 13:08:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46022 "EHLO mail.kernel.org"
+        id S1726968AbgGQRIr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 17 Jul 2020 13:08:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbgGQRIo (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 17 Jul 2020 13:08:44 -0400
+        id S1726293AbgGQRIq (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 17 Jul 2020 13:08:46 -0400
 Received: from localhost (unknown [137.135.114.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDC5020717;
-        Fri, 17 Jul 2020 17:08:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4F9420737;
+        Fri, 17 Jul 2020 17:08:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595005724;
-        bh=iszOuuRFn0grWAUjNr1O+f5aLxO1F5cAvHJyL0IRrX0=;
+        s=default; t=1595005725;
+        bh=gGebyc7p+P0/4ivjXN7mnEH/Fir9C918/3IfsXtRvEc=;
         h=Date:From:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:From;
-        b=j65yTO6VC/N6CizIUMdmLQpOElnJz20fK3fWfiRPCFgb1FqgutmAO1OtBPYmG2ZEi
-         rfkduxC+dAFVdh1VKwY7kixJROlVO42pRrrg+vOVNz5RPqTwuoww2Iw4LP3YqJfDD+
-         GqDoW1SZgWUBu3GL8q8xbVskkLux+osyzcqvjmCk=
-Date:   Fri, 17 Jul 2020 17:08:42 +0000
+        b=DLLy1lsrmkS2+uDP93e/qU2aKvlb/arARmUfYl5AdJsi2rPwK8WE1Hc/5kuMv5KyI
+         trePLpTpK4k5Be9XVNwhWIEV4w0KKN/cxPh8c/b9Qk3U7+kQlJCZ0rPYavwXtM/EO0
+         4WWWdhbVLcKIzI959PIs1HnDoRE7gXiHQr2Jz+KY=
+Date:   Fri, 17 Jul 2020 17:08:44 +0000
 From:   Sasha Levin <sashal@kernel.org>
 To:     Sasha Levin <sashal@kernel.org>
 To:     Coly Li <colyli@suse.de>
@@ -31,10 +31,10 @@ To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
 Cc:     stable@vger.kernel.org
 Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] bcche: fix overflow in offset_to_stripe()
-In-Reply-To: <20200713111501.19061-2-colyli@suse.de>
-References: <20200713111501.19061-2-colyli@suse.de>
-Message-Id: <20200717170843.CDC5020717@mail.kernel.org>
+Subject: Re: [PATCH 2/2] bcche: fix overflow in offset_to_stripe()
+In-Reply-To: <20200712174736.9840-2-colyli@suse.de>
+References: <20200712174736.9840-2-colyli@suse.de>
+Message-Id: <20200717170844.D4F9420737@mail.kernel.org>
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
@@ -101,6 +101,7 @@ v4.4.230: Failed to apply! Possible dependencies:
     6f10f7d1b02b1 ("bcache: style fix to replace 'unsigned' by 'unsigned int'")
     7e027ca4b534b ("bcache: add stop_when_cache_set_failed option to backing device")
     87760e5eef359 ("block: hook up writeback throttling")
+    8d354f133e86d ("blk-mq: improve layout of blk_mq_hw_ctx")
     9467f85960a31 ("blk-mq/cpu-notif: Convert to new hotplug state machine")
     9e234eeafbe17 ("blk-throttle: add a simple idle detection")
     af3e3a5259e35 ("block: don't unecessarily clobber bi_error for chained bios")
