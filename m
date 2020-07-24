@@ -2,54 +2,51 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 28F75227521
-	for <lists+linux-bcache@lfdr.de>; Tue, 21 Jul 2020 04:00:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A592222C0F8
+	for <lists+linux-bcache@lfdr.de>; Fri, 24 Jul 2020 10:39:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbgGUCA2 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 20 Jul 2020 22:00:28 -0400
-Received: from [211.196.21.11] ([211.196.21.11]:53116 "EHLO
-        iscure03.localdomain" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728153AbgGUCA0 (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 20 Jul 2020 22:00:26 -0400
-Received: from Shop01 (unknown [127.0.0.1])
-        by iscure03.localdomain (Postfix) with SMTP id 061772AE13B;
-        Mon, 20 Jul 2020 12:16:00 +0900 (KST)
-Received: from [229.141.241.102] by Shop01 id ud7dU1XDA1r0; Sun, 19 Jul 2020 12:13:41 -0400
-Message-ID: <p$j$$juj73lb2-kt@3ud.erf.a.16r>
-From:   "MOORE GATES LTD" <TEXT@TEXT.COM>
-Reply-To: "MOORE GATES LTD" <TEXT@TEXT.COM>
-To:     ling_1111@hotmail.com
-Subject: FROM MR. MOORE
-Date:   Sun, 19 Jul 20 12:13:41 GMT
-X-Mailer: eGroups Message Poster
+        id S1726642AbgGXIj3 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-bcache@lfdr.de>); Fri, 24 Jul 2020 04:39:29 -0400
+Received: from mx2.itam.mx ([148.205.229.36]:31620 "EHLO mx2.itam.mx"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726591AbgGXIj3 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 24 Jul 2020 04:39:29 -0400
+Received: from cronos.itam.mx (hydrus2b.itam.mx [148.205.228.143])
+        by mx2.itam.mx  with ESMTP id 06O8coHv007627-06O8coI2007627
+        (version=TLSv1.0 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
+        Fri, 24 Jul 2020 03:38:50 -0500
+Received: from [10.28.175.153] (105.0.7.102) by cronos.itam.mx
+ (148.205.148.91) with Microsoft SMTP Server (TLS) id 14.3.468.0; Fri, 24 Jul
+ 2020 03:38:50 -0500
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="D9F2D5A2__"
-X-Priority: 1
-X-MSMail-Priority: High
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Covid_19_Wohlt=C3=A4tigkeitsfonds?=
+To:     Recipients@vger.kernel.org
+From:   ''Tayeb@vger.kernel.org, Souami''@vger.kernel.org
+Date:   Fri, 24 Jul 2020 10:38:35 +0200
+Reply-To: <charlesjacksonjr001@gmail.com>
+Message-ID: <26b5e6fa-012d-4693-ac26-26c54051558e@CRONOS.itam.mx>
+X-Originating-IP: [105.0.7.102]
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+Hallo
 
---D9F2D5A2__
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+Ich bin Charles W. Jackson aus North Carolina, Vereinigte Staaten von Amerika, und ich bin der Gewinner des Mega-Millionen-Jackpots von 344 Millionen US-Dollar. Ich spende die Summe von 2.000.000 Millionen Euro als Teil der Hilfsgelder für das Corona-Virus.
 
-Dear Beloved,
-Peace of the Lord be with you and family, I am Fitzpatrick Moore a
-United Kingdom Citizen, I have ($ 25M) Twenty five Million united
-states dollars with a finance House in United State. I will want you
-to help me collect this deposit and dispatch it to charity
-organizations. You will take out 30% of these funds for your
-assistance to help ME disburse this fund to charities. I will like you
-to acknowledge the receipt of this e-mail as soon as possible and
-treats with absolute confidentiality and sincerity. Please reply to my
-Email: (moorefitzpatrick@gmail.com)
-Yours Sincerely,
-Fitzpatrick Moore
+Dies ist Ihr Spendencode: [CJ530342019]
 
---D9F2D5A2__--
+www.youtube.com/watch?v=BSr8myiLPMQ
 
+Bitte antworten Sie auf diese E-Mail mit dem SPENDERCODE:
+
+charlesjacksonjr001@gmail.com
+
+Ich hoffe, dass Sie und Ihre Familie dies durchkommen
+
+
+Herr Charles Jackson
