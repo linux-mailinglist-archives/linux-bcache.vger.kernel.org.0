@@ -2,27 +2,27 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D67C122D737
-	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 14:02:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5468B22D73B
+	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 14:02:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbgGYMCy (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 25 Jul 2020 08:02:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52180 "EHLO mx2.suse.de"
+        id S1726977AbgGYMC5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 25 Jul 2020 08:02:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52232 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726583AbgGYMCy (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 25 Jul 2020 08:02:54 -0400
+        id S1726583AbgGYMC4 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 25 Jul 2020 08:02:56 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 636D3AB55;
-        Sat, 25 Jul 2020 12:03:01 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 3CEF7AB55;
+        Sat, 25 Jul 2020 12:03:04 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Coly Li <colyli@suse.de>
-Subject: [PATCH 06/25] bcache: Use struct_size() in kzalloc()
-Date:   Sat, 25 Jul 2020 20:00:20 +0800
-Message-Id: <20200725120039.91071-7-colyli@suse.de>
+        Coly Li <colyli@suse.de>, Ken Raeburn <raeburn@redhat.com>,
+        stable@vger.kernel.org
+Subject: [PATCH 07/25] bcache: avoid nr_stripes overflow in bcache_device_init()
+Date:   Sat, 25 Jul 2020 20:00:21 +0800
+Message-Id: <20200725120039.91071-8-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200725120039.91071-1-colyli@suse.de>
 References: <20200725120039.91071-1-colyli@suse.de>
@@ -33,37 +33,54 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+For some block devices which large capacity (e.g. 8TB) but small io_opt
+size (e.g. 8 sectors), in bcache_device_init() the stripes number calcu-
+lated by,
+	DIV_ROUND_UP_ULL(sectors, d->stripe_size);
+might be overflow to the unsigned int bcache_device->nr_stripes.
 
-Make use of the struct_size() helper instead of an open-coded version
-in order to avoid any potential type mistakes.
+This patch uses the uint64_t variable to store DIV_ROUND_UP_ULL()
+and after the value is checked to be available in unsigned int range,
+sets it to bache_device->nr_stripes. Then the overflow is avoided.
 
-This code was detected with the help of Coccinelle and, audited and
-fixed manually.
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Reported-and-tested-by: Ken Raeburn <raeburn@redhat.com>
 Signed-off-by: Coly Li <colyli@suse.de>
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1783075
+Cc: stable@vger.kernel.org
 ---
- drivers/md/bcache/writeback.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/md/bcache/super.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 71801c086b82..5397a2c5d6cc 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -459,10 +459,8 @@ static void read_dirty(struct cached_dev *dc)
- 		for (i = 0; i < nk; i++) {
- 			w = keys[i];
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 6db698b1739a..05ad1cd9f329 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -826,19 +826,19 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+ 	struct request_queue *q;
+ 	const size_t max_stripes = min_t(size_t, INT_MAX,
+ 					 SIZE_MAX / sizeof(atomic_t));
+-	size_t n;
++	uint64_t n;
+ 	int idx;
  
--			io = kzalloc(sizeof(struct dirty_io) +
--				     sizeof(struct bio_vec) *
--				     DIV_ROUND_UP(KEY_SIZE(&w->key),
--						  PAGE_SECTORS),
-+			io = kzalloc(struct_size(io, bio.bi_inline_vecs,
-+						DIV_ROUND_UP(KEY_SIZE(&w->key), PAGE_SECTORS)),
- 				     GFP_KERNEL);
- 			if (!io)
- 				goto err;
+ 	if (!d->stripe_size)
+ 		d->stripe_size = 1 << 31;
+ 
+-	d->nr_stripes = DIV_ROUND_UP_ULL(sectors, d->stripe_size);
+-
+-	if (!d->nr_stripes || d->nr_stripes > max_stripes) {
+-		pr_err("nr_stripes too large or invalid: %u (start sector beyond end of disk?)\n",
+-			(unsigned int)d->nr_stripes);
++	n = DIV_ROUND_UP_ULL(sectors, d->stripe_size);
++	if (!n || n > max_stripes) {
++		pr_err("nr_stripes too large or invalid: %llu (start sector beyond end of disk?)\n",
++			n);
+ 		return -ENOMEM;
+ 	}
++	d->nr_stripes = n;
+ 
+ 	n = d->nr_stripes * sizeof(atomic_t);
+ 	d->stripe_sectors_dirty = kvzalloc(n, GFP_KERNEL);
 -- 
 2.26.2
 
