@@ -2,27 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ABB422D73E
-	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 14:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D89B622D73F
+	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 14:03:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbgGYMDA (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 25 Jul 2020 08:03:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52272 "EHLO mx2.suse.de"
+        id S1727012AbgGYMDD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 25 Jul 2020 08:03:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52300 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726583AbgGYMC7 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 25 Jul 2020 08:02:59 -0400
+        id S1726997AbgGYMDD (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 25 Jul 2020 08:03:03 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 5373DAEAF;
-        Sat, 25 Jul 2020 12:03:07 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 96049AB55;
+        Sat, 25 Jul 2020 12:03:09 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Ken Raeburn <raeburn@redhat.com>,
-        stable@vger.kernel.org
-Subject: [PATCH 08/25] bcache: fix overflow in offset_to_stripe()
-Date:   Sat, 25 Jul 2020 20:00:22 +0800
-Message-Id: <20200725120039.91071-9-colyli@suse.de>
+        Coly Li <colyli@suse.de>
+Subject: [PATCH 09/25] bcache: add read_super_common() to read major part of super block
+Date:   Sat, 25 Jul 2020 20:00:23 +0800
+Message-Id: <20200725120039.91071-10-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200725120039.91071-1-colyli@suse.de>
 References: <20200725120039.91071-1-colyli@suse.de>
@@ -33,136 +32,150 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-offset_to_stripe() returns the stripe number (in type unsigned int) from
-an offset (in type uint64_t) by the following calculation,
-	do_div(offset, d->stripe_size);
-For large capacity backing device (e.g. 18TB) with small stripe size
-(e.g. 4KB), the result is 4831838208 and exceeds UINT_MAX. The actual
-returned value which caller receives is 536870912, due to the overflow.
+Later patches will introduce feature set bits to on-disk super block and
+increase super block version. Current code in read_super() which reads
+common part of super block for version BCACHE_SB_VERSION_CDEV and version
+BCACHE_SB_VERSION_CDEV_WITH_UUID will be shared with the new version.
 
-Indeed in bcache_device_init(), bcache_device->nr_stripes is limited in
-range [1, INT_MAX]. Therefore all valid stripe numbers in bcache are
-in range [0, bcache_dev->nr_stripes - 1].
+Therefore this patch moves the reusable part into read_super_common(),
+this preparation patch will make later patches more simplier and only
+focus on new feature set bits.
 
-This patch adds a upper limition check in offset_to_stripe(): the max
-valid stripe number should be less than bcache_device->nr_stripes. If
-the calculated stripe number from do_div() is equal to or larger than
-bcache_device->nr_stripe, -EINVAL will be returned. (Normally nr_stripes
-is less than INT_MAX, exceeding upper limitation doesn't mean overflow,
-therefore -EOVERFLOW is not used as error code.)
-
-This patch also changes nr_stripes' type of struct bcache_device from
-'unsigned int' to 'int', and return value type of offset_to_stripe()
-from 'unsigned int' to 'int', to match their exact data ranges.
-
-All locations where bcache_device->nr_stripes and offset_to_stripe() are
-referenced also get updated for the above type change.
-
-Reported-and-tested-by: Ken Raeburn <raeburn@redhat.com>
 Signed-off-by: Coly Li <colyli@suse.de>
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1783075
-Cc: stable@vger.kernel.org
 ---
- drivers/md/bcache/bcache.h    |  2 +-
- drivers/md/bcache/writeback.c | 14 +++++++++-----
- drivers/md/bcache/writeback.h | 19 +++++++++++++++++--
- 3 files changed, 27 insertions(+), 8 deletions(-)
+ drivers/md/bcache/super.c | 111 +++++++++++++++++++++-----------------
+ 1 file changed, 63 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 221e0191b687..80e3c4813fb0 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -264,7 +264,7 @@ struct bcache_device {
- #define BCACHE_DEV_UNLINK_DONE		2
- #define BCACHE_DEV_WB_RUNNING		3
- #define BCACHE_DEV_RATE_DW_RUNNING	4
--	unsigned int		nr_stripes;
-+	int			nr_stripes;
- 	unsigned int		stripe_size;
- 	atomic_t		*stripe_sectors_dirty;
- 	unsigned long		*full_dirty_stripes;
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 5397a2c5d6cc..4f4ad6b3d43a 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -521,15 +521,19 @@ void bcache_dev_sectors_dirty_add(struct cache_set *c, unsigned int inode,
- 				  uint64_t offset, int nr_sectors)
- {
- 	struct bcache_device *d = c->devices[inode];
--	unsigned int stripe_offset, stripe, sectors_dirty;
-+	unsigned int stripe_offset, sectors_dirty;
-+	int stripe;
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 05ad1cd9f329..b5b81b92b2ef 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -59,6 +59,67 @@ struct workqueue_struct *bch_journal_wq;
  
- 	if (!d)
- 		return;
+ /* Superblock */
  
-+	stripe = offset_to_stripe(d, offset);
-+	if (stripe < 0)
-+		return;
++static const char *read_super_common(struct cache_sb *sb,  struct block_device *bdev,
++				     struct cache_sb_disk *s)
++{
++	const char *err;
++	unsigned int i;
 +
- 	if (UUID_FLASH_ONLY(&c->uuids[inode]))
- 		atomic_long_add(nr_sectors, &c->flash_dev_dirty_sectors);
- 
--	stripe = offset_to_stripe(d, offset);
- 	stripe_offset = offset & (d->stripe_size - 1);
- 
- 	while (nr_sectors) {
-@@ -569,12 +573,12 @@ static bool dirty_pred(struct keybuf *buf, struct bkey *k)
- static void refill_full_stripes(struct cached_dev *dc)
++	sb->nbuckets	= le64_to_cpu(s->nbuckets);
++	sb->bucket_size	= le16_to_cpu(s->bucket_size);
++
++	sb->nr_in_set	= le16_to_cpu(s->nr_in_set);
++	sb->nr_this_dev	= le16_to_cpu(s->nr_this_dev);
++
++	err = "Too many buckets";
++	if (sb->nbuckets > LONG_MAX)
++		goto err;
++
++	err = "Not enough buckets";
++	if (sb->nbuckets < 1 << 7)
++		goto err;
++
++	err = "Bad block/bucket size";
++	if (!is_power_of_2(sb->block_size) ||
++	    sb->block_size > PAGE_SECTORS ||
++	    !is_power_of_2(sb->bucket_size) ||
++	    sb->bucket_size < PAGE_SECTORS)
++		goto err;
++
++	err = "Invalid superblock: device too small";
++	if (get_capacity(bdev->bd_disk) <
++	    sb->bucket_size * sb->nbuckets)
++		goto err;
++
++	err = "Bad UUID";
++	if (bch_is_zero(sb->set_uuid, 16))
++		goto err;
++
++	err = "Bad cache device number in set";
++	if (!sb->nr_in_set ||
++	    sb->nr_in_set <= sb->nr_this_dev ||
++	    sb->nr_in_set > MAX_CACHES_PER_SET)
++		goto err;
++
++	err = "Journal buckets not sequential";
++	for (i = 0; i < sb->keys; i++)
++		if (sb->d[i] != sb->first_bucket + i)
++			goto err;
++
++	err = "Too many journal buckets";
++	if (sb->first_bucket + sb->keys > sb->nbuckets)
++		goto err;
++
++	err = "Invalid superblock: first bucket comes before end of super";
++	if (sb->first_bucket * sb->bucket_size < 16)
++		goto err;
++
++	err = NULL;
++err:
++	return err;
++}
++
++
+ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
+ 			      struct cache_sb_disk **res)
  {
- 	struct keybuf *buf = &dc->writeback_keys;
--	unsigned int start_stripe, stripe, next_stripe;
-+	unsigned int start_stripe, next_stripe;
-+	int stripe;
- 	bool wrapped = false;
- 
- 	stripe = offset_to_stripe(&dc->disk, KEY_OFFSET(&buf->last_scanned));
+@@ -133,55 +194,9 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
+ 		break;
+ 	case BCACHE_SB_VERSION_CDEV:
+ 	case BCACHE_SB_VERSION_CDEV_WITH_UUID:
+-		sb->nbuckets	= le64_to_cpu(s->nbuckets);
+-		sb->bucket_size	= le16_to_cpu(s->bucket_size);
 -
--	if (stripe >= dc->disk.nr_stripes)
-+	if (stripe < 0)
- 		stripe = 0;
- 
- 	start_stripe = stripe;
-diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
-index b029843ce5b6..3f1230e22de0 100644
---- a/drivers/md/bcache/writeback.h
-+++ b/drivers/md/bcache/writeback.h
-@@ -52,10 +52,22 @@ static inline uint64_t bcache_dev_sectors_dirty(struct bcache_device *d)
- 	return ret;
- }
- 
--static inline unsigned int offset_to_stripe(struct bcache_device *d,
-+static inline int offset_to_stripe(struct bcache_device *d,
- 					uint64_t offset)
- {
- 	do_div(offset, d->stripe_size);
-+
-+	/* d->nr_stripes is in range [1, INT_MAX] */
-+	if (unlikely(offset >= d->nr_stripes)) {
-+		pr_err("Invalid stripe %llu (>= nr_stripes %d).\n",
-+			offset, d->nr_stripes);
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * Here offset is definitly smaller than INT_MAX,
-+	 * return it as int will never overflow.
-+	 */
- 	return offset;
- }
- 
-@@ -63,7 +75,10 @@ static inline bool bcache_dev_stripe_dirty(struct cached_dev *dc,
- 					   uint64_t offset,
- 					   unsigned int nr_sectors)
- {
--	unsigned int stripe = offset_to_stripe(&dc->disk, offset);
-+	int stripe = offset_to_stripe(&dc->disk, offset);
-+
-+	if (stripe < 0)
-+		return false;
- 
- 	while (1) {
- 		if (atomic_read(dc->disk.stripe_sectors_dirty + stripe))
+-		sb->nr_in_set	= le16_to_cpu(s->nr_in_set);
+-		sb->nr_this_dev	= le16_to_cpu(s->nr_this_dev);
+-
+-		err = "Too many buckets";
+-		if (sb->nbuckets > LONG_MAX)
+-			goto err;
+-
+-		err = "Not enough buckets";
+-		if (sb->nbuckets < 1 << 7)
+-			goto err;
+-
+-		err = "Bad block/bucket size";
+-		if (!is_power_of_2(sb->block_size) ||
+-		    sb->block_size > PAGE_SECTORS ||
+-		    !is_power_of_2(sb->bucket_size) ||
+-		    sb->bucket_size < PAGE_SECTORS)
+-			goto err;
+-
+-		err = "Invalid superblock: device too small";
+-		if (get_capacity(bdev->bd_disk) <
+-		    sb->bucket_size * sb->nbuckets)
+-			goto err;
+-
+-		err = "Bad UUID";
+-		if (bch_is_zero(sb->set_uuid, 16))
+-			goto err;
+-
+-		err = "Bad cache device number in set";
+-		if (!sb->nr_in_set ||
+-		    sb->nr_in_set <= sb->nr_this_dev ||
+-		    sb->nr_in_set > MAX_CACHES_PER_SET)
+-			goto err;
+-
+-		err = "Journal buckets not sequential";
+-		for (i = 0; i < sb->keys; i++)
+-			if (sb->d[i] != sb->first_bucket + i)
+-				goto err;
+-
+-		err = "Too many journal buckets";
+-		if (sb->first_bucket + sb->keys > sb->nbuckets)
+-			goto err;
+-
+-		err = "Invalid superblock: first bucket comes before end of super";
+-		if (sb->first_bucket * sb->bucket_size < 16)
++		err = read_super_common(sb, bdev, s);
++		if (err)
+ 			goto err;
+-
+ 		break;
+ 	default:
+ 		err = "Unsupported superblock version";
 -- 
 2.26.2
 
