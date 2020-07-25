@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F8D722CB4C
-	for <lists+linux-bcache@lfdr.de>; Fri, 24 Jul 2020 18:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C30322D72B
+	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 14:02:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgGXQqI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 24 Jul 2020 12:46:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55270 "EHLO mx2.suse.de"
+        id S1726618AbgGYMCi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 25 Jul 2020 08:02:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52018 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726455AbgGXQqH (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 24 Jul 2020 12:46:07 -0400
+        id S1726583AbgGYMCi (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 25 Jul 2020 08:02:38 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 7876AAF5B;
-        Fri, 24 Jul 2020 16:46:13 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id A8E66AB55;
+        Sat, 25 Jul 2020 12:02:44 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
-To:     linux-bcache@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Christoph Hellwig <hch@lst.de>, stable@vger.kernel.org
-Subject: [PATCH] bcache: fix bio_{start,end}_io_acct with proper device
-Date:   Sat, 25 Jul 2020 00:45:58 +0800
-Message-Id: <20200724164558.87191-1-colyli@suse.de>
+To:     axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        Coly Li <colyli@suse.de>
+Subject: [PATCH 00/25] bcache patches for Linux v5.9 
+Date:   Sat, 25 Jul 2020 20:00:14 +0800
+Message-Id: <20200725120039.91071-1-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -30,101 +30,94 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Commit 85750aeb748f ("bcache: use bio_{start,end}_io_acct") moves the
-io account code to the location after bio_set_dev(bio, dc->bdev) in
-cached_dev_make_request(). Then the account is performed incorrectly on
-backing device, indeed the I/O should be counted to bcache device like
-/dev/bcache0.
+Hi Jens,
 
-With the mistaken I/O account, iostat does not display I/O counts for
-bcache device and all the numbers go to backing device. In writeback
-mode, the hard drive may have 340K+ IOPS which is impossible and wrong
-for spinning disk.
+This is the first wave bcache series for Linux v5.9.
 
-This patch introduces bch_bio_start_io_acct() and bch_bio_end_io_acct(),
-which switches bio->bi_disk to bcache device before calling
-bio_start_io_acct() or bio_end_io_acct(). Now the I/Os are counted to
-bcache device, and bcache device, cache device and backing device have
-their correct I/O count information back.
+The most part of change is to add large_bucket size support to bcache,
+which permits user to extend the bucket size from 16bit to 32bit width.
+This is the initial state of large bucket feature, more improvement will
+happen in future versions.
 
-Fixes: 85750aeb748f ("bcache: use bio_{start,end}_io_acct")
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: stable@vger.kernel.org
+Most of the patches from me are for the large_bucket feature, except for,
+- The fix for stripe size overflow
+   bcache: avoid nr_stripes overflow in bcache_device_init()
+   bcache: fix overflow in offset_to_stripe()
+- The fix to I/O account on wrong device
+   bcache: fix bio_{start,end}_io_acct with proper device
+
+Also we have Gustavo A. R. Silva to contribute 2 patches to cleanup
+kzalloc() code by using struct_size(), Jean Delvare to contribute a
+typo fix in bcache Kconfig file, and Xu Wang to contribute two code
+cleanup patches.
+
+Please take them for your Linux v5.9 block drivers branch.
+
+Thank you in advance.
+
+Coly Li
 ---
- drivers/md/bcache/request.c | 31 +++++++++++++++++++++++++++----
- 1 file changed, 27 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index 7acf024e99f3..8ea0f079c1d0 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -617,6 +617,28 @@ static void cache_lookup(struct closure *cl)
- 
- /* Common code for the make_request functions */
- 
-+static inline void bch_bio_start_io_acct(struct gendisk *acct_bi_disk,
-+					 struct bio *bio,
-+					 unsigned long *start_time)
-+{
-+	struct gendisk *saved_bi_disk = bio->bi_disk;
-+
-+	bio->bi_disk = acct_bi_disk;
-+	*start_time = bio_start_io_acct(bio);
-+	bio->bi_disk = saved_bi_disk;
-+}
-+
-+static inline void bch_bio_end_io_acct(struct gendisk *acct_bi_disk,
-+				       struct bio *bio,
-+				       unsigned long start_time)
-+{
-+	struct gendisk *saved_bi_disk = bio->bi_disk;
-+
-+	bio->bi_disk = acct_bi_disk;
-+	bio_end_io_acct(bio, start_time);
-+	bio->bi_disk = saved_bi_disk;
-+}
-+
- static void request_endio(struct bio *bio)
- {
- 	struct closure *cl = bio->bi_private;
-@@ -668,7 +690,7 @@ static void backing_request_endio(struct bio *bio)
- static void bio_complete(struct search *s)
- {
- 	if (s->orig_bio) {
--		bio_end_io_acct(s->orig_bio, s->start_time);
-+		bch_bio_end_io_acct(s->d->disk, s->orig_bio, s->start_time);
- 		trace_bcache_request_end(s->d, s->orig_bio);
- 		s->orig_bio->bi_status = s->iop.status;
- 		bio_endio(s->orig_bio);
-@@ -728,7 +750,7 @@ static inline struct search *search_alloc(struct bio *bio,
- 	s->recoverable		= 1;
- 	s->write		= op_is_write(bio_op(bio));
- 	s->read_dirty_data	= 0;
--	s->start_time		= bio_start_io_acct(bio);
-+	bch_bio_start_io_acct(d->disk, bio, &s->start_time);
- 
- 	s->iop.c		= d->c;
- 	s->iop.bio		= NULL;
-@@ -1080,7 +1102,7 @@ static void detached_dev_end_io(struct bio *bio)
- 	bio->bi_end_io = ddip->bi_end_io;
- 	bio->bi_private = ddip->bi_private;
- 
--	bio_end_io_acct(bio, ddip->start_time);
-+	bch_bio_end_io_acct(ddip->d->disk, bio, ddip->start_time);
- 
- 	if (bio->bi_status) {
- 		struct cached_dev *dc = container_of(ddip->d,
-@@ -1105,7 +1127,8 @@ static void detached_dev_do_request(struct bcache_device *d, struct bio *bio)
- 	 */
- 	ddip = kzalloc(sizeof(struct detached_dev_io_private), GFP_NOIO);
- 	ddip->d = d;
--	ddip->start_time = bio_start_io_acct(bio);
-+	bch_bio_start_io_acct(d->disk, bio, &ddip->start_time);
-+
- 	ddip->bi_end_io = bio->bi_end_io;
- 	ddip->bi_private = bio->bi_private;
- 	bio->bi_end_io = detached_dev_end_io;
+Coly Li (20):
+  bcache: allocate meta data pages as compound pages
+  bcache: avoid nr_stripes overflow in bcache_device_init()
+  bcache: fix overflow in offset_to_stripe()
+  bcache: add read_super_common() to read major part of super block
+  bcache: add more accurate error information in read_super_common()
+  bcache: disassemble the big if() checks in bch_cache_set_alloc()
+  bcache: fix super block seq numbers comparision in
+    register_cache_set()
+  bcache: increase super block version for cache device and backing
+    device
+  bcache: move bucket related code into read_super_common()
+  bcache: struct cache_sb is only for in-memory super block now
+  bcache: introduce meta_bucket_pages() related helper routines
+  bcache: handle c->uuids properly for bucket size > 8MB
+  bcache: handle cache prio_buckets and disk_buckets properly for bucket
+    size > 8MB
+  bcache: handle cache set verify_ondisk properly for bucket size > 8MB
+  bcache: handle btree node memory allocation properly for bucket size >
+    8MB
+  bcache: add bucket_size_hi into struct cache_sb_disk for large bucket
+  bcache: add sysfs file to display feature sets information of cache
+    set
+  bcache: avoid extra memory allocation from mempool c->fill_iter
+  bcache: avoid extra memory consumption in struct bbio for large bucket
+    size
+  bcache: fix bio_{start,end}_io_acct with proper device
+
+Gustavo A. R. Silva (2):
+  bcache: movinggc: Use struct_size() helper in kzalloc()
+  bcache: Use struct_size() in kzalloc()
+
+Jean Delvare (1):
+  bcache: Fix typo in Kconfig name
+
+Xu Wang (2):
+  bcache: journel: use for_each_clear_bit() to simplify the code
+  bcache: writeback: Remove unneeded variable i
+
+ drivers/md/bcache/Kconfig     |   2 +-
+ drivers/md/bcache/Makefile    |   2 +-
+ drivers/md/bcache/alloc.c     |   2 +-
+ drivers/md/bcache/bcache.h    |  31 +++-
+ drivers/md/bcache/bset.c      |   2 +-
+ drivers/md/bcache/btree.c     |  12 +-
+ drivers/md/bcache/features.c  |  75 +++++++++
+ drivers/md/bcache/features.h  |  86 +++++++++++
+ drivers/md/bcache/io.c        |   2 +-
+ drivers/md/bcache/journal.c   |   9 +-
+ drivers/md/bcache/movinggc.c  |   8 +-
+ drivers/md/bcache/request.c   |  31 +++-
+ drivers/md/bcache/super.c     | 277 +++++++++++++++++++++++-----------
+ drivers/md/bcache/sysfs.c     |  14 ++
+ drivers/md/bcache/writeback.c |  22 +--
+ drivers/md/bcache/writeback.h |  19 ++-
+ include/uapi/linux/bcache.h   |  38 +++--
+ 17 files changed, 493 insertions(+), 139 deletions(-)
+ create mode 100644 drivers/md/bcache/features.c
+ create mode 100644 drivers/md/bcache/features.h
+
 -- 
 2.26.2
 
