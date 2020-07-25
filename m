@@ -2,27 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D872E22D72C
-	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 14:02:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A44322D72E
+	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 14:02:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726639AbgGYMCk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 25 Jul 2020 08:02:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52026 "EHLO mx2.suse.de"
+        id S1726837AbgGYMCn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 25 Jul 2020 08:02:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52068 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726583AbgGYMCk (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 25 Jul 2020 08:02:40 -0400
+        id S1726583AbgGYMCm (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 25 Jul 2020 08:02:42 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3450DAB55;
-        Sat, 25 Jul 2020 12:02:47 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 5EA59AFBE;
+        Sat, 25 Jul 2020 12:02:50 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        Jean Delvare <jdelvare@suse.de>, Coly Li <colyli@suse.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 01/25] bcache: Fix typo in Kconfig name
-Date:   Sat, 25 Jul 2020 20:00:15 +0800
-Message-Id: <20200725120039.91071-2-colyli@suse.de>
+        Coly Li <colyli@suse.de>, stable@vger.kernel.org
+Subject: [PATCH 02/25] bcache: allocate meta data pages as compound pages
+Date:   Sat, 25 Jul 2020 20:00:16 +0800
+Message-Id: <20200725120039.91071-3-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200725120039.91071-1-colyli@suse.de>
 References: <20200725120039.91071-1-colyli@suse.de>
@@ -33,46 +32,82 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Jean Delvare <jdelvare@suse.de>
+There are some meta data of bcache are allocated by multiple pages,
+and they are used as bio bv_page for I/Os to the cache device. for
+example cache_set->uuids, cache->disk_buckets, journal_write->data,
+bset_tree->data.
 
-registraion -> registration
+For such meta data memory, all the allocated pages should be treated
+as a single memory block. Then the memory management and underlying I/O
+code can treat them more clearly.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: 0c8d3fceade2 ("bcache: configure the asynchronous registertion to be experimental")
-Reviewed-by: Coly Li <colyli@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
+This patch adds __GFP_COMP flag to all the location allocating >0 order
+pages for the above mentioned meta data. Then their pages are treated
+as compound pages now.
+
+Signed-off-by: Coly Li <colyli@suse.de>
+Cc: stable@vger.kernel.org
 ---
- drivers/md/bcache/Kconfig | 2 +-
- drivers/md/bcache/super.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/bcache/bset.c    | 2 +-
+ drivers/md/bcache/btree.c   | 2 +-
+ drivers/md/bcache/journal.c | 4 ++--
+ drivers/md/bcache/super.c   | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/md/bcache/Kconfig b/drivers/md/bcache/Kconfig
-index bf7dd96db9b3..d1ca4d059c20 100644
---- a/drivers/md/bcache/Kconfig
-+++ b/drivers/md/bcache/Kconfig
-@@ -27,7 +27,7 @@ config BCACHE_CLOSURES_DEBUG
- 	interface to list them, which makes it possible to see asynchronous
- 	operations that get stuck.
+diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+index 4995fcaefe29..67a2c47f4201 100644
+--- a/drivers/md/bcache/bset.c
++++ b/drivers/md/bcache/bset.c
+@@ -322,7 +322,7 @@ int bch_btree_keys_alloc(struct btree_keys *b,
  
--config BCACHE_ASYNC_REGISTRAION
-+config BCACHE_ASYNC_REGISTRATION
- 	bool "Asynchronous device registration (EXPERIMENTAL)"
- 	depends on BCACHE
- 	help
+ 	b->page_order = page_order;
+ 
+-	t->data = (void *) __get_free_pages(gfp, b->page_order);
++	t->data = (void *) __get_free_pages(__GFP_COMP|gfp, b->page_order);
+ 	if (!t->data)
+ 		goto err;
+ 
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 6548a601edf0..dd116c83de80 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -785,7 +785,7 @@ int bch_btree_cache_alloc(struct cache_set *c)
+ 	mutex_init(&c->verify_lock);
+ 
+ 	c->verify_ondisk = (void *)
+-		__get_free_pages(GFP_KERNEL, ilog2(bucket_pages(c)));
++		__get_free_pages(GFP_KERNEL|__GFP_COMP, ilog2(bucket_pages(c)));
+ 
+ 	c->verify_data = mca_bucket_alloc(c, &ZERO_KEY, GFP_KERNEL);
+ 
+diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+index 90aac4e2333f..d8586b6ccb76 100644
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -999,8 +999,8 @@ int bch_journal_alloc(struct cache_set *c)
+ 	j->w[1].c = c;
+ 
+ 	if (!(init_fifo(&j->pin, JOURNAL_PIN, GFP_KERNEL)) ||
+-	    !(j->w[0].data = (void *) __get_free_pages(GFP_KERNEL, JSET_BITS)) ||
+-	    !(j->w[1].data = (void *) __get_free_pages(GFP_KERNEL, JSET_BITS)))
++	    !(j->w[0].data = (void *) __get_free_pages(GFP_KERNEL|__GFP_COMP, JSET_BITS)) ||
++	    !(j->w[1].data = (void *) __get_free_pages(GFP_KERNEL|__GFP_COMP, JSET_BITS)))
+ 		return -ENOMEM;
+ 
+ 	return 0;
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 2014016f9a60..38d79f66fde5 100644
+index 38d79f66fde5..6db698b1739a 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -2782,7 +2782,7 @@ static int __init bcache_init(void)
- 	static const struct attribute *files[] = {
- 		&ksysfs_register.attr,
- 		&ksysfs_register_quiet.attr,
--#ifdef CONFIG_BCACHE_ASYNC_REGISTRAION
-+#ifdef CONFIG_BCACHE_ASYNC_REGISTRATION
- 		&ksysfs_register_async.attr,
- #endif
- 		&ksysfs_pendings_cleanup.attr,
+@@ -1776,7 +1776,7 @@ void bch_cache_set_unregister(struct cache_set *c)
+ }
+ 
+ #define alloc_bucket_pages(gfp, c)			\
+-	((void *) __get_free_pages(__GFP_ZERO|gfp, ilog2(bucket_pages(c))))
++	((void *) __get_free_pages(__GFP_ZERO|__GFP_COMP|gfp, ilog2(bucket_pages(c))))
+ 
+ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+ {
 -- 
 2.26.2
 
