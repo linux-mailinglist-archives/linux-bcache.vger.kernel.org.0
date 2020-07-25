@@ -2,132 +2,98 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88A6D22D762
-	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 14:03:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8258522D7E6
+	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 15:39:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbgGYMDq (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 25 Jul 2020 08:03:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52864 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727085AbgGYMDq (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 25 Jul 2020 08:03:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 96484AB55;
-        Sat, 25 Jul 2020 12:03:53 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Christoph Hellwig <hch@lst.de>,
-        stable@vger.kernel.org
-Subject: [PATCH 25/25] bcache: fix bio_{start,end}_io_acct with proper device
-Date:   Sat, 25 Jul 2020 20:00:39 +0800
-Message-Id: <20200725120039.91071-26-colyli@suse.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200725120039.91071-1-colyli@suse.de>
+        id S1726728AbgGYNjD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 25 Jul 2020 09:39:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36846 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbgGYNjD (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 25 Jul 2020 09:39:03 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7D88C08C5C1
+        for <linux-bcache@vger.kernel.org>; Sat, 25 Jul 2020 06:39:02 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id 1so6743029pfn.9
+        for <linux-bcache@vger.kernel.org>; Sat, 25 Jul 2020 06:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TY9S0ksY0gJHg8WOxYnWVFJ79KubheFo7aJATivXmzk=;
+        b=Xd0UQ0YgU7eSeirgLJWGWBxbU+KYNjUAsAm2rTJrtr75LiG0Cn/oOfC5UJ1HxDY13M
+         qUxl5IzZP7C0MNB3vGIfTRY2qt3yXCRqagjINxYa5IBf1LJZXFtIGYueIIdcYai25+ih
+         g6qnK37I0uv+gYlZydlAAq2NUAnW72r/VjCLuSGuMLxL2IXnJmx8p4Vje6KSuUbnsvOa
+         TAN02cduHe5A6WA/qmA5td3OGiRQzT/pDJFQe/K9Ret6wBqz/FzaLMcMitwhl3cO1O1l
+         4nzxIHIPyAExHOV9s1abWfWmj3+ikSmWFx0I47NiCwbNhIE34mGfMcUIVjQKiTFgQ6Fa
+         P+yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TY9S0ksY0gJHg8WOxYnWVFJ79KubheFo7aJATivXmzk=;
+        b=hHo/DWfsngMT4H5qC8i+XPAjLG9vSFihF5vF6yVEyqony4nTINk0ktqfWmKkGD3cUA
+         1TkIXTYZe3SAVdR9CqZ7pMS5Jd6/RrIa3hQ2FYyRkIWQKVi5qU7EDPymHnjcXkLc1QUs
+         ofTbG+Zi1afla6DFrMPwtfsm9QlDj19gnMT4aLhmzPBb7R6NYbVcXDbohxM82CUjJoEk
+         IDqyGarV6+5gXaF9Mb7XBxpeYmSOaopQjbppOxf2DIjgdNKE6U7nM/yqs9s0Vtbp2zWb
+         WN+7QwbilqgNT8wHkVvEI8MPyzW9vnedL7ZF0SIVaIFoD4mcZF45GzPQbh0Ku+3sYkv7
+         3oXg==
+X-Gm-Message-State: AOAM532uTYMZ0ipnK8BDXmqV5fIPOX+D4S7QSVCOxfeeIOkHAYOZHEdf
+        9XYYNpiOqYboiKdu7bvX0AfaOkTVl3k=
+X-Google-Smtp-Source: ABdhPJz2Gx0wKg1a/G6l9hILWNgeCCNZA/azxL2DSPyCDd2OtJQF3fKvbO1YfF39F2jZ4yMgt/TCew==
+X-Received: by 2002:a62:5a45:: with SMTP id o66mr12366758pfb.43.1595684341950;
+        Sat, 25 Jul 2020 06:39:01 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id x7sm9625443pfq.197.2020.07.25.06.39.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 Jul 2020 06:39:01 -0700 (PDT)
+Subject: Re: [PATCH 00/25] bcache patches for Linux v5.9
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org
 References: <20200725120039.91071-1-colyli@suse.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <bbc97069-6d8f-d8c5-35b1-d85ccb2566df@kernel.dk>
+Date:   Sat, 25 Jul 2020 07:39:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200725120039.91071-1-colyli@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Commit 85750aeb748f ("bcache: use bio_{start,end}_io_acct") moves the
-io account code to the location after bio_set_dev(bio, dc->bdev) in
-cached_dev_make_request(). Then the account is performed incorrectly on
-backing device, indeed the I/O should be counted to bcache device like
-/dev/bcache0.
+On 7/25/20 6:00 AM, Coly Li wrote:
+> Hi Jens,
+> 
+> This is the first wave bcache series for Linux v5.9.
+> 
+> The most part of change is to add large_bucket size support to bcache,
+> which permits user to extend the bucket size from 16bit to 32bit width.
+> This is the initial state of large bucket feature, more improvement will
+> happen in future versions.
+> 
+> Most of the patches from me are for the large_bucket feature, except for,
+> - The fix for stripe size overflow
+>    bcache: avoid nr_stripes overflow in bcache_device_init()
+>    bcache: fix overflow in offset_to_stripe()
+> - The fix to I/O account on wrong device
+>    bcache: fix bio_{start,end}_io_acct with proper device
+> 
+> Also we have Gustavo A. R. Silva to contribute 2 patches to cleanup
+> kzalloc() code by using struct_size(), Jean Delvare to contribute a
+> typo fix in bcache Kconfig file, and Xu Wang to contribute two code
+> cleanup patches.
+> 
+> Please take them for your Linux v5.9 block drivers branch.
 
-With the mistaken I/O account, iostat does not display I/O counts for
-bcache device and all the numbers go to backing device. In writeback
-mode, the hard drive may have 340K+ IOPS which is impossible and wrong
-for spinning disk.
+Thanks, applied.
 
-This patch introduces bch_bio_start_io_acct() and bch_bio_end_io_acct(),
-which switches bio->bi_disk to bcache device before calling
-bio_start_io_acct() or bio_end_io_acct(). Now the I/Os are counted to
-bcache device, and bcache device, cache device and backing device have
-their correct I/O count information back.
-
-Fixes: 85750aeb748f ("bcache: use bio_{start,end}_io_acct")
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: stable@vger.kernel.org
----
- drivers/md/bcache/request.c | 31 +++++++++++++++++++++++++++----
- 1 file changed, 27 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index 7acf024e99f3..8ea0f079c1d0 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -617,6 +617,28 @@ static void cache_lookup(struct closure *cl)
- 
- /* Common code for the make_request functions */
- 
-+static inline void bch_bio_start_io_acct(struct gendisk *acct_bi_disk,
-+					 struct bio *bio,
-+					 unsigned long *start_time)
-+{
-+	struct gendisk *saved_bi_disk = bio->bi_disk;
-+
-+	bio->bi_disk = acct_bi_disk;
-+	*start_time = bio_start_io_acct(bio);
-+	bio->bi_disk = saved_bi_disk;
-+}
-+
-+static inline void bch_bio_end_io_acct(struct gendisk *acct_bi_disk,
-+				       struct bio *bio,
-+				       unsigned long start_time)
-+{
-+	struct gendisk *saved_bi_disk = bio->bi_disk;
-+
-+	bio->bi_disk = acct_bi_disk;
-+	bio_end_io_acct(bio, start_time);
-+	bio->bi_disk = saved_bi_disk;
-+}
-+
- static void request_endio(struct bio *bio)
- {
- 	struct closure *cl = bio->bi_private;
-@@ -668,7 +690,7 @@ static void backing_request_endio(struct bio *bio)
- static void bio_complete(struct search *s)
- {
- 	if (s->orig_bio) {
--		bio_end_io_acct(s->orig_bio, s->start_time);
-+		bch_bio_end_io_acct(s->d->disk, s->orig_bio, s->start_time);
- 		trace_bcache_request_end(s->d, s->orig_bio);
- 		s->orig_bio->bi_status = s->iop.status;
- 		bio_endio(s->orig_bio);
-@@ -728,7 +750,7 @@ static inline struct search *search_alloc(struct bio *bio,
- 	s->recoverable		= 1;
- 	s->write		= op_is_write(bio_op(bio));
- 	s->read_dirty_data	= 0;
--	s->start_time		= bio_start_io_acct(bio);
-+	bch_bio_start_io_acct(d->disk, bio, &s->start_time);
- 
- 	s->iop.c		= d->c;
- 	s->iop.bio		= NULL;
-@@ -1080,7 +1102,7 @@ static void detached_dev_end_io(struct bio *bio)
- 	bio->bi_end_io = ddip->bi_end_io;
- 	bio->bi_private = ddip->bi_private;
- 
--	bio_end_io_acct(bio, ddip->start_time);
-+	bch_bio_end_io_acct(ddip->d->disk, bio, ddip->start_time);
- 
- 	if (bio->bi_status) {
- 		struct cached_dev *dc = container_of(ddip->d,
-@@ -1105,7 +1127,8 @@ static void detached_dev_do_request(struct bcache_device *d, struct bio *bio)
- 	 */
- 	ddip = kzalloc(sizeof(struct detached_dev_io_private), GFP_NOIO);
- 	ddip->d = d;
--	ddip->start_time = bio_start_io_acct(bio);
-+	bch_bio_start_io_acct(d->disk, bio, &ddip->start_time);
-+
- 	ddip->bi_end_io = bio->bi_end_io;
- 	ddip->bi_private = bio->bi_private;
- 	bio->bi_end_io = detached_dev_end_io;
 -- 
-2.26.2
+Jens Axboe
 
