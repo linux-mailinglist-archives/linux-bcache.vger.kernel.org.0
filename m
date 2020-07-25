@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E3C022D741
-	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 14:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 530DA22D743
+	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 14:03:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbgGYMDF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 25 Jul 2020 08:03:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52316 "EHLO mx2.suse.de"
+        id S1727019AbgGYMDH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 25 Jul 2020 08:03:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52340 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726997AbgGYMDE (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 25 Jul 2020 08:03:04 -0400
+        id S1726583AbgGYMDH (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 25 Jul 2020 08:03:07 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 28B9AAB55;
-        Sat, 25 Jul 2020 12:03:12 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id AE2E0AEAF;
+        Sat, 25 Jul 2020 12:03:14 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
         Coly Li <colyli@suse.de>, Hannes Reinecke <hare@suse.de>
-Subject: [PATCH 10/25] bcache: add more accurate error information in read_super_common()
-Date:   Sat, 25 Jul 2020 20:00:24 +0800
-Message-Id: <20200725120039.91071-11-colyli@suse.de>
+Subject: [PATCH 11/25] bcache: disassemble the big if() checks in bch_cache_set_alloc()
+Date:   Sat, 25 Jul 2020 20:00:25 +0800
+Message-Id: <20200725120039.91071-12-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200725120039.91071-1-colyli@suse.de>
 References: <20200725120039.91071-1-colyli@suse.de>
@@ -32,50 +32,82 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The improperly set bucket or block size will trigger error in
-read_super_common(). For large bucket size, a more accurate error message
-for invalid bucket or block size is necessary.
+In bch_cache_set_alloc() there is a big if() checks combined by 11 items
+together. When this big if() statement fails, it is difficult to tell
+exactly which item fails indeed.
 
-This patch disassembles the combined if() checks into multiple single
-if() check, and provide more accurate error message for each check
-failure condition.
+This patch disassembles this big if() checks into 11 single if() checks,
+which makes code debug more easier.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 ---
- drivers/md/bcache/super.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/md/bcache/super.c | 52 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 37 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index b5b81b92b2ef..fd8c9ee4d4a6 100644
+index fd8c9ee4d4a6..7ad6bbabfc66 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -79,11 +79,20 @@ static const char *read_super_common(struct cache_sb *sb,  struct block_device *
- 	if (sb->nbuckets < 1 << 7)
+@@ -1865,21 +1865,43 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+ 	iter_size = (sb->bucket_size / sb->block_size + 1) *
+ 		sizeof(struct btree_iter_set);
+ 
+-	if (!(c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL)) ||
+-	    mempool_init_slab_pool(&c->search, 32, bch_search_cache) ||
+-	    mempool_init_kmalloc_pool(&c->bio_meta, 2,
+-				sizeof(struct bbio) + sizeof(struct bio_vec) *
+-				bucket_pages(c)) ||
+-	    mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size) ||
+-	    bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
+-			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER) ||
+-	    !(c->uuids = alloc_bucket_pages(GFP_KERNEL, c)) ||
+-	    !(c->moving_gc_wq = alloc_workqueue("bcache_gc",
+-						WQ_MEM_RECLAIM, 0)) ||
+-	    bch_journal_alloc(c) ||
+-	    bch_btree_cache_alloc(c) ||
+-	    bch_open_buckets_alloc(c) ||
+-	    bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages)))
++	c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL);
++	if (!c->devices)
++		goto err;
++
++	if (mempool_init_slab_pool(&c->search, 32, bch_search_cache))
++		goto err;
++
++	if (mempool_init_kmalloc_pool(&c->bio_meta, 2,
++			sizeof(struct bbio) +
++			sizeof(struct bio_vec) * bucket_pages(c)))
++		goto err;
++
++	if (mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size))
++		goto err;
++
++	if (bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
++			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER))
++		goto err;
++
++	c->uuids = alloc_bucket_pages(GFP_KERNEL, c);
++	if (!c->uuids)
++		goto err;
++
++	c->moving_gc_wq = alloc_workqueue("bcache_gc", WQ_MEM_RECLAIM, 0);
++	if (!c->moving_gc_wq)
++		goto err;
++
++	if (bch_journal_alloc(c))
++		goto err;
++
++	if (bch_btree_cache_alloc(c))
++		goto err;
++
++	if (bch_open_buckets_alloc(c))
++		goto err;
++
++	if (bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages)))
  		goto err;
  
--	err = "Bad block/bucket size";
--	if (!is_power_of_2(sb->block_size) ||
--	    sb->block_size > PAGE_SECTORS ||
--	    !is_power_of_2(sb->bucket_size) ||
--	    sb->bucket_size < PAGE_SECTORS)
-+	err = "Bad block size (not power of 2)";
-+	if (!is_power_of_2(sb->block_size))
-+		goto err;
-+
-+	err = "Bad block size (larger than page size)";
-+	if (sb->block_size > PAGE_SECTORS)
-+		goto err;
-+
-+	err = "Bad bucket size (not power of 2)";
-+	if (!is_power_of_2(sb->bucket_size))
-+		goto err;
-+
-+	err = "Bad bucket size (smaller than page size)";
-+	if (sb->bucket_size < PAGE_SECTORS)
- 		goto err;
- 
- 	err = "Invalid superblock: device too small";
+ 	c->congested_read_threshold_us	= 2000;
 -- 
 2.26.2
 
