@@ -2,98 +2,124 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8258522D7E6
-	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jul 2020 15:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80FB922DF90
+	for <lists+linux-bcache@lfdr.de>; Sun, 26 Jul 2020 15:52:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbgGYNjD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 25 Jul 2020 09:39:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36846 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbgGYNjD (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 25 Jul 2020 09:39:03 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7D88C08C5C1
-        for <linux-bcache@vger.kernel.org>; Sat, 25 Jul 2020 06:39:02 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id 1so6743029pfn.9
-        for <linux-bcache@vger.kernel.org>; Sat, 25 Jul 2020 06:39:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TY9S0ksY0gJHg8WOxYnWVFJ79KubheFo7aJATivXmzk=;
-        b=Xd0UQ0YgU7eSeirgLJWGWBxbU+KYNjUAsAm2rTJrtr75LiG0Cn/oOfC5UJ1HxDY13M
-         qUxl5IzZP7C0MNB3vGIfTRY2qt3yXCRqagjINxYa5IBf1LJZXFtIGYueIIdcYai25+ih
-         g6qnK37I0uv+gYlZydlAAq2NUAnW72r/VjCLuSGuMLxL2IXnJmx8p4Vje6KSuUbnsvOa
-         TAN02cduHe5A6WA/qmA5td3OGiRQzT/pDJFQe/K9Ret6wBqz/FzaLMcMitwhl3cO1O1l
-         4nzxIHIPyAExHOV9s1abWfWmj3+ikSmWFx0I47NiCwbNhIE34mGfMcUIVjQKiTFgQ6Fa
-         P+yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TY9S0ksY0gJHg8WOxYnWVFJ79KubheFo7aJATivXmzk=;
-        b=hHo/DWfsngMT4H5qC8i+XPAjLG9vSFihF5vF6yVEyqony4nTINk0ktqfWmKkGD3cUA
-         1TkIXTYZe3SAVdR9CqZ7pMS5Jd6/RrIa3hQ2FYyRkIWQKVi5qU7EDPymHnjcXkLc1QUs
-         ofTbG+Zi1afla6DFrMPwtfsm9QlDj19gnMT4aLhmzPBb7R6NYbVcXDbohxM82CUjJoEk
-         IDqyGarV6+5gXaF9Mb7XBxpeYmSOaopQjbppOxf2DIjgdNKE6U7nM/yqs9s0Vtbp2zWb
-         WN+7QwbilqgNT8wHkVvEI8MPyzW9vnedL7ZF0SIVaIFoD4mcZF45GzPQbh0Ku+3sYkv7
-         3oXg==
-X-Gm-Message-State: AOAM532uTYMZ0ipnK8BDXmqV5fIPOX+D4S7QSVCOxfeeIOkHAYOZHEdf
-        9XYYNpiOqYboiKdu7bvX0AfaOkTVl3k=
-X-Google-Smtp-Source: ABdhPJz2Gx0wKg1a/G6l9hILWNgeCCNZA/azxL2DSPyCDd2OtJQF3fKvbO1YfF39F2jZ4yMgt/TCew==
-X-Received: by 2002:a62:5a45:: with SMTP id o66mr12366758pfb.43.1595684341950;
-        Sat, 25 Jul 2020 06:39:01 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id x7sm9625443pfq.197.2020.07.25.06.39.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Jul 2020 06:39:01 -0700 (PDT)
-Subject: Re: [PATCH 00/25] bcache patches for Linux v5.9
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org
-References: <20200725120039.91071-1-colyli@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <bbc97069-6d8f-d8c5-35b1-d85ccb2566df@kernel.dk>
-Date:   Sat, 25 Jul 2020 07:39:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727055AbgGZNwe (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 26 Jul 2020 09:52:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40766 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbgGZNwd (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 26 Jul 2020 09:52:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id BD24FB64D;
+        Sun, 26 Jul 2020 13:52:41 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     sagi@grimberg.me, philipp.reisner@linbit.com,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-bcache@vger.kernel.org, hch@lst.de
+Cc:     Coly Li <colyli@suse.de>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Hannes Reinecke <hare@suse.de>, Jan Kara <jack@suse.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>,
+        Vlastimil Babka <vbabka@suse.com>, stable@vger.kernel.org
+Subject: [PATCH 1/2] nvme-tcp: use sendpage_ok() to check page for kernel_sendpage()
+Date:   Sun, 26 Jul 2020 21:52:23 +0800
+Message-Id: <20200726135224.107516-1-colyli@suse.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <20200725120039.91071-1-colyli@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 7/25/20 6:00 AM, Coly Li wrote:
-> Hi Jens,
-> 
-> This is the first wave bcache series for Linux v5.9.
-> 
-> The most part of change is to add large_bucket size support to bcache,
-> which permits user to extend the bucket size from 16bit to 32bit width.
-> This is the initial state of large bucket feature, more improvement will
-> happen in future versions.
-> 
-> Most of the patches from me are for the large_bucket feature, except for,
-> - The fix for stripe size overflow
->    bcache: avoid nr_stripes overflow in bcache_device_init()
->    bcache: fix overflow in offset_to_stripe()
-> - The fix to I/O account on wrong device
->    bcache: fix bio_{start,end}_io_acct with proper device
-> 
-> Also we have Gustavo A. R. Silva to contribute 2 patches to cleanup
-> kzalloc() code by using struct_size(), Jean Delvare to contribute a
-> typo fix in bcache Kconfig file, and Xu Wang to contribute two code
-> cleanup patches.
-> 
-> Please take them for your Linux v5.9 block drivers branch.
+Currently nvme_tcp_try_send_data() doesn't use kernel_sendpage() to
+send slab pages. But for pages allocated by __get_free_pages() without
+__GFP_COMP, which also have refcount as 0, they are still sent by
+kernel_sendpage() to remote end, this is problematic.
 
-Thanks, applied.
+When bcache uses a remote NVMe SSD via nvme-over-tcp as its cache
+device, writing meta data e.g. cache_set->disk_buckets to remote SSD may
+trigger a kernel panic due to the above problem. Bcause the meta data
+pages for cache_set->disk_buckets are allocated by __get_free_pages()
+without __GFP_COMP.
 
+This problem should be fixed both in upper layer driver (bcache) and
+nvme-over-tcp code. This patch fixes the nvme-over-tcp code by checking
+whether the page refcount is 0, if yes then don't use kernel_sendpage()
+and call sock_no_sendpage() to send the page into network stack.
+
+Such check is done by macro sendpage_ok() in this patch, which is defined
+in include/linux/net.h as,
+	(!PageSlab(page) && page_count(page) >= 1)
+If sendpage_ok() returns false, sock_no_sendpage() will handle the page
+other than kernel_sendpage().
+
+The code comments in this patch is copied and modified from drbd where
+the similar problem already gets solved by Philipp Reisner. This is the
+best code comment including my own version.
+
+Signed-off-by: Coly Li <colyli@suse.de>
+Cc: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: Jan Kara <jack@suse.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>
+Cc: Philipp Reisner <philipp.reisner@linbit.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: Vlastimil Babka <vbabka@suse.com>
+Cc: stable@vger.kernel.org
+---
+Changelog:
+v3: introduce a more common name sendpage_ok() for the open coded check
+v2: fix typo in patch subject.
+v1: the initial version.
+
+ drivers/nvme/host/tcp.c | 13 +++++++++++--
+ include/linux/net.h     |  2 ++
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 79ef2b8e2b3c..f9952f6d94b9 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -887,8 +887,17 @@ static int nvme_tcp_try_send_data(struct nvme_tcp_request *req)
+ 		else
+ 			flags |= MSG_MORE | MSG_SENDPAGE_NOTLAST;
+ 
+-		/* can't zcopy slab pages */
+-		if (unlikely(PageSlab(page))) {
++		/*
++		 * e.g. XFS meta- & log-data is in slab pages, or bcache meta
++		 * data pages, or other high order pages allocated by
++		 * __get_free_pages() without __GFP_COMP, which have a page_count
++		 * of 0 and/or have PageSlab() set. We cannot use send_page for
++		 * those, as that does get_page(); put_page(); and would cause
++		 * either a VM_BUG directly, or __page_cache_release a page that
++		 * would actually still be referenced by someone, leading to some
++		 * obscure delayed Oops somewhere else.
++		 */
++		if (unlikely(!sendpage_ok(page))) {
+ 			ret = sock_no_sendpage(queue->sock, page, offset, len,
+ 					flags);
+ 		} else {
+diff --git a/include/linux/net.h b/include/linux/net.h
+index 016a9c5faa34..41e5d2898e97 100644
+--- a/include/linux/net.h
++++ b/include/linux/net.h
+@@ -290,6 +290,8 @@ do {									\
+ #define net_get_random_once_wait(buf, nbytes)			\
+ 	get_random_once_wait((buf), (nbytes))
+ 
++#define sendpage_ok(page)	(!PageSlab(page) && page_count(page) >= 1)
++
+ int kernel_sendmsg(struct socket *sock, struct msghdr *msg, struct kvec *vec,
+ 		   size_t num, size_t len);
+ int kernel_sendmsg_locked(struct sock *sk, struct msghdr *msg,
 -- 
-Jens Axboe
+2.26.2
 
