@@ -2,136 +2,107 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 82FED22F689
-	for <lists+linux-bcache@lfdr.de>; Mon, 27 Jul 2020 19:25:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AD8C22F9A2
+	for <lists+linux-bcache@lfdr.de>; Mon, 27 Jul 2020 21:58:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730683AbgG0RZd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 27 Jul 2020 13:25:33 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:36578 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbgG0RZd (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 27 Jul 2020 13:25:33 -0400
-Received: by mail-pj1-f67.google.com with SMTP id ha11so2631191pjb.1;
-        Mon, 27 Jul 2020 10:25:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aNt663yDzifzzB0XK1Rn3vQdJUzIbPRGw9BRhlu+BgI=;
-        b=VicB0PepQcwIzEF73B1eE8t73zu7gGSrVgXVDIhjZkiQqCee3/27vUFZLSX59pwPM+
-         O2uzKLAe2RCZfZNIrNF0OlgaXzSJwI+6AyBos0HDPdSHY5UEVwsVtNLASQ2D1Jf/vFW0
-         CQxpRcyN3g0cnd7qKORFS3mFynoFiR/NOMmc88eOWywJxGGzCmKM22RRBWDKBeF5V2YT
-         /jRfRFLhmFW0isrKV/pXKC4VSoV0mTXBs+HhhJA9vy3Mnbs208h58wY0gyj7oRrbov7p
-         ndGt93BtpTWmTFkzb0rBBDP89JgXWW+sRyKa9DOLOuYAaoJC8tb3EpZM5O9ww8lHcygC
-         smCA==
-X-Gm-Message-State: AOAM531jqvMDeX8wdfYrpyVfFZMoB3qTxgczOl2371aa7GDTFtY+GAKF
-        QZcfXcGhHwzeNevzedNhLio7dFHI
-X-Google-Smtp-Source: ABdhPJwUsW0OrmXzZI8dD+BwqaXmVKJG1zwM2eWYgiCDypR1jFOoZNeU280jcxCdzhCI8GCiXVaXyg==
-X-Received: by 2002:a17:902:bc49:: with SMTP id t9mr9726393plz.20.1595870731350;
-        Mon, 27 Jul 2020 10:25:31 -0700 (PDT)
-Received: from ?IPv6:2601:647:4802:9070:5d7d:f206:b163:f30b? ([2601:647:4802:9070:5d7d:f206:b163:f30b])
-        by smtp.gmail.com with ESMTPSA id k23sm15148773pgb.92.2020.07.27.10.25.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jul 2020 10:25:30 -0700 (PDT)
-Subject: Re: [PATCH 1/2] nvme-tcp: use sendpage_ok() to check page for
- kernel_sendpage()
-To:     Coly Li <colyli@suse.de>, philipp.reisner@linbit.com,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-bcache@vger.kernel.org, hch@lst.de
-Cc:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Hannes Reinecke <hare@suse.de>, Jan Kara <jack@suse.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>,
-        Vlastimil Babka <vbabka@suse.com>, stable@vger.kernel.org
-References: <20200726135224.107516-1-colyli@suse.de>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <f6cf7563-9d8c-baa8-e8e7-e41f9b13e787@grimberg.me>
-Date:   Mon, 27 Jul 2020 10:25:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1729090AbgG0T6F (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 27 Jul 2020 15:58:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728990AbgG0T6F (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 27 Jul 2020 15:58:05 -0400
+Received: from embeddedor (187-162-31-110.static.axtel.net [187.162.31.110])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6DC420759;
+        Mon, 27 Jul 2020 19:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595879884;
+        bh=0zLbwOrLh3AaOF3vmnAEIzeqmlSo/e9+NLDubtnDas4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=XeVsShoCzLPI2FjpnpUwVJS4A1NkUdicvO9ccEvCGXZb+gGFQt1rkJAVVd830abqA
+         ZzlaMEy+pLo5zkIHiuuSpz4rtWVZU0hVYANklGuolPq+lI42Y2/hDFlarh5yVGipbO
+         3bxmFPf9rO1tkhlGK9lOZzMOaZibkXd7CiP4pDfg=
+Date:   Mon, 27 Jul 2020 15:03:57 -0500
+From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Subject: [PATCH][next] bcache: Use fallthrough pseudo-keyword
+Message-ID: <20200727200357.GA2079@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20200726135224.107516-1-colyli@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+Replace the existing /* fall through */ comments and its variants with
+the new pseudo-keyword macro fallthrough[1].
 
+[1] https://www.kernel.org/doc/html/v5.7/process/deprecated.html?highlight=fallthrough#implicit-switch-case-fall-through
 
-On 7/26/20 6:52 AM, Coly Li wrote:
-> Currently nvme_tcp_try_send_data() doesn't use kernel_sendpage() to
-> send slab pages. But for pages allocated by __get_free_pages() without
-> __GFP_COMP, which also have refcount as 0, they are still sent by
-> kernel_sendpage() to remote end, this is problematic.
-> 
-> When bcache uses a remote NVMe SSD via nvme-over-tcp as its cache
-> device, writing meta data e.g. cache_set->disk_buckets to remote SSD may
-> trigger a kernel panic due to the above problem. Bcause the meta data
-> pages for cache_set->disk_buckets are allocated by __get_free_pages()
-> without __GFP_COMP.
-> 
-> This problem should be fixed both in upper layer driver (bcache) and
-> nvme-over-tcp code. This patch fixes the nvme-over-tcp code by checking
-> whether the page refcount is 0, if yes then don't use kernel_sendpage()
-> and call sock_no_sendpage() to send the page into network stack.
-> 
-> Such check is done by macro sendpage_ok() in this patch, which is defined
-> in include/linux/net.h as,
-> 	(!PageSlab(page) && page_count(page) >= 1)
-> If sendpage_ok() returns false, sock_no_sendpage() will handle the page
-> other than kernel_sendpage().
-> 
-> The code comments in this patch is copied and modified from drbd where
-> the similar problem already gets solved by Philipp Reisner. This is the
-> best code comment including my own version.
-> 
-> Signed-off-by: Coly Li <colyli@suse.de>
-> Cc: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Hannes Reinecke <hare@suse.de>
-> Cc: Jan Kara <jack@suse.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>
-> Cc: Philipp Reisner <philipp.reisner@linbit.com>
-> Cc: Sagi Grimberg <sagi@grimberg.me>
-> Cc: Vlastimil Babka <vbabka@suse.com>
-> Cc: stable@vger.kernel.org
-> ---
-> Changelog:
-> v3: introduce a more common name sendpage_ok() for the open coded check
-> v2: fix typo in patch subject.
-> v1: the initial version.
-> 
->   drivers/nvme/host/tcp.c | 13 +++++++++++--
->   include/linux/net.h     |  2 ++
->   2 files changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> index 79ef2b8e2b3c..f9952f6d94b9 100644
-> --- a/drivers/nvme/host/tcp.c
-> +++ b/drivers/nvme/host/tcp.c
-> @@ -887,8 +887,17 @@ static int nvme_tcp_try_send_data(struct nvme_tcp_request *req)
->   		else
->   			flags |= MSG_MORE | MSG_SENDPAGE_NOTLAST;
->   
-> -		/* can't zcopy slab pages */
-> -		if (unlikely(PageSlab(page))) {
-> +		/*
-> +		 * e.g. XFS meta- & log-data is in slab pages, or bcache meta
-> +		 * data pages, or other high order pages allocated by
-> +		 * __get_free_pages() without __GFP_COMP, which have a page_count
-> +		 * of 0 and/or have PageSlab() set. We cannot use send_page for
-> +		 * those, as that does get_page(); put_page(); and would cause
-> +		 * either a VM_BUG directly, or __page_cache_release a page that
-> +		 * would actually still be referenced by someone, leading to some
-> +		 * obscure delayed Oops somewhere else.
-> +		 */
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/md/bcache/journal.c |  2 +-
+ drivers/md/bcache/util.c    | 14 +++++++-------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-I was hoping that this comment would move to the helper as well.
+diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+index 77fbfd52edcf..c1227bdb57e7 100644
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -608,7 +608,7 @@ static void do_journal_discard(struct cache *ca)
+ 			ca->sb.njournal_buckets;
+ 
+ 		atomic_set(&ja->discard_in_flight, DISCARD_READY);
+-		/* fallthrough */
++		fallthrough;
+ 
+ 	case DISCARD_READY:
+ 		if (ja->discard_idx == ja->last_idx)
+diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+index 62fb917f7a4f..66965de548d0 100644
+--- a/drivers/md/bcache/util.c
++++ b/drivers/md/bcache/util.c
+@@ -33,27 +33,27 @@ int bch_ ## name ## _h(const char *cp, type *res)		\
+ 	case 'y':						\
+ 	case 'z':						\
+ 		u++;						\
+-		/* fall through */				\
++		fallthrough;					\
+ 	case 'e':						\
+ 		u++;						\
+-		/* fall through */				\
++		fallthrough;					\
+ 	case 'p':						\
+ 		u++;						\
+-		/* fall through */				\
++		fallthrough;					\
+ 	case 't':						\
+ 		u++;						\
+-		/* fall through */				\
++		fallthrough;					\
+ 	case 'g':						\
+ 		u++;						\
+-		/* fall through */				\
++		fallthrough					\
+ 	case 'm':						\
+ 		u++;						\
+-		/* fall through */				\
++		fallthrough;					\
+ 	case 'k':						\
+ 		u++;						\
+ 		if (e++ == cp)					\
+ 			return -EINVAL;				\
+-		/* fall through */				\
++		fallthrough;					\
+ 	case '\n':						\
+ 	case '\0':						\
+ 		if (*e == '\n')					\
+-- 
+2.27.0
 
-Agree with Christoph comment as well.
