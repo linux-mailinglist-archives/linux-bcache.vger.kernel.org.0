@@ -2,19 +2,21 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC27123BC77
-	for <lists+linux-bcache@lfdr.de>; Tue,  4 Aug 2020 16:44:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85F0823BC86
+	for <lists+linux-bcache@lfdr.de>; Tue,  4 Aug 2020 16:45:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbgHDOoI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 4 Aug 2020 10:44:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59030 "EHLO mx2.suse.de"
+        id S1729285AbgHDOpe (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 4 Aug 2020 10:45:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59502 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725904AbgHDOn7 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 4 Aug 2020 10:43:59 -0400
+        id S1729259AbgHDOp0 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 4 Aug 2020 10:45:26 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 516D9AB7D;
-        Tue,  4 Aug 2020 14:44:14 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 83520ACB7;
+        Tue,  4 Aug 2020 14:45:40 +0000 (UTC)
+Subject: Re: [PATCH] block: tolerate 0 byte discard_granularity in
+ __blkdev_issue_discard()
 To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
         "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
 Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
@@ -29,6 +31,7 @@ References: <20200804142332.29961-1-colyli@suse.de>
  <SN4PR0401MB3598033FF16A5AE1D375EDD69B4A0@SN4PR0401MB3598.namprd04.prod.outlook.com>
  <b469f0ec-0185-c624-b967-5080d805040c@suse.de>
  <SN4PR0401MB35983A30C6AE9886EF6E91C79B4A0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <SN4PR0401MB35984D6090CE1B7F1FD06CD59B4A0@SN4PR0401MB3598.namprd04.prod.outlook.com>
 From:   Coly Li <colyli@suse.de>
 Autocrypt: addr=colyli@suse.de; keydata=
  mQINBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
@@ -73,50 +76,64 @@ Autocrypt: addr=colyli@suse.de; keydata=
  K0Jx4CEZubakJe+894sX6pvNFiI7qUUdB882i5GR3v9ijVPhaMr8oGuJ3kvwBIA8lvRBGVGn
  9xvzkQ8Prpbqh30I4NMp8MjFdkwCN6znBKPHdjNTwE5PRZH0S9J0o67IEIvHfH0eAWAsgpTz
  +jwc7VKH7vkvgscUhq/v1/PEWCAqh9UHy7R/jiUxwzw/288OpgO+i+2l11Y=
-Subject: Re: [PATCH] block: tolerate 0 byte discard_granularity in
- __blkdev_issue_discard()
-Message-ID: <2f70177e-4964-0fce-14bf-506b0821128b@suse.de>
-Date:   Tue, 4 Aug 2020 22:43:53 +0800
+Message-ID: <06f2bb53-8917-82d6-3e0c-76270cd80e06@suse.de>
+Date:   Tue, 4 Aug 2020 22:45:19 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <SN4PR0401MB35983A30C6AE9886EF6E91C79B4A0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+In-Reply-To: <SN4PR0401MB35984D6090CE1B7F1FD06CD59B4A0@SN4PR0401MB3598.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/8/4 22:37, Johannes Thumshirn wrote:
-> On 04/08/2020 16:34, Coly Li wrote:
->> On 2020/8/4 22:31, Johannes Thumshirn wrote:
->>> On 04/08/2020 16:23, Coly Li wrote:
->>>> This is the procedure to reproduce the panic,
->>>>   # modprobe scsi_debug delay=0 dev_size_mb=2048 max_queue=1
->>>>   # losetup -f /dev/nvme0n1 --direct-io=on
->>>>   # blkdiscard /dev/loop0 -o 0 -l 0x200
+On 2020/8/4 22:39, Johannes Thumshirn wrote:
+> On 04/08/2020 16:37, Johannes Thumshirn wrote:
+>> On 04/08/2020 16:34, Coly Li wrote:
+>>> On 2020/8/4 22:31, Johannes Thumshirn wrote:
+>>>> On 04/08/2020 16:23, Coly Li wrote:
+>>>>> This is the procedure to reproduce the panic,
+>>>>>   # modprobe scsi_debug delay=0 dev_size_mb=2048 max_queue=1
+>>>>>   # losetup -f /dev/nvme0n1 --direct-io=on
+>>>>>   # blkdiscard /dev/loop0 -o 0 -l 0x200
+>>>>
+>>>> losetup -f /dev/sdX isn't it?
+>>>>
 >>>
->>> losetup -f /dev/sdX isn't it?
+>>> In my case, I use a NVMe SSD as the backing device of the loop device.
+>>> Because I don't have a scsi lun.
 >>>
+>>> And loading scsi_debug module seems necessary, otherwise the discard
+>>> process just hang and I cannot see the kernel panic (I don't know why yet).
 >>
->> In my case, I use a NVMe SSD as the backing device of the loop device.
->> Because I don't have a scsi lun.
+>> OK, now that's highly interesting. Does it also happen if you back loop with
+>> a file? loop_config_discard() has different cases for the different backing devices/files. S
 >>
->> And loading scsi_debug module seems necessary, otherwise the discard
->> process just hang and I cannot see the kernel panic (I don't know why yet).
 > 
-> OK, now that's highly interesting. Does it also happen if you back loop with
-> a file? loop_config_discard() has different cases for the different backing devices/files. S
+> Damn I didn't want to hit sent....
 > 
-No, for a file backing, q->limits.discard_granularity is set to
-inode->i_sb->s_blocksize. And the encrypted loop device does not support
-discard.
+> Does this (untested) change make a difference:
+> 
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 475e1a738560..8a07a89d702e 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -895,6 +895,9 @@ static void loop_config_discard(struct loop_device *lo)
+>                 blk_queue_max_write_zeroes_sectors(q,
+>                         backingq->limits.max_write_zeroes_sectors);
+>  
+> +               q->limits.discard_granularity =
+> +                       backingq->limits.discard_granularity;
+> +
+>         /*
+>          * We use punch hole to reclaim the free space used by the
+>          * image a.k.a. discard. However we do not support discard if
+> 
 
-Such issue just only happens on a device backing loop device which
-announces supporting discard. Without Ming's fix to loop device driver,
-discard on LBA 0 will trigger the BUG() panic in my setup (Maybe it is
-more easier to trigger this BUG() panic with scsi lun).
+Yes, Ming just posts a patch with a very similar change to loop device
+driver.
 
 Coly Li
