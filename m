@@ -2,203 +2,124 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00B0323BBF1
-	for <lists+linux-bcache@lfdr.de>; Tue,  4 Aug 2020 16:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB22123BC67
+	for <lists+linux-bcache@lfdr.de>; Tue,  4 Aug 2020 16:40:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbgHDOXq (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 4 Aug 2020 10:23:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48070 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728387AbgHDOXp (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 4 Aug 2020 10:23:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id AD2E7B184;
-        Tue,  4 Aug 2020 14:23:59 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     linux-block@vger.kernel.org
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Ming Lei <ming.lei@redhat.com>,
+        id S1728408AbgHDOkC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 4 Aug 2020 10:40:02 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:22588 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728689AbgHDObj (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 4 Aug 2020 10:31:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1596551498; x=1628087498;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=xVTO4E2DeLFFL18io8ffI2xCWzQPL1j2srh5tXQLIOc=;
+  b=MTueV8G5sK2meQg7QAZMZ0zRiREnj1bodwfNH2CQGara5VhS4T1KpO8X
+   KrkJvLVgUvKWt4fHGKt5h+++It8XkQRiZYvH5p9sj3MRLijDwiRZhbRBU
+   +Ga0UxUmeQm9ekHwp6LxNTqF2ZeU1+qbf5pmafkssUPii9FzZJP8kD0jd
+   Fs4umb/LSNcGI3z9RsvFNIRpIBFYb3Vxe3bg9rAiy28IBlkBskvGQC0xg
+   z8Tyb2gVGSN6N2pQStWMPSa1vvFAJesswq0TBQMbOTs0qENkB2q3f0R7H
+   oDr16VTXx6ZSrFxPHC8/MCex90BdtEYm5GXqzxRxLHkPQmMdGg5TjYCC0
+   Q==;
+IronPort-SDR: Q/Uxq3F88h6Bu4/9ZMzFSWZ82H7xqkI87Kb91RZb6eeKbZYDNWZCv4hlHVtR3zxLs9WDtqzWNb
+ dXOLsMkEjMYhVq38h37KbEBZtc89uEBTsfDmlPE030Ht7kxrVbwSmGUL0jkmzVQHcw4uRO+z4S
+ 2bxu0WpjXUGMDyDZab2GOsqkfl2fq3PNgobnCyvZ/710sF87/AGPNNcNUtyx70NuKrVJp3BR7b
+ TWxNmuH/7NW/mxdHM+WJ4XE+dL7r/sWfmaFGrLEb4qlrnN6rzqIlX1Oxno9K2h9etBUoKNX7Os
+ vHc=
+X-IronPort-AV: E=Sophos;i="5.75,434,1589212800"; 
+   d="scan'208";a="144113777"
+Received: from mail-co1nam04lp2057.outbound.protection.outlook.com (HELO NAM04-CO1-obe.outbound.protection.outlook.com) ([104.47.45.57])
+  by ob1.hgst.iphmx.com with ESMTP; 04 Aug 2020 22:31:23 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FavUFdW0ah94pxvcK43dZy07P57fvosZFyPbcXSW2feeLH0mtYxCSyoZW35gW+5lQmhBsuH4AAGWgq004Qev0O7oz1JSXB6MpadtkEhlwtrRFOO78NMFgoBqF9SVaJ8Ir0IJvTV3URfKMkGPPBYs2zoDyc0xmHRI1GwwgvXnbigARr4oWS/ZGwzXLypqZ/LRC614DY7MoBXMplDpO++nZc09+fFarN16XyaZLKc7Su5EGjVSAfz8AR2XeVJCAinwS6SLWXIZcEa9e8ikFrjKZEPAqZ7aKxZHWVATB8yTmyQcQPRXUbzHkASMUghTNyBfne3BV1fFJM74WvWHp7xdcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5AkZRzzZSN/mpvgprgnj+JoFHNzDKbBaeFVLMud0HAo=;
+ b=a4aQ2GzheyhKbEI2XNIzL55Umz3UqlIH14dY12SZLT6As+eucXlP02Gtmna0KiZDrfI6MEZB28e1hMEpfz0i/+zM1kVpQ6PATr6HoqC4ffCPMUcDrXXzlSSfqcxUDS82PF+d+NIxgLGQd/OmrJ6P97Bqre7PNA1Izy9VDthOSwMVa8Z0bAdbXttqr+4T4C3awnzsQ+U1eysVUvPq4dXDSlGXv8XhuCRCze3vLp/F4B81fkBHT71PNss8EyxwYXpcl8AiDEtxTmH8/2ynqigppnKdBapZRgfjGmnHyH9ZPBKgiINIV/o5CBkxjLgD2N4YQ4GYDEtbFRGEdyXixFtyNQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5AkZRzzZSN/mpvgprgnj+JoFHNzDKbBaeFVLMud0HAo=;
+ b=vrEruOHqF69vknEOy+aZLcLZgBQy9WewDXVdeVQSBz8bqTyQD8cFlX4YaCkOuVJAohsQNMSSVcnD04F3AGS44E+9T8xAdq+geN50DS0RsoVz5CfpEtu0edzsGiH4of21rJz3XzdfUlBrtOgcQtkmSGRuZVn0VAf8b8tyMNoEYMU=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN6PR04MB4240.namprd04.prod.outlook.com
+ (2603:10b6:805:3c::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.21; Tue, 4 Aug
+ 2020 14:31:23 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::457e:5fe9:2ae3:e738]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::457e:5fe9:2ae3:e738%7]) with mapi id 15.20.3239.021; Tue, 4 Aug 2020
+ 14:31:22 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Coly Li <colyli@suse.de>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+CC:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ming Lei <ming.lei@redhat.com>,
         Hannes Reinecke <hare@suse.com>, Xiao Ni <xni@redhat.com>,
         Bart Van Assche <bvanassche@acm.org>,
         Christoph Hellwig <hch@lst.de>,
         Enzo Matsumiya <ematsumiya@suse.com>,
         Jens Axboe <axboe@kernel.dk>, Evan Green <evgreen@chromium.org>
-Subject: [PATCH] block: tolerate 0 byte discard_granularity in __blkdev_issue_discard()
-Date:   Tue,  4 Aug 2020 22:23:32 +0800
-Message-Id: <20200804142332.29961-1-colyli@suse.de>
-X-Mailer: git-send-email 2.26.2
+Subject: Re: [PATCH] block: tolerate 0 byte discard_granularity in
+ __blkdev_issue_discard()
+Thread-Topic: [PATCH] block: tolerate 0 byte discard_granularity in
+ __blkdev_issue_discard()
+Thread-Index: AQHWamrhOskbhhn9f0O9q4CKi9C/MA==
+Date:   Tue, 4 Aug 2020 14:31:22 +0000
+Message-ID: <SN4PR0401MB3598033FF16A5AE1D375EDD69B4A0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200804142332.29961-1-colyli@suse.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: suse.de; dkim=none (message not signed)
+ header.d=none;suse.de; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 1514c6f4-316a-4c92-5309-08d838830fc8
+x-ms-traffictypediagnostic: SN6PR04MB4240:
+x-microsoft-antispam-prvs: <SN6PR04MB4240ABFE01C990A3F18E81569B4A0@SN6PR04MB4240.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: pTsI48KF0bWGenkInWDzoi7cnEDRjbjlVudwM18IbDliTFIQhfW78v5Uw5KUlYNTJJ1smu6IkTgsq/+NcVgmBG5XKCjRk8AqnEAcdQFVMHKoQ3l+unpPN7kLdywtwb/R1jDalqTeAA+wxDMTcQ8GYFfYV9irUg7A16voSilyXM+1Wc+gQTxVfmGi2WEmdQoOASD7bvzTNUJflbcZwK/aIOsAWWkqkZ81kMZggSmuBuO1g7j/NV1JzR19pdzI2j0lykIE6YYPpcs0T9520LKHdW+q/0dz7v6FxPK+aUHvqWWueenYnDT59/dkqjv2U//R/g/FyihR5zjWAN6V5XuoAQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(396003)(376002)(346002)(136003)(39850400004)(366004)(7696005)(6506007)(33656002)(66946007)(64756008)(91956017)(558084003)(66446008)(66476007)(54906003)(66556008)(76116006)(316002)(2906002)(53546011)(86362001)(186003)(110136005)(71200400001)(4326008)(8936002)(7416002)(9686003)(478600001)(52536014)(8676002)(5660300002)(26005)(55016002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: +crGDqVdcBJ08VAUVEgsiIl35BDCbPE0ORBV8kDC81NR1HN5QaHmoFOEoYXusAjuscscFXjnQ9LrXzfTiA6JIj5xKeWEAjmcH4AtywIBbSErAqbBCI9VRA2jsyFrpQKUFxikEEaQ5/n9iPd5JKoxW1K7b5UDF7piqtKAr/yFWpe7bUZDuXa8usw1Ixi6aJj8f9/JVHV7kHUZ+ZJ7zTEQDbFSxeM9EwgwXF5vj+z8KRiQyhYC/yOWabBmLlpbDipoUcArTGzqhx7qh7H9m1ShXABWMMEgnHoL8mGzaRQdfjABDgK/o864eLyXJamXRc7hxBG4FmhldJMwPCd25q5XBgpkSSS2YJeF5V8rOICgN/tiSsZEWW0/AFHTczTWNADpaZUDSRBZmu42O0UlcRR44ve+B6vKIVpdIjTbQqs8L6O8uWywEPJsAW4a0oOvo61u5X3sexac8tKiP15Nq4T+rEpwM3YU+eJrxsYfWP8GRt1LigwHZFG6TGWCLuV1bJC9RxWMfbwuGZk7uSWb+2viZOqd6XyylPemu2d16uwcMc5Jqf/PmLv8YdGIasUxUgqxncglHFABDjo3XBaWj53yjoJbEbElTyT1qovzzhvCab92mZ8PPaKNrHY5F2hF1nhPXdvVokrc6A1YXPtq4HnLwA==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1514c6f4-316a-4c92-5309-08d838830fc8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Aug 2020 14:31:22.8533
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wxfJ1mbyOZTGtsaFRTR6DOZiuNBY6qhv5nqKMMwFSDTxMd77iDz9Hs2bUUkSInsHHuMrG2uxsemVJUOGCsqW+3ZahKaSNqOzJiwZ6bsjwFo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4240
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-When some buggy driver doesn't set its queue->limits.discard_granularity
-(e.g. current loop device driver), discard at LBA 0 on such device will
-trigger a kernel BUG() panic from block/blk-mq.c:563.
-
-[  955.565006][   C39] ------------[ cut here ]------------
-[  955.559660][   C39] invalid opcode: 0000 [#1] SMP NOPTI
-[  955.622171][   C39] CPU: 39 PID: 248 Comm: ksoftirqd/39 Tainted: G            E     5.8.0-default+ #40
-[  955.622171][   C39] Hardware name: Lenovo ThinkSystem SR650 -[7X05CTO1WW]-/-[7X05CTO1WW]-, BIOS -[IVE160M-2.70]- 07/17/2020
-[  955.622175][   C39] RIP: 0010:blk_mq_end_request+0x107/0x110
-[  955.622177][   C39] Code: 48 8b 03 e9 59 ff ff ff 48 89 df 5b 5d 41 5c e9 9f ed ff ff 48 8b 35 98 3c f4 00 48 83 c7 10 48 83 c6 19 e8 cb 56 c9 ff eb cb <0f> 0b 0f 1f 80 00 00 00 00 0f 1f 44 00 00 55 48 89 e5 41 56 41 54
-[  955.622179][   C39] RSP: 0018:ffffb1288701fe28 EFLAGS: 00010202
-[  955.749277][   C39] RAX: 0000000000000001 RBX: ffff956fffba5080 RCX: 0000000000004003
-[  955.749278][   C39] RDX: 0000000000000003 RSI: 0000000000000000 RDI: 0000000000000000
-[  955.749279][   C39] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-[  955.749279][   C39] R10: ffffb1288701fd28 R11: 0000000000000001 R12: ffffffffa8e05160
-[  955.749280][   C39] R13: 0000000000000004 R14: 0000000000000004 R15: ffffffffa7ad3a1e
-[  955.749281][   C39] FS:  0000000000000000(0000) GS:ffff95bfbda00000(0000) knlGS:0000000000000000
-[  955.749282][   C39] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  955.749282][   C39] CR2: 00007f6f0ef766a8 CR3: 0000005a37012002 CR4: 00000000007606e0
-[  955.749283][   C39] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  955.749284][   C39] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  955.749284][   C39] PKRU: 55555554
-[  955.749285][   C39] Call Trace:
-[  955.749290][   C39]  blk_done_softirq+0x99/0xc0
-[  957.550669][   C39]  __do_softirq+0xd3/0x45f
-[  957.550677][   C39]  ? smpboot_thread_fn+0x2f/0x1e0
-[  957.550679][   C39]  ? smpboot_thread_fn+0x74/0x1e0
-[  957.550680][   C39]  ? smpboot_thread_fn+0x14e/0x1e0
-[  957.550684][   C39]  run_ksoftirqd+0x30/0x60
-[  957.550687][   C39]  smpboot_thread_fn+0x149/0x1e0
-[  957.886225][   C39]  ? sort_range+0x20/0x20
-[  957.886226][   C39]  kthread+0x137/0x160
-[  957.886228][   C39]  ? kthread_park+0x90/0x90
-[  957.886231][   C39]  ret_from_fork+0x22/0x30
-[  959.117120][   C39] ---[ end trace 3dacdac97e2ed164 ]---
-
-This is the procedure to reproduce the panic,
-  # modprobe scsi_debug delay=0 dev_size_mb=2048 max_queue=1
-  # losetup -f /dev/nvme0n1 --direct-io=on
-  # blkdiscard /dev/loop0 -o 0 -l 0x200
-
-This is how the BUG() panic triggered by __blkdev_issue_discard(),
-- For a NVMe SSD backing loop device, the driver does not initialize
-  its queue->limits.discard_granularity and leaves it to 0.
-- When discard on LBA 0 of the loop device, __blkdev_issue_discard()
-  is called before loop device driver code.
-- Inside __blkdev_issue_discard(), when calculating value of
-  granularity_aligned_lba by
-	granularity_aligned_lba = round_up(sector_mapped,
-			q->limits.discard_granularity >> SECTOR_SHIFT);
-  because sector_mapped is 0 (at LBA 0 and no partition offset), and
-  q->limits.discard_granularity is 0 (by the buggy loop driver), the
-  calculated granularity_aligned_lba is 0.
-- The inline function bio_aligned_discard_max_sectors() is defined as
-	return round_down(UINT_MAX, q->limits.discard_granularity) >>
-			SECTOR_SHIFT;
-   when q->limits.discard_granularity is 0 from loop device driver, the
-   above calculation returns value 0.
-- Now granularity_aligned_lba and sctor_mapped are 0, req_sectors is
-  calculated by the following lines in __blkdev_issue_discard(),
-	if (granularity_aligned_lba == sector_mapped)
-		req_sects = min_t(sector_t, nr_sects,
-				  bio_aligned_discard_max_sectors(q));
-  because bio_aligned_discard_max_sectors(q) returns 0, req_sects is
-  calculated as 0.
-- Now a discard bio is mistakenly initialized as a 0 byte bio by,
-	bio->bi_iter.bi_size = req_sects << 9;
-  and sent to loop device driver.
-- This discard request is handled by loop device driver by following
-  code path,
-    loop_handle_cmd => do_req_filebacked => lo_fallocate =>
-    file->f_op->fallocate => blkdev_fallocate => blkdev_issue_zeroout =>
-    __blkdev_issue_write_zeroes
-- Inside __blkdev_issue_write_zeroes(), a 0 byte length discard bio is
-  composed and sent to the backing device of the loop device.
-- In the I/O completion code path, in my case it is,
-    blk_done_softirq => nrq->q->mq_ops->complete => nvme_pci_complete_rq
-    => nvme_complete_rq => blk_mq_end_request
-  inside blk_mq_end_request(), blk_update_request() is called and due to
-  req->bio is NULL in previous step, blk_update_request() returns false
-  then the BUG() panic in blk_mq_end_request() is triggered.
-
-Although the above panic can be fixed in loop device driver, the generic
-__blkdev_issue_discard() should also be fixed to tolerate the incorrect
-0 value from queue->limits.discard_granularity, in case some other buggy
-driver makes such mistake again.
-
-This patch checks whether q->limits.discard_granularity is 0 in
-__blkdev_issue_discard() and bio_aligned_discard_max_sectors(). If it is
-0 from some buggy driver queue, prints a warning oops information and
-set queue_logical_block_size(q) to a local variable discard_granularity.
-This local variable is used in round_up() and round_down() calculation,
-now req_sects won't be 0  and no empty discard request is generated.
-
-Fixes: 9b15d109a6b2 ("block: improve discard bio alignment in __blkdev_issue_discard()")
-Fixes: c52abf563049 ("loop: Better discard support for block devices")
-Reported-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Ming Lei <ming.lei@redhat.com>
-Cc: Xiao Ni <xni@redhat.com>
-Cc: Bart Van Assche <bvanassche@acm.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Enzo Matsumiya <ematsumiya@suse.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Evan Green <evgreen@chromium.org>
----
- block/blk-lib.c | 8 +++++++-
- block/blk.h     | 9 +++++++--
- 2 files changed, 14 insertions(+), 3 deletions(-)
-
-diff --git a/block/blk-lib.c b/block/blk-lib.c
-index 019e09bb9c0e..3017e4cba923 100644
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -30,6 +30,7 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
- 	struct bio *bio = *biop;
- 	unsigned int op;
- 	sector_t bs_mask, part_offset = 0;
-+	sector_t discard_granularity;
- 
- 	if (!q)
- 		return -ENXIO;
-@@ -54,6 +55,11 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
- 	if (!nr_sects)
- 		return -EINVAL;
- 
-+	discard_granularity = q->limits.discard_granularity;
-+	/* In case some buggy driver does not set limits.discard_granularity */
-+	if (WARN_ON_ONCE(discard_granularity == 0))
-+		discard_granularity = queue_logical_block_size(q);
-+
- 	/* In case the discard request is in a partition */
- 	if (bdev->bd_partno)
- 		part_offset = bdev->bd_part->start_sect;
-@@ -63,7 +69,7 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
- 		sector_t sector_mapped = sector + part_offset;
- 
- 		granularity_aligned_lba = round_up(sector_mapped,
--				q->limits.discard_granularity >> SECTOR_SHIFT);
-+				discard_granularity >> SECTOR_SHIFT);
- 
- 		/*
- 		 * Check whether the discard bio starts at a discard_granularity
-diff --git a/block/blk.h b/block/blk.h
-index 49e2928a1632..b52aa7049fb0 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -274,8 +274,13 @@ static inline unsigned int bio_allowed_max_sectors(struct request_queue *q)
- static inline unsigned int bio_aligned_discard_max_sectors(
- 					struct request_queue *q)
- {
--	return round_down(UINT_MAX, q->limits.discard_granularity) >>
--			SECTOR_SHIFT;
-+	sector_t discard_granularity = q->limits.discard_granularity;
-+
-+	/* In case some buggy driver doesn't set >limits.discard_granularity */
-+	if (WARN_ON_ONCE(discard_granularity == 0))
-+		discard_granularity = queue_logical_block_size(q);
-+
-+	return round_down(UINT_MAX, discard_granularity) >> SECTOR_SHIFT;
- }
- 
- /*
--- 
-2.26.2
-
+On 04/08/2020 16:23, Coly Li wrote:=0A=
+> This is the procedure to reproduce the panic,=0A=
+>   # modprobe scsi_debug delay=3D0 dev_size_mb=3D2048 max_queue=3D1=0A=
+>   # losetup -f /dev/nvme0n1 --direct-io=3Don=0A=
+>   # blkdiscard /dev/loop0 -o 0 -l 0x200=0A=
+=0A=
+losetup -f /dev/sdX isn't it?=0A=
