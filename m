@@ -2,82 +2,83 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 86C5523D323
-	for <lists+linux-bcache@lfdr.de>; Wed,  5 Aug 2020 22:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 394B623D41F
+	for <lists+linux-bcache@lfdr.de>; Thu,  6 Aug 2020 01:16:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728659AbgHEUgF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 5 Aug 2020 16:36:05 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50790 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728643AbgHEUgD (ORCPT
+        id S1726013AbgHEXQL (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 5 Aug 2020 19:16:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50796 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725996AbgHEXQJ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 5 Aug 2020 16:36:03 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 075FmSsH177468;
-        Wed, 5 Aug 2020 15:48:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=j6PDDC/Mn/spTqWrjmibfzc15MJWahsDJABkuGlXOL8=;
- b=pKfbdaR1rm6EexkfUXMute1LqT50Jj8as1sABST78bRKCEEgG3nIT0PcMsMSeSWpB2DE
- vgRfTz2tZ+wUJfFHRK2FLgt1OkjkHQ5yl5ccyEm/t/+y+ZtAZxaLNUN06K6uT1yoi0UR
- KKIjiYEsN3rSOxgy9Vv4Bhjt9cXL/jLoQlGlg8EjPM/Cir0iTN8zivyH+Z5IzY5cOKmf
- lZN+cHfyXETqdEOgEL/8leGIVp3cd7RW722uy1OsLV/XVABEHG0ZUsKK/guUoPWM1qsw
- zHKv7arRrdoOKBxTe25AXv8RkfCTvr9aiS0RWCUUSjCPrGrstJX1prYRmw3vrDxL3/uc bQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 32n11naua7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 05 Aug 2020 15:48:49 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 075FljmT139364;
-        Wed, 5 Aug 2020 15:48:49 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 32qyaa143y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Aug 2020 15:48:49 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 075Fmj4g003269;
-        Wed, 5 Aug 2020 15:48:46 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Aug 2020 08:48:45 -0700
-Date:   Wed, 5 Aug 2020 08:48:43 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Wed, 5 Aug 2020 19:16:09 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AF2EC061756
+        for <linux-bcache@vger.kernel.org>; Wed,  5 Aug 2020 16:16:09 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id s15so14110050pgc.8
+        for <linux-bcache@vger.kernel.org>; Wed, 05 Aug 2020 16:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mX2RQWIeukytd4cMjhvK2ERywuLZIUHHxAhzXb8p2CI=;
+        b=RedmrbDYX8xHeYwBAyAMe59kGo6ejds4t+fKQDTHMHVZoIiRoXnp4eetVKZsqZHvwp
+         bqEa8dXP/bjqtUXZco7PnDuarFsJZZ+0SOLSAkZe6au6PqS/zfZhse/wsReGuyYCDPoZ
+         d/Uh/xAzUKc6Q05Las/S09motL9sXLvpByuOUy+OUqik3Konpp/RoaoMOO5PbFlA06GR
+         2gpNpMxRLB6FIWqnW8q5bysp7XVnQrsC9pPMu0IVvfJIfQn79jx6r94rbbHt4SWz+SGE
+         Ps2M5P4EPLv6QpD0+ajMO5TjQEgHAl4iANb5kH+o9uXBTGe1IWue0N+6UoZ/nVp6B8CJ
+         fXxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mX2RQWIeukytd4cMjhvK2ERywuLZIUHHxAhzXb8p2CI=;
+        b=TFYNZjSl2NAloqNwbjid+p5cS83C8TBcyAZzPI86HlfGPsRSJYMYZynzwMex2OL2oJ
+         iPtJzJ8yMublCgEXy9L11YM5VIa99V8a4N8LJuqo/uRT4W3Spp8pun1AFz4r6xv+84nX
+         l+pxge4+D0fL2n6cvGFySXGSyvqyBRnhnozkNTyODvnLlaAi+InR6nfFLwONuh0lz+4f
+         E0VzlNluiBR++2Sv7EjAzvAQ9HI2+F3Lp+aiuR1KlaLrPSMsFciMv2IAjK8O1hsQsmmR
+         /kVTO1OF2JP3V4UOUuvnXsigTBK2RrHFoj6jqHs3nSB5io6IEA/YlYpp1daUDzIxEjem
+         uj3g==
+X-Gm-Message-State: AOAM530xDPcr/6kPn/nZx3eVEylJnFTZsgICPLKTtqCcUZU3ca9wKWyE
+        Yvlqad05Pnejb7qE71gTKCd9nw==
+X-Google-Smtp-Source: ABdhPJxdhapAiWis8V0esUSVfVlcLDvYs+fpc50sa9uce/UQJLnj8/1rVj6gBsGtyKYnT4OhMkVUCw==
+X-Received: by 2002:aa7:9241:: with SMTP id 1mr5877013pfp.188.1596669368189;
+        Wed, 05 Aug 2020 16:16:08 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id e4sm5160490pfd.204.2020.08.05.16.16.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Aug 2020 16:16:07 -0700 (PDT)
+Subject: Re: [PATCH v4] block: check queue's limits.discard_granularity in
+ __blkdev_issue_discard()
+To:     Coly Li <colyli@suse.de>, linux-block@vger.kernel.org
+Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ming Lei <ming.lei@redhat.com>, Hannes Reinecke <hare@suse.de>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
         Bart Van Assche <bvanassche@acm.org>,
         Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
         Enzo Matsumiya <ematsumiya@suse.com>,
         Evan Green <evgreen@chromium.org>,
-        Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         Xiao Ni <xni@redhat.com>
-Subject: Re: [PATCH v3] block: check queue's limits.discard_granularity in
- __blkdev_issue_discard()
-Message-ID: <20200805154843.GB191798@magnolia>
-References: <20200805063150.41037-1-colyli@suse.de>
+References: <20200805172503.45121-1-colyli@suse.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fd22ada6-0ed9-aeed-94a7-561cd923dbbd@kernel.dk>
+Date:   Wed, 5 Aug 2020 17:16:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200805063150.41037-1-colyli@suse.de>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9704 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 suspectscore=1
- spamscore=0 bulkscore=0 phishscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008050128
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9704 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- suspectscore=1 mlxlogscore=999 phishscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008050128
+In-Reply-To: <20200805172503.45121-1-colyli@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, Aug 05, 2020 at 02:31:50PM +0800, Coly Li wrote:
+On 8/5/20 11:25 AM, Coly Li wrote:
 > If create a loop device with a backing NVMe SSD, current loop device
 > driver doesn't correctly set its  queue's limits.discard_granularity and
 > leaves it as 0. If a discard request at LBA 0 on this loop device, in
@@ -127,58 +128,9 @@ On Wed, Aug 05, 2020 at 02:31:50PM +0800, Coly Li wrote:
 > is 0, then prints a warning oops information and returns -EOPNOTSUPP to
 > the caller to indicate that this buggy device driver doesn't support
 > discard request.
-> 
-> Fixes: 9b15d109a6b2 ("block: improve discard bio alignment in __blkdev_issue_discard()")
-> Fixes: c52abf563049 ("loop: Better discard support for block devices")
-> Reported-and-suggested-by: Ming Lei <ming.lei@redhat.com>
-> Signed-off-by: Coly Li <colyli@suse.de>
-> Reviewed-by: Ming Lei <ming.lei@redhat.com>
-> Cc: Bart Van Assche <bvanassche@acm.org>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Enzo Matsumiya <ematsumiya@suse.com>
-> Cc: Evan Green <evgreen@chromium.org>
-> Cc: Hannes Reinecke <hare@suse.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Martin K. Petersen <martin.petersen@oracle.com>
-> Cc: Xiao Ni <xni@redhat.com>
-> ---
-> Changelog:
-> v3: print device name assocated with the buggy driver.
-> v2: fix typo of the wrong return error code.
-> v1: first version.
-> 
->  block/blk-lib.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/block/blk-lib.c b/block/blk-lib.c
-> index 019e09bb9c0e..d3bbb3d9fac3 100644
-> --- a/block/blk-lib.c
-> +++ b/block/blk-lib.c
-> @@ -47,6 +47,15 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
->  		op = REQ_OP_DISCARD;
->  	}
->  
-> +	/* In case the discard granularity isn't set by buggy device driver */
-> +	if (WARN_ON_ONCE(!q->limits.discard_granularity)) {
-> +		char dev_name[BDEVNAME_SIZE];
-> +
-> +		bdevname(bdev, dev_name);
-> +		pr_err("%s: Error: discard_granularity is 0.\n", dev_name);
 
-Hm, you might want to ratelimit this, before some buggy device +
-careless program flood dmesg.
+Applied, thanks.
 
-Also, why is it necessary to WARN_ON_ONCE /and/ pr_err the same
-condition?
+-- 
+Jens Axboe
 
---D
-
-> +		return -EOPNOTSUPP;
-> +	}
-> +
->  	bs_mask = (bdev_logical_block_size(bdev) >> 9) - 1;
->  	if ((sector | nr_sects) & bs_mask)
->  		return -EINVAL;
-> -- 
-> 2.26.2
-> 
