@@ -2,38 +2,38 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D2FC240E81
-	for <lists+linux-bcache@lfdr.de>; Mon, 10 Aug 2020 21:14:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46E2E240F01
+	for <lists+linux-bcache@lfdr.de>; Mon, 10 Aug 2020 21:17:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbgHJTNn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 10 Aug 2020 15:13:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44922 "EHLO mail.kernel.org"
+        id S1728703AbgHJTRp (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 10 Aug 2020 15:17:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728466AbgHJTNl (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 10 Aug 2020 15:13:41 -0400
+        id S1729309AbgHJTOQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 10 Aug 2020 15:14:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F29B22BED;
-        Mon, 10 Aug 2020 19:13:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6337522BEB;
+        Mon, 10 Aug 2020 19:14:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597086821;
-        bh=y3+g7EZTyn6i975gKp0Mp3Bv6elrogf8OcOKszMUTU4=;
+        s=default; t=1597086855;
+        bh=J2Vzlc4yCrjMyL61zX/BZkfCsomgm7E912enXuGztbI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wh40ia9boI2ZaMJxmyV5jCdZk5Cf2fLVx3tMMaPiKZfrM+EGM98Vh0CmxaHgmfXaC
-         Xwt/KIza/co4YIsJKH+bk0YHcJC320uBVY5oW7rMZuBRe3BCDOatk82EFIlYP3ry/U
-         ryPHUUWVqfJDG5dVDFi+uivqT9FOquVLN7drAeUc=
+        b=digJx6WihX+27n+QV+Y8Z8epFhB9agxDwYqav4H3REdyt2UwsWhiy+Unj3vL2oQQx
+         tKJOH78iiCbhydVA7oGGszqNet5fTt8m+fs1XpSQLwFpEKiD7tXMDm9W6hMT0KQCFL
+         fzOKFO+U1T1WRKEHxCxeUZ3jvOD9imlfQ537UfoA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>, Hannes Reinecke <hare@suse.de>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 29/31] bcache: fix super block seq numbers comparision in register_cache_set()
-Date:   Mon, 10 Aug 2020 15:12:57 -0400
-Message-Id: <20200810191259.3794858-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 21/22] bcache: fix super block seq numbers comparision in register_cache_set()
+Date:   Mon, 10 Aug 2020 15:13:43 -0400
+Message-Id: <20200810191345.3795166-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200810191259.3794858-1-sashal@kernel.org>
-References: <20200810191259.3794858-1-sashal@kernel.org>
+In-Reply-To: <20200810191345.3795166-1-sashal@kernel.org>
+References: <20200810191345.3795166-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -94,10 +94,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 68ebc2759c2ef..46ad0bf18e1fd 100644
+index 690aeb09bbf55..32498b912ce7c 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -2013,7 +2013,14 @@ static const char *register_cache_set(struct cache *ca)
+@@ -1780,7 +1780,14 @@ static const char *register_cache_set(struct cache *ca)
  	    sysfs_create_link(&c->kobj, &ca->kobj, buf))
  		goto err;
  
