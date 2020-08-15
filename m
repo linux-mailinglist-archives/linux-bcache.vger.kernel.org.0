@@ -2,102 +2,98 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 008F9243529
-	for <lists+linux-bcache@lfdr.de>; Thu, 13 Aug 2020 09:46:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDC8624522D
+	for <lists+linux-bcache@lfdr.de>; Sat, 15 Aug 2020 23:44:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbgHMHqI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 13 Aug 2020 03:46:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34532 "EHLO mx2.suse.de"
+        id S1726021AbgHOVoJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 15 Aug 2020 17:44:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55004 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726081AbgHMHqI (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 13 Aug 2020 03:46:08 -0400
+        id S1726675AbgHOVnu (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 15 Aug 2020 17:43:50 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 5075DAF82;
-        Thu, 13 Aug 2020 07:46:28 +0000 (UTC)
-To:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
+        by mx2.suse.de (Postfix) with ESMTP id 35A57AC79;
+        Sat, 15 Aug 2020 04:11:15 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
-Autocrypt: addr=colyli@suse.de; keydata=
- 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
-Cc:     "Ren, Qiaowei" <qiaowei.ren@intel.com>, jianpeng.ma@intel.com
-Subject: Use NVDIMM in bcache
-Message-ID: <bc7e71ec-97eb-b226-d4fc-d8b64c1ef41a@suse.de>
-Date:   Thu, 13 Aug 2020 15:46:02 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.11.0
+To:     linux-bcache@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
+Subject: [PATCH 00/14] bcache: remove multiple caches code framework
+Date:   Sat, 15 Aug 2020 12:10:29 +0800
+Message-Id: <20200815041043.45116-1-colyli@suse.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi folk,
+The multiple caches code framework in bcache is to store multiple
+copies of the cached data among multiple caches of the cache set.
+Current code framework just does simple data write to each cache without
+any extra condition handling (e.g. device failure, slow devices). This
+code framework is not and will never be completed. Considering people
+may use md raid1 for same similar data duplication purpose, the multiple
+caches framework is useless dead code indeed.
 
-Using NVDIMM in bcache right now is on my working desk. Now Lenovo
-supports me a SR650 server with Intel Apache Pass DIMM, and engineers
-from Intel have interest to join the development, it is about time the
-start this work.
+Due to the multiple caches code framework, bcache has two data structure
+struct cache and struct cache_set to manage the cache device. Indeed
+since bcache was merged into mainline kernel in Linux v3.10, a cache set
+only has one cache, the unnecessary two level abstraction makes extra
+effort to maintain redundant information between struct cache and struct
+cache set, for examaple the in-memmory super block struct cache_sb.
 
-The whole work devices into several steps,
-1) A generic frame work in bcache to allocate/release NV-memory pages,
-and provide allocated pages for each requestor after system reboot.
-2) Store bcache internal btree nodes on NVDIMM name space.
-3) Store bcache data bucket on NVDIMM name space.
+This is the first wave effort to remove multiple caches framework and
+make the code and data structure relation to be more clear. This series
+explicitly make each cache set only have single cache, and remove the
+embedded partial super block in struct cache_set and directly reference
+cache's in-memory super block, finally move struct cache_sb from
+include/uapi/linux/bcache.h to drivers/md/bcache/bcache.h since it isn't
+part of uapi anymore.
 
-All the NVDIMM usage method will be based on dax and libnvdimm code. In
-very soon future we will start to post patches for code review and testing.
+The patch set is just compiling passed, I post this series early for
+your review and comments. More fixes after testing will follow up soon.
 
-On bcache and bcache-tools tree, I will create a nvdimm-meta branch for
-the development activities, and rebase the code time to time to follow
-latest mainline kernel.
-
-It will be an interesting work, and let's see how much fun we can gain
-from the fantastic non-volatile memory.
-
-Thank you in advance for any help.
+Thanks in advance.
 
 Coly Li
+----
+
+Coly Li (14):
+  bcache: remove 'int n' from parameter list of bch_bucket_alloc_set()
+  bcache: explicitly make cache_set only have single cache
+  bcache: remove for_each_cache()
+  bcache: add set_uuid in struct cache_set
+  bcache: only use block_bytes() on struct cache
+  bcache: remove useless alloc_bucket_pages()
+  bcache: remove useless bucket_pages()
+  bcache: only use bucket_bytes() on struct cache
+  bcache: avoid data copy between cache_set->sb and cache->sb
+  bcache: don't check seq numbers in register_cache_set()
+  bcache: remove can_attach_cache()
+  bcache: check and set sync status on cache's in-memory super block
+  bcache: remove embedded struct cache_sb from struct cache_set
+  bcache: move struct cache_sb out of uapi bcache.h
+
+ drivers/md/bcache/alloc.c     |  60 ++++-----
+ drivers/md/bcache/bcache.h    | 128 +++++++++++++++---
+ drivers/md/bcache/btree.c     | 144 ++++++++++----------
+ drivers/md/bcache/btree.h     |   2 +-
+ drivers/md/bcache/debug.c     |  10 +-
+ drivers/md/bcache/extents.c   |   6 +-
+ drivers/md/bcache/features.c  |   4 +-
+ drivers/md/bcache/io.c        |   2 +-
+ drivers/md/bcache/journal.c   | 246 ++++++++++++++++------------------
+ drivers/md/bcache/movinggc.c  |  58 ++++----
+ drivers/md/bcache/request.c   |   6 +-
+ drivers/md/bcache/super.c     | 225 +++++++++++--------------------
+ drivers/md/bcache/sysfs.c     |  10 +-
+ drivers/md/bcache/writeback.c |   2 +-
+ include/trace/events/bcache.h |   4 +-
+ include/uapi/linux/bcache.h   |  98 --------------
+ 16 files changed, 445 insertions(+), 560 deletions(-)
+
+-- 
+2.26.2
+
