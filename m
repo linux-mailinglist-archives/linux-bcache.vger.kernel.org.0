@@ -2,26 +2,28 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DDC8624522D
-	for <lists+linux-bcache@lfdr.de>; Sat, 15 Aug 2020 23:44:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22052245234
+	for <lists+linux-bcache@lfdr.de>; Sat, 15 Aug 2020 23:44:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726021AbgHOVoJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 15 Aug 2020 17:44:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55004 "EHLO mx2.suse.de"
+        id S1727879AbgHOVoN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 15 Aug 2020 17:44:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54982 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726675AbgHOVnu (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 15 Aug 2020 17:43:50 -0400
+        id S1726593AbgHOVns (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 15 Aug 2020 17:43:48 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 35A57AC79;
-        Sat, 15 Aug 2020 04:11:15 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 242BCB795;
+        Sat, 15 Aug 2020 04:11:17 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [PATCH 00/14] bcache: remove multiple caches code framework
-Date:   Sat, 15 Aug 2020 12:10:29 +0800
-Message-Id: <20200815041043.45116-1-colyli@suse.de>
+Subject: [PATCH 01/14] bcache: remove 'int n' from parameter list of bch_bucket_alloc_set()
+Date:   Sat, 15 Aug 2020 12:10:30 +0800
+Message-Id: <20200815041043.45116-2-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200815041043.45116-1-colyli@suse.de>
+References: <20200815041043.45116-1-colyli@suse.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
@@ -29,71 +31,148 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The multiple caches code framework in bcache is to store multiple
-copies of the cached data among multiple caches of the cache set.
-Current code framework just does simple data write to each cache without
-any extra condition handling (e.g. device failure, slow devices). This
-code framework is not and will never be completed. Considering people
-may use md raid1 for same similar data duplication purpose, the multiple
-caches framework is useless dead code indeed.
+The parameter 'int n' from bch_bucket_alloc_set() is not cleared
+defined. From the code comments n is the number of buckets to alloc, but
+from the code itself 'n' is the maximum cache to iterate. Indeed all the
+locations where bch_bucket_alloc_set() is called, 'n' is alwasy 1.
 
-Due to the multiple caches code framework, bcache has two data structure
-struct cache and struct cache_set to manage the cache device. Indeed
-since bcache was merged into mainline kernel in Linux v3.10, a cache set
-only has one cache, the unnecessary two level abstraction makes extra
-effort to maintain redundant information between struct cache and struct
-cache set, for examaple the in-memmory super block struct cache_sb.
+This patch removes the confused and unnecessary 'int n' from parameter
+list of  bch_bucket_alloc_set(), and explicitly allocates only 1 bucket
+for its caller.
 
-This is the first wave effort to remove multiple caches framework and
-make the code and data structure relation to be more clear. This series
-explicitly make each cache set only have single cache, and remove the
-embedded partial super block in struct cache_set and directly reference
-cache's in-memory super block, finally move struct cache_sb from
-include/uapi/linux/bcache.h to drivers/md/bcache/bcache.h since it isn't
-part of uapi anymore.
+Signed-off-by: Coly Li <colyli@suse.de>
+---
+ drivers/md/bcache/alloc.c  | 35 +++++++++++++++--------------------
+ drivers/md/bcache/bcache.h |  4 ++--
+ drivers/md/bcache/btree.c  |  2 +-
+ drivers/md/bcache/super.c  |  2 +-
+ 4 files changed, 19 insertions(+), 24 deletions(-)
 
-The patch set is just compiling passed, I post this series early for
-your review and comments. More fixes after testing will follow up soon.
-
-Thanks in advance.
-
-Coly Li
-----
-
-Coly Li (14):
-  bcache: remove 'int n' from parameter list of bch_bucket_alloc_set()
-  bcache: explicitly make cache_set only have single cache
-  bcache: remove for_each_cache()
-  bcache: add set_uuid in struct cache_set
-  bcache: only use block_bytes() on struct cache
-  bcache: remove useless alloc_bucket_pages()
-  bcache: remove useless bucket_pages()
-  bcache: only use bucket_bytes() on struct cache
-  bcache: avoid data copy between cache_set->sb and cache->sb
-  bcache: don't check seq numbers in register_cache_set()
-  bcache: remove can_attach_cache()
-  bcache: check and set sync status on cache's in-memory super block
-  bcache: remove embedded struct cache_sb from struct cache_set
-  bcache: move struct cache_sb out of uapi bcache.h
-
- drivers/md/bcache/alloc.c     |  60 ++++-----
- drivers/md/bcache/bcache.h    | 128 +++++++++++++++---
- drivers/md/bcache/btree.c     | 144 ++++++++++----------
- drivers/md/bcache/btree.h     |   2 +-
- drivers/md/bcache/debug.c     |  10 +-
- drivers/md/bcache/extents.c   |   6 +-
- drivers/md/bcache/features.c  |   4 +-
- drivers/md/bcache/io.c        |   2 +-
- drivers/md/bcache/journal.c   | 246 ++++++++++++++++------------------
- drivers/md/bcache/movinggc.c  |  58 ++++----
- drivers/md/bcache/request.c   |   6 +-
- drivers/md/bcache/super.c     | 225 +++++++++++--------------------
- drivers/md/bcache/sysfs.c     |  10 +-
- drivers/md/bcache/writeback.c |   2 +-
- include/trace/events/bcache.h |   4 +-
- include/uapi/linux/bcache.h   |  98 --------------
- 16 files changed, 445 insertions(+), 560 deletions(-)
-
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index 52035a78d836..4493ff57476d 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -49,7 +49,7 @@
+  *
+  * bch_bucket_alloc() allocates a single bucket from a specific cache.
+  *
+- * bch_bucket_alloc_set() allocates one or more buckets from different caches
++ * bch_bucket_alloc_set() allocates one  bucket from different caches
+  * out of a cache set.
+  *
+  * free_some_buckets() drives all the processes described above. It's called
+@@ -488,34 +488,29 @@ void bch_bucket_free(struct cache_set *c, struct bkey *k)
+ }
+ 
+ int __bch_bucket_alloc_set(struct cache_set *c, unsigned int reserve,
+-			   struct bkey *k, int n, bool wait)
++			   struct bkey *k, bool wait)
+ {
+-	int i;
++	struct cache *ca;
++	long b;
+ 
+ 	/* No allocation if CACHE_SET_IO_DISABLE bit is set */
+ 	if (unlikely(test_bit(CACHE_SET_IO_DISABLE, &c->flags)))
+ 		return -1;
+ 
+ 	lockdep_assert_held(&c->bucket_lock);
+-	BUG_ON(!n || n > c->caches_loaded || n > MAX_CACHES_PER_SET);
+ 
+ 	bkey_init(k);
+ 
+-	/* sort by free space/prio of oldest data in caches */
+-
+-	for (i = 0; i < n; i++) {
+-		struct cache *ca = c->cache_by_alloc[i];
+-		long b = bch_bucket_alloc(ca, reserve, wait);
++	ca = c->cache_by_alloc[0];
++	b = bch_bucket_alloc(ca, reserve, wait);
++	if (b == -1)
++		goto err;
+ 
+-		if (b == -1)
+-			goto err;
++	k->ptr[0] = MAKE_PTR(ca->buckets[b].gen,
++			     bucket_to_sector(c, b),
++			     ca->sb.nr_this_dev);
+ 
+-		k->ptr[i] = MAKE_PTR(ca->buckets[b].gen,
+-				bucket_to_sector(c, b),
+-				ca->sb.nr_this_dev);
+-
+-		SET_KEY_PTRS(k, i + 1);
+-	}
++	SET_KEY_PTRS(k, 1);
+ 
+ 	return 0;
+ err:
+@@ -525,12 +520,12 @@ int __bch_bucket_alloc_set(struct cache_set *c, unsigned int reserve,
+ }
+ 
+ int bch_bucket_alloc_set(struct cache_set *c, unsigned int reserve,
+-			 struct bkey *k, int n, bool wait)
++			 struct bkey *k, bool wait)
+ {
+ 	int ret;
+ 
+ 	mutex_lock(&c->bucket_lock);
+-	ret = __bch_bucket_alloc_set(c, reserve, k, n, wait);
++	ret = __bch_bucket_alloc_set(c, reserve, k, wait);
+ 	mutex_unlock(&c->bucket_lock);
+ 	return ret;
+ }
+@@ -638,7 +633,7 @@ bool bch_alloc_sectors(struct cache_set *c,
+ 
+ 		spin_unlock(&c->data_bucket_lock);
+ 
+-		if (bch_bucket_alloc_set(c, watermark, &alloc.key, 1, wait))
++		if (bch_bucket_alloc_set(c, watermark, &alloc.key, wait))
+ 			return false;
+ 
+ 		spin_lock(&c->data_bucket_lock);
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 4fd03d2496d8..5ff6e9573935 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -994,9 +994,9 @@ void bch_bucket_free(struct cache_set *c, struct bkey *k);
+ 
+ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait);
+ int __bch_bucket_alloc_set(struct cache_set *c, unsigned int reserve,
+-			   struct bkey *k, int n, bool wait);
++			   struct bkey *k, bool wait);
+ int bch_bucket_alloc_set(struct cache_set *c, unsigned int reserve,
+-			 struct bkey *k, int n, bool wait);
++			 struct bkey *k, bool wait);
+ bool bch_alloc_sectors(struct cache_set *c, struct bkey *k,
+ 		       unsigned int sectors, unsigned int write_point,
+ 		       unsigned int write_prio, bool wait);
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 3d8bd0692af3..e2a719fed53b 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -1091,7 +1091,7 @@ struct btree *__bch_btree_node_alloc(struct cache_set *c, struct btree_op *op,
+ 
+ 	mutex_lock(&c->bucket_lock);
+ retry:
+-	if (__bch_bucket_alloc_set(c, RESERVE_BTREE, &k.key, 1, wait))
++	if (__bch_bucket_alloc_set(c, RESERVE_BTREE, &k.key, wait))
+ 		goto err;
+ 
+ 	bkey_put(c, &k.key);
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 1bbdc410ee3c..7057ec48f3d1 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -486,7 +486,7 @@ static int __uuid_write(struct cache_set *c)
+ 	closure_init_stack(&cl);
+ 	lockdep_assert_held(&bch_register_lock);
+ 
+-	if (bch_bucket_alloc_set(c, RESERVE_BTREE, &k.key, 1, true))
++	if (bch_bucket_alloc_set(c, RESERVE_BTREE, &k.key, true))
+ 		return 1;
+ 
+ 	size =  meta_bucket_pages(&c->sb) * PAGE_SECTORS;
 -- 
 2.26.2
 
