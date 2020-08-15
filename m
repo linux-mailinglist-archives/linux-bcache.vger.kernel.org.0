@@ -2,25 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B2E024523E
-	for <lists+linux-bcache@lfdr.de>; Sat, 15 Aug 2020 23:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D06C245221
+	for <lists+linux-bcache@lfdr.de>; Sat, 15 Aug 2020 23:43:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbgHOVoV (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 15 Aug 2020 17:44:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54814 "EHLO mx2.suse.de"
+        id S1726598AbgHOVnq (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 15 Aug 2020 17:43:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54794 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726361AbgHOVnr (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 15 Aug 2020 17:43:47 -0400
+        id S1726004AbgHOVnp (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 15 Aug 2020 17:43:45 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 7993EB7A7;
-        Sat, 15 Aug 2020 04:11:42 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 6AD22B7A3;
+        Sat, 15 Aug 2020 04:11:44 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [PATCH 13/14] bcache: remove embedded struct cache_sb from struct cache_set
-Date:   Sat, 15 Aug 2020 12:10:42 +0800
-Message-Id: <20200815041043.45116-14-colyli@suse.de>
+Subject: [PATCH 14/14] bcache: move struct cache_sb out of uapi bcache.h
+Date:   Sat, 15 Aug 2020 12:10:43 +0800
+Message-Id: <20200815041043.45116-15-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200815041043.45116-1-colyli@suse.de>
 References: <20200815041043.45116-1-colyli@suse.de>
@@ -31,412 +31,259 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Since bcache code was merged into mainline kerrnel, each cache set only
-as one single cache in it. The multiple caches framework is here but the
-code is far from completed. Considering the multiple copies of cached
-data can also be stored on e.g. md raid1 devices, it is unnecessary to
-support multiple caches in one cache set indeed.
+struct cache_sb does not exactly map to cache_sb_disk, it is only for
+in-memory super block and dosn't belong to uapi bcache.h.
 
-The previous preparation patches fix the dependencies of explicitly
-making a cache set only have single cache. Now we don't have to maintain
-an embedded partial super block in struct cache_set, the in-memory super
-block can be directly referenced from struct cache.
-
-This patch removes the embedded struct cache_sb from struct cache_set,
-and fixes all locations where the superb lock was referenced from this
-removed super block by referencing the in-memory super block of struct
-cache.
+This patch moves the struct cache_sb definition and other depending
+macros and inline routines from include/uapi/linux/bcache.h to
+drivers/md/bcache/bcache.h, this is the proper location to have them.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/alloc.c     |  6 +++---
- drivers/md/bcache/bcache.h    |  4 +---
- drivers/md/bcache/btree.c     | 17 +++++++++--------
- drivers/md/bcache/btree.h     |  2 +-
- drivers/md/bcache/extents.c   |  6 +++---
- drivers/md/bcache/features.c  |  4 ++--
- drivers/md/bcache/io.c        |  2 +-
- drivers/md/bcache/journal.c   | 11 ++++++-----
- drivers/md/bcache/request.c   |  4 ++--
- drivers/md/bcache/super.c     | 19 +++++++++----------
- drivers/md/bcache/writeback.c |  2 +-
- 11 files changed, 38 insertions(+), 39 deletions(-)
+ drivers/md/bcache/bcache.h  | 99 +++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/bcache.h | 98 ------------------------------------
+ 2 files changed, 99 insertions(+), 98 deletions(-)
 
-diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index 65fdbdeb5134..8c371d5eef8e 100644
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -87,7 +87,7 @@ void bch_rescale_priorities(struct cache_set *c, int sectors)
- {
- 	struct cache *ca;
- 	struct bucket *b;
--	unsigned long next = c->nbuckets * c->sb.bucket_size / 1024;
-+	unsigned long next = c->nbuckets * c->cache->sb.bucket_size / 1024;
- 	int r;
- 
- 	atomic_sub(sectors, &c->rescale);
-@@ -583,7 +583,7 @@ static struct open_bucket *pick_data_bucket(struct cache_set *c,
- 					   struct open_bucket, list);
- found:
- 	if (!ret->sectors_free && KEY_PTRS(alloc)) {
--		ret->sectors_free = c->sb.bucket_size;
-+		ret->sectors_free = c->cache->sb.bucket_size;
- 		bkey_copy(&ret->key, alloc);
- 		bkey_init(alloc);
- 	}
-@@ -677,7 +677,7 @@ bool bch_alloc_sectors(struct cache_set *c,
- 				&PTR_CACHE(c, &b->key, i)->sectors_written);
- 	}
- 
--	if (b->sectors_free < c->sb.block_size)
-+	if (b->sectors_free < c->cache->sb.block_size)
- 		b->sectors_free = 0;
- 
- 	/*
 diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 94d4baf4c405..1d57f48307e6 100644
+index 1d57f48307e6..b755bf7832ac 100644
 --- a/drivers/md/bcache/bcache.h
 +++ b/drivers/md/bcache/bcache.h
-@@ -517,8 +517,6 @@ struct cache_set {
- 	atomic_t		idle_counter;
- 	atomic_t		at_max_writeback_rate;
+@@ -279,6 +279,82 @@ struct bcache_device {
+ 		     unsigned int cmd, unsigned long arg);
+ };
  
--	struct cache_sb		sb;
++/*
++ * This is for in-memory bcache super block.
++ * NOTE: cache_sb is NOT exactly mapping to cache_sb_disk, the member
++ *       size, ordering and even whole struct size may be different
++ *       from cache_sb_disk.
++ */
++struct cache_sb {
++	__u64			offset;	/* sector where this sb was written */
++	__u64			version;
++
++	__u8			magic[16];
++
++	__u8			uuid[16];
++	union {
++		__u8		set_uuid[16];
++		__u64		set_magic;
++	};
++	__u8			label[SB_LABEL_SIZE];
++
++	__u64			flags;
++	__u64			seq;
++
++	__u64			feature_compat;
++	__u64			feature_incompat;
++	__u64			feature_ro_compat;
++
++	union {
++	struct {
++		/* Cache devices */
++		__u64		nbuckets;	/* device size */
++
++		__u16		block_size;	/* sectors */
++		__u16		nr_in_set;
++		__u16		nr_this_dev;
++		__u32		bucket_size;	/* sectors */
++	};
++	struct {
++		/* Backing devices */
++		__u64		data_offset;
++
++		/*
++		 * block_size from the cache device section is still used by
++		 * backing devices, so don't add anything here until we fix
++		 * things to not need it for backing devices anymore
++		 */
++	};
++	};
++
++	__u32			last_mount;	/* time overflow in y2106 */
++
++	__u16			first_bucket;
++	union {
++		__u16		njournal_buckets;
++		__u16		keys;
++	};
++	__u64			d[SB_JOURNAL_BUCKETS];	/* journal buckets */
++};
++
++BITMASK(CACHE_SYNC,			struct cache_sb, flags, 0, 1);
++BITMASK(CACHE_DISCARD,			struct cache_sb, flags, 1, 1);
++BITMASK(CACHE_REPLACEMENT,		struct cache_sb, flags, 2, 3);
++#define CACHE_REPLACEMENT_LRU		0U
++#define CACHE_REPLACEMENT_FIFO		1U
++#define CACHE_REPLACEMENT_RANDOM	2U
++
++BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
++#define CACHE_MODE_WRITETHROUGH		0U
++#define CACHE_MODE_WRITEBACK		1U
++#define CACHE_MODE_WRITEAROUND		2U
++#define CACHE_MODE_NONE			3U
++BITMASK(BDEV_STATE,			struct cache_sb, flags, 61, 2);
++#define BDEV_STATE_NONE			0U
++#define BDEV_STATE_CLEAN		1U
++#define BDEV_STATE_DIRTY		2U
++#define BDEV_STATE_STALE		3U
++
+ struct io {
+ 	/* Used to track sequential IO so it can be skipped */
+ 	struct hlist_node	hash;
+@@ -840,6 +916,13 @@ static inline bool ptr_available(struct cache_set *c, const struct bkey *k,
+ 	return (PTR_DEV(k, i) < MAX_CACHES_PER_SET) && PTR_CACHE(c, k, i);
+ }
+ 
++static inline _Bool SB_IS_BDEV(const struct cache_sb *sb)
++{
++	return sb->version == BCACHE_SB_VERSION_BDEV
++		|| sb->version == BCACHE_SB_VERSION_BDEV_WITH_OFFSET
++		|| sb->version == BCACHE_SB_VERSION_BDEV_WITH_FEATURES;
++}
++
+ /* Btree key macros */
+ 
+ /*
+@@ -958,6 +1041,22 @@ static inline void wait_for_kthread_stop(void)
+ 	}
+ }
+ 
++/* generate magic number */
++static inline __u64 jset_magic(struct cache_sb *sb)
++{
++	return sb->set_magic ^ JSET_MAGIC;
++}
++
++static inline __u64 pset_magic(struct cache_sb *sb)
++{
++	return sb->set_magic ^ PSET_MAGIC;
++}
++
++static inline __u64 bset_magic(struct cache_sb *sb)
++{
++	return sb->set_magic ^ BSET_MAGIC;
++}
++
+ /* Forward declarations */
+ 
+ void bch_count_backing_io_errors(struct cached_dev *dc, struct bio *bio);
+diff --git a/include/uapi/linux/bcache.h b/include/uapi/linux/bcache.h
+index 52e8bcb33981..18166a3d8503 100644
+--- a/include/uapi/linux/bcache.h
++++ b/include/uapi/linux/bcache.h
+@@ -216,89 +216,6 @@ struct cache_sb_disk {
+ 	__le16			bucket_size_hi;
+ };
+ 
+-/*
+- * This is for in-memory bcache super block.
+- * NOTE: cache_sb is NOT exactly mapping to cache_sb_disk, the member
+- *       size, ordering and even whole struct size may be different
+- *       from cache_sb_disk.
+- */
+-struct cache_sb {
+-	__u64			offset;	/* sector where this sb was written */
+-	__u64			version;
 -
- 	struct cache		*cache;
+-	__u8			magic[16];
+-
+-	__u8			uuid[16];
+-	union {
+-		__u8		set_uuid[16];
+-		__u64		set_magic;
+-	};
+-	__u8			label[SB_LABEL_SIZE];
+-
+-	__u64			flags;
+-	__u64			seq;
+-
+-	__u64			feature_compat;
+-	__u64			feature_incompat;
+-	__u64			feature_ro_compat;
+-
+-	union {
+-	struct {
+-		/* Cache devices */
+-		__u64		nbuckets;	/* device size */
+-
+-		__u16		block_size;	/* sectors */
+-		__u16		nr_in_set;
+-		__u16		nr_this_dev;
+-		__u32		bucket_size;	/* sectors */
+-	};
+-	struct {
+-		/* Backing devices */
+-		__u64		data_offset;
+-
+-		/*
+-		 * block_size from the cache device section is still used by
+-		 * backing devices, so don't add anything here until we fix
+-		 * things to not need it for backing devices anymore
+-		 */
+-	};
+-	};
+-
+-	__u32			last_mount;	/* time overflow in y2106 */
+-
+-	__u16			first_bucket;
+-	union {
+-		__u16		njournal_buckets;
+-		__u16		keys;
+-	};
+-	__u64			d[SB_JOURNAL_BUCKETS];	/* journal buckets */
+-};
+-
+-static inline _Bool SB_IS_BDEV(const struct cache_sb *sb)
+-{
+-	return sb->version == BCACHE_SB_VERSION_BDEV
+-		|| sb->version == BCACHE_SB_VERSION_BDEV_WITH_OFFSET
+-		|| sb->version == BCACHE_SB_VERSION_BDEV_WITH_FEATURES;
+-}
+-
+-BITMASK(CACHE_SYNC,			struct cache_sb, flags, 0, 1);
+-BITMASK(CACHE_DISCARD,			struct cache_sb, flags, 1, 1);
+-BITMASK(CACHE_REPLACEMENT,		struct cache_sb, flags, 2, 3);
+-#define CACHE_REPLACEMENT_LRU		0U
+-#define CACHE_REPLACEMENT_FIFO		1U
+-#define CACHE_REPLACEMENT_RANDOM	2U
+-
+-BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
+-#define CACHE_MODE_WRITETHROUGH		0U
+-#define CACHE_MODE_WRITEBACK		1U
+-#define CACHE_MODE_WRITEAROUND		2U
+-#define CACHE_MODE_NONE			3U
+-BITMASK(BDEV_STATE,			struct cache_sb, flags, 61, 2);
+-#define BDEV_STATE_NONE			0U
+-#define BDEV_STATE_CLEAN		1U
+-#define BDEV_STATE_DIRTY		2U
+-#define BDEV_STATE_STALE		3U
+-
+ /*
+  * Magic numbers
+  *
+@@ -310,21 +227,6 @@ BITMASK(BDEV_STATE,			struct cache_sb, flags, 61, 2);
+ #define PSET_MAGIC			0x6750e15f87337f91ULL
+ #define BSET_MAGIC			0x90135c78b99e07f5ULL
  
- 	struct bcache_device	**devices;
-@@ -799,7 +797,7 @@ static inline sector_t bucket_to_sector(struct cache_set *c, size_t b)
- 
- static inline sector_t bucket_remainder(struct cache_set *c, sector_t s)
- {
--	return s & (c->sb.bucket_size - 1);
-+	return s & (c->cache->sb.bucket_size - 1);
- }
- 
- static inline struct cache *PTR_CACHE(struct cache_set *c,
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index c91b4d58a5b3..d09103cc7da5 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -117,7 +117,7 @@ static void bch_btree_init_next(struct btree *b)
- 
- 	if (b->written < btree_blocks(b))
- 		bch_bset_init_next(&b->keys, write_block(b),
--				   bset_magic(&b->c->sb));
-+				   bset_magic(&b->c->cache->sb));
- 
- }
- 
-@@ -155,7 +155,7 @@ void bch_btree_node_read_done(struct btree *b)
- 	 * See the comment arount cache_set->fill_iter.
- 	 */
- 	iter = mempool_alloc(&b->c->fill_iter, GFP_NOIO);
--	iter->size = b->c->sb.bucket_size / b->c->sb.block_size;
-+	iter->size = b->c->cache->sb.bucket_size / b->c->cache->sb.block_size;
- 	iter->used = 0;
- 
- #ifdef CONFIG_BCACHE_DEBUG
-@@ -178,7 +178,7 @@ void bch_btree_node_read_done(struct btree *b)
- 			goto err;
- 
- 		err = "bad magic";
--		if (i->magic != bset_magic(&b->c->sb))
-+		if (i->magic != bset_magic(&b->c->cache->sb))
- 			goto err;
- 
- 		err = "bad checksum";
-@@ -219,7 +219,7 @@ void bch_btree_node_read_done(struct btree *b)
- 
- 	if (b->written < btree_blocks(b))
- 		bch_bset_init_next(&b->keys, write_block(b),
--				   bset_magic(&b->c->sb));
-+				   bset_magic(&b->c->cache->sb));
- out:
- 	mempool_free(iter, &b->c->fill_iter);
- 	return;
-@@ -423,7 +423,7 @@ void __bch_btree_node_write(struct btree *b, struct closure *parent)
- 
- 	do_btree_node_write(b);
- 
--	atomic_long_add(set_blocks(i, block_bytes(b->c->cache)) * b->c->sb.block_size,
-+	atomic_long_add(set_blocks(i, block_bytes(b->c->cache)) * b->c->cache->sb.block_size,
- 			&PTR_CACHE(b->c, &b->key, 0)->btree_sectors_written);
- 
- 	b->written += set_blocks(i, block_bytes(b->c->cache));
-@@ -738,7 +738,7 @@ void bch_btree_cache_free(struct cache_set *c)
- 	if (c->verify_data)
- 		list_move(&c->verify_data->list, &c->btree_cache);
- 
--	free_pages((unsigned long) c->verify_ondisk, ilog2(meta_bucket_pages(&c->sb)));
-+	free_pages((unsigned long) c->verify_ondisk, ilog2(meta_bucket_pages(&c->cache->sb)));
- #endif
- 
- 	list_splice(&c->btree_cache_freeable,
-@@ -785,7 +785,8 @@ int bch_btree_cache_alloc(struct cache_set *c)
- 	mutex_init(&c->verify_lock);
- 
- 	c->verify_ondisk = (void *)
--		__get_free_pages(GFP_KERNEL|__GFP_COMP, ilog2(meta_bucket_pages(&c->sb)));
-+		__get_free_pages(GFP_KERNEL|__GFP_COMP,
-+				 ilog2(meta_bucket_pages(&c->cache->sb)));
- 	if (!c->verify_ondisk) {
- 		/*
- 		 * Don't worry about the mca_rereserve buckets
-@@ -1108,7 +1109,7 @@ struct btree *__bch_btree_node_alloc(struct cache_set *c, struct btree_op *op,
- 	}
- 
- 	b->parent = parent;
--	bch_bset_init_next(&b->keys, b->keys.set->data, bset_magic(&b->c->sb));
-+	bch_bset_init_next(&b->keys, b->keys.set->data, bset_magic(&b->c->cache->sb));
- 
- 	mutex_unlock(&c->bucket_lock);
- 
-diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
-index 257969980c49..50482107134f 100644
---- a/drivers/md/bcache/btree.h
-+++ b/drivers/md/bcache/btree.h
-@@ -194,7 +194,7 @@ static inline unsigned int bset_block_offset(struct btree *b, struct bset *i)
- 
- static inline void set_gc_sectors(struct cache_set *c)
- {
--	atomic_set(&c->sectors_to_gc, c->sb.bucket_size * c->nbuckets / 16);
-+	atomic_set(&c->sectors_to_gc, c->cache->sb.bucket_size * c->nbuckets / 16);
- }
- 
- void bkey_put(struct cache_set *c, struct bkey *k);
-diff --git a/drivers/md/bcache/extents.c b/drivers/md/bcache/extents.c
-index 9162af5bb6ec..f4658a1f37b8 100644
---- a/drivers/md/bcache/extents.c
-+++ b/drivers/md/bcache/extents.c
-@@ -54,7 +54,7 @@ static bool __ptr_invalid(struct cache_set *c, const struct bkey *k)
- 			size_t bucket = PTR_BUCKET_NR(c, k, i);
- 			size_t r = bucket_remainder(c, PTR_OFFSET(k, i));
- 
--			if (KEY_SIZE(k) + r > c->sb.bucket_size ||
-+			if (KEY_SIZE(k) + r > c->cache->sb.bucket_size ||
- 			    bucket <  ca->sb.first_bucket ||
- 			    bucket >= ca->sb.nbuckets)
- 				return true;
-@@ -75,7 +75,7 @@ static const char *bch_ptr_status(struct cache_set *c, const struct bkey *k)
- 			size_t bucket = PTR_BUCKET_NR(c, k, i);
- 			size_t r = bucket_remainder(c, PTR_OFFSET(k, i));
- 
--			if (KEY_SIZE(k) + r > c->sb.bucket_size)
-+			if (KEY_SIZE(k) + r > c->cache->sb.bucket_size)
- 				return "bad, length too big";
- 			if (bucket <  ca->sb.first_bucket)
- 				return "bad, short offset";
-@@ -136,7 +136,7 @@ static void bch_bkey_dump(struct btree_keys *keys, const struct bkey *k)
- 		size_t n = PTR_BUCKET_NR(b->c, k, j);
- 
- 		pr_cont(" bucket %zu", n);
--		if (n >= b->c->sb.first_bucket && n < b->c->sb.nbuckets)
-+		if (n >= b->c->cache->sb.first_bucket && n < b->c->cache->sb.nbuckets)
- 			pr_cont(" prio %i",
- 				PTR_BUCKET(b->c, k, j)->prio);
- 	}
-diff --git a/drivers/md/bcache/features.c b/drivers/md/bcache/features.c
-index 4442df48d28c..6469223f0b77 100644
---- a/drivers/md/bcache/features.c
-+++ b/drivers/md/bcache/features.c
-@@ -30,7 +30,7 @@ static struct feature feature_list[] = {
- 	for (f = &feature_list[0]; f->compat != 0; f++) {		\
- 		if (f->compat != BCH_FEATURE_ ## type)			\
- 			continue;					\
--		if (BCH_HAS_ ## type ## _FEATURE(&c->sb, f->mask)) {	\
-+		if (BCH_HAS_ ## type ## _FEATURE(&c->cache->sb, f->mask)) {	\
- 			if (first) {					\
- 				out += snprintf(out, buf + size - out,	\
- 						"[");	\
-@@ -44,7 +44,7 @@ static struct feature feature_list[] = {
- 									\
- 		out += snprintf(out, buf + size - out, "%s", f->string);\
- 									\
--		if (BCH_HAS_ ## type ## _FEATURE(&c->sb, f->mask))	\
-+		if (BCH_HAS_ ## type ## _FEATURE(&c->cache->sb, f->mask))	\
- 			out += snprintf(out, buf + size - out, "]");	\
- 									\
- 		first = false;						\
-diff --git a/drivers/md/bcache/io.c b/drivers/md/bcache/io.c
-index a14a445618b4..dad71a6b7889 100644
---- a/drivers/md/bcache/io.c
-+++ b/drivers/md/bcache/io.c
-@@ -26,7 +26,7 @@ struct bio *bch_bbio_alloc(struct cache_set *c)
- 	struct bbio *b = mempool_alloc(&c->bio_meta, GFP_NOIO);
- 	struct bio *bio = &b->bio;
- 
--	bio_init(bio, bio->bi_inline_vecs, meta_bucket_pages(&c->sb));
-+	bio_init(bio, bio->bi_inline_vecs, meta_bucket_pages(&c->cache->sb));
- 
- 	return bio;
- }
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index e2810668ede3..c5526e5087ef 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -666,7 +666,7 @@ static void journal_reclaim(struct cache_set *c)
- 
- 	bkey_init(k);
- 	SET_KEY_PTRS(k, 1);
--	c->journal.blocks_free = c->sb.bucket_size >> c->block_bits;
-+	c->journal.blocks_free = ca->sb.bucket_size >> c->block_bits;
- 
- out:
- 	if (!journal_full(&c->journal))
-@@ -735,7 +735,7 @@ static void journal_write_unlocked(struct closure *cl)
- 	struct journal_write *w = c->journal.cur;
- 	struct bkey *k = &c->journal.key;
- 	unsigned int i, sectors = set_blocks(w->data, block_bytes(ca)) *
--		c->sb.block_size;
-+		ca->sb.block_size;
- 
- 	struct bio *bio;
- 	struct bio_list list;
-@@ -762,7 +762,7 @@ static void journal_write_unlocked(struct closure *cl)
- 	bkey_copy(&w->data->uuid_bucket, &c->uuid_bucket);
- 
- 	w->data->prio_bucket[ca->sb.nr_this_dev] = ca->prio_buckets[0];
--	w->data->magic		= jset_magic(&c->sb);
-+	w->data->magic		= jset_magic(&ca->sb);
- 	w->data->version	= BCACHE_JSET_VERSION;
- 	w->data->last_seq	= last_seq(&c->journal);
- 	w->data->csum		= csum_set(w->data);
-@@ -838,6 +838,7 @@ static struct journal_write *journal_wait_for_write(struct cache_set *c,
- 	size_t sectors;
- 	struct closure cl;
- 	bool wait = false;
-+	struct cache *ca = c->cache;
- 
- 	closure_init_stack(&cl);
- 
-@@ -847,10 +848,10 @@ static struct journal_write *journal_wait_for_write(struct cache_set *c,
- 		struct journal_write *w = c->journal.cur;
- 
- 		sectors = __set_blocks(w->data, w->data->keys + nkeys,
--				       block_bytes(c->cache)) * c->sb.block_size;
-+				       block_bytes(ca)) * ca->sb.block_size;
- 
- 		if (sectors <= min_t(size_t,
--				     c->journal.blocks_free * c->sb.block_size,
-+				     c->journal.blocks_free * ca->sb.block_size,
- 				     PAGE_SECTORS << JSET_BITS))
- 			return w;
- 
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index 02408fdbf5bb..37e9cf8dbfc1 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -394,8 +394,8 @@ static bool check_should_bypass(struct cached_dev *dc, struct bio *bio)
- 			goto skip;
- 	}
- 
--	if (bio->bi_iter.bi_sector & (c->sb.block_size - 1) ||
--	    bio_sectors(bio) & (c->sb.block_size - 1)) {
-+	if (bio->bi_iter.bi_sector & (c->cache->sb.block_size - 1) ||
-+	    bio_sectors(bio) & (c->cache->sb.block_size - 1)) {
- 		pr_debug("skipping unaligned io\n");
- 		goto skip;
- 	}
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 68563ee92393..698a0de9170f 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -471,7 +471,7 @@ static int __uuid_write(struct cache_set *c)
- {
- 	BKEY_PADDED(key) k;
- 	struct closure cl;
--	struct cache *ca;
-+	struct cache *ca = c->cache;
- 	unsigned int size;
- 
- 	closure_init_stack(&cl);
-@@ -480,13 +480,12 @@ static int __uuid_write(struct cache_set *c)
- 	if (bch_bucket_alloc_set(c, RESERVE_BTREE, &k.key, true))
- 		return 1;
- 
--	size =  meta_bucket_pages(&c->sb) * PAGE_SECTORS;
-+	size =  meta_bucket_pages(&ca->sb) * PAGE_SECTORS;
- 	SET_KEY_SIZE(&k.key, size);
- 	uuid_io(c, REQ_OP_WRITE, 0, &k.key, &cl);
- 	closure_sync(&cl);
- 
- 	/* Only one bucket used for uuid write */
--	ca = PTR_CACHE(c, &k.key, 0);
- 	atomic_long_add(ca->sb.bucket_size, &ca->meta_sectors_written);
- 
- 	bkey_copy(&c->uuid_bucket, &k.key);
-@@ -1199,7 +1198,7 @@ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
- 		return -EINVAL;
- 	}
- 
--	if (dc->sb.block_size < c->sb.block_size) {
-+	if (dc->sb.block_size < c->cache->sb.block_size) {
- 		/* Will die */
- 		pr_err("Couldn't attach %s: block size less than set's block size\n",
- 		       dc->backing_dev_name);
-@@ -1666,7 +1665,7 @@ static void cache_set_free(struct closure *cl)
- 	}
- 
- 	bch_bset_sort_state_free(&c->sort);
--	free_pages((unsigned long) c->uuids, ilog2(meta_bucket_pages(&c->sb)));
-+	free_pages((unsigned long) c->uuids, ilog2(meta_bucket_pages(&c->cache->sb)));
- 
- 	if (c->moving_gc_wq)
- 		destroy_workqueue(c->moving_gc_wq);
-@@ -1857,10 +1856,10 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
- 
- 	c->bucket_bits		= ilog2(sb->bucket_size);
- 	c->block_bits		= ilog2(sb->block_size);
--	c->nr_uuids		= meta_bucket_bytes(&c->sb) / sizeof(struct uuid_entry);
-+	c->nr_uuids		= meta_bucket_bytes(sb) / sizeof(struct uuid_entry);
- 	c->devices_max_used	= 0;
- 	atomic_set(&c->attached_dev_nr, 0);
--	c->btree_pages		= meta_bucket_pages(&c->sb);
-+	c->btree_pages		= meta_bucket_pages(sb);
- 	if (c->btree_pages > BTREE_MAX_PAGES)
- 		c->btree_pages = max_t(int, c->btree_pages / 4,
- 				       BTREE_MAX_PAGES);
-@@ -1898,7 +1897,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
- 
- 	if (mempool_init_kmalloc_pool(&c->bio_meta, 2,
- 			sizeof(struct bbio) +
--			sizeof(struct bio_vec) * meta_bucket_pages(&c->sb)))
-+			sizeof(struct bio_vec) * meta_bucket_pages(sb)))
- 		goto err;
- 
- 	if (mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size))
-@@ -1908,7 +1907,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
- 			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER))
- 		goto err;
- 
--	c->uuids = alloc_meta_bucket_pages(GFP_KERNEL, &c->sb);
-+	c->uuids = alloc_meta_bucket_pages(GFP_KERNEL, sb);
- 	if (!c->uuids)
- 		goto err;
- 
-@@ -2088,7 +2087,7 @@ static int run_cache_set(struct cache_set *c)
- 		goto err;
- 
- 	closure_sync(&cl);
--	c->sb.last_mount = (u32)ktime_get_real_seconds();
-+	c->cache->sb.last_mount = (u32)ktime_get_real_seconds();
- 	bcache_write_super(c);
- 
- 	list_for_each_entry_safe(dc, t, &uncached_devices, list)
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 4f4ad6b3d43a..3c74996978da 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -35,7 +35,7 @@ static uint64_t __calc_target_rate(struct cached_dev *dc)
- 	 * This is the size of the cache, minus the amount used for
- 	 * flash-only devices
- 	 */
--	uint64_t cache_sectors = c->nbuckets * c->sb.bucket_size -
-+	uint64_t cache_sectors = c->nbuckets * c->cache->sb.bucket_size -
- 				atomic_long_read(&c->flash_dev_dirty_sectors);
- 
- 	/*
+-static inline __u64 jset_magic(struct cache_sb *sb)
+-{
+-	return sb->set_magic ^ JSET_MAGIC;
+-}
+-
+-static inline __u64 pset_magic(struct cache_sb *sb)
+-{
+-	return sb->set_magic ^ PSET_MAGIC;
+-}
+-
+-static inline __u64 bset_magic(struct cache_sb *sb)
+-{
+-	return sb->set_magic ^ BSET_MAGIC;
+-}
+-
+ /*
+  * Journal
+  *
 -- 
 2.26.2
 
