@@ -2,290 +2,97 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50D5124545A
-	for <lists+linux-bcache@lfdr.de>; Sun, 16 Aug 2020 00:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1882457E5
+	for <lists+linux-bcache@lfdr.de>; Sun, 16 Aug 2020 16:28:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbgHOWXv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 15 Aug 2020 18:23:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37954 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728786AbgHOWXr (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 15 Aug 2020 18:23:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D4614B1D3;
-        Sat, 15 Aug 2020 12:48:37 +0000 (UTC)
-From:   colyli@suse.de
-To:     linux-bcache@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
-Subject: [PATCH v1 14/14] bcache: move struct cache_sb out of uapi bcache.h
-Date:   Sat, 15 Aug 2020 20:47:43 +0800
-Message-Id: <20200815124743.115270-15-colyli@suse.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200815124743.115270-1-colyli@suse.de>
-References: <20200815124743.115270-1-colyli@suse.de>
+        id S1727973AbgHPO2a (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 16 Aug 2020 10:28:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57050 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728234AbgHPO21 (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 16 Aug 2020 10:28:27 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DD16C061385
+        for <linux-bcache@vger.kernel.org>; Sun, 16 Aug 2020 07:28:25 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id z18so12381342wrm.12
+        for <linux-bcache@vger.kernel.org>; Sun, 16 Aug 2020 07:28:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=Duxa+mmNF3T3C2WDKsmzowR2OzvdY892XFjTPp0RWRI=;
+        b=WydAeewQhr1r/XNZpFH3zIH+szhFi1y3aL3E9C0t+/P/o9UraiFWbofR/CQ6sPEcpC
+         KyCeW8UEKHrP3ODzHNzRF0fXKVacBOmuLb8NECLyUFXYtyIqVUeYoDGst/1ZZTlDrSFg
+         UqSpOJ6dtUV1psB5nDXdq7xdyi/8gRNM1VbIFNZJZ/Jq19E7MYwhVDZIDPjgPqAXZhyn
+         GqeGT1PbpkDjLV3sLnwpKnct94lXuL+96hZmSmobGb3Qy2pozBmBDF2Jj9UT2J2RyTFf
+         8zkXh3Q26txE+QPN4s7K+eUJ2QneFKWjK5m2vP3HOTwJU8+CUBzlx8CYcMp2boJXkNFa
+         Q36Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=Duxa+mmNF3T3C2WDKsmzowR2OzvdY892XFjTPp0RWRI=;
+        b=k4M3K5LlTf+V/gxt1ftJTbHCm9YWDRY6d00UYohRv7lbZHo4It3Qj2uMggpNwsc3aA
+         Qj2ELRlHHE/JMtJQnHJTCH35N3f/Ucths/xCZpOyjtv+RpMuoTbwBpt381bk7m2nV39N
+         C9qgseYUVOuLInv4elVPBTSzTIkzpF0Sqj4fe/CpEjzVw6FiujP0km9LaWyOKRZNY1ks
+         jVHf4IGGN8Zi98PezFMkB31LBIm8BdNvNZSRrW8Db2D+G+wj28p19gsCebmukMaQiJY6
+         LpBuELNX/J22wCJDdtV+NEgFF4rF/gJdacjl1wLA0oK/iEyCUxFyONj/K4aKxRP3WUGR
+         wYwg==
+X-Gm-Message-State: AOAM530P9kp1l/hc9Lc8iIwu+PHtMf/URLt55ZG5dtnZbg8JbehXir1n
+        2uwqeRRthfZznL31IXSCteIzXOR+N6gCTZXmaTQ=
+X-Google-Smtp-Source: ABdhPJwBhDgN8zDFv7Vp+6FwrySrd7+zBZF+4bgjNBXNpkwqG/RDbCaE/Q6+6wMIFZa1PWMJ+xJlLCn7iN4TuC23ED4=
+X-Received: by 2002:adf:97dc:: with SMTP id t28mr10205969wrb.291.1597588104107;
+ Sun, 16 Aug 2020 07:28:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a5d:6cd3:0:0:0:0:0 with HTTP; Sun, 16 Aug 2020 07:28:23
+ -0700 (PDT)
+Reply-To: sctnld11170@tlen.pl
+From:   "Mr. Scott Donald" <confianzayrentabilidad@gmail.com>
+Date:   Sun, 16 Aug 2020 07:28:23 -0700
+Message-ID: <CANrrfX4FE9qQHVqDqDeDgrqidfa8Ug7YqLDZJ5dm2fb1ExQM=w@mail.gmail.com>
+Subject: Hello, Please
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+--=20
+Dear Friend,
 
-struct cache_sb does not exactly map to cache_sb_disk, it is only for
-in-memory super block and dosn't belong to uapi bcache.h.
+I'm Mr. Scott Donald a Successful businessMan dealing with
+Exportation, I got your mail contact through search to let you know my
+intension and my Ugly Situation Am a dying Man here in Los Angeles
+California Hospital Bed in (USA), I Lost my Wife and my only Daughter
+for Covid-19 and I also have a problem in my Health and I can die
+anytime I Know,
 
-This patch moves the struct cache_sb definition and other depending
-macros and inline routines from include/uapi/linux/bcache.h to
-drivers/md/bcache/bcache.h, this is the proper location to have them.
+I have a project that I am about to hand over to you. and I already
+instructed the Bankia S.A. Madrid, Spain(BSA) to transfer my fund sum
+of =C2=A33,7M GBP. Equivalent to =E2=82=AC4,077,033.91 EUR, to you as to en=
+able you
+to give 50% of this fund to Charitable Home in your State and take 50%
+don't think otherwise and why would anybody send someone you barely
+know to help you deliver a message, help me do this for the happiness
+of my soul and for God to mercy me and my Family and give Us a good
+place.
 
-Signed-off-by: Coly Li <colyli@suse.de>
----
- drivers/md/bcache/bcache.h  | 99 +++++++++++++++++++++++++++++++++++++
- include/uapi/linux/bcache.h | 98 ------------------------------------
- 2 files changed, 99 insertions(+), 98 deletions(-)
+please, do as I said there was someone from your State that I deeply
+love so very very much and I miss her so badly I have no means to
+reach any Charitable Home there. that is why I go for a personal
+search of the Country and State and I got your mail contact through
+search to let you know my Bitterness and please, help me is getting
+Dark I ask my Doctor to help me keep you notice failure for me to
+reach you in person Your urgent Response, here is my Doctor Whats-app
+Number for urgent notice +13019692737
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 1d57f48307e6..b755bf7832ac 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -279,6 +279,82 @@ struct bcache_device {
- 		     unsigned int cmd, unsigned long arg);
- };
- 
-+/*
-+ * This is for in-memory bcache super block.
-+ * NOTE: cache_sb is NOT exactly mapping to cache_sb_disk, the member
-+ *       size, ordering and even whole struct size may be different
-+ *       from cache_sb_disk.
-+ */
-+struct cache_sb {
-+	__u64			offset;	/* sector where this sb was written */
-+	__u64			version;
-+
-+	__u8			magic[16];
-+
-+	__u8			uuid[16];
-+	union {
-+		__u8		set_uuid[16];
-+		__u64		set_magic;
-+	};
-+	__u8			label[SB_LABEL_SIZE];
-+
-+	__u64			flags;
-+	__u64			seq;
-+
-+	__u64			feature_compat;
-+	__u64			feature_incompat;
-+	__u64			feature_ro_compat;
-+
-+	union {
-+	struct {
-+		/* Cache devices */
-+		__u64		nbuckets;	/* device size */
-+
-+		__u16		block_size;	/* sectors */
-+		__u16		nr_in_set;
-+		__u16		nr_this_dev;
-+		__u32		bucket_size;	/* sectors */
-+	};
-+	struct {
-+		/* Backing devices */
-+		__u64		data_offset;
-+
-+		/*
-+		 * block_size from the cache device section is still used by
-+		 * backing devices, so don't add anything here until we fix
-+		 * things to not need it for backing devices anymore
-+		 */
-+	};
-+	};
-+
-+	__u32			last_mount;	/* time overflow in y2106 */
-+
-+	__u16			first_bucket;
-+	union {
-+		__u16		njournal_buckets;
-+		__u16		keys;
-+	};
-+	__u64			d[SB_JOURNAL_BUCKETS];	/* journal buckets */
-+};
-+
-+BITMASK(CACHE_SYNC,			struct cache_sb, flags, 0, 1);
-+BITMASK(CACHE_DISCARD,			struct cache_sb, flags, 1, 1);
-+BITMASK(CACHE_REPLACEMENT,		struct cache_sb, flags, 2, 3);
-+#define CACHE_REPLACEMENT_LRU		0U
-+#define CACHE_REPLACEMENT_FIFO		1U
-+#define CACHE_REPLACEMENT_RANDOM	2U
-+
-+BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
-+#define CACHE_MODE_WRITETHROUGH		0U
-+#define CACHE_MODE_WRITEBACK		1U
-+#define CACHE_MODE_WRITEAROUND		2U
-+#define CACHE_MODE_NONE			3U
-+BITMASK(BDEV_STATE,			struct cache_sb, flags, 61, 2);
-+#define BDEV_STATE_NONE			0U
-+#define BDEV_STATE_CLEAN		1U
-+#define BDEV_STATE_DIRTY		2U
-+#define BDEV_STATE_STALE		3U
-+
- struct io {
- 	/* Used to track sequential IO so it can be skipped */
- 	struct hlist_node	hash;
-@@ -840,6 +916,13 @@ static inline bool ptr_available(struct cache_set *c, const struct bkey *k,
- 	return (PTR_DEV(k, i) < MAX_CACHES_PER_SET) && PTR_CACHE(c, k, i);
- }
- 
-+static inline _Bool SB_IS_BDEV(const struct cache_sb *sb)
-+{
-+	return sb->version == BCACHE_SB_VERSION_BDEV
-+		|| sb->version == BCACHE_SB_VERSION_BDEV_WITH_OFFSET
-+		|| sb->version == BCACHE_SB_VERSION_BDEV_WITH_FEATURES;
-+}
-+
- /* Btree key macros */
- 
- /*
-@@ -958,6 +1041,22 @@ static inline void wait_for_kthread_stop(void)
- 	}
- }
- 
-+/* generate magic number */
-+static inline __u64 jset_magic(struct cache_sb *sb)
-+{
-+	return sb->set_magic ^ JSET_MAGIC;
-+}
-+
-+static inline __u64 pset_magic(struct cache_sb *sb)
-+{
-+	return sb->set_magic ^ PSET_MAGIC;
-+}
-+
-+static inline __u64 bset_magic(struct cache_sb *sb)
-+{
-+	return sb->set_magic ^ BSET_MAGIC;
-+}
-+
- /* Forward declarations */
- 
- void bch_count_backing_io_errors(struct cached_dev *dc, struct bio *bio);
-diff --git a/include/uapi/linux/bcache.h b/include/uapi/linux/bcache.h
-index 52e8bcb33981..18166a3d8503 100644
---- a/include/uapi/linux/bcache.h
-+++ b/include/uapi/linux/bcache.h
-@@ -216,89 +216,6 @@ struct cache_sb_disk {
- 	__le16			bucket_size_hi;
- };
- 
--/*
-- * This is for in-memory bcache super block.
-- * NOTE: cache_sb is NOT exactly mapping to cache_sb_disk, the member
-- *       size, ordering and even whole struct size may be different
-- *       from cache_sb_disk.
-- */
--struct cache_sb {
--	__u64			offset;	/* sector where this sb was written */
--	__u64			version;
--
--	__u8			magic[16];
--
--	__u8			uuid[16];
--	union {
--		__u8		set_uuid[16];
--		__u64		set_magic;
--	};
--	__u8			label[SB_LABEL_SIZE];
--
--	__u64			flags;
--	__u64			seq;
--
--	__u64			feature_compat;
--	__u64			feature_incompat;
--	__u64			feature_ro_compat;
--
--	union {
--	struct {
--		/* Cache devices */
--		__u64		nbuckets;	/* device size */
--
--		__u16		block_size;	/* sectors */
--		__u16		nr_in_set;
--		__u16		nr_this_dev;
--		__u32		bucket_size;	/* sectors */
--	};
--	struct {
--		/* Backing devices */
--		__u64		data_offset;
--
--		/*
--		 * block_size from the cache device section is still used by
--		 * backing devices, so don't add anything here until we fix
--		 * things to not need it for backing devices anymore
--		 */
--	};
--	};
--
--	__u32			last_mount;	/* time overflow in y2106 */
--
--	__u16			first_bucket;
--	union {
--		__u16		njournal_buckets;
--		__u16		keys;
--	};
--	__u64			d[SB_JOURNAL_BUCKETS];	/* journal buckets */
--};
--
--static inline _Bool SB_IS_BDEV(const struct cache_sb *sb)
--{
--	return sb->version == BCACHE_SB_VERSION_BDEV
--		|| sb->version == BCACHE_SB_VERSION_BDEV_WITH_OFFSET
--		|| sb->version == BCACHE_SB_VERSION_BDEV_WITH_FEATURES;
--}
--
--BITMASK(CACHE_SYNC,			struct cache_sb, flags, 0, 1);
--BITMASK(CACHE_DISCARD,			struct cache_sb, flags, 1, 1);
--BITMASK(CACHE_REPLACEMENT,		struct cache_sb, flags, 2, 3);
--#define CACHE_REPLACEMENT_LRU		0U
--#define CACHE_REPLACEMENT_FIFO		1U
--#define CACHE_REPLACEMENT_RANDOM	2U
--
--BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
--#define CACHE_MODE_WRITETHROUGH		0U
--#define CACHE_MODE_WRITEBACK		1U
--#define CACHE_MODE_WRITEAROUND		2U
--#define CACHE_MODE_NONE			3U
--BITMASK(BDEV_STATE,			struct cache_sb, flags, 61, 2);
--#define BDEV_STATE_NONE			0U
--#define BDEV_STATE_CLEAN		1U
--#define BDEV_STATE_DIRTY		2U
--#define BDEV_STATE_STALE		3U
--
- /*
-  * Magic numbers
-  *
-@@ -310,21 +227,6 @@ BITMASK(BDEV_STATE,			struct cache_sb, flags, 61, 2);
- #define PSET_MAGIC			0x6750e15f87337f91ULL
- #define BSET_MAGIC			0x90135c78b99e07f5ULL
- 
--static inline __u64 jset_magic(struct cache_sb *sb)
--{
--	return sb->set_magic ^ JSET_MAGIC;
--}
--
--static inline __u64 pset_magic(struct cache_sb *sb)
--{
--	return sb->set_magic ^ PSET_MAGIC;
--}
--
--static inline __u64 bset_magic(struct cache_sb *sb)
--{
--	return sb->set_magic ^ BSET_MAGIC;
--}
--
- /*
-  * Journal
-  *
--- 
-2.26.2
+Hope To Hear From You. I'm sending this email to you for the second
+time yet no response from you.
 
+My Regards.
+
+Mr. Scott Donald
+CEO
