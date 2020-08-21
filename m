@@ -2,210 +2,127 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 297E5249B30
-	for <lists+linux-bcache@lfdr.de>; Wed, 19 Aug 2020 12:52:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ABF424C9D5
+	for <lists+linux-bcache@lfdr.de>; Fri, 21 Aug 2020 04:04:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbgHSKwI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 19 Aug 2020 06:52:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44758 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728049AbgHSKvq (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 19 Aug 2020 06:51:46 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECEC0C061348
-        for <linux-bcache@vger.kernel.org>; Wed, 19 Aug 2020 03:51:34 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id 2so927211pjx.5
-        for <linux-bcache@vger.kernel.org>; Wed, 19 Aug 2020 03:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:in-reply-to:references:content-transfer-encoding;
-        bh=uiH7tlxXBQcdGzP3CpVXTDpR6If738RH8DOIk/plU0o=;
-        b=C6e7vvBQ9iKT5vM6nr1FdpCeXQCfrpecpnmJRtKjF4yIdwfk4Nk7ZXGxRaSB7xrjLW
-         kpfPpgcGIavYG6YZC/ZgKJbkubm77HbgAdER1BamYbkfRCR/zIH0IKsvBjA1K99Aqihs
-         X5XLV9VBiSe9TZw+xVWstN21voCnYiAw65kHkJ/1eI88c6raEgCh4fmfyCZvNfYIvBQ4
-         pkeXmN/UU+3bPjui1+L5y3vGf71jBZXqSiPhrkQLFBLs4iaoTUpMPD1RS4rAmpDjCy+g
-         zzuidkxtPcNoBIRetKEKtG96m1PK/mguHGQbP1vxSb1EB0bM0R2CWzeMgCQoIPVABp8u
-         XR5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:in-reply-to:references
-         :content-transfer-encoding;
-        bh=uiH7tlxXBQcdGzP3CpVXTDpR6If738RH8DOIk/plU0o=;
-        b=dtTMB8cINUgUG/fDyetASC8QehsLFtjkSQ6AdL1vu4RyB1H1nkfIY7CzYidqjL7zf0
-         RWkT9ES+VYaEVhaXGXClklqnjSjbQLy2dT8egcf6pIAaMUHXU/bVqSfAG0avIe21uHkt
-         3kuU3z+8n+uAjG0ms/kHpCCRlxe1J4BLvmDpb/w/Ta5JSIAKwF2i9kzKRDjbjFudly3E
-         pZwQcZ2AXQkajbm3LfgV5eSCrosZisvmerooXXWoVZzI5tQfcJIyRm7dRrXAIfX9QslA
-         eNdE4Kojn83H5al3z4tPqfoOPRfBefxPsfBTG9iqz9nTWWqhcVC1CdbJVlkU6+4moE7r
-         IQuA==
-X-Gm-Message-State: AOAM533LWghjBc4+qYHkYK94qgbCNcxVs6+dZ8fQii30pBl7HP3G5cVh
-        fuu2B5eBLZi2TAOSoQy76EEimvKgjYm1idoZ
-X-Google-Smtp-Source: ABdhPJwp4knBmsADh7uDdqZFpXLdOlDSFnWhu8+JklKGBn5mPvAtrqLd94bvXYk8XiGg7wziVYOZQQ==
-X-Received: by 2002:a17:902:bb8d:: with SMTP id m13mr8616806pls.11.1597834294251;
-        Wed, 19 Aug 2020 03:51:34 -0700 (PDT)
-Received: from gmail.com ([119.8.124.38])
-        by smtp.gmail.com with ESMTPSA id k21sm24844830pgl.0.2020.08.19.03.51.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Aug 2020 03:51:33 -0700 (PDT)
-From:   Shaoxiong Li <dahefanteng@gmail.com>
-To:     linux-bcache@vger.kernel.org
-Cc:     colyli@suse.de
-Subject: [PATCH 3/3] bcache-tools: Remove the dependency on libsmartcols
-Date:   Wed, 19 Aug 2020 18:51:28 +0800
-Message-Id: <635386ddf41bc1656344009597837b885c543bf1.1597817961.git.dahefanteng@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <a6b9fc134e5dd73d1a6f3945fd649d7aa23cff9e.1597817961.git.dahefanteng@gmail.com>
-References: <a6b9fc134e5dd73d1a6f3945fd649d7aa23cff9e.1597817961.git.dahefanteng@gmail.com>
+        id S1727040AbgHUCEk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 20 Aug 2020 22:04:40 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10247 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726983AbgHUCEj (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 20 Aug 2020 22:04:39 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7CF4D46E9A2671E94ED7;
+        Fri, 21 Aug 2020 10:04:36 +0800 (CST)
+Received: from DESKTOP-C3MD9UG.china.huawei.com (10.174.177.253) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.487.0; Fri, 21 Aug 2020 10:04:27 +0800
+From:   Zhen Lei <thunder.leizhen@huawei.com>
+To:     Jens Axboe <axboe@kernel.dk>, Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        dm-devel <dm-devel@redhat.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-bcache <linux-bcache@vger.kernel.org>
+CC:     Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 1/1] block: move the PAGE_SECTORS definition into <linux/blkdev.h>
+Date:   Fri, 21 Aug 2020 10:03:45 +0800
+Message-ID: <20200821020345.3358-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.26.0.windows.1
 MIME-Version: 1.0
-In-Reply-To: <a6b9fc134e5dd73d1a6f3945fd649d7aa23cff9e.1597817961.git.dahefanteng@gmail.com>
-References: <a6b9fc134e5dd73d1a6f3945fd649d7aa23cff9e.1597817961.git.dahefanteng@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.174.177.253]
+X-CFilter-Loop: Reflected
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The bcache tree function relies on the libsmartcols library to
-display the relationship between the cache device and the bdev
-device in a tree shape. However, it is difficult for many old
-operating systems (such as Ubuntu 12) to install this library.
+There are too many PAGE_SECTORS definitions, and all of them are the
+same. It looks a bit of a mess. So why not move it into <linux/blkdev.h>,
+to achieve a basic and unique definition.
 
-For better compatibility, a simpler implementation is used to
-achieve the same purpose, while removing the dependency on
-libsmartcols.
-
-Signed-off-by: Shaoxiong Li <dahefanteng@gmail.com>
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 ---
- Makefile |  8 ++++----
- bcache.c | 53 +++++++++++++++++++++++++++++++++++------------------
- 2 files changed, 39 insertions(+), 22 deletions(-)
+ drivers/block/brd.c           | 1 -
+ drivers/block/null_blk_main.c | 1 -
+ drivers/md/bcache/util.h      | 2 --
+ include/linux/blkdev.h        | 5 +++--
+ include/linux/device-mapper.h | 1 -
+ 5 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 90db951..df44085 100644
---- a/Makefile
-+++ b/Makefile
-@@ -22,8 +22,8 @@ clean:
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index 2723a70eb855936..24c4687694b9f49 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -26,7 +26,6 @@
+ #include <linux/uaccess.h>
  
- bcache-test: LDLIBS += `pkg-config --libs openssl` -lm
+ #define PAGE_SECTORS_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
+-#define PAGE_SECTORS		(1 << PAGE_SECTORS_SHIFT)
  
--make-bcache: LDLIBS += `pkg-config --libs uuid blkid smartcols`
--make-bcache: CFLAGS += `pkg-config --cflags uuid blkid smartcols`
-+make-bcache: LDLIBS += `pkg-config --libs uuid blkid`
-+make-bcache: CFLAGS += `pkg-config --cflags uuid blkid`
- make-bcache: make.o crc64.o lib.o zoned.o
+ /*
+  * Each block ramdisk device has a radix_tree brd_pages of pages that stores
+diff --git a/drivers/block/null_blk_main.c b/drivers/block/null_blk_main.c
+index 47a9dad880af2aa..0624a26b86453ce 100644
+--- a/drivers/block/null_blk_main.c
++++ b/drivers/block/null_blk_main.c
+@@ -12,7 +12,6 @@
+ #include "null_blk.h"
  
- probe-bcache: LDLIBS += `pkg-config --libs uuid blkid`
-@@ -35,7 +35,7 @@ bcache-super-show: crc64.o lib.o
+ #define PAGE_SECTORS_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
+-#define PAGE_SECTORS		(1 << PAGE_SECTORS_SHIFT)
+ #define SECTOR_MASK		(PAGE_SECTORS - 1)
  
- bcache-register: bcache-register.o
+ #define FREE_BATCH		16
+diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
+index c029f7443190805..55196e0f37c32c6 100644
+--- a/drivers/md/bcache/util.h
++++ b/drivers/md/bcache/util.h
+@@ -15,8 +15,6 @@
  
--bcache: CFLAGS += `pkg-config --cflags blkid uuid smartcols`
--bcache: LDLIBS += `pkg-config --libs blkid uuid smartcols`
-+bcache: CFLAGS += `pkg-config --cflags blkid uuid`
-+bcache: LDLIBS += `pkg-config --libs blkid uuid`
- bcache: CFLAGS += -std=gnu99
- bcache: crc64.o lib.o make.o zoned.o features.o
-diff --git a/bcache.c b/bcache.c
-index 3b963e4..a0c5a67 100644
---- a/bcache.c
-+++ b/bcache.c
-@@ -10,13 +10,13 @@
- #include <unistd.h>
- #include <getopt.h>
- #include <regex.h>
--#include <libsmartcols/libsmartcols.h>
- #include "bcache.h"
- #include "lib.h"
- #include "make.h"
- #include <locale.h>
- #include "list.h"
- #include <limits.h>
-+#include <assert.h>
+ #include "closure.h"
  
- #include "features.h"
+-#define PAGE_SECTORS		(PAGE_SIZE / 512)
+-
+ struct closure;
  
-@@ -425,8 +425,34 @@ int detail_single(char *devname)
- 	return 0;
- }
+ #ifdef CONFIG_BCACHE_DEBUG
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index bb5636cc17b91a7..b068dfc5f2ef0ab 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -949,11 +949,12 @@ static inline struct request_queue *bdev_get_queue(struct block_device *bdev)
+  * multiple of 512 bytes. Hence these two constants.
+  */
+ #ifndef SECTOR_SHIFT
+-#define SECTOR_SHIFT 9
++#define SECTOR_SHIFT		9
+ #endif
+ #ifndef SECTOR_SIZE
+-#define SECTOR_SIZE (1 << SECTOR_SHIFT)
++#define SECTOR_SIZE		(1 << SECTOR_SHIFT)
+ #endif
++#define PAGE_SECTORS		(PAGE_SIZE / SECTOR_SIZE)
  
-+void replace_line(char **dest, const char *from, const char *to)
-+{
-+	assert(strlen(from) == strlen(to));
-+	char sub[4096] = "";
-+	char new[4096] = "";
-+
-+	strcpy(sub, *dest);
-+	while (1) {
-+		char *tmp = strpbrk(sub, from);
-+
-+		if (tmp != NULL) {
-+			strcpy(new, tmp);
-+			strcpy(sub, tmp + strlen(from));
-+		} else
-+			break;
-+	}
-+	if (strlen(new) > 0) {
-+		strncpy(new, to, strlen(to));
-+		sprintf(*dest + strlen(*dest) - strlen(new), new, strlen(new));
-+	}
-+}
-+
- int tree(void)
- {
-+	char *out = (char *)malloc(4096);
-+	const char *begin = ".\n";
-+	const char *middle = "├─";
-+	const char *tail = "└─";
- 	struct list_head head;
- 	struct dev *devs, *tmp, *n, *m;
+ /*
+  * blk_rq_pos()			: the current sector
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index 93096e524e43945..ffccce9b700c326 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -143,7 +143,6 @@ typedef size_t (*dm_dax_copy_iter_fn)(struct dm_target *ti, pgoff_t pgoff,
+ 		void *addr, size_t bytes, struct iov_iter *i);
+ typedef int (*dm_dax_zero_page_range_fn)(struct dm_target *ti, pgoff_t pgoff,
+ 		size_t nr_pages);
+-#define PAGE_SECTORS (PAGE_SIZE / 512)
  
-@@ -438,35 +464,26 @@ int tree(void)
- 		fprintf(stderr, "Failed to list devices\n");
- 		return ret;
- 	}
--	struct libscols_table *tb;
--	struct libscols_line *dad, *son;
--	enum { COL_CSET, COL_BNAME };
--	setlocale(LC_ALL, "");
--	tb = scols_new_table();
--	scols_table_new_column(tb, ".", 0.1, SCOLS_FL_TREE);
--	scols_table_new_column(tb, "", 2, SCOLS_FL_TRUNC);
-+	sprintf(out, "%s", begin);
- 	list_for_each_entry_safe(devs, n, &head, dev_list) {
- 		if ((devs->version == BCACHE_SB_VERSION_CDEV
- 		     || devs->version == BCACHE_SB_VERSION_CDEV_WITH_UUID)
- 		    && strcmp(devs->state, BCACHE_BASIC_STATE_ACTIVE) == 0) {
--			dad = scols_table_new_line(tb, NULL);
--			scols_line_set_data(dad, COL_CSET, devs->name);
-+			sprintf(out + strlen(out), "%s\n", devs->name);
- 			list_for_each_entry_safe(tmp, m, &head, dev_list) {
- 				if (strcmp(devs->cset, tmp->attachuuid) ==
- 				    0) {
--					son =
--					    scols_table_new_line(tb, dad);
--					scols_line_set_data(son, COL_CSET,
--							    tmp->name);
--					scols_line_set_data(son, COL_BNAME,
--							    tmp->bname);
-+					replace_line(&out, tail, middle);
-+					sprintf(out + strlen(out), "%s%s %s\n",
-+						tail, tmp->name, tmp->bname);
- 				}
- 			}
- 		}
- 	}
--	scols_print_table(tb);
--	scols_unref_table(tb);
-+	if (strlen(out) > strlen(begin))
-+		printf("%s", out);
- 	free_dev(&head);
-+	free(out);
- 	return 0;
- }
+ void dm_error(const char *message);
  
 -- 
-2.17.1
+1.8.3
+
 
