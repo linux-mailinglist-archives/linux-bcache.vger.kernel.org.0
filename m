@@ -2,22 +2,25 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F5224E707
-	for <lists+linux-bcache@lfdr.de>; Sat, 22 Aug 2020 13:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D7224E721
+	for <lists+linux-bcache@lfdr.de>; Sat, 22 Aug 2020 13:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbgHVLUf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 22 Aug 2020 07:20:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49826 "EHLO mx2.suse.de"
+        id S1727776AbgHVLkk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 22 Aug 2020 07:40:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55638 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726938AbgHVLUf (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 22 Aug 2020 07:20:35 -0400
+        id S1727087AbgHVLkk (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 22 Aug 2020 07:40:40 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 13395AC2F;
-        Sat, 22 Aug 2020 11:21:02 +0000 (UTC)
-Subject: Re: [PATCH 1/3] bcache-tools: Fix potential coredump issues
-To:     Shaoxiong Li <dahefanteng@gmail.com>, linux-bcache@vger.kernel.org
-References: <a6b9fc134e5dd73d1a6f3945fd649d7aa23cff9e.1597817961.git.dahefanteng@gmail.com>
+        by mx2.suse.de (Postfix) with ESMTP id DA685B7AE;
+        Sat, 22 Aug 2020 11:41:06 +0000 (UTC)
+Subject: Re: [PATCH 03/14] bcache: remove for_each_cache()
+To:     Hannes Reinecke <hare@suse.de>, linux-bcache@vger.kernel.org
+Cc:     linux-block@vger.kernel.org
+References: <20200815041043.45116-1-colyli@suse.de>
+ <20200815041043.45116-4-colyli@suse.de>
+ <a8e73776-acec-44bb-f777-a67bbd033267@suse.de>
 From:   Coly Li <colyli@suse.de>
 Autocrypt: addr=colyli@suse.de; keydata=
  mQINBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
@@ -62,28 +65,80 @@ Autocrypt: addr=colyli@suse.de; keydata=
  K0Jx4CEZubakJe+894sX6pvNFiI7qUUdB882i5GR3v9ijVPhaMr8oGuJ3kvwBIA8lvRBGVGn
  9xvzkQ8Prpbqh30I4NMp8MjFdkwCN6znBKPHdjNTwE5PRZH0S9J0o67IEIvHfH0eAWAsgpTz
  +jwc7VKH7vkvgscUhq/v1/PEWCAqh9UHy7R/jiUxwzw/288OpgO+i+2l11Y=
-Message-ID: <75b6ed81-450a-5a6b-8856-c48700f63a78@suse.de>
-Date:   Sat, 22 Aug 2020 19:20:29 +0800
+Message-ID: <13b04130-1164-3b2b-2b71-a8f45709d88a@suse.de>
+Date:   Sat, 22 Aug 2020 19:40:35 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <a6b9fc134e5dd73d1a6f3945fd649d7aa23cff9e.1597817961.git.dahefanteng@gmail.com>
+In-Reply-To: <a8e73776-acec-44bb-f777-a67bbd033267@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/8/19 18:51, Shaoxiong Li wrote:
-> In some distributions, such as opensuse 15.2, when the free_dev
-> function is called, it may refer to the memory that has been
-> released, causing a coredump. Changing 'list_for_each_entry'
-> to 'list_for_each_entry_safe' can avoid this problem.
-> 
-> Signed-off-by: Shaoxiong Li <dahefanteng@gmail.com>
+On 2020/8/17 14:13, Hannes Reinecke wrote:
+> On 8/15/20 6:10 AM, Coly Li wrote:
+>> Since now each cache_set explicitly has single cache, for_each_cache()
+>> is unnecessary. This patch removes this macro, and update all locations
+>> where it is used, and makes sure all code logic still being consistent.
+>>
+>> Signed-off-by: Coly Li <colyli@suse.de>
+>> ---
+>>   drivers/md/bcache/alloc.c    |  17 ++-
+>>   drivers/md/bcache/bcache.h   |   9 +-
+>>   drivers/md/bcache/btree.c    | 103 +++++++---------
+>>   drivers/md/bcache/journal.c  | 229 ++++++++++++++++-------------------
+>>   drivers/md/bcache/movinggc.c |  58 +++++----
+>>   drivers/md/bcache/super.c    | 114 +++++++----------
+>>   6 files changed, 236 insertions(+), 294 deletions(-)
+>>
+>> diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+>> index 3385f6add6df..1b8310992dd0 100644
+>> --- a/drivers/md/bcache/alloc.c
+>> +++ b/drivers/md/bcache/alloc.c
+>> @@ -88,7 +88,6 @@ void bch_rescale_priorities(struct cache_set *c, int
+>> sectors)
+>>       struct cache *ca;
+>>       struct bucket *b;
+>>       unsigned long next = c->nbuckets * c->sb.bucket_size / 1024;
+>> -    unsigned int i;
+>>       int r;
+>>         atomic_sub(sectors, &c->rescale);
+>> @@ -104,14 +103,14 @@ void bch_rescale_priorities(struct cache_set *c,
+>> int sectors)
+>>         c->min_prio = USHRT_MAX;
+>>   -    for_each_cache(ca, c, i)
+>> -        for_each_bucket(b, ca)
+>> -            if (b->prio &&
+>> -                b->prio != BTREE_PRIO &&
+>> -                !atomic_read(&b->pin)) {
+>> -                b->prio--;
+>> -                c->min_prio = min(c->min_prio, b->prio);
+>> -            }
+>> +    ca = c->cache;
+>> +    for_each_bucket(b, ca)
+>> +        if (b->prio &&
+>> +            b->prio != BTREE_PRIO &&
+>> +            !atomic_read(&b->pin)) {
+>> +            b->prio--;
+>> +            c->min_prio = min(c->min_prio, b->prio);
+>> +        }
+>>         mutex_unlock(&c->bucket_lock);
 
-All these three patches applied. Thanks.
+[snipped]
+
+>>  
+> I guess one could remove the 'ca' variables above, but that's just a
+> minor detail.
+
+I was thinking of use a macro BCH_CACHE_SB() to reduce c->cache->sb, but
+this macro is 12 characters, which does not make code shorter. I don't
+make a dicision whether to make it or not. Let me keep it in current
+shape, and make dicision later.
+
+Thanks.
 
 Coly Li
