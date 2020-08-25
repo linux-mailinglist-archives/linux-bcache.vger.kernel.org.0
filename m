@@ -2,102 +2,128 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 30AD1251147
-	for <lists+linux-bcache@lfdr.de>; Tue, 25 Aug 2020 07:05:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29C032511F2
+	for <lists+linux-bcache@lfdr.de>; Tue, 25 Aug 2020 08:17:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725287AbgHYFFt (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 25 Aug 2020 01:05:49 -0400
-Received: from smtprelay0197.hostedemail.com ([216.40.44.197]:44486 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728246AbgHYFFt (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 25 Aug 2020 01:05:49 -0400
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave04.hostedemail.com (Postfix) with ESMTP id 65C461801195F
-        for <linux-bcache@vger.kernel.org>; Tue, 25 Aug 2020 04:57:12 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id A19FF180A7FF2;
-        Tue, 25 Aug 2020 04:57:06 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:541:800:960:973:988:989:1260:1311:1314:1345:1359:1437:1515:1534:1541:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:3138:3139:3140:3141:3142:3352:3865:3868:3870:3871:4321:4605:5007:6261:7875:7904:8603:10004:10848:11026:11473:11658:11914:12043:12296:12297:12438:12555:12895:13069:13311:13357:13894:14181:14384:14394:14721:21080:21627:30046:30054,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: bell57_2912de727059
-X-Filterd-Recvd-Size: 2577
-Received: from joe-laptop.perches.com (unknown [47.151.133.149])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 25 Aug 2020 04:57:05 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     Jiri Kosina <trivial@kernel.org>, Coly Li <colyli@suse.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 13/29] bcache: Avoid comma separated statements
-Date:   Mon, 24 Aug 2020 21:56:10 -0700
-Message-Id: <99ba798329f7d957e75a22c8551e8bd22f70c626.1598331149.git.joe@perches.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <cover.1598331148.git.joe@perches.com>
-References: <cover.1598331148.git.joe@perches.com>
+        id S1726166AbgHYGRU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 25 Aug 2020 02:17:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36940 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726015AbgHYGRU (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 25 Aug 2020 02:17:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id A2351AC61;
+        Tue, 25 Aug 2020 06:17:48 +0000 (UTC)
+Subject: Re: [PATCH v2 02/12] bcache: explicitly make cache_set only have
+ single cache
+To:     Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org
+Cc:     linux-block@vger.kernel.org
+References: <20200822114536.23491-1-colyli@suse.de>
+ <20200822114536.23491-3-colyli@suse.de>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <04a41d67-5591-4ef6-7083-67ae367e63fc@suse.de>
+Date:   Tue, 25 Aug 2020 08:17:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
+In-Reply-To: <20200822114536.23491-3-colyli@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Use semicolons and braces.
+On 8/22/20 1:45 PM, Coly Li wrote:
+> Currently although the bcache code has a framework for multiple caches
+> in a cache set, but indeed the multiple caches never completed and users
+> use md raid1 for multiple copies of the cached data.
+> 
+> This patch does the following change in struct cache_set, to explicitly
+> make a cache_set only have single cache,
+> - Change pointer array "*cache[MAX_CACHES_PER_SET]" to a single pointer
+>    "*cache".
+> - Remove pointer array "*cache_by_alloc[MAX_CACHES_PER_SET]".
+> - Remove "caches_loaded".
+> 
+> Now the code looks as exactly what it does in practic: only one cache is
+> used in the cache set.
+> 
+> Signed-off-by: Coly Li <colyli@suse.de>
+> ---
+>   drivers/md/bcache/alloc.c  |  2 +-
+>   drivers/md/bcache/bcache.h |  8 +++-----
+>   drivers/md/bcache/super.c  | 19 ++++++++-----------
+>   3 files changed, 12 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+> index 4493ff57476d..3385f6add6df 100644
+> --- a/drivers/md/bcache/alloc.c
+> +++ b/drivers/md/bcache/alloc.c
+> @@ -501,7 +501,7 @@ int __bch_bucket_alloc_set(struct cache_set *c, unsigned int reserve,
+>   
+>   	bkey_init(k);
+>   
+> -	ca = c->cache_by_alloc[0];
+> +	ca = c->cache;
+>   	b = bch_bucket_alloc(ca, reserve, wait);
+>   	if (b == -1)
+>   		goto err;
+> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+> index 5ff6e9573935..aa112c1adba1 100644
+> --- a/drivers/md/bcache/bcache.h
+> +++ b/drivers/md/bcache/bcache.h
+> @@ -519,9 +519,7 @@ struct cache_set {
+>   
+>   	struct cache_sb		sb;
+>   
+> -	struct cache		*cache[MAX_CACHES_PER_SET];
+> -	struct cache		*cache_by_alloc[MAX_CACHES_PER_SET];
+> -	int			caches_loaded;
+> +	struct cache		*cache;
+>   
+>   	struct bcache_device	**devices;
+>   	unsigned int		devices_max_used;
+> @@ -808,7 +806,7 @@ static inline struct cache *PTR_CACHE(struct cache_set *c,
+>   				      const struct bkey *k,
+>   				      unsigned int ptr)
+>   {
+> -	return c->cache[PTR_DEV(k, ptr)];
+> +	return c->cache;
+>   }
+>   
+>   static inline size_t PTR_BUCKET_NR(struct cache_set *c,
+> @@ -890,7 +888,7 @@ do {									\
+>   /* Looping macros */
+>   
+>   #define for_each_cache(ca, cs, iter)					\
+> -	for (iter = 0; ca = cs->cache[iter], iter < (cs)->sb.nr_in_set; iter++)
+> +	for (iter = 0; ca = cs->cache, iter < 1; iter++)
+>   
+>   #define for_each_bucket(b, ca)						\
+>   	for (b = (ca)->buckets + (ca)->sb.first_bucket;			\
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index 7057ec48f3d1..e9ccfa17beb8 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -1675,7 +1675,7 @@ static void cache_set_free(struct closure *cl)
+>   	for_each_cache(ca, c, i)
+>   		if (ca) {
+>   			ca->set = NULL;
+> -			c->cache[ca->sb.nr_this_dev] = NULL;
+> +			c->cache = NULL;
+>   			kobject_put(&ca->kobj);
+>   		}
+>   
+Please kill 'for_each_cache()', too, and replace it by an if clause.
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- drivers/md/bcache/bset.c  | 12 ++++++++----
- drivers/md/bcache/sysfs.c |  6 ++++--
- 2 files changed, 12 insertions(+), 6 deletions(-)
+Cheers,
 
-diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
-index 67a2c47f4201..94d38e8a59b3 100644
---- a/drivers/md/bcache/bset.c
-+++ b/drivers/md/bcache/bset.c
-@@ -712,8 +712,10 @@ void bch_bset_build_written_tree(struct btree_keys *b)
- 	for (j = inorder_next(0, t->size);
- 	     j;
- 	     j = inorder_next(j, t->size)) {
--		while (bkey_to_cacheline(t, k) < cacheline)
--			prev = k, k = bkey_next(k);
-+		while (bkey_to_cacheline(t, k) < cacheline) {
-+			prev = k;
-+			k = bkey_next(k);
-+		}
- 
- 		t->prev[j] = bkey_u64s(prev);
- 		t->tree[j].m = bkey_to_cacheline_offset(t, cacheline++, k);
-@@ -901,8 +903,10 @@ unsigned int bch_btree_insert_key(struct btree_keys *b, struct bkey *k,
- 	status = BTREE_INSERT_STATUS_INSERT;
- 
- 	while (m != bset_bkey_last(i) &&
--	       bkey_cmp(k, b->ops->is_extents ? &START_KEY(m) : m) > 0)
--		prev = m, m = bkey_next(m);
-+	       bkey_cmp(k, b->ops->is_extents ? &START_KEY(m) : m) > 0) {
-+		prev = m;
-+		m = bkey_next(m);
-+	}
- 
- 	/* prev is in the tree, if we merge we're done */
- 	status = BTREE_INSERT_STATUS_BACK_MERGE;
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index ac06c0bc3c0a..1878c5ee53b6 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -1071,8 +1071,10 @@ SHOW(__bch_cache)
- 			--n;
- 
- 		while (cached < p + n &&
--		       *cached == BTREE_PRIO)
--			cached++, n--;
-+		       *cached == BTREE_PRIO) {
-+			cached++;
-+			n--;
-+		}
- 
- 		for (i = 0; i < n; i++)
- 			sum += INITIAL_PRIO - cached[i];
+Hannes
 -- 
-2.26.0
-
+Dr. Hannes Reinecke            Teamlead Storage & Networking
+hare@suse.de                               +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
