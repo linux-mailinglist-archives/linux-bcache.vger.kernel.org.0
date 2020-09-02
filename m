@@ -2,63 +2,407 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BFC325A552
-	for <lists+linux-bcache@lfdr.de>; Wed,  2 Sep 2020 08:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EA7325AAF3
+	for <lists+linux-bcache@lfdr.de>; Wed,  2 Sep 2020 14:15:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbgIBGFn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 2 Sep 2020 02:05:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47962 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbgIBGFn (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 2 Sep 2020 02:05:43 -0400
-Received: from smtp.mfedv.net (smtp.mfedv.net [IPv6:2a04:6c0:2::19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC050C061244
-        for <linux-bcache@vger.kernel.org>; Tue,  1 Sep 2020 23:05:41 -0700 (PDT)
-Received: from suse92host.mfedv.net (suse92host.mfedv.net [IPv6:2a04:6c0:2:3:0:0:0:ffff])
-        by smtp.mfedv.net (8.15.2/8.15.2/Debian-10) with ESMTP id 08265UtW030280;
-        Wed, 2 Sep 2020 06:05:31 GMT
-Received: from xoff (klappe2.mfedv.net [192.168.71.72])
-        by suse92host.mfedv.net (Postfix) with SMTP id CFF5CC80C7;
-        Wed,  2 Sep 2020 08:05:29 +0200 (CEST)
-        (envelope-from bcache@mfedv.net)
-Date:   Wed, 2 Sep 2020 08:05:29 +0200
-From:   Matthias Ferdinand <bcache@mfedv.net>
-To:     Brendan Boerner <bboerner.biz@gmail.com>
-Cc:     linux-bcache@vger.kernel.org
-Subject: Re: Bcache in Ubuntu 18.04 kernel panic
-Message-ID: <20200902060529.GI10169@xoff>
-References: <CAKkfZL0FR=PX5roCpB9HQe5=F6T70F7+8EFL_yTZPEbqWWHKPA@mail.gmail.com>
+        id S1726285AbgIBMPC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 2 Sep 2020 08:15:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41804 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726247AbgIBMOu (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 2 Sep 2020 08:14:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AB3B6AD68;
+        Wed,  2 Sep 2020 12:14:45 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     linux-bcache@vger.kernel.org
+Cc:     Coly Li <colyli@suse.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>
+Subject: [PATCH 1/2] bcache-tools: add bcache-status
+Date:   Wed,  2 Sep 2020 20:14:34 +0800
+Message-Id: <20200902121435.85166-1-colyli@suse.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKkfZL0FR=PX5roCpB9HQe5=F6T70F7+8EFL_yTZPEbqWWHKPA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, Sep 01, 2020 at 03:42:54PM -0500, Brendan Boerner wrote:
-> Hi,
-> 
-> I spent the weekend verifying and isolating a kernel panic in bcache
-> on Ubuntu 18.04 (4.15.0-112-generic #113-Ubuntu SMP Thu Jul 9 23:41:39
-> UTC 2020).
-> 
-> Is this the place to report it? I have kernel crash dumps.
+People request to include bcache-status into bcache-tools package. This
+patch picks bcache-status script from github page of the orginal author
+Darrick J. Wong,
+  https://github.com/djwong/bcache-tools/blob/master/bcache-status
 
-I'm no bcache developer, but I see there are Ubuntu kernel updates
-available, with bcache fixes.
+Thanks to Darrick for writing the great bcache-status, and I will keep
+this script being updated from Darrick's repo time to time.
 
-From the changelogs for 4.15.0-113.114:
+Signed-off-by: Coly Li <colyli@suse.de>
+Cc: Darrick J. Wong <darrick.wong@oracle.com>
+---
+ bcache-status | 352 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 352 insertions(+)
+ create mode 100755 bcache-status
 
-  * Regression in kernel 4.15.0-91 causes kernel panic with Bcache
-    (LP: #1867916)
-    - bcache: check and adjust logical block size for backing devices
+diff --git a/bcache-status b/bcache-status
+new file mode 100755
+index 0000000..ac5a22f
+--- /dev/null
++++ b/bcache-status
+@@ -0,0 +1,352 @@
++#!/usr/bin/env python
++#
++# Dumb script to dump (some) of bcache status
++# Copyright 2014 Darrick J. Wong. All rights reserved.
++#
++# This file is part of Bcache.  Bcache is free software: you can
++# redistribute it and/or modify it under the terms of the GNU General Public
++# License as published by the Free Software Foundation, version 2.
++#
++# This program is distributed in the hope that it will be useful, but WITHOUT
++# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
++# details.
++#
++# You should have received a copy of the GNU General Public License along with
++# this program; if not, write to the Free Software Foundation, Inc., 51
++# Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++#
++
++import os
++import sys
++import argparse
++
++MAX_KEY_LENGTH		= 28
++DEV_BLOCK_PATH		= '/dev/block/'
++SYSFS_BCACHE_PATH	= '/sys/fs/bcache/'
++SYSFS_BLOCK_PATH	= '/sys/block/'
++
++def file_to_lines(fname):
++	try:
++		with open(fname, "r") as fd:
++			return fd.readlines()
++	except:
++		return []
++
++def file_to_line(fname):
++	ret = file_to_lines(fname)
++	if ret:
++		return ret[0].strip()
++	return ''
++
++def str_to_bool(x):
++	return x == '1'
++
++def format_sectors(x):
++	'''Pretty print a sector count.'''
++	sectors = float(x)
++	asectors = abs(sectors)
++
++	if asectors < 2:
++		return '%d B' % (sectors * 512)
++	elif asectors < 2048:
++		return '%.2f KiB' % (sectors / 2)
++	elif asectors < 2097152:
++		return '%.1f MiB' % (sectors / 2048)
++	elif asectors < 2147483648:
++		return '%.0f GiB' % (sectors / 2097152)
++	else:
++		return '%.0f TiB' % (sectors / 2147483648)
++
++def interpret_sectors(x):
++	'''Interpret a pretty-printed disk size.'''
++	factors = {
++		'k': 1 << 10,
++		'M': 1 << 20,
++		'G': 1 << 30,
++		'T': 1 << 40,
++		'P': 1 << 50,
++		'E': 1 << 60,
++		'Z': 1 << 70,
++		'Y': 1 << 80,
++	}
++
++	factor = 1
++	if x[-1] in factors:
++		factor = factors[x[-1]]
++		x = x[:-1]
++	return int(float(x) * factor / 512)
++
++def pretty_size(x):
++	return format_sectors(interpret_sectors(x))
++
++def device_path(x):
++	if not os.path.isdir(DEV_BLOCK_PATH):
++		return '?'
++	x = '%s/%s' % (DEV_BLOCK_PATH, x)
++	return os.path.abspath(os.path.join(os.path.dirname(x), os.readlink(x)))
++
++def str_device_path(x):
++	return '%s (%s)' % (device_path(x), x)
++
++def dump_bdev(bdev_path):
++	'''Dump a backing device stats.'''
++	global MAX_KEY_LENGTH
++	attrs = [
++		('../dev',		'Device File',		str_device_path),
++		('dev/dev',		'bcache Device File',	str_device_path),
++		('../size',		'Size',			format_sectors),
++		('cache_mode',		'Cache Mode',		None),
++		('readahead',		'Readahead',		None),
++		('sequential_cutoff',	'Sequential Cutoff',	pretty_size),
++		('sequential_merge',	'Merge sequential?',	str_to_bool),
++		('state',		'State',		None),
++		('writeback_running',	'Writeback?',		str_to_bool),
++		('dirty_data',		'Dirty Data',		pretty_size),
++		('writeback_rate',	'Writeback Rate',	lambda x: '%s/s' % x),
++		('writeback_percent',	'Dirty Target',		lambda x: '%s%%' % x),
++	]
++
++	print('--- Backing Device ---')
++	for (sysfs_name, display_name, conversion_func) in attrs:
++		val = file_to_line('%s/%s' % (bdev_path, sysfs_name))
++		if conversion_func is not None:
++			val = conversion_func(val)
++		if display_name is None:
++			display_name = sysfs_name
++		print('  %-*s%s' % (MAX_KEY_LENGTH - 2, display_name, val))
++
++def dump_cachedev(cachedev_path):
++	'''Dump a cachding device stats.'''
++	def fmt_cachesize(val):
++		return '%s\t(%.0f%%)' % (format_sectors(val), float(val) / cache_size * 100)
++
++	global MAX_KEY_LENGTH
++	attrs = [
++		('../dev',			'Device File',		str_device_path),
++		('../size',			'Size',			format_sectors),
++		('block_size',			'Block Size',		pretty_size),
++		('bucket_size',			'Bucket Size',		pretty_size),
++		('cache_replacement_policy',	'Replacement Policy',	None),
++		('discard',			'Discard?',		str_to_bool),
++		('io_errors',			'I/O Errors',		None),
++		('metadata_written',		'Metadata Written',	pretty_size),
++		('written',			'Data Written',		pretty_size),
++		('nbuckets',			'Buckets',		None),
++		(None,				'Cache Used',		lambda x: fmt_cachesize(used_sectors)),
++		(None,				'Cache Unused',		lambda x: fmt_cachesize(unused_sectors)),
++	]
++
++	stats = get_cache_priority_stats(cachedev_path)
++	cache_size = int(file_to_line('%s/../size' % cachedev_path))
++	unused_sectors = float(stats['Unused'][:-1]) * cache_size / 100
++	used_sectors = cache_size - unused_sectors
++
++	print('--- Cache Device ---')
++	for (sysfs_name, display_name, conversion_func) in attrs:
++		if sysfs_name is not None:
++			val = file_to_line('%s/%s' % (cachedev_path, sysfs_name))
++		if conversion_func is not None:
++			val = conversion_func(val)
++		if display_name is None:
++			display_name = sysfs_name
++		print('  %-*s%s' % (MAX_KEY_LENGTH - 2, display_name, val))
++
++def hits_to_str(hits_str, misses_str):
++	'''Render a hits/misses ratio as a string.'''
++	hits = int(hits_str)
++	misses = int(misses_str)
++
++	ret = '%d' % hits
++	if hits + misses != 0:
++		ret = '%s\t(%.d%%)' % (ret, 100 * hits / (hits + misses))
++	return ret
++
++def dump_stats(sysfs_path, indent_str, stats):
++	'''Dump stats on a bcache device.'''
++	stat_types = [
++		('five_minute',	'Last 5min'),
++		('hour',	'Last Hour'),
++		('day',		'Last Day'),
++		('total',	'Total'),
++	]
++	attrs = ['bypassed', 'cache_bypass_hits', 'cache_bypass_misses', 'cache_hits', 'cache_misses']
++	display = [
++		('Hits',		lambda: hits_to_str(stat_data['cache_hits'], stat_data['cache_misses'])),
++		('Misses',		lambda: stat_data['cache_misses']),
++		('Bypass Hits',		lambda: hits_to_str(stat_data['cache_bypass_hits'], stat_data['cache_bypass_misses'])),
++		('Bypass Misses',	lambda: stat_data['cache_bypass_misses']),
++		('Bypassed',		lambda: pretty_size(stat_data['bypassed'])),
++	]
++
++	for (sysfs_name, stat_display_name) in stat_types:
++		if len(stats) > 0 and sysfs_name not in stats:
++			continue
++		stat_data = {}
++		for attr in attrs:
++			val = file_to_line('%s/stats_%s/%s' % (sysfs_path, sysfs_name, attr))
++			stat_data[attr] = val
++		for (display_name, str_func) in display:
++			d = '%s%s %s' % (indent_str, stat_display_name, display_name)
++			print('%-*s%s' % (MAX_KEY_LENGTH, d, str_func()))
++
++def get_cache_priority_stats(cache):
++	'''Retrieve priority stats from a cache.'''
++	attrs = {}
++
++	for line in file_to_lines('%s/priority_stats' % cache):
++		x = line.split()
++		key = x[0]
++		value = x[1]
++		attrs[key[:-1]] = value
++	return attrs
++
++def dump_bcache(bcache_sysfs_path, stats, print_subdevices, device):
++	'''Dump bcache stats'''
++	def fmt_cachesize(val):
++		return '%s\t(%.0f%%)' % (format_sectors(val), 100.0 * val / cache_sectors)
++
++	attrs = [
++		(None,					'UUID',			lambda x: os.path.basename(bcache_sysfs_path)),
++		('block_size',				'Block Size',		pretty_size),
++		('bucket_size',				'Bucket Size',		pretty_size),
++		('congested', 				'Congested?',		str_to_bool),
++		('congested_read_threshold_us',		'Read Congestion',	lambda x: '%.1fms' % (int(x) / 1000)),
++		('congested_write_threshold_us',	'Write Congestion',	lambda x: '%.1fms' % (int(x) / 1000)),
++		(None,					'Total Cache Size',	lambda x: format_sectors(cache_sectors)),
++		(None,					'Total Cache Used',	lambda x: fmt_cachesize(cache_used_sectors)),
++		(None,					'Total Cache Unused',	lambda x: fmt_cachesize(cache_unused_sectors)),
++		#('dirty_data',				'Dirty Data',		lambda x: fmt_cachesize(interpret_sectors(x))),		# disappeared in 3.13?
++		('cache_available_percent',		'Evictable Cache',	lambda x: '%s\t(%s%%)' % (format_sectors(float(x) * cache_sectors / 100), x)),
++		(None,					'Replacement Policy',	lambda x: replacement_policies.pop() if len(replacement_policies) == 1 else '(Various)'),
++		(None,					'Cache Mode',		lambda x: cache_modes.pop() if len(cache_modes) == 1 else '(Various)'),
++	]
++
++	# Calculate aggregate data
++	cache_sectors = 0
++	cache_unused_sectors = 0
++	cache_modes = set()
++	replacement_policies = set()
++	for obj in os.listdir(bcache_sysfs_path):
++		if not os.path.isdir('%s/%s' % (bcache_sysfs_path, obj)):
++			continue
++		if obj.startswith('cache'):
++			cache_size = int(file_to_line('%s/%s/../size' % (bcache_sysfs_path, obj)))
++			cache_sectors += cache_size
++			cstats = get_cache_priority_stats('%s/%s' % (bcache_sysfs_path, obj))
++			unused_size = float(cstats['Unused'][:-1]) * cache_size / 100
++			cache_unused_sectors += unused_size
++			replacement_policies.add(file_to_line('%s/%s/cache_replacement_policy' % (bcache_sysfs_path, obj)))
++		elif obj.startswith('bdev'):
++			cache_modes.add(file_to_line('%s/%s/cache_mode' % (bcache_sysfs_path, obj)))
++	cache_used_sectors = cache_sectors - cache_unused_sectors
++
++	# Dump basic stats
++	print("--- bcache ---")
++	for (sysfs_name, display_name, conversion_func) in attrs:
++		if sysfs_name is not None:
++			val = file_to_line('%s/%s' % (bcache_sysfs_path, sysfs_name))
++		else:
++			val = None
++		if conversion_func is not None:
++			val = conversion_func(val)
++		if display_name is None:
++			display_name = sysfs_name
++		print('%-*s%s' % (MAX_KEY_LENGTH, display_name, val))
++	dump_stats(bcache_sysfs_path, '', stats)
++
++	# Dump sub-device stats
++	if not print_subdevices:
++		return
++	for obj in os.listdir(bcache_sysfs_path):
++		if not os.path.isdir('%s/%s' % (bcache_sysfs_path, obj)):
++			continue
++		if obj.startswith('bdev'):
++			dump_bdev('%s/%s' % (bcache_sysfs_path, obj))
++			dump_stats('%s/%s' % (bcache_sysfs_path, obj), '  ', stats)
++		elif obj.startswith('cache'):
++			dump_cachedev('%s/%s' % (bcache_sysfs_path, obj))
++
++def map_uuid_to_device():
++	'''Map bcache UUIDs to device files.'''
++	global SYSFS_BLOCK_PATH
++	ret = {}
++
++	if not os.path.isdir(SYSFS_BLOCK_PATH):
++		return ret
++	for bdev in os.listdir(SYSFS_BLOCK_PATH):
++		link = '%s%s/bcache/cache' % (SYSFS_BLOCK_PATH, bdev)
++		if not os.path.islink(link):
++			continue
++		basename = os.path.basename(os.readlink(link))
++		ret[basename] = file_to_line('%s%s/dev' % (SYSFS_BLOCK_PATH, bdev))
++	return ret
++
++def main():
++	'''Main function'''
++	global SYSFS_BCACHE_PATH
++	global uuid_map
++	stats = set()
++	reset_stats = False
++	print_subdevices = False
++	run_gc = False
++
++	parser = argparse.ArgumentParser(add_help=False)
++	parser.add_argument('--help',			help='Show this help message and exit',		action='store_true')
++	parser.add_argument('-f', '--five-minute',	help='Print the last five minutes of stats.',	action='store_true')
++	parser.add_argument('-h', '--hour',		help='Print the last hour of stats.',		action='store_true')
++	parser.add_argument('-d', '--day',		help='Print the last day of stats.',		action='store_true')
++	parser.add_argument('-t', '--total',		help='Print total stats.',			action='store_true')
++	parser.add_argument('-a', '--all',		help='Print all stats.',			action='store_true')
++	parser.add_argument('-r', '--reset-stats',	help='Reset stats after printing them.',	action='store_true')
++	parser.add_argument('-s', '--sub-status',	help='Print subdevice status.',			action='store_true')
++	parser.add_argument('-g', '--gc',		help='Invoke GC before printing status.',	action='store_true')
++	args = parser.parse_args()
++
++	if args.help:
++		parser.print_help()
++		return 0
++
++	if args.five_minute:
++		stats.add('five_minute')
++	if args.hour:
++		stats.add('hour')
++	if args.day:
++		stats.add('day')
++	if args.total:
++		stats.add('total')
++	if args.all:
++		stats.add('five_minute')
++		stats.add('hour')
++		stats.add('day')
++		stats.add('total')
++	if args.reset_stats:
++		reset_stats = True
++	if args.sub_status:
++		print_subdevices = True
++	if args.gc:
++		run_gc = True
++
++	if not stats:
++		stats.add('total')
++
++	uuid_map = map_uuid_to_device()
++	if not os.path.isdir(SYSFS_BCACHE_PATH):
++		print('bcache is not loaded.')
++		return
++	for cache in os.listdir(SYSFS_BCACHE_PATH):
++		if not os.path.isdir('%s%s' % (SYSFS_BCACHE_PATH, cache)):
++			continue
++
++		if run_gc:
++			with open('%s%s/internal/trigger_gc' % (SYSFS_BCACHE_PATH, cache), 'w') as fd:
++				fd.write('1\n')
++
++		dump_bcache('%s%s' % (SYSFS_BCACHE_PATH, cache), stats, print_subdevices, uuid_map.get(cache, '?'))
++
++		if reset_stats:
++			with open('%s%s/clear_stats' % (SYSFS_BCACHE_PATH, cache), 'w') as fd:
++				fd.write('1\n')
++
++if __name__ == '__main__':
++	main()
+-- 
+2.26.2
 
-
-Perhaps you used unorthodox (neither 512b nor 4k) block sizes at bcache creation?
-
-
-Regards
-Matthias
