@@ -2,36 +2,34 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D02126457D
-	for <lists+linux-bcache@lfdr.de>; Thu, 10 Sep 2020 13:51:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5280C2645D0
+	for <lists+linux-bcache@lfdr.de>; Thu, 10 Sep 2020 14:14:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbgIJLvB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 10 Sep 2020 07:51:01 -0400
-Received: from m97179.mail.qiye.163.com ([220.181.97.179]:39012 "EHLO
+        id S1726642AbgIJMO3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 10 Sep 2020 08:14:29 -0400
+Received: from m97179.mail.qiye.163.com ([220.181.97.179]:60476 "EHLO
         m97179.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730166AbgIJLs4 (ORCPT
+        with ESMTP id S1726079AbgIJMNs (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 10 Sep 2020 07:48:56 -0400
+        Thu, 10 Sep 2020 08:13:48 -0400
 Received: from atest-guest.localdomain (unknown [218.94.118.90])
-        by m97179.mail.qiye.163.com (Hmail) with ESMTPA id E6D1DE025EA;
-        Thu, 10 Sep 2020 19:28:26 +0800 (CST)
+        by m97179.mail.qiye.163.com (Hmail) with ESMTPA id C299AE021FE;
+        Thu, 10 Sep 2020 19:21:58 +0800 (CST)
 From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
 To:     colyli@suse.de
 Cc:     linux-bcache@vger.kernel.org,
         Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH v2] bcache: allow allocator to invalidate bucket in gc
-Date:   Thu, 10 Sep 2020 11:28:15 +0000
-Message-Id: <1599737295-7985-1-git-send-email-dongsheng.yang@easystack.cn>
+Subject: [PATCH] bcache: allow allocator to invalidate bucket in gc
+Date:   Thu, 10 Sep 2020 11:21:24 +0000
+Message-Id: <1599736884-5479-1-git-send-email-dongsheng.yang@easystack.cn>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1599736884-5479-1-git-send-email-dongsheng.yang@easystack.cn>
-References: <1599736884-5479-1-git-send-email-dongsheng.yang@easystack.cn>
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgYFAkeWUFZS1VLWVdZKFlBSUI3V1ktWUFJV1kPCR
-        oVCBIfWUFZGkodQk8ZGU8YSU5KVkpOQkJMSExIS0xKSkxVGRETFhoSFyQUDg9ZV1kWGg8SFR0UWU
+        oVCBIfWUFZSk1NHU5DGRkeH0JOVkpOQkJMSE1CSkNCTUtVGRETFhoSFyQUDg9ZV1kWGg8SFR0UWU
         FZT0tIVUpKS09ISVVKS0tZBg++
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NzY6Hhw6Hj4DShMJKxAYAg4C
-        Iw0wFFFVSlVKTkJCTEhMSEtMSUNJVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
-        V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBT0lOQjcG
-X-HM-Tid: 0a7477c61f8d20bdkuqye6d1de025ea
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAg6KQw4TD4CPxM2HRFRA0kx
+        IxkwFDFVSlVKTkJCTEhNQkpCSkhIVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
+        V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSE1CTzcG
+X-HM-Tid: 0a7477c0335420bdkuqyc299ae021fe
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
@@ -45,17 +43,17 @@ But actually, there would be some buckets is reclaimable before gc,
 and gc will never mark this kind of bucket to be  unreclaimable.
 
 So we can put these buckets into free_inc in gc running to avoid
-IO being blocked.
+IO blocking.
 
 Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 ---
- drivers/md/bcache/alloc.c  | 11 +++++------
+ drivers/md/bcache/alloc.c  | 10 ++++------
  drivers/md/bcache/bcache.h |  1 +
  drivers/md/bcache/btree.c  | 10 +++++++++-
- 3 files changed, 15 insertions(+), 7 deletions(-)
+ 3 files changed, 14 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index 52035a7..faa5a5d 100644
+index 52035a7..265fa05 100644
 --- a/drivers/md/bcache/alloc.c
 +++ b/drivers/md/bcache/alloc.c
 @@ -130,12 +130,11 @@ static inline bool can_inc_bucket_gen(struct bucket *b)
@@ -74,15 +72,7 @@ index 52035a7..faa5a5d 100644
  }
  
  void __bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
-@@ -149,6 +148,7 @@ void __bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
- 	bch_inc_gen(ca, b);
- 	b->prio = INITIAL_PRIO;
- 	atomic_inc(&b->pin);
-+	b->reclaimable_in_gc = 0;
- }
- 
- static void bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
-@@ -353,8 +353,7 @@ static int bch_allocator_thread(void *arg)
+@@ -353,8 +352,7 @@ static int bch_allocator_thread(void *arg)
  		 */
  
  retry_invalidate:
