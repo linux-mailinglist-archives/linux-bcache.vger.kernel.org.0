@@ -2,79 +2,84 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC006265E57
-	for <lists+linux-bcache@lfdr.de>; Fri, 11 Sep 2020 12:48:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B93A4266A24
+	for <lists+linux-bcache@lfdr.de>; Fri, 11 Sep 2020 23:37:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725825AbgIKKsG convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-bcache@lfdr.de>); Fri, 11 Sep 2020 06:48:06 -0400
-Received: from mail.flex.co.jp ([211.8.82.123]:52803 "EHLO www.flex.co.jp"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725768AbgIKKsF (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 11 Sep 2020 06:48:05 -0400
-Received: from live.com.mx ([103.89.89.225])
-        (authenticated bits=0)
-        by www.flex.co.jp (MTA) with ESMTP id 0898nZwg009284
-        for <linux-bcache@vger.kernel.org>; Wed, 9 Sep 2020 17:49:48 +0900
-Reply-To: powerinthewords@yahoo.co.jp
-From:   piyin.crhe@live.com.mx
-To:     linux-bcache@vger.kernel.org
-Subject: =?utf-8?Q?=5BSpam=5D?=
- We are still waiting for your email...
-Date:   09 Sep 2020 01:49:46 -0700
-Message-ID: <20200909014946.4BB90A702D71DE42@live.com.mx>
+        id S1725844AbgIKVhs (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 11 Sep 2020 17:37:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35262 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725864AbgIKVhq (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 11 Sep 2020 17:37:46 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA8FDC0613ED
+        for <linux-bcache@vger.kernel.org>; Fri, 11 Sep 2020 14:37:45 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id 34so7469741pgo.13
+        for <linux-bcache@vger.kernel.org>; Fri, 11 Sep 2020 14:37:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=r51LP7m4rUbCgwSAKD5/YKIVFU6XhFovTY9ZXd0poEc=;
+        b=iQs9Uo+P1Ikbj8cd9+UMIByGSZfY8FQ0QJZuAvFAdnVHZ6S2VEdIoRsEIeZscDM65u
+         cWa15KtHgLUK7U5stSucP7JiIXMjHWYPHfo1lR8hWVJ6/aQDJ53YEPQAPszjOOWTRjue
+         vYQLm2F2LBglhQqI8jxfy1gGKHwsSFZ7y65MlIi8/JmKo8VTKRcAR9Kj2KpT/CNnGIGk
+         OFrCKVVNRZsg/vFOn/0zcxK4VHq9TRs9RcC2NNXZtADTW2Qczo1PjFs2GK7jHsfPo3Ht
+         rcDRXeblqKoihzU2qqNlKZvOML2ysrpjVU7kPz6TaPT9j0S3gaRJg4Ff7Hk9n/X+ed2D
+         5kbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=r51LP7m4rUbCgwSAKD5/YKIVFU6XhFovTY9ZXd0poEc=;
+        b=D2Z7mTlfCcqUwVGoDEo+F/uYRwfq0YKILZfZ5dXuhLGPTQ/EQ8z92RlIW6ZUaHMsvA
+         hngguUR3wRB5itCWhW56GR5uxMnw8krbj6+7OU5S2QLX4p0BRL3DqrwejmIbNOzupYdo
+         uuWDHThT1B/8HC0v3keXxLZ4v5aGDZDjJ1D1bW9YjZ1CyOZVg9AgQ0XxbEQYgs8kI498
+         ZXPktFmQsg2pr5E+gekDYdRljulXnT2Mp9WHkckIwBYKDaN2E0kAK3ujxVRfiZQfpocn
+         xiX9NZD1JJJKjLl0oIDrg9JbCqm0dcLVggzct/qY1Os8nenWRckkZAZYKGHjOjQGfNTV
+         zBeg==
+X-Gm-Message-State: AOAM532lSHcWvWxqMXmqt93XTA9WywAAPcP8FSlGxV1ONY0NZC7lJXCN
+        0s145iMU5YHe8pekpuesScSdzA==
+X-Google-Smtp-Source: ABdhPJxriWuG9UsTdeDt1QvD0oSEycaGqMo0AChaG8ybqdM56zVilrT2CJ0yt8sas2+GjdFcpoUfHA==
+X-Received: by 2002:a63:cd4f:: with SMTP id a15mr3175439pgj.416.1599860265219;
+        Fri, 11 Sep 2020 14:37:45 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id m188sm3275508pfd.56.2020.09.11.14.37.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Sep 2020 14:37:44 -0700 (PDT)
+Subject: Re: [PATCH v3 0/3] block: improve iostat for md/bcache partitions
+To:     Song Liu <songliubraving@fb.com>, linux-block@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org
+Cc:     colyli@suse.de, kernel-team@fb.com, song@kernel.org,
+        hch@infradead.org
+References: <20200831222725.3860186-1-songliubraving@fb.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0665df03-41a8-fb06-71d2-a487c31ad610@kernel.dk>
+Date:   Fri, 11 Sep 2020 15:37:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-SpamInfo: FortiGuard-AntiSpam ip, connection black ip 103.89.89.225
+In-Reply-To: <20200831222725.3860186-1-songliubraving@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Dear Beneficiary,
+On 8/31/20 4:27 PM, Song Liu wrote:
+> Currently, devices like md, bcache uses disk_[start|end]_io_acct to report
+> iostat. These functions couldn't get proper iostat for partitions on these
+> devices.
+> 
+> This set resolves this issue by introducing part_[begin|end]_io_acct, and
+> using them in md and bcache code.
 
-We wish to inform you that a power of attorney was forwarded to 
-our office  by two gentlemen regarding your unclaimed fund of $56 
-Million Dollar. One of them is an American citizen named Mr. 
-Robert Porter and the other is Mr. Wilhelm Berg a Swedish 
-citizen.We have be waiting for you to contact us since last year.
+Applied, thanks.
 
-The document claims these gentlemen to be your authorized 
-representatives, and the power of attorney states that you are 
-already deceased.  It further states that your death was due to 
-lung cancer, with your date of death being January 27th, 2020.
+-- 
+Jens Axboe
 
-They have now submitted a new account to replace the receiving 
-account that was in the original claim of funds. These funds have 
-remained unclaimed for quite some time and the need for 
-resolution is pressing. Below is the new account they have 
-submitted.
-
-Account Name's :  Robert Porter /Wilhelm Berg
-Account: 5007-29 438 66
-IBAN-nr: SE4150000000050072943866
-Bic-kod: ESSESESS
-Skandinaviska Enskilda Banken. (SEB :)
-SWEDEN .
-
-In the event that you are in fact still alive, we ask that you 
-confirm your existence by responding to this email. You are to 
-view this as a matter requiring immediate attention and response. 
-We have 48 hr monitoring of all activities within Federal Reserve 
-Bank.On this regard,you will be directed to any of our office 
-center that you will go in person to sign the final papers,
-because we have our payment center in Europe,Asia,America and 
-Canada.You will go to any of the office that you will be directed 
-to with the copy of the documents of your fund.
-
-We have contacted the bank in the Sweden asking them to wait for 
-further directives from Federal Reserve Bank, prior to 
-authorizing any withdrawals in any form.  Our request is based 
-entirely on our attempt to verify that you are in fact deceased, 
-before money is wrongly disbursed.
-
-Your in Service,
-
-Robert Steven Kaplan
-2200 N Pearl St, Dallas, TX 75201, United States
