@@ -2,115 +2,73 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A683268B42
-	for <lists+linux-bcache@lfdr.de>; Mon, 14 Sep 2020 14:41:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C12126BCA3
+	for <lists+linux-bcache@lfdr.de>; Wed, 16 Sep 2020 08:20:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbgINMlb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 14 Sep 2020 08:41:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48804 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgINMhv (ORCPT
+        id S1726189AbgIPGUM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 16 Sep 2020 02:20:12 -0400
+Received: from m97141.mail.qiye.163.com ([220.181.97.141]:23342 "EHLO
+        m97141.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbgIPGTu (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 14 Sep 2020 08:37:51 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D59FEC061355
-        for <linux-bcache@vger.kernel.org>; Mon, 14 Sep 2020 05:08:29 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id lo4so22841291ejb.8
-        for <linux-bcache@vger.kernel.org>; Mon, 14 Sep 2020 05:08:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=gxYQz48aGorfvze6exW0FuIKKJvVhs5z+cRnEenJUaY=;
-        b=HqUymWiK3gkBxrw8q6YRIrCheth92x+nGAZXKKQK0xfkjw23y31T0cXexuE1QRLluF
-         /CZws0tX77CB0Ah6P2rYc8at6rIYuKkfSiO0Y9Ldg0YF0BKdriIgUEI1XXQKAZ86lNQf
-         aC9jdW8Usod6rD8UBPyXlKMHA9QVL5I11txXhZjkO1NreWKs3/y8I700wVAiNaFze5EZ
-         G33+VG85S8daYwoEjVkAzc9aAqBrm9EljUyIEW8ZqFOwYY+/cqA4lu2ihoGYSz5tL/48
-         /3WdZjSkr/lZLAkh6z8upuQFAYWS57ugYqrZ1NrDEn9bkopcz+iVT3h6g8K/KPH248ha
-         TzIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=gxYQz48aGorfvze6exW0FuIKKJvVhs5z+cRnEenJUaY=;
-        b=r/BrI/eM8qdZCJfdP04MsPeNdcJ59J1tgY71asMW0OT8r4MrrKeKeaDKorLNYlQjyt
-         kz59ZXX2xn3qj7SOXW3zlEO7Axs7MesPba0RGmPtKHq+zvDn1BiOlG7KKzYjuxZ+rcsh
-         7CPcnCHM7P0oV8Tp39YkKN0KWyhUSZSQQfoQjJ6BDpvpXFL+necLLs0tY7YYl+zjkxq1
-         IUCDYvU2oANOdhFue2OVLFl0yiOSd4N7fkmAqAC6s134hscGtemrnrIOBqZS4rVW1J2C
-         2Kl3NK7CVliz6q3dSFTiT3VNoUVR22EpfAOWRg2jkCisqTBf5ATDzNXrvPAOnbH+VQ3A
-         Yi6w==
-X-Gm-Message-State: AOAM531JESUk5/CVZAMKqNmQE6qc2H0rzaMWHmrLzxcaOQIGAbne48iI
-        B2eU+a2FLCKezud6h17/ply770dzwz9GKGe0VyQ=
-X-Google-Smtp-Source: ABdhPJx+r9brCTFmTaGSub1DpA0KFyYuctp6TdeMKA78F9xmzXXhxOYaH5Iaa94xv3gHMbmg9Aj0cacZSRQWrhwnIl8=
-X-Received: by 2002:a17:906:7489:: with SMTP id e9mr14151447ejl.154.1600085308496;
- Mon, 14 Sep 2020 05:08:28 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:906:6945:0:0:0:0 with HTTP; Mon, 14 Sep 2020 05:08:27
- -0700 (PDT)
-Reply-To: mrsmegwilliam6@gmail.com
-From:   Ms Mary Mcniff <dhlcouriercompanymiami@gmail.com>
-Date:   Mon, 14 Sep 2020 05:08:27 -0700
-Message-ID: <CAG_Oktq-EX5KTnAWDnAp1yRQMxYh5_72OotV+MQ8_Cz8Z3nt7w@mail.gmail.com>
-Subject: Your Respond ASAP
-To:     undisclosed-recipients:;
+        Wed, 16 Sep 2020 02:19:50 -0400
+Received: from easystack.cn (wm-1.hmbj.internal [127.0.0.1])
+        by m97141.mail.qiye.163.com (Hmail) with ESMTP id 113F7383985;
+        Wed, 16 Sep 2020 14:19:46 +0800 (CST)
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <AMsATAA4E*Dlrpq6fL0rxqqL.8.1600237186053.Hmail.dongsheng.yang@easystack.cn>
+To:     colyli <colyli@suse.de>
+Cc:     linux-bcache <linux-bcache@vger.kernel.org>
+Subject: =?UTF-8?B?Rnc6QWJvdXQgYmNhY2hlLWNoZWNr?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2015-163.com
+X-Originating-IP: 218.94.118.90
+MIME-Version: 1.0
+Received: from dongsheng.yang@easystack.cn( [218.94.118.90) ] by ajax-webmail ( [127.0.0.1] ) ; Wed, 16 Sep 2020 14:19:46 +0800 (GMT+08:00)
+From:   =?UTF-8?B?5p2o5Lic5Y2H?= <dongsheng.yang@easystack.cn>
+Date:   Wed, 16 Sep 2020 14:19:46 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgYFAkeWUFZS1VLWVdZKFlBSUI3V1ktWUFJV1kPCR
+        oVCBIfWUFZQhhCGkNKGE1MT0IYVkpNS0tJSExKQ01KS0lVGRETFhoSFyQUDg9ZV1kWGg8SFR0UWU
+        FZT0tIVUpKS0xKSFVKS0tZBg++
+X-HM-Sender-Digest: e1kMHhlZQQ8JDh5XWRIfHhUPWUFZRzo2CDovOjpPPlE*FwkLCk0dN0sJ
+        AwoKN1VDVUpNS0tJSExKQ01ISENVMxYaEhdVHxQVHAgTHhUcVQIaFRw7HhoIAggPGhgQVRgVRVlX
+        WRILWUFZSUpDVUJPVUpKQ1VCS1lXWQgBWUFIQ0JPN1dZHQwfVhYSHwhZQSBDTk9OTUpCTkpNTjcm
+        Bg++
+X-HM-Tid: 0a749591ac1720bfkuqy113f7383985
 Sender: linux-bcache-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
--- 
-From Chief Compliance Officer, Citigroup Inc CITIBANK
-388 Greenwich St, New York, 10013, United States United.
-PAYMENT CODE: FRB010
-Swift: PTBLBXXX
-==============================================
-
-Attention: Beneficiary,
-
-We write to inform you that Series of meetings have been held over the
-past 2 weeks with the Secretary General of United Nations,U.S
-Department of State and Dubai Union Organization this ended last
-week.And parcel is under our custody right now, It will deliver to you
-within 24 hours once you clear the charges which will cost you
-according to the BANKERS COURIER SERVICES that wish to deliver your
-ATM CARD card to
-you immediately.
-
-However, it is the pleasure of this office to inform you that your ATM
-CARD number; is 29741733 and it has been approved and upgraded in your
-favor .you call me for the pin code numbers. The ATM CARD value is us
-$10.5 Million only.
-
-Kindly contact the paying bank for the claim of your ATM visa card
-payment fund $10,500,000.00 through the below contact information;
-
-Contact Person:Mr Williams S Young
-Director of Financial Controller
-Bank Name: CITIBANK
-Bank address; 388 Greenwich St,
-New York City,10013, United States
-Email:mrsmegwilliam6@gmail.com
-
-Reconfirm the following information?
-
-(1)Your Full Name=============
-(2)Mobile Phone Number======
-(3)Current Home Address==== ====
-(4)Fax Number================
-(5)Passport/Drivers license ======
-
-Endeavor to keep me posted once you contacted the officer in charge
-through the above mentioned information.
-
-Your timely response is highly appreciated.To this end, you are
-required to forward your payment information as follows to enable us
-load your fund into the card with your information and deliver it to
-your door step. as the BANKERS COURIER SERVICES are in charge of the
-delivery services to your destination.
-
-Yours truly;
-
-Ms Mary Mcniff.
-Chief Compliance Officer, Citigroup Inc
-FEDERAL RESERVE SYSTEM.
-Email: marymcniff7@gmail.com.
+UmVzZW5kaW5nIHdpdGggbm8gSFRNTCBmb3JtYXQgIC4uLiAuLi4KCgpIaSBDb2x5IGFuZCBhbGws
+CsKgwqDCoMKgIEkgZm91bmQgdGhlcmUgaXMgYW4gZXJyb3IgbWVzc2FnZSBpbiBvdXIgdGVzdGlu
+ZzoKCgpTZXAgMjcgMTc6NDM6MDAgbm9kZS0xIGtlcm5lbDogYmNhY2hlOiBlcnJvciBvbiAKYzI5
+MTRiN2UtZDY2NS00ZWMxLTgwZTEtMjcyNzU1ZGUxOWVmOiB1bnN1cHBvcnRlZCBic2V0IHZlcnNp
+b24gYXQgYnVja2V0CiA1ODI5MCwgYmxvY2sgMCwgNDA4MTg4MTAga2V5cywgZGlzYWJsaW5nIGNh
+Y2hpbmcKCgpJIGNoZWNrZWQgdGhlIGNvZGUgaW4gYmNoX2J0cmVlX25vZGVfcmVhZF9kb25lKCkg
+YXJvdW5kIHRoaXMgbWVzc2FnZToKCiAyMTQgICAgICAgICBmb3IgKDsKIDIxNSAgICAgICAgICAg
+ICAgYi0+d3JpdHRlbiA8IGJ0cmVlX2Jsb2NrcyhiKSAmJiBpLT5zZXEgPT0gYi0+a2V5cy5zZXRb
+MF0uZGF0YS0+c2VxOwogMjE2ICAgICAgICAgICAgICBpID0gd3JpdGVfYmxvY2soYikpIHsKIDIx
+NyAgICAgICAgICAgICAgICAgZXJyID0gInVuc3VwcG9ydGVkIGJzZXQgdmVyc2lvbiI7CiAyMTgg
+ICAgICAgICAgICAgICAgIGlmIChpLT52ZXJzaW9uID4gQkNBQ0hFX0JTRVRfVkVSU0lPTikKIDIx
+OSAgICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGVycjsKIDIyMCAKVGhlIHByb2JsZW0gaXMg
+d2UgZm91bmQgdGhlIGktPnNlcSBpcyB3aGF0IHdlIGV4cGVjdGVkIGZvciB0aGlzIGJ0cmVlX25v
+ZGUsIGJ1dCB0aGUgdmVyc2lvbiBpcyBub3QgQkNBQ0hFX0JTRVRfVkVSU0lPTiAoMSkKCgoKSSB0
+aGluayB0aGVyZSB3b3VsZCBiZSB0d28gcmVhc29ucyB0byBjYXVzZSB0aGlzIG1lc3NhZ2VzOgoo
+MSkgY2FjaGUgZGlzY2FyZCBpcyBub3QgZW5hYmxlZC4KwqDCoMKgwqDCoCBXaGVuIHdlIGFsbG9j
+YXRlIGEgYnVja2V0LCBpZiB3ZSBkb250IGVuYWJsZSBkaXNjYXJkLCB0aGVyZSBjb3VsZCBiZSBz
+b21lIG91dGRhdGVkIGRhdGEgaW4gdGhpcyBidWNrZXQsIAoKYW5kIHRoZXJlIGlzIHBvc3NpYmls
+aXR5IHRoYXQgdGhlIGxvY2F0aW9uIG9mIGktPnNlcSBpcyBlcXVhbCB0byB3aGF0IHdlIGV4cGVj
+dGVkLAoKYnV0IHRoYXQncyByZWFsbHkgbm90IGFuIGJzZXQgYXQgYWxsLCBzbyB3ZSB3aWxsIGZv
+dW5kIHZlcnNpb24sIG1hZ2ljIGFuZCBic2V0X2NzdW0gYXJlIGFsbCB1bmV4cGVjdGVkLCAKCmN1
+cnJlbnRseSB3ZSB3aWxsIGdvdG8gZXJyIGFuZCBzdG9wIGNhY2hlX3NldC4KCgooMikgcG93ZXIt
+Y3V0LgrCoMKgwqDCoMKgwqAgV2hlbiB3ZSBhcmUgZG9pbmcgYnRyZWVfbm9kZV93cml0ZSwgaWYg
+dGhlcmUgaXMgYSBwb3dlci1jdXQgaGFwcGVuLCB3ZSBjb3VsZCB3cml0ZSBhIHBhcnRpYWwgYnRy
+ZWUuCiAKCkJ1dCB3aGVuIHdlIG1lZXQgdGhpcyBraW5kIG9mIHByb2JsZW1zLCB3ZSBjYW50IHVz
+ZSB0aGlzIGNhY2hlIGRldmljZS4gVGhlcmUgaXMgbm8gdG9vbCB0byByZWNvdmVyeSBmcm9tIHRo
+aXMga2luZCBvZiBwcm9ibGVtLgoKSSB0aGluayBJIGNhbiBjb29rIGEgYmNhY2hlLWNoZWNrIGlu
+IGJjYWNoZS10b29scywgc29tZXRoaW5nIGxpa2UgZnNjay4gdG8gY2hlY2sgdGhpcyBraW5kIG9m
+IHByb2JsZW0KCmFuZCBhbGxvdyB1c2VyIHRvIHJlcGFpciBpdCwgd2FybmluZyBvbiB1c2VyIGZv
+cmNlLXJlcGFpcmUgaXMgcmlza3kuCgoKClBsZWFzZSBoZWxwIHRvIHBvaW50IG91dCBpZiB0aGVy
+ZSBpcyBzb21ldGhpbmcgSSBhbSBtaXNzaW5nLiAKCgoKVGhhbngKRG9uZ3NoZW5nCgoNCg0K
