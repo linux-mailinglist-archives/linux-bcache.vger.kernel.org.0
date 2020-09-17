@@ -2,83 +2,95 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B22326D63F
-	for <lists+linux-bcache@lfdr.de>; Thu, 17 Sep 2020 10:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D91DF26DBC2
+	for <lists+linux-bcache@lfdr.de>; Thu, 17 Sep 2020 14:40:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726169AbgIQISv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 17 Sep 2020 04:18:51 -0400
-Received: from m97179.mail.qiye.163.com ([220.181.97.179]:43668 "EHLO
-        m97179.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726153AbgIQISu (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 17 Sep 2020 04:18:50 -0400
-X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 04:18:46 EDT
-Received: from atest-guest.localdomain (unknown [218.94.118.90])
-        by m97179.mail.qiye.163.com (Hmail) with ESMTPA id E625EE0224C;
-        Thu, 17 Sep 2020 16:13:38 +0800 (CST)
-From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
-To:     colyli@suse.de
-Cc:     linux-bcache@vger.kernel.org,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH] bcache: check c->root with IS_ERR_OR_NULL() in mca_reserve()
-Date:   Thu, 17 Sep 2020 08:13:26 +0000
-Message-Id: <1600330406-2484-1-git-send-email-dongsheng.yang@easystack.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgYFAkeWUFZS1VLWVdZKFlBSUI3V1ktWUFJV1kPCR
-        oVCBIfWUFZSUxDGk9MQhpJQk8fVkpNS0tISEtPSkJKSkxVGRETFhoSFyQUDg9ZV1kWGg8SFR0UWU
-        FZT0tIVUpKS0JITVVKS0tZBg++
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mwg6DDo5Hz5JCRY4Ix03OBE1
-        TR5PCklVSlVKTUtLSEhLT0pCSEtLVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
-        V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSU5CSDcG
-X-HM-Tid: 0a749b204b6c20bdkuqye625ee0224c
+        id S1727043AbgIQMkg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 17 Sep 2020 08:40:36 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:49912 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727034AbgIQMkQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 17 Sep 2020 08:40:16 -0400
+X-Greylist: delayed 965 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 08:40:10 EDT
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7EAB13B5571B7F534558;
+        Thu, 17 Sep 2020 20:22:55 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.487.0; Thu, 17 Sep 2020 20:22:49 +0800
+From:   Qinglang Miao <miaoqinglang@huawei.com>
+To:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+CC:     <linux-bcache@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Qinglang Miao" <miaoqinglang@huawei.com>
+Subject: [PATCH -next v2] bcache: Convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Thu, 17 Sep 2020 20:23:26 +0800
+Message-ID: <20200917122326.99080-1-miaoqinglang@huawei.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In mca_reserve(c) macro, we are checking root whether is NULL or not.
-But that's not enough, when we read the root node in run_cache_set(),
-if we got an error in bch_btree_node_read_done(), we will return ERR_PTR(-EIO)
-to c->root.
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-And then we will go continue to unregister, but before unregister_shrinker(&c->shrink);
-there is a possibility to call bch_mca_count(), and we would get a crash with call trace like that:
+As inode->iprivate equals to third parameter of
+debugfs_create_file() which is NULL. So it's equivalent
+to original code logic.
 
-[ 2149.876008] Unable to handle kernel NULL pointer dereference at virtual address 00000000000000b5
-... ...
-[ 2150.598931] Call trace:
-[ 2150.606439]  bch_mca_count+0x58/0x98 [escache]
-[ 2150.615866]  do_shrink_slab+0x54/0x310
-[ 2150.624429]  shrink_slab+0x248/0x2d0
-[ 2150.632633]  drop_slab_node+0x54/0x88
-[ 2150.640746]  drop_slab+0x50/0x88
-[ 2150.648228]  drop_caches_sysctl_handler+0xf0/0x118
-[ 2150.657219]  proc_sys_call_handler.isra.18+0xb8/0x110
-[ 2150.666342]  proc_sys_write+0x40/0x50
-[ 2150.673889]  __vfs_write+0x48/0x90
-[ 2150.681095]  vfs_write+0xac/0x1b8
-[ 2150.688145]  ksys_write+0x6c/0xd0
-[ 2150.695127]  __arm64_sys_write+0x24/0x30
-[ 2150.702749]  el0_svc_handler+0xa0/0x128
-[ 2150.710296]  el0_svc+0x8/0xc
-
-Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
 ---
- drivers/md/bcache/btree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: based on linux-next(20200917), and can be applied to
+    mainline cleanly now.
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index d45a1dd..36cae5c 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -514,7 +514,7 @@ static void bch_btree_leaf_dirty(struct btree *b, atomic_t *journal_ref)
-  * mca -> memory cache
-  */
+ drivers/md/bcache/closure.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/md/bcache/closure.c b/drivers/md/bcache/closure.c
+index 0164a1fe9..d8d9394a6 100644
+--- a/drivers/md/bcache/closure.c
++++ b/drivers/md/bcache/closure.c
+@@ -159,7 +159,7 @@ void closure_debug_destroy(struct closure *cl)
  
--#define mca_reserve(c)	(((c->root && c->root->level)		\
-+#define mca_reserve(c)	(((!IS_ERR_OR_NULL(c->root) && c->root->level) \
- 			  ? c->root->level : 1) * 8 + 16)
- #define mca_can_free(c)						\
- 	max_t(int, 0, c->btree_cache_used - mca_reserve(c))
+ static struct dentry *closure_debug;
+ 
+-static int debug_seq_show(struct seq_file *f, void *data)
++static int debug_show(struct seq_file *f, void *data)
+ {
+ 	struct closure *cl;
+ 
+@@ -188,17 +188,7 @@ static int debug_seq_show(struct seq_file *f, void *data)
+ 	return 0;
+ }
+ 
+-static int debug_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, debug_seq_show, NULL);
+-}
+-
+-static const struct file_operations debug_ops = {
+-	.owner		= THIS_MODULE,
+-	.open		= debug_seq_open,
+-	.read		= seq_read,
+-	.release	= single_release
+-};
++DEFINE_SHOW_ATTRIBUTE(debug);
+ 
+ void  __init closure_debug_init(void)
+ {
+@@ -209,7 +199,7 @@ void  __init closure_debug_init(void)
+ 		 * about this.
+ 		 */
+ 		closure_debug = debugfs_create_file(
+-			"closures", 0400, bcache_debug, NULL, &debug_ops);
++			"closures", 0400, bcache_debug, NULL, &debug_fops);
+ }
+ #endif
+ 
 -- 
-1.8.3.1
+2.23.0
 
