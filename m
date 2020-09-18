@@ -2,135 +2,111 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3E9126F445
-	for <lists+linux-bcache@lfdr.de>; Fri, 18 Sep 2020 05:14:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D45426F9A1
+	for <lists+linux-bcache@lfdr.de>; Fri, 18 Sep 2020 11:54:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbgIRCCG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 17 Sep 2020 22:02:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47000 "EHLO mail.kernel.org"
+        id S1726064AbgIRJxZ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 18 Sep 2020 05:53:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35504 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726611AbgIRCCF (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:02:05 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BBAA208DB;
-        Fri, 18 Sep 2020 02:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600394524;
-        bh=ANl3JrAbLgRoeObtJtIWUNJ2+H7AmOOwkQArMASHwBc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JqGxW7uIoAiPlEZSaQa8sy2VZGjgnNNX/p2PmRFEjFS5sUOiidiyh/ZhcG1xiomDl
-         LVHb/6IqxO5g93rZNpXC2ZV6esekGJHuhjAhf82qglbDUhIokDyOoKXLttkmWemUQQ
-         an25T6LMfn3tkT+UXzLJ++1Vc0liyRYSxVyR/nfo=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Guoju Fang <fangguoju@gmail.com>, Coly Li <colyli@suse.de>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 045/330] bcache: fix a lost wake-up problem caused by mca_cannibalize_lock
-Date:   Thu, 17 Sep 2020 21:56:25 -0400
-Message-Id: <20200918020110.2063155-45-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200918020110.2063155-1-sashal@kernel.org>
-References: <20200918020110.2063155-1-sashal@kernel.org>
+        id S1725941AbgIRJxZ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 18 Sep 2020 05:53:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 622D1B12B;
+        Fri, 18 Sep 2020 09:53:57 +0000 (UTC)
+Subject: Re: [PATCH v2] bcache: allow allocator to invalidate bucket in gc
+To:     Dongsheng Yang <dongsheng.yang@easystack.cn>
+Cc:     linux-bcache@vger.kernel.org
+References: <1599736884-5479-1-git-send-email-dongsheng.yang@easystack.cn>
+ <1599737295-7985-1-git-send-email-dongsheng.yang@easystack.cn>
+From:   Coly Li <colyli@suse.de>
+Autocrypt: addr=colyli@suse.de; keydata=
+ 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
+Message-ID: <1ddde040-9bde-515a-1d4d-b41de472a702@suse.de>
+Date:   Fri, 18 Sep 2020 17:53:19 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.12.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1599737295-7985-1-git-send-email-dongsheng.yang@easystack.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Guoju Fang <fangguoju@gmail.com>
+On 2020/9/10 19:28, Dongsheng Yang wrote:
+> Currently, if the gc is running, when the allocator found free_inc
+> is empty, allocator has to wait the gc finish. Before that, the
+> IO is blocked.
+> 
+> But actually, there would be some buckets is reclaimable before gc,
+> and gc will never mark this kind of bucket to be  unreclaimable.
+> 
+> So we can put these buckets into free_inc in gc running to avoid
+> IO being blocked.
+> 
+> Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 
-[ Upstream commit 34cf78bf34d48dddddfeeadb44f9841d7864997a ]
+Hi Dongsheng,
 
-This patch fix a lost wake-up problem caused by the race between
-mca_cannibalize_lock and bch_cannibalize_unlock.
+This is not a simple change :-)
 
-Consider two processes, A and B. Process A is executing
-mca_cannibalize_lock, while process B takes c->btree_cache_alloc_lock
-and is executing bch_cannibalize_unlock. The problem happens that after
-process A executes cmpxchg and will execute prepare_to_wait. In this
-timeslice process B executes wake_up, but after that process A executes
-prepare_to_wait and set the state to TASK_INTERRUPTIBLE. Then process A
-goes to sleep but no one will wake up it. This problem may cause bcache
-device to dead.
+Let's do more testing for this patch, and give me more time to
+understand the new code path.
 
-Signed-off-by: Guoju Fang <fangguoju@gmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/md/bcache/bcache.h |  1 +
- drivers/md/bcache/btree.c  | 12 ++++++++----
- drivers/md/bcache/super.c  |  1 +
- 3 files changed, 10 insertions(+), 4 deletions(-)
+Thanks for the idea.
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 217c838a1b405..859567ad3db4e 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -585,6 +585,7 @@ struct cache_set {
- 	 */
- 	wait_queue_head_t	btree_cache_wait;
- 	struct task_struct	*btree_cache_alloc_lock;
-+	spinlock_t		btree_cannibalize_lock;
- 
- 	/*
- 	 * When we free a btree node, we increment the gen of the bucket the
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 46556bde032e2..8d06105fc9ff5 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -886,15 +886,17 @@ out:
- 
- static int mca_cannibalize_lock(struct cache_set *c, struct btree_op *op)
- {
--	struct task_struct *old;
--
--	old = cmpxchg(&c->btree_cache_alloc_lock, NULL, current);
--	if (old && old != current) {
-+	spin_lock(&c->btree_cannibalize_lock);
-+	if (likely(c->btree_cache_alloc_lock == NULL)) {
-+		c->btree_cache_alloc_lock = current;
-+	} else if (c->btree_cache_alloc_lock != current) {
- 		if (op)
- 			prepare_to_wait(&c->btree_cache_wait, &op->wait,
- 					TASK_UNINTERRUPTIBLE);
-+		spin_unlock(&c->btree_cannibalize_lock);
- 		return -EINTR;
- 	}
-+	spin_unlock(&c->btree_cannibalize_lock);
- 
- 	return 0;
- }
-@@ -929,10 +931,12 @@ static struct btree *mca_cannibalize(struct cache_set *c, struct btree_op *op,
-  */
- static void bch_cannibalize_unlock(struct cache_set *c)
- {
-+	spin_lock(&c->btree_cannibalize_lock);
- 	if (c->btree_cache_alloc_lock == current) {
- 		c->btree_cache_alloc_lock = NULL;
- 		wake_up(&c->btree_cache_wait);
- 	}
-+	spin_unlock(&c->btree_cannibalize_lock);
- }
- 
- static struct btree *mca_alloc(struct cache_set *c, struct btree_op *op,
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 2cbfcd99b7ee7..63f5ce18311bb 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1798,6 +1798,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
- 	sema_init(&c->sb_write_mutex, 1);
- 	mutex_init(&c->bucket_lock);
- 	init_waitqueue_head(&c->btree_cache_wait);
-+	spin_lock_init(&c->btree_cannibalize_lock);
- 	init_waitqueue_head(&c->bucket_wait);
- 	init_waitqueue_head(&c->gc_wait);
- 	sema_init(&c->uuid_write_mutex, 1);
--- 
-2.25.1
+Coly Li
+
+
+> ---
+>  drivers/md/bcache/alloc.c  | 11 +++++------
+>  drivers/md/bcache/bcache.h |  1 +
+>  drivers/md/bcache/btree.c  | 10 +++++++++-
+>  3 files changed, 15 insertions(+), 7 deletions(-)
+> 
+[snipped]
 
