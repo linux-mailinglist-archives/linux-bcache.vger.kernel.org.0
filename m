@@ -2,38 +2,38 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D95C26EE8D
-	for <lists+linux-bcache@lfdr.de>; Fri, 18 Sep 2020 04:29:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FA2726EDBE
+	for <lists+linux-bcache@lfdr.de>; Fri, 18 Sep 2020 04:23:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbgIRC3S (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 17 Sep 2020 22:29:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43830 "EHLO mail.kernel.org"
+        id S1727185AbgIRCXQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 17 Sep 2020 22:23:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728580AbgIRCPJ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:15:09 -0400
+        id S1729463AbgIRCQ4 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 17 Sep 2020 22:16:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 197E8235F7;
-        Fri, 18 Sep 2020 02:15:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B826E23772;
+        Fri, 18 Sep 2020 02:16:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600395308;
-        bh=RMrWm9O1QbQpo3EGcjd78aEJURre9a9Z5xRIIN7QmkQ=;
+        s=default; t=1600395415;
+        bh=5urpLU8oeS6gDR7Jjp/j4LpHwZGRGcr0hFAeFKjIv6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RhlPYgwXa1m20rK4lW+VCr5gvwznX9vk0hgty2K0i940nSZQ7vL2RYdZzuIXYFa0W
-         +J8Kyof70mnIzEie/OJ4hjgsrBg9eTGOkfdUd9HUZk1nwBxtfGa14IQIBLmXHm0YXL
-         LC8cPZpq1f7rr3/HT43cwvNStD4ETOxdrPtXdASM=
+        b=qzvn6Zerh+ih7BZ7R3itpLFtfqywIVEKsn8fKTE4zjwb0Wl8gChvkxwTtmptf54yO
+         ZKUUkIZs4SVfw0WzDs+Ce+YhYK2h2zkQyh5LFCuipJ9f47aXhdAkxL9ngYEpqCFRAM
+         qFZAmGsCpqfbTbPGyP08gEXhVPjS1Irv4cQ1Xlc8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Guoju Fang <fangguoju@gmail.com>, Coly Li <colyli@suse.de>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 11/90] bcache: fix a lost wake-up problem caused by mca_cannibalize_lock
-Date:   Thu, 17 Sep 2020 22:13:36 -0400
-Message-Id: <20200918021455.2067301-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 10/64] bcache: fix a lost wake-up problem caused by mca_cannibalize_lock
+Date:   Thu, 17 Sep 2020 22:15:49 -0400
+Message-Id: <20200918021643.2067895-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200918021455.2067301-1-sashal@kernel.org>
-References: <20200918021455.2067301-1-sashal@kernel.org>
+In-Reply-To: <20200918021643.2067895-1-sashal@kernel.org>
+References: <20200918021643.2067895-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -81,10 +81,10 @@ index 7fe7df56fa334..f0939fc1cfe55 100644
  	/*
  	 * When we free a btree node, we increment the gen of the bucket the
 diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 764d519a7f1c6..26e56a9952d09 100644
+index 122d975220945..bdf6071c1b184 100644
 --- a/drivers/md/bcache/btree.c
 +++ b/drivers/md/bcache/btree.c
-@@ -836,15 +836,17 @@ out:
+@@ -841,15 +841,17 @@ out:
  
  static int mca_cannibalize_lock(struct cache_set *c, struct btree_op *op)
  {
@@ -106,7 +106,7 @@ index 764d519a7f1c6..26e56a9952d09 100644
  
  	return 0;
  }
-@@ -879,10 +881,12 @@ static struct btree *mca_cannibalize(struct cache_set *c, struct btree_op *op,
+@@ -884,10 +886,12 @@ static struct btree *mca_cannibalize(struct cache_set *c, struct btree_op *op,
   */
  static void bch_cannibalize_unlock(struct cache_set *c)
  {
@@ -120,10 +120,10 @@ index 764d519a7f1c6..26e56a9952d09 100644
  
  static struct btree *mca_alloc(struct cache_set *c, struct btree_op *op,
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 95e9a33de06a2..263c0d987929e 100644
+index f7f8fb079d2a9..d73f9ea776861 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -1510,6 +1510,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+@@ -1511,6 +1511,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
  	sema_init(&c->sb_write_mutex, 1);
  	mutex_init(&c->bucket_lock);
  	init_waitqueue_head(&c->btree_cache_wait);
