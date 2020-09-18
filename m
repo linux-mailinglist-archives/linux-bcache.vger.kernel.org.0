@@ -2,24 +2,24 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FB7B26FA30
-	for <lists+linux-bcache@lfdr.de>; Fri, 18 Sep 2020 12:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D75FF26FA31
+	for <lists+linux-bcache@lfdr.de>; Fri, 18 Sep 2020 12:14:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbgIRKOM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 18 Sep 2020 06:14:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58616 "EHLO mx2.suse.de"
+        id S1726154AbgIRKOm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 18 Sep 2020 06:14:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58740 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbgIRKOL (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 18 Sep 2020 06:14:11 -0400
+        id S1726130AbgIRKOm (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 18 Sep 2020 06:14:42 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A4D13AF32;
-        Fri, 18 Sep 2020 10:14:44 +0000 (UTC)
-Subject: Re: [PATCH] bcache: check c->root with IS_ERR_OR_NULL() in
- mca_reserve()
-To:     Dongsheng Yang <dongsheng.yang@easystack.cn>
-Cc:     linux-bcache@vger.kernel.org
-References: <1600330406-2484-1-git-send-email-dongsheng.yang@easystack.cn>
+        by mx2.suse.de (Postfix) with ESMTP id 6F658AFAC;
+        Fri, 18 Sep 2020 10:15:14 +0000 (UTC)
+Subject: Re: [PATCH -next v2] bcache: Convert to DEFINE_SHOW_ATTRIBUTE
+To:     Qinglang Miao <miaoqinglang@huawei.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200917122326.99080-1-miaoqinglang@huawei.com>
 From:   Coly Li <colyli@suse.de>
 Autocrypt: addr=colyli@suse.de; keydata=
  mQINBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
@@ -64,12 +64,12 @@ Autocrypt: addr=colyli@suse.de; keydata=
  K0Jx4CEZubakJe+894sX6pvNFiI7qUUdB882i5GR3v9ijVPhaMr8oGuJ3kvwBIA8lvRBGVGn
  9xvzkQ8Prpbqh30I4NMp8MjFdkwCN6znBKPHdjNTwE5PRZH0S9J0o67IEIvHfH0eAWAsgpTz
  +jwc7VKH7vkvgscUhq/v1/PEWCAqh9UHy7R/jiUxwzw/288OpgO+i+2l11Y=
-Message-ID: <5805c5a5-6578-64e0-747c-0f0f7961ca43@suse.de>
-Date:   Fri, 18 Sep 2020 18:14:07 +0800
+Message-ID: <e559cd50-4e74-d585-183f-b164ab7a294c@suse.de>
+Date:   Fri, 18 Sep 2020 18:14:36 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <1600330406-2484-1-git-send-email-dongsheng.yang@easystack.cn>
+In-Reply-To: <20200917122326.99080-1-miaoqinglang@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -77,57 +77,68 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/9/17 16:13, Dongsheng Yang wrote:
-> In mca_reserve(c) macro, we are checking root whether is NULL or not.
-> But that's not enough, when we read the root node in run_cache_set(),
-> if we got an error in bch_btree_node_read_done(), we will return ERR_PTR(-EIO)
-> to c->root.
+On 2020/9/17 20:23, Qinglang Miao wrote:
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 > 
-> And then we will go continue to unregister, but before unregister_shrinker(&c->shrink);
-> there is a possibility to call bch_mca_count(), and we would get a crash with call trace like that:
+> As inode->iprivate equals to third parameter of
+> debugfs_create_file() which is NULL. So it's equivalent
+> to original code logic.
 > 
-> [ 2149.876008] Unable to handle kernel NULL pointer dereference at virtual address 00000000000000b5
-> ... ...
-> [ 2150.598931] Call trace:
-> [ 2150.606439]  bch_mca_count+0x58/0x98 [escache]
-> [ 2150.615866]  do_shrink_slab+0x54/0x310
-> [ 2150.624429]  shrink_slab+0x248/0x2d0
-> [ 2150.632633]  drop_slab_node+0x54/0x88
-> [ 2150.640746]  drop_slab+0x50/0x88
-> [ 2150.648228]  drop_caches_sysctl_handler+0xf0/0x118
-> [ 2150.657219]  proc_sys_call_handler.isra.18+0xb8/0x110
-> [ 2150.666342]  proc_sys_write+0x40/0x50
-> [ 2150.673889]  __vfs_write+0x48/0x90
-> [ 2150.681095]  vfs_write+0xac/0x1b8
-> [ 2150.688145]  ksys_write+0x6c/0xd0
-> [ 2150.695127]  __arm64_sys_write+0x24/0x30
-> [ 2150.702749]  el0_svc_handler+0xa0/0x128
-> [ 2150.710296]  el0_svc+0x8/0xc
-> 
-> Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+> Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
+> ---
+> v2: based on linux-next(20200917), and can be applied to
+>     mainline cleanly now.
 
-It looks good to me, added into my test queue.
 
-Thanks.
+Added into my test queue. Thanks.
 
 Coly Li
 
-> ---
->  drivers/md/bcache/btree.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+
 > 
-> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-> index d45a1dd..36cae5c 100644
-> --- a/drivers/md/bcache/btree.c
-> +++ b/drivers/md/bcache/btree.c
-> @@ -514,7 +514,7 @@ static void bch_btree_leaf_dirty(struct btree *b, atomic_t *journal_ref)
->   * mca -> memory cache
->   */
+>  drivers/md/bcache/closure.c | 16 +++-------------
+>  1 file changed, 3 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/md/bcache/closure.c b/drivers/md/bcache/closure.c
+> index 0164a1fe9..d8d9394a6 100644
+> --- a/drivers/md/bcache/closure.c
+> +++ b/drivers/md/bcache/closure.c
+> @@ -159,7 +159,7 @@ void closure_debug_destroy(struct closure *cl)
 >  
-> -#define mca_reserve(c)	(((c->root && c->root->level)		\
-> +#define mca_reserve(c)	(((!IS_ERR_OR_NULL(c->root) && c->root->level) \
->  			  ? c->root->level : 1) * 8 + 16)
->  #define mca_can_free(c)						\
->  	max_t(int, 0, c->btree_cache_used - mca_reserve(c))
+>  static struct dentry *closure_debug;
+>  
+> -static int debug_seq_show(struct seq_file *f, void *data)
+> +static int debug_show(struct seq_file *f, void *data)
+>  {
+>  	struct closure *cl;
+>  
+> @@ -188,17 +188,7 @@ static int debug_seq_show(struct seq_file *f, void *data)
+>  	return 0;
+>  }
+>  
+> -static int debug_seq_open(struct inode *inode, struct file *file)
+> -{
+> -	return single_open(file, debug_seq_show, NULL);
+> -}
+> -
+> -static const struct file_operations debug_ops = {
+> -	.owner		= THIS_MODULE,
+> -	.open		= debug_seq_open,
+> -	.read		= seq_read,
+> -	.release	= single_release
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(debug);
+>  
+>  void  __init closure_debug_init(void)
+>  {
+> @@ -209,7 +199,7 @@ void  __init closure_debug_init(void)
+>  		 * about this.
+>  		 */
+>  		closure_debug = debugfs_create_file(
+> -			"closures", 0400, bcache_debug, NULL, &debug_ops);
+> +			"closures", 0400, bcache_debug, NULL, &debug_fops);
+>  }
+>  #endif
+>  
 > 
 
