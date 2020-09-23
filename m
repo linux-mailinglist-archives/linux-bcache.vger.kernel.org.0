@@ -2,88 +2,61 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8BBC2745F6
-	for <lists+linux-bcache@lfdr.de>; Tue, 22 Sep 2020 18:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02493275B53
+	for <lists+linux-bcache@lfdr.de>; Wed, 23 Sep 2020 17:16:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbgIVQCD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 22 Sep 2020 12:02:03 -0400
-Received: from mail-m965.mail.126.com ([123.126.96.5]:48378 "EHLO
-        mail-m965.mail.126.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbgIVQCD (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 22 Sep 2020 12:02:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=iwLNfioL3ibzOJGkWO
-        C4ttL5Ajnu56+SYdrHMbfMujY=; b=KC23QRliQfCikOkp54vRgNuyG7K/zRoOQL
-        RG0mKHTYkZ+gUjtwE/sS8KvXUtegYYvPAo20X5/WdJZYtBC8O3/a7Us0IcCasNN1
-        EjB1/n8tIeDeYbRh5tivP9YE1AIvvCXXVfWlgt2Mp0FF72Mm/KcAaXTfPhb8U1FK
-        AXSXAVHR0=
-Received: from localhost.localdomain (unknown [114.247.113.140])
-        by smtp10 (Coremail) with SMTP id NuRpCgCXq7tCGGpf9GPKcQ--.6328S2;
-        Tue, 22 Sep 2020 23:29:08 +0800 (CST)
-From:   Liu Hua <liusdu@126.com>
-To:     colyli@suse.de, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org
-Cc:     sdu.liu@huawei.com, Liu Hua <liusdu@126.com>
-Subject: [PATCH] bcache: insert bkeys without overlap when placeholder missed
-Date:   Tue, 22 Sep 2020 23:28:34 +0800
-Message-Id: <20200922152834.7418-1-liusdu@126.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: NuRpCgCXq7tCGGpf9GPKcQ--.6328S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrurykKF4xGr4xArWkWF47twb_yoWktrb_u3
-        WFqFyftr4YyFZIgr1jyrWfZrWjya98ZF1Iqa4jqFySvrW7Ca93Wr18Aa4xJrs8CrW3CFy3
-        G34DXrnYy3s29jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnJ5r7UUUUU==
-X-Originating-IP: [114.247.113.140]
-X-CM-SenderInfo: polx2vbx6rjloofrz/1tbiuxOnNFpEBnZOJgAAs9
+        id S1726832AbgIWPQS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 23 Sep 2020 11:16:18 -0400
+Received: from verein.lst.de ([213.95.11.211]:48859 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726518AbgIWPQN (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 23 Sep 2020 11:16:13 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id D31FF6736F; Wed, 23 Sep 2020 17:16:06 +0200 (CEST)
+Date:   Wed, 23 Sep 2020 17:16:06 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Song Liu <song@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Coly Li <colyli@suse.de>, Richard Weinberger <richard@nod.at>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Justin Sanders <justin@coraid.com>,
+        linux-mtd@lists.infradead.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org,
+        David Sterba <dsterba@suse.com>
+Subject: Re: [PATCH 05/13] bdi: initialize ->ra_pages and ->io_pages in
+ bdi_init
+Message-ID: <20200923151606.GB16073@lst.de>
+References: <20200921080734.452759-1-hch@lst.de> <20200921080734.452759-6-hch@lst.de> <20200922084954.GC16464@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200922084954.GC16464@quack2.suse.cz>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Btree spliting and garbage collection process will drop
-placeholders, which may cause cache miss collision. We can
-insert nonoverlapping bkeys with write lock. It is helpful
-for performance.
+On Tue, Sep 22, 2020 at 10:49:54AM +0200, Jan Kara wrote:
+> On Mon 21-09-20 10:07:26, Christoph Hellwig wrote:
+> > Set up a readahead size by default, as very few users have a good
+> > reason to change it.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > Acked-by: David Sterba <dsterba@suse.com> [btrfs]
+> > Acked-by: Richard Weinberger <richard@nod.at> [ubifs, mtd]
+> 
+> The patch looks good to me. You can add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> I'd just prefer if the changelog explicitely mentioned that this patch
+> results in enabling readahead for coda, ecryptfs, and orangefs... Just in
+> case someone bisects some issue down to this patch :).
 
-Signed-off-by: Liu Hua <liusdu@126.com>
----
- drivers/md/bcache/extents.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/md/bcache/extents.c b/drivers/md/bcache/extents.c
-index c809724e6571..cc8af08aee8d 100644
---- a/drivers/md/bcache/extents.c
-+++ b/drivers/md/bcache/extents.c
-@@ -329,6 +329,7 @@ static bool bch_extent_insert_fixup(struct btree_keys *b,
- 
- 	uint64_t old_offset;
- 	unsigned int old_size, sectors_found = 0;
-+	bool overlay = false;
- 
- 	BUG_ON(!KEY_OFFSET(insert));
- 	BUG_ON(!KEY_SIZE(insert));
-@@ -340,15 +341,18 @@ static bool bch_extent_insert_fixup(struct btree_keys *b,
- 			break;
- 
- 		if (bkey_cmp(&START_KEY(k), insert) >= 0) {
--			if (KEY_SIZE(k))
--				break;
--			else
-+			if (!KEY_SIZE(k))
- 				continue;
-+			if (replace_key && overlay == false)
-+				goto out;
-+			break;
- 		}
- 
- 		if (bkey_cmp(k, &START_KEY(insert)) <= 0)
- 			continue;
- 
-+		overlay = true;
-+
- 		old_offset = KEY_START(k);
- 		old_size = KEY_SIZE(k);
- 
--- 
-2.17.1
-
+Ok, I've updated the changelog.
