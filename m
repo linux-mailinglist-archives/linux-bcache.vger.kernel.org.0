@@ -2,98 +2,89 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AABC1277607
-	for <lists+linux-bcache@lfdr.de>; Thu, 24 Sep 2020 17:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 986F327799B
+	for <lists+linux-bcache@lfdr.de>; Thu, 24 Sep 2020 21:44:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728494AbgIXP5t (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 24 Sep 2020 11:57:49 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:58118 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728139AbgIXP5t (ORCPT
+        id S1726566AbgIXTo6 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 24 Sep 2020 15:44:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50216 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbgIXTo5 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 24 Sep 2020 11:57:49 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08OFYNF4187938;
-        Thu, 24 Sep 2020 15:57:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : mime-version :
- content-type; s=corp-2020-01-29;
- bh=coGfpNEvHw1Ww6VMM3AUAr95WYwBGdMfGxQAq7Ut3Eo=;
- b=td1+RxKdoLOO2t63uF4zlGVrGlzNX/kncvf9CRu1+Q/Z185II6vOPY7OYVmR00lwbBvB
- oI39qsaxEsXuhrFRnhPNYadRAzid4vpFVH1DnNrCOUVZGKGLshblg06fbzYwGPztgdZo
- Z/fUTCgCP16jQ550PJt+VWDuquf6GdVURF+vw2dk3HUNxhFcamf3ZH2BVw0ZfMpJ+5yZ
- mxpIgUdAVm3QXDHsXihsvYimVL4XmoOEGm2cGgSqGvu3D9jELBR6iVkzSAWn9+LAYCfl
- ZfTFRr7HESquQPnKqBx6g1RyXHnWraO8Kxaud9pk648QpJJgQ9L9MM7dy9P+I69dS8p3 Iw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 33qcpu62rn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Sep 2020 15:57:21 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08OFUVZ4083297;
-        Thu, 24 Sep 2020 15:57:21 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 33nujr3a74-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Sep 2020 15:57:21 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 08OFvJrj021930;
-        Thu, 24 Sep 2020 15:57:19 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 24 Sep 2020 08:57:19 -0700
+        Thu, 24 Sep 2020 15:44:57 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6F0BC0613D3
+        for <linux-bcache@vger.kernel.org>; Thu, 24 Sep 2020 12:44:57 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id o25so344975pgm.0
+        for <linux-bcache@vger.kernel.org>; Thu, 24 Sep 2020 12:44:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ADwlTn9rnJzlHv/xfLefERCgTh/zOY3+dj+IP5LMhIo=;
+        b=L2Wx7FlLw8QHVp62Ne3mt4GV7+MUCO/WLUazgDqXAmYbUX1Et5GwKUZRbOhKWcg1pJ
+         h3F8YG2QH8T53HlhbxkOnKDq7rYr7VYQSpBZ/SrGKbAAN0q9gjlZztvIvkLYWYD2H5p5
+         D5jWhUDJxNaNV9x10hDsgdYsv3+GqUJuih92RXGRYnyEyog4jlWpFA8o+B+sqtqEeysu
+         zXsVFR5QGsEI7lJZ39JHqx1JjZyubGP7QEwNsybW+JHQWulohPcvjDgNlPxNi7sQOhp+
+         YLXR3ph4QhgGStegDp9ue2849D7tWES5wOYPeY73GujeWcYMaP3DsMTgcgakPfQ8C4Iw
+         pmzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ADwlTn9rnJzlHv/xfLefERCgTh/zOY3+dj+IP5LMhIo=;
+        b=RWj+943Jsb0Zjv1NUgrI5acCjkcDSOFH8d19PR4HLZINJfVwusq0mv/k8q93V3QQTU
+         BvQcM0s5sVywRnF4s12x0D4mdSHScFDi3DqK/2GXAsMZjFSoQ7FsjppUOzO/ZMb4ZmbZ
+         JZUFAiJCjgwtEGGbsm3kA44gBQzwGJ6116qQpXeOVhRAs7JbI7BKosuEJ2UBgP2CWubV
+         L5HFmdKdMTss/0GdRmM5oClWFLLEBStvEapKuhMVJi2FRpWqxsMKzJwsPrVk2GekEJik
+         REYc926LXeDC8p0iHzijT0a5YzJoyR4hTHc6T7O6Fadc/yKlZRjGzdgt6ntjgiBzHxL6
+         om0A==
+X-Gm-Message-State: AOAM5327GFppP1/Um1Lez50rZLEWuoQ3z7qmLuB9amJ1kteQzZTiPGyt
+        wrZzplQ1+B5v+KwhhTVWcLSRUg==
+X-Google-Smtp-Source: ABdhPJyn7jUbiC3AGiO/dBfKmKGpcA3VV/JE4LzjEmCUjGJIbrcL8/kmgANM72e+JonEfnG9EJ77rg==
+X-Received: by 2002:a17:902:854b:b029:d1:cbf4:bb43 with SMTP id d11-20020a170902854bb02900d1cbf4bb43mr778274plo.13.1600976697336;
+        Thu, 24 Sep 2020 12:44:57 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c085:21d6::1911? ([2620:10d:c090:400::5:d63d])
+        by smtp.gmail.com with ESMTPSA id u10sm267612pfn.122.2020.09.24.12.44.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Sep 2020 12:44:56 -0700 (PDT)
+Subject: Re: bdi cleanups v7
 To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
+Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
         Coly Li <colyli@suse.de>, Richard Weinberger <richard@nod.at>,
         Minchan Kim <minchan@kernel.org>,
         Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
         Justin Sanders <justin@coraid.com>,
         linux-mtd@lists.infradead.org, dm-devel@redhat.com,
         linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org, drbd-dev@tron.linbit.com,
+        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
         linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH 07/13] block: lift setting the readahead size into the
- block layer
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <yq1y2kzkw1h.fsf@ca-mkp.ca.oracle.com>
 References: <20200924065140.726436-1-hch@lst.de>
-        <20200924065140.726436-8-hch@lst.de>
-Date:   Thu, 24 Sep 2020 11:57:14 -0400
-In-Reply-To: <20200924065140.726436-8-hch@lst.de> (Christoph Hellwig's message
-        of "Thu, 24 Sep 2020 08:51:34 +0200")
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a9235ba9-95a0-4251-ee7d-e4012775346e@kernel.dk>
+Date:   Thu, 24 Sep 2020 13:44:54 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9753 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 adultscore=0 spamscore=0 suspectscore=1
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009240118
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9753 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 mlxlogscore=999
- adultscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- phishscore=0 spamscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009240118
+In-Reply-To: <20200924065140.726436-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+On 9/24/20 12:51 AM, Christoph Hellwig wrote:
+> Hi Jens,
+> 
+> this series contains a bunch of different BDI cleanups.  The biggest item
+> is to isolate block drivers from the BDI in preparation of changing the
+> lifetime of the block device BDI in a follow up series.
 
-Christoph,
-
-> Drivers shouldn't really mess with the readahead size, as that is a VM
-> concept.  Instead set it based on the optimal I/O size by lifting the
-> algorithm from the md driver when registering the disk.  Also set
-> bdi->io_pages there as well by applying the same scheme based on
-> max_sectors.  To ensure the limits work well for stacking drivers a
-> new helper is added to update the readahead limits from the block
-> limits, which is also called from disk_stack_limits.
-
-Looks good!
-
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Applied, thanks.
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Jens Axboe
+
