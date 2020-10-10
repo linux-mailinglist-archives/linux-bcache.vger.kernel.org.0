@@ -2,26 +2,54 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8189E289D74
-	for <lists+linux-bcache@lfdr.de>; Sat, 10 Oct 2020 04:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B3E9289D8F
+	for <lists+linux-bcache@lfdr.de>; Sat, 10 Oct 2020 04:38:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730197AbgJJCX3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 9 Oct 2020 22:23:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40112 "EHLO mx2.suse.de"
+        id S1730133AbgJJChZ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 9 Oct 2020 22:37:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54340 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730025AbgJJCGu (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 9 Oct 2020 22:06:50 -0400
+        id S1730285AbgJJCU6 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 9 Oct 2020 22:20:58 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 22CD3AD71;
-        Sat, 10 Oct 2020 02:05:28 +0000 (UTC)
-Subject: Re: [PATCH] bcache: Use #ifdef instead of boolean variable
-To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Alex Dewar <alex.dewar90@gmail.com>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20201009183447.1611204-1-alex.dewar90@gmail.com>
- <b37a5dd2-437d-65e3-f432-a5247d09d94a@prevas.dk>
+        by mx2.suse.de (Postfix) with ESMTP id B0EF9AC65;
+        Sat, 10 Oct 2020 02:20:53 +0000 (UTC)
+Subject: Re: [PATCH RFC PKS/PMEM 48/58] drivers/md: Utilize new kmap_thread()
+To:     ira.weiny@intel.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
+        reiserfs-devel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
+        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
+References: <20201009195033.3208459-1-ira.weiny@intel.com>
+ <20201009195033.3208459-49-ira.weiny@intel.com>
 From:   Coly Li <colyli@suse.de>
 Autocrypt: addr=colyli@suse.de; keydata=
  mQINBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
@@ -66,84 +94,76 @@ Autocrypt: addr=colyli@suse.de; keydata=
  K0Jx4CEZubakJe+894sX6pvNFiI7qUUdB882i5GR3v9ijVPhaMr8oGuJ3kvwBIA8lvRBGVGn
  9xvzkQ8Prpbqh30I4NMp8MjFdkwCN6znBKPHdjNTwE5PRZH0S9J0o67IEIvHfH0eAWAsgpTz
  +jwc7VKH7vkvgscUhq/v1/PEWCAqh9UHy7R/jiUxwzw/288OpgO+i+2l11Y=
-Message-ID: <64db3f27-5904-8857-349e-e50d612932fb@suse.de>
-Date:   Sat, 10 Oct 2020 10:05:22 +0800
+Message-ID: <c802fbf4-f67a-b205-536d-9c71b440f9c8@suse.de>
+Date:   Sat, 10 Oct 2020 10:20:34 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.12.1
 MIME-Version: 1.0
-In-Reply-To: <b37a5dd2-437d-65e3-f432-a5247d09d94a@prevas.dk>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20201009195033.3208459-49-ira.weiny@intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2020/10/10 07:00, Rasmus Villemoes wrote:
-> On 09/10/2020 20.34, Alex Dewar wrote:
->> The variable async_registration is used to indicate whether or not
->> CONFIG_BCACHE_ASYNC_REGISTRATION is enabled, triggering a (false)
->> warning in Coverity about unreachable code. However, it seems clearer in
->> this case just to use an #ifdef, so let's do that instead.
->>
->> Addresses-Coverity-ID: 1497746: Control flow issues (DEADCODE)
+On 2020/10/10 03:50, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
 > 
-> I think that coverity check needs to be ignored. The kernel is full of
-> things that are supposed to be eliminated by the compiler, but still
-> checked for valid syntax etc. Often it's even more hidden than this,
-> something like
+> These kmap() calls are localized to a single thread.  To avoid the over
+> head of global PKRS updates use the new kmap_thread() call.
 > 
-> // some header
-> #ifdef CONFIG_FOO
-> int foo(void);
-> #else
-> static inline int foo(void) { return 0; }
-> #endif
-> 
-> // code
-> 
->   if (foo()) { ... // this goes away for CONFIG_FOO=n }
-> 
->> Signed-off-by: Alex Dewar <alex.dewar90@gmail.com>
->> ---
->>  drivers/md/bcache/super.c | 40 +++++++++++++++++----------------------
->>  1 file changed, 17 insertions(+), 23 deletions(-)
->>
->> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
->> index 46a00134a36a..6d4127881c6a 100644
->> --- a/drivers/md/bcache/super.c
->> +++ b/drivers/md/bcache/super.c
->> @@ -2504,11 +2504,6 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->>  	struct cache_sb_disk *sb_disk;
->>  	struct block_device *bdev;
->>  	ssize_t ret;
->> -	bool async_registration = false;
->> -
->> -#ifdef CONFIG_BCACHE_ASYNC_REGISTRATION
->> -	async_registration = true;
->> -#endif
-> 
-> If anything, this should simply be changed to
-> 
->   bool async_registration = IS_ENABLED(CONFIG_BCACHE_ASYNC_REGISTRATION);
-> 
-> Rasmus
 
-Hi Rasmus,
+Hi Ira,
 
-Yes, the above change might be better. But I don't suggest to spent
-effort on this.
+There were a number of options considered.
 
-Hi Alex,
+1) Attempt to change all the thread local kmap() calls to kmap_atomic()
+2) Introduce a flags parameter to kmap() to indicate if the mapping
+should be global or not
+3) Change ~20-30 call sites to 'kmap_global()' to indicate that they
+require a global mapping of the pages
+4) Change ~209 call sites to 'kmap_thread()' to indicate that the
+mapping is to be used within that thread of execution only
 
-Indeed the code in v5.9 is quite similar to what your patch makes, and I
-change it in this shape in v5.10 series. This piece of code may stay in
-kernel for 2 or 3 versions at most, the purpose is to make it convenient
-for people to test the async registration in production environment.
-Once the new async registration behavior is verified to not break any
-existing thing (which we don't know) it will be the (only) default
-behavior and the CONFIG_BCACHE_ASYNC_REGISTRATION check will be removed.
 
-Thank you all for looking at this.
+I copied the above information from patch 00/58 to this message. The
+idea behind kmap_thread() is fine to me, but as you said the new api is
+very easy to be missed in new code (even for me). I would like to be
+supportive to option 2) introduce a flag to kmap(), then we won't forget
+the new thread-localized kmap method, and people won't ask why a
+_thread() function is called but no kthread created.
+
+Thanks.
+
 
 Coly Li
+
+
+
+> Cc: Coly Li <colyli@suse.de> (maintainer:BCACHE (BLOCK LAYER CACHE))
+> Cc: Kent Overstreet <kent.overstreet@gmail.com> (maintainer:BCACHE (BLOCK LAYER CACHE))
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
+>  drivers/md/bcache/request.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+> index c7cadaafa947..a4571f6d09dd 100644
+> --- a/drivers/md/bcache/request.c
+> +++ b/drivers/md/bcache/request.c
+> @@ -44,10 +44,10 @@ static void bio_csum(struct bio *bio, struct bkey *k)
+>  	uint64_t csum = 0;
+>  
+>  	bio_for_each_segment(bv, bio, iter) {
+> -		void *d = kmap(bv.bv_page) + bv.bv_offset;
+> +		void *d = kmap_thread(bv.bv_page) + bv.bv_offset;
+>  
+>  		csum = bch_crc64_update(csum, d, bv.bv_len);
+> -		kunmap(bv.bv_page);
+> +		kunmap_thread(bv.bv_page);
+>  	}
+>  
+>  	k->ptr[KEY_PTRS(k)] = csum & (~0ULL >> 1);
+> 
+
