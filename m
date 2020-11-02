@@ -2,162 +2,125 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D86AF2A2985
-	for <lists+linux-bcache@lfdr.de>; Mon,  2 Nov 2020 12:30:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 600712A2B24
+	for <lists+linux-bcache@lfdr.de>; Mon,  2 Nov 2020 14:02:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbgKBLaK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 2 Nov 2020 06:30:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48988 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728288AbgKBLaK (ORCPT
+        id S1728624AbgKBNCm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 2 Nov 2020 08:02:42 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:44936 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728520AbgKBNCm (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 2 Nov 2020 06:30:10 -0500
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DED15C0617A6;
-        Mon,  2 Nov 2020 03:30:05 -0800 (PST)
-Received: by mail-il1-x144.google.com with SMTP id t13so4671030ilp.2;
-        Mon, 02 Nov 2020 03:30:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8sUFnRhpnLvg7Edccau1zP+dWkQRjNO5vrDkvqn3/Yo=;
-        b=jLuIKgWriDRxMgI2AiuOdNFIgDsPVBJsLKxgfRIXXGVbdL6r8kSn+BSLm1lQXISCG6
-         O0LNHKmTmYC4zDJpDa7M0SFjOEdxTEN8Ax9ezfwA3XBzKd1zzem9OtH+dftOfFllmBXZ
-         QwpP7IMjL36MyfBKKfh22hQngXmxc8QrsFWOV6t8YrOKk0sqncnBsZiT7KfibIb9G+OU
-         fldtoNWCAlh70Nm5A5VE/gR3iE7lmDy7OBbtAvBBLXmhFhwveqbLvH7ugaEHEaqsKE2U
-         D7sIK9/xTPLckHko6qUcyq4805xHKFZfIYVyFl/yg+WcDgCxOQkzsYQdtRIMwmvPNZkB
-         H7XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8sUFnRhpnLvg7Edccau1zP+dWkQRjNO5vrDkvqn3/Yo=;
-        b=mVfV1c6Bu1+s5F5dnuf7GP6DgIt89/kZkNWbJtQi1kcUN+wieGcmHurBAsGPDRJUbo
-         o1Y8plVV/YJgRoiJfQAm+2k4wFQh/F+6F9dapG6Qwf9tEQhfY0kbyzjLt6zbo0AMLWj2
-         wGjA/j4vuVCTxXCgNSj5b72q3ntT37e3bk7UGEzdN0Q6rvle8Wwbr0vtaS9rqsz/gaT7
-         vNiHPpZlpNGborkfpj/TqLj7nQc8fk8GDTnuUu0etPSFC8WSdVlN1Lz0Mu3+t+/NX24r
-         tB9jsapbswaLHVwMmJY1IAZ75A5p96LNB9Vl2mmTXgJNM2Njw8BoH3KdDx8ZDYZ42Wa1
-         vAig==
-X-Gm-Message-State: AOAM533oAYWoYwEaNo1Wf5tleEPD4CQNEZbCNNcFnoybtcwTl+PFlotH
-        oPTXW9bijnXPvTqnAWqDE4CfzBR1FR//K9PhNek=
-X-Google-Smtp-Source: ABdhPJzpyGmJV5pG8ZiDqRv2txjmaZQGWb7h3zlA7GiMfetk64KQGYmh/FJhJNPZ6zDF33Q1fRfyCjNzxRjhwa73XGA=
-X-Received: by 2002:a92:1f43:: with SMTP id i64mr9932879ile.281.1604316605261;
- Mon, 02 Nov 2020 03:30:05 -0800 (PST)
+        Mon, 2 Nov 2020 08:02:42 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0A2CxMju070463;
+        Mon, 2 Nov 2020 13:02:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=ZbIfwGQlA7ONKWkUUEhlrcz6ZCvbFEQKW2WR4ULQERQ=;
+ b=m8+WNO5eVttIMeGiWHlTwCNzv5Bq7FV3K9DsT7vda8oUe5tnW8i3Rpo+OhgEyAFFuYwM
+ f/CgAozgHCuSD6EV2dzTyL1aQWt8u1RJd+SRgMKxRPYLld7CwliKtBNDESCisOVOouP7
+ aKMFTEl2WSvmQC2zGeyMRR7yAwUWJt0TVZ9WH9x/Hcw+M+Ox7Seg/iLBg+UCAd3UGRlu
+ UXSKoO9CTt4BcssrpJ/d0JLJgBvS7ylVkkoxLvEJ2otWc9FW5dBsd6UwE5TyO/so+lo4
+ FMGTkr3LAMoFSBMdQZ91y0GzMnwKIWrJqP0b+o8ePKzUdw2CtgwvxWgU2Zdk4AuMKJhN 8Q== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 34hhvc3nv7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 02 Nov 2020 13:02:36 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0A2Csjv4169186;
+        Mon, 2 Nov 2020 13:02:36 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 34jf46gs7m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Nov 2020 13:02:36 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0A2D2WWL015239;
+        Mon, 2 Nov 2020 13:02:33 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 02 Nov 2020 05:02:32 -0800
+Date:   Mon, 2 Nov 2020 16:02:26 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     colyli@suse.de
+Cc:     linux-bcache@vger.kernel.org
+Subject: [bug report] bcache: explicitly make cache_set only have single cache
+Message-ID: <20201102130226.GA30570@mwanda>
 MIME-Version: 1.0
-References: <20201031085810.450489-1-hch@lst.de> <20201031085810.450489-6-hch@lst.de>
-In-Reply-To: <20201031085810.450489-6-hch@lst.de>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 2 Nov 2020 12:30:05 +0100
-Message-ID: <CAOi1vP_-GydZpwuR2DWpNmz2N2Wf7MHDbXudLB=t5xuEEq3Y=w@mail.gmail.com>
-Subject: Re: [PATCH 05/11] rbd: implement ->set_read_only to hook into
- BLKROSET processing
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9792 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=3 mlxscore=0
+ bulkscore=0 malwarescore=0 mlxlogscore=835 phishscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011020102
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9792 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=3
+ impostorscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=824
+ bulkscore=0 phishscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2011020102
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Sat, Oct 31, 2020 at 10:11 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> Implement the ->set_read_only method instead of parsing the actual
-> ioctl command.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/block/rbd.c | 41 ++++-------------------------------------
->  1 file changed, 4 insertions(+), 37 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index f84128abade319..37f8fc28004acb 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -692,12 +692,9 @@ static void rbd_release(struct gendisk *disk, fmode_t mode)
->         put_device(&rbd_dev->dev);
->  }
->
-> -static int rbd_ioctl_set_ro(struct rbd_device *rbd_dev, unsigned long arg)
-> +static int rbd_set_read_only(struct block_device *bdev, bool ro)
->  {
-> -       int ro;
-> -
-> -       if (get_user(ro, (int __user *)arg))
-> -               return -EFAULT;
-> +       struct rbd_device *rbd_dev = bdev->bd_disk->private_data;
->
->         /*
->          * Both images mapped read-only and snapshots can't be marked
-> @@ -706,47 +703,17 @@ static int rbd_ioctl_set_ro(struct rbd_device *rbd_dev, unsigned long arg)
->         if (!ro) {
->                 if (rbd_is_ro(rbd_dev))
->                         return -EROFS;
-> -
->                 rbd_assert(!rbd_is_snap(rbd_dev));
+Hello Coly Li,
 
-If you repost, please leave this empty line.
+This is a semi-automatic email about new static checker warnings.
 
->         }
->
-> -       /* Let blkdev_roset() handle it */
-> -       return -ENOTTY;
-> -}
-> -
-> -static int rbd_ioctl(struct block_device *bdev, fmode_t mode,
-> -                       unsigned int cmd, unsigned long arg)
-> -{
-> -       struct rbd_device *rbd_dev = bdev->bd_disk->private_data;
-> -       int ret;
-> -
-> -       switch (cmd) {
-> -       case BLKROSET:
-> -               ret = rbd_ioctl_set_ro(rbd_dev, arg);
-> -               break;
-> -       default:
-> -               ret = -ENOTTY;
-> -       }
-> -
-> -       return ret;
-> -}
-> -
-> -#ifdef CONFIG_COMPAT
-> -static int rbd_compat_ioctl(struct block_device *bdev, fmode_t mode,
-> -                               unsigned int cmd, unsigned long arg)
-> -{
-> -       return rbd_ioctl(bdev, mode, cmd, arg);
-> +       return 0;
->  }
-> -#endif /* CONFIG_COMPAT */
->
->  static const struct block_device_operations rbd_bd_ops = {
->         .owner                  = THIS_MODULE,
->         .open                   = rbd_open,
->         .release                = rbd_release,
-> -       .ioctl                  = rbd_ioctl,
-> -#ifdef CONFIG_COMPAT
-> -       .compat_ioctl           = rbd_compat_ioctl,
-> -#endif
-> +       .set_read_only          = rbd_set_read_only,
->  };
->
->  /*
-> --
-> 2.28.0
->
+The patch 697e23495c94: "bcache: explicitly make cache_set only have 
+single cache" from Oct 1, 2020, leads to the following Smatch 
+complaint:
 
-With that nit,
+    drivers/md/bcache/super.c:2157 register_cache_set()
+    error: we previously assumed 'c->cache' could be null (see line 2125)
 
-Acked-by: Ilya Dryomov <idryomov@gmail.com>
+drivers/md/bcache/super.c
+  2124			if (!memcmp(c->set_uuid, ca->sb.set_uuid, 16)) {
+  2125				if (c->cache)
+                                    ^^^^^^^^
 
-Thanks,
+  2126					return "duplicate cache set member";
+  2127	
+  2128				goto found;
+                                ^^^^^^^^^^
+"c->cache" is NULL on this path.
 
-                Ilya
+  2129			}
+  2130	
+  2131		c = bch_cache_set_alloc(&ca->sb);
+  2132		if (!c)
+  2133			return err;
+  2134	
+  2135		err = "error creating kobject";
+  2136		if (kobject_add(&c->kobj, bcache_kobj, "%pU", c->set_uuid) ||
+  2137		    kobject_add(&c->internal, &c->kobj, "internal"))
+  2138			goto err;
+  2139	
+  2140		if (bch_cache_accounting_add_kobjs(&c->accounting, &c->kobj))
+  2141			goto err;
+  2142	
+  2143		bch_debug_init_cache_set(c);
+  2144	
+  2145		list_add(&c->list, &bch_cache_sets);
+  2146	found:
+  2147		sprintf(buf, "cache%i", ca->sb.nr_this_dev);
+  2148		if (sysfs_create_link(&ca->kobj, &c->kobj, "set") ||
+  2149		    sysfs_create_link(&c->kobj, &ca->kobj, buf))
+  2150			goto err;
+  2151	
+  2152		kobject_get(&ca->kobj);
+  2153		ca->set = c;
+  2154		ca->set->cache = ca;
+  2155	
+  2156		err = "failed to run cache set";
+  2157		if (run_cache_set(c) < 0)
+                    ^^^^^^^^^^^^^^^^
+c->cache gets dereferenced inside this function without checking when we
+do "c->nbuckets = ca->sb.nbuckets;".
+
+  2158			goto err;
+  2159	
+
+regards,
+dan carpenter
