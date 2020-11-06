@@ -2,65 +2,75 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7F0E2A8BBB
-	for <lists+linux-bcache@lfdr.de>; Fri,  6 Nov 2020 01:59:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C0E12A9755
+	for <lists+linux-bcache@lfdr.de>; Fri,  6 Nov 2020 15:02:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730895AbgKFA7Q (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 5 Nov 2020 19:59:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37866 "EHLO mail.kernel.org"
+        id S1727351AbgKFOCG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 6 Nov 2020 09:02:06 -0500
+Received: from verein.lst.de ([213.95.11.211]:51668 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729162AbgKFA7Q (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 5 Nov 2020 19:59:16 -0500
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 874D020B80;
-        Fri,  6 Nov 2020 00:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604624355;
-        bh=7ZEnEByVc0R517QJnXpcoY8tP3coLZ3Q0yNiPZUgtgg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LNpnrV7M/iN+V4ujDAzN/T3tay3OStPr/YwN3bQLZEZRpTgr0YhvNN4iBgBUJLUf3
-         Eyu6tRaITH92HSP28KFJe9mve+CEskk+7qXQLpjeDebpDpVOQUSpkbvXaaONO39bxV
-         IJUM6BAFBL4N5Ww5w31SVrYbaTEzjrMQ+XrSEDIA=
-Received: by mail-lj1-f172.google.com with SMTP id v18so1721207ljc.3;
-        Thu, 05 Nov 2020 16:59:15 -0800 (PST)
-X-Gm-Message-State: AOAM5326MOuS1QQqb4Zj2wC8GUOUq9Lx7YsQGQNBHszlCCCOOEjJS3Mn
-        SXKGJl4UrcRGfajUsf4yyjWZIMcSDtiAMLstp0U=
-X-Google-Smtp-Source: ABdhPJyXOcSc3bNtfvoEDL2fsq2W1tQrSuxExDjK8UvdpyheAJjMXI2e+jMAtLr0Lt7iM9E9hRacrnZUBqM91DJOAeg=
-X-Received: by 2002:a2e:50d:: with SMTP id 13mr1899629ljf.41.1604624353730;
- Thu, 05 Nov 2020 16:59:13 -0800 (PST)
-MIME-Version: 1.0
-References: <20201103100018.683694-1-hch@lst.de> <20201103100018.683694-6-hch@lst.de>
-In-Reply-To: <20201103100018.683694-6-hch@lst.de>
-From:   Song Liu <song@kernel.org>
-Date:   Thu, 5 Nov 2020 16:59:02 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW65Au-wJJo96KF0J3drdriCqHZ9Oa3=bfjfspV3tKByrg@mail.gmail.com>
-Message-ID: <CAPhsuW65Au-wJJo96KF0J3drdriCqHZ9Oa3=bfjfspV3tKByrg@mail.gmail.com>
-Subject: Re: [PATCH 05/10] md: implement ->set_read_only to hook into BLKROSET processing
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Ilya Dryomov <idryomov@gmail.com>,
+        id S1727251AbgKFOCG (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 6 Nov 2020 09:02:06 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id C704868B02; Fri,  6 Nov 2020 15:02:01 +0100 (CET)
+Date:   Fri, 6 Nov 2020 15:02:01 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Stefan Haberland <sth@linux.ibm.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ilya Dryomov <idryomov@gmail.com>, Song Liu <song@kernel.org>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
         Richard Weinberger <richard@nod.at>,
         Vignesh Raghavendra <vigneshr@ti.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
         Jan Hoeppner <hoeppner@linux.ibm.com>,
         linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-bcache@vger.kernel.org,
-        linux-raid <linux-raid@vger.kernel.org>,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 06/10] dasd: implement ->set_read_only to hook into
+ BLKROSET processing
+Message-ID: <20201106140201.GA23087@lst.de>
+References: <20201103100018.683694-1-hch@lst.de> <20201103100018.683694-7-hch@lst.de> <20201105205634.GA78869@imap.linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201105205634.GA78869@imap.linux.ibm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, Nov 3, 2020 at 2:13 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> Implement the ->set_read_only method instead of parsing the actual
-> ioctl command.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Thu, Nov 05, 2020 at 09:56:47PM +0100, Stefan Haberland wrote:
+> > +	/* do not manipulate hardware state for partitions */
+> >  	if (bdev_is_partition(bdev))
+> > -		// ro setting is not allowed for partitions
+> > -		return -EINVAL;
+> > -	if (get_user(intval, (int __user *)argp))
+> > -		return -EFAULT;
+> > +		return 0;
+> > +
+> >  	base = dasd_device_from_gendisk(bdev->bd_disk);
+> >  	if (!base)
+> >  		return -ENODEV;
+> > -	if (!intval && test_bit(DASD_FLAG_DEVICE_RO, &base->flags)) {
+> > -		dasd_put_device(base);
+> > -		return -EROFS;
+> > -	}
+> > -	set_disk_ro(bdev->bd_disk, intval);
+> 
+> 
+> While testing this patch I just noticed that when I set a device readonly this is
+> not going to be passed on to the partitions on this device any longer.
+> 
+> This is caused by the removed call to set_disk_ro().
+> 
+> Is this intentional or was this removed by accident?
 
-LGTM!
+It was unintentionally intentional :)
 
-Acked-by: Song Liu <song@kernel.org>
+The generic code used already by almost all drivers in mainline only
+calls set_device_ro from blkdev_roset, that is it only sets the main
+device read-only.  dasd was the outlier here, and I didn't notice it
+actually called set_disk_ro instead of set_device_ro.   That being
+said I think setting all the partitions read-only as well when the
+full device is set read-only makes perfect sense.  I'm just a little
+worried it could cause regressions.  Let me prepare a follow on patch
+on top of the series that switches to that behavior.
