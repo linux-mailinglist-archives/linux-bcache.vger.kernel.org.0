@@ -2,56 +2,49 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3920C2AF62D
-	for <lists+linux-bcache@lfdr.de>; Wed, 11 Nov 2020 17:23:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 104C72AF6F5
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 Nov 2020 17:53:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbgKKQXp (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 11 Nov 2020 11:23:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52282 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727156AbgKKQXo (ORCPT
+        id S1727480AbgKKQxj (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 Nov 2020 11:53:39 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:55940 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbgKKQxi (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 11 Nov 2020 11:23:44 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F12FC0613D6
-        for <linux-bcache@vger.kernel.org>; Wed, 11 Nov 2020 08:23:43 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id r12so2876502iot.4
-        for <linux-bcache@vger.kernel.org>; Wed, 11 Nov 2020 08:23:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=s4Jgqy8FHGYsxGd2uxg+9lGtU2p6NtadNFvzPdnxd2s=;
-        b=HZsNKlo2UT9eRHtIwf289PTytKLb+zC8ek6E2dbj+f9F9pstXmXwaxqLvfcUbGalxN
-         7Oddm2Wzh03m6vCQyr+ZlxLXiTaEetSry4XhA+EQxPZK5u22S4cQ2tA+19gy85pl0EZm
-         Nt1au8XgQB6b1OgnynW0QwK26oe+DPu/U5nM7FzkpfFR3ecq4TzPZUU3+iQVCJ6lMYP9
-         TinPfa4Va++MxpxAGgGeKk7iIJlnt8noV7Rn/gsf5YNLrMEWieECbH0dZGJG2fgNh0F3
-         FM1tsPApkc2WvAbxES7anE/7P/cltGtV32WLSNJ0In4d0In83NeR8d45aH7hZ92FOetl
-         HoYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=s4Jgqy8FHGYsxGd2uxg+9lGtU2p6NtadNFvzPdnxd2s=;
-        b=DKlm19kRIhFtylMhaIjzByncFTYAo6XEP/e6n/GNXi05fia4Mp2DBdBgJLXrPYpz4Y
-         lwjvbafFq4E8PqjuhJxXZgfKww7bt8ikId33KtJxSQUK1wBFUmuzwitvmKuKCpKzDPnk
-         NlDqRKLLClJz3mfd8MR4JCb2e6mEyrl8mqmhSM8DrfktvF5BquN91hF8WS8ezm2hIHn5
-         XQnBV2r613Yv9Xb7neOdIvpDK6WMq0sGxqZekYA9sx6rLAVIMTSNWTJfLyjhZ01ZTrAn
-         R0txgdwkeKGAHdOWFqpU+F5wpFWqDLYHmYpT+5gQo24KbcP1h32mAioV58640fGo/R4z
-         sFQA==
-X-Gm-Message-State: AOAM533XagoLG0B1o+gc5vRXTK18a56eaRaNj18/OTaPqlgml4Tw0cJq
-        p2px5S3j0jH5libJ0FnFXXhXcw==
-X-Google-Smtp-Source: ABdhPJzHHGmG1XrS7WDG6d3tzoxSvq+xuGBnqMcFnvnMWf0b7Gy9hUgmOrM9tqcOMGUk5yzj63tLLw==
-X-Received: by 2002:a5d:9d16:: with SMTP id j22mr19163231ioj.172.1605111822389;
-        Wed, 11 Nov 2020 08:23:42 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id v9sm1439555ilh.6.2020.11.11.08.23.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Nov 2020 08:23:41 -0800 (PST)
-Subject: Re: block ioctl cleanups v2
+        Wed, 11 Nov 2020 11:53:38 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ABGjcP7055598;
+        Wed, 11 Nov 2020 16:53:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=rtr9ZwfifFQUB6Xm7rE6zrQB75duW4A6ZUujJWOIcy0=;
+ b=exGX3C0qT4hc/xlWa/AIm9ktJgo3Z//a0o4mVgKdeKGmGA/eaFYoQbi800neiStHpB4e
+ tFsrnOWmxAuossvNG8Pw+BxUWop8xMBSCqnr7z/BRW8uJVoZbgurNkL3ZGrwGHzwfuA4
+ Gs7RSMJIhJKB1v4bnboh+uSU+6W4DiMcXMh1h5xVZ0dpa9hpH3Rl5ykPpFR0of3rZSoX
+ +jIlTtURtYo1Dq5KH+0vEOfFvvvdWfCnug14v78NOiYUPi1u0vBpnSjlcACdYBGweMr2
+ 1yEDh9l2TA2MZkJqrSGrANe41/rwZrW/lu4+bGwkBt467AYodHuM5qVxksGh9ZXr0qZt /A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 34p72er0e1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Nov 2020 16:53:11 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ABGitBl102834;
+        Wed, 11 Nov 2020 16:53:11 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 34p5g1x6bh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Nov 2020 16:53:11 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0ABGr6tR015124;
+        Wed, 11 Nov 2020 16:53:07 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Nov 2020 08:53:05 -0800
 To:     Christoph Hellwig <hch@lst.de>
-Cc:     Ilya Dryomov <idryomov@gmail.com>, Song Liu <song@kernel.org>,
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Ilya Dryomov <idryomov@gmail.com>, Song Liu <song@kernel.org>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
         Richard Weinberger <richard@nod.at>,
         Vignesh Raghavendra <vigneshr@ti.com>,
@@ -60,39 +53,44 @@ Cc:     Ilya Dryomov <idryomov@gmail.com>, Song Liu <song@kernel.org>,
         linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
         linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-References: <20201103100018.683694-1-hch@lst.de>
- <20201111075802.GB23010@lst.de>
- <92a7c6e5-fe8b-e291-0dce-ecd727262a2e@kernel.dk>
- <20201111162035.GA23772@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <10469de3-10a9-c8b5-8e95-05a014b1c24a@kernel.dk>
-Date:   Wed, 11 Nov 2020 09:23:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+Subject: Re: [PATCH, RFC 11/10] block: propagate BLKROSET to all partitions
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <yq1o8k3dei6.fsf@ca-mkp.ca.oracle.com>
+References: <20201106140817.GA23557@lst.de>
+        <yq1imacecwz.fsf@ca-mkp.ca.oracle.com> <20201111080334.GA23062@lst.de>
+Date:   Wed, 11 Nov 2020 11:53:02 -0500
+In-Reply-To: <20201111080334.GA23062@lst.de> (Christoph Hellwig's message of
+        "Wed, 11 Nov 2020 09:03:34 +0100")
 MIME-Version: 1.0
-In-Reply-To: <20201111162035.GA23772@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9802 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 malwarescore=0
+ adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 suspectscore=1
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011110099
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9802 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 suspectscore=1 lowpriorityscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011110099
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 11/11/20 9:20 AM, Christoph Hellwig wrote:
-> On Wed, Nov 11, 2020 at 09:13:05AM -0700, Jens Axboe wrote:
->> On 11/11/20 12:58 AM, Christoph Hellwig wrote:
->>> Jens, can you take a look and possibly pick this series up?
->>
->> Looks good to me - but what is the final resolution on the BLKROSET
->> propagation?
-> 
-> Do it properly including a hard read only flag.  Martin has an old
-> patch that I'm going to forward port.  For now I think we need to
-> adjust dasd to match the behavior of all drivers, so that we can fix
-> the common code to behave more like dasd in the next step.
 
-I applied the series, so just send something for this on top.
+Christoph,
+
+> I actually think your patch that goes further is the right thing to
+> do, and I was going to look into something similar for a problem with
+> hardware read-only namespaces in NVMe.  I think I'll take your patch
+> as a starting point and will work from there.
+
+Sounds good!
+
+I still have the blktests in a branch. Will adjust and resubmit once you
+post your rework.
 
 -- 
-Jens Axboe
-
+Martin K. Petersen	Oracle Linux Engineering
