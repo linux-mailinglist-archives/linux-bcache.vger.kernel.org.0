@@ -2,86 +2,75 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A6DE52B1FF4
-	for <lists+linux-bcache@lfdr.de>; Fri, 13 Nov 2020 17:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACB1F2B2116
+	for <lists+linux-bcache@lfdr.de>; Fri, 13 Nov 2020 17:55:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbgKMQTP convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-bcache@lfdr.de>); Fri, 13 Nov 2020 11:19:15 -0500
-Received: from vostok.pvgoran.name ([71.19.149.48]:51775 "EHLO
-        vostok.pvgoran.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbgKMQTP (ORCPT
+        id S1726080AbgKMQy7 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 13 Nov 2020 11:54:59 -0500
+Received: from static.214.254.202.116.clients.your-server.de ([116.202.254.214]:56198
+        "EHLO ciao.gmane.io" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbgKMQy7 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 13 Nov 2020 11:19:15 -0500
-Received: from [10.0.10.127] (l37-193-246-51.novotelecom.ru [::ffff:37.193.246.51])
-  (AUTH: CRAM-MD5 main-collector@pvgoran.name, )
-  by vostok.pvgoran.name with ESMTPSA
-  id 0000000000085FD6.000000005FAEB202.000023BE; Fri, 13 Nov 2020 16:19:13 +0000
-Date:   Fri, 13 Nov 2020 23:19:11 +0700
-From:   Pavel Goran <via-bcache@pvgoran.name>
-X-Mailer: The Bat! (v3.85.03) Professional
-Reply-To: Pavel Goran <via-bcache@pvgoran.name>
-X-Priority: 3 (Normal)
-Message-ID: <1726375278.20201113231911@pvgoran.name>
-To:     Jean-Denis Girard <jd.girard@sysnux.pf>
-CC:     linux-bcache@vger.kernel.org
-Subject: Re[2]: bcache error -> btrfs unmountable
-In-Reply-To: <romag0$2ci$1@ciao.gmane.io>
-References: <rokg8t$u8n$1@ciao.gmane.io> <1854634128.20201113145913@pvgoran.name> <romag0$2ci$1@ciao.gmane.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+        Fri, 13 Nov 2020 11:54:59 -0500
+Received: from list by ciao.gmane.io with local (Exim 4.92)
+        (envelope-from <glbd-linux-bcache@m.gmane-mx.org>)
+        id 1kdcLh-00094s-Ob
+        for linux-bcache@vger.kernel.org; Fri, 13 Nov 2020 17:54:57 +0100
+X-Injected-Via-Gmane: http://gmane.org/
+To:     linux-bcache@vger.kernel.org
+From:   Jean-Denis Girard <jd.girard@sysnux.pf>
+Subject: Re: bcache error -> btrfs unmountable
+Date:   Fri, 13 Nov 2020 06:54:50 -1000
+Message-ID: <romdor$11i3$1@ciao.gmane.io>
+References: <rokg8t$u8n$1@ciao.gmane.io>
+ <1854634128.20201113145913@pvgoran.name> <romag0$2ci$1@ciao.gmane.io>
+ <1726375278.20201113231911@pvgoran.name>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
+In-Reply-To: <1726375278.20201113231911@pvgoran.name>
+Content-Language: fr
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hello Jean-Denis,
+Le 13/11/2020 à 06:19, Pavel Goran a écrit :
+> First, you may want to check if there is any dirty data in the cache, by
+> executing:
+> cat /sys/block/bcache0/bcache/state
+> cat /sys/block/bcache1/bcache/state
+> 
+> If these return "clean", then you should be good to detach the cache.
 
-Friday, November 13, 2020, 10:58:56 PM, you wrote:
+I get "no cache", not sure why:
+[jdg@tiare ~]$ cat /sys/block/bcache{0,1}/bcache/state
+no cache
+no cache
 
-> Hello Pavel,
+Here are the kernel logs concerning bcache:
+[jdg@tiare ~]$ dmesg | grep bcache
+[    9.217610] bcache: bch_journal_replay() journal replay done, 0 keys 
+in 1 entries, seq 254637130
+[    9.219671] bcache: register_cache() registered cache device nvme0n1p4
+[    9.223512] bcache: register_bdev() registered backing device sdc
+[    9.226015] bcache: register_bdev() registered backing device sdb
+[    9.312796] BTRFS: device fsid c5b8386b-b81d-4473-9340-7b8a74fc3a3c 
+devid 2 transid 29647859 /dev/bcache1 scanned by systemd-udevd (314)
+[    9.314219] BTRFS: device fsid c5b8386b-b81d-4473-9340-7b8a74fc3a3c 
+devid 1 transid 29647859 /dev/bcache0 scanned by systemd-udevd (290)
 
-> Le 12/11/2020 a 21:59, Pavel Goran a ecrit :
->> Hello Jean-Denis,
->> 
->> See comments inline.
->> 
->> Friday, November 13, 2020, 6:25:15 AM, you wrote:
->> 
->>> Hi list,
->> 
->>> I have a RAID1 Btrfs (on sdb and sdc) behind bcache (on nvme0n1p4):
->> 
->> What's the cache mode? Writeback, writethrough, writearound?
+That was after rebooting, and no trying to mount the broken Btrfs RAID1.
 
-> Sorry I forgot that important information: mode was Writeback.
-
->> You could try to detach the *cache* from the bcache devices, and then try to
->> use the bcache devices as before; it should be possible and harmless,
->> *unless* the cache mode is "writeback". If it's "writeback", things are more
->> complicated, and I'll leave them to more experienced people around.
-
-> ok, as I have Writeback, I'll wait for further instructions.
-
-First, you may want to check if there is any dirty data in the cache, by
-executing:
-cat /sys/block/bcache0/bcache/state
-cat /sys/block/bcache1/bcache/state
-
-If these return "clean", then you should be good to detach the cache.
-
-You will want to try it *before* removing the faulty NVMe storage (which
-would obviously make the cache device inaccessible).
-
->> IMPORANT: The kernel logs below indicate that bcache failed to do IO on the
->> cache device. It could be a hardware problem with your NVMe device, so I
->> suggest you look at its SMART, ASAP.
-
-> Yes, the nvme is having problem... I'll replace it ASAP.
+So, should I detach the cache?
 
 
-> Thanks for your reply Pavel,
-> Best regards,
+Thanks for your assistance Pavel,
+Best regards,
+-- 
+Jean-Denis Girard
 
-Pavel Goran
-  
+SysNux                   Systèmes   Linux   en   Polynésie  française
+https://www.sysnux.pf/   Tél: +689 40.50.10.40 / GSM: +689 87.797.527
 
