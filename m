@@ -2,56 +2,78 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B4582B7E89
-	for <lists+linux-bcache@lfdr.de>; Wed, 18 Nov 2020 14:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A3B42B7F22
+	for <lists+linux-bcache@lfdr.de>; Wed, 18 Nov 2020 15:10:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbgKRNsf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-bcache@lfdr.de>); Wed, 18 Nov 2020 08:48:35 -0500
-Received: from tigeramira.ro ([88.158.78.30]:41329 "EHLO mail.tigeramira.ro"
-        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbgKRNsf (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 18 Nov 2020 08:48:35 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.tigeramira.ro (Postfix) with ESMTP id A8A0ACB5AC7
-        for <linux-bcache@vger.kernel.org>; Tue, 17 Nov 2020 09:25:49 +0200 (EET)
-Received: from mail.tigeramira.ro ([127.0.0.1])
-        by localhost (mail.tigeramira.ro [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id pXqNRImYAqb9 for <linux-bcache@vger.kernel.org>;
-        Tue, 17 Nov 2020 09:25:47 +0200 (EET)
-Received: from mail.tigeramira.ro (localhost [127.0.0.1])
-        by mail.tigeramira.ro (Postfix) with ESMTP id CD25D9B74D6
-        for <linux-bcache@vger.kernel.org>; Sat, 14 Nov 2020 01:42:16 +0200 (EET)
-Received: from [156.96.44.214] (unknown [192.168.12.254])
-        by mail.tigeramira.ro (Postfix) with ESMTP id 800E5914216
-        for <linux-bcache@vger.kernel.org>; Fri, 13 Nov 2020 13:31:09 +0200 (EET)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726714AbgKROJG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 18 Nov 2020 09:09:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60148 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726721AbgKROJF (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 18 Nov 2020 09:09:05 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id E3BF2AC90;
+        Wed, 18 Nov 2020 14:09:03 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5DDFD1E130B; Wed, 18 Nov 2020 15:09:03 +0100 (CET)
+Date:   Wed, 18 Nov 2020 15:09:03 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 01/20] blk-cgroup: fix a hd_struct leak in
+ blkcg_fill_root_iostats
+Message-ID: <20201118140903.GF1981@quack2.suse.cz>
+References: <20201118084800.2339180-1-hch@lst.de>
+ <20201118084800.2339180-2-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Corporate and Personal Loan::,
-To:     linux-bcache@vger.kernel.org
-From:   "Investment  Corporate" <financialcapability6@gmail.com>
-Date:   Fri, 13 Nov 2020 02:31:23 -0800
-Reply-To: hmurrah39@gmail.com
-Message-Id: <20201113113110.800E5914216@mail.tigeramira.ro>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201118084800.2339180-2-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hello linux-bcache@vger.kernel.org
+On Wed 18-11-20 09:47:41, Christoph Hellwig wrote:
+> disk_get_part needs to be paired with a disk_put_part.
+> 
+> Fixes: ef45fe470e1 ("blk-cgroup: show global disk stats in root cgroup io.stat")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
+Looks good to me. You can add:
 
-We are Base Investment Company offering Corporate and Personal Loan at 3% Interest Rate for a duration of 10Years.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
+								Honza
 
-We also pay 1% commission to brokers, who introduce project owners for finance or other opportunities.
-
-
-Please get back to me if you are interested for more
-
-details.
-
-
-Yours faithfully,
-
-Hashim Murrah
+> ---
+>  block/blk-cgroup.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+> index c68bdf58c9a6e1..54fbe1e80cc41a 100644
+> --- a/block/blk-cgroup.c
+> +++ b/block/blk-cgroup.c
+> @@ -849,6 +849,7 @@ static void blkcg_fill_root_iostats(void)
+>  			blkg_iostat_set(&blkg->iostat.cur, &tmp);
+>  			u64_stats_update_end(&blkg->iostat.sync);
+>  		}
+> +		disk_put_part(part);
+>  	}
+>  }
+>  
+> -- 
+> 2.29.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
