@@ -2,78 +2,183 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20F6C2B95E4
-	for <lists+linux-bcache@lfdr.de>; Thu, 19 Nov 2020 16:17:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C7C92B9FAF
+	for <lists+linux-bcache@lfdr.de>; Fri, 20 Nov 2020 02:27:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbgKSPOA (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 19 Nov 2020 10:14:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42516 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726853AbgKSPOA (ORCPT
+        id S1726580AbgKTB1U (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 19 Nov 2020 20:27:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20962 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726596AbgKTB1S (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 19 Nov 2020 10:14:00 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34925C0613CF;
-        Thu, 19 Nov 2020 07:14:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=aI9mH0dq7mTuWpujo4T+CjmE2gbvb95KnVfM843FQ84=; b=NQxl2LUeXdxB2yfG38WXbOdZDF
-        4m3yXl2LUAYY4UoHaaLjO55fQMRmjPGQ3+B+xj1A4lwNOqB+KRFQoIk1nbaMMuKB/WnQRRcUmsRbV
-        R2K9qIjBs0hPN6TTWcG6BAmilJQG1snUXu5nywrLj8Cz/xFJxvZUmVOZATxF0u8B82LwZZSJWb1hl
-        RGyLJC+B2H7/mLhmvZRyTkib7wsKGqq179e8VAUmByqV2VbOMsqMaYFdiiZ3EUGK3Uw1hPAA3usoO
-        WlHH4d0KOLmy0/ejtH1mtQgmdWJPaNlHqDfX4UPUMcxUgftU+j2y1V0nrwb5yjBJnF9f3J8T+0xqW
-        MLlqYaTw==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kflcb-0002ed-15; Thu, 19 Nov 2020 15:13:17 +0000
-Date:   Thu, 19 Nov 2020 15:13:16 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 17/20] filemap: consistently use ->f_mapping over
- ->i_mapping
-Message-ID: <20201119151316.GH29991@casper.infradead.org>
-References: <20201118084800.2339180-1-hch@lst.de>
- <20201118084800.2339180-18-hch@lst.de>
+        Thu, 19 Nov 2020 20:27:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1605835636;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DLIVQHvx6BWBfd7HmGxTRnB/+14KaYzo8H+szC2YlPI=;
+        b=NV29aVEFQ0NDGgSVCR8PH9QV8S2SHf+xrST9WD11wNAawkgefZQRigEoZyQPEUaYZ/E0sN
+        0utQJd+RAOKuRxgGnBY6Xd5Adg5peaUWzjJ+wb5xVYlYrlT5ERswnaIvimqph3SHTTsb5B
+        sEof+fq2F0h1FIdlLTlWHI0UVbQAmkg=
+Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com
+ [209.85.222.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-295-FuGY6wvTPxmZ4Nqno28Ogw-1; Thu, 19 Nov 2020 20:27:14 -0500
+X-MC-Unique: FuGY6wvTPxmZ4Nqno28Ogw-1
+Received: by mail-ua1-f72.google.com with SMTP id 89so2064834uar.16
+        for <linux-bcache@vger.kernel.org>; Thu, 19 Nov 2020 17:27:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DLIVQHvx6BWBfd7HmGxTRnB/+14KaYzo8H+szC2YlPI=;
+        b=gvqaqbl875CMVTC/jm0OIvFkMlGw2l0paULIH8fuQb+F8QQtlXf2zzO0qeW5/vilWQ
+         ZvMLGEuOCQBuh7dRqyhLFl+vuPeKJMfkOupw0okUE25MQbgQKejhwnFfTxvnVWxcGg+/
+         LZriBMMOx7jkEHcqAOwajUNdJpnL1kpzTa1d+AgnUXAakPA1kxwuWbT23ZZrKRyvhSLD
+         3UpqasWttLnrbrsq5mxRpIpcJSVj1MHMV1W8mItStRq/BKYQNsUPktIOdTKMfibTh8Vn
+         KF2AiNy5k9xDaXrKL/g/Oeo+rQMycGYO3bm49xs4E4Be9kOhCQLyy8C5zumSLXZZEyEI
+         kufw==
+X-Gm-Message-State: AOAM530cMOl5m8kXtcuDL0tsPsr2+Ct33tM4Gtk7xVw98f7V7jALU1lj
+        XXKGxzvxul3TQaTWv6D8LS+eSyAh6tjU6te+eLERLMaHh3/N+CW20qIhx1LfpufNClFsUMiynbW
+        9Y1JfBZgua5VRpXNEqbhqVshULodhvK0zxR90eN/t
+X-Received: by 2002:a67:ead4:: with SMTP id s20mr9956262vso.23.1605835633570;
+        Thu, 19 Nov 2020 17:27:13 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxAOprCn+MSLwpUL1KRNzUeNpOM1FggL7enU/sNOGdCf/2dwEQ+lfxQplsQG9tT32TFdvR6vVegizOMc4DLrrs=
+X-Received: by 2002:a67:ead4:: with SMTP id s20mr9956250vso.23.1605835633366;
+ Thu, 19 Nov 2020 17:27:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201118084800.2339180-18-hch@lst.de>
+References: <20200821020345.3358-1-thunder.leizhen@huawei.com>
+ <b4643e74-aad9-385f-01f2-f8e48ba4dbef@suse.de> <ad100923-e479-faf0-f749-ac8e4cf87899@huawei.com>
+ <8aa638b7-6cfd-bf3d-8015-fbe59f28f31f@suse.de> <c2f8cf50-d9f7-df19-40eb-0543e6208c0d@huawei.com>
+In-Reply-To: <c2f8cf50-d9f7-df19-40eb-0543e6208c0d@huawei.com>
+From:   John Dorminy <jdorminy@redhat.com>
+Date:   Thu, 19 Nov 2020 20:27:02 -0500
+Message-ID: <CAMeeMh_iBFpmSjgm8aC1WO-=iQPU5rQ2-Z6oe0L8nt5ke=+XQw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] block: move the PAGE_SECTORS definition into <linux/blkdev.h>
+To:     "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Cc:     Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        dm-devel <dm-devel@redhat.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-bcache <linux-bcache@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, Nov 18, 2020 at 09:47:57AM +0100, Christoph Hellwig wrote:
-> @@ -2887,13 +2887,13 @@ EXPORT_SYMBOL(filemap_map_pages);
->  vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf)
->  {
->  	struct page *page = vmf->page;
-> -	struct inode *inode = file_inode(vmf->vma->vm_file);
-> +	struct inode *inode = vmf->vma->vm_file->f_mapping->host;
->  	vm_fault_t ret = VM_FAULT_LOCKED;
->  
->  	sb_start_pagefault(inode->i_sb);
->  	file_update_time(vmf->vma->vm_file);
->  	lock_page(page);
-> -	if (page->mapping != inode->i_mapping) {
-> +	if (page->mapping != vmf->vma->vm_file->f_mapping) {
+Greetings;
 
-Bit messy.  I'd do:
+There are a lot of uses of PAGE_SIZE/SECTOR_SIZE scattered around, and
+it seems like a medium improvement to be able to refer to it as
+PAGE_SECTORS everywhere instead of just inside dm, bcache, and
+null_blk. Did this change progress forward somewhere?
 
-	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+Thanks!
 
-	sb_start_pagefault(mapping->host->i_sb);
+John Dorminy
 
-	if (page->mapping != mapping)
 
-	sb_end_pagefault(mapping->host->i_sb);
+On Mon, Sep 7, 2020 at 3:40 AM Leizhen (ThunderTown)
+<thunder.leizhen@huawei.com> wrote:
+>
+> Hi, Jens Axboe, Alasdair Kergon, Mike Snitzer:
+>   What's your opinion?
+>
+>
+> On 2020/8/21 15:05, Coly Li wrote:
+> > On 2020/8/21 14:48, Leizhen (ThunderTown) wrote:
+> >>
+> >>
+> >> On 8/21/2020 12:11 PM, Coly Li wrote:
+> >>> On 2020/8/21 10:03, Zhen Lei wrote:
+> >>>> There are too many PAGE_SECTORS definitions, and all of them are the
+> >>>> same. It looks a bit of a mess. So why not move it into <linux/blkdev.h>,
+> >>>> to achieve a basic and unique definition.
+> >>>>
+> >>>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> >>>
+> >>>
+> >>> A lazy question about page size > 4KB: currently in bcache code the
+> >>> sector size is assumed to be 512 sectors, if kernel page > 4KB, it is
+> >>> possible that PAGE_SECTORS in bcache will be a number > 8 ?
+> >>
+> >> Sorry, I don't fully understand your question. I known that the sector size
+> >> can be 512 or 4K, and the PAGE_SIZE can be 4K or 64K. So even if sector size
+> >> is 4K, isn't it greater than 8 for 64K pages?
+> >>
+> >> I'm not sure if the question you're asking is the one Matthew Wilcox has
+> >> answered before:
+> >> https://www.spinics.net/lists/raid/msg64345.html
+> >
+> > Thank you for the above information. Currently bcache code assumes
+> > sector size is always 512 bytes, you may see how many "<< 9" or ">> 9"
+> > are used. Therefore I doubt whether current code may stably work on e.g.
+> > 4Kn SSDs (this is only doubt because I don't have such SSD).
+> >
+> > Anyway your patch is fine to me. This change to bcache doesn't make
+> > thins worse or better, maybe it can be helpful to trigger my above
+> > suspicious early if people do have this kind of problem on 4Kn sector SSDs.
+> >
+> > For the bcache part of this patch, you may add,
+> > Acked-by: Coly Li <colyli@suse.de>
+> >
+> > Thanks.
+> >
+> > Coly Li
+> >
+> >>>> ---
+> >>>>  drivers/block/brd.c           | 1 -
+> >>>>  drivers/block/null_blk_main.c | 1 -
+> >>>>  drivers/md/bcache/util.h      | 2 --
+> >>>>  include/linux/blkdev.h        | 5 +++--
+> >>>>  include/linux/device-mapper.h | 1 -
+> >>>>  5 files changed, 3 insertions(+), 7 deletions(-)
+> >>>>
+> >>>
+> >>> [snipped]
+> >>>
+> >>>> diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
+> >>>> index c029f7443190805..55196e0f37c32c6 100644
+> >>>> --- a/drivers/md/bcache/util.h
+> >>>> +++ b/drivers/md/bcache/util.h
+> >>>> @@ -15,8 +15,6 @@
+> >>>>
+> >>>>  #include "closure.h"
+> >>>>
+> >>>> -#define PAGE_SECTORS              (PAGE_SIZE / 512)
+> >>>> -
+> >>>>  struct closure;
+> >>>>
+> >>>>  #ifdef CONFIG_BCACHE_DEBUG
+> >>>> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> >>>> index bb5636cc17b91a7..b068dfc5f2ef0ab 100644
+> >>>> --- a/include/linux/blkdev.h
+> >>>> +++ b/include/linux/blkdev.h
+> >>>> @@ -949,11 +949,12 @@ static inline struct request_queue *bdev_get_queue(struct block_device *bdev)
+> >>>>   * multiple of 512 bytes. Hence these two constants.
+> >>>>   */
+> >>>>  #ifndef SECTOR_SHIFT
+> >>>> -#define SECTOR_SHIFT 9
+> >>>> +#define SECTOR_SHIFT              9
+> >>>>  #endif
+> >>>>  #ifndef SECTOR_SIZE
+> >>>> -#define SECTOR_SIZE (1 << SECTOR_SHIFT)
+> >>>> +#define SECTOR_SIZE               (1 << SECTOR_SHIFT)
+> >>>>  #endif
+> >>>> +#define PAGE_SECTORS              (PAGE_SIZE / SECTOR_SIZE)
+> >>>>
+> >>>>  /*
+> >>>>   * blk_rq_pos()                   : the current sector
+> >>> [snipped]
+> >>>
+> >>>
+> >>
+> >
+> >
+> > .
+> >
+>
 
