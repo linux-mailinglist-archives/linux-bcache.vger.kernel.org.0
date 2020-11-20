@@ -2,22 +2,22 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8CE02BA7CD
-	for <lists+linux-bcache@lfdr.de>; Fri, 20 Nov 2020 11:54:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 170952BA8E1
+	for <lists+linux-bcache@lfdr.de>; Fri, 20 Nov 2020 12:22:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbgKTKxW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 20 Nov 2020 05:53:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41778 "EHLO mx2.suse.de"
+        id S1727241AbgKTLVX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 20 Nov 2020 06:21:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57330 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727241AbgKTKxW (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 20 Nov 2020 05:53:22 -0500
+        id S1727197AbgKTLVX (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 20 Nov 2020 06:21:23 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 015E9AED9;
-        Fri, 20 Nov 2020 10:53:20 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id C4C79AED9;
+        Fri, 20 Nov 2020 11:21:21 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id AC96F1E130B; Fri, 20 Nov 2020 11:53:19 +0100 (CET)
-Date:   Fri, 20 Nov 2020 11:53:19 +0100
+        id 2825E1E130B; Fri, 20 Nov 2020 12:21:21 +0100 (CET)
+Date:   Fri, 20 Nov 2020 12:21:21 +0100
 From:   Jan Kara <jack@suse.cz>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
@@ -29,52 +29,95 @@ Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 15/20] block: merge struct block_device and struct
+Subject: Re: [PATCH 14/20] block: remove the nr_sects field in struct
  hd_struct
-Message-ID: <20201120105319.GA15537@quack2.suse.cz>
+Message-ID: <20201120112121.GB15537@quack2.suse.cz>
 References: <20201118084800.2339180-1-hch@lst.de>
- <20201118084800.2339180-16-hch@lst.de>
- <20201119143921.GX1981@quack2.suse.cz>
- <20201120091546.GE21715@lst.de>
+ <20201118084800.2339180-15-hch@lst.de>
+ <20201119120525.GW1981@quack2.suse.cz>
+ <20201120090820.GD21715@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201120091546.GE21715@lst.de>
+In-Reply-To: <20201120090820.GD21715@lst.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Fri 20-11-20 10:15:46, Christoph Hellwig wrote:
-> On Thu, Nov 19, 2020 at 03:39:21PM +0100, Jan Kara wrote:
-> > This patch is kind of difficult to review due to the size of mostly
-> > mechanical changes mixed with not completely mechanical changes. Can we
-> > perhaps split out the mechanical bits? E.g. the rq->part => rq->bdev
-> > renaming is mechanical and notable part of the patch. Similarly the
-> > part->foo => part->bd_foo bits...
+On Fri 20-11-20 10:08:20, Christoph Hellwig wrote:
+> On Thu, Nov 19, 2020 at 01:05:25PM +0100, Jan Kara wrote:
+> > > @@ -613,7 +613,7 @@ void guard_bio_eod(struct bio *bio)
+> > >  	rcu_read_lock();
+> > >  	part = __disk_get_part(bio->bi_disk, bio->bi_partno);
+> > >  	if (part)
+> > > -		maxsector = part_nr_sects_read(part);
+> > > +		maxsector = bdev_nr_sectors(part->bdev);
+> > >  	else
+> > >  		maxsector = get_capacity(bio->bi_disk);
+> > 
+> > I have to say that after these changes I find it a bit confusing that we
+> > have get/set_capacity() and bdev_nr_sectors() / bdev_set_nr_sectors() and
+> > they are all the same thing (i_size of the bdev). Is there a reason for the
+> > distinction?
 > 
-> We'd end with really weird patches that way.  Never mind that I'm not
-> even sure how we could mechnically do the renaming.
-
-Well, I believe coccinelle should be able to do the renaming automatically.
-
-> > Also I'm kind of wondering: AFAIU the new lifetime rules, gendisk holds
-> > bdev reference and bdev is created on gendisk allocation so bdev lifetime is
-> > strictly larger than gendisk lifetime. But what now keeps bdev->bd_disk
-> > reference safe in presence device hot unplug? In most cases we are still
-> > protected by gendisk reference taken in __blkdev_get() but how about
-> > disk->lookup_sem and disk->flags dereferences before we actually grab the
-> > reference?
+> get_capacity/set_capacity are the existing unchanged interfaces that
+> work on struct gendisk, and unchanged from what we had before.  They also
+> have lots of users which makes them kinda awkward to touch.
 > 
-> Good question.  I'll need to think about this a bit more.
+> bdev_nr_sectors is the public interface to query the size for any
+> kind of struct block device, to be used by consumers of the block
+> device interface.
+> 
+> bdev_set_nr_sectors is a private helper for the partitions core that
+> avoids duplicating a bit of code, and works on partitions.
 
-My thinking was that you could use
+OK, I guess I'll get used to this...
 
-kobject_get_unless_zero(bdev->bd_device->kobj)
+> > > @@ -38,6 +38,16 @@ static void disk_add_events(struct gendisk *disk);
+> > >  static void disk_del_events(struct gendisk *disk);
+> > >  static void disk_release_events(struct gendisk *disk);
+> > >  
+> > > +void set_capacity(struct gendisk *disk, sector_t sectors)
+> > > +{
+> > > +	struct block_device *bdev = disk->part0.bdev;
+> > > +
+> > > +	spin_lock(&bdev->bd_size_lock);
+> > > +	i_size_write(bdev->bd_inode, (loff_t)sectors << SECTOR_SHIFT);
+> > > +	spin_unlock(&bdev->bd_size_lock);
+> > 
+> > AFAICT bd_size_lock is pointless after these changes so we can just remove
+> > it?
+> 
+> I don't think it is, as reuqiring bd_mutex for size updates leads to
+> rather awkward lock ordering problems.
 
-and after you hold this reference, you can do everything else safely. In
-this case it is really useful that device is embedded in block_dev and
-not in gendisk itself...
+OK, let me ask differently: What is bd_size_lock protecting now? Ah, I see,
+on 32-bit it is needed to prevent torn writes to i_size, right?
+
+> > >  	if (capacity != size && capacity != 0 && size != 0) {
+> > >  		char *envp[] = { "RESIZE=1", NULL };
+> > >  
+> > > +		pr_info("%s: detected capacity change from %lld to %lld\n",
+> > > +		       disk->disk_name, size, capacity);
+> > 
+> > So we are now missing above message for transitions from / to 0 capacity?
+> > Is there any other notification in the kernel log when e.g. media is
+> > inserted into a CD-ROM drive? I remember using these messages for detecting
+> > that...
+> 
+> True, I guess we should keep the messages for that case at least under
+> some circumstances.  Let me take a closer look at what could make sense.
+> 
+> > Also what about GENHD_FL_HIDDEN devices? Are we sure we never set capacity
+> > for them?
+> 
+> We absolutely set the capacity for them, as we have to.  And even use
+> this interface.  But yes, I think we should skip sending the uevent for
+> them.
+
+Also previously we were not printing any messages for hidden devices and
+now we do. I'm not sure whether that's intended or not.
 
 								Honza
 -- 
