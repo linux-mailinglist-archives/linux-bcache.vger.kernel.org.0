@@ -2,53 +2,69 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4279C2BC08A
-	for <lists+linux-bcache@lfdr.de>; Sat, 21 Nov 2020 17:25:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D23C2BC99F
+	for <lists+linux-bcache@lfdr.de>; Sun, 22 Nov 2020 22:48:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbgKUQYR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 21 Nov 2020 11:24:17 -0500
-Received: from verein.lst.de ([213.95.11.211]:46174 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725953AbgKUQYQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 21 Nov 2020 11:24:16 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 951F467373; Sat, 21 Nov 2020 17:24:11 +0100 (CET)
-Date:   Sat, 21 Nov 2020 17:24:11 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 14/20] block: remove the nr_sects field in struct
- hd_struct
-Message-ID: <20201121162411.GA18475@lst.de>
-References: <20201118084800.2339180-1-hch@lst.de> <20201118084800.2339180-15-hch@lst.de> <20201119120525.GW1981@quack2.suse.cz> <20201120090820.GD21715@lst.de> <20201120112121.GB15537@quack2.suse.cz> <20201120153253.GA18990@lst.de> <20201120155956.GB4327@casper.infradead.org> <20201120200548.GA27360@quack2.suse.cz>
+        id S1726363AbgKVVsI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 22 Nov 2020 16:48:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33440 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbgKVVsI (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 22 Nov 2020 16:48:08 -0500
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B01EC0613CF;
+        Sun, 22 Nov 2020 13:48:08 -0800 (PST)
+Received: by mail-ed1-x542.google.com with SMTP id l5so15100618edq.11;
+        Sun, 22 Nov 2020 13:48:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:sender:from:mime-version:content-transfer-encoding
+         :content-description:subject:to:date:reply-to;
+        bh=holMzMixu6L4mPkY4KLX0AXrH3B7KLU6Q1+gVZ1hbDo=;
+        b=e2XQXHGx+AFJmjt1DoCgIlODlB8ZUstez3DCuUv7j3Fs2CD8n5IMM/63hLOM8V3dgD
+         pyXD4zjFM/q9/NhAlmIJL52B6OeZ//J9N3VtzrzweM40mfKyq3BYQqHtdzhpn0xkJ1yI
+         UBLJEYBnWCNhkgretPuU8az0KqrZC3ws94ZbIIkXG3V+6Q13s2MHTOrmD0B4+3ciATGn
+         3YLTlnCsmr1KOi8TZ7GawYWf3exkjUF1ZrgsXqiL+PpRNu+d58HmthuDLvENurxro+sI
+         mVinmDUREXijb9fMLtufoHBJsi5MVid+AQwQ1HUjcUgi9wY1W7LLm5fwTz3lzny3f7Yj
+         wt9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:sender:from:mime-version
+         :content-transfer-encoding:content-description:subject:to:date
+         :reply-to;
+        bh=holMzMixu6L4mPkY4KLX0AXrH3B7KLU6Q1+gVZ1hbDo=;
+        b=cR4FFMFuNbfU2WIJoTqJ9ZT4uwonTl79nIpZ1OLw2Dum/gjfNbU6V/+mCoFUkN4Anc
+         9EV2TJOQxDoRt066HRo46WW8GJRNikNmiKNmVME5VJnrNQDLvGAR3PlLGDVOJ26sMfxk
+         jbd0NbkYzLrzRZ8kLjT11R50P3dyruJbuDRPuA8tw1U8DTOG9jeyUAviI1fTPfvKfSjC
+         26kK3bHTca7TcpHg2wR4KIfJ4k/GiCLsL2qcoEU5vAqg92Max93TCzTicl6QVkhl7xoZ
+         aFZBOEts8PDa9SBlOvpeu5naZVlrgwQVv3aWS1Uv0gIz8uWTiO/P6p2jqgrgm8GT32h2
+         vsyA==
+X-Gm-Message-State: AOAM532Gvm51R22DzR2DSm0tXHeE/Y32mfGbohjdNLZ2lpTWq+4LMxbn
+        JT8QoBxBuG/9NF0vKLi+ltY=
+X-Google-Smtp-Source: ABdhPJypc8imjAAmlWAsRMhHJIe2tLmKuQJKqAf8Iv2IEyM6od/nUDtqT7SYMXSQkjkgoR82uFX27Q==
+X-Received: by 2002:a05:6402:3076:: with SMTP id bs22mr10499891edb.267.1606081686863;
+        Sun, 22 Nov 2020 13:48:06 -0800 (PST)
+Received: from [192.168.43.48] ([197.210.35.67])
+        by smtp.gmail.com with ESMTPSA id e17sm4016232edc.45.2020.11.22.13.48.01
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Sun, 22 Nov 2020 13:48:06 -0800 (PST)
+Message-ID: <5fbadc96.1c69fb81.8dfc7.119f@mx.google.com>
+Sender: Baniko Diallo <banidiallo23@gmail.com>
+From:   Adelina Zeuki <adelinazeuki@gmail.com>
+X-Google-Original-From: "Adelina Zeuki" <  adelinazeuki@gmail.comm >
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201120200548.GA27360@quack2.suse.cz>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Hello !!
+To:     Recipients <adelinazeuki@gmail.comm>
+Date:   Sun, 22 Nov 2020 21:47:56 +0000
+Reply-To: adelinazeuki@gmail.com
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 09:05:48PM +0100, Jan Kara wrote:
-> The code is already switched to it AFAICT (the lock is really only used in
-> the two places that write i_size). But the problem is that in theory two
-> i_size_write() calls can race in a way that the resulting stored i_size is a
-> mix of two stored sizes. Now I have hard time imagining how this could
-> happen for a block device and if two reconfigurations of a block device
-> could race like that we'd have a large problems anyway...
+Hi dear,
 
-Now that you mention it, yes - i_size_write needs to be under i_rwsem
-or an equivalent lock.  We could look into using i_rwsem also for block
-device, but for now the spinlock seems to be doing fine.  Note that
-in current mainline we only have such a lock protecting i_size of the
-block_device inode, but none for the size in hd_struct.
+Can i talk with you ?
