@@ -2,69 +2,86 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D23C2BC99F
-	for <lists+linux-bcache@lfdr.de>; Sun, 22 Nov 2020 22:48:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6035F2C25A5
+	for <lists+linux-bcache@lfdr.de>; Tue, 24 Nov 2020 13:27:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbgKVVsI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 22 Nov 2020 16:48:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33440 "EHLO
+        id S2387544AbgKXM02 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 24 Nov 2020 07:26:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbgKVVsI (ORCPT
+        with ESMTP id S1733231AbgKXM01 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 22 Nov 2020 16:48:08 -0500
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B01EC0613CF;
-        Sun, 22 Nov 2020 13:48:08 -0800 (PST)
-Received: by mail-ed1-x542.google.com with SMTP id l5so15100618edq.11;
-        Sun, 22 Nov 2020 13:48:07 -0800 (PST)
+        Tue, 24 Nov 2020 07:26:27 -0500
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B85ACC0613D6;
+        Tue, 24 Nov 2020 04:26:27 -0800 (PST)
+Received: by mail-qt1-x844.google.com with SMTP id d5so6831449qtn.0;
+        Tue, 24 Nov 2020 04:26:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=message-id:sender:from:mime-version:content-transfer-encoding
-         :content-description:subject:to:date:reply-to;
-        bh=holMzMixu6L4mPkY4KLX0AXrH3B7KLU6Q1+gVZ1hbDo=;
-        b=e2XQXHGx+AFJmjt1DoCgIlODlB8ZUstez3DCuUv7j3Fs2CD8n5IMM/63hLOM8V3dgD
-         pyXD4zjFM/q9/NhAlmIJL52B6OeZ//J9N3VtzrzweM40mfKyq3BYQqHtdzhpn0xkJ1yI
-         UBLJEYBnWCNhkgretPuU8az0KqrZC3ws94ZbIIkXG3V+6Q13s2MHTOrmD0B4+3ciATGn
-         3YLTlnCsmr1KOi8TZ7GawYWf3exkjUF1ZrgsXqiL+PpRNu+d58HmthuDLvENurxro+sI
-         mVinmDUREXijb9fMLtufoHBJsi5MVid+AQwQ1HUjcUgi9wY1W7LLm5fwTz3lzny3f7Yj
-         wt9Q==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3VmFnou2nD4lcYGUPrMqThXCue7L4UhclP4oij42Kbk=;
+        b=Q2pmLjkQax53DfEJqAJ++rfXRuCUfTMdSrNvTnPX432cf0gQiAL3+rv3sWj3pG2My/
+         oRdarF4chfZ/NGCWEsg2aUxLBAr7DM0+LX5j3dmwR37bMrIIw9a2t0+E+kgW+uzsRvYc
+         g8kM86RUe+4+vv//4l1WUE0yyA289I+AFdLve44wNIShUP964g0YZBC6/O2hSjbZ07AU
+         S+AiwdwqWWOpdsi3wwn8TVFeRWE/u7jWG4pRzv/CGg3KS5VD7Ier0L558UzN4+P3vh8c
+         3eIrk+wHnJy7NT29VnOUcXmovGz+97HAGUQWfQatJC0i/4bkcHptLw7Lu0lLat1XLRR0
+         0C4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:sender:from:mime-version
-         :content-transfer-encoding:content-description:subject:to:date
-         :reply-to;
-        bh=holMzMixu6L4mPkY4KLX0AXrH3B7KLU6Q1+gVZ1hbDo=;
-        b=cR4FFMFuNbfU2WIJoTqJ9ZT4uwonTl79nIpZ1OLw2Dum/gjfNbU6V/+mCoFUkN4Anc
-         9EV2TJOQxDoRt066HRo46WW8GJRNikNmiKNmVME5VJnrNQDLvGAR3PlLGDVOJ26sMfxk
-         jbd0NbkYzLrzRZ8kLjT11R50P3dyruJbuDRPuA8tw1U8DTOG9jeyUAviI1fTPfvKfSjC
-         26kK3bHTca7TcpHg2wR4KIfJ4k/GiCLsL2qcoEU5vAqg92Max93TCzTicl6QVkhl7xoZ
-         aFZBOEts8PDa9SBlOvpeu5naZVlrgwQVv3aWS1Uv0gIz8uWTiO/P6p2jqgrgm8GT32h2
-         vsyA==
-X-Gm-Message-State: AOAM532Gvm51R22DzR2DSm0tXHeE/Y32mfGbohjdNLZ2lpTWq+4LMxbn
-        JT8QoBxBuG/9NF0vKLi+ltY=
-X-Google-Smtp-Source: ABdhPJypc8imjAAmlWAsRMhHJIe2tLmKuQJKqAf8Iv2IEyM6od/nUDtqT7SYMXSQkjkgoR82uFX27Q==
-X-Received: by 2002:a05:6402:3076:: with SMTP id bs22mr10499891edb.267.1606081686863;
-        Sun, 22 Nov 2020 13:48:06 -0800 (PST)
-Received: from [192.168.43.48] ([197.210.35.67])
-        by smtp.gmail.com with ESMTPSA id e17sm4016232edc.45.2020.11.22.13.48.01
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Sun, 22 Nov 2020 13:48:06 -0800 (PST)
-Message-ID: <5fbadc96.1c69fb81.8dfc7.119f@mx.google.com>
-Sender: Baniko Diallo <banidiallo23@gmail.com>
-From:   Adelina Zeuki <adelinazeuki@gmail.com>
-X-Google-Original-From: "Adelina Zeuki" <  adelinazeuki@gmail.comm >
-Content-Type: text/plain; charset="iso-8859-1"
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=3VmFnou2nD4lcYGUPrMqThXCue7L4UhclP4oij42Kbk=;
+        b=QOYY+DvKsuE0yZzIGpF/TxiYGY4nSbKE8vc0R3o3dMWP1uONBI5+0FkK2KnLpT8AqO
+         FdeqTtDEvUWSWMyU6b28rYOnoZrV+Ri/oHeQ6M60I1QsaSjALCV3dfEi7saK0fqD44P9
+         Q8m4jC69bL7NuNi9kcowGH1lg9nOynHfa5z3rJQV3vJP/PLWVHvmxhBi/rFA8FbEpFhn
+         /Tvg12vKjlqt8OTo63e6qhrLblkuLItbRa+Og5rxkhRBPWwbHo6ZedIMT+UiXRMajQZf
+         70o/pF5ip9G9ulZnnWhRJwussE1vZmeRb8sjuvQpSG/jGBxKsdVNFSDVvC3pkbCy+xgV
+         ppLg==
+X-Gm-Message-State: AOAM530Bxm/5R8BDUG5TUKrJOFqkJMRCKobL7XADZ0eVl6+UkjZAvw0N
+        SGv/o3sTp5QCGSLjvH4Cqk8=
+X-Google-Smtp-Source: ABdhPJzEc+iLQWYgDMndDYVqthGkMbJAnqvSsODxlzYXE5vX4s2url7RgqZoX9eivJ6nNv6zlRow0w==
+X-Received: by 2002:aed:3c42:: with SMTP id u2mr4081287qte.159.1606220786736;
+        Tue, 24 Nov 2020 04:26:26 -0800 (PST)
+Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [72.28.8.195])
+        by smtp.gmail.com with ESMTPSA id t2sm8643187qkb.2.2020.11.24.04.26.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2020 04:26:25 -0800 (PST)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Tue, 24 Nov 2020 07:26:03 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 01/20] blk-cgroup: fix a hd_struct leak in
+ blkcg_fill_root_iostats
+Message-ID: <X7z7215hVXzg3FGA@mtj.duckdns.org>
+References: <20201118084800.2339180-1-hch@lst.de>
+ <20201118084800.2339180-2-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Hello !!
-To:     Recipients <adelinazeuki@gmail.comm>
-Date:   Sun, 22 Nov 2020 21:47:56 +0000
-Reply-To: adelinazeuki@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201118084800.2339180-2-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi dear,
+On Wed, Nov 18, 2020 at 09:47:41AM +0100, Christoph Hellwig wrote:
+> disk_get_part needs to be paired with a disk_put_part.
+> 
+> Fixes: ef45fe470e1 ("blk-cgroup: show global disk stats in root cgroup io.stat")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Can i talk with you ?
+Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks.
+
+-- 
+tejun
