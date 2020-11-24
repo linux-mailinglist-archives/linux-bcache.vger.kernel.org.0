@@ -2,86 +2,157 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6035F2C25A5
-	for <lists+linux-bcache@lfdr.de>; Tue, 24 Nov 2020 13:27:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC6CC2C273A
+	for <lists+linux-bcache@lfdr.de>; Tue, 24 Nov 2020 14:29:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387544AbgKXM02 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 24 Nov 2020 07:26:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52250 "EHLO
+        id S2388092AbgKXN20 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 24 Nov 2020 08:28:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733231AbgKXM01 (ORCPT
+        with ESMTP id S2388085AbgKXN2Y (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 24 Nov 2020 07:26:27 -0500
-Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B85ACC0613D6;
-        Tue, 24 Nov 2020 04:26:27 -0800 (PST)
-Received: by mail-qt1-x844.google.com with SMTP id d5so6831449qtn.0;
-        Tue, 24 Nov 2020 04:26:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=3VmFnou2nD4lcYGUPrMqThXCue7L4UhclP4oij42Kbk=;
-        b=Q2pmLjkQax53DfEJqAJ++rfXRuCUfTMdSrNvTnPX432cf0gQiAL3+rv3sWj3pG2My/
-         oRdarF4chfZ/NGCWEsg2aUxLBAr7DM0+LX5j3dmwR37bMrIIw9a2t0+E+kgW+uzsRvYc
-         g8kM86RUe+4+vv//4l1WUE0yyA289I+AFdLve44wNIShUP964g0YZBC6/O2hSjbZ07AU
-         S+AiwdwqWWOpdsi3wwn8TVFeRWE/u7jWG4pRzv/CGg3KS5VD7Ier0L558UzN4+P3vh8c
-         3eIrk+wHnJy7NT29VnOUcXmovGz+97HAGUQWfQatJC0i/4bkcHptLw7Lu0lLat1XLRR0
-         0C4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=3VmFnou2nD4lcYGUPrMqThXCue7L4UhclP4oij42Kbk=;
-        b=QOYY+DvKsuE0yZzIGpF/TxiYGY4nSbKE8vc0R3o3dMWP1uONBI5+0FkK2KnLpT8AqO
-         FdeqTtDEvUWSWMyU6b28rYOnoZrV+Ri/oHeQ6M60I1QsaSjALCV3dfEi7saK0fqD44P9
-         Q8m4jC69bL7NuNi9kcowGH1lg9nOynHfa5z3rJQV3vJP/PLWVHvmxhBi/rFA8FbEpFhn
-         /Tvg12vKjlqt8OTo63e6qhrLblkuLItbRa+Og5rxkhRBPWwbHo6ZedIMT+UiXRMajQZf
-         70o/pF5ip9G9ulZnnWhRJwussE1vZmeRb8sjuvQpSG/jGBxKsdVNFSDVvC3pkbCy+xgV
-         ppLg==
-X-Gm-Message-State: AOAM530Bxm/5R8BDUG5TUKrJOFqkJMRCKobL7XADZ0eVl6+UkjZAvw0N
-        SGv/o3sTp5QCGSLjvH4Cqk8=
-X-Google-Smtp-Source: ABdhPJzEc+iLQWYgDMndDYVqthGkMbJAnqvSsODxlzYXE5vX4s2url7RgqZoX9eivJ6nNv6zlRow0w==
-X-Received: by 2002:aed:3c42:: with SMTP id u2mr4081287qte.159.1606220786736;
-        Tue, 24 Nov 2020 04:26:26 -0800 (PST)
-Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [72.28.8.195])
-        by smtp.gmail.com with ESMTPSA id t2sm8643187qkb.2.2020.11.24.04.26.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2020 04:26:25 -0800 (PST)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Tue, 24 Nov 2020 07:26:03 -0500
-From:   Tejun Heo <tj@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+        Tue, 24 Nov 2020 08:28:24 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20C1FC0617A6;
+        Tue, 24 Nov 2020 05:28:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=hzV3z6SMaqyfIauoWZXz79MWtSUwimkTva+cu+wYxlA=; b=YcqovzdCTe1S4oEOtkiwBB1Lva
+        tbtWR9C+DovWiWZoNJPHK9RQrYZjKUM7Drp1hnFw1GTX1Jvk04Hd3trxzQ+fyoxsP1futR8jAHh7G
+        m++vI6ur7xxBWeJPKrJNK5QVX7l3+UeM6AjbiAjRATlrWkYizakQMYaATUwBbYrcERkSINRrED8sM
+        txPsKX3pPj/UYI560klmFpFYMcMloF+t/eXLNLUVVvoEw3eCXzSegwCuUVDPpT8EfzdIKSLiqbIKa
+        lxgMy3k+JWNbKkmnFS165gUjPgzeD07g2h5F4z1oEdlv0ay94Qn86TlwxjevvUAt6v+K6LwpveQ2I
+        DtDCjJVg==;
+Received: from [2001:4bb8:180:5443:c70:4a89:bc61:3] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1khYML-0006U2-TO; Tue, 24 Nov 2020 13:27:54 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
         Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 01/20] blk-cgroup: fix a hd_struct leak in
- blkcg_fill_root_iostats
-Message-ID: <X7z7215hVXzg3FGA@mtj.duckdns.org>
-References: <20201118084800.2339180-1-hch@lst.de>
- <20201118084800.2339180-2-hch@lst.de>
+Subject: merge struct block_device and struct hd_struct v2
+Date:   Tue, 24 Nov 2020 14:27:06 +0100
+Message-Id: <20201124132751.3747337-1-hch@lst.de>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201118084800.2339180-2-hch@lst.de>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, Nov 18, 2020 at 09:47:41AM +0100, Christoph Hellwig wrote:
-> disk_get_part needs to be paired with a disk_put_part.
-> 
-> Fixes: ef45fe470e1 ("blk-cgroup: show global disk stats in root cgroup io.stat")
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Hi Jens,
 
-Acked-by: Tejun Heo <tj@kernel.org>
+this series cleans up our main per-device node data structure by merging
+the block_device and hd_struct data structures that have the same scope,
+but different life times.  The main effect (besides removing lots of
+code) is that instead of having two device sizes that need complex
+synchronization there is just one now.
 
-Thanks.
+Note that this now includes the previous "misc cleanups" series as I had
+to fix up a thing in there with the changed patch ordering.
 
--- 
-tejun
+The first patch already is in 5.10-rc, but not in for-5.11/block
+
+A git tree is available here:
+
+    git://git.infradead.org/users/hch/block.git bdev-lookup
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/block.git/shortlog/refs/heads/bdev-lookup
+
+Changes since v1:
+ - spelling fixes
+ - fix error unwinding in __alloc_disk_node
+ - use bdev_is_partition in a few more places
+ - don't send the RESIZE=1 uevent for hidden gendisks
+ - rename __bdget_disk to disk_find_part
+ - drop a bcache patch
+ - some patch reordering
+ - add more refactoring
+ - use rcu protection to prevent racing with a disk going away
+   in blkdev_get
+ - split up some of the big patches into many small ones
+ - clean up the freeze_bdev interface
+
+Diffstat:
+ block/bio.c                                  |    6 
+ block/blk-cgroup.c                           |   50 -
+ block/blk-core.c                             |   68 +-
+ block/blk-flush.c                            |    2 
+ block/blk-iocost.c                           |   36 -
+ block/blk-lib.c                              |    2 
+ block/blk-merge.c                            |    2 
+ block/blk-mq.c                               |    9 
+ block/blk-mq.h                               |    7 
+ block/blk.h                                  |   84 ---
+ block/genhd.c                                |  467 ++++-------------
+ block/ioctl.c                                |   14 
+ block/partitions/core.c                      |  252 +++------
+ drivers/block/drbd/drbd_receiver.c           |    2 
+ drivers/block/drbd/drbd_worker.c             |    3 
+ drivers/block/loop.c                         |   24 
+ drivers/block/mtip32xx/mtip32xx.c            |   15 
+ drivers/block/mtip32xx/mtip32xx.h            |    2 
+ drivers/block/nbd.c                          |    6 
+ drivers/block/xen-blkback/common.h           |    4 
+ drivers/block/xen-blkfront.c                 |   20 
+ drivers/block/zram/zram_drv.c                |   87 ---
+ drivers/block/zram/zram_drv.h                |    1 
+ drivers/md/bcache/request.c                  |    4 
+ drivers/md/bcache/super.c                    |   29 -
+ drivers/md/dm-core.h                         |    7 
+ drivers/md/dm-table.c                        |    9 
+ drivers/md/dm.c                              |   45 -
+ drivers/md/md.c                              |    8 
+ drivers/mtd/mtdsuper.c                       |   17 
+ drivers/nvme/target/admin-cmd.c              |   20 
+ drivers/s390/block/dasd.c                    |    8 
+ drivers/s390/block/dasd_ioctl.c              |    9 
+ drivers/scsi/scsicam.c                       |    2 
+ drivers/target/target_core_file.c            |    6 
+ drivers/target/target_core_pscsi.c           |    7 
+ drivers/usb/gadget/function/storage_common.c |    8 
+ fs/block_dev.c                               |  730 +++++++++------------------
+ fs/btrfs/sysfs.c                             |   15 
+ fs/btrfs/volumes.c                           |   13 
+ fs/buffer.c                                  |    2 
+ fs/ext4/ioctl.c                              |    2 
+ fs/ext4/super.c                              |   18 
+ fs/ext4/sysfs.c                              |   10 
+ fs/f2fs/checkpoint.c                         |    5 
+ fs/f2fs/f2fs.h                               |    2 
+ fs/f2fs/file.c                               |   14 
+ fs/f2fs/super.c                              |    8 
+ fs/f2fs/sysfs.c                              |    9 
+ fs/inode.c                                   |    3 
+ fs/internal.h                                |    7 
+ fs/io_uring.c                                |   10 
+ fs/pipe.c                                    |    5 
+ fs/pstore/blk.c                              |    2 
+ fs/quota/quota.c                             |   40 +
+ fs/statfs.c                                  |    2 
+ fs/super.c                                   |   86 ---
+ fs/xfs/xfs_fsops.c                           |    7 
+ include/linux/blk-cgroup.h                   |    4 
+ include/linux/blk_types.h                    |   24 
+ include/linux/blkdev.h                       |   27 
+ include/linux/fs.h                           |    5 
+ include/linux/genhd.h                        |  110 ----
+ include/linux/part_stat.h                    |   45 -
+ init/do_mounts.c                             |  271 ++++------
+ kernel/trace/blktrace.c                      |   54 -
+ mm/filemap.c                                 |   13 
+ 67 files changed, 957 insertions(+), 1928 deletions(-)
