@@ -2,68 +2,198 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 399422C404E
-	for <lists+linux-bcache@lfdr.de>; Wed, 25 Nov 2020 13:37:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C58E42C4054
+	for <lists+linux-bcache@lfdr.de>; Wed, 25 Nov 2020 13:38:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729245AbgKYMfb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 25 Nov 2020 07:35:31 -0500
-Received: from mout.gmx.net ([212.227.15.18]:37067 "EHLO mout.gmx.net"
+        id S1728558AbgKYMhw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 25 Nov 2020 07:37:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42972 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728326AbgKYMfb (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 25 Nov 2020 07:35:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1606307730;
-        bh=aE09HQo5JGx9moRjSa0UQ1X0mj4HF6qoNS8tu4ZShpE=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=Fj8oVw0A0gxooTGSQ8NIYnY5Si4TejCdmCXcMFXOc9eX1bGeDdENZMi0qWbSXqSzP
-         TUiJ367TNp2jbjxbK9X456gQhndtJBcbHR7inU36QnmShkjkxjgpQ3DvyiWwWocJDe
-         NB9Fg4XK3legy5j1RzxNJt1RCx1PI9MswZuyEnDk=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from t460-skr.localnet ([92.214.189.46]) by mail.gmx.com (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MHoRA-1kT6BD3guM-00ExSc; Wed, 25
- Nov 2020 13:35:29 +0100
-From:   Stefan K <shadow_7@gmx.net>
-To:     linux-bcachefs@vger.kernel.org
-Cc:     linux-bcache@vger.kernel.org
-Subject: Status of merging bcachefs into mainline
-Date:   Wed, 25 Nov 2020 13:35:29 +0100
-Message-ID: <3738693.ng0IJAnuUy@t460-skr>
+        id S1726654AbgKYMhw (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 25 Nov 2020 07:37:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C45A3AC22;
+        Wed, 25 Nov 2020 12:37:50 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 557991E130F; Wed, 25 Nov 2020 13:37:50 +0100 (CET)
+Date:   Wed, 25 Nov 2020 13:37:50 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 06/45] zram: remove the claim mechanism
+Message-ID: <20201125123750.GJ16944@quack2.suse.cz>
+References: <20201124132751.3747337-1-hch@lst.de>
+ <20201124132751.3747337-7-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Provags-ID: V03:K1:sWQxj7/whobUwluOjXJBXiN5lTyVU2NA/iDurTh+9XbWTKZvSgQ
- IrcdLX0xSCBBTOPQ4Sy80+yBLSbc0R6hcqN1xk3+d6TiQ/12K31SaLSSYRso8fOKFuWYQFr
- rU2YTQYMBFvpXayLQsdwNfM7AneK8lC+ASQJ4k8fzmd+g3BeEpnZkxWir408dkumlZRnDhC
- +YxKpn2OB2QsND5124rfA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:LtoQ1mIKQuQ=:QcgFZ2P3Dsu369MF+DyBC8
- 6Dv+VM+6yFfzPe2KrvaRhnFVhBKEXWNiu5D3UCR+M6YfEfZOK7Ot/feVDNtNFA0/A3d5Xb4R5
- 0xFJT/dc1eCOeR+QxNU3LIbfxD8LAQLSj4VMezNYDP1LLTkfXAVwD7PIrcV8lPaliSljySQE8
- Fb7bgKYOZgCagh7oonRWgP0pjz8ddZqFIgbCT0P8NuRDBYNjlQdcsmhFEHJnqsltOSiKBMgD1
- YVYqHxYfnQXTBKejMI8aD59Gbm68JXeWxRk16nTf646/UvTKwy3CMwc4C6BnjX+O88SigApe5
- E1icGByGNr5Z1H663Yx/QlGByUfYhE6GujUtfrcLeBA87lUEJsGQ8XCtKEeVUTA3XciGM+bM6
- PF1cH2F0niUAyeFxpOyeT63X034hlQzw5JAl7lP/w6e7cz/aR4YPHHED9aShNhqLM/GHD/GMl
- +Iv5zztmA1+9ghDnFCrQb1UyZ6qAKJxD/7qY5z5As25754cWAY2Ds5M0/4+K8sY0skKZdup//
- iJPgHsVQDqntKH8aMIPouthwc4PBgYWx0U15Kjx3seg88xctiLc0diNiiQxsGM3j++YVe54kr
- hDdVGvwlYptq+krVFt0ul1d4EE5WYx2mspSdlnsi6PclpCEH4TAwGXdzWcmfCiAnD7shxH3xL
- MNixfWSvHBz0XOiFJU4ALOe1Zlsxc5TqBfsVQq6/IilL3tmhGrRBJA8eBGB9wH7N2vnUKlDjt
- Dm9f5AweaXZIYaWtwC9VIpB439H6qjUD4Yu/xMAR0ymcFDPXzAbevtkbXWYbMWrY8MEmsGglc
- WwuOs5Q1jvGJky0SboQKpI3Jxi4PCK3IBor9hTg0KhkoPSC7JMnYFtwxew+ufKupY90l5HnBF
- L+h9dMC+Fvqvnjq6eZNg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201124132751.3747337-7-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hello,
+On Tue 24-11-20 14:27:12, Christoph Hellwig wrote:
+> The zram claim mechanism was added to ensure no new opens come in
+> during teardown.  But the proper way to archive that is to call
+					  ^^^ achieve
 
-I saw that Kent ask for review for bcachefs[1], also the latest patreon post of "upcoming changes"[2]. But how is the status to get bcachefs into the mainline kernel?
-I don't see 'usefull' answers on the mailinglist, does Kent get answers directly?
-It would be very nice if we (the bcachefs community), get more details here.
+> del_gendisk first, which takes care of all that.  Once del_gendisk
+> is called in the right place, the reset side can also be simplified
+> as no I/O can be outstanding on a block device that is not open.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-[1] https://lkml.org/lkml/2020/10/27/3684
-[2] https://www.patreon.com/posts/upcoming-changes-44125345
+Otherwise I didn't find anything obviously wrong with the patch but I don't
+feel confident enough with zram to really give you my reviewed-by on this
+one.
 
-best regards
-Stefan
+								Honza
 
-
+> ---
+>  drivers/block/zram/zram_drv.c | 72 ++++++++---------------------------
+>  1 file changed, 15 insertions(+), 57 deletions(-)
+> 
+> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+> index 6d15d51cee2b7e..2e6d75ec1afddb 100644
+> --- a/drivers/block/zram/zram_drv.c
+> +++ b/drivers/block/zram/zram_drv.c
+> @@ -1756,64 +1756,33 @@ static ssize_t disksize_store(struct device *dev,
+>  static ssize_t reset_store(struct device *dev,
+>  		struct device_attribute *attr, const char *buf, size_t len)
+>  {
+> -	int ret;
+> -	unsigned short do_reset;
+> -	struct zram *zram;
+> +	struct zram *zram = dev_to_zram(dev);
+>  	struct block_device *bdev;
+> +	unsigned short do_reset;
+> +	int ret = 0;
+>  
+>  	ret = kstrtou16(buf, 10, &do_reset);
+>  	if (ret)
+>  		return ret;
+> -
+>  	if (!do_reset)
+>  		return -EINVAL;
+>  
+> -	zram = dev_to_zram(dev);
+>  	bdev = bdget_disk(zram->disk, 0);
+>  	if (!bdev)
+>  		return -ENOMEM;
+>  
+>  	mutex_lock(&bdev->bd_mutex);
+> -	/* Do not reset an active device or claimed device */
+> -	if (bdev->bd_openers || zram->claim) {
+> -		mutex_unlock(&bdev->bd_mutex);
+> -		bdput(bdev);
+> -		return -EBUSY;
+> -	}
+> -
+> -	/* From now on, anyone can't open /dev/zram[0-9] */
+> -	zram->claim = true;
+> +	if (bdev->bd_openers)
+> +		ret = -EBUSY;
+> +	else
+> +		zram_reset_device(zram);
+>  	mutex_unlock(&bdev->bd_mutex);
+> -
+> -	/* Make sure all the pending I/O are finished */
+> -	fsync_bdev(bdev);
+> -	zram_reset_device(zram);
+>  	bdput(bdev);
+>  
+> -	mutex_lock(&bdev->bd_mutex);
+> -	zram->claim = false;
+> -	mutex_unlock(&bdev->bd_mutex);
+> -
+> -	return len;
+> -}
+> -
+> -static int zram_open(struct block_device *bdev, fmode_t mode)
+> -{
+> -	int ret = 0;
+> -	struct zram *zram;
+> -
+> -	WARN_ON(!mutex_is_locked(&bdev->bd_mutex));
+> -
+> -	zram = bdev->bd_disk->private_data;
+> -	/* zram was claimed to reset so open request fails */
+> -	if (zram->claim)
+> -		ret = -EBUSY;
+> -
+> -	return ret;
+> +	return ret ? ret : len;
+>  }
+>  
+>  static const struct block_device_operations zram_devops = {
+> -	.open = zram_open,
+>  	.submit_bio = zram_submit_bio,
+>  	.swap_slot_free_notify = zram_slot_free_notify,
+>  	.rw_page = zram_rw_page,
+> @@ -1821,7 +1790,6 @@ static const struct block_device_operations zram_devops = {
+>  };
+>  
+>  static const struct block_device_operations zram_wb_devops = {
+> -	.open = zram_open,
+>  	.submit_bio = zram_submit_bio,
+>  	.swap_slot_free_notify = zram_slot_free_notify,
+>  	.owner = THIS_MODULE
+> @@ -1974,32 +1942,22 @@ static int zram_add(void)
+>  
+>  static int zram_remove(struct zram *zram)
+>  {
+> -	struct block_device *bdev;
+> -
+> -	bdev = bdget_disk(zram->disk, 0);
+> -	if (!bdev)
+> -		return -ENOMEM;
+> +	struct block_device *bdev = bdget_disk(zram->disk, 0);
+>  
+> -	mutex_lock(&bdev->bd_mutex);
+> -	if (bdev->bd_openers || zram->claim) {
+> -		mutex_unlock(&bdev->bd_mutex);
+> +	if (bdev) {
+> +		if (bdev->bd_openers) {
+> +			bdput(bdev);
+> +			return -EBUSY;
+> +		}
+>  		bdput(bdev);
+> -		return -EBUSY;
+>  	}
+>  
+> -	zram->claim = true;
+> -	mutex_unlock(&bdev->bd_mutex);
+> -
+> +	del_gendisk(zram->disk);
+>  	zram_debugfs_unregister(zram);
+> -
+> -	/* Make sure all the pending I/O are finished */
+> -	fsync_bdev(bdev);
+>  	zram_reset_device(zram);
+> -	bdput(bdev);
+>  
+>  	pr_info("Removed device: %s\n", zram->disk->disk_name);
+>  
+> -	del_gendisk(zram->disk);
+>  	blk_cleanup_queue(zram->disk->queue);
+>  	put_disk(zram->disk);
+>  	kfree(zram);
+> -- 
+> 2.29.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
