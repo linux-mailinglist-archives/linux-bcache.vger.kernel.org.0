@@ -2,129 +2,68 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB0122C4038
-	for <lists+linux-bcache@lfdr.de>; Wed, 25 Nov 2020 13:31:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 399422C404E
+	for <lists+linux-bcache@lfdr.de>; Wed, 25 Nov 2020 13:37:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729349AbgKYMbf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 25 Nov 2020 07:31:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35994 "EHLO mx2.suse.de"
+        id S1729245AbgKYMfb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 25 Nov 2020 07:35:31 -0500
+Received: from mout.gmx.net ([212.227.15.18]:37067 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729348AbgKYMbf (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 25 Nov 2020 07:31:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 6A34EAF0E;
-        Wed, 25 Nov 2020 12:31:33 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3DD711E130F; Wed, 25 Nov 2020 13:31:33 +0100 (CET)
-Date:   Wed, 25 Nov 2020 13:31:33 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 05/45] mtip32xx: remove the call to fsync_bdev on removal
-Message-ID: <20201125123133.GI16944@quack2.suse.cz>
-References: <20201124132751.3747337-1-hch@lst.de>
- <20201124132751.3747337-6-hch@lst.de>
+        id S1728326AbgKYMfb (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 25 Nov 2020 07:35:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1606307730;
+        bh=aE09HQo5JGx9moRjSa0UQ1X0mj4HF6qoNS8tu4ZShpE=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=Fj8oVw0A0gxooTGSQ8NIYnY5Si4TejCdmCXcMFXOc9eX1bGeDdENZMi0qWbSXqSzP
+         TUiJ367TNp2jbjxbK9X456gQhndtJBcbHR7inU36QnmShkjkxjgpQ3DvyiWwWocJDe
+         NB9Fg4XK3legy5j1RzxNJt1RCx1PI9MswZuyEnDk=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from t460-skr.localnet ([92.214.189.46]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MHoRA-1kT6BD3guM-00ExSc; Wed, 25
+ Nov 2020 13:35:29 +0100
+From:   Stefan K <shadow_7@gmx.net>
+To:     linux-bcachefs@vger.kernel.org
+Cc:     linux-bcache@vger.kernel.org
+Subject: Status of merging bcachefs into mainline
+Date:   Wed, 25 Nov 2020 13:35:29 +0100
+Message-ID: <3738693.ng0IJAnuUy@t460-skr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201124132751.3747337-6-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Provags-ID: V03:K1:sWQxj7/whobUwluOjXJBXiN5lTyVU2NA/iDurTh+9XbWTKZvSgQ
+ IrcdLX0xSCBBTOPQ4Sy80+yBLSbc0R6hcqN1xk3+d6TiQ/12K31SaLSSYRso8fOKFuWYQFr
+ rU2YTQYMBFvpXayLQsdwNfM7AneK8lC+ASQJ4k8fzmd+g3BeEpnZkxWir408dkumlZRnDhC
+ +YxKpn2OB2QsND5124rfA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:LtoQ1mIKQuQ=:QcgFZ2P3Dsu369MF+DyBC8
+ 6Dv+VM+6yFfzPe2KrvaRhnFVhBKEXWNiu5D3UCR+M6YfEfZOK7Ot/feVDNtNFA0/A3d5Xb4R5
+ 0xFJT/dc1eCOeR+QxNU3LIbfxD8LAQLSj4VMezNYDP1LLTkfXAVwD7PIrcV8lPaliSljySQE8
+ Fb7bgKYOZgCagh7oonRWgP0pjz8ddZqFIgbCT0P8NuRDBYNjlQdcsmhFEHJnqsltOSiKBMgD1
+ YVYqHxYfnQXTBKejMI8aD59Gbm68JXeWxRk16nTf646/UvTKwy3CMwc4C6BnjX+O88SigApe5
+ E1icGByGNr5Z1H663Yx/QlGByUfYhE6GujUtfrcLeBA87lUEJsGQ8XCtKEeVUTA3XciGM+bM6
+ PF1cH2F0niUAyeFxpOyeT63X034hlQzw5JAl7lP/w6e7cz/aR4YPHHED9aShNhqLM/GHD/GMl
+ +Iv5zztmA1+9ghDnFCrQb1UyZ6qAKJxD/7qY5z5As25754cWAY2Ds5M0/4+K8sY0skKZdup//
+ iJPgHsVQDqntKH8aMIPouthwc4PBgYWx0U15Kjx3seg88xctiLc0diNiiQxsGM3j++YVe54kr
+ hDdVGvwlYptq+krVFt0ul1d4EE5WYx2mspSdlnsi6PclpCEH4TAwGXdzWcmfCiAnD7shxH3xL
+ MNixfWSvHBz0XOiFJU4ALOe1Zlsxc5TqBfsVQq6/IilL3tmhGrRBJA8eBGB9wH7N2vnUKlDjt
+ Dm9f5AweaXZIYaWtwC9VIpB439H6qjUD4Yu/xMAR0ymcFDPXzAbevtkbXWYbMWrY8MEmsGglc
+ WwuOs5Q1jvGJky0SboQKpI3Jxi4PCK3IBor9hTg0KhkoPSC7JMnYFtwxew+ufKupY90l5HnBF
+ L+h9dMC+Fvqvnjq6eZNg==
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue 24-11-20 14:27:11, Christoph Hellwig wrote:
-> del_gendisk already calls fsync_bdev for every partition, no need
-> to do this twice.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Hello,
 
-Makes sense to me. You can add:
+I saw that Kent ask for review for bcachefs[1], also the latest patreon post of "upcoming changes"[2]. But how is the status to get bcachefs into the mainline kernel?
+I don't see 'usefull' answers on the mailinglist, does Kent get answers directly?
+It would be very nice if we (the bcachefs community), get more details here.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+[1] https://lkml.org/lkml/2020/10/27/3684
+[2] https://www.patreon.com/posts/upcoming-changes-44125345
 
-								Honza
+best regards
+Stefan
 
-> ---
->  drivers/block/mtip32xx/mtip32xx.c | 15 ---------------
->  drivers/block/mtip32xx/mtip32xx.h |  2 --
->  2 files changed, 17 deletions(-)
-> 
-> diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
-> index 153e2cdecb4d40..53ac59d19ae530 100644
-> --- a/drivers/block/mtip32xx/mtip32xx.c
-> +++ b/drivers/block/mtip32xx/mtip32xx.c
-> @@ -3687,7 +3687,6 @@ static int mtip_block_initialize(struct driver_data *dd)
->  	/* Enable the block device and add it to /dev */
->  	device_add_disk(&dd->pdev->dev, dd->disk, NULL);
->  
-> -	dd->bdev = bdget_disk(dd->disk, 0);
->  	/*
->  	 * Now that the disk is active, initialize any sysfs attributes
->  	 * managed by the protocol layer.
-> @@ -3721,9 +3720,6 @@ static int mtip_block_initialize(struct driver_data *dd)
->  	return rv;
->  
->  kthread_run_error:
-> -	bdput(dd->bdev);
-> -	dd->bdev = NULL;
-> -
->  	/* Delete our gendisk. This also removes the device from /dev */
->  	del_gendisk(dd->disk);
->  
-> @@ -3804,14 +3800,6 @@ static int mtip_block_remove(struct driver_data *dd)
->  	blk_mq_tagset_busy_iter(&dd->tags, mtip_no_dev_cleanup, dd);
->  	blk_mq_unquiesce_queue(dd->queue);
->  
-> -	/*
-> -	 * Delete our gendisk structure. This also removes the device
-> -	 * from /dev
-> -	 */
-> -	if (dd->bdev) {
-> -		bdput(dd->bdev);
-> -		dd->bdev = NULL;
-> -	}
->  	if (dd->disk) {
->  		if (test_bit(MTIP_DDF_INIT_DONE_BIT, &dd->dd_flag))
->  			del_gendisk(dd->disk);
-> @@ -4206,9 +4194,6 @@ static void mtip_pci_remove(struct pci_dev *pdev)
->  	} while (atomic_read(&dd->irq_workers_active) != 0 &&
->  		time_before(jiffies, to));
->  
-> -	if (!dd->sr)
-> -		fsync_bdev(dd->bdev);
-> -
->  	if (atomic_read(&dd->irq_workers_active) != 0) {
->  		dev_warn(&dd->pdev->dev,
->  			"Completion workers still active!\n");
-> diff --git a/drivers/block/mtip32xx/mtip32xx.h b/drivers/block/mtip32xx/mtip32xx.h
-> index e22a7f0523bf30..88f4206310e4c8 100644
-> --- a/drivers/block/mtip32xx/mtip32xx.h
-> +++ b/drivers/block/mtip32xx/mtip32xx.h
-> @@ -463,8 +463,6 @@ struct driver_data {
->  
->  	int isr_binding;
->  
-> -	struct block_device *bdev;
-> -
->  	struct list_head online_list; /* linkage for online list */
->  
->  	struct list_head remove_list; /* linkage for removing list */
-> -- 
-> 2.29.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
