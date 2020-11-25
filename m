@@ -2,62 +2,82 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8194E2C44E0
-	for <lists+linux-bcache@lfdr.de>; Wed, 25 Nov 2020 17:24:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C7E42C4531
+	for <lists+linux-bcache@lfdr.de>; Wed, 25 Nov 2020 17:29:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730560AbgKYQW4 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 25 Nov 2020 11:22:56 -0500
-Received: from verein.lst.de ([213.95.11.211]:59598 "EHLO verein.lst.de"
+        id S1731487AbgKYQ3c (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 25 Nov 2020 11:29:32 -0500
+Received: from verein.lst.de ([213.95.11.211]:59650 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729755AbgKYQW4 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 25 Nov 2020 11:22:56 -0500
+        id S1730840AbgKYQ3c (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 25 Nov 2020 11:29:32 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 4507168B02; Wed, 25 Nov 2020 17:22:50 +0100 (CET)
-Date:   Wed, 25 Nov 2020 17:22:50 +0100
+        id 948AB68B02; Wed, 25 Nov 2020 17:29:26 +0100 (CET)
+Date:   Wed, 25 Nov 2020 17:29:26 +0100
 From:   Christoph Hellwig <hch@lst.de>
-To:     Jan Kara <jack@suse.cz>
+To:     Tejun Heo <tj@kernel.org>
 Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        Josef Bacik <josef@toxicpanda.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
         Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 04/45] fs: simplify freeze_bdev/thaw_bdev
-Message-ID: <20201125162250.GA795@lst.de>
-References: <20201124132751.3747337-1-hch@lst.de> <20201124132751.3747337-5-hch@lst.de> <20201125122953.GH16944@quack2.suse.cz>
+Subject: Re: [PATCH 23/45] block: remove i_bdev
+Message-ID: <20201125162926.GA1024@lst.de>
+References: <20201124132751.3747337-1-hch@lst.de> <20201124132751.3747337-24-hch@lst.de> <X71g4Tm+3RiRg4Gf@mtj.duckdns.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201125122953.GH16944@quack2.suse.cz>
+In-Reply-To: <X71g4Tm+3RiRg4Gf@mtj.duckdns.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, Nov 25, 2020 at 01:29:53PM +0100, Jan Kara wrote:
-> >  	mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> > -	return sb;	/* thaw_bdev releases s->s_umount */
-> > +	return error;	/* thaw_bdev releases s->s_umount */
-> 
-> The comment about thaw_bdev() seems to be stale? At least I don't see what
-> it's speaking about...
-
-Yes, this comment seems long stale.  I think in the very early days
-we held s_umount on frozen file system, which caused all kinds of
-problems.
-
-> >  	mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> > -	return error;
+On Tue, Nov 24, 2020 at 02:37:05PM -0500, Tejun Heo wrote:
+> On Tue, Nov 24, 2020 at 02:27:29PM +0100, Christoph Hellwig wrote:
+> > Switch the block device lookup interfaces to directly work with a dev_t
+> > so that struct block_device references are only acquired by the
+> > blkdev_get variants (and the blk-cgroup special case).  This means that
+> > we not don't need an extra reference in the inode and can generally
+>      ^
+>      now
+> > simplify handling of struct block_device to keep the lookups contained
+> > in the core block layer code.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ...
+> > @@ -1689,14 +1599,12 @@ static int blkdev_open(struct inode * inode, struct file * filp)
+> >  	if ((filp->f_flags & O_ACCMODE) == 3)
+> >  		filp->f_mode |= FMODE_WRITE_IOCTL;
+> >  
+> > -	bdev = bd_acquire(inode);
+> > -	if (bdev == NULL)
+> > -		return -ENOMEM;
+> > -
+> > +	bdev = blkdev_get_by_dev(inode->i_rdev, filp->f_mode, filp);
+> > +	if (IS_ERR(bdev))
+> > +		return PTR_ERR(bdev);
+> >  	filp->f_mapping = bdev->bd_inode->i_mapping;
+> >  	filp->f_wb_err = filemap_sample_wb_err(filp->f_mapping);
+> > -
+> > -	return blkdev_get(bdev, filp->f_mode, filp);
 > > +	return 0;
+> >  }
 > 
-> But we now won't return -EINVAL if this gets called e.g. with
-> bd_fsfreeze_count == 0, right?
+> I was wondering whether losing the stale bdev flushing in bd_acquire() would
+> cause user-visible behavior changes but can't see how it would given that
+> userland has no way of holding onto a specific instance of block inode.
+> Maybe it's something worth mentioning in the commit message?
 
-Yes.  I had tried to drop the return value as all the freeze_bdev
-calls ignored it.  But I had missed the unpaired emergency thaw and put
-it back and messed this up..
+With stale bdev flushing do you mean the call to bd_forget if
+i_bdev exists but is unhashed?  It doesn't actually flush anything but
+just detaches the old bdev from the inode so that the new one can be
+attached.  That problem goes away by definition if we don't attach
+the bdev to the inode.
