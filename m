@@ -2,104 +2,122 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D21C2C3F99
-	for <lists+linux-bcache@lfdr.de>; Wed, 25 Nov 2020 13:10:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DD0F2C3FB7
+	for <lists+linux-bcache@lfdr.de>; Wed, 25 Nov 2020 13:18:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbgKYMKK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 25 Nov 2020 07:10:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46422 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbgKYMKK (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 25 Nov 2020 07:10:10 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E914FC0613D4;
-        Wed, 25 Nov 2020 04:10:09 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id i9so1915327ioo.2;
-        Wed, 25 Nov 2020 04:10:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=7Gu8dfUtFbW1JkuoI0JsJxuRwdXnhq5kHzNpgpg59Vg=;
-        b=qBMGf8ZlpGBDrQf4OZ1U5hpBWVyNLxT8t7mb89EQfIXn+CYHj49+4NspUMpFZN+IBb
-         ow2ADzA501Y4hGPFKjrnnAGIPGi9hyvAwwXtpDtFAkYj7ksmhQny5Q5+xlY6jtJjsSvN
-         iA9i5fMRanrtfyZfe3+dWZgmeaV0x4lRD+7LgXZczkfB+RbnQDZrkTxOZ7Es8MQAef6B
-         e5RRaQ3t+46Lg0Zd/h/8g8StzDseAQGAZgvUuKfsUJH8/o4saKvewPtw+57G9TyZa/BY
-         /ViJEbywwBG8XKFF7bgqckI6jrquPx5+GfHPK5ghMTcJ5KumQuJnVjVzT50eAtnQOxE9
-         Uwfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=7Gu8dfUtFbW1JkuoI0JsJxuRwdXnhq5kHzNpgpg59Vg=;
-        b=MLwT3DvGDNNdaho0bgCfxDiEvEcF/8omAvMvJwMnWRwRqGeYQ7HQJzC5OwOE+d40HF
-         e/5ZJ6b0qb55APBJbO/ljQrUKB1tB+Yz1nvLjzQcNVZ/fxTMUq3qzuu3iBS88DoyGCys
-         Sf0fwcsSdHPR1ETn72K5ITs4KmdrOfyDo3GEjGCgAf0kIMFUSt+6LgJx9s7O8h9ZFvnv
-         wcwt/um60nQPYlggbGTWJFgMNM0/DOL+RSFxw6TeOrzW1ZYviKTeMKFMyKSevOe4aTX1
-         pjy565Nd7v0tWLN8cMj7K7QVFRuyRab/gIPqiH80I/1A7D+XTO3ndWrMAxlIUfpuiz6N
-         zBsw==
-X-Gm-Message-State: AOAM531jN58DsRFqE2+6YGl97jGUyu5OEgqiO8tQNAD3ovJJhbZAcCC9
-        91Hq+bhq2lrVdfabWdio10o=
-X-Google-Smtp-Source: ABdhPJzrP+6qlAsvVf6NJAz9IW3W/tDwuPyEzkZeYfjLrVcKdFZvzQhG4Xm+JItZe22HwNKBFUD46g==
-X-Received: by 2002:a5e:8206:: with SMTP id l6mr2327550iom.126.1606306209079;
-        Wed, 25 Nov 2020 04:10:09 -0800 (PST)
-Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [72.28.8.195])
-        by smtp.gmail.com with ESMTPSA id v85sm1343250ilk.50.2020.11.25.04.10.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2020 04:10:08 -0800 (PST)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Wed, 25 Nov 2020 07:09:46 -0500
-From:   Tejun Heo <tj@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        id S1728548AbgKYMQq (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 25 Nov 2020 07:16:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53804 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727626AbgKYMQp (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 25 Nov 2020 07:16:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 8E6B3AF0B;
+        Wed, 25 Nov 2020 12:16:44 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 2138A1E130F; Wed, 25 Nov 2020 13:16:44 +0100 (CET)
+Date:   Wed, 25 Nov 2020 13:16:44 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Josef Bacik <josef@toxicpanda.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
         Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 11/20] block: reference struct block_device from struct
- hd_struct
-Message-ID: <X75JitlWvZieqIR3@mtj.duckdns.org>
-References: <20201118084800.2339180-1-hch@lst.de>
- <20201118084800.2339180-12-hch@lst.de>
- <X708BTJ5njtbC2z1@mtj.duckdns.org>
- <20201125114044.GC16944@quack2.suse.cz>
+Subject: Re: [PATCH 02/45] filemap: consistently use ->f_mapping over
+ ->i_mapping
+Message-ID: <20201125121644.GF16944@quack2.suse.cz>
+References: <20201124132751.3747337-1-hch@lst.de>
+ <20201124132751.3747337-3-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201125114044.GC16944@quack2.suse.cz>
+In-Reply-To: <20201124132751.3747337-3-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hey, Jan,
-
-On Wed, Nov 25, 2020 at 12:40:44PM +0100, Jan Kara wrote:
-> > I don't think this is necessary now that the bdev and inode lifetimes are
-> > one. Before, punching out the association early was necessary because we
-> > could be in a situation where we can successfully look up a part from idr
-> > and then try to pin the associated disk which may already be freed. With the
-> > new code, the lookup is through the inode whose lifetime is one and the same
-> > with gendisk, so use-after-free isn't possible and __blkdev_get() will
-> > reliably reject such open attempts.
+On Tue 24-11-20 14:27:08, Christoph Hellwig wrote:
+> Use file->f_mapping in all remaining places that have a struct file
+> available to properly handle the case where inode->i_mapping !=
+> file_inode(file)->i_mapping.
 > 
-> I think the remove_inode_hash() call is actually still needed. Consider a
-> situation when the disk is unplugged, gendisk gets destroyed, bdev still
-> lives on (e.g. because it is still open). Device gets re-plugged, gendisk
-> for the same device number gets created. But we really need new bdev for
-> this because from higher level POV this is completely new device. And the
-> old bdev needs to live on as long as it is open. So IMO we still need to
-> just unhash the inode and leave it lingering in the background.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-You're absolutely right. I was only thinking about the lifetime problem
-described in the comment. So, it just needs an updated comment there, I
-think.
+Looks good to me. You can add:
 
-Thanks.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
+								Honza
+
+> ---
+>  mm/filemap.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index d5e7c2029d16b4..4f583489aa3c2a 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2886,14 +2886,14 @@ EXPORT_SYMBOL(filemap_map_pages);
+>  
+>  vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf)
+>  {
+> +	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+>  	struct page *page = vmf->page;
+> -	struct inode *inode = file_inode(vmf->vma->vm_file);
+>  	vm_fault_t ret = VM_FAULT_LOCKED;
+>  
+> -	sb_start_pagefault(inode->i_sb);
+> +	sb_start_pagefault(mapping->host->i_sb);
+>  	file_update_time(vmf->vma->vm_file);
+>  	lock_page(page);
+> -	if (page->mapping != inode->i_mapping) {
+> +	if (page->mapping != mapping) {
+>  		unlock_page(page);
+>  		ret = VM_FAULT_NOPAGE;
+>  		goto out;
+> @@ -2906,7 +2906,7 @@ vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf)
+>  	set_page_dirty(page);
+>  	wait_for_stable_page(page);
+>  out:
+> -	sb_end_pagefault(inode->i_sb);
+> +	sb_end_pagefault(mapping->host->i_sb);
+>  	return ret;
+>  }
+>  
+> @@ -3149,10 +3149,9 @@ void dio_warn_stale_pagecache(struct file *filp)
+>  {
+>  	static DEFINE_RATELIMIT_STATE(_rs, 86400 * HZ, DEFAULT_RATELIMIT_BURST);
+>  	char pathname[128];
+> -	struct inode *inode = file_inode(filp);
+>  	char *path;
+>  
+> -	errseq_set(&inode->i_mapping->wb_err, -EIO);
+> +	errseq_set(&filp->f_mapping->wb_err, -EIO);
+>  	if (__ratelimit(&_rs)) {
+>  		path = file_path(filp, pathname, sizeof(pathname));
+>  		if (IS_ERR(path))
+> @@ -3179,7 +3178,7 @@ generic_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
+>  
+>  	if (iocb->ki_flags & IOCB_NOWAIT) {
+>  		/* If there are pages to writeback, return */
+> -		if (filemap_range_has_page(inode->i_mapping, pos,
+> +		if (filemap_range_has_page(file->f_mapping, pos,
+>  					   pos + write_len - 1))
+>  			return -EAGAIN;
+>  	} else {
+> -- 
+> 2.29.2
+> 
 -- 
-tejun
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
