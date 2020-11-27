@@ -2,22 +2,22 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 900B62C6619
-	for <lists+linux-bcache@lfdr.de>; Fri, 27 Nov 2020 13:53:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 792502C6693
+	for <lists+linux-bcache@lfdr.de>; Fri, 27 Nov 2020 14:19:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729945AbgK0Mxo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 27 Nov 2020 07:53:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59670 "EHLO mx2.suse.de"
+        id S1730304AbgK0NTD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 27 Nov 2020 08:19:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51378 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729880AbgK0Mxn (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 27 Nov 2020 07:53:43 -0500
+        id S1730033AbgK0NTD (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 27 Nov 2020 08:19:03 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3E46AABD7;
-        Fri, 27 Nov 2020 12:53:42 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id E6B3BABD7;
+        Fri, 27 Nov 2020 13:19:01 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 8B3201E1318; Fri, 27 Nov 2020 13:53:41 +0100 (CET)
-Date:   Fri, 27 Nov 2020 13:53:41 +0100
+        id 7BE0A1E1318; Fri, 27 Nov 2020 14:19:01 +0100 (CET)
+Date:   Fri, 27 Nov 2020 14:19:01 +0100
 From:   Jan Kara <jack@suse.cz>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
@@ -30,62 +30,55 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 41/44] block: switch disk_part_iter_* to use a struct
- block_device
-Message-ID: <20201127125341.GD27162@quack2.suse.cz>
+Subject: Re: [PATCH 43/44] block: merge struct block_device and struct
+ hd_struct
+Message-ID: <20201127131901.GE27162@quack2.suse.cz>
 References: <20201126130422.92945-1-hch@lst.de>
- <20201126130422.92945-42-hch@lst.de>
+ <20201126130422.92945-44-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201126130422.92945-42-hch@lst.de>
+In-Reply-To: <20201126130422.92945-44-hch@lst.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Thu 26-11-20 14:04:19, Christoph Hellwig wrote:
-> Switch the partition iter infrastructure to iterate over block_device
-> references instead of hd_struct ones mostly used to get at the
-> block_device.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Thu 26-11-20 14:04:21, Christoph Hellwig wrote:
+> Instead of having two structures that represent each block device with
+> different life time rules, merge them into a single one.  This also
+> greatly simplifies the reference counting rules, as we can use the inode
+> reference count as the main reference count for the new struct
+> block_device, with the device model reference front ending it for device
+> model interaction.  The percpu refcount in struct hd_struct is entirely
+> gone given that struct block_device must be opened and thus valid for
+> the duration of the I/O.
 
-The patch mostly looks good. Two comments below.
+The percpu refcount is long gone after the series refactoring...
 
-> diff --git a/block/genhd.c b/block/genhd.c
-> index 28299b24173be1..b58595f2ca33b1 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -233,7 +233,7 @@ EXPORT_SYMBOL_GPL(disk_part_iter_init);
->   * CONTEXT:
->   * Don't care.
+> @@ -939,13 +910,13 @@ void blk_request_module(dev_t devt)
 >   */
-> -struct hd_struct *disk_part_iter_next(struct disk_part_iter *piter)
-> +struct block_device *disk_part_iter_next(struct disk_part_iter *piter)
+>  struct block_device *bdget_disk(struct gendisk *disk, int partno)
 >  {
->  	struct disk_part_tbl *ptbl;
->  	int inc, end;
-
-There's:
-
-        /* put the last partition */
-        disk_put_part(piter->part);
-        piter->part = NULL;
-
-at the beginning of disk_part_iter_next() which also needs switching to
-bdput(), doesn't it?
-
-> @@ -271,8 +271,7 @@ struct hd_struct *disk_part_iter_next(struct disk_part_iter *piter)
->  		      piter->idx == 0))
->  			continue;
+> -	struct hd_struct *part;
+>  	struct block_device *bdev = NULL;
 >  
-> -		get_device(part_to_dev(part->bd_part));
-> -		piter->part = part->bd_part;
-> +		piter->part = bdgrab(part);
+> -	part = disk_get_part(disk, partno);
+> -	if (part)
+> -		bdev = bdget_part(part);
+> -	disk_put_part(part);
+> +	rcu_read_lock();
+> +	bdev = __disk_get_part(disk, partno);
+> +	if (bdev)
+> +		bdgrab(bdev);
 
-bdgrab() could return NULL if we are racing with delete_partition() so I
-think we need to take care of that.
+Again I think you need to accommodate for bdgrab() returning NULL here when
+we race with partition destruction...
+
+> +	rcu_read_unlock();
+>  
+>  	return bdev;
+>  }
 
 								Honza
 -- 
