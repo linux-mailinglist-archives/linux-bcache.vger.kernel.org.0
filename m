@@ -2,137 +2,134 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4349A2C832F
-	for <lists+linux-bcache@lfdr.de>; Mon, 30 Nov 2020 12:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 942C12C8357
+	for <lists+linux-bcache@lfdr.de>; Mon, 30 Nov 2020 12:38:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbgK3L1v (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 30 Nov 2020 06:27:51 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:37748 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729028AbgK3L1v (ORCPT
+        id S1728398AbgK3Lhm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 30 Nov 2020 06:37:42 -0500
+Received: from regular1.263xmail.com ([211.150.70.206]:52368 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727630AbgK3Lhm (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 30 Nov 2020 06:27:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1606735670; x=1638271670;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
-  b=A5mgTb8VlnVsxgsowst8b98LKmz0rnMnMA949/poQZ/hqYQZoo6R8dDR
-   TxDgXMYm1kFFkzBL5Gp4T66zFBHHLuvXWGmrhoZeihITmGujro7X/b3dZ
-   TcBrE0OD5Y0yvb3Z7CQHNOP5YH5T0Odw5CgivpZUpOMqETn/KlKWve4QL
-   fuOQUcBCldKYY/kwwC6ndt9+MYZU5Jzbl/zpY/8e6GE55mpfAyFthSaJl
-   0YmuR0CWg4Ze3pYodbQJhELZa6TFqKZS0bpCPMx/sOozYFibMigJXIlsV
-   9mMGWfwb8e5JbTeO+gVa3Srjjj/2BEO5ZbhpvTnPY3bPFtf1a2nluMRb7
-   w==;
-IronPort-SDR: OmjVBp2+/KVjZgsE5EXdXaIUXOv6X+0D8CTji+Ef1cZD3U/WQHnV1R77gfGQb1aMokp5XgiegP
- FwJYRxMxsKbCSUNq5vDYQoBww/X6JRrz3NSqxeWUNegXe42c/0gGKmp97ZBVpGN2yw4G2x+BVU
- cJbHZCwIjKabeS9bZ4cHcIq+5ZP0KotugabmP9srf+w+WsJ8E5CLVtWXMVbCxGw9XLauWahaNs
- ry1B/mH4H1A47aL8RKQsUZsbGb0jmeZHH+mNrn/7FyUixY43JOnfRNhPGiaFygqSm77Sug/uCm
- I20=
-X-IronPort-AV: E=Sophos;i="5.78,381,1599494400"; 
-   d="scan'208";a="153875405"
-Received: from mail-co1nam11lp2176.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.176])
-  by ob1.hgst.iphmx.com with ESMTP; 30 Nov 2020 19:26:42 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bsv0J0gdit/E3APoeS1RuAF651IgIRyxzv38lYZHCL9k3PJBpgbtuHogNlu7Vq9CX5nv8mc8+8F7gD3i/prgwBEVE1ELn8W8FFeb8Rwz1IglVinokDhDLNTmnevhDATj5GSAJZSAU9QMH7R3y4a8jodk2reG0NTE7GuiaLam7sLE//JA9Tgew7zjsI6hfRjuCkrmR3hKqGzur3aqZ/M35R9UAd0H6IP1Ga8Dqu+s6XJjK7xUJFPAdI8LyYceFzpDxbbNguxe7+GgR1XYrLJoVu69tJ7V/5K59GvLLn0Esq/YtsJQsNkUkcpjCMXI5MeCseaD9m/PvzGUxIrlpj9HKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
- b=d7RSiXg5PD0hDBczkKq09kRdNxXxr4MxRhtE/TwUOGd7Yg9lpQs0ylE9GokVFjN6YmmLOfjaoBJC6uqlCTRPhbNTPrTtEGCiA41sxSxBNC8Cfm0D+xnGw8UNoeZ5KbD6LTuP2DuLRLm2gVwqQ/aMG+USn2ZKswc0LUGsipNRtZbHW4eJXuXXH1iHIxGK3FAlYaCANnI7vqWGfUfr1/Eh+6CSOHN6vtl+q1eLFSRFmzFI4Puyih/8mguRlw4a5SVprUdX8wsMnJGsRgb74mqP5Mz0fKWir5iUmPd0iVrJpF4clM82RR1DkTG+q2Fj/AwVvd/SMohKDgz3G7CfiOCP2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
- b=fT3htEXU1M1PqdOvqPrbYOxISG5mGReKwR4NmwO4HWFt1JQmGZDe0qgbKshQ9k0BBXOBorvQdWkP8UH+FNCclgOf0I2n1dFvqownaVZAqWI69rOgizX2jSBGUrry51/KBLn5RsZ/fbJW8cKJHZF+ljoGH4a1J4UiMdzQZ9cTxFs=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SA0PR04MB7436.namprd04.prod.outlook.com
- (2603:10b6:806:e0::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.25; Mon, 30 Nov
- 2020 11:26:41 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::65d7:592a:32d4:9f98]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::65d7:592a:32d4:9f98%7]) with mapi id 15.20.3589.030; Mon, 30 Nov 2020
- 11:26:40 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-CC:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        Jan Kara <jack@suse.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH 07/45] loop: do not call set_blocksize
-Thread-Topic: [PATCH 07/45] loop: do not call set_blocksize
-Thread-Index: AQHWxaG2UPoC+nZlKkGLQI6ts2xybw==
-Date:   Mon, 30 Nov 2020 11:26:40 +0000
-Message-ID: <SN4PR0401MB35980299348BBA758C4B971F9BF50@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20201128161510.347752-1-hch@lst.de>
- <20201128161510.347752-8-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: lst.de; dkim=none (message not signed)
- header.d=none;lst.de; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [2001:a62:155d:1001:2c26:fc00:7c60:29b]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e1f9f9d8-ec50-4336-825c-08d89522cf28
-x-ms-traffictypediagnostic: SA0PR04MB7436:
-x-microsoft-antispam-prvs: <SA0PR04MB7436FFA28E0D85578A5EF6A79BF50@SA0PR04MB7436.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:1728;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: C/fTD1l+S8WQ96C8pa8WdYKEZl5iM0kiZ6StblqfNPaXFSfpNi3xDBgKXj/2cMrzEU5d9b0N+4+E7Pj959cAnc4YGAegLLcotqVQuYga82OaFh5DRyKqw8d9g+ZNXYYgMIPYhHIsM0IuDpq9wENx4dW4l6vmrxL2x85YMDfCej1v1gTlha/2Nwm5BGLUSeK8bGYKghPMKXR4mvWUA/i1iGAHHPctFYt77Do5lkd5ss64xVKbH0fIiZH7ZYrCLFgFe+rBf/l4tSOxDOIot/AcS3SQMg8bRvjlQAlTlUAnYlmjE3l/sZfjqRk2a5iNCmMJa2qBZqrf6oWXhCeo85Cm0A==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(39860400002)(136003)(396003)(366004)(376002)(33656002)(64756008)(66446008)(316002)(55016002)(5660300002)(66556008)(76116006)(186003)(66946007)(110136005)(558084003)(19618925003)(54906003)(86362001)(52536014)(66476007)(8676002)(91956017)(7416002)(4326008)(71200400001)(8936002)(2906002)(478600001)(7696005)(6506007)(4270600006)(9686003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?arA84ct3CvUDHCx8N0pBqLNK7/MkKQ0M6UClHD8sGI8IgxHuzisG/vQwpj5f?=
- =?us-ascii?Q?lHOKlt+AakUbbLM2kw8mrC+kFyQg4TbAjzubEtH9FSUw3rdHw5faZqN7X4T2?=
- =?us-ascii?Q?8RrrBCGAhf27YIT5n75+6M3V4pINv0+2G1hLo3w8zNGXYxqKJEBvSrNJecgg?=
- =?us-ascii?Q?dW6y8I+OabNr5T5F2JOpmTeDpsMHw/yUC1x+6oFs+/+yCq3ymn/rbC7FDIag?=
- =?us-ascii?Q?9AziGT0SKSFkw7nEHKxP1kXegOb6vV7GHgmERi09gzyiX/e6c6Z+UZAqaqun?=
- =?us-ascii?Q?hacEWecBAIscwOHcELkJE8GQbfjuspyQ0RUsziZr7xBeHgrT/4nkBNDTmLxk?=
- =?us-ascii?Q?GcjL/h4tKtqXqcKYR2jrWxI83oaQNB6U3RfAa6WRlGWmNeE6/FTy7nxDp8Tv?=
- =?us-ascii?Q?uQJ/fOJehUCqRoq8+F9z6AHTgSy4zGSqVm50W09pFiHbVedkyv8ITsmgoy2P?=
- =?us-ascii?Q?CYh4HqTlGgb3mZ7LvxuP1eFjORWVWUwXebaJ5sLhc3PWPbFPOrZCf1bWFeUM?=
- =?us-ascii?Q?3owBmbDwGmqapN6zvyQ+EpRhbKWdPW5t6ZoNwjzp1HpMOulO7jjIqJ2xXmu+?=
- =?us-ascii?Q?6HYZEx8vV4YzRjslu6PkNJVQzXbwKkpbMLd2XgdNAy2halT7ohfctChTGjmZ?=
- =?us-ascii?Q?j/bbREokwQPplndMckjuamYhgTazBaLddgb7+IXXfc6baQiqgh6jf6Fk7HxT?=
- =?us-ascii?Q?wGBS+UVFTAKzojKljmKzVitfu012Q2fnF/4kUiTDAKKQTGEvd1auygpKaj+D?=
- =?us-ascii?Q?V9O8UTPdA4LJFXl6unBTDUcosyXBcJY1D/QlOJsvWFAlt2gy4c4Vy5w6nPsm?=
- =?us-ascii?Q?wcj1Cei9n/h7ur0MbPgLCgCGzcGka7zpg0XtoJk1RxngHHqUL21B6hVMNCBt?=
- =?us-ascii?Q?+8ntXKC6EWjz/Y4kPlP1hXTSpShya2ZNUqphmswpTRydE6uZ6AM/0NC4uLsF?=
- =?us-ascii?Q?8T9jB62tOr8568I0LNoy/OnJAQ6P8lNKEPC0XCQigGpWhG8xbz0XbNXwqke3?=
- =?us-ascii?Q?70STR4ZEW99NLQTtcbJEi2LBLmvP1SX8yeFK4Q8jsJ+lAgpqaEF8irYCD67j?=
- =?us-ascii?Q?1t5GdEDq?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 30 Nov 2020 06:37:42 -0500
+X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Nov 2020 06:37:39 EST
+Received: from localhost (unknown [192.168.167.32])
+        by regular1.263xmail.com (Postfix) with ESMTP id A57781A98;
+        Mon, 30 Nov 2020 19:21:46 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from localhost.localdomain (unknown [14.18.236.70])
+        by smtp.263.net (postfix) whith ESMTP id P26670T140451934750464S1606735299812191_;
+        Mon, 30 Nov 2020 19:21:46 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <609705c7df649c7f57edb97859403f48>
+X-RL-SENDER: yili@winhong.com
+X-SENDER: yili@winhong.com
+X-LOGIN-NAME: yili@winhong.com
+X-FST-TO: colyli@suse.de
+X-SENDER-IP: 14.18.236.70
+X-ATTACHMENT-NUM: 0
+X-System-Flag: 0
+From:   Yi Li <yili@winhong.com>
+To:     colyli@suse.de
+Cc:     yilikernel@gmail.com, kent.overstreet@gmail.com,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yi Li <yili@winhong.com>, Guo Chao <guochao@winhong.com>
+Subject: [PATCH] bcache: fix panic due to cache_set is null
+Date:   Mon, 30 Nov 2020 19:21:37 +0800
+Message-Id: <20201130112137.587437-1-yili@winhong.com>
+X-Mailer: git-send-email 2.25.3
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1f9f9d8-ec50-4336-825c-08d89522cf28
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2020 11:26:40.8311
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JluDZqeAyRCGF0BjtVqI+V0Hy+Bj86m859625whxYIDXRc/SwNiZ8casvh5/JoCtb7/asdYfl6DjtLvuzI9WnsbbQvcSAIY6S8vj99iPQ0A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR04MB7436
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Looks good,=0A=
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
+bcache_device_detach will release the cache_set after hotunplug cache
+disk. update_writeback_rate should check validate of cache_set.
+
+  IP: [<ffffffffa03730c9>] update_writeback_rate+0x59/0x3a0 [bcache]
+  PGD 879620067 PUD 8755d3067 PMD 0
+  Oops: 0000 [#1] SMP
+  CPU: 8 PID: 1005702 Comm: kworker/8:0 Tainted: G 4.4.0+10 #1
+  Hardware name: Intel BIOS SE5C610.86B.01.01.0021.032120170601 03/21/2017
+  Workqueue: events update_writeback_rate [bcache]
+  task: ffff8808786f3800 ti: ffff88077082c000 task.ti: ffff88077082c000
+  RIP: e030:[<ffffffffa03730c9>] update_writeback_rate+0x59/0x3a0 [bcache]
+  RSP: e02b:ffff88077082fde0  EFLAGS: 00010202
+  RAX: 0000000000000018 RBX: ffff8808047f0b08 RCX: 0000000000000000
+  RDX: 0000000000000001 RSI: ffff88088170dab8 RDI: ffff88088170dab8
+  RBP: ffff88077082fe18 R08: 000000000000000a R09: 0000000000000000
+  R10: 0000000000000000 R11: 0000000000017bc8 R12: 0000000000000000
+  R13: ffff8808047f0000 R14: 0000000000000200 R15: ffff8808047f0b08
+  FS:  00007f157b6d6700(0000) GS:ffff880881700000(0000) knlGS:0000000000000000
+  CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 0000000000000368 CR3: 0000000875c05000 CR4: 0000000000040660
+  Stack:
+   0000000000000001 0000000000007ff0 ffff88085ff600c0 ffff880881714e80
+   ffff880881719500 0000000000000200 ffff8808047f0b08 ffff88077082fe60
+   ffffffff81088c0c 0000000081714e80 0000000000000000 ffff880881714e80
+  Call Trace:
+   [<ffffffff81088c0c>] process_one_work+0x1fc/0x3b0
+   [<ffffffff81089575>] worker_thread+0x2a5/0x470
+   [<ffffffff815a2f58>] ? __schedule+0x648/0x870
+   [<ffffffff810892d0>] ? rescuer_thread+0x300/0x300
+   [<ffffffff8108e3d5>] kthread+0xd5/0xe0
+   [<ffffffff8108e300>] ? kthread_stop+0x110/0x110
+   [<ffffffff815a704f>] ret_from_fork+0x3f/0x70
+   [<ffffffff8108e300>] ? kthread_stop+0x110/0x110
+
+Reported-by: Guo Chao <guochao@winhong.com>
+Signed-off-by: Guo Chao <guochao@winhong.com>
+Signed-off-by: Yi Li <yili@winhong.com>
+---
+ drivers/md/bcache/writeback.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index 3c74996978da..186c4c6e1607 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -175,7 +175,15 @@ static void update_writeback_rate(struct work_struct *work)
+ 	struct cached_dev *dc = container_of(to_delayed_work(work),
+ 					     struct cached_dev,
+ 					     writeback_rate_update);
+-	struct cache_set *c = dc->disk.c;
++	struct cache_set *c = NULL;
++
++	mutex_lock(&bch_register_lock);
++	c = dc->disk.c;
++
++	if (c == NULL) {
++		mutex_unlock(&bch_register_lock);
++		return;
++	}
+ 
+ 	/*
+ 	 * should check BCACHE_DEV_RATE_DW_RUNNING before calling
+@@ -194,6 +202,7 @@ static void update_writeback_rate(struct work_struct *work)
+ 		clear_bit(BCACHE_DEV_RATE_DW_RUNNING, &dc->disk.flags);
+ 		/* paired with where BCACHE_DEV_RATE_DW_RUNNING is tested */
+ 		smp_mb__after_atomic();
++		mutex_unlock(&bch_register_lock);
+ 		return;
+ 	}
+ 
+@@ -230,6 +239,7 @@ static void update_writeback_rate(struct work_struct *work)
+ 	clear_bit(BCACHE_DEV_RATE_DW_RUNNING, &dc->disk.flags);
+ 	/* paired with where BCACHE_DEV_RATE_DW_RUNNING is tested */
+ 	smp_mb__after_atomic();
++	mutex_unlock(&bch_register_lock);
+ }
+ 
+ static unsigned int writeback_delay(struct cached_dev *dc,
+-- 
+2.25.3
+
+
+
