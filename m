@@ -2,41 +2,41 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58DA02CA8F8
-	for <lists+linux-bcache@lfdr.de>; Tue,  1 Dec 2020 17:56:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF8A92CA905
+	for <lists+linux-bcache@lfdr.de>; Tue,  1 Dec 2020 17:56:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391017AbgLAQzx (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 1 Dec 2020 11:55:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40786 "EHLO
+        id S2391261AbgLAQzz (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 1 Dec 2020 11:55:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389890AbgLAQzw (ORCPT
+        with ESMTP id S2389102AbgLAQzx (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 1 Dec 2020 11:55:52 -0500
+        Tue, 1 Dec 2020 11:55:53 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21893C061A49;
-        Tue,  1 Dec 2020 08:54:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 677B1C061A4A;
+        Tue,  1 Dec 2020 08:54:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=z3TR4SOfklo1NSy0jtxTf0pSxLrXpFRU8wpKn7XHbfk=; b=mGO3VelM/ewo5WYpjtgCX3bjfv
-        8vnom8zhT/A/o7byWs7Ix1KsjQe+Z6nigJ/guo0w6qBpswJ3B5lMYjz5IpyR/bXrrch3QdlA8QP/B
-        K8HcIkiqnS1q4H/YZ+r3oxt36iYFJm3A8rz3T8CNLLqAULpXzhLDA0m3GyZgxm0KuHhUdSihDJdnV
-        iHvjw1818nstRL0Qkm4pzvGObVp7A18JkXI/13PGWM940BAqrO2tbFn4Y/NMTo7GMaHNUgfXlWMT2
-        LEkVb55C1Y5EVxByfD/4kiFZa4rw9dAiUUGbZ4HfTVqV+NfqfvEn29eCozsElsD0yGLJPvVIxt/wX
-        F4Sk4fJg==;
+        bh=qDJw9+WBWtvvbs2CFXkHCwVKHcE61fPt5/mC66tZW6M=; b=HefPhl90E9WicKOenQcxb/Jthq
+        avfTbLC37i0nY9MjwYfrGC7v5rXxL85x3z2ChtbUnTI/5BrsktnpRyUjidl3QKAzutcZLXadpKQ2E
+        wUncJWVl1DSWu+CH2Ow8kkeM+eiDCFL6tCYCq3fgUeoTR3kdA7V83zjYnBLaAU5ruWs0Se40f+L48
+        zvt9Ia1K83sQ2JZlL/qrPuLvtBDJgOhMrhcTSse5qnbpAa/tYKSq7Wj7Rpxz0Adj4g4XmYvDQKgtp
+        Wqb1GowGM8JzzB9y16bHGIRZyNLw2NOR4KO3zCmt6d7xhHTT4cumyzhe1yy52gZv0333e8cMDlGei
+        0aS9Y/TA==;
 Received: from [2001:4bb8:184:6389:bbd8:a1c2:99e0:f58a] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kk8vC-0005Zm-Ud; Tue, 01 Dec 2020 16:54:35 +0000
+        id 1kk8vE-0005Zx-5c; Tue, 01 Dec 2020 16:54:36 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Coly Li <colyli@suse.de>,
         Song Liu <song@kernel.org>, dm-devel@redhat.com,
         linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
         linux-s390@vger.kernel.org, linux-block@vger.kernel.org
-Subject: [PATCH 7/9] block: add a disk_uevent helper
-Date:   Tue,  1 Dec 2020 17:54:22 +0100
-Message-Id: <20201201165424.2030647-8-hch@lst.de>
+Subject: [PATCH 8/9] block: remove DISK_PITER_REVERSE
+Date:   Tue,  1 Dec 2020 17:54:23 +0100
+Message-Id: <20201201165424.2030647-9-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201201165424.2030647-1-hch@lst.de>
 References: <20201201165424.2030647-1-hch@lst.de>
@@ -47,161 +47,107 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Add a helper to call kobject_uevent for the disk and all partitions, and
-unexport the disk_part_iter_* helpers that are now only used in the core
-block code.
+There is good reason to iterate backwards when deleting all partitions in
+del_gendisk, just like we don't in blk_drop_partitions.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/genhd.c             | 27 ++++++++++++++-------------
- drivers/s390/block/dasd.c | 26 +++++---------------------
- include/linux/genhd.h     |  2 ++
- 3 files changed, 21 insertions(+), 34 deletions(-)
+ block/genhd.c         | 34 ++++------------------------------
+ include/linux/genhd.h |  1 -
+ 2 files changed, 4 insertions(+), 31 deletions(-)
 
 diff --git a/block/genhd.c b/block/genhd.c
-index 3b9cd766d95228..65dba32df5474f 100644
+index 65dba32df5474f..7730ddabebba92 100644
 --- a/block/genhd.c
 +++ b/block/genhd.c
-@@ -201,7 +201,6 @@ void disk_part_iter_init(struct disk_part_iter *piter, struct gendisk *disk,
- 
- 	rcu_read_unlock();
- }
--EXPORT_SYMBOL_GPL(disk_part_iter_init);
- 
- /**
-  * disk_part_iter_next - proceed iterator to the next partition and return it
-@@ -261,7 +260,6 @@ struct block_device *disk_part_iter_next(struct disk_part_iter *piter)
- 
- 	return piter->part;
- }
--EXPORT_SYMBOL_GPL(disk_part_iter_next);
- 
- /**
-  * disk_part_iter_exit - finish up partition iteration
-@@ -278,7 +276,6 @@ void disk_part_iter_exit(struct disk_part_iter *piter)
- 		bdput(piter->part);
+@@ -182,24 +182,13 @@ static struct block_device *__disk_get_part(struct gendisk *disk, int partno)
+ void disk_part_iter_init(struct disk_part_iter *piter, struct gendisk *disk,
+ 			  unsigned int flags)
+ {
+-	struct disk_part_tbl *ptbl;
+-
+-	rcu_read_lock();
+-	ptbl = rcu_dereference(disk->part_tbl);
+-
+ 	piter->disk = disk;
  	piter->part = NULL;
+-
+-	if (flags & DISK_PITER_REVERSE)
+-		piter->idx = ptbl->len - 1;
+-	else if (flags & (DISK_PITER_INCL_PART0 | DISK_PITER_INCL_EMPTY_PART0))
++	if (flags & (DISK_PITER_INCL_PART0 | DISK_PITER_INCL_EMPTY_PART0))
+ 		piter->idx = 0;
+ 	else
+ 		piter->idx = 1;
+-
+ 	piter->flags = flags;
+-
+-	rcu_read_unlock();
  }
--EXPORT_SYMBOL_GPL(disk_part_iter_exit);
  
  /**
-  * disk_has_partitions
-@@ -550,6 +547,18 @@ static char *bdevt_str(dev_t devt, char *buf)
- 	return buf;
- }
- 
-+void disk_uevent(struct gendisk *disk, enum kobject_action action)
-+{
-+	struct disk_part_iter piter;
-+	struct block_device *part;
-+
-+	disk_part_iter_init(&piter, disk, DISK_PITER_INCL_PART0);
-+	while ((part = disk_part_iter_next(&piter)))
-+		kobject_uevent(bdev_kobj(part), action);
-+	disk_part_iter_exit(&piter);
-+}
-+EXPORT_SYMBOL_GPL(disk_uevent);
-+
- static void disk_scan_partitions(struct gendisk *disk)
+@@ -214,7 +203,6 @@ void disk_part_iter_init(struct disk_part_iter *piter, struct gendisk *disk,
+ struct block_device *disk_part_iter_next(struct disk_part_iter *piter)
  {
- 	struct block_device *bdev;
-@@ -567,8 +576,6 @@ static void register_disk(struct device *parent, struct gendisk *disk,
- 			  const struct attribute_group **groups)
- {
- 	struct device *ddev = disk_to_dev(disk);
--	struct disk_part_iter piter;
--	struct block_device *part;
- 	int err;
+ 	struct disk_part_tbl *ptbl;
+-	int inc, end;
  
- 	ddev->parent = parent;
-@@ -611,15 +618,9 @@ static void register_disk(struct device *parent, struct gendisk *disk,
+ 	/* put the last partition */
+ 	disk_part_iter_exit(piter);
+@@ -223,21 +211,8 @@ struct block_device *disk_part_iter_next(struct disk_part_iter *piter)
+ 	rcu_read_lock();
+ 	ptbl = rcu_dereference(piter->disk->part_tbl);
  
- 	disk_scan_partitions(disk);
- 
--	/* announce disk after possible partitions are created */
-+	/* announce the disk and partitions after all partitions are created */
- 	dev_set_uevent_suppress(ddev, 0);
--	kobject_uevent(&ddev->kobj, KOBJ_ADD);
--
--	/* announce possible partitions */
--	disk_part_iter_init(&piter, disk, 0);
--	while ((part = disk_part_iter_next(&piter)))
--		kobject_uevent(bdev_kobj(part), KOBJ_ADD);
--	disk_part_iter_exit(&piter);
-+	disk_uevent(disk, KOBJ_ADD);
- 
- 	if (disk->queue->backing_dev_info->dev) {
- 		err = sysfs_create_link(&ddev->kobj,
-diff --git a/drivers/s390/block/dasd.c b/drivers/s390/block/dasd.c
-index 1825fa8d05a780..bb0c63fbdabc01 100644
---- a/drivers/s390/block/dasd.c
-+++ b/drivers/s390/block/dasd.c
-@@ -430,23 +430,15 @@ static int dasd_state_unfmt_to_basic(struct dasd_device *device)
- static int
- dasd_state_ready_to_online(struct dasd_device * device)
- {
--	struct gendisk *disk;
--	struct disk_part_iter piter;
--	struct block_device *part;
--
- 	device->state = DASD_STATE_ONLINE;
- 	if (device->block) {
- 		dasd_schedule_block_bh(device->block);
- 		if ((device->features & DASD_FEATURE_USERAW)) {
--			disk = device->block->gdp;
--			kobject_uevent(&disk_to_dev(disk)->kobj, KOBJ_CHANGE);
-+			kobject_uevent(&disk_to_dev(device->block->gdp)->kobj,
-+					KOBJ_CHANGE);
- 			return 0;
- 		}
--		disk = device->block->bdev->bd_disk;
--		disk_part_iter_init(&piter, disk, DISK_PITER_INCL_PART0);
--		while ((part = disk_part_iter_next(&piter)))
--			kobject_uevent(bdev_kobj(part), KOBJ_CHANGE);
--		disk_part_iter_exit(&piter);
-+		disk_uevent(device->block->bdev->bd_disk, KOBJ_CHANGE);
- 	}
- 	return 0;
- }
-@@ -457,9 +449,6 @@ dasd_state_ready_to_online(struct dasd_device * device)
- static int dasd_state_online_to_ready(struct dasd_device *device)
- {
- 	int rc;
--	struct gendisk *disk;
--	struct disk_part_iter piter;
--	struct block_device *part;
- 
- 	if (device->discipline->online_to_ready) {
- 		rc = device->discipline->online_to_ready(device);
-@@ -468,13 +457,8 @@ static int dasd_state_online_to_ready(struct dasd_device *device)
- 	}
- 
- 	device->state = DASD_STATE_READY;
--	if (device->block && !(device->features & DASD_FEATURE_USERAW)) {
--		disk = device->block->bdev->bd_disk;
--		disk_part_iter_init(&piter, disk, DISK_PITER_INCL_PART0);
--		while ((part = disk_part_iter_next(&piter)))
--			kobject_uevent(bdev_kobj(part), KOBJ_CHANGE);
--		disk_part_iter_exit(&piter);
+-	/* determine iteration parameters */
+-	if (piter->flags & DISK_PITER_REVERSE) {
+-		inc = -1;
+-		if (piter->flags & (DISK_PITER_INCL_PART0 |
+-				    DISK_PITER_INCL_EMPTY_PART0))
+-			end = -1;
+-		else
+-			end = 0;
+-	} else {
+-		inc = 1;
+-		end = ptbl->len;
 -	}
-+	if (device->block && !(device->features & DASD_FEATURE_USERAW))
-+		disk_uevent(device->block->bdev->bd_disk, KOBJ_CHANGE);
- 	return 0;
- }
+-
+ 	/* iterate to the next partition */
+-	for (; piter->idx != end; piter->idx += inc) {
++	for (; piter->idx != ptbl->len; piter->idx += 1) {
+ 		struct block_device *part;
  
+ 		part = rcu_dereference(ptbl->part[piter->idx]);
+@@ -252,7 +227,7 @@ struct block_device *disk_part_iter_next(struct disk_part_iter *piter)
+ 		piter->part = bdgrab(part);
+ 		if (!piter->part)
+ 			continue;
+-		piter->idx += inc;
++		piter->idx += 1;
+ 		break;
+ 	}
+ 
+@@ -776,8 +751,7 @@ void del_gendisk(struct gendisk *disk)
+ 	down_write(&bdev_lookup_sem);
+ 
+ 	/* invalidate stuff */
+-	disk_part_iter_init(&piter, disk,
+-			     DISK_PITER_INCL_EMPTY | DISK_PITER_REVERSE);
++	disk_part_iter_init(&piter, disk, DISK_PITER_INCL_EMPTY);
+ 	while ((part = disk_part_iter_next(&piter))) {
+ 		invalidate_partition(part);
+ 		delete_partition(part);
 diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 809aaa32d53cba..191f5e4ae4e93b 100644
+index 191f5e4ae4e93b..425956ac9315fa 100644
 --- a/include/linux/genhd.h
 +++ b/include/linux/genhd.h
-@@ -212,6 +212,8 @@ static inline dev_t disk_devt(struct gendisk *disk)
- 	return MKDEV(disk->major, disk->first_minor);
- }
- 
-+void disk_uevent(struct gendisk *disk, enum kobject_action action);
-+
+@@ -217,7 +217,6 @@ void disk_uevent(struct gendisk *disk, enum kobject_action action);
  /*
   * Smarter partition iterator without context limits.
   */
+-#define DISK_PITER_REVERSE	(1 << 0) /* iterate in the reverse direction */
+ #define DISK_PITER_INCL_EMPTY	(1 << 1) /* include 0-sized parts */
+ #define DISK_PITER_INCL_PART0	(1 << 2) /* include partition 0 */
+ #define DISK_PITER_INCL_EMPTY_PART0 (1 << 3) /* include empty partition 0 */
 -- 
 2.29.2
 
