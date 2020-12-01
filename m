@@ -2,343 +2,155 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D6F52C8BDD
-	for <lists+linux-bcache@lfdr.de>; Mon, 30 Nov 2020 18:57:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEE972C9689
+	for <lists+linux-bcache@lfdr.de>; Tue,  1 Dec 2020 05:37:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728510AbgK3R4o (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 30 Nov 2020 12:56:44 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:32774 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387518AbgK3R4o (ORCPT
+        id S1728324AbgLAEfs (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 30 Nov 2020 23:35:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38514 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbgLAEfr (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 30 Nov 2020 12:56:44 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AUHt6sJ032368;
-        Mon, 30 Nov 2020 17:55:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=yU/s1Wkvr4/ioNoOs3LBBcInryfxg69nAE5giYmsDtI=;
- b=BrK4tMKOyzxrwpzYTlNpbblVdyLj99rOklmu5b7G3fLXIWb2oNqMQu74n9tgiYZwSkBI
- q8IW2lAJ5A6imO7tAcmjiauSeYKxYgvojWgmqUb+glplMcsSBpQB/nymMvV9krD+mvOx
- DJ6IExm9EXZp2F4lOGfprRJVEjVxzJHYcSqaNjkbyM3Wnz0FCyTZBf6e1ZkXGRMOrel5
- iTClNF3xexyfxuNMgiBvvTscsy1ludxN/bcAKiqWKZHalWlxEqVF8X/LXFrIQD7ENvWF
- 7khVBK6sKTyMNkKp2BlgN/EPcZ+SSXaDxEH2cewbxY+orjH/5z/Hz13U2jTrI6mOMPxb Ow== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 353c2apjs8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 30 Nov 2020 17:55:34 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AUHk2nh011017;
-        Mon, 30 Nov 2020 17:55:34 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 3540ewv77j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Nov 2020 17:55:34 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AUHtSUK012345;
-        Mon, 30 Nov 2020 17:55:28 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Nov 2020 09:55:28 -0800
-Date:   Mon, 30 Nov 2020 09:55:26 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        dm-devel@redhat.com, Jan Kara <jack@suse.com>,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 04/45] fs: simplify freeze_bdev/thaw_bdev
-Message-ID: <20201130175526.GA143012@magnolia>
-References: <20201128161510.347752-1-hch@lst.de>
- <20201128161510.347752-5-hch@lst.de>
+        Mon, 30 Nov 2020 23:35:47 -0500
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC749C0613CF;
+        Mon, 30 Nov 2020 20:35:07 -0800 (PST)
+Received: by mail-pj1-x1043.google.com with SMTP id e5so466440pjt.0;
+        Mon, 30 Nov 2020 20:35:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=BPtWYGD7y8CigqXoE2gXVtOc81D8k8JttMXCbXMY8s0=;
+        b=YtFuwEFsueHt4H+UiwWyjkGT+32Y7ExycKvIjYZJyciw08BO8hcpGs/PW2Up2XUhDV
+         McPNQ4m4mviviDMYzU/W4wBwVDXT+RmBa6V1PeDFDfyHeNKhhkniIu34apuz41AhSzs6
+         v5FlmRULyJNvR4zG+Mq2y21Hy/R+zftifiFqbLnBCa2ueaPCaYpaPPXHJs5Wy/n4kJ/y
+         r/lxdug5eGLvhr/x+6tdEH8jHqGgs+t9P2boyf/Rrc2IFwElPE3gUVRWMdi0Q0raAMRf
+         Gk5tBWIwjxKz8PqRBg5BdRgWLg424IglcC2I+fsHZX5Yt2LtN0q0p8mPZh7cLK0AMczd
+         IbDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=BPtWYGD7y8CigqXoE2gXVtOc81D8k8JttMXCbXMY8s0=;
+        b=WRjLNXC5P57dTa/Gdkc14MfguUw4XHweeGto3i4b0k98xuuqE/NyrMSUduudytUkjV
+         5XdI40UlCiU1Ssi8bewwQJA6tG2BjUr6HyYLyIaV4dInlvqnzXFnyuSdBJUxD1z48UZu
+         GPydEyZadceRxnc6PiZULjht+jldICj+tFHLWCnltNmo4zr3M+N61J1DxR6QGKUlOxfg
+         A7LtJbZvE+qk2GwVkEHVTC7tOYRfzPQgnF4+lX/xuR3B/ghM5Ou+B8bfAIe2+MeQ6bx4
+         o6pjwvD1lqXcrkg+lzSlFLNB71uxZQ0rvyCAPZi09fK/v5t75MyTwFIx/Jatvs25cHRL
+         RMVg==
+X-Gm-Message-State: AOAM5333UXLa2m7QnHyR55wc2rLIVvRNlymIIvK+DbynlDm22yqRp2qO
+        BGXrJgHqLXRt9mRfuAY06x7wgNG30d2PEYbZLZpol/zRSVg=
+X-Google-Smtp-Source: ABdhPJyBt3QNzW9OVRkY+oVCY64/AnhKw2iU+cGYjXVyQhP9Bv0zJs3DTlgcK9463VIJADa4k/DRkmH2iag8z8YK/zo=
+X-Received: by 2002:a17:902:a581:b029:da:d78:7f79 with SMTP id
+ az1-20020a170902a581b02900da0d787f79mr1073866plb.32.1606797307177; Mon, 30
+ Nov 2020 20:35:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201128161510.347752-5-hch@lst.de>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9821 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 phishscore=0
- suspectscore=1 bulkscore=0 spamscore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011300116
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9821 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 lowpriorityscore=0
- clxscore=1011 bulkscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011300117
+Received: by 2002:a17:90a:7886:0:0:0:0 with HTTP; Mon, 30 Nov 2020 20:35:06
+ -0800 (PST)
+In-Reply-To: <20201130112137.587437-1-yili@winhong.com>
+References: <20201130112137.587437-1-yili@winhong.com>
+From:   Yi Li <yilikernel@gmail.com>
+Date:   Tue, 1 Dec 2020 12:35:06 +0800
+Message-ID: <CAJfdMYDnDJXFVfEECtQ9-E4F9kfsF035PH+x3kaVn6PPSYCydA@mail.gmail.com>
+Subject: Re: [PATCH] bcache: fix panic due to cache_set is null
+To:     Yi Li <yili@winhong.com>
+Cc:     colyli@suse.de, kent.overstreet@gmail.com,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guo Chao <guochao@winhong.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Sat, Nov 28, 2020 at 05:14:29PM +0100, Christoph Hellwig wrote:
-> Store the frozen superblock in struct block_device to avoid the awkward
-> interface that can return a sb only used a cookie, an ERR_PTR or NULL.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Acked-by: Chao Yu <yuchao0@huawei.com>		[f2fs]
+sorry, This patch will cause deadlock, i will check and redo it.
+
+On 11/30/20, Yi Li <yili@winhong.com> wrote:
+> bcache_device_detach will release the cache_set after hotunplug cache
+> disk. update_writeback_rate should check validate of cache_set.
+>
+>   IP: [<ffffffffa03730c9>] update_writeback_rate+0x59/0x3a0 [bcache]
+>   PGD 879620067 PUD 8755d3067 PMD 0
+>   Oops: 0000 [#1] SMP
+>   CPU: 8 PID: 1005702 Comm: kworker/8:0 Tainted: G 4.4.0+10 #1
+>   Hardware name: Intel BIOS SE5C610.86B.01.01.0021.032120170601 03/21/2017
+>   Workqueue: events update_writeback_rate [bcache]
+>   task: ffff8808786f3800 ti: ffff88077082c000 task.ti: ffff88077082c000
+>   RIP: e030:[<ffffffffa03730c9>] update_writeback_rate+0x59/0x3a0 [bcache]
+>   RSP: e02b:ffff88077082fde0  EFLAGS: 00010202
+>   RAX: 0000000000000018 RBX: ffff8808047f0b08 RCX: 0000000000000000
+>   RDX: 0000000000000001 RSI: ffff88088170dab8 RDI: ffff88088170dab8
+>   RBP: ffff88077082fe18 R08: 000000000000000a R09: 0000000000000000
+>   R10: 0000000000000000 R11: 0000000000017bc8 R12: 0000000000000000
+>   R13: ffff8808047f0000 R14: 0000000000000200 R15: ffff8808047f0b08
+>   FS:  00007f157b6d6700(0000) GS:ffff880881700000(0000)
+> knlGS:0000000000000000
+>   CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+>   CR2: 0000000000000368 CR3: 0000000875c05000 CR4: 0000000000040660
+>   Stack:
+>    0000000000000001 0000000000007ff0 ffff88085ff600c0 ffff880881714e80
+>    ffff880881719500 0000000000000200 ffff8808047f0b08 ffff88077082fe60
+>    ffffffff81088c0c 0000000081714e80 0000000000000000 ffff880881714e80
+>   Call Trace:
+>    [<ffffffff81088c0c>] process_one_work+0x1fc/0x3b0
+>    [<ffffffff81089575>] worker_thread+0x2a5/0x470
+>    [<ffffffff815a2f58>] ? __schedule+0x648/0x870
+>    [<ffffffff810892d0>] ? rescuer_thread+0x300/0x300
+>    [<ffffffff8108e3d5>] kthread+0xd5/0xe0
+>    [<ffffffff8108e300>] ? kthread_stop+0x110/0x110
+>    [<ffffffff815a704f>] ret_from_fork+0x3f/0x70
+>    [<ffffffff8108e300>] ? kthread_stop+0x110/0x110
+>
+> Reported-by: Guo Chao <guochao@winhong.com>
+> Signed-off-by: Guo Chao <guochao@winhong.com>
+> Signed-off-by: Yi Li <yili@winhong.com>
 > ---
->  drivers/md/dm-core.h      |  5 -----
->  drivers/md/dm.c           | 20 ++++++--------------
->  fs/block_dev.c            | 37 +++++++++++++++----------------------
->  fs/buffer.c               |  2 +-
->  fs/ext4/ioctl.c           |  2 +-
->  fs/f2fs/file.c            | 14 +++++---------
->  fs/xfs/xfs_fsops.c        |  7 ++-----
-
-For the xfs part:
-Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
-
-(I did glance at the other 44 patches and didn't see anything that
-screamed 'wrong' but I wouldn't call that a strong review...)
-
---D
-
->  include/linux/blk_types.h |  1 +
->  include/linux/blkdev.h    |  4 ++--
->  9 files changed, 33 insertions(+), 59 deletions(-)
-> 
-> diff --git a/drivers/md/dm-core.h b/drivers/md/dm-core.h
-> index d522093cb39dda..aace147effcacb 100644
-> --- a/drivers/md/dm-core.h
-> +++ b/drivers/md/dm-core.h
-> @@ -96,11 +96,6 @@ struct mapped_device {
->  	 */
->  	struct workqueue_struct *wq;
->  
-> -	/*
-> -	 * freeze/thaw support require holding onto a super block
-> -	 */
-> -	struct super_block *frozen_sb;
-> -
->  	/* forced geometry settings */
->  	struct hd_geometry geometry;
->  
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 54739f1b579bc8..50541d336c719b 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -2392,27 +2392,19 @@ static int lock_fs(struct mapped_device *md)
->  {
->  	int r;
->  
-> -	WARN_ON(md->frozen_sb);
-> +	WARN_ON(test_bit(DMF_FROZEN, &md->flags));
->  
-> -	md->frozen_sb = freeze_bdev(md->bdev);
-> -	if (IS_ERR(md->frozen_sb)) {
-> -		r = PTR_ERR(md->frozen_sb);
-> -		md->frozen_sb = NULL;
-> -		return r;
-> -	}
-> -
-> -	set_bit(DMF_FROZEN, &md->flags);
-> -
-> -	return 0;
-> +	r = freeze_bdev(md->bdev);
-> +	if (!r)
-> +		set_bit(DMF_FROZEN, &md->flags);
-> +	return r;
->  }
->  
->  static void unlock_fs(struct mapped_device *md)
->  {
->  	if (!test_bit(DMF_FROZEN, &md->flags))
+>  drivers/md/bcache/writeback.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+> index 3c74996978da..186c4c6e1607 100644
+> --- a/drivers/md/bcache/writeback.c
+> +++ b/drivers/md/bcache/writeback.c
+> @@ -175,7 +175,15 @@ static void update_writeback_rate(struct work_struct
+> *work)
+>  	struct cached_dev *dc = container_of(to_delayed_work(work),
+>  					     struct cached_dev,
+>  					     writeback_rate_update);
+> -	struct cache_set *c = dc->disk.c;
+> +	struct cache_set *c = NULL;
+> +
+> +	mutex_lock(&bch_register_lock);
+> +	c = dc->disk.c;
+> +
+> +	if (c == NULL) {
+> +		mutex_unlock(&bch_register_lock);
+> +		return;
+> +	}
+>
+>  	/*
+>  	 * should check BCACHE_DEV_RATE_DW_RUNNING before calling
+> @@ -194,6 +202,7 @@ static void update_writeback_rate(struct work_struct
+> *work)
+>  		clear_bit(BCACHE_DEV_RATE_DW_RUNNING, &dc->disk.flags);
+>  		/* paired with where BCACHE_DEV_RATE_DW_RUNNING is tested */
+>  		smp_mb__after_atomic();
+> +		mutex_unlock(&bch_register_lock);
 >  		return;
-> -
-> -	thaw_bdev(md->bdev, md->frozen_sb);
-> -	md->frozen_sb = NULL;
-> +	thaw_bdev(md->bdev);
->  	clear_bit(DMF_FROZEN, &md->flags);
->  }
->  
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index d8664f5c1ff669..33c29106c98907 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -548,55 +548,47 @@ EXPORT_SYMBOL(fsync_bdev);
->   * count down in thaw_bdev(). When it becomes 0, thaw_bdev() will unfreeze
->   * actually.
->   */
-> -struct super_block *freeze_bdev(struct block_device *bdev)
-> +int freeze_bdev(struct block_device *bdev)
->  {
->  	struct super_block *sb;
->  	int error = 0;
->  
->  	mutex_lock(&bdev->bd_fsfreeze_mutex);
-> -	if (++bdev->bd_fsfreeze_count > 1) {
-> -		/*
-> -		 * We don't even need to grab a reference - the first call
-> -		 * to freeze_bdev grab an active reference and only the last
-> -		 * thaw_bdev drops it.
-> -		 */
-> -		sb = get_super(bdev);
-> -		if (sb)
-> -			drop_super(sb);
-> -		mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> -		return sb;
-> -	}
-> +	if (++bdev->bd_fsfreeze_count > 1)
-> +		goto done;
->  
->  	sb = get_active_super(bdev);
->  	if (!sb)
-> -		goto out;
-> +		goto sync;
->  	if (sb->s_op->freeze_super)
->  		error = sb->s_op->freeze_super(sb);
->  	else
->  		error = freeze_super(sb);
-> +	deactivate_super(sb);
-> +
->  	if (error) {
-> -		deactivate_super(sb);
->  		bdev->bd_fsfreeze_count--;
-> -		mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> -		return ERR_PTR(error);
-> +		goto done;
 >  	}
-> -	deactivate_super(sb);
-> - out:
-> +	bdev->bd_fsfreeze_sb = sb;
-> +
-> +sync:
->  	sync_blockdev(bdev);
-> +done:
->  	mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> -	return sb;	/* thaw_bdev releases s->s_umount */
-> +	return error;
+>
+> @@ -230,6 +239,7 @@ static void update_writeback_rate(struct work_struct
+> *work)
+>  	clear_bit(BCACHE_DEV_RATE_DW_RUNNING, &dc->disk.flags);
+>  	/* paired with where BCACHE_DEV_RATE_DW_RUNNING is tested */
+>  	smp_mb__after_atomic();
+> +	mutex_unlock(&bch_register_lock);
 >  }
->  EXPORT_SYMBOL(freeze_bdev);
->  
->  /**
->   * thaw_bdev  -- unlock filesystem
->   * @bdev:	blockdevice to unlock
-> - * @sb:		associated superblock
->   *
->   * Unlocks the filesystem and marks it writeable again after freeze_bdev().
->   */
-> -int thaw_bdev(struct block_device *bdev, struct super_block *sb)
-> +int thaw_bdev(struct block_device *bdev)
->  {
-> +	struct super_block *sb;
->  	int error = -EINVAL;
->  
->  	mutex_lock(&bdev->bd_fsfreeze_mutex);
-> @@ -607,6 +599,7 @@ int thaw_bdev(struct block_device *bdev, struct super_block *sb)
->  	if (--bdev->bd_fsfreeze_count > 0)
->  		goto out;
->  
-> +	sb = bdev->bd_fsfreeze_sb;
->  	if (!sb)
->  		goto out;
->  
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 23f645657488ba..a7595ada9400ff 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -523,7 +523,7 @@ static int osync_buffers_list(spinlock_t *lock, struct list_head *list)
->  
->  void emergency_thaw_bdev(struct super_block *sb)
->  {
-> -	while (sb->s_bdev && !thaw_bdev(sb->s_bdev, sb))
-> +	while (sb->s_bdev && !thaw_bdev(sb->s_bdev))
->  		printk(KERN_WARNING "Emergency Thaw on %pg\n", sb->s_bdev);
->  }
->  
-> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> index f0381876a7e5b0..524e134324475e 100644
-> --- a/fs/ext4/ioctl.c
-> +++ b/fs/ext4/ioctl.c
-> @@ -624,7 +624,7 @@ static int ext4_shutdown(struct super_block *sb, unsigned long arg)
->  	case EXT4_GOING_FLAGS_DEFAULT:
->  		freeze_bdev(sb->s_bdev);
->  		set_bit(EXT4_FLAGS_SHUTDOWN, &sbi->s_ext4_flags);
-> -		thaw_bdev(sb->s_bdev, sb);
-> +		thaw_bdev(sb->s_bdev);
->  		break;
->  	case EXT4_GOING_FLAGS_LOGFLUSH:
->  		set_bit(EXT4_FLAGS_SHUTDOWN, &sbi->s_ext4_flags);
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index ee861c6d9ff026..a9fc482a0e60a5 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -2230,16 +2230,12 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
->  
->  	switch (in) {
->  	case F2FS_GOING_DOWN_FULLSYNC:
-> -		sb = freeze_bdev(sb->s_bdev);
-> -		if (IS_ERR(sb)) {
-> -			ret = PTR_ERR(sb);
-> +		ret = freeze_bdev(sb->s_bdev);
-> +		if (ret)
->  			goto out;
-> -		}
-> -		if (sb) {
-> -			f2fs_stop_checkpoint(sbi, false);
-> -			set_sbi_flag(sbi, SBI_IS_SHUTDOWN);
-> -			thaw_bdev(sb->s_bdev, sb);
-> -		}
-> +		f2fs_stop_checkpoint(sbi, false);
-> +		set_sbi_flag(sbi, SBI_IS_SHUTDOWN);
-> +		thaw_bdev(sb->s_bdev);
->  		break;
->  	case F2FS_GOING_DOWN_METASYNC:
->  		/* do checkpoint only */
-> diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
-> index ef1d5bb88b93ab..b7c5783a031c69 100644
-> --- a/fs/xfs/xfs_fsops.c
-> +++ b/fs/xfs/xfs_fsops.c
-> @@ -433,13 +433,10 @@ xfs_fs_goingdown(
->  {
->  	switch (inflags) {
->  	case XFS_FSOP_GOING_FLAGS_DEFAULT: {
-> -		struct super_block *sb = freeze_bdev(mp->m_super->s_bdev);
-> -
-> -		if (sb && !IS_ERR(sb)) {
-> +		if (!freeze_bdev(mp->m_super->s_bdev)) {
->  			xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
-> -			thaw_bdev(sb->s_bdev, sb);
-> +			thaw_bdev(mp->m_super->s_bdev);
->  		}
-> -
->  		break;
->  	}
->  	case XFS_FSOP_GOING_FLAGS_LOGFLUSH:
-> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> index d9b69bbde5cc54..ebfb4e7c1fd125 100644
-> --- a/include/linux/blk_types.h
-> +++ b/include/linux/blk_types.h
-> @@ -46,6 +46,7 @@ struct block_device {
->  	int			bd_fsfreeze_count;
->  	/* Mutex for freeze */
->  	struct mutex		bd_fsfreeze_mutex;
-> +	struct super_block	*bd_fsfreeze_sb;
->  } __randomize_layout;
->  
->  /*
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index 05b346a68c2eee..12810a19edebc4 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -2020,7 +2020,7 @@ static inline int sync_blockdev(struct block_device *bdev)
->  #endif
->  int fsync_bdev(struct block_device *bdev);
->  
-> -struct super_block *freeze_bdev(struct block_device *bdev);
-> -int thaw_bdev(struct block_device *bdev, struct super_block *sb);
-> +int freeze_bdev(struct block_device *bdev);
-> +int thaw_bdev(struct block_device *bdev);
->  
->  #endif /* _LINUX_BLKDEV_H */
-> -- 
-> 2.29.2
-> 
+>
+>  static unsigned int writeback_delay(struct cached_dev *dc,
+> --
+> 2.25.3
+>
+>
+>
+>
