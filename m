@@ -2,75 +2,79 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 728692CCA1A
-	for <lists+linux-bcache@lfdr.de>; Wed,  2 Dec 2020 23:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96A202CCA45
+	for <lists+linux-bcache@lfdr.de>; Thu,  3 Dec 2020 00:07:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbgLBW5A (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 2 Dec 2020 17:57:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37040 "EHLO
+        id S1728466AbgLBXGb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 2 Dec 2020 18:06:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbgLBW5A (ORCPT
+        with ESMTP id S1726082AbgLBXGb (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 2 Dec 2020 17:57:00 -0500
-Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 275B3C0613D6;
-        Wed,  2 Dec 2020 14:56:20 -0800 (PST)
-Received: by mail-qv1-xf44.google.com with SMTP id es6so67768qvb.7;
-        Wed, 02 Dec 2020 14:56:20 -0800 (PST)
+        Wed, 2 Dec 2020 18:06:31 -0500
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49EDEC0617A6;
+        Wed,  2 Dec 2020 15:05:51 -0800 (PST)
+Received: by mail-qk1-x741.google.com with SMTP id u4so413670qkk.10;
+        Wed, 02 Dec 2020 15:05:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=IBFDTpo6HCPZ58+V0bzhRqACm4PvOWR/Et5h/3XwaU8=;
-        b=TvWJEJnUJXkGMOnX7Dz1P7yeuQgJ1YxF/HGwdmJgn5aWVXw2iJYs/WoINnhJCLLomM
-         BHuAC/cg9xdRxnyG2ZYHgFc/VZPO/i1Vr0bl63/bw1Qwc10Im7/CdPamN42BGX5Pyrkm
-         2QTIrpKFl5CvbUQp8oHAxzOgdOwUt5YDruTWmpPEgRg3c+q6F/WzHqA9MsQzEr/9l1bb
-         p+cI6kRoEELTHzqHnOHUQ7YtYkSmMtpVbhUOIzF4gqrmYxODwA/KKTDJts55frFt0/QE
-         3GS3pxjUYuOWopqR97VaLOVKtcAMsRmVIFvGYgVxIlmnKVRkRo1a3EY7/K54ktz9Mekr
-         cXQQ==
+        bh=NHfol06cSqlCCrl5YsPDHdTrQXLbo8wKJWGeGJlSsmE=;
+        b=iSSRK2q3Pvd1F5lqJeQ7hyd0kV7Sn11M84d0rzQ/CdliWC4y68pC30Bbd3FxUg5Foj
+         Ss3br/XUNv+2eaDVMKAcAgvXp2UiDVXY43+WXvzfyK91itPfKLEX7Igwox5YYMmkrvoX
+         yrO8jG08QA3USxnSUc56chGjCYnVU8FVvJ9+mNMvmnHBvCpauC5ul9ocaX/4VDRICbNs
+         9J3yJ6IFoLGABMGUkQyBXRBWXyhTDkR3Q3ZgEhgppo/jlHiwugdxQee6SpSNmwj3QvJw
+         3G+bFXmIMb/yIDPI5/sJdfBQHQuWLIVgkBR7oHVO7qjYEsIMM4om1ep8LUh6++YNkEGY
+         p4WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to;
-        bh=IBFDTpo6HCPZ58+V0bzhRqACm4PvOWR/Et5h/3XwaU8=;
-        b=GyG/axJt0sU49zvHCHRIlM4n79xl/B/Km4COSk+Lgoac9jPyNFwBIvVgUrL6IhrZZG
-         uYABYFAHIq8PDN5ImKmfPYFGRXEpj9i2KnKxPOahTeP+0PGJOV6dQYnlhu8VyuDlWkX/
-         IsA245td1g4EHOY+qA275LkpNUW9oWPI7EX+lfoJeIPuGYITwC/O3pjn8hAI1v2I2N45
-         eGytkgIUYZqIY4CIWEcnTXZGe7PuJ2/qbh2pVbC3PPszX5BPyjKLavd+uGWAUPVGwMRD
-         7urLR75Rk3pWtxSFn4ri24Q3xvwbWjGvDOrRR+7aPUKphQUEwepW2I8HtnEzHyfaHEhZ
-         J1GQ==
-X-Gm-Message-State: AOAM531i/N68uO4GxJWIx4xSb9EgtbKTiUkhL3idssKnqmnFi/3ugoMp
-        JIeXRZpnGX22Iw8j34Ifz90=
-X-Google-Smtp-Source: ABdhPJwJibtRzDad60HT36HN6FnIXnXcdBaU9HV0uJhnDSuilp3rwyjJsTTbCkE48vAEqp+9FbP8ZA==
-X-Received: by 2002:ad4:4ee7:: with SMTP id dv7mr420732qvb.43.1606949779283;
-        Wed, 02 Dec 2020 14:56:19 -0800 (PST)
+        bh=NHfol06cSqlCCrl5YsPDHdTrQXLbo8wKJWGeGJlSsmE=;
+        b=DZMCXJkhWYyiJQ/AxiGc7MY1PwdUbu3GIe+UUr7q63FvISyEu94Jpw0I658E8vspNd
+         LDYIcniMsRAJnBPzsXc2p6S0qhGEOmYClkDo4r+CtCn9BOPgBOmTLIrh4cQ5l61NYOc0
+         71fzk26HrC7YbeAFSnE+Tfk1yNPYaZbq0NpjL0VJxkx9OY8sIF3oCrC4FhjxVJDiS/pB
+         SdKjk5F4LQ83TXuheeIJqbzCoyMsW/NWax+othxHMLUXpL2MwWrWtWY+9vlZDSOUYXjv
+         PQZdDXKhLF5NHlKTAdATEK1qxe4nTXYe49Ek1YiDqmGGZ9rZp2hgiUoGVTcFLjXILZ3e
+         8G2A==
+X-Gm-Message-State: AOAM533GVuQjvV90IAkG/Ce5YskMggIoVgvMOCe4l+ktwnmW/LYU4HjG
+        a8wxeXA40070RJQyhDQ8TTk=
+X-Google-Smtp-Source: ABdhPJylOQn1ChoyZHml9j4uxp+LB+QzMjhGewJQojxlvSyi/AQikfiEJcPaQK9vpNDOdB/iqObIXg==
+X-Received: by 2002:a37:64f:: with SMTP id 76mr114596qkg.260.1606950350503;
+        Wed, 02 Dec 2020 15:05:50 -0800 (PST)
 Received: from localhost ([2620:10d:c091:480::1:ec0f])
-        by smtp.gmail.com with ESMTPSA id q123sm100474qke.28.2020.12.02.14.56.18
+        by smtp.gmail.com with ESMTPSA id w31sm433235qth.60.2020.12.02.15.05.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Dec 2020 14:56:18 -0800 (PST)
+        Wed, 02 Dec 2020 15:05:49 -0800 (PST)
 Sender: Tejun Heo <htejun@gmail.com>
-Date:   Wed, 2 Dec 2020 17:55:50 -0500
+Date:   Wed, 2 Dec 2020 18:05:21 -0500
 From:   Tejun Heo <tj@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Coly Li <colyli@suse.de>,
         Song Liu <song@kernel.org>, dm-devel@redhat.com,
         linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
         linux-s390@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 4/9] block: simplify submit_bio_checks a bit
-Message-ID: <X8gbdmOWK46JTUwX@mtj.duckdns.org>
+Subject: Re: [PATCH 5/9] block: use ->bi_bdev for bio based I/O accounting
+Message-ID: <X8gdscx01GT9vJyp@mtj.duckdns.org>
 References: <20201201165424.2030647-1-hch@lst.de>
- <20201201165424.2030647-5-hch@lst.de>
+ <20201201165424.2030647-6-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201201165424.2030647-5-hch@lst.de>
+In-Reply-To: <20201201165424.2030647-6-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, Dec 01, 2020 at 05:54:19PM +0100, Christoph Hellwig wrote:
-> Merge a few checks for whole devices vs partitions to streamline the
-> sanity checks.
+On Tue, Dec 01, 2020 at 05:54:20PM +0100, Christoph Hellwig wrote:
+> Rework the I/O accounting for bio based drivers to use ->bi_bdev.  This
+> means all drivers can now simply use bio_start_io_acct to start
+> accounting, and it will take partitions into account automatically.  To
+> end I/O account either bio_end_io_acct can be used if the driver never
+> remaps I/O to a different device, or bio_end_io_acct_remapped if the
+> driver did remap the I/O.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
