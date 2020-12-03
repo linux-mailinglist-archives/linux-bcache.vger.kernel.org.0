@@ -2,131 +2,103 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B9B092CD217
-	for <lists+linux-bcache@lfdr.de>; Thu,  3 Dec 2020 10:09:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A8C52CD299
+	for <lists+linux-bcache@lfdr.de>; Thu,  3 Dec 2020 10:36:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729936AbgLCJH0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 3 Dec 2020 04:07:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46262 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728037AbgLCJHZ (ORCPT
+        id S1728962AbgLCJd4 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 3 Dec 2020 04:33:56 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36565 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728912AbgLCJdz (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 3 Dec 2020 04:07:25 -0500
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B40C061A4D;
-        Thu,  3 Dec 2020 01:06:45 -0800 (PST)
-Received: by mail-pj1-x1043.google.com with SMTP id j13so758889pjz.3;
-        Thu, 03 Dec 2020 01:06:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=x090Pi/p4YdcyRoV862Kj0ZiAvBp3vZ9F7IWYK4ZvKQ=;
-        b=ckqlCtgiG+ueA5VyNM+O63WETRQ7o586/ee4FYil95hEwBqRa6XNfo9DmTIRJhtGvU
-         yM/nMHEzU0A54LWTZkNZnkYQajIPFM2hViIbMZnao4fBrcdOAEe0SdbnrQnsQMwak2HP
-         wWEa70jJ+oC7e1NOAJoR/SmfkphdRmqSfLbmrSr1zOilYivX8qTIAyhvVaRKLWP9xoD1
-         9YWJL8QInRf55bH0dmDdQft226UAtNeuQsX+ROB7Bnz4sY66IxcroM1nlAsEA50JhEc0
-         bp3J/CAx5nd+UXkJsTkhURdof2tlIjC4jYzKMhMEpz8CtEYb0R6uTHvoeYVzEphjcTSF
-         DVSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=x090Pi/p4YdcyRoV862Kj0ZiAvBp3vZ9F7IWYK4ZvKQ=;
-        b=AwCuv7ey3bgu6fYXDmyEkeQ6n36fI4rCXwEmSDTOigCbBk7S4wxbeXlOcEzQLUugsI
-         Pyy239ekCV1PrFcTcUAprk5TSVgoHwlY1lYFXwl6JPICDP3drD8vMI4S0c6eIgcsjmQt
-         4jdIKAQdtdvMC+JojcpVo7atd6UxRUPhXOK+FEwDLgHFPj0Ln6/9N3H8eBVDjkr4uIQ/
-         FqldR6rQgfZ+qEbYfkuMy5B6ifbhtBfbsn2fcEMXlQcttYyucEEgooF4q9CNKktXZ84h
-         Ahu4fX3Msp5z7k6aJZrM1KpKKJAV18yig8mw0tVhyn2Vx2iOGXQwSKE9M/1mThGYZ+Rh
-         Q44A==
-X-Gm-Message-State: AOAM531SaQErBYGVbifCHqsuetK6sogRLoZwWLIOR9b5mDZzYATtjgGE
-        Fsw4q8SzXeXrpK3IuhnSgxhMHDdxSfTXkJ9jnRe8ocXdTJo=
-X-Google-Smtp-Source: ABdhPJxBpL93a9A1Kw9XZK+wssGAmhgxWbnJ6xbNVEzFbIPfkDK2Lq0Rb/qA8hxQQ/DUxisYvpqdtkBglwBoBth9FrI=
-X-Received: by 2002:a17:902:bd98:b029:d9:7b0:e1e5 with SMTP id
- q24-20020a170902bd98b02900d907b0e1e5mr2151870pls.77.1606986404968; Thu, 03
- Dec 2020 01:06:44 -0800 (PST)
+        Thu, 3 Dec 2020 04:33:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606987949;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Jmel3tjqsc7Vgh83Ue1t0WC/6y10c9bSGUCqUms/GTA=;
+        b=SA955Vg9pU/nas6chvuaaMkLB99bJuAz3UOZo6h4SHZgH92omw8FOAWIn+8RXLS8yqjI7n
+        flKn8awGYUKrVpK2y2Wf3GnuVKzhEhLiNGogs0Gq+YPvyI6SKQAzWLwsPKzZdrNqgjXRWH
+        bHv2ti+Jy0c7Un8aYMV6zSEkp6yYyYQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-337-oQcaGzWtP5-v7yXp30SHvg-1; Thu, 03 Dec 2020 04:32:25 -0500
+X-MC-Unique: oQcaGzWtP5-v7yXp30SHvg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D5D9185E497;
+        Thu,  3 Dec 2020 09:32:24 +0000 (UTC)
+Received: from T590 (ovpn-13-173.pek2.redhat.com [10.72.13.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 627CB1899A;
+        Thu,  3 Dec 2020 09:32:10 +0000 (UTC)
+Date:   Thu, 3 Dec 2020 17:32:01 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Coly Li <colyli@suse.de>, Song Liu <song@kernel.org>,
+        dm-devel@redhat.com, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH 3/9] block: store a block_device pointer in struct bio
+Message-ID: <20201203093201.GC633702@T590>
+References: <20201201165424.2030647-1-hch@lst.de>
+ <20201201165424.2030647-4-hch@lst.de>
+ <20201203063941.GA629758@T590>
+ <20201203071055.GA633702@T590>
+ <20201203082951.GA15581@lst.de>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:7886:0:0:0:0 with HTTP; Thu, 3 Dec 2020 01:06:44
- -0800 (PST)
-In-Reply-To: <79fde596-254a-510c-547a-b1525985de9d@suse.de>
-References: <20201130112137.587437-1-yili@winhong.com> <CAJfdMYDnDJXFVfEECtQ9-E4F9kfsF035PH+x3kaVn6PPSYCydA@mail.gmail.com>
- <b838b790-e1e3-d644-2b1c-5de02a10669f@suse.de> <CAJfdMYCbkAZtWpJ6sgsrRnV4i+5sRahaq-ktMjqcG1JXoazmGQ@mail.gmail.com>
- <79fde596-254a-510c-547a-b1525985de9d@suse.de>
-From:   Yi Li <yilikernel@gmail.com>
-Date:   Thu, 3 Dec 2020 17:06:44 +0800
-Message-ID: <CAJfdMYDLydAtoxvPGzaQ+K5jLvwAXg6MvpE-OM9sFjZgz_01sQ@mail.gmail.com>
-Subject: Re: [PATCH] bcache: fix panic due to cache_set is null
-To:     Coly Li <colyli@suse.de>
-Cc:     Yi Li <yili@winhong.com>, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guo Chao <guochao@winhong.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201203082951.GA15581@lst.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The root cause:
+On Thu, Dec 03, 2020 at 09:29:51AM +0100, Christoph Hellwig wrote:
+> On Thu, Dec 03, 2020 at 03:10:55PM +0800, Ming Lei wrote:
+> > On Thu, Dec 03, 2020 at 02:40:04PM +0800, Ming Lei wrote:
+> > > On Tue, Dec 01, 2020 at 05:54:18PM +0100, Christoph Hellwig wrote:
+> > > > Replace the gendisk pointer in struct bio with a pointer to the newly
+> > > > improved struct block device.  From that the gendisk can be trivially
+> > > > accessed with an extra indirection, but it also allows to directly
+> > > > look up all information related to partition remapping.
+> > > 
+> > > The extra indirection is often done in fast path, so just wondering why
+> > > you don't consider to embed gendisk into block_device? Then the extra
+> > > indirection can be avoided.
+> > 
+> > oops, that is only possible for disk, and indirection is still needed
+> > for partitions.
+> 
+> I looked into that, but given that the block device is allocated as part
+> of the inode we'd need to tell ->alloc_inode if we want to allocate the
+> small inode without the gendisk, or the large one with it which doesn't
+> work with the current interface.
 
-After just  cached_dev_free do cancel_writeback_rate_update_dwork
-without bch_register_lock
-.
-at the same time. Wirting the writeback_percent by sysfs witch
-bch_register_lock will insert a writeback_rate_update work.
+I guess it could be done without fs code change, because now block device is
+always allocated by bdev_alloc() since 22ae8ce8b892("block: simplify bdev/disk
+lookup in blkdev_get"). And one manual inode allocation with a bit duplication
+from new_inode_pseudo() should be fine:
 
-cached_dev_free with bch_register_lock to do bcache_device_free.
+	allocate big inode for disk, and small for partition
+	inode_init_always(sb, inode);
+    if (inode) {
+            spin_lock(&inode->i_lock);
+            inode->i_state = 0;
+            spin_unlock(&inode->i_lock);
+            INIT_LIST_HEAD(&inode->i_sb_list);
+			inode_sb_list_add(inode);
+    }
 
-(it is introduce by patch 80265d8dfd77792e133793cef44a21323aac2908)
+> Beause the hd_struct is gone we're
+> still not using more structures in the I/O path than we did before.
 
-pls=EF=BC=9A
-1=EF=BC=9A run the shell script
-#!/bin/bash
-while [ true ]
-do
-        echo 0 > /sys/block/bcache0/bcache/writeback_percent
-done
-
-2: hotplug the cache disk
+Indeed, and block_device instance is often cached in IO path.
 
 
-On 12/3/20, Coly Li <colyli@suse.de> wrote:
-> On 12/3/20 2:25 PM, Yi Li wrote:
->>> On 12/1/20 12:35 PM, Yi Li wrote:
->>>> sorry, This patch will cause deadlock, i will check and redo it.
->>>
->>> Can you try latest upstream kernel firstly ? Before spending more time
->>> on the fix.
->>>
->>
->> This issue just happened three times =EF=BC=88xenserver7.5 dom0 kernel=
-=EF=BC=89 on the
->> same machine and cannot reproduce it now. and have not reproduce it
->> using the lastest uptream kernel.
->>
->
-> Hmm, this is something very probably that I am not able to help. It
-> seems the kernel is a third-part maintained Linux v4.4 based kernel +
-> bcache backport, which is out of my view.
->
-> If similar problem happens on latest upstream kernel, or at least v5.8+
-> kernel, I can help to take a look.
->
->
->>> If I remember correctly, when cancel_writeback_rate_update_dwork() is
->>> not timed out, the cache set memory won't be freed before the
->>> writeback_rate_update worker terminates. It is possible that I miss
->>> something in the code, but I suggest to test with a kernel after v5.3,
->>> and better a v5.8+ kernel.
->>>
->>> Coly Li
->>>
->> Thanks.
->>
->> it is  confused that why writeback_rate_update worker run  again after
->> cancel_delayed_work_sync( kernel log telled).
->>
->
-> [snipped]
->
-> Coly Li
->
+thanks,
+Ming
+
