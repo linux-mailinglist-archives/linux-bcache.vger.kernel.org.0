@@ -2,103 +2,132 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8C52CD299
-	for <lists+linux-bcache@lfdr.de>; Thu,  3 Dec 2020 10:36:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38F372CD2F3
+	for <lists+linux-bcache@lfdr.de>; Thu,  3 Dec 2020 10:53:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbgLCJd4 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 3 Dec 2020 04:33:56 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36565 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728912AbgLCJdz (ORCPT
+        id S2387563AbgLCJxP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 3 Dec 2020 04:53:15 -0500
+Received: from regular1.263xmail.com ([211.150.70.206]:42772 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387548AbgLCJxO (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 3 Dec 2020 04:33:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606987949;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Jmel3tjqsc7Vgh83Ue1t0WC/6y10c9bSGUCqUms/GTA=;
-        b=SA955Vg9pU/nas6chvuaaMkLB99bJuAz3UOZo6h4SHZgH92omw8FOAWIn+8RXLS8yqjI7n
-        flKn8awGYUKrVpK2y2Wf3GnuVKzhEhLiNGogs0Gq+YPvyI6SKQAzWLwsPKzZdrNqgjXRWH
-        bHv2ti+Jy0c7Un8aYMV6zSEkp6yYyYQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-337-oQcaGzWtP5-v7yXp30SHvg-1; Thu, 03 Dec 2020 04:32:25 -0500
-X-MC-Unique: oQcaGzWtP5-v7yXp30SHvg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D5D9185E497;
-        Thu,  3 Dec 2020 09:32:24 +0000 (UTC)
-Received: from T590 (ovpn-13-173.pek2.redhat.com [10.72.13.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 627CB1899A;
-        Thu,  3 Dec 2020 09:32:10 +0000 (UTC)
-Date:   Thu, 3 Dec 2020 17:32:01 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Coly Li <colyli@suse.de>, Song Liu <song@kernel.org>,
-        dm-devel@redhat.com, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH 3/9] block: store a block_device pointer in struct bio
-Message-ID: <20201203093201.GC633702@T590>
-References: <20201201165424.2030647-1-hch@lst.de>
- <20201201165424.2030647-4-hch@lst.de>
- <20201203063941.GA629758@T590>
- <20201203071055.GA633702@T590>
- <20201203082951.GA15581@lst.de>
+        Thu, 3 Dec 2020 04:53:14 -0500
+Received: from localhost (unknown [192.168.167.32])
+        by regular1.263xmail.com (Postfix) with ESMTP id 1C2D71B17;
+        Thu,  3 Dec 2020 17:47:24 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from localhost.localdomain (unknown [14.18.236.70])
+        by smtp.263.net (postfix) whith ESMTP id P26670T140451924260608S1606988834214421_;
+        Thu, 03 Dec 2020 17:47:23 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <4add3ead76855a29643536f784f1c7d0>
+X-RL-SENDER: yili@winhong.com
+X-SENDER: yili@winhong.com
+X-LOGIN-NAME: yili@winhong.com
+X-FST-TO: colyli@suse.de
+X-SENDER-IP: 14.18.236.70
+X-ATTACHMENT-NUM: 0
+X-System-Flag: 0
+From:   Yi Li <yili@winhong.com>
+To:     colyli@suse.de
+Cc:     yilikernel@gmail.com, kent.overstreet@gmail.com,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yi Li <yili@winhong.com>, Guo Chao <guochao@winhong.com>
+Subject: [PATCH v2] bcache: fix panic due to cache_set is null
+Date:   Thu,  3 Dec 2020 17:47:11 +0800
+Message-Id: <20201203094711.3236551-1-yili@winhong.com>
+X-Mailer: git-send-email 2.25.3
+In-Reply-To: <CAJfdMYDLydAtoxvPGzaQ+K5jLvwAXg6MvpE-OM9sFjZgz_01sQ@mail.gmail.com>
+References: <CAJfdMYDLydAtoxvPGzaQ+K5jLvwAXg6MvpE-OM9sFjZgz_01sQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201203082951.GA15581@lst.de>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Thu, Dec 03, 2020 at 09:29:51AM +0100, Christoph Hellwig wrote:
-> On Thu, Dec 03, 2020 at 03:10:55PM +0800, Ming Lei wrote:
-> > On Thu, Dec 03, 2020 at 02:40:04PM +0800, Ming Lei wrote:
-> > > On Tue, Dec 01, 2020 at 05:54:18PM +0100, Christoph Hellwig wrote:
-> > > > Replace the gendisk pointer in struct bio with a pointer to the newly
-> > > > improved struct block device.  From that the gendisk can be trivially
-> > > > accessed with an extra indirection, but it also allows to directly
-> > > > look up all information related to partition remapping.
-> > > 
-> > > The extra indirection is often done in fast path, so just wondering why
-> > > you don't consider to embed gendisk into block_device? Then the extra
-> > > indirection can be avoided.
-> > 
-> > oops, that is only possible for disk, and indirection is still needed
-> > for partitions.
-> 
-> I looked into that, but given that the block device is allocated as part
-> of the inode we'd need to tell ->alloc_inode if we want to allocate the
-> small inode without the gendisk, or the large one with it which doesn't
-> work with the current interface.
+bcache_device_detach will release the cache_set after hotunplug cache
+disk.
 
-I guess it could be done without fs code change, because now block device is
-always allocated by bdev_alloc() since 22ae8ce8b892("block: simplify bdev/disk
-lookup in blkdev_get"). And one manual inode allocation with a bit duplication
-from new_inode_pseudo() should be fine:
+Here is how the issue happens.
+1) cached_dev_free do cancel_writeback_rate_update_dwork
+   without bch_register_lock.
+2) Wirting the writeback_percent by sysfs with
+   bch_register_lock will insert a writeback_rate_update work.
+3) cached_dev_free with bch_register_lock to do bcache_device_free.
+   dc->disk.cl will be set NULL
+4) update_writeback_rate will crash when access dc->disk.cl
 
-	allocate big inode for disk, and small for partition
-	inode_init_always(sb, inode);
-    if (inode) {
-            spin_lock(&inode->i_lock);
-            inode->i_state = 0;
-            spin_unlock(&inode->i_lock);
-            INIT_LIST_HEAD(&inode->i_sb_list);
-			inode_sb_list_add(inode);
-    }
+Fixes: 80265d8dfd77 ("bcache: acquire bch_register_lock later in cached_dev_free()")
 
-> Beause the hd_struct is gone we're
-> still not using more structures in the I/O path than we did before.
+  IP: [<ffffffffa03730c9>] update_writeback_rate+0x59/0x3a0 [bcache]
+  PGD 879620067 PUD 8755d3067 PMD 0
+  Oops: 0000 [#1] SMP
+  CPU: 8 PID: 1005702 Comm: kworker/8:0 Tainted: G 4.4.0+10 #1
+  Hardware name: Intel BIOS SE5C610.86B.01.01.0021.032120170601 03/21/2017
+  Workqueue: events update_writeback_rate [bcache]
+  task: ffff8808786f3800 ti: ffff88077082c000 task.ti: ffff88077082c000
+  RIP: e030:[<ffffffffa03730c9>] update_writeback_rate+0x59/0x3a0 [bcache]
+  RSP: e02b:ffff88077082fde0  EFLAGS: 00010202
+  RAX: 0000000000000018 RBX: ffff8808047f0b08 RCX: 0000000000000000
+  RDX: 0000000000000001 RSI: ffff88088170dab8 RDI: ffff88088170dab8
+  RBP: ffff88077082fe18 R08: 000000000000000a R09: 0000000000000000
+  R10: 0000000000000000 R11: 0000000000017bc8 R12: 0000000000000000
+  R13: ffff8808047f0000 R14: 0000000000000200 R15: ffff8808047f0b08
+  FS:  00007f157b6d6700(0000) GS:ffff880881700000(0000) knlGS:0000000000000000
+  CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 0000000000000368 CR3: 0000000875c05000 CR4: 0000000000040660
+  Stack:
+   0000000000000001 0000000000007ff0 ffff88085ff600c0 ffff880881714e80
+   ffff880881719500 0000000000000200 ffff8808047f0b08 ffff88077082fe60
+   ffffffff81088c0c 0000000081714e80 0000000000000000 ffff880881714e80
+  Call Trace:
+   [<ffffffff81088c0c>] process_one_work+0x1fc/0x3b0
+   [<ffffffff81089575>] worker_thread+0x2a5/0x470
+   [<ffffffff815a2f58>] ? __schedule+0x648/0x870
+   [<ffffffff810892d0>] ? rescuer_thread+0x300/0x300
+   [<ffffffff8108e3d5>] kthread+0xd5/0xe0
+   [<ffffffff8108e300>] ? kthread_stop+0x110/0x110
+   [<ffffffff815a704f>] ret_from_fork+0x3f/0x70
+   [<ffffffff8108e300>] ? kthread_stop+0x110/0x110
 
-Indeed, and block_device instance is often cached in IO path.
+Reported-by: Guo Chao <guochao@winhong.com>
+Signed-off-by: Yi Li <yili@winhong.com>
+---
+ drivers/md/bcache/super.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 46a00134a36a..8b341f756ac0 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1334,9 +1334,6 @@ static void cached_dev_free(struct closure *cl)
+ {
+ 	struct cached_dev *dc = container_of(cl, struct cached_dev, disk.cl);
+ 
+-	if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
+-		cancel_writeback_rate_update_dwork(dc);
+-
+ 	if (!IS_ERR_OR_NULL(dc->writeback_thread))
+ 		kthread_stop(dc->writeback_thread);
+ 	if (!IS_ERR_OR_NULL(dc->status_update_thread))
+@@ -1344,6 +1341,9 @@ static void cached_dev_free(struct closure *cl)
+ 
+ 	mutex_lock(&bch_register_lock);
+ 
++	if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
++		cancel_writeback_rate_update_dwork(dc);
++
+ 	if (atomic_read(&dc->running))
+ 		bd_unlink_disk_holder(dc->bdev, dc->disk.disk);
+ 	bcache_device_free(&dc->disk);
+-- 
+2.25.3
 
 
-thanks,
-Ming
 
