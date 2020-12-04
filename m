@@ -2,158 +2,90 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9622C2CE7E4
-	for <lists+linux-bcache@lfdr.de>; Fri,  4 Dec 2020 07:01:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CCC12CF225
+	for <lists+linux-bcache@lfdr.de>; Fri,  4 Dec 2020 17:46:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725550AbgLDGBP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 4 Dec 2020 01:01:15 -0500
-Received: from regular1.263xmail.com ([211.150.70.206]:44172 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbgLDGBP (ORCPT
+        id S1730928AbgLDQns (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 4 Dec 2020 11:43:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58248 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728382AbgLDQns (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 4 Dec 2020 01:01:15 -0500
-Received: from localhost (unknown [192.168.167.70])
-        by regular1.263xmail.com (Postfix) with ESMTP id 85E1B1B24;
-        Fri,  4 Dec 2020 13:54:51 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-Received: from localhost.localdomain (unknown [14.18.236.70])
-        by smtp.263.net (postfix) whith ESMTP id P21328T140298957076224S1607061286350349_;
-        Fri, 04 Dec 2020 13:54:50 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <38248cf2e7045d4fd411bf67e7d6b4ee>
-X-RL-SENDER: yili@winhong.com
-X-SENDER: yili@winhong.com
-X-LOGIN-NAME: yili@winhong.com
-X-FST-TO: colyli@suse.de
-X-SENDER-IP: 14.18.236.70
-X-ATTACHMENT-NUM: 0
-X-System-Flag: 0
-From:   Yi Li <yili@winhong.com>
-To:     colyli@suse.de
-Cc:     yilikernel@gmail.com, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yi Li <yili@winhong.com>, Guo Chao <guochao@winhong.com>
-Subject: [PATCH v3] bcache: fix panic due to cache_set is null
-Date:   Fri,  4 Dec 2020 13:54:40 +0800
-Message-Id: <20201204055440.2569865-1-yili@winhong.com>
-X-Mailer: git-send-email 2.25.3
-In-Reply-To: <CAJfdMYA159asor+HuFRhzyNp-zT7SRo6GmST4ZU7DNGhoQkYOQ@mail.gmail.com>
-References: <CAJfdMYA159asor+HuFRhzyNp-zT7SRo6GmST4ZU7DNGhoQkYOQ@mail.gmail.com>
+        Fri, 4 Dec 2020 11:43:48 -0500
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7229CC061A53
+        for <linux-bcache@vger.kernel.org>; Fri,  4 Dec 2020 08:43:02 -0800 (PST)
+Received: by mail-il1-x142.google.com with SMTP id x15so5779104ilq.1
+        for <linux-bcache@vger.kernel.org>; Fri, 04 Dec 2020 08:43:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eMCK196yGD9HEmztT5X4HDwb0AlO+qvFoU6onkVpAVY=;
+        b=m3sqnXWJeTAd3qQUF1d9wJyXwHu7JxXcC6uKIzKnlo7TpnJ0vYQXk+eWhirNC1qNc6
+         aWtFXzQOh0tidKwXqU80pwMzIT8ZRZt5PRaxJSJc8E29JFtApk6BEQdYW7hsB24li7Wz
+         GaHvnlkDkAXaS5vCx5OsdA8Gdjg2fKCwfxWclRwxoS6t079ff5UktFuwRsCmmeiSXiuT
+         xW/GuQxNIV2YBOU7ho2AFYAEGF1BA6L5NjXH97l1WWxaDgleOwbf8TG5h9LgnhjdG/OI
+         JRD43kLpWzFWbCzhBfc/Q4Pv6ykA/JlxFPWiKSwSGdMJVYAl1gBtHvq4FoMJiyhXaw3Z
+         plEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eMCK196yGD9HEmztT5X4HDwb0AlO+qvFoU6onkVpAVY=;
+        b=ky9kZ3QEr5Z1enXrOnO/pDykx0OFidvTPI1DS9EljeYv6tUHC/2CMrp2E4S2WhA2Y6
+         7vhWnJ4Z89p1VgzjgluQtIUP8EuT32niRiR2d8TYZTNAsNhHgl34NrNW52/jisy2VqeQ
+         KMDbGZempdOhjRNs7ksvrLc1INW7uDy7toFt4yNiz+2AQD+rIt6Uu6QWyFUEsceHCyWX
+         dTU/6A+enWGDewp/cqD6hsaAq4O0eLVXXuvvlV/QJxtobHySawIUCZDHfdUNCsKqaWgj
+         wSU22QjGKxSzNUQ6aNbGR/wxIuQ8XAEvFsnTxvORPqG9QYdqIQRKfP2kemsF/DV/0+/R
+         4vjQ==
+X-Gm-Message-State: AOAM531qin89uWXnoj3Er5ti+YilvdUNa0yRi8INXxxL3GrKSArdC6eA
+        PjSh7rl6GyfXy0J5cXVG5/H3e1EsssHUFA==
+X-Google-Smtp-Source: ABdhPJzAzVGKZD0+jfQBEzVp6xMbQWg671BzhxHKVihCK0qVzrk8H6Zb94kitBpSOVrN+CsFf10McA==
+X-Received: by 2002:a92:58cb:: with SMTP id z72mr7331084ilf.104.1607100181830;
+        Fri, 04 Dec 2020 08:43:01 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id h1sm1874781ilj.8.2020.12.04.08.43.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Dec 2020 08:43:01 -0800 (PST)
+Subject: Re: store a pointer to the block_device in struct bio (again)
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Tejun Heo <tj@kernel.org>, Coly Li <colyli@suse.de>,
+        Song Liu <song@kernel.org>, dm-devel@redhat.com,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-block@vger.kernel.org
+References: <20201201165424.2030647-1-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <285e5e82-2e9c-a1db-b9b6-b82ec95aea6d@kernel.dk>
+Date:   Fri, 4 Dec 2020 09:43:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20201201165424.2030647-1-hch@lst.de>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-bcache_device_detach will release the cache_set after hotunplug cache
-disk.
+On 12/1/20 9:54 AM, Christoph Hellwig wrote:
+> Hi Jens,
+> 
+> this series switches back from storing the gendisk + partno to storing
+> a block_device pointer in struct bio.  The reason is two fold:  for one
+> the new struct block_device actually is always available, removing the
+> need to avoid originally.  Second the merge struct block_device is much
+> more useful than the old one, as storing it avoids the need for looking
+> up what used to be hd_struct during partition remapping and I/O
+> accounting.
+> 
+> Note that this series depends on the posted but not merged
+> "block tracepoint cleanups" series.
 
-Here is how the issue happens.
-1) cached_dev_free do cancel_writeback_rate_update_dwork
-   without bch_register_lock.
-2) Wirting the writeback_percent by sysfs with
-   bch_register_lock will insert a writeback_rate_update work.
-3) cached_dev_free with bch_register_lock to do bcache_device_free.
-   dc->disk.c will be set NULL.
-4) update_writeback_rate will crash when access dc->disk.c.
+Applied, thanks.
 
-After Patch:
-1) cached_dev_free do cancel_writeback_rate_update_dwork and set dc->disk.c
-   to NULL with bch_register_lock.
-2) dc->disk.c = NULL will avoid that Wirting the writeback_percent by sysfs
-   insert a writeback_rate_update work.
-
-Fixes: 80265d8dfd77 ("bcache: acquire bch_register_lock later in cached_dev_free()")
-
-  IP: [<ffffffffa03730c9>] update_writeback_rate+0x59/0x3a0 [bcache]
-  PGD 879620067 PUD 8755d3067 PMD 0
-  Oops: 0000 [#1] SMP
-  CPU: 8 PID: 1005702 Comm: kworker/8:0 Tainted: G 4.4.0+10 #1
-  Hardware name: Intel BIOS SE5C610.86B.01.01.0021.032120170601 03/21/2017
-  Workqueue: events update_writeback_rate [bcache]
-  task: ffff8808786f3800 ti: ffff88077082c000 task.ti: ffff88077082c000
-  RIP: e030:[<ffffffffa03730c9>] update_writeback_rate+0x59/0x3a0 [bcache]
-  RSP: e02b:ffff88077082fde0  EFLAGS: 00010202
-  RAX: 0000000000000018 RBX: ffff8808047f0b08 RCX: 0000000000000000
-  RDX: 0000000000000001 RSI: ffff88088170dab8 RDI: ffff88088170dab8
-  RBP: ffff88077082fe18 R08: 000000000000000a R09: 0000000000000000
-  R10: 0000000000000000 R11: 0000000000017bc8 R12: 0000000000000000
-  R13: ffff8808047f0000 R14: 0000000000000200 R15: ffff8808047f0b08
-  FS:  00007f157b6d6700(0000) GS:ffff880881700000(0000) knlGS:0000000000000000
-  CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000368 CR3: 0000000875c05000 CR4: 0000000000040660
-  Stack:
-   0000000000000001 0000000000007ff0 ffff88085ff600c0 ffff880881714e80
-   ffff880881719500 0000000000000200 ffff8808047f0b08 ffff88077082fe60
-   ffffffff81088c0c 0000000081714e80 0000000000000000 ffff880881714e80
-  Call Trace:
-   [<ffffffff81088c0c>] process_one_work+0x1fc/0x3b0
-   [<ffffffff81089575>] worker_thread+0x2a5/0x470
-   [<ffffffff815a2f58>] ? __schedule+0x648/0x870
-   [<ffffffff810892d0>] ? rescuer_thread+0x300/0x300
-   [<ffffffff8108e3d5>] kthread+0xd5/0xe0
-   [<ffffffff8108e300>] ? kthread_stop+0x110/0x110
-   [<ffffffff815a704f>] ret_from_fork+0x3f/0x70
-   [<ffffffff8108e300>] ? kthread_stop+0x110/0x110
-
-Reported-by: Guo Chao <guochao@winhong.com>
-Signed-off-by: Yi Li <yili@winhong.com>
----
- drivers/md/bcache/super.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 46a00134a36a..381f9fbcd765 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1122,9 +1122,6 @@ static void cached_dev_detach_finish(struct work_struct *w)
- 	BUG_ON(refcount_read(&dc->count));
- 
- 
--	if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
--		cancel_writeback_rate_update_dwork(dc);
--
- 	if (!IS_ERR_OR_NULL(dc->writeback_thread)) {
- 		kthread_stop(dc->writeback_thread);
- 		dc->writeback_thread = NULL;
-@@ -1138,6 +1135,9 @@ static void cached_dev_detach_finish(struct work_struct *w)
- 
- 	mutex_lock(&bch_register_lock);
- 
-+	if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
-+		cancel_writeback_rate_update_dwork(dc);
-+
- 	calc_cached_dev_sectors(dc->disk.c);
- 	bcache_device_detach(&dc->disk);
- 	list_move(&dc->list, &uncached_devices);
-@@ -1334,9 +1334,6 @@ static void cached_dev_free(struct closure *cl)
- {
- 	struct cached_dev *dc = container_of(cl, struct cached_dev, disk.cl);
- 
--	if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
--		cancel_writeback_rate_update_dwork(dc);
--
- 	if (!IS_ERR_OR_NULL(dc->writeback_thread))
- 		kthread_stop(dc->writeback_thread);
- 	if (!IS_ERR_OR_NULL(dc->status_update_thread))
-@@ -1344,6 +1341,9 @@ static void cached_dev_free(struct closure *cl)
- 
- 	mutex_lock(&bch_register_lock);
- 
-+	if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
-+		cancel_writeback_rate_update_dwork(dc);
-+
- 	if (atomic_read(&dc->running))
- 		bd_unlink_disk_holder(dc->bdev, dc->disk.disk);
- 	bcache_device_free(&dc->disk);
 -- 
-2.25.3
-
-
+Jens Axboe
 
