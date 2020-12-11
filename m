@@ -2,53 +2,59 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 551D52D5B8B
-	for <lists+linux-bcache@lfdr.de>; Thu, 10 Dec 2020 14:24:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EF772D724D
+	for <lists+linux-bcache@lfdr.de>; Fri, 11 Dec 2020 09:54:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389122AbgLJNXb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 10 Dec 2020 08:23:31 -0500
-Received: from server.kenspensetc.com ([185.148.128.76]:35274 "EHLO
-        server.kenspensetc.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388449AbgLJNXa (ORCPT
+        id S2392901AbgLKIxR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 11 Dec 2020 03:53:17 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9163 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392926AbgLKIwp (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 10 Dec 2020 08:23:30 -0500
-X-Greylist: delayed 300 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Dec 2020 08:23:24 EST
-Received: from localhost ([127.0.0.1]:46978 helo=server.kenspensetc.com)
-        by server.kenspensetc.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <sender@ridecals.com>)
-        id 1knLmi-00022h-22; Thu, 10 Dec 2020 08:15:04 -0500
-Received: from [70.32.0.46] ([70.32.0.46]) by ridecals.com (Horde Framework)
- with HTTPS; Thu, 10 Dec 2020 08:15:03 -0500
-Date:   Thu, 10 Dec 2020 08:15:03 -0500
-Message-ID: <20201210081503.Horde.xymGh06rXL7Y0PYhrmnf63d@ridecals.com>
-From:   Russell Branting <sender@ridecals.com>
-Subject: Vital
-Reply-to: Goodagent01@gmail.com
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+        Fri, 11 Dec 2020 03:52:45 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CskzM55c4z15bZQ;
+        Fri, 11 Dec 2020 16:51:27 +0800 (CST)
+Received: from ubuntu.network (10.175.138.68) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.487.0; Fri, 11 Dec 2020 16:51:53 +0800
+From:   Zheng Yongjun <zhengyongjun3@huawei.com>
+To:     <colyli@suse.de>, <kent.overstreet@gmail.com>,
+        <linux-bcache@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Zheng Yongjun <zhengyongjun3@huawei.com>
+Subject: [PATCH -next] md/bcache: convert comma to semicolon
+Date:   Fri, 11 Dec 2020 16:52:22 +0800
+Message-ID: <20201211085222.2762-1-zhengyongjun3@huawei.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Disposition: inline
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.kenspensetc.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - ridecals.com
-X-Get-Message-Sender-Via: server.kenspensetc.com: authenticated_id: sender9@ridecals.com
-X-Authenticated-Sender: server.kenspensetc.com: sender9@ridecals.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.138.68]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+Replace a comma between expression statements by a semicolon.
 
-I am instructed to inform you of your appointment as the next of kin  
-to your deceased relative estate. Kindly indicate your acceptance by  
-reconfirming your Full Name, Address & Phone Number for immediate  
-processing of the funds release to your control OR the deceased  
-deposited funds will be declared unclaimed.
+Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+---
+ drivers/md/bcache/sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 554e3afc9b68..00a520c03f41 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -404,7 +404,7 @@ STORE(__cached_dev)
+ 		if (!env)
+ 			return -ENOMEM;
+ 		add_uevent_var(env, "DRIVER=bcache");
+-		add_uevent_var(env, "CACHED_UUID=%pU", dc->sb.uuid),
++		add_uevent_var(env, "CACHED_UUID=%pU", dc->sb.uuid);
+ 		add_uevent_var(env, "CACHED_LABEL=%s", buf);
+ 		kobject_uevent_env(&disk_to_dev(dc->disk.disk)->kobj,
+ 				   KOBJ_CHANGE,
+-- 
+2.22.0
 
