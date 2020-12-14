@@ -2,42 +2,63 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DAF702D8C87
-	for <lists+linux-bcache@lfdr.de>; Sun, 13 Dec 2020 10:33:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B9EB2D9330
+	for <lists+linux-bcache@lfdr.de>; Mon, 14 Dec 2020 07:05:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405812AbgLMJd0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 13 Dec 2020 04:33:26 -0500
-Received: from iad1-shared-relay2.dreamhost.com ([208.113.157.41]:34736 "EHLO
-        iad1-shared-relay2.dreamhost.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728910AbgLMJd0 (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 13 Dec 2020 04:33:26 -0500
-X-Greylist: delayed 43553 seconds by postgrey-1.27 at vger.kernel.org; Sun, 13 Dec 2020 04:33:25 EST
-Received: from iad1-shared-relay1.dreamhost.com (iad1-shared-relay1.dreamhost.com [208.113.157.50])
-        by iad1-shared-relay2.dreamhost.com (Postfix) with ESMTP id 2C2074AA765
-        for <linux-bcache@vger.kernel.org>; Sat, 12 Dec 2020 01:51:39 -0800 (PST)
-Received: from ford-prefect.dreamhost.com (ford-prefect.dreamhost.com [173.236.152.146])
-        by iad1-shared-relay1.dreamhost.com (Postfix) with ESMTP id E8904B401D7
-        for <linux-bcache@vger.kernel.org>; Fri, 11 Dec 2020 17:19:55 -0800 (PST)
-Received: by ford-prefect.dreamhost.com (Postfix, from userid 15311382)
-        id 3BCA764F; Sat, 12 Dec 2020 01:23:34 -0800 (PST)
-To:     linux-bcache@vger.kernel.org
-Subject: Change It Up Media -  Web Enquiry
-X-PHP-Originating-Script: 15311382:PHPMailer.php
-Date:   Sat, 12 Dec 2020 09:23:33 +0000
-From:   Change It Up Media <info@changeitupmedia.com>
-Message-ID: <fW7e6KLZnSUTpd49KorfUmz6TQf4ergGyKbpbGXH5k@www.changeitupmedia.com>
-X-Mailer: PHPMailer 6.1.6 (https://github.com/PHPMailer/PHPMailer)
+        id S2438699AbgLNGCg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 14 Dec 2020 01:02:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48906 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2438698AbgLNGCg (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 14 Dec 2020 01:02:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AB231AC10;
+        Mon, 14 Dec 2020 06:01:54 +0000 (UTC)
+Subject: Re: [PATCH -next] md/bcache: convert comma to semicolon
+To:     Zheng Yongjun <zhengyongjun3@huawei.com>,
+        kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20201211085222.2762-1-zhengyongjun3@huawei.com>
+From:   Coly Li <colyli@suse.de>
+Message-ID: <896b0315-2aec-47ce-d281-d231f54de805@suse.de>
+Date:   Mon, 14 Dec 2020 14:01:51 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
+ Gecko/20100101 Thunderbird/78.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201211085222.2762-1-zhengyongjun3@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Thank you for your message, we will be in touch very shortly.
+On 12/11/20 4:52 PM, Zheng Yongjun wrote:
+> Replace a comma between expression statements by a semicolon.
+> 
+> Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
 
-Here is a copy of your message :
+Thanks for the catch. Added in my 2nd wave series.
 
-😘 Take a look at my photos here: https://bit.ly/37VPjaz?yyx - do you like it? 😘
+Coly Li
+
+> ---
+>  drivers/md/bcache/sysfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+> index 554e3afc9b68..00a520c03f41 100644
+> --- a/drivers/md/bcache/sysfs.c
+> +++ b/drivers/md/bcache/sysfs.c
+> @@ -404,7 +404,7 @@ STORE(__cached_dev)
+>  		if (!env)
+>  			return -ENOMEM;
+>  		add_uevent_var(env, "DRIVER=bcache");
+> -		add_uevent_var(env, "CACHED_UUID=%pU", dc->sb.uuid),
+> +		add_uevent_var(env, "CACHED_UUID=%pU", dc->sb.uuid);
+>  		add_uevent_var(env, "CACHED_LABEL=%s", buf);
+>  		kobject_uevent_env(&disk_to_dev(dc->disk.disk)->kobj,
+>  				   KOBJ_CHANGE,
+> 
 
