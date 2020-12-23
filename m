@@ -2,37 +2,37 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 487D92E192F
+	by mail.lfdr.de (Postfix) with ESMTP id BED7F2E1930
 	for <lists+linux-bcache@lfdr.de>; Wed, 23 Dec 2020 08:01:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727372AbgLWHBH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        id S1727314AbgLWHBH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
         Wed, 23 Dec 2020 02:01:07 -0500
-Received: from mga18.intel.com ([134.134.136.126]:58035 "EHLO mga18.intel.com"
+Received: from mga18.intel.com ([134.134.136.126]:58038 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727314AbgLWHBH (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        id S1727353AbgLWHBH (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
         Wed, 23 Dec 2020 02:01:07 -0500
-IronPort-SDR: 2KBEM4CM1JOIh+jq3+KIBvDWsIaP7pKyrzHVk5R7PzoMHyDfW0QmIVbAF8sppke1RbhkTEQNUc
- xc3VZi0X1tng==
-X-IronPort-AV: E=McAfee;i="6000,8403,9843"; a="163695085"
+IronPort-SDR: L3OcoybBhEJp4NxKR0kMSmiu71MPdmG8SfwgWhry1E33W7c/54zUe0qKDSROQ3EZ8NJcxH02pW
+ MzVBvLzmL1lg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9843"; a="163695086"
 X-IronPort-AV: E=Sophos;i="5.78,441,1599548400"; 
-   d="scan'208";a="163695085"
+   d="scan'208";a="163695086"
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Dec 2020 23:00:12 -0800
-IronPort-SDR: CqCzGOWuFo/HKJNPbkv5KYLlfzMnPilWzwCD8NaEiz8TR2Qr4NROrynsHmKn7W/kfo36BrKOS3
- pqG7mo9S6z0w==
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Dec 2020 23:00:14 -0800
+IronPort-SDR: m+qQvIJjZ413heMijTTNMGd/+9vK5lIdJzEIzTrwwBpxVtxz9iudL2OQDsT8E2GO6UiReABCpd
+ N4qEWz2dKbaQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.78,441,1599548400"; 
-   d="scan'208";a="344924258"
+   d="scan'208";a="344924268"
 Received: from ceph.sh.intel.com ([10.239.241.176])
-  by fmsmga008.fm.intel.com with ESMTP; 22 Dec 2020 23:00:11 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 22 Dec 2020 23:00:12 -0800
 From:   Qiaowei Ren <qiaowei.ren@intel.com>
 To:     Coly Li <colyli@suse.de>
 Cc:     Qiaowei Ren <qiaowei.ren@intel.com>,
         Jianpeng Ma <jianpeng.ma@intel.com>,
         linux-bcache@vger.kernel.org
-Subject: [PATCH 4/8] bcache: nvm_alloc_pages() of the buddy
-Date:   Wed, 23 Dec 2020 09:41:32 -0500
-Message-Id: <20201223144136.24966-5-qiaowei.ren@intel.com>
+Subject: [PATCH 5/8] bcache: nvm_free_pages() of the buddy
+Date:   Wed, 23 Dec 2020 09:41:33 -0500
+Message-Id: <20201223144136.24966-6-qiaowei.ren@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201223144136.24966-1-qiaowei.ren@intel.com>
 References: <20201223144136.24966-1-qiaowei.ren@intel.com>
@@ -40,65 +40,48 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch implements the nvm_alloc_pages() of the buddy.
+This patch implements the nvm_free_pages() of the buddy.
 
 Signed-off-by: Jianpeng Ma <jianpeng.ma@intel.com>
 Signed-off-by: Qiaowei Ren <qiaowei.ren@intel.com>
 ---
- drivers/md/bcache/nvm-pages.c | 136 ++++++++++++++++++++++++++++++++++
- drivers/md/bcache/nvm-pages.h |   4 +
- 2 files changed, 140 insertions(+)
+ drivers/md/bcache/nvm-pages.c | 142 ++++++++++++++++++++++++++++++++++
+ drivers/md/bcache/nvm-pages.h |   2 +
+ 2 files changed, 144 insertions(+)
 
 diff --git a/drivers/md/bcache/nvm-pages.c b/drivers/md/bcache/nvm-pages.c
-index 7ffbfbacaf3f..2cde62081c4f 100644
+index 2cde62081c4f..16b65a866041 100644
 --- a/drivers/md/bcache/nvm-pages.c
 +++ b/drivers/md/bcache/nvm-pages.c
-@@ -95,6 +95,142 @@ static inline void remove_owner_space(struct nvm_namespace *ns,
- 	bitmap_set(ns->pages_bitmap, pgoff, nr);
+@@ -173,6 +173,148 @@ static void add_extent(struct nvm_alloced_recs *alloced_recs, void *addr, int or
+ 	}
  }
  
-+/* If not found, it will create if create == true */
-+static struct owner_list *find_owner_list(const char *owner_uuid, bool create)
++static inline void *nvm_end_addr(struct nvm_namespace *ns)
 +{
-+	struct owner_list *owner_list;
++	return ns->kaddr + ns->pages_offset + (ns->pages_total << PAGE_SHIFT);
++}
++
++static inline bool in_nvm_range(struct nvm_namespace *ns,
++		void *start_addr, void *end_addr)
++{
++	return (start_addr >= ns->kaddr) && (end_addr <= nvm_end_addr(ns));
++}
++
++static struct nvm_namespace *find_nvm_by_addr(void *addr, int order)
++{
 +	int i;
++	struct nvm_namespace *ns;
 +
-+	for (i = 0; i < only_set->owner_list_size; i++) {
-+		if (!memcmp(owner_uuid, only_set->owner_lists[i]->owner_uuid, 16))
-+			return only_set->owner_lists[i];
++	for (i = 0; i < only_set->total_namespaces_nr; i++) {
++		ns = only_set->nss[i];
++		if ((ns != NULL) && in_nvm_range(ns, addr, addr + (1 << order)))
++			return ns;
 +	}
-+
-+	if (create) {
-+		owner_list = alloc_owner_list(owner_uuid, NULL, only_set->total_namespaces_nr);
-+		only_set->owner_lists[only_set->owner_list_size++] = owner_list;
-+		return owner_list;
-+	} else
-+		return NULL;
++	return NULL;
 +}
 +
-+static struct nvm_alloced_recs *find_nvm_alloced_recs(struct owner_list *owner_list,
-+		struct nvm_namespace *ns, bool create)
-+{
-+	int position = ns->sb->this_namespace_nr;
-+
-+	if (create && !owner_list->alloced_recs[position]) {
-+		struct nvm_alloced_recs *extents =
-+			kzalloc(sizeof(struct nvm_alloced_recs), GFP_KERNEL);
-+
-+		extents->ns = ns;
-+		INIT_LIST_HEAD(&extents->extent_head);
-+		owner_list->alloced_recs[position] = extents;
-+		return extents;
-+	} else
-+		return owner_list->alloced_recs[position];
-+}
-+
-+static inline void *extent_end_addr(struct extent *extent)
-+{
-+	return extent->kaddr + (extent->nr << PAGE_SHIFT);
-+}
-+
-+static void add_extent(struct nvm_alloced_recs *alloced_recs, void *addr, int order)
++static int remove_extent(struct nvm_alloced_recs *alloced_recs, void *addr, int order)
 +{
 +	struct list_head *list = alloced_recs->extent_head.next;
 +	struct extent *extent;
@@ -106,118 +89,139 @@ index 7ffbfbacaf3f..2cde62081c4f 100644
 +
 +	while (list != &alloced_recs->extent_head) {
 +		extent = container_of(list, struct extent, list);
-+		if (end_addr == extent->kaddr) {
-+			extent->kaddr = addr;
-+			extent->nr += 1 << order;
-+			break;
-+		} else if (extent_end_addr(extent) == addr) {
-+			extent->nr += 1 << order;
-+			break;
-+		} else if (end_addr < extent->kaddr) {
-+			struct extent *e = kzalloc(sizeof(struct extent), GFP_KERNEL);
 +
-+			e->kaddr = addr;
-+			e->nr = 1 << order;
-+			list_add_tail(&e->list, &extent->list);
-+			alloced_recs->size++;
-+			break;
++		if (addr < extent->kaddr || end_addr > extent_end_addr(extent)) {
++			list = list->next;
++			continue;
 +		}
-+		list = list->next;
-+	}
 +
-+	if (list == &alloced_recs->extent_head) {
-+		struct extent *e = kzalloc(sizeof(struct extent), GFP_KERNEL);
++		if (addr == extent->kaddr) {
++			if (extent->nr == (1 << order)) {
++				list_del(list);
++				kfree(extent);
++				alloced_recs->size--;
++			} else {
++				extent->kaddr = end_addr;
++				extent->nr -= 1 << order;
++			}
++		} else {
++			if (extent_end_addr(extent) > end_addr) {
++				struct extent *e = kzalloc(sizeof(struct extent), GFP_KERNEL);
 +
-+		e->kaddr = addr;
-+		e->nr = 1 << order;
-+		list_add(&e->list, &alloced_recs->extent_head);
-+		alloced_recs->size++;
++				e->kaddr = end_addr;
++				e->nr = (pgoff_t)(extent_end_addr(extent) - end_addr) >> PAGE_SHIFT;
++				list_add(&e->list, list);
++				alloced_recs->size++;
++			}
++			extent->nr = (addr - extent->kaddr) >> PAGE_SHIFT;
++		}
++		break;
 +	}
++	return (list == &alloced_recs->extent_head) ? -ENOENT : 0;
 +}
 +
-+void *nvm_alloc_pages(int order, const char *owner_uuid)
++static void __free_space(struct nvm_namespace *ns, void *addr, int order)
 +{
-+	void *kaddr = NULL;
++	unsigned int add_pages = (1 << order);
++	pgoff_t pgoff;
++	struct page *page;
++
++	page = nvm_vaddr_to_page(ns, addr);
++	WARN_ON(page->private != order);
++	pgoff = page->index;
++
++	while (order < MAX_ORDER - 1) {
++		struct page *buddy_page;
++
++		pgoff_t buddy_pgoff = pgoff ^ (1 << order);
++		pgoff_t parent_pgoff = pgoff & ~(1 << order);
++
++		if ((parent_pgoff + (1 << (order + 1)) > ns->pages_total))
++			break;
++
++		buddy_page = nvm_vaddr_to_page(ns, nvm_pgoff_to_vaddr(ns, buddy_pgoff));
++
++		if (PageBuddy(buddy_page) && (buddy_page->private == order)) {
++			list_del((struct list_head *)&buddy_page->zone_device_data);
++			__ClearPageBuddy(buddy_page);
++			pgoff = parent_pgoff;
++			order++;
++			continue;
++		}
++		break;
++	}
++
++	page = nvm_vaddr_to_page(ns, nvm_pgoff_to_vaddr(ns, pgoff));
++	list_add((struct list_head *)&page->zone_device_data, &ns->free_area[order]);
++	page->index = pgoff;
++	page->private = order;
++	__SetPageBuddy(page);
++	ns->free += add_pages;
++}
++
++void nvm_free_pages(void *addr, int order, const char *owner_uuid)
++{
++	struct nvm_namespace *ns;
 +	struct owner_list *owner_list;
 +	struct nvm_alloced_recs *alloced_recs;
-+	int i, j;
++	int r;
 +
 +	mutex_lock(&only_set->lock);
-+	owner_list = find_owner_list(owner_uuid, true);
 +
-+	for (j = 0; j < only_set->total_namespaces_nr; j++) {
-+		struct nvm_namespace *ns = only_set->nss[j];
-+
-+		if (!ns || (ns->free < (1 << order)))
-+			continue;
-+
-+		for (i = order; i < MAX_ORDER; i++) {
-+			struct list_head *list;
-+			struct page *page, *buddy_page;
-+
-+			if (list_empty(&ns->free_area[i]))
-+				continue;
-+
-+			list = ns->free_area[i].next;
-+			page = container_of((void *)list, struct page, zone_device_data);
-+
-+			list_del(list);
-+
-+			while (i != order) {
-+				buddy_page = nvm_vaddr_to_page(ns,
-+					nvm_pgoff_to_vaddr(ns, page->index + (1 << (i - 1))));
-+				buddy_page->private = i - 1;
-+				buddy_page->index = page->index + (1 << (i - 1));
-+				__SetPageBuddy(buddy_page);
-+				list_add((struct list_head *)&buddy_page->zone_device_data,
-+					&ns->free_area[i - 1]);
-+				i--;
-+			}
-+
-+			page->private = order;
-+			__ClearPageBuddy(page);
-+			ns->free -= 1 << order;
-+			kaddr = nvm_pgoff_to_vaddr(ns, page->index);
-+			break;
-+		}
-+
-+		if (i != MAX_ORDER) {
-+			alloced_recs = find_nvm_alloced_recs(owner_list, ns, true);
-+			add_extent(alloced_recs, kaddr, order);
-+			break;
-+		}
++	ns = find_nvm_by_addr(addr, order);
++	if (ns == NULL) {
++		pr_info("can't find nvm_dev by kaddr %p\n", addr);
++		goto unlock;
 +	}
 +
-+	mutex_unlock(&only_set->lock);
-+	return kaddr;
-+}
-+EXPORT_SYMBOL_GPL(nvm_alloc_pages);
++	owner_list = find_owner_list(owner_uuid, false);
++	if (owner_list == NULL) {
++		pr_info("can't found owner(uuid=%s)\n", owner_uuid);
++		goto unlock;
++	}
 +
- static void init_owner_info(struct nvm_namespace *ns)
++	alloced_recs = find_nvm_alloced_recs(owner_list, ns, false);
++	if (alloced_recs == NULL) {
++		pr_info("can't find alloced_recs(uuid=%s)\n", ns->uuid);
++		goto unlock;
++	}
++
++	r = remove_extent(alloced_recs, addr, order);
++	if (r < 0) {
++		pr_info("can't find extent\n");
++		goto unlock;
++	}
++
++	__free_space(ns, addr, order);
++
++unlock:
++	mutex_unlock(&only_set->lock);
++}
++EXPORT_SYMBOL_GPL(nvm_free_pages);
++
+ void *nvm_alloc_pages(int order, const char *owner_uuid)
  {
- 	struct owner_list_head *owner_list_head;
+ 	void *kaddr = NULL;
 diff --git a/drivers/md/bcache/nvm-pages.h b/drivers/md/bcache/nvm-pages.h
-index d91352496af1..95b7fa4b7dd0 100644
+index 95b7fa4b7dd0..1e435ce0ddf4 100644
 --- a/drivers/md/bcache/nvm-pages.h
 +++ b/drivers/md/bcache/nvm-pages.h
-@@ -77,6 +77,8 @@ extern struct nvm_namespace *register_namespace(const char *dev_path);
- extern int bch_nvm_init(void);
+@@ -78,6 +78,7 @@ extern int bch_nvm_init(void);
  extern void bch_nvm_exit(void);
  
-+extern void *nvm_alloc_pages(int order, const char *owner_uuid);
-+
+ extern void *nvm_alloc_pages(int order, const char *owner_uuid);
++extern void nvm_free_pages(void *addr, int order, const char *owner_uuid);
+ 
  #else
  
- static inline struct nvm_namespace *register_namespace(const char *dev_path)
-@@ -89,6 +91,8 @@ static inline int bch_nvm_init(void)
- }
+@@ -92,6 +93,7 @@ static inline int bch_nvm_init(void)
  static inline void bch_nvm_exit(void) { }
  
-+static inline void *nvm_alloc_pages(int order, const char *owner_uuid) { }
-+
+ static inline void *nvm_alloc_pages(int order, const char *owner_uuid) { }
++static inline void nvm_free_pages(void *addr, int order, const char *owner_uuid) { }
+ 
  #endif /* CONFIG_BCACHE_NVM_PAGES */
  
- #endif /* _BCACHE_NVM_PAGES_H */
 -- 
 2.17.1
 
