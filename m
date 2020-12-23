@@ -2,125 +2,82 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B19632E1600
-	for <lists+linux-bcache@lfdr.de>; Wed, 23 Dec 2020 03:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 740332E192B
+	for <lists+linux-bcache@lfdr.de>; Wed, 23 Dec 2020 08:01:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729349AbgLWC40 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 22 Dec 2020 21:56:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49658 "EHLO mail.kernel.org"
+        id S1727294AbgLWHAt (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 23 Dec 2020 02:00:49 -0500
+Received: from mga18.intel.com ([134.134.136.126]:58033 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729130AbgLWCUz (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 22 Dec 2020 21:20:55 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7C793229CA;
-        Wed, 23 Dec 2020 02:20:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608690014;
-        bh=y3xnCdMjaalb1+NugOTJYOLDazlf9ZWnnOZtAxErUFA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rd8m5iXPXeN9I4gwE+Eu3ekGn753SeGoUjn9JUY+HS3f4Oe1JJAvdaU6VtSQE5+t0
-         YmB7jvpYNnWx5e1FWxDiCiLheGk41UZJIHeDjLHqibzkkBMth3gupfOKNbG+SATTU6
-         yHua82QgCRh5b2bVdNdUGhLihvk9rs6mV+HlRSUiIL6VA49gmw1aAxI4NEA6fgg8aE
-         3mXGI5tBti+Jz5t/cPejabRbNPQbdaoIV6mUJet+k57/6rnfs08Pdu7IuiiHJ5pAAb
-         vca76KOvkPhDopah/nM+nOuhnYyOyUO3GXqYIMe0m9IfhqtqlxqgWvRC9KO8zvxmII
-         pUyrZI7uirwxg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 093/130] bcache: fix race between setting bdev state to none and new write request direct to backing
-Date:   Tue, 22 Dec 2020 21:17:36 -0500
-Message-Id: <20201223021813.2791612-93-sashal@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201223021813.2791612-1-sashal@kernel.org>
-References: <20201223021813.2791612-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1726960AbgLWHAt (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 23 Dec 2020 02:00:49 -0500
+IronPort-SDR: dWcGMlhsiMnNLOds9H+zcAG+9x89RV3phJDPzEAyyaiKVTDgq/7IkV/6LSY0sp+KZ9Rb3QzuKZ
+ 4dtQrFTP2Wbg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9843"; a="163695070"
+X-IronPort-AV: E=Sophos;i="5.78,441,1599548400"; 
+   d="scan'208";a="163695070"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Dec 2020 23:00:07 -0800
+IronPort-SDR: ++hqPTkFyYVS8f/HdjrJZFVCva/Zwrbo9aqdrsbCSHTW7uoxBV1Ni4RC/KEoz9ptb9BpSSVdz0
+ AfZ2KGvd2C2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.78,441,1599548400"; 
+   d="scan'208";a="344924201"
+Received: from ceph.sh.intel.com ([10.239.241.176])
+  by fmsmga008.fm.intel.com with ESMTP; 22 Dec 2020 23:00:05 -0800
+From:   Qiaowei Ren <qiaowei.ren@intel.com>
+To:     Coly Li <colyli@suse.de>
+Cc:     Qiaowei Ren <qiaowei.ren@intel.com>,
+        Jianpeng Ma <jianpeng.ma@intel.com>,
+        linux-bcache@vger.kernel.org
+Subject: [RFC PATCH 0/8] nvm page allocator for bcache 
+Date:   Wed, 23 Dec 2020 09:41:28 -0500
+Message-Id: <20201223144136.24966-1-qiaowei.ren@intel.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Dongsheng Yang <dongsheng.yang@easystack.cn>
+This series implements nvm pages allocator for bcache. This idea is from
+one discussion about nvdimm use case in kernel together with Coly. Coly
+sent the following email about this idea to give some introduction on what
+we will do before:
 
-[ Upstream commit df4ad53242158f9f1f97daf4feddbb4f8b77f080 ]
+https://lore.kernel.org/linux-bcache/bc7e71ec-97eb-b226-d4fc-d8b64c1ef41a@suse.de/
 
-There is a race condition in detaching as below:
-A. detaching			B. Write request
-(1) writing back
-(2) write back done, set bdev
-    state to clean.
-(3) cached_dev_put() and
-    schedule_work(&dc->detach);
-				(4) write data [0 - 4K] directly
-				    into backing and ack to user.
-(5) power-failure...
+Here this series focus on the first step in above email, that is to say,
+this patch set implements a generic framework in bcache to allocate/release
+NV-memory pages, and provide allocated pages for each requestor after reboot.
+In order to do this, one simple buddy system is implemented to manage NV-memory
+pages.
 
-When we restart this bcache device, this bdev is clean but not detached,
-and read [0 - 4K], we will get unexpected old data from cache device.
+This set includes one testing module which can be used for simple test cases.
+Next need to stroe bcache log or internal btree nodes into nvdimm based on
+these buddy apis to do more testing.
 
-To fix this problem, set the bdev state to none when we writeback done
-in detaching, and then if power-failure happened as above, the data in
-cache will not be used in next bcache device starting, it's detached, we
-will read the correct data from backing derectly.
+Qiaowei Ren (8):
+  bcache: add initial data structures for nvm pages
+  bcache: initialize the nvm pages allocator
+  bcache: initialization of the buddy
+  bcache: nvm_alloc_pages() of the buddy
+  bcache: nvm_free_pages() of the buddy
+  bcache: get allocated pages from specific owner
+  bcache: persist owner info when alloc/free pages.
+  bcache: testing module for nvm pages allocator
 
-Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/md/bcache/super.c     | 9 ---------
- drivers/md/bcache/writeback.c | 9 +++++++++
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/md/bcache/Kconfig       |  12 +
+ drivers/md/bcache/Makefile      |   4 +-
+ drivers/md/bcache/nvm-pages.c   | 769 ++++++++++++++++++++++++++++++++
+ drivers/md/bcache/nvm-pages.h   | 107 +++++
+ drivers/md/bcache/super.c       |   3 +
+ drivers/md/bcache/test-nvm.c    | 117 +++++
+ include/uapi/linux/bcache-nvm.h | 184 ++++++++
+ 7 files changed, 1195 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/md/bcache/nvm-pages.c
+ create mode 100644 drivers/md/bcache/nvm-pages.h
+ create mode 100644 drivers/md/bcache/test-nvm.c
+ create mode 100644 include/uapi/linux/bcache-nvm.h
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 63f5ce18311bb..a251c1f35afa9 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1040,9 +1040,6 @@ static void cancel_writeback_rate_update_dwork(struct cached_dev *dc)
- static void cached_dev_detach_finish(struct work_struct *w)
- {
- 	struct cached_dev *dc = container_of(w, struct cached_dev, detach);
--	struct closure cl;
--
--	closure_init_stack(&cl);
- 
- 	BUG_ON(!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags));
- 	BUG_ON(refcount_read(&dc->count));
-@@ -1056,12 +1053,6 @@ static void cached_dev_detach_finish(struct work_struct *w)
- 		dc->writeback_thread = NULL;
- 	}
- 
--	memset(&dc->sb.set_uuid, 0, 16);
--	SET_BDEV_STATE(&dc->sb, BDEV_STATE_NONE);
--
--	bch_write_bdev_super(dc, &cl);
--	closure_sync(&cl);
--
- 	mutex_lock(&bch_register_lock);
- 
- 	calc_cached_dev_sectors(dc->disk.c);
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 0b02210ab4355..38b5c6cc18c7b 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -703,6 +703,15 @@ static int bch_writeback_thread(void *arg)
- 			 * bch_cached_dev_detach().
- 			 */
- 			if (test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags)) {
-+				struct closure cl;
-+
-+				closure_init_stack(&cl);
-+				memset(&dc->sb.set_uuid, 0, 16);
-+				SET_BDEV_STATE(&dc->sb, BDEV_STATE_NONE);
-+
-+				bch_write_bdev_super(dc, &cl);
-+				closure_sync(&cl);
-+
- 				up_write(&dc->writeback_lock);
- 				break;
- 			}
 -- 
-2.27.0
+2.17.1
 
