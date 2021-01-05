@@ -2,231 +2,149 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AE6F2EA3A7
-	for <lists+linux-bcache@lfdr.de>; Tue,  5 Jan 2021 04:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40A3D2EA47B
+	for <lists+linux-bcache@lfdr.de>; Tue,  5 Jan 2021 05:36:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbhAEDHZ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 4 Jan 2021 22:07:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35744 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbhAEDHZ (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 4 Jan 2021 22:07:25 -0500
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5925BC061793;
-        Mon,  4 Jan 2021 19:06:45 -0800 (PST)
-Received: by mail-pl1-x62b.google.com with SMTP id v3so15592081plz.13;
-        Mon, 04 Jan 2021 19:06:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=xENrclEGDl6glJgcYVqz5LneIt8S9uuGcpfcMMVUZXc=;
-        b=WhEMPw+F53bNQyHNcXtn3N6pnC7UQBkRmYrLfhuaPf/3gu9tGhmL+uBfaPRXb4j9pd
-         n1fXgpp5OOVeNezybylTNeLbIhGHROHEUB9bfXM90S/3gOdU577kodf4O6YabvybJZHn
-         z74wX1plfPhf0iPHgkNATG9cqblBH33UifIJ2J9nxznWQRPPoBTzZWeO5taKAR1eL3cT
-         3/1o9yEx9yq44TPGY68MIPCvZmIu+NaDk8pklE4twc5y9KDCgRdkBn1Zt+3UarirGOfn
-         M1gX9tZ3dupXBrK2n9pCv67e3S4My9Hpy4zFNjQjRFfwKuRz0gBlsULSFBstPaSH3Hw8
-         4l5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xENrclEGDl6glJgcYVqz5LneIt8S9uuGcpfcMMVUZXc=;
-        b=BYJcar8dd6O0ljk52JlCtUMHrmCFnLgDfipH15AQyIr/U2YngrzImjKr886Ctm26eK
-         k1gs1M/HrKl1YtmKuxaaz4j5/RYGKRWb2oXTZYTyaBU3d+1I2C+3Coiqp/QhFU009Q5w
-         KziHB/JiO66CojPYSSmsxWiEj7pVA+9xi/ZLqzAnm3e/NIfNTFiLdK5ge+MYtS0goa8F
-         LUVQfnGYULxn0Fn8EHfqwYTN5sGQWNiekwVfSIxnMC3Pjei4iwrVQqBKZW9PG1vPh9vR
-         E7XNL87H4hBxjSzCrQ1Z/DihFnrf+luWtgQZXdsgua8g5G9tJS/RUdBkLtP/V4Ie6+Ms
-         gYLA==
-X-Gm-Message-State: AOAM533rYa/OfhnAFpZsK/ZSZQInw1JBE8ZfiTW2Zam7gFP7rf+i/QPC
-        uP9mjOvipu9Jj14QNq46/dQ=
-X-Google-Smtp-Source: ABdhPJwaYRV7aIoVxsscjZc0D5HBU6kwPYWpOgZ5sQGsJWmK9OOKJwcaOf2U8wNcItNEv9vsR3fX0Q==
-X-Received: by 2002:a17:90b:204:: with SMTP id fy4mr1939322pjb.57.1609816004848;
-        Mon, 04 Jan 2021 19:06:44 -0800 (PST)
-Received: from localhost.localdomain ([45.77.27.82])
-        by smtp.gmail.com with ESMTPSA id nm6sm676304pjb.25.2021.01.04.19.06.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jan 2021 19:06:44 -0800 (PST)
-From:   Dongdong Tao <tdd21151186@gmail.com>
-To:     colyli@suse.de
-Cc:     dongdong tao <dongdong.tao@canonical.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] bcache: consider the fragmentation when update the writeback rate
-Date:   Tue,  5 Jan 2021 11:06:02 +0800
-Message-Id: <20210105030602.14427-1-tdd21151186@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726260AbhAEEeX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 4 Jan 2021 23:34:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59790 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbhAEEeW (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 4 Jan 2021 23:34:22 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 5E0D8ACAF;
+        Tue,  5 Jan 2021 04:33:40 +0000 (UTC)
+To:     Dongdong Tao <dongdong.tao@canonical.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        "open list:BCACHE (BLOCK LAYER CACHE)" <linux-bcache@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Gavin Guo <gavin.guo@canonical.com>,
+        Gerald Yang <gerald.yang@canonical.com>,
+        Trent Lloyd <trent.lloyd@canonical.com>,
+        Dominique Poulain <dominique.poulain@canonical.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>
+References: <20210105030602.14427-1-tdd21151186@gmail.com>
+ <CAJS8hVK-ZCxJt=E3hwR0hmqPYL1T07_WC_nerb-dZodO+DqtDA@mail.gmail.com>
+From:   Coly Li <colyli@suse.de>
+Subject: Re: [PATCH] bcache: consider the fragmentation when update the
+ writeback rate
+Message-ID: <1a4b2a68-a7b0-8eb0-e60b-c3cf5a5a9e56@suse.de>
+Date:   Tue, 5 Jan 2021 12:33:35 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAJS8hVK-ZCxJt=E3hwR0hmqPYL1T07_WC_nerb-dZodO+DqtDA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: dongdong tao <dongdong.tao@canonical.com>
+On 1/5/21 11:44 AM, Dongdong Tao wrote:
+> Hey Coly,
+> 
+> This is the second version of the patch, please allow me to explain a
+> bit for this patch:
+> 
+> We accelerate the rate in 3 stages with different aggressiveness, the
+> first stage starts when dirty buckets percent reach above
+> BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW(50), the second is
+> BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID(57) and the third is
+> BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH(64). By default the first stage
+> tries to writeback the amount of dirty data in one bucket (on average)
+> in (1 / (dirty_buckets_percent - 50)) second, the second stage tries to
+> writeback the amount of dirty data in one bucket in (1 /
+> (dirty_buckets_percent - 57)) * 200 millisecond. The third stage tries
+> to writeback the amount of dirty data in one bucket in (1 /
+> (dirty_buckets_percent - 64)) * 20 millisecond.
+> 
+> As we can see, there are two writeback aggressiveness increasing
+> strategies, one strategy is with the increasing of the stage, the first
+> stage is the easy-going phase whose initial rate is trying to write back
+> dirty data of one bucket in 1 second, the second stage is a bit more
+> aggressive, the initial rate tries to writeback the dirty data of one
+> bucket in 200 ms, the last stage is even more, whose initial rate tries
+> to writeback the dirty data of one bucket in 20 ms. This makes sense,
+> one reason is that if the preceding stage couldn’t get the fragmentation
+> to a fine stage, then the next stage should increase the aggressiveness
+> properly, also it is because the later stage is closer to the
+> bch_cutoff_writeback_sync. Another aggressiveness increasing strategy is
+> with the increasing of dirty bucket percent within each stage, the first
+> strategy controls the initial writeback rate of each stage, while this
+> one increases the rate based on the initial rate, which is initial_rate
+> * (dirty bucket percent - BCH_WRITEBACK_FRAGMENT_THRESHOLD_X).  
+> 
+> The initial rate can be controlled by 3 parameters
+> writeback_rate_fp_term_low, writeback_rate_fp_term_mid,
+> writeback_rate_fp_term_high, they are default 1, 5, 50, users can adjust
+> them based on their needs.
+> 
+> The reason that I choose 50, 57, 64 as the threshold value is because
+> the GC must be triggered at least once during each stage due to the
+> “sectors_to_gc” being set to 1/16 (6.25 %) of the total cache size. So,
+> the hope is that the first and second stage can get us back to good
+> shape in most situations by smoothly writing back the dirty data without
+> giving too much stress to the backing devices, but it might still enter
+> the third stage if the bucket consumption is very aggressive.
+> 
+> This patch use (dirty / dirty_buckets) * fp_term to calculate the rate,
+> this formula means that we want to writeback (dirty / dirty_buckets) in
+> 1/fp_term second, fp_term is calculated by above aggressiveness
+> controller, “dirty” is the current dirty sectors, “dirty_buckets” is the
+> current dirty buckets, so (dirty / dirty_buckets) means the average
+> dirty sectors in one bucket, the value is between 0 to 1024 for the
+> default setting,  so this formula basically gives a hint that to reclaim
+> one bucket in 1/fp_term second. By using this semantic, we can have a
+> lower writeback rate when the amount of dirty data is decreasing and
+> overcome the fact that dirty buckets number is always increasing unless
+> GC happens.
+> 
+> *Compare to the first patch:
+> *The first patch is trying to write back all the data in 40 seconds,
+> this will result in a very high writeback rate when the amount of dirty
+> data is big, this is mostly true for the large cache devices. The basic
+> problem is that the semantic of this patch is not ideal, because we
+> don’t really need to writeback all dirty data in order to solve this
+> issue, and the instant large increase of the rate is something I feel we
+> should better avoid (I like things to be smoothly changed unless no
+> choice: )).
+> 
+> Before I get to this new patch(which I believe should be optimal for me
+> atm), there have been many tuning/testing iterations, eg. I’ve tried to
+> tune the algorithm to writeback ⅓ of the dirty data in a certain amount
+> of seconds, writeback 1/fragment of the dirty data in a certain amount
+> of seconds, writeback all the dirty data only in those error_buckets
+> (error buckets = dirty buckets - 50% of the total buckets) in a certain
+> amount of time. However, those all turn out not to be ideal, only the
+> semantic of the patch makes much sense for me and allows me to control
+> the rate in a more precise way.
+> 
+> *Testing data:
+> *I'll provide the visualized testing data in the next couple of days
+> with 1TB NVME devices cache but with HDD as backing device since it's
+> what we mostly used in production env. 
+> I have the data for 400GB NVME, let me prepare it and take it for you to
+> review.
+[snipped]
 
-Current way to calculate the writeback rate only considered the
-dirty sectors, this usually works fine when the fragmentation
-is not high, but it will give us unreasonable small rate when
-we are under a situation that very few dirty sectors consumed
-a lot dirty buckets. In some case, the dirty bucekts can reached
-to CUTOFF_WRITEBACK_SYNC while the dirty data(sectors) noteven
-reached the writeback_percent, the writeback rate will still
-be the minimum value (4k), thus it will cause all the writes to be
-stucked in a non-writeback mode because of the slow writeback.
+Hi Dongdong,
 
-We accelerate the rate in 3 stages with different aggressiveness,
-the first stage starts when dirty buckets percent reach above
-BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW (50), the second is
-BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID (57), the third is
-BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH (64). By default
-the first stage tries to writeback the amount of dirty data
-in one bucket (on average) in (1 / (dirty_buckets_percent - 50)) second,
-the second stage tries to writeback the amount of dirty data in one bucket
-in (1 / (dirty_buckets_percent - 57)) * 200 millisecond, the third
-stage tries to writeback the amount of dirty data in one bucket in
-(1 / (dirty_buckets_percent - 64)) * 20 millisecond.
+Thanks for the update and continuous effort on this idea.
 
-Signed-off-by: dongdong tao <dongdong.tao@canonical.com>
----
- drivers/md/bcache/bcache.h    |  3 +++
- drivers/md/bcache/sysfs.c     | 18 ++++++++++++++++
- drivers/md/bcache/writeback.c | 39 +++++++++++++++++++++++++++++++++++
- drivers/md/bcache/writeback.h |  4 ++++
- 4 files changed, 64 insertions(+)
+Please keep in mind the writeback rate is just a advice rate for the
+writeback throughput, in real workload changing the writeback rate
+number does not change writeback throughput obviously.
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 1d57f48307e6..f8e892208bae 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -385,6 +385,9 @@ struct cached_dev {
- 	unsigned int		writeback_rate_update_seconds;
- 	unsigned int		writeback_rate_i_term_inverse;
- 	unsigned int		writeback_rate_p_term_inverse;
-+	unsigned int		writeback_rate_fp_term_low;
-+	unsigned int		writeback_rate_fp_term_mid;
-+	unsigned int		writeback_rate_fp_term_high;
- 	unsigned int		writeback_rate_minimum;
- 
- 	enum stop_on_failure	stop_when_cache_set_failed;
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index 554e3afc9b68..130df9406171 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -121,6 +121,9 @@ rw_attribute(writeback_rate);
- rw_attribute(writeback_rate_update_seconds);
- rw_attribute(writeback_rate_i_term_inverse);
- rw_attribute(writeback_rate_p_term_inverse);
-+rw_attribute(writeback_rate_fp_term_low);
-+rw_attribute(writeback_rate_fp_term_mid);
-+rw_attribute(writeback_rate_fp_term_high);
- rw_attribute(writeback_rate_minimum);
- read_attribute(writeback_rate_debug);
- 
-@@ -205,6 +208,9 @@ SHOW(__bch_cached_dev)
- 	var_print(writeback_rate_update_seconds);
- 	var_print(writeback_rate_i_term_inverse);
- 	var_print(writeback_rate_p_term_inverse);
-+	var_print(writeback_rate_fp_term_low);
-+	var_print(writeback_rate_fp_term_mid);
-+	var_print(writeback_rate_fp_term_high);
- 	var_print(writeback_rate_minimum);
- 
- 	if (attr == &sysfs_writeback_rate_debug) {
-@@ -331,6 +337,15 @@ STORE(__cached_dev)
- 	sysfs_strtoul_clamp(writeback_rate_p_term_inverse,
- 			    dc->writeback_rate_p_term_inverse,
- 			    1, UINT_MAX);
-+	sysfs_strtoul_clamp(writeback_rate_fp_term_low,
-+			    dc->writeback_rate_fp_term_low,
-+			    1, UINT_MAX);
-+	sysfs_strtoul_clamp(writeback_rate_fp_term_mid,
-+			    dc->writeback_rate_fp_term_mid,
-+			    1, UINT_MAX);
-+	sysfs_strtoul_clamp(writeback_rate_fp_term_high,
-+			    dc->writeback_rate_fp_term_high,
-+			    1, UINT_MAX);
- 	sysfs_strtoul_clamp(writeback_rate_minimum,
- 			    dc->writeback_rate_minimum,
- 			    1, UINT_MAX);
-@@ -502,6 +517,9 @@ static struct attribute *bch_cached_dev_files[] = {
- 	&sysfs_writeback_rate_update_seconds,
- 	&sysfs_writeback_rate_i_term_inverse,
- 	&sysfs_writeback_rate_p_term_inverse,
-+	&sysfs_writeback_rate_fp_term_low,
-+	&sysfs_writeback_rate_fp_term_mid,
-+	&sysfs_writeback_rate_fp_term_high,
- 	&sysfs_writeback_rate_minimum,
- 	&sysfs_writeback_rate_debug,
- 	&sysfs_io_errors,
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index a129e4d2707c..a21485448e8e 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -88,6 +88,42 @@ static void __update_writeback_rate(struct cached_dev *dc)
- 	int64_t integral_scaled;
- 	uint32_t new_rate;
- 
-+	/*
-+	 * We need to consider the number of dirty buckets as well
-+	 * when calculating the proportional_scaled, Otherwise we might
-+	 * have an unreasonable small writeback rate at a highly fragmented situation
-+	 * when very few dirty sectors consumed a lot dirty buckets, the
-+	 * worst case is when dirty_data reached writeback_percent and
-+	 * dirty buckets reached to cutoff_writeback_sync, but the rate
-+	 * still will be at the minimum value, which will cause the write
-+	 * stuck at a non-writeback mode.
-+	 */
-+	struct cache_set *c = dc->disk.c;
-+
-+	int64_t dirty_buckets = c->nbuckets - c->avail_nbuckets;
-+
-+	if (c->gc_stats.in_use > BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW && dirty > 0) {
-+		int64_t fragment = (dirty_buckets *  c->cache->sb.bucket_size) / dirty;
-+		int64_t fp_term;
-+		int64_t fps;
-+
-+		if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID) {
-+			fp_term = dc->writeback_rate_fp_term_low *
-+			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW);
-+		} else if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH) {
-+			fp_term = dc->writeback_rate_fp_term_mid *
-+			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID);
-+		} else {
-+			fp_term = dc->writeback_rate_fp_term_high *
-+			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH);
-+		}
-+		fps = (dirty / dirty_buckets) * fp_term;
-+		if (fragment > 3 && fps > proportional_scaled) {
-+			//Only overrite the p when fragment > 3
-+			proportional_scaled = fps;
-+		}
-+	}
-+
- 	if ((error < 0 && dc->writeback_rate_integral > 0) ||
- 	    (error > 0 && time_before64(local_clock(),
- 			 dc->writeback_rate.next + NSEC_PER_MSEC))) {
-@@ -984,6 +1020,9 @@ void bch_cached_dev_writeback_init(struct cached_dev *dc)
- 
- 	dc->writeback_rate_update_seconds = WRITEBACK_RATE_UPDATE_SECS_DEFAULT;
- 	dc->writeback_rate_p_term_inverse = 40;
-+	dc->writeback_rate_fp_term_low = 1;
-+	dc->writeback_rate_fp_term_mid = 5;
-+	dc->writeback_rate_fp_term_high = 50;
- 	dc->writeback_rate_i_term_inverse = 10000;
- 
- 	WARN_ON(test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags));
-diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
-index 3f1230e22de0..02b2f9df73f6 100644
---- a/drivers/md/bcache/writeback.h
-+++ b/drivers/md/bcache/writeback.h
-@@ -16,6 +16,10 @@
- 
- #define BCH_AUTO_GC_DIRTY_THRESHOLD	50
- 
-+#define BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW 50
-+#define BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID 57
-+#define BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH 64
-+
- #define BCH_DIRTY_INIT_THRD_MAX	64
- /*
-  * 14 (16384ths) is chosen here as something that each backing device
--- 
-2.17.1
+Currently I feel this is an interesting and promising idea for your
+patch, but I am not able to say whether it may take effect in real
+workload, so we do need convinced performance data on real workload and
+configuration.
 
+Of course I may also help on the benchmark, but my to-do list is long
+enough and it may take a very long delay time.
+
+Thanks.
+
+Coly Li
