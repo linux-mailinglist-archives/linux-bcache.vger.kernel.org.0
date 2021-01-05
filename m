@@ -2,131 +2,79 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F01EE2EA6AF
-	for <lists+linux-bcache@lfdr.de>; Tue,  5 Jan 2021 09:40:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12B672EAB1E
+	for <lists+linux-bcache@lfdr.de>; Tue,  5 Jan 2021 13:46:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725776AbhAEIjn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 5 Jan 2021 03:39:43 -0500
-Received: from m97179.mail.qiye.163.com ([220.181.97.179]:64139 "EHLO
-        m97179.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbhAEIjm (ORCPT
+        id S1729244AbhAEMo1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 5 Jan 2021 07:44:27 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:54474 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729238AbhAEMo1 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 5 Jan 2021 03:39:42 -0500
-Received: from [192.168.122.37] (unknown [218.94.118.90])
-        by m97179.mail.qiye.163.com (Hmail) with ESMTPA id 4EB4CE024E1;
-        Tue,  5 Jan 2021 16:28:57 +0800 (CST)
-Subject: Re: Defects about bcache GC
-To:     Lin Feng <linf@wangsu.com>, linux-bcache@vger.kernel.org
-References: <5768fb38-743a-42e7-a6b6-a12d7ea9f3f0@wangsu.com>
-From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
-Message-ID: <ec826f2c-d0de-157f-c4d2-fa9325c83014@easystack.cn>
-Date:   Tue, 5 Jan 2021 16:29:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Tue, 5 Jan 2021 07:44:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1609850581;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Uy+q9x/LhT5LmxfrDWoXPnKFI8e993HQ2GG56/x1S54=;
+        b=WdTE2tv8u9+MMwVjAe3cReaL5Tw+JS6p2oesNRWNsNTM1AMPQ8I46ZFp4zZ49lNhgu5oID
+        LGwTRUlrIO5xjX37Z0wO6ZqSrtDRBSvNawNK0MxBHHwqK739CqwqpkhSE2HAGw4hdTmWxq
+        IYoaQdnDGgLL/hnTQddbQJ6uE7QlLoc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-436-344HezKgN_OQjZeam1IO1w-1; Tue, 05 Jan 2021 07:42:59 -0500
+X-MC-Unique: 344HezKgN_OQjZeam1IO1w-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D6FE1927802;
+        Tue,  5 Jan 2021 12:42:58 +0000 (UTC)
+Received: from localhost (ovpn-12-37.pek2.redhat.com [10.72.12.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1D57060BD8;
+        Tue,  5 Jan 2021 12:42:56 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Ming Lei <ming.lei@redhat.com>, linux-bcache@vger.kernel.org,
+        Coly Li <colyli@suse.de>
+Subject: [PATCH V2 6/6] bcache: don't pass BIOSET_NEED_BVECS for the 'bio_set' embedded in 'cache_set'
+Date:   Tue,  5 Jan 2021 20:42:03 +0800
+Message-Id: <20210105124203.3726599-7-ming.lei@redhat.com>
+In-Reply-To: <20210105124203.3726599-1-ming.lei@redhat.com>
+References: <20210105124203.3726599-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <5768fb38-743a-42e7-a6b6-a12d7ea9f3f0@wangsu.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSUI3V1ktWUFJV1kPCR
-        oVCBIfWUFZGhpJS04YSx0aHkJOVkpNS0JDSE5ISExOSUpVGRETFhoSFyQUDg9ZV1kWGg8SFR0UWU
-        FZT0tIVUpKS0hKQ1VLWQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MCo6Mxw*Kj0wNh1CIhE6GR8q
-        CBMaCgpVSlVKTUtCQ0hOSEhMTEhPVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
-        V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBT0JPQzcG
-X-HM-Tid: 0a76d1a9d6c120bdkuqy4eb4ce024e1
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Lin,
+This bioset is just for allocating bio only from bio_next_split, and it
+needn't bvecs, so remove the flag.
 
-     There is a patch for this situation: 
-https://www.spinics.net/lists/linux-bcache/msg08870.html
+Cc: linux-bcache@vger.kernel.org
+Cc: Coly Li <colyli@suse.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ drivers/md/bcache/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-     That's not in mainline yet, and not tested widely. You can give it 
-a try if you are interested in.
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index a4752ac410dc..4102e47f43e1 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1897,7 +1897,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+ 		goto err;
+ 
+ 	if (bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
+-			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER))
++			BIOSET_NEED_RESCUER))
+ 		goto err;
+ 
+ 	c->uuids = alloc_meta_bucket_pages(GFP_KERNEL, sb);
+-- 
+2.28.0
 
-
-Thanx
-
-在 2020/12/18 星期五 下午 6:35, Lin Feng 写道:
-> Hi all,
->
-> I googled a lot but only finding this, my question is if this issue 
-> have been fixed or
-> if there are ways to work around?
->
-> > On Wed, 28 Jun 2017, Coly Li wrote:
-> >
-> > > On 2017/6/27 下午8:04, tang.junhui@xxxxxxxxxx wrote:
-> > > > Hello Eric, Coly,
-> > > >
-> > > > I use a 1400G SSD device a bcache cache device,
-> > > > and attach with 10 back-end devices,
-> > > > and run random small write IOs,
-> > > > when gc works, It takes about 15 seconds,
-> > > > and the up layer application IOs was suspended at this time,
-> > > > How could we bear such a long time IO stopping?
-> > > > Is there any way we can avoid this problem?
-> > > >
-> > > > I am very anxious about this question, any comment would be 
-> valuable.
-> > >
-> > > I encounter same situation too.
-> > > Hmm, I assume there are some locking issue here, to prevent 
-> application
-> > > to send request and insert keys in LSM tree, no matter in 
-> writeback or
-> > > writethrough mode. This is a lazy and fast response, I need to 
-> check the
-> > > code then provide an accurate reply :-)
-> >
->
-> I encoutered even worse situation(8TB ssd cached for 4*10 TB disks) as 
-> mail extracted above,
-> all usrer IOs are hung during bcache GC runs, my kernel is 4.18, while 
-> I tested it with kernel 5.10,
-> it seems that situation is unchaged.
->
-> Below are some logs for reference.
-> GC trace events:
-> [Wed Dec 16 15:08:40 2020]   ##48735 [046] .... 1632697.784097: 
-> bcache_gc_start: 4ab63029-0c4a-42a8-8f54-e638358c2c6c
-> [Wed Dec 16 15:09:01 2020]   ##48735 [034] .... 1632718.828510: 
-> bcache_gc_end: 4ab63029-0c4a-42a8-8f54-e638358c2c6c
->
-> and during which iostat shows like:
-> 12/16/2020 03:08:48 PM
-> Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s 
-> avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
-> sdb               0.00     0.50 1325.00   27.00 169600.00 122.00   
-> 251.07     0.32    0.24    0.24    0.02   0.13  17.90
-> sdc               0.00     0.00    0.00    0.00     0.00 0.00     
-> 0.00     0.00    0.00    0.00    0.00   0.00   0.00
-> sdd               0.00     0.00    0.00    0.00     0.00 0.00     
-> 0.00     0.00    0.00    0.00    0.00   0.00   0.00
-> sde               0.00     0.00    0.00    0.00     0.00 0.00     
-> 0.00     0.00    0.00    0.00    0.00   0.00   0.00
-> sdf               0.00     0.00    0.00    0.00     0.00 0.00     
-> 0.00     0.00    0.00    0.00    0.00   0.00   0.00
-> bcache0           0.00     0.00    1.00    0.00     4.00 0.00     
-> 8.00    39.54    0.00    0.00    0.00 1000.00 100.00
->
-> # grep . 
-> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/*gc*
-> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/btree_gc_average_duration_ms:26539 
->
-> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/btree_gc_average_frequency_sec:8692 
->
-> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/btree_gc_last_sec:6328 
->
-> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/btree_gc_max_duration_ms:283405 
->
-> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/copy_gc_enabled:1 
->
-> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/gc_always_rewrite:1 
->
->
-> Thanks and Best wishes!
-> linfeng
->
