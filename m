@@ -2,151 +2,172 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDA692ECA4B
-	for <lists+linux-bcache@lfdr.de>; Thu,  7 Jan 2021 07:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D122ED337
+	for <lists+linux-bcache@lfdr.de>; Thu,  7 Jan 2021 16:07:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725974AbhAGGAI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 7 Jan 2021 01:00:08 -0500
-Received: from mail.wangsu.com ([123.103.51.227]:36894 "EHLO wangsu.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725929AbhAGGAI (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 7 Jan 2021 01:00:08 -0500
-Received: from [10.8.148.37] (unknown [59.61.78.237])
-        by app2 (Coremail) with SMTP id 4zNnewAXHsYNo_ZfbTMEAA--.1839S2;
-        Thu, 07 Jan 2021 13:58:37 +0800 (CST)
-Subject: Re: Defects about bcache GC
-To:     Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        linux-bcache@vger.kernel.org
-References: <5768fb38-743a-42e7-a6b6-a12d7ea9f3f0@wangsu.com>
- <ec826f2c-d0de-157f-c4d2-fa9325c83014@easystack.cn>
-From:   Lin Feng <linf@wangsu.com>
-Message-ID: <747feeb9-d469-b75d-e4ca-c5f4d0081cdd@wangsu.com>
-Date:   Thu, 7 Jan 2021 13:58:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        id S1728023AbhAGPGe convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-bcache@lfdr.de>); Thu, 7 Jan 2021 10:06:34 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:43796 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbhAGPGe (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 7 Jan 2021 10:06:34 -0500
+Received: from mail-oo1-f70.google.com ([209.85.161.70])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <dongdong.tao@canonical.com>)
+        id 1kxWrI-0007TE-Gr
+        for linux-bcache@vger.kernel.org; Thu, 07 Jan 2021 15:05:52 +0000
+Received: by mail-oo1-f70.google.com with SMTP id m7so4570722oop.18
+        for <linux-bcache@vger.kernel.org>; Thu, 07 Jan 2021 07:05:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WpyyFJ4fPBGwTKzWOT59msmfGVx9mRP8BSo7tdCr2OA=;
+        b=sx6E4BbhcDvaYPeazevzjAkqJGl6XygGJgVUjTX0/xdbcr8ACMUyA8xO0Sackja8Ln
+         xK6rFOW5lQ6qUQrsSh9t6dbp9zEwf+gzwmY0TIGzxZEbFQPQCMP2XuTLsUvB/vTjoszR
+         Gle//IZzH6Ruj0GWcIubHENZXAqFKdfVGKDa3pUmKqI4L/X36zBizL9tG2RfbKKV9CQx
+         HnPYlqe3e+JXLpWtIJGhqa5iYqaPRJ+mhkQWw/mdzriKDRovmKLgu7ftmkwJWN8hF+Qz
+         /Aja5yPML4bgcCjPwbWK+zs6BOinfARIQAVxiCfbhL0AjLZr3+rU8WMNM0f9KVkPEs66
+         JBxg==
+X-Gm-Message-State: AOAM5310Mp1N33NG3YinnSWgH87JakyuXhcd31kNrn5CtUe4DoICBi1R
+        Ey0jdGChlMFDUVhlljvZGC/sQIpu7u79fagi2f7D5Xg5IhmIb+QR060wsX9jPxtFA6hAbk8FGG4
+        0bUlqQ6GC0AyXi4SZX3HzDeAdzKrA7FuiWKUrBLatXrwzwIQjGnasdjb3xQ==
+X-Received: by 2002:a9d:620f:: with SMTP id g15mr6589817otj.361.1610031951259;
+        Thu, 07 Jan 2021 07:05:51 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyqDxCqli8GEZNkQM5LBxaIorYM/vpbarUfdQ/ZkZXjEkMr3zCWLewrTvBRHM1xqzZBgu1TdiCW+ybpKYbRX4w=
+X-Received: by 2002:a9d:620f:: with SMTP id g15mr6589792otj.361.1610031950935;
+ Thu, 07 Jan 2021 07:05:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <ec826f2c-d0de-157f-c4d2-fa9325c83014@easystack.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: 4zNnewAXHsYNo_ZfbTMEAA--.1839S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr43ZF47GFWUXry8tr13Jwb_yoWrAry8pF
-        s5JF13KrW8Wrn3JrW2yFyUJryUtryUJwn8Grn5JF17J34aq3Wqqw1DXw12g3ZIyF4xCF4D
-        Jr1UJF43ur4avaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkvb7Iv0xC_KF4lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-        cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-        v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owA2z4x0Y4vE
-        x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzx
-        vE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VCjz48v1sIEY20_Gr4l
-        Yx0Ec7CjxVAajcxG14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-        CYjI0SjxkI62AI1cAE67vIY487MxkIecxEwVAFwVW8WwCF04k20xvY0x0EwIxGrwCF04k2
-        0xvE74AGY7Cv6cx26r48MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
-        0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0E
-        wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
-        W8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-        42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07U2LvtUUUUU=
-X-CM-SenderInfo: holqwq5zdqw23xof0z/
+References: <20210105030602.14427-1-tdd21151186@gmail.com> <CAJS8hVK-ZCxJt=E3hwR0hmqPYL1T07_WC_nerb-dZodO+DqtDA@mail.gmail.com>
+ <1a4b2a68-a7b0-8eb0-e60b-c3cf5a5a9e56@suse.de>
+In-Reply-To: <1a4b2a68-a7b0-8eb0-e60b-c3cf5a5a9e56@suse.de>
+From:   Dongdong Tao <dongdong.tao@canonical.com>
+Date:   Thu, 7 Jan 2021 23:05:39 +0800
+Message-ID: <CAJS8hVJpXR6XEE=VL73RdjcjLR9aCKGJ5t=a48ag_Ey98L-uzg@mail.gmail.com>
+Subject: Re: [PATCH] bcache: consider the fragmentation when update the
+ writeback rate
+To:     "open list:BCACHE (BLOCK LAYER CACHE)" <linux-bcache@vger.kernel.org>
+Cc:     Dongdong Tao <dongdong.tao@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Yang,
+[Sorry for the Spam]
 
-Thanks for your reply!
-Happy to try the patch and I will give you feedback!
+Here is the testing result on 400G NVME, I'll get a 1TB NVME later
 
-linfeng
-On 1/5/21 16:29, Dongsheng Yang wrote:
-> Hi Lin,
-> 
->       There is a patch for this situation:
-> https://www.spinics.net/lists/linux-bcache/msg08870.html
-> 
->       That's not in mainline yet, and not tested widely. You can give it
-> a try if you are interested in.
-> 
-> 
-> Thanx
-> 
-> 在 2020/12/18 星期五 下午 6:35, Lin Feng 写道:
->> Hi all,
->>
->> I googled a lot but only finding this, my question is if this issue
->> have been fixed or
->> if there are ways to work around?
->>
->>> On Wed, 28 Jun 2017, Coly Li wrote:
->>>
->>>> On 2017/6/27 下午8:04, tang.junhui@xxxxxxxxxx wrote:
->>>>> Hello Eric, Coly,
->>>>>
->>>>> I use a 1400G SSD device a bcache cache device,
->>>>> and attach with 10 back-end devices,
->>>>> and run random small write IOs,
->>>>> when gc works, It takes about 15 seconds,
->>>>> and the up layer application IOs was suspended at this time,
->>>>> How could we bear such a long time IO stopping?
->>>>> Is there any way we can avoid this problem?
->>>>>
->>>>> I am very anxious about this question, any comment would be
->> valuable.
->>>>
->>>> I encounter same situation too.
->>>> Hmm, I assume there are some locking issue here, to prevent
->> application
->>>> to send request and insert keys in LSM tree, no matter in
->> writeback or
->>>> writethrough mode. This is a lazy and fast response, I need to
->> check the
->>>> code then provide an accurate reply :-)
->>>
->>
->> I encoutered even worse situation(8TB ssd cached for 4*10 TB disks) as
->> mail extracted above,
->> all usrer IOs are hung during bcache GC runs, my kernel is 4.18, while
->> I tested it with kernel 5.10,
->> it seems that situation is unchaged.
->>
->> Below are some logs for reference.
->> GC trace events:
->> [Wed Dec 16 15:08:40 2020]   ##48735 [046] .... 1632697.784097:
->> bcache_gc_start: 4ab63029-0c4a-42a8-8f54-e638358c2c6c
->> [Wed Dec 16 15:09:01 2020]   ##48735 [034] .... 1632718.828510:
->> bcache_gc_end: 4ab63029-0c4a-42a8-8f54-e638358c2c6c
->>
->> and during which iostat shows like:
->> 12/16/2020 03:08:48 PM
->> Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s
->> avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
->> sdb               0.00     0.50 1325.00   27.00 169600.00 122.00
->> 251.07     0.32    0.24    0.24    0.02   0.13  17.90
->> sdc               0.00     0.00    0.00    0.00     0.00 0.00
->> 0.00     0.00    0.00    0.00    0.00   0.00   0.00
->> sdd               0.00     0.00    0.00    0.00     0.00 0.00
->> 0.00     0.00    0.00    0.00    0.00   0.00   0.00
->> sde               0.00     0.00    0.00    0.00     0.00 0.00
->> 0.00     0.00    0.00    0.00    0.00   0.00   0.00
->> sdf               0.00     0.00    0.00    0.00     0.00 0.00
->> 0.00     0.00    0.00    0.00    0.00   0.00   0.00
->> bcache0           0.00     0.00    1.00    0.00     4.00 0.00
->> 8.00    39.54    0.00    0.00    0.00 1000.00 100.00
->>
->> # grep .
->> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/*gc*
->> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/btree_gc_average_duration_ms:26539
->>
->> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/btree_gc_average_frequency_sec:8692
->>
->> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/btree_gc_last_sec:6328
->>
->> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/btree_gc_max_duration_ms:283405
->>
->> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/copy_gc_enabled:1
->>
->> /sys/fs/bcache/4ab63029-0c4a-42a8-8f54-e638358c2c6c/internal/gc_always_rewrite:1
->>
->>
->> Thanks and Best wishes!
->> linfeng
->>
+https://docs.google.com/document/d/1MmZBWfLRIX7_NfX4tGpWxOj31oIN5NuhNfCFzrIAP48/edit?usp=sharing
 
+
+On Tue, Jan 5, 2021 at 12:33 PM Coly Li <colyli@suse.de> wrote:
+>
+> On 1/5/21 11:44 AM, Dongdong Tao wrote:
+> > Hey Coly,
+> >
+> > This is the second version of the patch, please allow me to explain a
+> > bit for this patch:
+> >
+> > We accelerate the rate in 3 stages with different aggressiveness, the
+> > first stage starts when dirty buckets percent reach above
+> > BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW(50), the second is
+> > BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID(57) and the third is
+> > BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH(64). By default the first stage
+> > tries to writeback the amount of dirty data in one bucket (on average)
+> > in (1 / (dirty_buckets_percent - 50)) second, the second stage tries to
+> > writeback the amount of dirty data in one bucket in (1 /
+> > (dirty_buckets_percent - 57)) * 200 millisecond. The third stage tries
+> > to writeback the amount of dirty data in one bucket in (1 /
+> > (dirty_buckets_percent - 64)) * 20 millisecond.
+> >
+> > As we can see, there are two writeback aggressiveness increasing
+> > strategies, one strategy is with the increasing of the stage, the first
+> > stage is the easy-going phase whose initial rate is trying to write back
+> > dirty data of one bucket in 1 second, the second stage is a bit more
+> > aggressive, the initial rate tries to writeback the dirty data of one
+> > bucket in 200 ms, the last stage is even more, whose initial rate tries
+> > to writeback the dirty data of one bucket in 20 ms. This makes sense,
+> > one reason is that if the preceding stage couldn’t get the fragmentation
+> > to a fine stage, then the next stage should increase the aggressiveness
+> > properly, also it is because the later stage is closer to the
+> > bch_cutoff_writeback_sync. Another aggressiveness increasing strategy is
+> > with the increasing of dirty bucket percent within each stage, the first
+> > strategy controls the initial writeback rate of each stage, while this
+> > one increases the rate based on the initial rate, which is initial_rate
+> > * (dirty bucket percent - BCH_WRITEBACK_FRAGMENT_THRESHOLD_X).
+> >
+> > The initial rate can be controlled by 3 parameters
+> > writeback_rate_fp_term_low, writeback_rate_fp_term_mid,
+> > writeback_rate_fp_term_high, they are default 1, 5, 50, users can adjust
+> > them based on their needs.
+> >
+> > The reason that I choose 50, 57, 64 as the threshold value is because
+> > the GC must be triggered at least once during each stage due to the
+> > “sectors_to_gc” being set to 1/16 (6.25 %) of the total cache size. So,
+> > the hope is that the first and second stage can get us back to good
+> > shape in most situations by smoothly writing back the dirty data without
+> > giving too much stress to the backing devices, but it might still enter
+> > the third stage if the bucket consumption is very aggressive.
+> >
+> > This patch use (dirty / dirty_buckets) * fp_term to calculate the rate,
+> > this formula means that we want to writeback (dirty / dirty_buckets) in
+> > 1/fp_term second, fp_term is calculated by above aggressiveness
+> > controller, “dirty” is the current dirty sectors, “dirty_buckets” is the
+> > current dirty buckets, so (dirty / dirty_buckets) means the average
+> > dirty sectors in one bucket, the value is between 0 to 1024 for the
+> > default setting,  so this formula basically gives a hint that to reclaim
+> > one bucket in 1/fp_term second. By using this semantic, we can have a
+> > lower writeback rate when the amount of dirty data is decreasing and
+> > overcome the fact that dirty buckets number is always increasing unless
+> > GC happens.
+> >
+> > *Compare to the first patch:
+> > *The first patch is trying to write back all the data in 40 seconds,
+> > this will result in a very high writeback rate when the amount of dirty
+> > data is big, this is mostly true for the large cache devices. The basic
+> > problem is that the semantic of this patch is not ideal, because we
+> > don’t really need to writeback all dirty data in order to solve this
+> > issue, and the instant large increase of the rate is something I feel we
+> > should better avoid (I like things to be smoothly changed unless no
+> > choice: )).
+> >
+> > Before I get to this new patch(which I believe should be optimal for me
+> > atm), there have been many tuning/testing iterations, eg. I’ve tried to
+> > tune the algorithm to writeback ⅓ of the dirty data in a certain amount
+> > of seconds, writeback 1/fragment of the dirty data in a certain amount
+> > of seconds, writeback all the dirty data only in those error_buckets
+> > (error buckets = dirty buckets - 50% of the total buckets) in a certain
+> > amount of time. However, those all turn out not to be ideal, only the
+> > semantic of the patch makes much sense for me and allows me to control
+> > the rate in a more precise way.
+> >
+> > *Testing data:
+> > *I'll provide the visualized testing data in the next couple of days
+> > with 1TB NVME devices cache but with HDD as backing device since it's
+> > what we mostly used in production env.
+> > I have the data for 400GB NVME, let me prepare it and take it for you to
+> > review.
+> [snipped]
+>
+> Hi Dongdong,
+>
+> Thanks for the update and continuous effort on this idea.
+>
+> Please keep in mind the writeback rate is just a advice rate for the
+> writeback throughput, in real workload changing the writeback rate
+> number does not change writeback throughput obviously.
+>
+> Currently I feel this is an interesting and promising idea for your
+> patch, but I am not able to say whether it may take effect in real
+> workload, so we do need convinced performance data on real workload and
+> configuration.
+>
+> Of course I may also help on the benchmark, but my to-do list is long
+> enough and it may take a very long delay time.
+>
+> Thanks.
+>
+> Coly Li
