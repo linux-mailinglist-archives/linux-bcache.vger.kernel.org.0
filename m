@@ -2,70 +2,87 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 185962F007F
-	for <lists+linux-bcache@lfdr.de>; Sat,  9 Jan 2021 15:33:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DB1D2F009E
+	for <lists+linux-bcache@lfdr.de>; Sat,  9 Jan 2021 16:03:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725826AbhAIOdC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 9 Jan 2021 09:33:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54536 "EHLO mx2.suse.de"
+        id S1726251AbhAIPCt (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 9 Jan 2021 10:02:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60802 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725780AbhAIOdC (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 9 Jan 2021 09:33:02 -0500
+        id S1726189AbhAIPCt (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 9 Jan 2021 10:02:49 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id DBF48AAF1;
-        Sat,  9 Jan 2021 14:32:20 +0000 (UTC)
-To:     Cedric.dewijs@eclipso.eu
-References: <2d981576325bec349ea63861f65668e0@mail.eclipso.de>
+        by mx2.suse.de (Postfix) with ESMTP id C4C08AAF1;
+        Sat,  9 Jan 2021 15:02:07 +0000 (UTC)
+Subject: Re: [PATCH 0/5] bcache patches for Linux v5.11-rc3
+To:     axboe@kernel.dk
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
+References: <20210104074122.19759-1-colyli@suse.de>
 From:   Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org
-Subject: Re: multiple caches code is being removed, what is the recommended
- alternative?
-Message-ID: <e03dd593-14cb-b4a0-d68a-bd9b4fb8bd20@suse.de>
-Date:   Sat, 9 Jan 2021 22:32:14 +0800
+Message-ID: <0ec90bb3-aa7b-431c-eed2-557cb15f9d06@suse.de>
+Date:   Sat, 9 Jan 2021 23:02:05 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
  Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <2d981576325bec349ea63861f65668e0@mail.eclipso.de>
+In-Reply-To: <20210104074122.19759-1-colyli@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 1/7/21 2:30 AM, Cedric.dewijs@eclipso.eu wrote:
-> ­Hi All,
+On 1/4/21 3:41 PM, Coly Li wrote:
+> Hi Jens,
 > 
-> I recently saw a series of patches to remove multiple caches code [1] For me, having one large mirrored write cache is desirable, so I can make this structure:
+> This series is not planned but necessary. The four patches from me fix
+> a bcache super block layout issue which was introduced in 5.9 when large
+> bucket (32MB-1TB size for zoned device) feature firstly introduced.
 > 
-> +--------------------------------------------------------------------------+
-> |                         btrfs raid 1 (2 copies) /mnt                     |
-> +--------------+--------------+--------------+--------------+--------------+
-> | /dev/bcache0 | /dev/bcache1 | /dev/bcache2 | /dev/bcache3 | /dev/bcache4 |
-> +--------------+--------------+--------------+--------------+--------------+
-> |                   Mirrored  Writeback Cache (SSD)                        |
-> |                         /dev/sda3 and /dev/sda4                          |
-> +--------------+--------------+--------------+--------------+--------------+
-> | Data         | Data         | Data         | Data         | Data         |
-> | /dev/sda8    | /dev/sda9    | /dev/sda10   | /dev/sda11   | /dev/sda12   |
-> +--------------+--------------+--------------+--------------+--------------+
+> Previous code has problem on space consumption and checksum calculation.
+> These four patches improve and fix the problems with on-disk format
+> consistency. Although now almost no one (except me) uses the large
+> bucket code now, it should be good to have the fix as soon as possible.
 > 
-> This way I don't have to worry about data loss when one of the SSD's or one of the hard drives fails, and I have maximum performance for the least amount of drives.
+> This series also has a patch from Yi Li which avoid a redundant value
+> assignment in a two-level loop. It is cool if we may have it in 5.11.
 > 
-> With the code for multiple caches removed, what is the recommended way forward?
-> What is the best way to use 2 SSD's with different size and speed, while keeping enough redundancy to survive a single drive failure?
-> 
-> [1] https://lore.kernel.org/linux-bcache/20200822114536.23491-1-colyli@suse.de/T/#t
+> User space bcache-tools are updated for the above kernel changes too.
+> Please take them for 5.11-rc3.
 > 
 
-It is removed because it is not completed, a working mirror cache in
-bcache is not that simple like submitting bios to all cache device and
-waiting for all of them completed. This might be one of the reason why
-this feature is not production ready after 10+ years since bcache merged
-into mainline kernel.
+Hi Jens,
 
-I see many production environments using md raid1 for cached data
-duplication. This is the preferred method IMHO.
+Could you please to take this series for rc3?
+
+Thanks in advance.
+
 
 Coly Li
+
+
+
+> ---
+> 
+> 
+> Coly Li (4):
+>   bcache: fix typo from SUUP to SUPP in features.h
+>   bcache: check unsupported feature sets for bcache register
+>   bcache: introduce BCH_FEATURE_INCOMPAT_LOG_LARGE_BUCKET_SIZE for large
+>     bucket
+>   bcache: set bcache device into read-only mode for
+>     BCH_FEATURE_INCOMPAT_OBSO_LARGE_BUCKET
+> 
+> Yi Li (1):
+>   bcache: set pdev_set_uuid before scond loop iteration
+> 
+>  drivers/md/bcache/features.c |  2 +-
+>  drivers/md/bcache/features.h | 30 ++++++++++++++++----
+>  drivers/md/bcache/super.c    | 53 +++++++++++++++++++++++++++++++++---
+>  include/uapi/linux/bcache.h  |  2 +-
+>  4 files changed, 76 insertions(+), 11 deletions(-)
+> 
+
+
+
