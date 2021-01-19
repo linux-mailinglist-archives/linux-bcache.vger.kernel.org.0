@@ -2,53 +2,53 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96D222FB064
-	for <lists+linux-bcache@lfdr.de>; Tue, 19 Jan 2021 06:26:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6DEC2FB05E
+	for <lists+linux-bcache@lfdr.de>; Tue, 19 Jan 2021 06:26:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389823AbhASFZy (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 19 Jan 2021 00:25:54 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:51850 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388688AbhASFLK (ORCPT
+        id S2389676AbhASFZH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 19 Jan 2021 00:25:07 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:56996 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731562AbhASFJo (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 19 Jan 2021 00:11:10 -0500
+        Tue, 19 Jan 2021 00:09:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611033069; x=1642569069;
+  t=1611032983; x=1642568983;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=SmRmSEecsPl0dNDxe5lwcfSlZzCbmw+NJIUAkJff7lg=;
-  b=TTvy6az7YfZu3I6RHd9uyLCVnwXWebTAMf6S3xktUuhs2h78+C557uVM
-   OXZgNjJv/UDCvBCzFeQfbVEXTWjwsOvM+wlLiXN8UA9BjePci4j0t4P41
-   phrft7eVbfhtyXDCj8lo7A8of6OfMNgxv2DFo7mf9/Hcz1ROOc/dWQ7aJ
-   sjlri9n9IXMxZCXufh9lcUrMV/GrBq9rB+RBN/dh2BXwLgojReARvZtdh
-   qoDyg8ZTm1hovQHzy3pIMGTJL5bbZ+BsLhyh8yrsjvi2VmHkE7RpD2XL1
-   ZVxncMm2bbNwqwib8zyO5q19tpa36deIcvYCjXIHeeTHQWVL3s59PjfBp
-   Q==;
-IronPort-SDR: kdIIt2x5PMEjTb4EGFggpfl2dYfQSP2xDtYm8mdeYH9f7qSSxJPAzzb88WjlqscRztf9vZyP+b
- vhQOor71N7fuZ/YmXovuKjf11uBcQFvNusA2qzMpBdFq+cf7QDww22iX65ytM5RuX4K7cbXjvK
- Npe4W67SABEJgoC8q6QzihocwyA2irnL2mDeWA5NH0apI8P5RftybOIQpALQclkBz0qdcMkLWn
- QHlxUgOOs3s7xwVoq8aFuBuyQPYX4HYZrBd451ytL2c0kFFHZzRQGh2SvdzQIK090J1FNiMJmF
- DL4=
+  bh=VllxQdSuETkut8jiQhHuy5FqGdkslwtr76oc8FFhzYc=;
+  b=mXQoFRTpzsMI+SEv0cqbKQrXdS19iOWRBPavRwHUswWJrJ7nonsIMu11
+   GxUU4sdJof12Iul4rCztRJuD6IdDuwFrHmJlJ9LSLorwh6vWaZggFb14F
+   IT0aN8zHQQapMVdUjGoXZKXbaGITyze6F6a0YiAewS/aQdVxqYAojaUiJ
+   3ceqsqrR/KRGvDXS7IcahF3L66p1LamaL/cbdbY4/YJGzzRXMGwJFPWl8
+   pti0Om3e9YTL2Sby/GRB9lOXyJZlIQeGDpRQWK7HwGgKihQZId3eZE4d2
+   bk/DttrAxtZ6eKCOivNkJYyvsYDT8onGtnDQwDzGpW6m5Azfi9nX6EQR7
+   g==;
+IronPort-SDR: 2uTT8eL1dRQtmu5OniOOmoi1RF6C+19qgjagFB3XRQ3/mSYSwu8vcge+qkyb3rSLw4TqSL/FWX
+ AcMSsLedPiJG6ITz3IETTM3KDzkHuzfn0tnHFVOwMBF5CNw7btzWoXyktqUWgzp7ST1W135bKN
+ E+5jV0f6U9EaNPUakuM2yj4WgPMEVvDWMsNt7ypL2W+FbtyzEeVrocK0/H31A9LFFJoqtBU2y6
+ hCACAGTZZRNGDDoqtum0p52IpbTQIhO8YbiYtVPUdJQisaH3ssPk83S+125b9bqcLbyfsDJi4T
+ LAM=
 X-IronPort-AV: E=Sophos;i="5.79,357,1602518400"; 
-   d="scan'208";a="157763889"
+   d="scan'208";a="162201061"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 19 Jan 2021 13:08:14 +0800
-IronPort-SDR: LRuwxLsfABgj/FCitJ0WnK7Gjvqvg6JtsxJOwfFIj2l4BDUeLDVqxwb8vvGjnII3F0zTIsz7Hg
- rNlUiU8qFPgYVZGXHuLfVWEAHJO+lSgJKLtPPd9OLxtfSHEkOJpPWoWQ77jERR+EHu+2SEdrDR
- 2gck+Umd+1Ctbn6H/dAAkP5xYvUnceNTw8BphGocZ4LPmS8SKHdNy7IALc/BjWXNTwK4VP+G5Q
- Rz8YIopnF85w26xAJHC88oJJ2QoWS2RMnI7cw41qWtr1PAnqyv+ix63ozfXpfgTrp48v0vSPbG
- efVVa6oioVUBcBumGIvxib5f
+  by ob1.hgst.iphmx.com with ESMTP; 19 Jan 2021 13:08:22 +0800
+IronPort-SDR: fvwAs+YVVhRtphEuD38L5yoRHEeupJ/V7awoOjPbhbDvanClaPhl/83ACTwaNff59py0AJVZSm
+ xMiN8Oi0VKzRemLsC9o/6gzJY3FQ7CuraspYr3YNXDoQDTtAqJcLu5/te0r24tIL5Pa+KJ7X1j
+ VbfjMskcKqfaGWcwaOZnyTxv8QBydXWkqKSwy//Hti2jA8UjV38Wd38qjEhOwUUHH8Rwm4IukF
+ BZLDPe0f0QHXkE8xbPzjBmA6xfbRWAKpKzkNF8q8VnVFc1ilObZ2R61mBovZf7EKCgkXofTg/E
+ tNuRe1VQqaztNdh7o2u7ZkLh
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 20:52:52 -0800
-IronPort-SDR: p1tcnYwAx/l/NVCOSE++cI0sO4XNQ+lbfc67fxaPGZ0Kwcqxhdz9+u3CPNrCwOw83oDaMA1Qjm
- ESU3xmsUtmMt60eRcgdVRVFxzLHWW7CqjKNcfNh1+RIHGbsJ3Ai97YW6MaxhVDB0yLEg9IysxE
- 83VZ2vSeY/l/vgDGSUb38hhYRsZT54dyq7c3WndcswTCZVlwVMvWGE4bWezbXz6r57OZtdR1bX
- 3lpkUR2AIs9h1PW1353M+8ODhhBWH9ueZ25tUnouwQQq8n8IP+3JRSYVgmwudbuVJ26I/RNNul
- ogs=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 20:52:59 -0800
+IronPort-SDR: AukWeQ10GheUQlYR0D5EEj/feVa20cSuWNwottGMwE7opN0/I3RYtMUjQ5GxQSyfBE6/sdBk0k
+ z4fxfv6aG+9JDmdOEZ65AwSHkGYtwddoOVkRqi4DvyiiLB8vtd/fOm44eFdRlx5N0V45fVA/G2
+ Mrkem+bFgQ/7hMk41j/WbKXfrCn46pyu5FjaWYjPtBRdJOMYXrfOYhaNNWZEy5N5aQ3tw7GglR
+ lppVbOb4m+51NXG4xiicKFxmfiLfz3Hlw8sn3kAgisMPSXvCeaKzeiNu728KKk2Lm4HPl2GKbp
+ MUo=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
-  by uls-op-cesaip02.wdc.com with ESMTP; 18 Jan 2021 21:08:14 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 18 Jan 2021 21:08:22 -0800
 From:   Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To:     linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -70,9 +70,9 @@ Cc:     jfs-discussion@lists.sourceforge.net, dm-devel@redhat.com,
         osandov@fb.com, bvanassche@acm.org, gustavo@embeddedor.com,
         asml.silence@gmail.com, jefflexu@linux.alibaba.com,
         Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Subject: [RFC PATCH 14/37] drdb: use bio_init_fields in bitmap
-Date:   Mon, 18 Jan 2021 21:06:08 -0800
-Message-Id: <20210119050631.57073-15-chaitanya.kulkarni@wdc.com>
+Subject: [RFC PATCH 15/37] drdb: use bio_init_fields in receiver
+Date:   Mon, 18 Jan 2021 21:06:09 -0800
+Message-Id: <20210119050631.57073-16-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1
 In-Reply-To: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
 References: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
@@ -84,28 +84,39 @@ X-Mailing-List: linux-bcache@vger.kernel.org
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- drivers/block/drbd/drbd_bitmap.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/block/drbd/drbd_receiver.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_bitmap.c b/drivers/block/drbd/drbd_bitmap.c
-index df53dca5d02c..4fd9746af469 100644
---- a/drivers/block/drbd/drbd_bitmap.c
-+++ b/drivers/block/drbd/drbd_bitmap.c
-@@ -1006,13 +1006,10 @@ static void bm_page_io_async(struct drbd_bm_aio_ctx *ctx, int page_nr) __must_ho
- 		bm_store_page_idx(page, page_nr);
- 	} else
- 		page = b->bm_pages[page_nr];
--	bio_set_dev(bio, device->ldev->md_bdev);
--	bio->bi_iter.bi_sector = on_disk_sector;
-+	bio_init_fields(bio, device->ldev->md_bdev, on_disk_sector, ctx, drbd_bm_endio, 0, 0);
- 	/* bio_add_page of a single page to an empty bio will always succeed,
- 	 * according to api.  Do we want to assert that? */
- 	bio_add_page(bio, page, len, 0);
--	bio->bi_private = ctx;
--	bio->bi_end_io = drbd_bm_endio;
- 	bio_set_op_attrs(bio, op, 0);
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 09c86ef3f0fd..2715081a4603 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -1296,9 +1296,7 @@ static void submit_one_flush(struct drbd_device *device, struct issue_flush_cont
  
- 	if (drbd_insert_fault(device, (op == REQ_OP_WRITE) ? DRBD_FAULT_MD_WR : DRBD_FAULT_MD_RD)) {
+ 	octx->device = device;
+ 	octx->ctx = ctx;
+-	bio_set_dev(bio, device->ldev->backing_bdev);
+-	bio->bi_private = octx;
+-	bio->bi_end_io = one_flush_endio;
++	bio_init_fields(bio, device->ldev->backing_bdev, 0, octx, one_flush_endio, 0, 0);
+ 	bio->bi_opf = REQ_OP_FLUSH | REQ_PREFLUSH;
+ 
+ 	device->flush_jif = jiffies;
+@@ -1693,12 +1691,9 @@ int drbd_submit_peer_request(struct drbd_device *device,
+ 		goto fail;
+ 	}
+ 	/* > peer_req->i.sector, unless this is the first bio */
+-	bio->bi_iter.bi_sector = sector;
+-	bio_set_dev(bio, device->ldev->backing_bdev);
++	bio_init_fields(bio, device->ldev->backing_bdev, sector, peer_req,
++			drbd_peer_request_endio, 0, 0);
+ 	bio_set_op_attrs(bio, op, op_flags);
+-	bio->bi_private = peer_req;
+-	bio->bi_end_io = drbd_peer_request_endio;
+-
+ 	bio->bi_next = bios;
+ 	bios = bio;
+ 	++n_bios;
 -- 
 2.22.1
 
