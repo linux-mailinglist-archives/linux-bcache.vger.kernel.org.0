@@ -2,33 +2,100 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 597392FC511
-	for <lists+linux-bcache@lfdr.de>; Wed, 20 Jan 2021 00:49:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65CB32FC542
+	for <lists+linux-bcache@lfdr.de>; Wed, 20 Jan 2021 01:01:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbhASXhb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 19 Jan 2021 18:37:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52096 "EHLO mx2.suse.de"
+        id S1726638AbhATAAp (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 19 Jan 2021 19:00:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41684 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389222AbhASOHo (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 19 Jan 2021 09:07:44 -0500
+        id S2394964AbhASNx3 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 19 Jan 2021 08:53:29 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1611064351; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=iHKhjDkg2elRSLCRxcs3JrLM+Cwcg+VKeqaH+Rb+H6c=;
+        b=rDTgZ7xM0AN8Ucse2v7mBg8l0Jc0DJBU5I16P+0kPu6Ll3d1MYjww4/OSPhb827NAQfP3a
+        AICZcyHBf6nEypATvwx9kRZbFb+EuDroiPciU7vbGZXpZWf5BQXuaB+OroVtJXg0PBeUIO
+        NBdb1UgiuuGaVIXgCdiitPnNeC32Gk4=
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id AA9D0AB7F;
-        Tue, 19 Jan 2021 14:07:01 +0000 (UTC)
-To:     Dongdong Tao <tdd21151186@gmail.com>
-Cc:     dongdong tao <dongdong.tao@canonical.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210119125639.21013-1-tdd21151186@gmail.com>
-From:   Coly Li <colyli@suse.de>
-Subject: Re: [PATCH] bcache: consider the fragmentation when update the
- writeback rate
-Message-ID: <937e8096-b0fe-9fcc-87bd-dff82d760546@suse.de>
-Date:   Tue, 19 Jan 2021 22:06:53 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
- Gecko/20100101 Thunderbird/78.6.1
+        by mx2.suse.de (Postfix) with ESMTP id 5E644B247;
+        Tue, 19 Jan 2021 13:52:31 +0000 (UTC)
+Subject: Re: [RFC PATCH 04/37] btrfs: use bio_init_fields in volumes
+To:     Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com
+Cc:     jfs-discussion@lists.sourceforge.net, dm-devel@redhat.com,
+        axboe@kernel.dk, philipp.reisner@linbit.com,
+        lars.ellenberg@linbit.com, efremov@linux.com, colyli@suse.de,
+        kent.overstreet@gmail.com, agk@redhat.com, snitzer@redhat.com,
+        song@kernel.org, hch@lst.de, sagi@grimberg.me,
+        martin.petersen@oracle.com, viro@zeniv.linux.org.uk, clm@fb.com,
+        josef@toxicpanda.com, dsterba@suse.com, tytso@mit.edu,
+        adilger.kernel@dilger.ca, rpeterso@redhat.com, agruenba@redhat.com,
+        darrick.wong@oracle.com, shaggy@kernel.org, damien.lemoal@wdc.com,
+        naohiro.aota@wdc.com, jth@kernel.org, tj@kernel.org,
+        osandov@fb.com, bvanassche@acm.org, gustavo@embeddedor.com,
+        asml.silence@gmail.com, jefflexu@linux.alibaba.com
+References: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
+ <20210119050631.57073-5-chaitanya.kulkarni@wdc.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ mQINBFiKBz4BEADNHZmqwhuN6EAzXj9SpPpH/nSSP8YgfwoOqwrP+JR4pIqRK0AWWeWCSwmZ
+ T7g+RbfPFlmQp+EwFWOtABXlKC54zgSf+uulGwx5JAUFVUIRBmnHOYi/lUiE0yhpnb1KCA7f
+ u/W+DkwGerXqhhe9TvQoGwgCKNfzFPZoM+gZrm+kWv03QLUCr210n4cwaCPJ0Nr9Z3c582xc
+ bCUVbsjt7BN0CFa2BByulrx5xD9sDAYIqfLCcZetAqsTRGxM7LD0kh5WlKzOeAXj5r8DOrU2
+ GdZS33uKZI/kZJZVytSmZpswDsKhnGzRN1BANGP8sC+WD4eRXajOmNh2HL4P+meO1TlM3GLl
+ EQd2shHFY0qjEo7wxKZI1RyZZ5AgJnSmehrPCyuIyVY210CbMaIKHUIsTqRgY5GaNME24w7h
+ TyyVCy2qAM8fLJ4Vw5bycM/u5xfWm7gyTb9V1TkZ3o1MTrEsrcqFiRrBY94Rs0oQkZvunqia
+ c+NprYSaOG1Cta14o94eMH271Kka/reEwSZkC7T+o9hZ4zi2CcLcY0DXj0qdId7vUKSJjEep
+ c++s8ncFekh1MPhkOgNj8pk17OAESanmDwksmzh1j12lgA5lTFPrJeRNu6/isC2zyZhTwMWs
+ k3LkcTa8ZXxh0RfWAqgx/ogKPk4ZxOXQEZetkEyTFghbRH2BIwARAQABtCNOaWtvbGF5IEJv
+ cmlzb3YgPG5ib3Jpc292QHN1c2UuY29tPokCOAQTAQIAIgUCWIo48QIbAwYLCQgHAwIGFQgC
+ CQoLBBYCAwECHgECF4AACgkQcb6CRuU/KFc0eg/9GLD3wTQz9iZHMFbjiqTCitD7B6dTLV1C
+ ddZVlC8Hm/TophPts1bWZORAmYIihHHI1EIF19+bfIr46pvfTu0yFrJDLOADMDH+Ufzsfy2v
+ HSqqWV/nOSWGXzh8bgg/ncLwrIdEwBQBN9SDS6aqsglagvwFD91UCg/TshLlRxD5BOnuzfzI
+ Leyx2c6YmH7Oa1R4MX9Jo79SaKwdHt2yRN3SochVtxCyafDlZsE/efp21pMiaK1HoCOZTBp5
+ VzrIP85GATh18pN7YR9CuPxxN0V6IzT7IlhS4Jgj0NXh6vi1DlmKspr+FOevu4RVXqqcNTSS
+ E2rycB2v6cttH21UUdu/0FtMBKh+rv8+yD49FxMYnTi1jwVzr208vDdRU2v7Ij/TxYt/v4O8
+ V+jNRKy5Fevca/1xroQBICXsNoFLr10X5IjmhAhqIH8Atpz/89ItS3+HWuE4BHB6RRLM0gy8
+ T7rN6ja+KegOGikp/VTwBlszhvfLhyoyjXI44Tf3oLSFM+8+qG3B7MNBHOt60CQlMkq0fGXd
+ mm4xENl/SSeHsiomdveeq7cNGpHi6i6ntZK33XJLwvyf00PD7tip/GUj0Dic/ZUsoPSTF/mG
+ EpuQiUZs8X2xjK/AS/l3wa4Kz2tlcOKSKpIpna7V1+CMNkNzaCOlbv7QwprAerKYywPCoOSC
+ 7P25Ag0EWIoHPgEQAMiUqvRBZNvPvki34O/dcTodvLSyOmK/MMBDrzN8Cnk302XfnGlW/YAQ
+ csMWISKKSpStc6tmD+2Y0z9WjyRqFr3EGfH1RXSv9Z1vmfPzU42jsdZn667UxrRcVQXUgoKg
+ QYx055Q2FdUeaZSaivoIBD9WtJq/66UPXRRr4H/+Y5FaUZx+gWNGmBT6a0S/GQnHb9g3nonD
+ jmDKGw+YO4P6aEMxyy3k9PstaoiyBXnzQASzdOi39BgWQuZfIQjN0aW+Dm8kOAfT5i/yk59h
+ VV6v3NLHBjHVw9kHli3jwvsizIX9X2W8tb1SefaVxqvqO1132AO8V9CbE1DcVT8fzICvGi42
+ FoV/k0QOGwq+LmLf0t04Q0csEl+h69ZcqeBSQcIMm/Ir+NorfCr6HjrB6lW7giBkQl6hhomn
+ l1mtDP6MTdbyYzEiBFcwQD4terc7S/8ELRRybWQHQp7sxQM/Lnuhs77MgY/e6c5AVWnMKd/z
+ MKm4ru7A8+8gdHeydrRQSWDaVbfy3Hup0Ia76J9FaolnjB8YLUOJPdhI2vbvNCQ2ipxw3Y3c
+ KhVIpGYqwdvFIiz0Fej7wnJICIrpJs/+XLQHyqcmERn3s/iWwBpeogrx2Lf8AGezqnv9woq7
+ OSoWlwXDJiUdaqPEB/HmGfqoRRN20jx+OOvuaBMPAPb+aKJyle8zABEBAAGJAh8EGAECAAkF
+ AliKBz4CGwwACgkQcb6CRuU/KFdacg/+M3V3Ti9JYZEiIyVhqs+yHb6NMI1R0kkAmzsGQ1jU
+ zSQUz9AVMR6T7v2fIETTT/f5Oout0+Hi9cY8uLpk8CWno9V9eR/B7Ifs2pAA8lh2nW43FFwp
+ IDiSuDbH6oTLmiGCB206IvSuaQCp1fed8U6yuqGFcnf0ZpJm/sILG2ECdFK9RYnMIaeqlNQm
+ iZicBY2lmlYFBEaMXHoy+K7nbOuizPWdUKoKHq+tmZ3iA+qL5s6Qlm4trH28/fPpFuOmgP8P
+ K+7LpYLNSl1oQUr+WlqilPAuLcCo5Vdl7M7VFLMq4xxY/dY99aZx0ZJQYFx0w/6UkbDdFLzN
+ upT7NIN68lZRucImffiWyN7CjH23X3Tni8bS9ubo7OON68NbPz1YIaYaHmnVQCjDyDXkQoKC
+ R82Vf9mf5slj0Vlpf+/Wpsv/TH8X32ajva37oEQTkWNMsDxyw3aPSps6MaMafcN7k60y2Wk/
+ TCiLsRHFfMHFY6/lq/c0ZdOsGjgpIK0G0z6et9YU6MaPuKwNY4kBdjPNBwHreucrQVUdqRRm
+ RcxmGC6ohvpqVGfhT48ZPZKZEWM+tZky0mO7bhZYxMXyVjBn4EoNTsXy1et9Y1dU3HVJ8fod
+ 5UqrNrzIQFbdeM0/JqSLrtlTcXKJ7cYFa9ZM2AP7UIN9n1UWxq+OPY9YMOewVfYtL8M=
+Message-ID: <89feb998-8c60-dbae-92a6-15a9ad4fd594@suse.com>
+Date:   Tue, 19 Jan 2021 15:52:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210119125639.21013-1-tdd21151186@gmail.com>
+In-Reply-To: <20210119050631.57073-5-chaitanya.kulkarni@wdc.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -36,253 +103,34 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 1/19/21 8:56 PM, Dongdong Tao wrote:
-> From: dongdong tao <dongdong.tao@canonical.com>
-> 
-> Current way to calculate the writeback rate only considered the
-> dirty sectors, this usually works fine when the fragmentation
-> is not high, but it will give us unreasonable small rate when
-> we are under a situation that very few dirty sectors consumed
-> a lot dirty buckets. In some case, the dirty bucekts can reached
-> to CUTOFF_WRITEBACK_SYNC while the dirty data(sectors) not even
-> reached the writeback_percent, the writeback rate will still
-> be the minimum value (4k), thus it will cause all the writes to be
-> stucked in a non-writeback mode because of the slow writeback.
-> 
-> We accelerate the rate in 3 stages with different aggressiveness,
-> the first stage starts when dirty buckets percent reach above
-> BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW (50), the second is
-> BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID (57), the third is
-> BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH (64). By default
-> the first stage tries to writeback the amount of dirty data
-> in one bucket (on average) in (1 / (dirty_buckets_percent - 50)) second,
-> the second stage tries to writeback the amount of dirty data in one bucket
-> in (1 / (dirty_buckets_percent - 57)) * 100 millisecond, the third
-> stage tries to writeback the amount of dirty data in one bucket in
-> (1 / (dirty_buckets_percent - 64)) millisecond. It is ok to be very
-> aggressive in the last stage, as it is our last chance to pull it back.
-> 
-> Option writeback_consider_fragment to control whether we want
-> this feature to be on or off, it's on by default.
-> 
-> Lastly, below is the performance data for all the testing result,
-> including the data from production env:
-> https://docs.google.com/document/d/
-> 1AmbIEa_2MhB9bqhC3rfga9tp7n9YX9PLn0jSUxscVW0/edit?usp=sharing
-> 
-> Signed-off-by: dongdong tao <dongdong.tao@canonical.com>
-
-Hi Dongdong,
-
-Now overall the patch is OK for me, just minor comments  and please
-check them inline.
 
 
+On 19.01.21 г. 7:05 ч., Chaitanya Kulkarni wrote:
+> Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 > ---
->  drivers/md/bcache/bcache.h    |  4 ++++
->  drivers/md/bcache/sysfs.c     | 22 ++++++++++++++++++
->  drivers/md/bcache/writeback.c | 42 +++++++++++++++++++++++++++++++++++
->  drivers/md/bcache/writeback.h |  4 ++++
->  4 files changed, 72 insertions(+)
+>  fs/btrfs/volumes.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 1d57f48307e6..d7a84327b7f1 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -373,6 +373,7 @@ struct cached_dev {
->  	unsigned int		partial_stripes_expensive:1;
->  	unsigned int		writeback_metadata:1;
->  	unsigned int		writeback_running:1;
-> +	unsigned int		writeback_consider_fragment:1;
->  	unsigned char		writeback_percent;
->  	unsigned int		writeback_delay;
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index ee086fc56c30..836167212252 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -6371,14 +6371,12 @@ static void submit_stripe_bio(struct btrfs_bio *bbio, struct bio *bio,
 >  
-> @@ -385,6 +386,9 @@ struct cached_dev {
->  	unsigned int		writeback_rate_update_seconds;
->  	unsigned int		writeback_rate_i_term_inverse;
->  	unsigned int		writeback_rate_p_term_inverse;
-> +	unsigned int		writeback_rate_fp_term_low;
-> +	unsigned int		writeback_rate_fp_term_mid;
-> +	unsigned int		writeback_rate_fp_term_high;
->  	unsigned int		writeback_rate_minimum;
+>  	bio->bi_private = bbio;
+This line can be removed as ->private is initialized by bio_init_fields.
+
+>  	btrfs_io_bio(bio)->device = dev;
+> -	bio->bi_end_io = btrfs_end_bio;
+> -	bio->bi_iter.bi_sector = physical >> 9;
+> +	bio_init_fields(bio, dev->bdev, physical >> 9, bbio, btrfs_end_bio, 0, 0);
+>  	btrfs_debug_in_rcu(fs_info,
+>  	"btrfs_map_bio: rw %d 0x%x, sector=%llu, dev=%lu (%s id %llu), size=%u",
+>  		bio_op(bio), bio->bi_opf, bio->bi_iter.bi_sector,
+>  		(unsigned long)dev->bdev->bd_dev, rcu_str_deref(dev->name),
+>  		dev->devid, bio->bi_iter.bi_size);
+> -	bio_set_dev(bio, dev->bdev);
 >  
->  	enum stop_on_failure	stop_when_cache_set_failed;
-> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> index 00a520c03f41..136899beadba 100644
-> --- a/drivers/md/bcache/sysfs.c
-> +++ b/drivers/md/bcache/sysfs.c
-> @@ -117,10 +117,14 @@ rw_attribute(writeback_running);
->  rw_attribute(writeback_percent);
->  rw_attribute(writeback_delay);
->  rw_attribute(writeback_rate);
-> +rw_attribute(writeback_consider_fragment);
+>  	btrfs_bio_counter_inc_noblocked(fs_info);
 >  
->  rw_attribute(writeback_rate_update_seconds);
->  rw_attribute(writeback_rate_i_term_inverse);
->  rw_attribute(writeback_rate_p_term_inverse);
-> +rw_attribute(writeback_rate_fp_term_low);
-> +rw_attribute(writeback_rate_fp_term_mid);
-> +rw_attribute(writeback_rate_fp_term_high);
->  rw_attribute(writeback_rate_minimum);
->  read_attribute(writeback_rate_debug);
->  
-> @@ -195,6 +199,7 @@ SHOW(__bch_cached_dev)
->  	var_printf(bypass_torture_test,	"%i");
->  	var_printf(writeback_metadata,	"%i");
->  	var_printf(writeback_running,	"%i");
-> +	var_printf(writeback_consider_fragment,	"%i");
->  	var_print(writeback_delay);
->  	var_print(writeback_percent);
->  	sysfs_hprint(writeback_rate,
-> @@ -205,6 +210,9 @@ SHOW(__bch_cached_dev)
->  	var_print(writeback_rate_update_seconds);
->  	var_print(writeback_rate_i_term_inverse);
->  	var_print(writeback_rate_p_term_inverse);
-> +	var_print(writeback_rate_fp_term_low);
-> +	var_print(writeback_rate_fp_term_mid);
-> +	var_print(writeback_rate_fp_term_high);
->  	var_print(writeback_rate_minimum);
->  
->  	if (attr == &sysfs_writeback_rate_debug) {
-> @@ -303,6 +311,7 @@ STORE(__cached_dev)
->  	sysfs_strtoul_bool(bypass_torture_test, dc->bypass_torture_test);
->  	sysfs_strtoul_bool(writeback_metadata, dc->writeback_metadata);
->  	sysfs_strtoul_bool(writeback_running, dc->writeback_running);
-> +	sysfs_strtoul_bool(writeback_consider_fragment, dc->writeback_consider_fragment);
->  	sysfs_strtoul_clamp(writeback_delay, dc->writeback_delay, 0, UINT_MAX);
->  
->  	sysfs_strtoul_clamp(writeback_percent, dc->writeback_percent,
-> @@ -331,6 +340,15 @@ STORE(__cached_dev)
->  	sysfs_strtoul_clamp(writeback_rate_p_term_inverse,
->  			    dc->writeback_rate_p_term_inverse,
->  			    1, UINT_MAX);
-> +	sysfs_strtoul_clamp(writeback_rate_fp_term_low,
-> +			    dc->writeback_rate_fp_term_low,
-> +			    1, UINT_MAX);
-> +	sysfs_strtoul_clamp(writeback_rate_fp_term_mid,
-> +			    dc->writeback_rate_fp_term_mid,
-> +			    1, UINT_MAX);
-> +	sysfs_strtoul_clamp(writeback_rate_fp_term_high,
-> +			    dc->writeback_rate_fp_term_high,
-> +			    1, UINT_MAX);
-
-
-Here you should make sure the input value should always be in order,
-  low < mid < high
-
-Otherwise the calculation might be messed up.
-
-
->  	sysfs_strtoul_clamp(writeback_rate_minimum,
->  			    dc->writeback_rate_minimum,
->  			    1, UINT_MAX);
-> @@ -499,9 +517,13 @@ static struct attribute *bch_cached_dev_files[] = {
->  	&sysfs_writeback_delay,
->  	&sysfs_writeback_percent,
->  	&sysfs_writeback_rate,
-> +	&sysfs_writeback_consider_fragment,
->  	&sysfs_writeback_rate_update_seconds,
->  	&sysfs_writeback_rate_i_term_inverse,
->  	&sysfs_writeback_rate_p_term_inverse,
-> +	&sysfs_writeback_rate_fp_term_low,
-> +	&sysfs_writeback_rate_fp_term_mid,
-> +	&sysfs_writeback_rate_fp_term_high,
->  	&sysfs_writeback_rate_minimum,
->  	&sysfs_writeback_rate_debug,
->  	&sysfs_io_errors,
-> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-> index a129e4d2707c..9d440166c6bf 100644
-> --- a/drivers/md/bcache/writeback.c
-> +++ b/drivers/md/bcache/writeback.c
-> @@ -88,6 +88,44 @@ static void __update_writeback_rate(struct cached_dev *dc)
->  	int64_t integral_scaled;
->  	uint32_t new_rate;
->  
-> +	/*
-> +	 * We need to consider the number of dirty buckets as well
-> +	 * when calculating the proportional_scaled, Otherwise we might
-> +	 * have an unreasonable small writeback rate at a highly fragmented situation
-> +	 * when very few dirty sectors consumed a lot dirty buckets, the
-> +	 * worst case is when dirty buckets reached cutoff_writeback_sync and
-> +	 * dirty data is still not even reached to writeback percent, so the rate
-> +	 * still will be at the minimum value, which will cause the write
-> +	 * stuck at a non-writeback mode.
-> +	 */
-> +	struct cache_set *c = dc->disk.c;
-> +
-> +	int64_t dirty_buckets = c->nbuckets - c->avail_nbuckets;
-> +
-> +	if (dc->writeback_consider_fragment &&
-> +		c->gc_stats.in_use > BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW && dirty > 0) {
-> +		int64_t fragment =
-> +			div_s64((dirty_buckets *  c->cache->sb.bucket_size), dirty);
-> +		int64_t fp_term;
-> +		int64_t fps;
-> +
-> +		if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID) {
-> +			fp_term = dc->writeback_rate_fp_term_low *
-> +			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW);
-> +		} else if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH) {
-> +			fp_term = dc->writeback_rate_fp_term_mid *
-> +			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID);
-> +		} else {
-> +			fp_term = dc->writeback_rate_fp_term_high *
-> +			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH);
-> +		}
-> +		fps = div_s64(dirty, dirty_buckets) * fp_term;
-> +		if (fragment > 3 && fps > proportional_scaled) {
-> +			//Only overrite the p when fragment > 3
-
-The above "//" style is not recommended as bcache coding style.
-
-
-> +			proportional_scaled = fps;
-> +		}
-> +	}
-> +
->  	if ((error < 0 && dc->writeback_rate_integral > 0) ||
->  	    (error > 0 && time_before64(local_clock(),
->  			 dc->writeback_rate.next + NSEC_PER_MSEC))) {
-> @@ -977,6 +1015,7 @@ void bch_cached_dev_writeback_init(struct cached_dev *dc)
->  
->  	dc->writeback_metadata		= true;
->  	dc->writeback_running		= false;
-> +	dc->writeback_consider_fragment = true;
->  	dc->writeback_percent		= 10;
->  	dc->writeback_delay		= 30;
->  	atomic_long_set(&dc->writeback_rate.rate, 1024);
-> @@ -984,6 +1023,9 @@ void bch_cached_dev_writeback_init(struct cached_dev *dc)
->  
->  	dc->writeback_rate_update_seconds = WRITEBACK_RATE_UPDATE_SECS_DEFAULT;
->  	dc->writeback_rate_p_term_inverse = 40;
-> +	dc->writeback_rate_fp_term_low = 1;
-> +	dc->writeback_rate_fp_term_mid = 10;
-> +	dc->writeback_rate_fp_term_high = 1000;
-
-Could you please to explain a bit how the above 3 numbers are decided ?
-
-
-
->  	dc->writeback_rate_i_term_inverse = 10000;
->  
->  	WARN_ON(test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags));
-> diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
-> index 3f1230e22de0..02b2f9df73f6 100644
-> --- a/drivers/md/bcache/writeback.h
-> +++ b/drivers/md/bcache/writeback.h
-> @@ -16,6 +16,10 @@
->  
->  #define BCH_AUTO_GC_DIRTY_THRESHOLD	50
->  
-> +#define BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW 50
-> +#define BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID 57
-> +#define BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH 64
-> +
->  #define BCH_DIRTY_INIT_THRD_MAX	64
->  /*
->   * 14 (16384ths) is chosen here as something that each backing device
 > 
-
-Thanks in advance.
-
-Coly Li
