@@ -2,187 +2,327 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59DD42FC8EE
-	for <lists+linux-bcache@lfdr.de>; Wed, 20 Jan 2021 04:31:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D7EE2FD0D8
+	for <lists+linux-bcache@lfdr.de>; Wed, 20 Jan 2021 14:00:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbhATD3Q (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 19 Jan 2021 22:29:16 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:50257 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728253AbhATD3M (ORCPT
+        id S1726101AbhATM5F (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 20 Jan 2021 07:57:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389679AbhATMTX (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 19 Jan 2021 22:29:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1611113351; x=1642649351;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=M4nuvjROJD8gM53WiMW4QIN6VnKfsI/ugJIBArJ8Iag=;
-  b=cydazKMXghTzcBfWLVsEPhYXnpDu1cZK+uw1P55VEouubufOJxC19voD
-   czQplhMJumxDogKbc8A1do8mLShYrxGBqMdxR3mqdJbY1NYfwVD6OUBXO
-   E2RgNFbica4jjmrEEd+ZpNbOXEfzKAOoVOcG+MMu7c/vlec7pAALK3zzM
-   u+gyqjszheAUbZLCS7hNVzJUtxgEG3PnErbAiblZR9kAv5TBmHv9aYC8+
-   q8IMT6ctxuMc/Uf7pMLaF2P9jLNWwkzd+QNZbGxJ09thhLIquooJVYvmw
-   uwPQa1wdnVe+G/6LgJGK4ORZ5FM7RI6abgn0ongGx8Whc9XgnxsR+6u5C
-   g==;
-IronPort-SDR: 5+xZGKwR+vWn59Bhi8mkKXqNz/iW4w9Vnu9yAMcqM7RBpWTonEGmyTXdWeHqap0mKuHzjPub3F
- kgz6zEPhIoanstfyptbr7W4g57Bpiof0QZAMtTOoXa/rDvjPmSz0nab0wpZJcAry9GnAZ8+qcC
- M3b7Rsuhp8LY8AgjbdN8oEFWgMWeg2ZnqeOsT8yp/K2it2xvQgYSpT/y5b9E/hAldiyfDW2Px3
- /9Iq5djCd2PWE28ff0fVjFhEynFv3+Q3c6J+cJMdUYE1InGosCicYxFZO8mhm4eSrukifCaTdo
- RGI=
-X-IronPort-AV: E=Sophos;i="5.79,360,1602518400"; 
-   d="scan'208";a="157859380"
-Received: from mail-bn8nam12lp2171.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.171])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Jan 2021 11:27:58 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nIvgvIgSqoJMeejK5wOC/rvWoh/uPTaXwNdGWnxe68UqEKFYLOF9gxcshBHTTEphhOSVZBfFvdID0LbwCHkrI+GcCGUg8SzpxnZWhg0RpxFviKHhztEk4GmLeyBpwLB2nHMp39s6GtSM9QcMPiN86ogsQ/fLPLU5kprWvJUbGk+QwheZ69RPU7s4PhxXetiQBx32R54wLsiXEDfHBALc9KcoS0SwQHEPwLlmasDRWiQK+fDpLKFyCtKzsCmzxJLJZPeraot9n0JDGw4y7WAaYy3DSPHOSlnkRicjh7SPN4L/HA4TCQ9i24sfI2u41/xxF3JBxUehHfSSGWKJ1CJkng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ao3zFQITGqA2aHh0f6JEQROwynf2v+vXzjbrHI/DUFI=;
- b=cnLtrKL2/vH/USc4+KX9bMQ2ei7snm0c5TtBPRMFaTeDletDceoFtZbf1tbDkYcmAy1IflDAXOszqONer6yQme16Ld4fbIkxVVXIu95Wb1sjoCUSjaW+Ing+X5Zc3Adocg0ffZqrBVcxZlz142jYpbYGQoyvJhxHHNkD0wg9BOHWlq6kYEOWbJDTzGFiT7vz+39pDPP8wUUu3zOjiKJp+sYv16+XDd+snAw7q6Ow4BTGW7BoeMwttdjCix4fn0NsDtXTWNGqUXrAKY121U/Q/e2cZ9Yb5WMZa5A8wchjLtgMKCffji6ZgX6vLUTTJJwmGCvTFGFsMzL0W9lEERM7lw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Wed, 20 Jan 2021 07:19:23 -0500
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8CC2C0613CF;
+        Wed, 20 Jan 2021 04:18:42 -0800 (PST)
+Received: by mail-pl1-x631.google.com with SMTP id s15so12416956plr.9;
+        Wed, 20 Jan 2021 04:18:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ao3zFQITGqA2aHh0f6JEQROwynf2v+vXzjbrHI/DUFI=;
- b=qPzgsZBsUwQIfS4W2aAP1pPawNzrzDtYNYzGjBTGX/Pn+Z7gcpAOR2mmKTg5p7Jo76rCKmORDKArE9M657syotjOZ41GRUsp8O2zqXTVcbx+xltFXYYtQ5ixv9FVam3eZc+SYM53BNe1qnMNqMLeip1vZJjYatp8sjY5744ly3o=
-Received: from BYAPR04MB4965.namprd04.prod.outlook.com (2603:10b6:a03:4d::25)
- by BYAPR04MB4872.namprd04.prod.outlook.com (2603:10b6:a03:42::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.11; Wed, 20 Jan
- 2021 03:27:55 +0000
-Received: from BYAPR04MB4965.namprd04.prod.outlook.com
- ([fe80::716c:4e0c:c6d1:298a]) by BYAPR04MB4965.namprd04.prod.outlook.com
- ([fe80::716c:4e0c:c6d1:298a%6]) with mapi id 15.20.3742.012; Wed, 20 Jan 2021
- 03:27:55 +0000
-From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-To:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "cluster-devel@redhat.com" <cluster-devel@redhat.com>
-CC:     "jfs-discussion@lists.sourceforge.net" 
-        <jfs-discussion@lists.sourceforge.net>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "philipp.reisner@linbit.com" <philipp.reisner@linbit.com>,
-        "lars.ellenberg@linbit.com" <lars.ellenberg@linbit.com>,
-        "efremov@linux.com" <efremov@linux.com>,
-        "colyli@suse.de" <colyli@suse.de>,
-        "kent.overstreet@gmail.com" <kent.overstreet@gmail.com>,
-        "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@redhat.com" <snitzer@redhat.com>,
-        "song@kernel.org" <song@kernel.org>, "hch@lst.de" <hch@lst.de>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "clm@fb.com" <clm@fb.com>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        "dsterba@suse.com" <dsterba@suse.com>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "rpeterso@redhat.com" <rpeterso@redhat.com>,
-        "agruenba@redhat.com" <agruenba@redhat.com>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "shaggy@kernel.org" <shaggy@kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "jth@kernel.org" <jth@kernel.org>, "tj@kernel.org" <tj@kernel.org>,
-        "osandov@fb.com" <osandov@fb.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
-        "asml.silence@gmail.com" <asml.silence@gmail.com>,
-        "jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>
-Subject: Re: [RFC PATCH 00/37] block: introduce bio_init_fields()
-Thread-Topic: [RFC PATCH 00/37] block: introduce bio_init_fields()
-Thread-Index: AQHW7iDfXiv5iuHOl0mGSxMcJ7OwhA==
-Date:   Wed, 20 Jan 2021 03:27:55 +0000
-Message-ID: <BYAPR04MB49652C7B57396757FF064C6686A20@BYAPR04MB4965.namprd04.prod.outlook.com>
-References: <20210119050631.57073-1-chaitanya.kulkarni@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [199.255.45.62]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: a5b4c018-b955-4aff-42d9-08d8bcf3608a
-x-ms-traffictypediagnostic: BYAPR04MB4872:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR04MB48725C6EE06AE9513255BA5C86A29@BYAPR04MB4872.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: lqw/FI7V3h3I7N6LUDiMWfhW2chPZ0fK5VoXZLC7RQTD04IRNr4lXPyMYMfMUREUCjhqbsEYNkR0i0ntiSZcIAZqmjdF57HMmj47+NooF42/0RPaWT26C5YZdfVo75rKokHq9PHjl7dxwLYdYsGdDfeeSENfAfCuDQ6aQWFFVFPiLrgilW2mfde9/lHnT4hAxNphtCZIW+V5C2Py1PVUDiHlYPv2SPmmXl7/djmz9Qbq0Nki1YnQIwziZVTKalwz+WddcgkSnLau7w5rNtFQH859+NQBj6hCuAnSQuBzU1mThUFpsvhXA0yfEbPr+mL40U7l2JqTnG571BQR+R+aM9sPYuQHp0BOzVNjTSR8vodGszQKXWhtLuuwquyO8nXZQjgc+4qjPKcH0W2oDvW51k7EwOI1xZ5LXvKta7v96r3le8A9o3BLdb2CfPmvgpU1Oft1BbJlI4NLPQmkxMqn6sK7khwZMWz9cxpawhQGe8pg2Ierz/Nis188soVv0v/o3jfWHv0lnergYaYQYoLOwQpy9PedA2SAlM0R2GY7OBp1nP3el2JC9YrwDPIXhkfu
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR04MB4965.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(136003)(366004)(396003)(376002)(39860400002)(83380400001)(8676002)(921005)(7416002)(64756008)(66446008)(54906003)(53546011)(7696005)(6506007)(71200400001)(86362001)(52536014)(2906002)(5660300002)(478600001)(76116006)(66556008)(66946007)(7406005)(33656002)(66476007)(110136005)(8936002)(316002)(186003)(4744005)(55016002)(26005)(9686003)(4326008);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?CYeIwzL7+LDwBcGUtwWpgfGZXas4/+HyoB5dQvzgRXUwabx1wNppES5QTFxT?=
- =?us-ascii?Q?kMs/MvxFLYVZI5XqHFhuJeOq9onZPVWZNgeM1d1TVfokEb23W8IjRI9/kJQ8?=
- =?us-ascii?Q?njDQexyJ0VEFzXOM2fBaNuy8G56NIO9iILmStR8rTXkc+GN1VWuYWqmyqz1p?=
- =?us-ascii?Q?M8UvAerZCHQTENnAamWt49x4NLAfr9FFpZfux/lxafxQafyaTIS3nxDmer6n?=
- =?us-ascii?Q?8JRBu5PudXaoLVCIX5TFxJ9BHaj5MvpPcwnMe9yBtbXqD1lRlqEUUHnvhwfK?=
- =?us-ascii?Q?UIftvmnTQROjFbfkJXhZccpAoL/aq5AS0W+TYV2JB6qHUFtSaFLOv3m+7JSZ?=
- =?us-ascii?Q?KB9qT49sztiW8OklmFBypBXzxVxH+sFpG6dedI3pzoiKl+1l+yv8lx+IHIc0?=
- =?us-ascii?Q?bnPJo+pPjByH83zID56ASid+n3EMXQ+AQvu66L3G8/pfCvGGrwcnjiN+wYuE?=
- =?us-ascii?Q?jgn5p46CJnUPI8fVsBvsOPPQvD6RahqlpOCKp6O2gNqlabFChMaHTa/HtLeg?=
- =?us-ascii?Q?XaXE4rLcbgkaSWEuoLPG8GlN6LNp18Xjm2RS/25dq8vNTwk1NzTSmsv6RRZc?=
- =?us-ascii?Q?IhQ78OnwWHRVLF+ZyQ9faxQPYis+oX25aE/PAdTk/AV3kke9/XNbjlyjz6sQ?=
- =?us-ascii?Q?KIglOzm3XKue4E4mZ/Oc+2YadCcFDjxtp0hf2tyIs9TJL1r/GKvdcThyYVBL?=
- =?us-ascii?Q?wRV66Eex1KUdgrzLeEjXT1fMhAelxL2Wq+SWqiZp6VmrBxF5LExsi7A+978r?=
- =?us-ascii?Q?TGNkHEzmUVLuoOEUMQ5T44Jv1898R9lxeWj4JeItOojNBXT3Tq4OcRsZELf6?=
- =?us-ascii?Q?R1dvqhysFLFxXmuVei/nYnRFepqrdE1rAIghfvG53HAVCMokkzIzD53g+VJu?=
- =?us-ascii?Q?kM1xatRvJtNTqOB350/tIRKqR8GtrILKDN38GJ3VpbZ6v0ZDSUF2VCgTSLt7?=
- =?us-ascii?Q?l91pWwrHQtmycz370urFgVYRNv18k5jQ1qOlRwMHa2D1aKdGKoCKPFMikA/F?=
- =?us-ascii?Q?ocZw?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9mqAhlazB0SRDyqFw9Uz/8oCO5pD/0R05kZThxcmH60=;
+        b=u1f60RJ67haSYTi8zoiDv7XeaScUzURB95gPu/mg2R03NX2D40lzZ73EReLAhR8Uke
+         /jW9y4d5qHXxdoS5kvbFIM+uMn9dEG6v3DqvBcDWg6OkGSX9CKq0fj10q7SSHlk+WLl7
+         cmj+6kPiDD+ixI3VxIWFV7WViIWFUQY+4aB0QGIqwhwrjHtN0ovDIOLGojz/nIZJkKRj
+         th7zmB7APsDrhN3T6mJlD0L9G12OBhmNEcTd00KkYgX4NG5/EoqFNAR/S4ITwAd7KomN
+         vADC6tvs5TWGPxBckaAbuFpsmzdiShnX7DNpRYJvGYCAq/9EIP9viCWY0ZHgDz8oaX2/
+         iCuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9mqAhlazB0SRDyqFw9Uz/8oCO5pD/0R05kZThxcmH60=;
+        b=tbPGpHsE4pa3pwX9N44sZH4QyBpGGyMzt80gtvTwSnhwt6RUICYXBGa/yeUEfeO6lF
+         6QiCTXYzmJj/rcUvj6Y1gJb4gQBdudnx1/UWXT80xgktaEzBlDdztRg41eHmb3HOUn5J
+         Kp8gKJEFjfBAyUjMB4k60oDDW562dJCulGUCO1IlVpA7Yj6BT0BV36kFGI1Iw9IlFoFf
+         yS25gKtdTZROnHjmWHbh5G8nVHW6UXBowolQLa7WhYE3KQpud32Oowi8NvdFe2JPiHU/
+         llk7lSzeQKqil7n/Z/c7361CM8UmhJbXeR2ZKwmHydGXXKPp21HayD/Y2kvi6MmymK6H
+         b/4g==
+X-Gm-Message-State: AOAM5308Uw7zpThDlaexQiquQgBs4gUQxzztD2uIkvnEZV5Ftw0bpREk
+        FBL4/ONCPBkpApugJGHQz/A=
+X-Google-Smtp-Source: ABdhPJyJREkYeJ4+gjaFDER5NGBPywqsNMtITYNjL0YaVV9llFiWiPkBPf1GR+KImIcgF/nVZKzT+w==
+X-Received: by 2002:a17:90a:46cd:: with SMTP id x13mr3886196pjg.194.1611145122339;
+        Wed, 20 Jan 2021 04:18:42 -0800 (PST)
+Received: from localhost.localdomain ([45.77.27.82])
+        by smtp.gmail.com with ESMTPSA id w1sm2431693pjt.23.2021.01.20.04.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Jan 2021 04:18:41 -0800 (PST)
+From:   Dongdong Tao <tdd21151186@gmail.com>
+To:     colyli@suse.de
+Cc:     dongdong tao <dongdong.tao@canonical.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4] bcache: consider the fragmentation when update the writeback rate
+Date:   Wed, 20 Jan 2021 20:01:52 +0800
+Message-Id: <20210120120153.3782-1-tdd21151186@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR04MB4965.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5b4c018-b955-4aff-42d9-08d8bcf3608a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jan 2021 03:27:55.2569
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6GChSPAwRaJR+pnJ/NXEbGatSLvEkK5o5I/huExAKkTALRKQxBWJkWD8S6meD32zVWEaMR/TBIKWTtYqKFHLrIZporw6ZI089anAFL9wihk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4872
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 1/18/21 21:06, Chaitanya Kulkarni wrote:=0A=
-> Hi,=0A=
->=0A=
-> This is a *compile only RFC* which adds a generic helper to initialize=0A=
-> the various fields of the bio that is repeated all the places in=0A=
-> file-systems, block layer, and drivers.=0A=
->=0A=
-> The new helper allows callers to initialize various members such as=0A=
-> bdev, sector, private, end io callback, io priority, and write hints.=0A=
->=0A=
-> The objective of this RFC is to only start a discussion, this it not =0A=
-> completely tested at all.                                                =
-                                                            =0A=
-> Following diff shows code level benefits of this helper :-=0A=
->  38 files changed, 124 insertions(+), 236 deletions(-)=0A=
->=0A=
-> -ck=0A=
-Thanks for replying Mike, Josef and Christoph.=0A=
-=0A=
-I'll move forward with Christoph's suggestion and get rid of=0A=
-optional parameters which is making this API hard to use.=0A=
+From: dongdong tao <dongdong.tao@canonical.com>
+
+Current way to calculate the writeback rate only considered the
+dirty sectors, this usually works fine when the fragmentation
+is not high, but it will give us unreasonable small rate when
+we are under a situation that very few dirty sectors consumed
+a lot dirty buckets. In some case, the dirty bucekts can reached
+to CUTOFF_WRITEBACK_SYNC while the dirty data(sectors) not even
+reached the writeback_percent, the writeback rate will still
+be the minimum value (4k), thus it will cause all the writes to be
+stucked in a non-writeback mode because of the slow writeback.
+
+We accelerate the rate in 3 stages with different aggressiveness,
+the first stage starts when dirty buckets percent reach above
+BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW (50), the second is
+BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID (57), the third is
+BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH (64). By default
+the first stage tries to writeback the amount of dirty data
+in one bucket (on average) in (1 / (dirty_buckets_percent - 50)) second,
+the second stage tries to writeback the amount of dirty data in one bucket
+in (1 / (dirty_buckets_percent - 57)) * 100 millisecond, the third
+stage tries to writeback the amount of dirty data in one bucket in
+(1 / (dirty_buckets_percent - 64)) millisecond.
+
+the initial rate at each stage can be controlled by 3 configurable
+parameters writeback_rate_fp_term_{low|mid|high}, they are by default
+1, 10, 1000, the hint of IO throughput that these values are trying
+to achieve is described by above paragraph, the reason that
+I choose those value as default is based on the testing and the
+production data, below is some details:
+
+A. When it comes to the low stage, there is still a bit far from the 70
+   threshold, so we only want to give it a little bit push by setting the
+   term to 1, it means the initial rate will be 170 if the fragment is 6,
+   it is calculated by bucket_size/fragment, this rate is very small,
+   but still much reasonable than the minimum 8.
+   For a production bcache with unheavy workload, if the cache device
+   is bigger than 1 TB, it may take hours to consume 1% buckets,
+   so it is very possible to reclaim enough dirty buckets in this stage,
+   thus to avoid entering the next stage.
+
+B. If the dirty buckets ratio didn’t turn around during the first stage,
+   it comes to the mid stage, then it is necessary for mid stage
+   to be more aggressive than low stage, so i choose the initial rate
+   to be 10 times more than low stage, that means 1700 as the initial
+   rate if the fragment is 6. This is some normal rate
+   we usually see for a normal workload when writeback happens
+   because of writeback_percent.
+
+C. If the dirty buckets ratio didn't turn around during the low and mid
+   stages, it comes to the third stage, and it is the last chance that
+   we can turn around to avoid the horrible cutoff writeback sync issue,
+   then we choose 100 times more aggressive than the mid stage, that
+   means 170000 as the initial rate if the fragment is 6. This is also
+   inferred from a production bcache, I've got one week's writeback rate
+   data from a production bcache which has quite heavy workloads,
+   again, the writeback is trigged by the writeback percent,
+   the highest rate area is around 100000 to 240000, so I believe this
+   kind aggressiveness at this stage is reasonable for production.
+   And it should be mostly enough because the hint is trying to reclaim
+   1000 bucket per second, and from that heavy production env,
+   it is consuming 50 bucket per second on avarage in one week's data.
+
+Option writeback_consider_fragment is to control whether we want
+this feature to be on or off, it's on by default.
+
+Lastly, below is the performance data for all the testing result,
+including the data from production env:
+https://docs.google.com/document/d/
+1AmbIEa_2MhB9bqhC3rfga9tp7n9YX9PLn0jSUxscVW0/edit?usp=sharing
+
+Signed-off-by: dongdong tao <dongdong.tao@canonical.com>
+---
+ drivers/md/bcache/bcache.h    |  4 ++++
+ drivers/md/bcache/sysfs.c     | 23 +++++++++++++++++++
+ drivers/md/bcache/writeback.c | 42 +++++++++++++++++++++++++++++++++++
+ drivers/md/bcache/writeback.h |  4 ++++
+ 4 files changed, 73 insertions(+)
+
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 1d57f48307e6..d7a84327b7f1 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -373,6 +373,7 @@ struct cached_dev {
+ 	unsigned int		partial_stripes_expensive:1;
+ 	unsigned int		writeback_metadata:1;
+ 	unsigned int		writeback_running:1;
++	unsigned int		writeback_consider_fragment:1;
+ 	unsigned char		writeback_percent;
+ 	unsigned int		writeback_delay;
+ 
+@@ -385,6 +386,9 @@ struct cached_dev {
+ 	unsigned int		writeback_rate_update_seconds;
+ 	unsigned int		writeback_rate_i_term_inverse;
+ 	unsigned int		writeback_rate_p_term_inverse;
++	unsigned int		writeback_rate_fp_term_low;
++	unsigned int		writeback_rate_fp_term_mid;
++	unsigned int		writeback_rate_fp_term_high;
+ 	unsigned int		writeback_rate_minimum;
+ 
+ 	enum stop_on_failure	stop_when_cache_set_failed;
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 00a520c03f41..eef15f8022ba 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -117,10 +117,14 @@ rw_attribute(writeback_running);
+ rw_attribute(writeback_percent);
+ rw_attribute(writeback_delay);
+ rw_attribute(writeback_rate);
++rw_attribute(writeback_consider_fragment);
+ 
+ rw_attribute(writeback_rate_update_seconds);
+ rw_attribute(writeback_rate_i_term_inverse);
+ rw_attribute(writeback_rate_p_term_inverse);
++rw_attribute(writeback_rate_fp_term_low);
++rw_attribute(writeback_rate_fp_term_mid);
++rw_attribute(writeback_rate_fp_term_high);
+ rw_attribute(writeback_rate_minimum);
+ read_attribute(writeback_rate_debug);
+ 
+@@ -195,6 +199,7 @@ SHOW(__bch_cached_dev)
+ 	var_printf(bypass_torture_test,	"%i");
+ 	var_printf(writeback_metadata,	"%i");
+ 	var_printf(writeback_running,	"%i");
++	var_printf(writeback_consider_fragment,	"%i");
+ 	var_print(writeback_delay);
+ 	var_print(writeback_percent);
+ 	sysfs_hprint(writeback_rate,
+@@ -205,6 +210,9 @@ SHOW(__bch_cached_dev)
+ 	var_print(writeback_rate_update_seconds);
+ 	var_print(writeback_rate_i_term_inverse);
+ 	var_print(writeback_rate_p_term_inverse);
++	var_print(writeback_rate_fp_term_low);
++	var_print(writeback_rate_fp_term_mid);
++	var_print(writeback_rate_fp_term_high);
+ 	var_print(writeback_rate_minimum);
+ 
+ 	if (attr == &sysfs_writeback_rate_debug) {
+@@ -303,6 +311,7 @@ STORE(__cached_dev)
+ 	sysfs_strtoul_bool(bypass_torture_test, dc->bypass_torture_test);
+ 	sysfs_strtoul_bool(writeback_metadata, dc->writeback_metadata);
+ 	sysfs_strtoul_bool(writeback_running, dc->writeback_running);
++	sysfs_strtoul_bool(writeback_consider_fragment, dc->writeback_consider_fragment);
+ 	sysfs_strtoul_clamp(writeback_delay, dc->writeback_delay, 0, UINT_MAX);
+ 
+ 	sysfs_strtoul_clamp(writeback_percent, dc->writeback_percent,
+@@ -331,6 +340,16 @@ STORE(__cached_dev)
+ 	sysfs_strtoul_clamp(writeback_rate_p_term_inverse,
+ 			    dc->writeback_rate_p_term_inverse,
+ 			    1, UINT_MAX);
++	sysfs_strtoul_clamp(writeback_rate_fp_term_low,
++			    dc->writeback_rate_fp_term_low,
++			    1, dc->writeback_rate_fp_term_mid - 1);
++	sysfs_strtoul_clamp(writeback_rate_fp_term_mid,
++			    dc->writeback_rate_fp_term_mid,
++			    dc->writeback_rate_fp_term_low + 1,
++			    dc->writeback_rate_fp_term_high - 1);
++	sysfs_strtoul_clamp(writeback_rate_fp_term_high,
++			    dc->writeback_rate_fp_term_high,
++			    dc->writeback_rate_fp_term_mid + 1, UINT_MAX);
+ 	sysfs_strtoul_clamp(writeback_rate_minimum,
+ 			    dc->writeback_rate_minimum,
+ 			    1, UINT_MAX);
+@@ -499,9 +518,13 @@ static struct attribute *bch_cached_dev_files[] = {
+ 	&sysfs_writeback_delay,
+ 	&sysfs_writeback_percent,
+ 	&sysfs_writeback_rate,
++	&sysfs_writeback_consider_fragment,
+ 	&sysfs_writeback_rate_update_seconds,
+ 	&sysfs_writeback_rate_i_term_inverse,
+ 	&sysfs_writeback_rate_p_term_inverse,
++	&sysfs_writeback_rate_fp_term_low,
++	&sysfs_writeback_rate_fp_term_mid,
++	&sysfs_writeback_rate_fp_term_high,
+ 	&sysfs_writeback_rate_minimum,
+ 	&sysfs_writeback_rate_debug,
+ 	&sysfs_io_errors,
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index a129e4d2707c..82d4e0880a99 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -88,6 +88,44 @@ static void __update_writeback_rate(struct cached_dev *dc)
+ 	int64_t integral_scaled;
+ 	uint32_t new_rate;
+ 
++	/*
++	 * We need to consider the number of dirty buckets as well
++	 * when calculating the proportional_scaled, Otherwise we might
++	 * have an unreasonable small writeback rate at a highly fragmented situation
++	 * when very few dirty sectors consumed a lot dirty buckets, the
++	 * worst case is when dirty buckets reached cutoff_writeback_sync and
++	 * dirty data is still not even reached to writeback percent, so the rate
++	 * still will be at the minimum value, which will cause the write
++	 * stuck at a non-writeback mode.
++	 */
++	struct cache_set *c = dc->disk.c;
++
++	int64_t dirty_buckets = c->nbuckets - c->avail_nbuckets;
++
++	if (dc->writeback_consider_fragment &&
++		c->gc_stats.in_use > BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW && dirty > 0) {
++		int64_t fragment =
++			div_s64((dirty_buckets *  c->cache->sb.bucket_size), dirty);
++		int64_t fp_term;
++		int64_t fps;
++
++		if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID) {
++			fp_term = dc->writeback_rate_fp_term_low *
++			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW);
++		} else if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH) {
++			fp_term = dc->writeback_rate_fp_term_mid *
++			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID);
++		} else {
++			fp_term = dc->writeback_rate_fp_term_high *
++			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH);
++		}
++		fps = div_s64(dirty, dirty_buckets) * fp_term;
++		if (fragment > 3 && fps > proportional_scaled) {
++			/* Only overrite the p when fragment > 3 */
++			proportional_scaled = fps;
++		}
++	}
++
+ 	if ((error < 0 && dc->writeback_rate_integral > 0) ||
+ 	    (error > 0 && time_before64(local_clock(),
+ 			 dc->writeback_rate.next + NSEC_PER_MSEC))) {
+@@ -977,6 +1015,7 @@ void bch_cached_dev_writeback_init(struct cached_dev *dc)
+ 
+ 	dc->writeback_metadata		= true;
+ 	dc->writeback_running		= false;
++	dc->writeback_consider_fragment = true;
+ 	dc->writeback_percent		= 10;
+ 	dc->writeback_delay		= 30;
+ 	atomic_long_set(&dc->writeback_rate.rate, 1024);
+@@ -984,6 +1023,9 @@ void bch_cached_dev_writeback_init(struct cached_dev *dc)
+ 
+ 	dc->writeback_rate_update_seconds = WRITEBACK_RATE_UPDATE_SECS_DEFAULT;
+ 	dc->writeback_rate_p_term_inverse = 40;
++	dc->writeback_rate_fp_term_low = 1;
++	dc->writeback_rate_fp_term_mid = 10;
++	dc->writeback_rate_fp_term_high = 1000;
+ 	dc->writeback_rate_i_term_inverse = 10000;
+ 
+ 	WARN_ON(test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags));
+diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
+index 3f1230e22de0..02b2f9df73f6 100644
+--- a/drivers/md/bcache/writeback.h
++++ b/drivers/md/bcache/writeback.h
+@@ -16,6 +16,10 @@
+ 
+ #define BCH_AUTO_GC_DIRTY_THRESHOLD	50
+ 
++#define BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW 50
++#define BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID 57
++#define BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH 64
++
+ #define BCH_DIRTY_INIT_THRD_MAX	64
+ /*
+  * 14 (16384ths) is chosen here as something that each backing device
+-- 
+2.17.1
+
