@@ -2,120 +2,135 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 31FEE302A4C
-	for <lists+linux-bcache@lfdr.de>; Mon, 25 Jan 2021 19:32:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B3A6303244
+	for <lists+linux-bcache@lfdr.de>; Tue, 26 Jan 2021 03:56:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbhAYScK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 25 Jan 2021 13:32:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41172 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbhAYScG (ORCPT
+        id S1728873AbhAYNyk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 25 Jan 2021 08:54:40 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:64421 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729136AbhAYNxl (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 25 Jan 2021 13:32:06 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 734AFC061756
-        for <linux-bcache@vger.kernel.org>; Mon, 25 Jan 2021 10:31:26 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id g15so140435pjd.2
-        for <linux-bcache@vger.kernel.org>; Mon, 25 Jan 2021 10:31:26 -0800 (PST)
+        Mon, 25 Jan 2021 08:53:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1611583271; x=1643119271;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+  b=BtNfaQi6qJYlqfzSJgMusazLO6FbREkoXUGyqj7Wi68xaGQYgy8Qc4t0
+   mT9Jn/JLo8wtJBPpwOybgdUNM+Zu9luoEHuI+lY/eOh0d8XB/eStYletG
+   5LV5tf0oRMdOkoE4teGtbWOsN/wntdKpCMA6Ecf13012FaOhmGrcXisB0
+   fva8mPs+cQx1tJG2o9XWMF4sfGtGW8l4CspsOxANC9slUK16KgT/KbHsb
+   NwYTIdIeVj9uYer66Gi523A2/2Nw1evIdpsUbbbuXlQGPzdBxYoB760zT
+   qD0VotBkpmRNpz+MYpas0OL82uoSPJLaanCfw/2+Unh/2ihRyAT8pxF4n
+   A==;
+IronPort-SDR: w9f7yEUHTBwXH9ZtLOs5/TOVOPlLhmMnitvBAcZH78kFCm5hRy37eqUkH32WYLvd0wuuvundny
+ JUjSb4iKAorYOruy22KO4j5kXm5DSPE10b3LRvWffh137kdw7tMsdcRVqU+2eJVfc+PWz+o8C+
+ wnO/AMVGbs6J8RlyeuqsEczMUgZ2fJ3tcj4NUp3GDoh5vnOwQH6zAnOILIieaKdX4p3Ge1tKs2
+ wz5UVKeuuhGsBGVhktQEarEoqwwe9xWZlSdKQalGvBv5gmJ/LZpSesfpC11dGVT9cJ6Hdhj34V
+ lVc=
+X-IronPort-AV: E=Sophos;i="5.79,373,1602518400"; 
+   d="scan'208";a="262261185"
+Received: from mail-dm6nam11lp2168.outbound.protection.outlook.com (HELO NAM11-DM6-obe.outbound.protection.outlook.com) ([104.47.57.168])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Jan 2021 21:59:11 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Huy2TIXWW5A0L+UQHt5Nsr/4BJt5o7p6LZAePnZstSnIdVx/oYhCsEOyVRa5iYA/zavTWRy0xZ6bFe7tWiW40MMAc3JKCDqjNy/RkjMi1R7XqYbJCPiVTdK6AIk00wH41wLymqkyqqBtvLnKS9C7l/VQom6N2/TIOZVtFKmHvROLgHPDjtETeInaGDvl+0vcmOkrl5PYT5XOD4cFS4pJWYxLS/9IUPwY9BTEZd61gQBYGtmRL3Gxeq5BxsJO/3oYMCXMq4WUbKZIqTBBSjSWAsN5GvywZIdzcwxIloQNhykERfT9lPGbKpwd7FIondZruNdcDax6jeMB/r+CwY9vpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=SDbqW5uf7fl5/hzhiF9sMqRbpxBjdA0EZ/vqSoDVy5NGp4oaXBuceX4UYMdyV32tNxMXmNAIaIApd/5IkEkAGMkmJWfkaVQ2Kfh6QnqZrZwIvDWfXOuBD3LcD1C/YMjW+F3kRIU7Wlz4JGWtMwK0ceIxPnXbfq6fRLe5OtC/WiifIN0PAoBPMIKAGpsJ8kawaQ8XpHVYOQQioAURGZnxtXwgkBZUitUKJFfIFb3M76wvdM79XGCuQgKTQao+QnlDXyt/aPcaJy7EencTghJq0UpTYexD2AcblsxR+xOG6eom2/4pWg5xkZ9n59xFqS2hDuro+afSNLCE26kpvIUmXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fj+Mfh+iRTxHQ178jS8NvM3lFwTcOTHpKQTHJjUZLmQ=;
-        b=NdQRadAEr90lOki82TN6DFtvOSfUjjxSRo0YnI+9kABgrnXatJDaUbKH+9fZNKlj37
-         8v87B8qPFNTO01QF4Z+jIs5WJSNxzD33TVTDgtv3nEZ0w4x9IK0JXeObsgFXpyWnJclh
-         r1MPwMoLp0LwM1UHh5fYunKmOYFttusTDMogxqlA60ejvcSjL5+cjWapnKTGwkLE1WBl
-         +wecUym331pkGeIW1V+NRLHgryE1s5ac1/KqEetgGSVYiji7zS/TssjK7ZHThlzIZPks
-         OzM9LBWUFP8lxX7V4KXEiIL3WHyGamsVVlVK0jNWsvr2a+VU1wTnQ8QTxvk6YIBylWd2
-         kcYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fj+Mfh+iRTxHQ178jS8NvM3lFwTcOTHpKQTHJjUZLmQ=;
-        b=q4FTfdRRIkNUMPon5poEEx+hng+XfM4RnIGL15t4D0NX8SsFOLpqg3pj9oxpDVYlDc
-         RlBZ7oxOVg9gskACyClzxGc+7KjiPms77x3tuf4VOrWDEWut8/xDUdPu6iWSZDzP9IdT
-         j9wIxGTAIDaa9EBsel9pGU6sicbo9488++VR4NshiekI31qNQwW7JEDLtA7GSv5BEQAz
-         SOXc+OaSDSMRmCorMVfzWxtI0W6rXnkhhT3ctQ/TjtoVUsl/HTo/njj5LqRYf9rVjzJc
-         RmAlPiaS8uky7izHAmbXP/vOPNReWDH+E62DMn8YGABX8FzmEu+iNSiWQwAsmRiA5z2w
-         STXg==
-X-Gm-Message-State: AOAM531n9U40QWzcKKmU7P9Ee02y3N2WpPl4MxwM4eVaCNtNw4tJus6x
-        d1cijxicEwNruNyOMzOXo3mlUA==
-X-Google-Smtp-Source: ABdhPJw45UKblJYIjAuYyqjrm84zW5HcAl4q2OlrL0kcx51YsGL6Wwv5aF+a7froFnxQYB/1Z5yYqg==
-X-Received: by 2002:a17:902:b717:b029:dc:3e69:6dd5 with SMTP id d23-20020a170902b717b02900dc3e696dd5mr1995124pls.70.1611599485884;
-        Mon, 25 Jan 2021 10:31:25 -0800 (PST)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id 24sm10567912pgt.14.2021.01.25.10.31.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Jan 2021 10:31:25 -0800 (PST)
-Subject: Re: [PATCH 05/10] block: do not reassig ->bi_bdev when partition
- remapping
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Tejun Heo <tj@kernel.org>, Coly Li <colyli@suse.de>,
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=vdKs+UxI18D3S5nrGqVHOUvT8jpjKM7MtjZzfR0AJQMexzRrchg9M63PvH6d6yxeqXW+BzdEw3yvapc0X6Hq1MheDIjkGg8pTgLN3kuroXTXTRCQMkz0c54kXZpRlpofSb8AGSq7nG7HOKElaGsu6iDnErhTP1BxNKkAnZNsmOA=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SA2PR04MB7612.namprd04.prod.outlook.com
+ (2603:10b6:806:147::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.11; Mon, 25 Jan
+ 2021 13:52:20 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::c19b:805:20e0:6274]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::c19b:805:20e0:6274%6]) with mapi id 15.20.3784.017; Mon, 25 Jan 2021
+ 13:52:20 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+CC:     Tejun Heo <tj@kernel.org>, Coly Li <colyli@suse.de>,
         Song Liu <song@kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-bcache <linux-bcache@vger.kernel.org>,
-        "open list:SOFTWARE RAID (Multiple Disks) SUPPORT" 
-        <linux-raid@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [PATCH 02/10] dcssblk: remove the end of device check in
+ dcssblk_submit_bio
+Thread-Topic: [PATCH 02/10] dcssblk: remove the end of device check in
+ dcssblk_submit_bio
+Thread-Index: AQHW8jiwHN0LZhsDiEuvFiOYbsXH2A==
+Date:   Mon, 25 Jan 2021 13:52:20 +0000
+Message-ID: <SN4PR0401MB3598F6894E3789B7D3FCB7679BBD9@SN4PR0401MB3598.namprd04.prod.outlook.com>
 References: <20210124100241.1167849-1-hch@lst.de>
- <20210124100241.1167849-6-hch@lst.de>
- <dfdff48c-c263-8e7c-cb52-28e7bee00c45@kernel.dk>
- <20210125175528.GA13451@lst.de>
- <2b600368-96fa-7caf-f05b-321de616f7c9@kernel.dk>
- <13667b22-029b-d7be-02da-96fce22cfd8f@kernel.dk>
- <20210125181349.GA14432@lst.de>
- <1c0fabdc-9b73-dfd7-f49d-c211d58cbf12@kernel.dk>
- <20210125181826.GA14957@lst.de>
- <22e0f687-3165-e9d1-e1bd-9769a11dc0ea@kernel.dk>
- <20210125182150.GA15367@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <387c824a-c713-a087-2f6f-434ba127b1df@kernel.dk>
-Date:   Mon, 25 Jan 2021 11:31:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20210125182150.GA15367@lst.de>
-Content-Type: text/plain; charset=utf-8
+ <20210124100241.1167849-3-hch@lst.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: lst.de; dkim=none (message not signed)
+ header.d=none;lst.de; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: a1e656bc-f908-4935-389d-08d8c1386f73
+x-ms-traffictypediagnostic: SA2PR04MB7612:
+x-microsoft-antispam-prvs: <SA2PR04MB761269F9E0177D9E9267E7D59BBD9@SA2PR04MB7612.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:1728;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: bU5R9tm9gvsBNXwaTw7lhZWx8a3ybA0DpqZLEQ5vuCd0GbwvvliXQ1Zcz7aRVsBwnudvUh9IyMRb94R/r1DC7Mc2nkztLx4jnPB8k9cLnlhsxo2X/tGwY9MSJ/43HZGMOyOaknzujG2bwmP7xRt6MTS1t1Ub/vJccUp6FE//bYpyUUtcfa/RgsiQfN4tI0mAbRySo0EgntHNhTK9aMolg3vULSVbYUx7D2Mq8PHBTb4H2ObQFGVb/1WQIdwMS8aC9hNR9uDIH39CoIBQmKWuI0+VERppoh7OXSuSMj1ssd23sD3FtMFx47xi9lfOC1EWd2EOM+y9CGJW5gjFQO7FdwZj9n69zFDcGgOAYd0DT67tVpZn5TRkqUkw9kqcgaCbo5VrrRf9NPF6dTpvn4cAoA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(366004)(39860400002)(346002)(136003)(376002)(64756008)(186003)(5660300002)(4326008)(86362001)(7416002)(316002)(8936002)(52536014)(2906002)(33656002)(66446008)(66556008)(6506007)(4270600006)(66476007)(55016002)(110136005)(66946007)(8676002)(558084003)(76116006)(9686003)(478600001)(26005)(71200400001)(19618925003)(54906003)(7696005)(91956017);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?lDHqkrQZVyGZ31ML1d+IhfEcdPEiXrPozKBjdBevBrp1zpl2XoidpNz2mXTE?=
+ =?us-ascii?Q?6/3WStXkE+FSLY8+H0V6yFVgE55XlWaToz4fvdYixnUNZHlu3JnJf8n9xKLf?=
+ =?us-ascii?Q?WoJOR/lTCKliSW6wi+8ZnrJhw77ct+Nf9fvUt2qUFjFYvwOzEKNkcjO/0UfY?=
+ =?us-ascii?Q?DTjfkYFJgl+d/2olcMOUtYqKaCa9piBrIATbU5zJichvf67oRdL3d4kjVtud?=
+ =?us-ascii?Q?W5BkAo9PYzU1TpfcGyuDox8ipXSBAEwV4V5s5BEpFMCGQb6ffamau+h45y+d?=
+ =?us-ascii?Q?k/g9e4/YuyJDsnNFKgHmg161493sJutWrBkIegyqz7NI/Ybj1SUBdYcdEd5Q?=
+ =?us-ascii?Q?qjSJLlV/+JJjE9dRaAVyS/dhLUjC4f218fn6rCzGBNVQibzUQLdZgAMxtPSQ?=
+ =?us-ascii?Q?jSGGD/QcWf4xkCnAUW4Z9Q8HhOYSxiveujCSJskhfdcMlJz7KNnQt9gHBsYo?=
+ =?us-ascii?Q?aJIUyUKAjWbmJDWxkCA//ZQbn7/bdnxVSilYIU3YXg6GrpCij4hLMFsLe54i?=
+ =?us-ascii?Q?DHjeS6s8QhFHyRP9hv22rwFS6sN3tnQfkzSWp8VMCs4p+fXVDmSYf0+7vH2m?=
+ =?us-ascii?Q?CzeEM5ZFgldTFeuBpw8jKB7kDuPHfileuYYuK4XUDLxlS6QZy5xsj22vpk7L?=
+ =?us-ascii?Q?WAy7d5rBm+96PHxnpnVSCyJqKZDfIiqM8cQiwk6I0a7/0SnzsEtGs4IYt0FB?=
+ =?us-ascii?Q?NlZvHPzsowE2Br3d7ZuHMr713Hn1PArjvlD8x8k8wZMvoEFVxYj1MYJvIuFj?=
+ =?us-ascii?Q?+yo41/bbTC3N9+wMoiEczrV9E5SywMRR0MIHBcmwSbnMhDURnABRxuVWfrga?=
+ =?us-ascii?Q?SqZ2wo7S2L3vyFXE7Sx7g2g9/Jf1lUTN5dtMeOzcITLOnMBfBX1vjBZeotoy?=
+ =?us-ascii?Q?S15nHBW15drWRG78GsnEDMxEFI6w+OJr/hty1rSC/25m0/fvU+UHXZJmwNPC?=
+ =?us-ascii?Q?Bw1QawKtheMInGW4gxGvqE24WKa1fOtgQhu6FXUNLln19F1ddlMNC+MDTg+z?=
+ =?us-ascii?Q?oywG1pcmKG73YoufraIiF4Zv0NC+jAkI1sICjrZEItLHz4s0u57a0R//2RCn?=
+ =?us-ascii?Q?XiDd4M+sH2ypNbN1pGOzVPvhXmf7qA=3D=3D?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1e656bc-f908-4935-389d-08d8c1386f73
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2021 13:52:20.4127
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Cg1G7xyT10MPoHu/nOwo5LbZhouchgS3A+abYpZxs+RvkR1G/A5gL8sBR27JsumSYIw638q9hWajJ3kcMMiE5JBNWe7gKtPKidupxFHsrFs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR04MB7612
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 1/25/21 11:21 AM, Christoph Hellwig wrote:
-> On Mon, Jan 25, 2021 at 11:19:23AM -0700, Jens Axboe wrote:
->> On 1/25/21 11:18 AM, Christoph Hellwig wrote:
->>> On Mon, Jan 25, 2021 at 11:15:04AM -0700, Jens Axboe wrote:
->>>> On 1/25/21 11:13 AM, Christoph Hellwig wrote:
->>>>> On Mon, Jan 25, 2021 at 11:03:24AM -0700, Jens Axboe wrote:
->>>>>> Partition table entries are not in disk order.
->>>>>
->>>>> And the issue shows up with the series just up to the this patch,
->>>>> without any later patches?
->>>>
->>>> At that patch specifically. I bisected it, and then I double checked
->>>> by running the previous commit (boots fine), then apply this one, and
->>>> then I run into that error. So it should be 100% reliable.
->>>
->>> Ok, I have an idea.  With EOD message you mean this printk, right:
->>>
->>> 	pr_info_ratelimited("attempt to access beyond end of device\n"
->>>                             "%s: rw=%d, want=%llu, limit=%llu\n",
->>> 			    ...
->>>
->>> right?
->>
->> Yep
-> 
-> Can you give this untested patch a spin?  This should fix the
-> case where we check the eod for the original partition with the
-> remapped bi_sectors.  Looking into a local reproducer now.
-
-Yep, with that applied on top my laptop boots again.
-
--- 
-Jens Axboe
-
+Looks good,=0A=
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
