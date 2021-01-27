@@ -2,111 +2,223 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B31B230533F
-	for <lists+linux-bcache@lfdr.de>; Wed, 27 Jan 2021 07:33:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A249C305459
+	for <lists+linux-bcache@lfdr.de>; Wed, 27 Jan 2021 08:22:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232034AbhA0Gcm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 27 Jan 2021 01:32:42 -0500
-Received: from m97179.mail.qiye.163.com ([220.181.97.179]:41140 "EHLO
-        m97179.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233793AbhA0DMj (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 26 Jan 2021 22:12:39 -0500
-Received: from localhost.localdomain (unknown [218.94.118.90])
-        by m97179.mail.qiye.163.com (Hmail) with ESMTPA id 926D7E02834;
-        Wed, 27 Jan 2021 11:11:14 +0800 (CST)
-From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
-To:     colyli@suse.de, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mchristi@redhat.com
-Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH V2] bcache: dont reset bio opf in bch_data_insert_start
-Date:   Wed, 27 Jan 2021 11:11:11 +0800
-Message-Id: <20210127031111.3493-1-dongsheng.yang@easystack.cn>
-X-Mailer: git-send-email 2.25.1
+        id S233117AbhA0HTg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 27 Jan 2021 02:19:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47124 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233498AbhA0HQr (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 27 Jan 2021 02:16:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A14A22073A;
+        Wed, 27 Jan 2021 07:16:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611731766;
+        bh=roeH+S42no3Sboc4a7IJP429EgMi3Brd/syWUAT1emI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YwAkJqJB5KFzCdu4e+4xCNTp5SGGkGySjdzbItm+79z64FYD48iciemcPnv9Mlnh2
+         fQe/1cHafViGhPE5p2SUGGk7l2Vhny6UH/75EGwWZ3nK0+HnxUNWUmWGRosC2xio9O
+         dRi+UbUKyDXe8JCUdmtUZW0806oZFEhVUm2J2GGpN8AlBtCoUdYBvDoW9GI5hoFou2
+         3xjIKrj9pkB94a6Kv5TBwDw6939ekhvFTRuKbb7P+RY+RabHAYJmGrLgripNRJJX3W
+         Raf3XxHZrQEIZAvG4133epfOMyH9k3RvBZMOilB6mOoVuQkWm455KOkyOh/K8Y5DFv
+         MHtESQFL6GhMA==
+Received: by mail-lf1-f50.google.com with SMTP id f1so1249639lfu.3;
+        Tue, 26 Jan 2021 23:16:05 -0800 (PST)
+X-Gm-Message-State: AOAM530hTGoI/NZEUqRnpztQG0Cn43JQoq4V3v2LqhN1rQpHFale6zgN
+        YHpuyXJcRDV06hRuJQEI2t3QbwUHSclvuTQlo4w=
+X-Google-Smtp-Source: ABdhPJwFmb6CVFGHBWXlzQnS58PALEhepsv7f0h0Je/37NQinPkKDgqPDkTeBlpmndchuGkIHeS1z4Fyx1z/Fa+aNwE=
+X-Received: by 2002:a05:6512:b1b:: with SMTP id w27mr4506047lfu.10.1611731763892;
+ Tue, 26 Jan 2021 23:16:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSUI3V1ktWUFJV1kPCR
-        oVCBIfWUFZGkgZGExDSR1KHkkaVkpNSkpMSkxLTE9DT05VGRETFhoSFyQUDg9ZV1kWGg8SFR0UWU
-        FZT0tIVUpKS0hNSlVLWQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MAg6Sjo6HD0zNghMGgIxHigq
-        Pi4aCh5VSlVKTUpKTEpMS0xOS0hNVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
-        V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSE5KTDcG
-X-HM-Tid: 0a7741d2df4320bdkuqy926d7e02834
+References: <20210126145247.1964410-1-hch@lst.de> <20210126145247.1964410-15-hch@lst.de>
+In-Reply-To: <20210126145247.1964410-15-hch@lst.de>
+From:   Song Liu <song@kernel.org>
+Date:   Tue, 26 Jan 2021 23:15:52 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW599kbe-YFX0FOOGJy30gy3V2_hMYW3jg3sK_VwaayEBQ@mail.gmail.com>
+Message-ID: <CAPhsuW599kbe-YFX0FOOGJy30gy3V2_hMYW3jg3sK_VwaayEBQ@mail.gmail.com>
+Subject: Re: [PATCH 14/17] md/raid6: refactor raid5_read_one_chunk
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <chao@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        linux-nilfs@vger.kernel.org, dm-devel@redhat.com,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-bcache@vger.kernel.org,
+        linux-raid <linux-raid@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-commit ad0d9e76(bcache: use bio op accessors) makes the bi_opf
-modified by bio_set_op_attrs(). But there is a logical
-problem in this commit:
+On Tue, Jan 26, 2021 at 7:19 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Refactor raid5_read_one_chunk so that all simple checks are done
+> before allocating the bio.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-                trace_bcache_cache_insert(k);
-                bch_keylist_push(&op->insert_keys);
+Acked-by: Song Liu <song@kernel.org>
 
--               n->bi_rw |= REQ_WRITE;
-+               bio_set_op_attrs(n, REQ_OP_WRITE, 0);
-                bch_submit_bbio(n, op->c, k, 0);
-        } while (n != bio);
+Thanks for the clean-up!
 
-The old code add REQ_WRITE into bio n and keep other flags; the
-new code set REQ_OP_WRITE to bi_opf, but reset all other flags.
 
-This problem is discoverd in our performance testing:
-(1) start a fio with 1M x 128depth for read in /dev/nvme0n1p1
-(2) start a fio with 1M x 128depth for write in /dev/escache0 (cache
-device is /dev/nvme0n1p2)
-
-We found the BW of reading is 2000+M/s, but the BW of writing is
-0-100M/s. After some debugging, we found the problem is io submit in
-writting is very slow.
-
-bch_data_insert_start() insert a bio to /dev/nvme0n1p1, but as
-cached_dev submit stack bio will be added into current->bio_list, and
-return.Then __submit_bio_noacct() will submit the new bio in bio_list
-into /dev/nvme0n1p1. This operation would be slow in
-blk_mq_submit_bio() -> rq_qos_throttle(q, bio);
-
-The rq_qos_throttle() will call wbt_should_throttle(),
-static inline bool wbt_should_throttle(struct rq_wb *rwb, struct bio *bio)
-{
-        switch (bio_op(bio)) {
-        case REQ_OP_WRITE:
-                /*
-                 * Don't throttle WRITE_ODIRECT
-                 */
-                if ((bio->bi_opf & (REQ_SYNC | REQ_IDLE)) ==
-                    (REQ_SYNC | REQ_IDLE))
-                        return false;
-... ...
-}
-
-As the bio_set_op_attrs() reset the (REQ_SYNC | REQ_IDLE), so this write
-bio will be considered as non-direct write.
-
-After this fix, bio to nvme will flaged as (REQ_SYNC | REQ_IDLE),
-then fio for writing will get about 1000M/s bandwidth.
-
-Fixes: ad0d9e76a412 ("bcache: use bio op accessors")
-Close: EAS-60259
-CC: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
----
- drivers/md/bcache/request.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index c7cadaafa947..eb734f7ddaac 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -244,7 +244,7 @@ static void bch_data_insert_start(struct closure *cl)
- 		trace_bcache_cache_insert(k);
- 		bch_keylist_push(&op->insert_keys);
- 
--		bio_set_op_attrs(n, REQ_OP_WRITE, 0);
-+		n->bi_opf |= REQ_OP_WRITE;
- 		bch_submit_bbio(n, op->c, k, 0);
- 	} while (n != bio);
- 
--- 
-2.25.1
-
+> ---
+>  drivers/md/raid5.c | 108 +++++++++++++++++++--------------------------
+>  1 file changed, 45 insertions(+), 63 deletions(-)
+>
+> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+> index f411b9e5c332f4..a348b2adf2a9f9 100644
+> --- a/drivers/md/raid5.c
+> +++ b/drivers/md/raid5.c
+> @@ -5393,90 +5393,72 @@ static void raid5_align_endio(struct bio *bi)
+>  static int raid5_read_one_chunk(struct mddev *mddev, struct bio *raid_bio)
+>  {
+>         struct r5conf *conf = mddev->private;
+> -       int dd_idx;
+> -       struct bio* align_bi;
+> +       struct bio *align_bio;
+>         struct md_rdev *rdev;
+> -       sector_t end_sector;
+> +       sector_t sector, end_sector, first_bad;
+> +       int bad_sectors, dd_idx;
+>
+>         if (!in_chunk_boundary(mddev, raid_bio)) {
+>                 pr_debug("%s: non aligned\n", __func__);
+>                 return 0;
+>         }
+> -       /*
+> -        * use bio_clone_fast to make a copy of the bio
+> -        */
+> -       align_bi = bio_clone_fast(raid_bio, GFP_NOIO, &mddev->bio_set);
+> -       if (!align_bi)
+> -               return 0;
+> -       /*
+> -        *   set bi_end_io to a new function, and set bi_private to the
+> -        *     original bio.
+> -        */
+> -       align_bi->bi_end_io  = raid5_align_endio;
+> -       align_bi->bi_private = raid_bio;
+> -       /*
+> -        *      compute position
+> -        */
+> -       align_bi->bi_iter.bi_sector =
+> -               raid5_compute_sector(conf, raid_bio->bi_iter.bi_sector,
+> -                                    0, &dd_idx, NULL);
+>
+> -       end_sector = bio_end_sector(align_bi);
+> +       sector = raid5_compute_sector(conf, raid_bio->bi_iter.bi_sector, 0,
+> +                                     &dd_idx, NULL);
+> +       end_sector = bio_end_sector(raid_bio);
+> +
+>         rcu_read_lock();
+> +       if (r5c_big_stripe_cached(conf, sector))
+> +               goto out_rcu_unlock;
+> +
+>         rdev = rcu_dereference(conf->disks[dd_idx].replacement);
+>         if (!rdev || test_bit(Faulty, &rdev->flags) ||
+>             rdev->recovery_offset < end_sector) {
+>                 rdev = rcu_dereference(conf->disks[dd_idx].rdev);
+> -               if (rdev &&
+> -                   (test_bit(Faulty, &rdev->flags) ||
+> +               if (!rdev)
+> +                       goto out_rcu_unlock;
+> +               if (test_bit(Faulty, &rdev->flags) ||
+>                     !(test_bit(In_sync, &rdev->flags) ||
+> -                     rdev->recovery_offset >= end_sector)))
+> -                       rdev = NULL;
+> +                     rdev->recovery_offset >= end_sector))
+> +                       goto out_rcu_unlock;
+>         }
+>
+> -       if (r5c_big_stripe_cached(conf, align_bi->bi_iter.bi_sector)) {
+> -               rcu_read_unlock();
+> -               bio_put(align_bi);
+> +       atomic_inc(&rdev->nr_pending);
+> +       rcu_read_unlock();
+> +
+> +       align_bio = bio_clone_fast(raid_bio, GFP_NOIO, &mddev->bio_set);
+> +       bio_set_dev(align_bio, rdev->bdev);
+> +       align_bio->bi_end_io = raid5_align_endio;
+> +       align_bio->bi_private = raid_bio;
+> +       align_bio->bi_iter.bi_sector = sector;
+> +
+> +       raid_bio->bi_next = (void *)rdev;
+> +
+> +       if (is_badblock(rdev, sector, bio_sectors(align_bio), &first_bad,
+> +                       &bad_sectors)) {
+> +               bio_put(align_bio);
+> +               rdev_dec_pending(rdev, mddev);
+>                 return 0;
+>         }
+>
+> -       if (rdev) {
+> -               sector_t first_bad;
+> -               int bad_sectors;
+> -
+> -               atomic_inc(&rdev->nr_pending);
+> -               rcu_read_unlock();
+> -               raid_bio->bi_next = (void*)rdev;
+> -               bio_set_dev(align_bi, rdev->bdev);
+> -
+> -               if (is_badblock(rdev, align_bi->bi_iter.bi_sector,
+> -                               bio_sectors(align_bi),
+> -                               &first_bad, &bad_sectors)) {
+> -                       bio_put(align_bi);
+> -                       rdev_dec_pending(rdev, mddev);
+> -                       return 0;
+> -               }
+> +       /* No reshape active, so we can trust rdev->data_offset */
+> +       align_bio->bi_iter.bi_sector += rdev->data_offset;
+>
+> -               /* No reshape active, so we can trust rdev->data_offset */
+> -               align_bi->bi_iter.bi_sector += rdev->data_offset;
+> +       spin_lock_irq(&conf->device_lock);
+> +       wait_event_lock_irq(conf->wait_for_quiescent, conf->quiesce == 0,
+> +                           conf->device_lock);
+> +       atomic_inc(&conf->active_aligned_reads);
+> +       spin_unlock_irq(&conf->device_lock);
+>
+> -               spin_lock_irq(&conf->device_lock);
+> -               wait_event_lock_irq(conf->wait_for_quiescent,
+> -                                   conf->quiesce == 0,
+> -                                   conf->device_lock);
+> -               atomic_inc(&conf->active_aligned_reads);
+> -               spin_unlock_irq(&conf->device_lock);
+> +       if (mddev->gendisk)
+> +               trace_block_bio_remap(align_bio, disk_devt(mddev->gendisk),
+> +                                     raid_bio->bi_iter.bi_sector);
+> +       submit_bio_noacct(align_bio);
+> +       return 1;
+>
+> -               if (mddev->gendisk)
+> -                       trace_block_bio_remap(align_bi, disk_devt(mddev->gendisk),
+> -                                             raid_bio->bi_iter.bi_sector);
+> -               submit_bio_noacct(align_bi);
+> -               return 1;
+> -       } else {
+> -               rcu_read_unlock();
+> -               bio_put(align_bi);
+> -               return 0;
+> -       }
+> +out_rcu_unlock:
+> +       rcu_read_unlock();
+> +       return 0;
+>  }
+>
+>  static struct bio *chunk_aligned_read(struct mddev *mddev, struct bio *raid_bio)
+> --
+> 2.29.2
+>
