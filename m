@@ -2,133 +2,129 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B63BA305D15
-	for <lists+linux-bcache@lfdr.de>; Wed, 27 Jan 2021 14:27:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFE36305FA1
+	for <lists+linux-bcache@lfdr.de>; Wed, 27 Jan 2021 16:31:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231858AbhA0N0z (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 27 Jan 2021 08:26:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58682 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238191AbhA0NYs (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 27 Jan 2021 08:24:48 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05825C0613D6
-        for <linux-bcache@vger.kernel.org>; Wed, 27 Jan 2021 05:24:08 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id c2so2387911edr.11
-        for <linux-bcache@vger.kernel.org>; Wed, 27 Jan 2021 05:24:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kaishome.de; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EGvs4+3Tai+1O1uU2syNKHsO+Hd31hsn/79MXSHQvAk=;
-        b=gvfUSO0H1BEqvxKVAuD9loEFSROvCrHrLaMVql/Uoipi73qubNZ1bfPJ5ISs/wRsmP
-         uZHjeu9LC0rKnVIy5ZJLwLWZaAbFQIx6Q/5naODp3XDQW0UH/12TGWDFoaSuco0uf69N
-         bed8ojygwYsRVRDuiK8daWTXdcjP/SL/BP/l8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EGvs4+3Tai+1O1uU2syNKHsO+Hd31hsn/79MXSHQvAk=;
-        b=B1lQUa9Wszq5RKm7Wv4owf9mjFh8YJAKoCFaLZjBeLyHMn6lo4eJ1ql9CjK1d6FH+O
-         Y7NNpVEDFxUIgLoXNU7AZvDa4wr7vGP7ofrnl1mvAoICMyqPtLWYAlOQ1zVhy0ngUesI
-         qeSxlOSS5/IW1MfMkRyH/VIxb8jAwGtITsVeOvvizhjUepuT4vgBjTiLR9ip4Alq+chU
-         t7ZwmLWqFc4RZLH8Pb0kPVXf52k+3J/beApAGpsyY88CjtGcjCZ8XKudm/dcaZ8BS2Y5
-         nWKcaG5vhmurxyeUYrJNFvMONUUcOt82TeyH/+8CtnMPvFgy96cZLwdIb+rfdFCkPEyi
-         Jt2Q==
-X-Gm-Message-State: AOAM531sDur3MjEsdGCWXKBUG0Q0JHksPmvLyltZQXxLIqLfpVwLJpdj
-        90OGGmj4nmW6Uzuti2gjlTxIHTsxqCC6ZQ==
-X-Google-Smtp-Source: ABdhPJwxZENmrn7lk1Y6ZJhr5BMgSS3S4etN3mky6SWpIICoMUGrlwzg4Y3HZd3YDLV+i6ppXxQqrQ==
-X-Received: by 2002:a05:6402:312e:: with SMTP id dd14mr9252342edb.366.1611753846488;
-        Wed, 27 Jan 2021 05:24:06 -0800 (PST)
-Received: from jupiter.sol.kaishome.de ([2a02:8109:c40:9200::1a2])
-        by smtp.gmail.com with ESMTPSA id e11sm826444ejz.94.2021.01.27.05.24.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Jan 2021 05:24:05 -0800 (PST)
-Received: (nullmailer pid 558046 invoked by uid 500);
-        Wed, 27 Jan 2021 13:24:04 -0000
-From:   Kai Krakow <kai@kaishome.de>
-To:     linux-bcache@vger.kernel.org
-Cc:     Kai Krakow <kai@kaishome.de>
-Subject: [PATCH 2/2] bcache: Move journal work to new background wq
-Date:   Wed, 27 Jan 2021 14:23:50 +0100
-Message-Id: <20210127132350.557935-3-kai@kaishome.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210127132350.557935-1-kai@kaishome.de>
+        id S1343879AbhA0Pan (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 27 Jan 2021 10:30:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35370 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235800AbhA0P2c (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 27 Jan 2021 10:28:32 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id BEA3FB72C;
+        Wed, 27 Jan 2021 15:27:50 +0000 (UTC)
+Subject: Re: Fix degraded system performance due to workqueue overload
+To:     Kai Krakow <kai@kaishome.de>
 References: <20210127132350.557935-1-kai@kaishome.de>
+Cc:     linux-bcache@vger.kernel.org
+From:   Coly Li <colyli@suse.de>
+Message-ID: <3f252d42-e057-54b7-d54e-cced88659ff7@suse.de>
+Date:   Wed, 27 Jan 2021 23:27:48 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
+ Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210127132350.557935-1-kai@kaishome.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This is potentially long running and not latency sensitive, let's get
-it out of the way of other latency sensitive events.
----
- drivers/md/bcache/bcache.h  | 1 +
- drivers/md/bcache/journal.c | 4 ++--
- drivers/md/bcache/super.c   | 7 +++++++
- 3 files changed, 10 insertions(+), 2 deletions(-)
+On 1/27/21 9:23 PM, Kai Krakow wrote:
+> In the past months (and looking back, even years), I was seeing system
+> performance and latency degrading vastly when bcache is active.
+> 
+> Finally, with kernel 5.10, I was able to locate the problem:
+> 
+> [250336.887598] BUG: workqueue lockup - pool cpus=2 node=0 flags=0x0 nice=0 stuck for 72s!
+> [250336.887606] Showing busy workqueues and worker pools:
+> [250336.887607] workqueue events: flags=0x0
+> [250336.887608]   pwq 10: cpus=5 node=0 flags=0x0 nice=0 active=3/256 refcnt=4
+> [250336.887611]     pending: psi_avgs_work, psi_avgs_work, psi_avgs_work
+> [250336.887619]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=15/256 refcnt=16
+> [250336.887621]     in-flight: 3760137:psi_avgs_work
+> [250336.887624]     pending: psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work
+> [250336.887637]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256 refcnt=2
+> [250336.887639]     pending: psi_avgs_work
+> [250336.887643] workqueue events_power_efficient: flags=0x80
+> [250336.887644]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256 refcnt=2
+> [250336.887646]     pending: do_cache_clean
+> [250336.887651] workqueue mm_percpu_wq: flags=0x8
+> [250336.887651]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=2/256 refcnt=4
+> [250336.887653]     pending: lru_add_drain_per_cpu BAR(60), vmstat_update
+> [250336.887666] workqueue bcache: flags=0x8
+> [250336.887667]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256 refcnt=2
+> [250336.887668]     pending: cached_dev_nodata
+> [250336.887681] pool 4: cpus=2 node=0 flags=0x0 nice=0 hung=72s workers=2 idle: 3760136
+> 
+> I was able to track that back to the following commit:
+> 56b30770b27d54d68ad51eccc6d888282b568cee ("bcache: Kill btree_io_wq")
+> 
+> Reverting that commit (with some adjustments due to later code changes)
+> improved my desktop latency a lot, I mean really a lot. The system was
+> finally able to handle somewhat higher loads without stalling for
+> several seconds and without spiking load into the hundreds while doing a
+> lot of write IO.
+> 
+> So I dug a little deeper and found that the assumption of this old
+> commit may no longer be true and bcache simply overwhelms the system_wq
+> with too many or too long running workers. This should really only be
+> used for workers that can do their work almost instantly, and it should
+> not be spammed with a lot of workers which bcache seems to do (look at
+> how many kthreads it creates from workers):
+> 
+> # ps aux | grep 'kworker/.*bc' | wc -l
+> 131
+> 
+> And this is with a mostly idle system, it may easily reach 700+. Also,
+> with my patches in place, that number seems to be overall lower.
+> 
+> So I added another commit (patch 2) to move another worker queue over
+> to a dedicated worker queue ("bcache: Move journal work to new
+> background wq").
+> 
+> I tested this by overloading my desktop system with the following
+> parallel load:
+> 
+>   * A big download at 1 Gbit/s, resulting in 60+ MB/s write
+>   * Active IPFS daemon
+>   * Watching a YouTube video
+>   * Fully syncing 4 IMAP accounts with MailSpring
+>   * Running a Gentoo system update (compiling packages)
+>   * Browsing the web
+>   * Running a Windows VM (Qemu) with Outlook and defragmentation
+>   * Starting and closing several applications and clicking in them
+> 
+> IO setup: 4x HDD (2+2+4+4 TB) btrfs RAID-0 with 850 GB SSD bcache
+> Kernel 5.10.10
+> 
+> Without the patches, the system would have come to a stop, probably not
+> recovering from it (last time I tried, a clean shutdown took 1+ hour).
+> With the patches, the system easily survives and feels overall smooth
+> with only a small perceivable lag.
+> 
+> Boot times are more consistent, too, and faster when bcache is mostly
+> cold due to a previous system update.
+> 
+> Write rates of the system are more smooth now, and can easily sustain a
+> constant load of 200-300 MB/s while previously I would see long stalls
+> followed by vastly reduces write performance (down to 5-20 MB/s).
+> 
+> I'm not sure if there are side-effects of my patches that I cannot know
+> of but it works great for me: All write-related desktop stalling is
+> gone.
+> 
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index b1ed16c7a534..70565ed5732d 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -1001,6 +1001,7 @@ void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent);
- 
- extern struct workqueue_struct *bcache_wq;
- extern struct workqueue_struct *bch_journal_wq;
-+extern struct workqueue_struct *bch_background_wq;
- extern struct mutex bch_register_lock;
- extern struct list_head bch_cache_sets;
- 
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index aefbdb7e003b..942e97dd1755 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -932,8 +932,8 @@ atomic_t *bch_journal(struct cache_set *c,
- 		journal_try_write(c);
- 	} else if (!w->dirty) {
- 		w->dirty = true;
--		schedule_delayed_work(&c->journal.work,
--				      msecs_to_jiffies(c->journal_delay_ms));
-+		queue_delayed_work(bch_background_wq, &c->journal.work,
-+				   msecs_to_jiffies(c->journal_delay_ms));
- 		spin_unlock(&c->journal.lock);
- 	} else {
- 		spin_unlock(&c->journal.lock);
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index dc4fe7eeda81..9e1481917ce6 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -49,6 +49,7 @@ static int bcache_major;
- static DEFINE_IDA(bcache_device_idx);
- static wait_queue_head_t unregister_wait;
- struct workqueue_struct *bcache_wq;
-+struct workqueue_struct *bch_background_wq;
- struct workqueue_struct *bch_journal_wq;
- 
- 
-@@ -2822,6 +2823,8 @@ static void bcache_exit(void)
- 		destroy_workqueue(bcache_wq);
- 	if (bch_journal_wq)
- 		destroy_workqueue(bch_journal_wq);
-+	if (bch_background_wq)
-+		destroy_workqueue(bch_background_wq);
- 
- 	if (bcache_major)
- 		unregister_blkdev(bcache_major, "bcache");
-@@ -2884,6 +2887,10 @@ static int __init bcache_init(void)
- 	if (bch_btree_init())
- 		goto err;
- 
-+	bch_background_wq = alloc_workqueue("bch_background", 0, 0);
-+	if (!bch_background_wq)
-+		goto err;
-+
- 	bch_journal_wq = alloc_workqueue("bch_journal", WQ_MEM_RECLAIM, 0);
- 	if (!bch_journal_wq)
- 		goto err;
--- 
-2.26.2
 
+Hi Kai,
+
+Overall I am OK with this series, it makes sense IMHO. Let's wait for
+response from Kent, if there is no comment from him, I will add these
+two patches in my v5.12 for-next series.
+
+Thanks for the fix up.
+
+Coly Li
