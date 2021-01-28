@@ -2,114 +2,153 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E284F3072EA
-	for <lists+linux-bcache@lfdr.de>; Thu, 28 Jan 2021 10:40:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 840F630736F
+	for <lists+linux-bcache@lfdr.de>; Thu, 28 Jan 2021 11:11:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231641AbhA1Jjn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 28 Jan 2021 04:39:43 -0500
-Received: from m9784.mail.qiye.163.com ([220.181.97.84]:19530 "EHLO
-        m9784.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232052AbhA1Jg7 (ORCPT
+        id S231845AbhA1KKQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 28 Jan 2021 05:10:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43764 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231657AbhA1KKI (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 28 Jan 2021 04:36:59 -0500
-X-Greylist: delayed 1545 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 Jan 2021 04:36:56 EST
-Received: from [192.168.122.37] (unknown [218.94.118.90])
-        by m9784.mail.qiye.163.com (Hmail) with ESMTPA id 76012417F3;
-        Thu, 28 Jan 2021 17:10:18 +0800 (CST)
-From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: Re: [PATCH] bcache: dont reset bio opf in bch_data_insert_start
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     colyli@suse.de, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mchristi@redhat.com
-References: <20210125042942.1087170-1-dongsheng.yang@easystack.cn>
- <20210127173726.GA1738577@infradead.org>
-Message-ID: <e360e24b-7c6e-f7b3-ee59-e4f9d7dd3576@easystack.cn>
-Date:   Thu, 28 Jan 2021 17:10:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Thu, 28 Jan 2021 05:10:08 -0500
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2099FC061573
+        for <linux-bcache@vger.kernel.org>; Thu, 28 Jan 2021 02:09:28 -0800 (PST)
+Received: by mail-qv1-xf2a.google.com with SMTP id h21so2505258qvb.8
+        for <linux-bcache@vger.kernel.org>; Thu, 28 Jan 2021 02:09:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kaishome.de; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sGB7ryjbXLkQduBYek9fsCh9WrkOkBjJkxgDruP6hs0=;
+        b=WJkhmpNdph1A7yG3Asn79OlHMpel0LxmSOMSUezW5of6izZ0NDLuzRfo9SwHvQJIKv
+         SEWlSUTVB74aL31U/+kNz5XWKMuz8m8JnaeglqdIfzrdKsTmp/Bj9NNYn01/u6F44uoX
+         LQAeAv5BOxskSRgfWwHfCMyxUtfrhZTLIMRZk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sGB7ryjbXLkQduBYek9fsCh9WrkOkBjJkxgDruP6hs0=;
+        b=Dd54FE6VljH7fucFxp2dI9OS5VbcDZ41kkvFpCdjZ7lVALZ6W0g6xKADXE1NiV0T/x
+         kZTeUFKqWCnIFRjMi+qWwObyNehAEedzNcNC/w1HIbE201Z6x7PB1MPigx+8wiDqIz2Y
+         g7T3NmmTlh1nUMJm2dALBrjeYn5EwkTeG79JW5yg6lj/ju64Mm9sF6qJ6sn6hOoiYJFG
+         zMkhCYvUiA6StYth0HkgzTVZlS71VNhkSwyEtZLmQ2LN19wqt/KbHkbqj+kerhS7OU00
+         08Qb2lp8JCF1szUKD3oQoo2zCWmlPuuKfT+9Sh3pyNx0RNltbNJcE1gdSmtCTb19W42M
+         CHhQ==
+X-Gm-Message-State: AOAM530kTj/02ZyrXxwq1YX3vK67uLuJrb6RpkyEx7UjgR7khuhqFsXO
+        /QmFCRyb8PzHXVvfzwjkEoxgOPKRBTekdlN+6Ku/nA==
+X-Google-Smtp-Source: ABdhPJwDzq4eV0Oj0ZaCXacO1KpNZ5WdoEDR2ptAgstD3dy5+SV8Of0Xa7Ht8z45Y3enAeqGpz/Gwr98hQ0wczczksk=
+X-Received: by 2002:a0c:c687:: with SMTP id d7mr14480374qvj.17.1611828567348;
+ Thu, 28 Jan 2021 02:09:27 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210127173726.GA1738577@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSUI3V1ktWUFJV1kPCR
-        oVCBIfWUFZTEhMSUpNTkpOTRlLVkpNSkpDSU5LSkNDSk1VGRETFhoSFyQUDg9ZV1kWGg8SFR0UWU
-        FZT0tIVUpKS0hNSlVLWQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MDY6Hzo*Sz00Pg8DGhgZAiEj
-        CC9PCxpVSlVKTUpKQ0lOS0pCS0pNVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
-        V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSExKQzcG
-X-HM-Tid: 0a774841f7202086kuqy76012417f3
+References: <20210127132350.557935-1-kai@kaishome.de>
+In-Reply-To: <20210127132350.557935-1-kai@kaishome.de>
+From:   Kai Krakow <kai@kaishome.de>
+Date:   Thu, 28 Jan 2021 11:09:16 +0100
+Message-ID: <CAC2ZOYtrrOXD35ZWLer8R8n1dcyqGi_dipHp+y1JNt_eaue_9A@mail.gmail.com>
+Subject: Re: Fix degraded system performance due to workqueue overload
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Christop:
+Hi Kent!
 
-在 2021/1/28 星期四 上午 1:37, Christoph Hellwig 写道:
-> But the old code is also completely broken.  We can't just OR in
-> the op, as that implicitly assumes the old op was 0 (REQ_OP_READ).
+Any objections about the following patches? Coly wanted to wait for
+your confirmation.
 
+Thanks.
 
-Yes, indeed, there is an assume that the op is just possible to be 0 
-(REQ_OP_READ) or 1 (REQ_OP_WRITE).
-
-REQ_OP_WRITE is from cached_dev_submit_bio() which would be submitted by 
-upper user.
-
-REQ_OP_READ is from bcache itself, such as cached_dev_read_done() (when 
-we found cache miss, we will read
-
-data from backing and then we want to insert it into cache device. then 
-there is a read bio with data reach here, we
-
-need to set the bio_op to REQ_OP_WRITE, and send this bio to cache device).
-
-> Please fix this to explicitly set the exact op and flags that you want
-> instead of this fragile magic.blk_rq_map_kern
-
-This commit only want to fix the logic bug introduced in ad0d9e76a412 
-("bcache: use bio op accessors"),
-
-that's more likely a partial revert.
-
-
-I agree that we can make it more clearly and explicitly.
-
-But I found there is no accessor to set op only, besides, the 
-bio_set_op_attrs() was marked as obsolete.
-
-There are some others doing similar things as below:
-
-blk_rq_map_kern():
-
-bio->bi_opf &= ~REQ_OP_MASK;
-
-bio->bi_opf |= req_op(rq);
-
-
-So what about below:
-
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index c7cadaafa947..bacc7366002f 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -244,7 +244,14 @@ static void bch_data_insert_start(struct closure *cl)
-                 trace_bcache_cache_insert(k);
-                 bch_keylist_push(&op->insert_keys);
-
--               bio_set_op_attrs(n, REQ_OP_WRITE, 0);
-+               /*
-+                * n here would be REQ_OP_READ, if
-+                * we are inserting data read from
-+                * backing device in cache miss or
-+                * inserting data in movinggc.
-+                */
-+               n->bi_opf &= ~REQ_OP_MASK;
-+               n->bi_opf |= REQ_OP_WRITE;
-                 bch_submit_bbio(n, op->c, k, 0);
-         } while (n != bio);
-
-
-Thanx
-
-Yang
-
+Am Mi., 27. Jan. 2021 um 14:24 Uhr schrieb Kai Krakow <kai@kaishome.de>:
+>
+> In the past months (and looking back, even years), I was seeing system
+> performance and latency degrading vastly when bcache is active.
+>
+> Finally, with kernel 5.10, I was able to locate the problem:
+>
+> [250336.887598] BUG: workqueue lockup - pool cpus=2 node=0 flags=0x0 nice=0 stuck for 72s!
+> [250336.887606] Showing busy workqueues and worker pools:
+> [250336.887607] workqueue events: flags=0x0
+> [250336.887608]   pwq 10: cpus=5 node=0 flags=0x0 nice=0 active=3/256 refcnt=4
+> [250336.887611]     pending: psi_avgs_work, psi_avgs_work, psi_avgs_work
+> [250336.887619]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=15/256 refcnt=16
+> [250336.887621]     in-flight: 3760137:psi_avgs_work
+> [250336.887624]     pending: psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work, psi_avgs_work
+> [250336.887637]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256 refcnt=2
+> [250336.887639]     pending: psi_avgs_work
+> [250336.887643] workqueue events_power_efficient: flags=0x80
+> [250336.887644]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256 refcnt=2
+> [250336.887646]     pending: do_cache_clean
+> [250336.887651] workqueue mm_percpu_wq: flags=0x8
+> [250336.887651]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=2/256 refcnt=4
+> [250336.887653]     pending: lru_add_drain_per_cpu BAR(60), vmstat_update
+> [250336.887666] workqueue bcache: flags=0x8
+> [250336.887667]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256 refcnt=2
+> [250336.887668]     pending: cached_dev_nodata
+> [250336.887681] pool 4: cpus=2 node=0 flags=0x0 nice=0 hung=72s workers=2 idle: 3760136
+>
+> I was able to track that back to the following commit:
+> 56b30770b27d54d68ad51eccc6d888282b568cee ("bcache: Kill btree_io_wq")
+>
+> Reverting that commit (with some adjustments due to later code changes)
+> improved my desktop latency a lot, I mean really a lot. The system was
+> finally able to handle somewhat higher loads without stalling for
+> several seconds and without spiking load into the hundreds while doing a
+> lot of write IO.
+>
+> So I dug a little deeper and found that the assumption of this old
+> commit may no longer be true and bcache simply overwhelms the system_wq
+> with too many or too long running workers. This should really only be
+> used for workers that can do their work almost instantly, and it should
+> not be spammed with a lot of workers which bcache seems to do (look at
+> how many kthreads it creates from workers):
+>
+> # ps aux | grep 'kworker/.*bc' | wc -l
+> 131
+>
+> And this is with a mostly idle system, it may easily reach 700+. Also,
+> with my patches in place, that number seems to be overall lower.
+>
+> So I added another commit (patch 2) to move another worker queue over
+> to a dedicated worker queue ("bcache: Move journal work to new
+> background wq").
+>
+> I tested this by overloading my desktop system with the following
+> parallel load:
+>
+>   * A big download at 1 Gbit/s, resulting in 60+ MB/s write
+>   * Active IPFS daemon
+>   * Watching a YouTube video
+>   * Fully syncing 4 IMAP accounts with MailSpring
+>   * Running a Gentoo system update (compiling packages)
+>   * Browsing the web
+>   * Running a Windows VM (Qemu) with Outlook and defragmentation
+>   * Starting and closing several applications and clicking in them
+>
+> IO setup: 4x HDD (2+2+4+4 TB) btrfs RAID-0 with 850 GB SSD bcache
+> Kernel 5.10.10
+>
+> Without the patches, the system would have come to a stop, probably not
+> recovering from it (last time I tried, a clean shutdown took 1+ hour).
+> With the patches, the system easily survives and feels overall smooth
+> with only a small perceivable lag.
+>
+> Boot times are more consistent, too, and faster when bcache is mostly
+> cold due to a previous system update.
+>
+> Write rates of the system are more smooth now, and can easily sustain a
+> constant load of 200-300 MB/s while previously I would see long stalls
+> followed by vastly reduces write performance (down to 5-20 MB/s).
+>
+> I'm not sure if there are side-effects of my patches that I cannot know
+> of but it works great for me: All write-related desktop stalling is
+> gone.
+>
+> --
+> Regards,
+> Kai
+>
+>
