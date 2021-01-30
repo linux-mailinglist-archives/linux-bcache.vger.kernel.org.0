@@ -2,98 +2,111 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F34A309301
-	for <lists+linux-bcache@lfdr.de>; Sat, 30 Jan 2021 10:14:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EBC73097CB
+	for <lists+linux-bcache@lfdr.de>; Sat, 30 Jan 2021 20:07:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230208AbhA3JMw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 30 Jan 2021 04:12:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48550 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233654AbhA3EQf (ORCPT
+        id S232210AbhA3TGo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 30 Jan 2021 14:06:44 -0500
+Received: from smtprelay0077.hostedemail.com ([216.40.44.77]:42408 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229990AbhA3TGn (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 29 Jan 2021 23:16:35 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E69CFC061354;
-        Fri, 29 Jan 2021 19:57:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=DenP85I1Njjb0sm/Pv5awH6u78JiwmjeMN74Dl7XDmA=; b=H8SDl3brId4iyEQMOwW4BfEUQ2
-        Xy9mZcqFmFvcWvR6dxLgQ3QUwF+RwC9GNnBM28jr+2J7JQ5Bm8pWtzkJy9Bu5683unOHOgLMv+gFM
-        jYIfOM6Ao2NNEjEzqoWU83ro0i2k1QtT++2jpOr8mpPL1+MxGJTvy2GRgyUg+z6xssmGMSAnWY2zd
-        lqlVaZEtkQfNNrYTdAkx5Dh4tKL60XSKbWMPsTXg7ShS8Q1MALyQ1L4XvADIPpEa3DQT7A35auYCK
-        RYKeUzMDMR7ROqaOWCMHMSpzECR3dkUR8mtXMmO0lgMzXZcgza2tXYiFwaZvQ9UvVr3UoISIOLjsY
-        syMo01WQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l5hNO-00Afhm-T1; Sat, 30 Jan 2021 03:56:47 +0000
-Date:   Sat, 30 Jan 2021 03:56:46 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        linux-nilfs@vger.kernel.org, dm-devel@redhat.com,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 04/17] block: split bio_kmalloc from bio_alloc_bioset
-Message-ID: <20210130035646.GH308988@casper.infradead.org>
-References: <20210126145247.1964410-1-hch@lst.de>
- <20210126145247.1964410-5-hch@lst.de>
+        Sat, 30 Jan 2021 14:06:43 -0500
+X-Greylist: delayed 388 seconds by postgrey-1.27 at vger.kernel.org; Sat, 30 Jan 2021 14:06:43 EST
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave08.hostedemail.com (Postfix) with ESMTP id 89594182D4575
+        for <linux-bcache@vger.kernel.org>; Sat, 30 Jan 2021 19:00:15 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 86FC9173085F;
+        Sat, 30 Jan 2021 18:59:33 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1261:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3868:3870:3871:4321:4605:5007:7652:7875:7904:8603:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12297:12438:12555:12740:12895:13069:13311:13357:13439:13894:14181:14659:14721:21080:21627:30046:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: hook93_0608dc9275b3
+X-Filterd-Recvd-Size: 2897
+Received: from [192.168.1.159] (unknown [47.151.137.21])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 30 Jan 2021 18:59:32 +0000 (UTC)
+Message-ID: <14e1e776ceac5d4e84675bc70532aa30530eb8ec.camel@perches.com>
+Subject: Re: [PATCH 13/29] bcache: Avoid comma separated statements
+From:   Joe Perches <joe@perches.com>
+To:     Jiri Kosina <trivial@kernel.org>, Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Sat, 30 Jan 2021 10:59:31 -0800
+In-Reply-To: <99ba798329f7d957e75a22c8551e8bd22f70c626.1598331149.git.joe@perches.com>
+References: <cover.1598331148.git.joe@perches.com>
+         <99ba798329f7d957e75a22c8551e8bd22f70c626.1598331149.git.joe@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.38.1-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210126145247.1964410-5-hch@lst.de>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 03:52:34PM +0100, Christoph Hellwig wrote:
-> bio_kmalloc shares almost no logic with the bio_set based fast path
-> in bio_alloc_bioset.  Split it into an entirely separate implementation.
->=20
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Mon, 2020-08-24 at 21:56 -0700, Joe Perches wrote:
+> Use semicolons and braces.
+
+ping?
+
+> Signed-off-by: Joe Perches <joe@perches.com>
 > ---
->  block/bio.c         | 167 ++++++++++++++++++++++----------------------
->  include/linux/bio.h |   6 +-
->  2 files changed, 86 insertions(+), 87 deletions(-)
+>  drivers/md/bcache/bset.c  | 12 ++++++++----
+>  drivers/md/bcache/sysfs.c |  6 ++++--
+>  2 files changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+> index 67a2c47f4201..94d38e8a59b3 100644
+> --- a/drivers/md/bcache/bset.c
+> +++ b/drivers/md/bcache/bset.c
+> @@ -712,8 +712,10 @@ void bch_bset_build_written_tree(struct btree_keys *b)
+>  	for (j = inorder_next(0, t->size);
+>  	     j;
+>  	     j = inorder_next(j, t->size)) {
+> -		while (bkey_to_cacheline(t, k) < cacheline)
+> -			prev = k, k = bkey_next(k);
+> +		while (bkey_to_cacheline(t, k) < cacheline) {
+> +			prev = k;
+> +			k = bkey_next(k);
+> +		}
+>  
+> 
+>  		t->prev[j] = bkey_u64s(prev);
+>  		t->tree[j].m = bkey_to_cacheline_offset(t, cacheline++, k);
+> @@ -901,8 +903,10 @@ unsigned int bch_btree_insert_key(struct btree_keys *b, struct bkey *k,
+>  	status = BTREE_INSERT_STATUS_INSERT;
+>  
+> 
+>  	while (m != bset_bkey_last(i) &&
+> -	       bkey_cmp(k, b->ops->is_extents ? &START_KEY(m) : m) > 0)
+> -		prev = m, m = bkey_next(m);
+> +	       bkey_cmp(k, b->ops->is_extents ? &START_KEY(m) : m) > 0) {
+> +		prev = m;
+> +		m = bkey_next(m);
+> +	}
+>  
+> 
+>  	/* prev is in the tree, if we merge we're done */
+>  	status = BTREE_INSERT_STATUS_BACK_MERGE;
+> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+> index ac06c0bc3c0a..1878c5ee53b6 100644
+> --- a/drivers/md/bcache/sysfs.c
+> +++ b/drivers/md/bcache/sysfs.c
+> @@ -1071,8 +1071,10 @@ SHOW(__bch_cache)
+>  			--n;
+>  
+> 
+>  		while (cached < p + n &&
+> -		       *cached == BTREE_PRIO)
+> -			cached++, n--;
+> +		       *cached == BTREE_PRIO) {
+> +			cached++;
+> +			n--;
+> +		}
+>  
+> 
+>  		for (i = 0; i < n; i++)
+>  			sum += INITIAL_PRIO - cached[i];
 
-This patch causes current linux-next to OOM for me when running xfstests
-after about ten minutes.  Haven't looked into why yet, this is just the
-results of a git bisect.
-
-The qemu command line is:
-
-qemu-system-x86_64 -nodefaults -nographic -cpu host -machine accel=3Dkvm,nv=
-dimm -m 2G,slots=3D8,maxmem=3D1T -smp 6 -kernel /home/willy/kernel/folio/.b=
-uild_test_kernel-x86_64/kpgk/vmlinuz -append console=3Dhvc0 root=3D/dev/sda=
- rw log_buf_len=3D8M ktest.dir=3D/home/willy/kernel/ktest ktest.env=3D/tmp/=
-build-test-kernel-nJO6QgxOmo/env quiet systemd.show_status=3D0 systemd.log-=
-target=3Djournal crashkernel=3D128M no_console_suspend -device virtio-seria=
-l -chardev stdio,id=3Dconsole -device virtconsole,chardev=3Dconsole -serial=
- unix:/tmp/build-test-kernel-nJO6QgxOmo/vm-kgdb,server,nowait -monitor unix=
-:/tmp/build-test-kernel-nJO6QgxOmo/vm-mon,server,nowait -gdb unix:/tmp/buil=
-d-test-kernel-nJO6QgxOmo/vm-gdb,server,nowait -device virtio-rng-pci -virtf=
-s local,path=3D/,mount_tag=3Dhost,security_model=3Dnone -device virtio-scsi=
--pci,id=3Dhba -nic user,model=3Dvirtio,hostfwd=3Dtcp:127.0.0.1:24674-:22 -d=
-rive if=3Dnone,format=3Draw,id=3Ddisk0,file=3D/var/lib/ktest/root.amd64,sna=
-pshot=3Don -device scsi-hd,bus=3Dhba.0,drive=3Ddisk0 -drive if=3Dnone,forma=
-t=3Draw,id=3Ddisk1,file=3D/tmp/build-test-kernel-nJO6QgxOmo/dev-1,cache=3Du=
-nsafe -device scsi-hd,bus=3Dhba.0,drive=3Ddisk1 -drive if=3Dnone,format=3Dr=
-aw,id=3Ddisk2,file=3D/tmp/build-test-kernel-nJO6QgxOmo/dev-2,cache=3Dunsafe=
- -device scsi-hd,bus=3Dhba.0,drive=3Ddisk2 -drive if=3Dnone,format=3Draw,id=
-=3Ddisk3,file=3D/tmp/build-test-kernel-nJO6QgxOmo/dev-3,cache=3Dunsafe -dev=
-ice scsi-hd,bus=3Dhba.0,drive=3Ddisk3
 
