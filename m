@@ -2,182 +2,98 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9282C308AE1
-	for <lists+linux-bcache@lfdr.de>; Fri, 29 Jan 2021 18:08:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F34A309301
+	for <lists+linux-bcache@lfdr.de>; Sat, 30 Jan 2021 10:14:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231396AbhA2RDG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 29 Jan 2021 12:03:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45132 "EHLO
+        id S230208AbhA3JMw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 30 Jan 2021 04:12:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231423AbhA2RBj (ORCPT
+        with ESMTP id S233654AbhA3EQf (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 29 Jan 2021 12:01:39 -0500
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 422CBC0613ED
-        for <linux-bcache@vger.kernel.org>; Fri, 29 Jan 2021 08:59:15 -0800 (PST)
-Received: by mail-qk1-x733.google.com with SMTP id k193so9346477qke.6
-        for <linux-bcache@vger.kernel.org>; Fri, 29 Jan 2021 08:59:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kaishome.de; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oktbdsfMxCoAFwk1z6YwGI/XRwTZIHH96RTtoH8mj+w=;
-        b=TWJ9RJ/HPzue98BS0DVuOIz64pozSUgqbtENurT8hE399Ef51NAqtV2kNWIwdXF8Mb
-         +1QyDgy4GzGtyh1XrkXtFTkEH6N3vKuKAmFwYG2Ut8zEANspqua0xkaXE3bMjFyimff3
-         kN7102KG1009y8MxbN61cGYUirPmKTroReajs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oktbdsfMxCoAFwk1z6YwGI/XRwTZIHH96RTtoH8mj+w=;
-        b=RW3JB52mmFI5blAULlmMpmHak9hUSsBwk0v099MxURVNqHyKlaLsNIkhGsofwhjsbn
-         e6sT50Yc1mscHSyyZe8PgWzIpYFJWcSusfBYl0pgqWNrr85ms3lQntHND8M09M35oRnY
-         vAZQeV7PMNuZXYnGuzUjUTGMGNGKtqvuTPMFWTD4XoiKY+UJxORCQpPgSwA143jL3E3c
-         Vb4+x+MJBKdj3MAeuth4zPqYsG4z1gXDCIqWnf4WAsPNJz+hOKehW5lVwKPGwT88xvqq
-         Pa/56syY+zT7PiU5Hr0FkRUhWXoLsMPcyPBSQCdBtBMUgHGLS8w7TRxPHBe3I8jKlmKk
-         PQ1g==
-X-Gm-Message-State: AOAM531y1bNefk9C8KlOP8tuc77EjW3bw3EjdshMtMiWWKH+mzEyrjDm
-        1ySPnX76Zf1tcF4W9zCaXIqgBqWXj3PQbNE8F7wzvw==
-X-Google-Smtp-Source: ABdhPJwVVbHO5MhP+oznroR8KMVeO2ZlSYiXYOeNZZX2WnQ6QPn/K++yJ5etVZd2dOhxa3i3OCZrup9FUWxWFJLWe3I=
-X-Received: by 2002:a37:8dc1:: with SMTP id p184mr4788017qkd.70.1611939554466;
- Fri, 29 Jan 2021 08:59:14 -0800 (PST)
+        Fri, 29 Jan 2021 23:16:35 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E69CFC061354;
+        Fri, 29 Jan 2021 19:57:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=DenP85I1Njjb0sm/Pv5awH6u78JiwmjeMN74Dl7XDmA=; b=H8SDl3brId4iyEQMOwW4BfEUQ2
+        Xy9mZcqFmFvcWvR6dxLgQ3QUwF+RwC9GNnBM28jr+2J7JQ5Bm8pWtzkJy9Bu5683unOHOgLMv+gFM
+        jYIfOM6Ao2NNEjEzqoWU83ro0i2k1QtT++2jpOr8mpPL1+MxGJTvy2GRgyUg+z6xssmGMSAnWY2zd
+        lqlVaZEtkQfNNrYTdAkx5Dh4tKL60XSKbWMPsTXg7ShS8Q1MALyQ1L4XvADIPpEa3DQT7A35auYCK
+        RYKeUzMDMR7ROqaOWCMHMSpzECR3dkUR8mtXMmO0lgMzXZcgza2tXYiFwaZvQ9UvVr3UoISIOLjsY
+        syMo01WQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l5hNO-00Afhm-T1; Sat, 30 Jan 2021 03:56:47 +0000
+Date:   Sat, 30 Jan 2021 03:56:46 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        linux-nilfs@vger.kernel.org, dm-devel@redhat.com,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 04/17] block: split bio_kmalloc from bio_alloc_bioset
+Message-ID: <20210130035646.GH308988@casper.infradead.org>
+References: <20210126145247.1964410-1-hch@lst.de>
+ <20210126145247.1964410-5-hch@lst.de>
 MIME-Version: 1.0
-References: <20210127132350.557935-1-kai@kaishome.de> <20210128232825.18719-1-kai@kaishome.de>
- <4fe07714-e5bf-4be3-6023-74b507ee54be@suse.de>
-In-Reply-To: <4fe07714-e5bf-4be3-6023-74b507ee54be@suse.de>
-From:   Kai Krakow <kai@kaishome.de>
-Date:   Fri, 29 Jan 2021 17:59:02 +0100
-Message-ID: <CAC2ZOYu=Opf2O=5r+uFk8XO+qP0-KGPyndGCc2mAaHSVJO0-0A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] Revert "bcache: Kill btree_io_wq"
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210126145247.1964410-5-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Am Fr., 29. Jan. 2021 um 16:30 Uhr schrieb Coly Li <colyli@suse.de>:
->
-> On 1/29/21 7:28 AM, Kai Krakow wrote:
-> > This reverts commit 56b30770b27d54d68ad51eccc6d888282b568cee.
-> >
-> > With the btree using the `system_wq`, I seem to see a lot more desktop
-> > latency than I should.
-> >
-> > After some more investigation, it looks like the original assumption
-> > of 56b3077 no longer is true, and bcache has a very high potential of
-> > congesting the `system_wq`. In turn, this introduces laggy desktop
-> > performance, IO stalls (at least with btrfs), and input events may be
-> > delayed.
-> >
-> > So let's revert this. It's important to note that the semantics of
-> > using `system_wq` previously mean that `btree_io_wq` should be created
-> > before and destroyed after other bcache wqs to keep the same
-> > assumptions.
-> >
-> > Cc: Coly Li <colyli@suse.de>
-> > Signed-off-by: Kai Krakow <kai@kaishome.de>
->
-> The patch is OK to me in general. I just feel it might be unnecessary to
-> use ordered work queue. The out-of-order system_wq is used for many
-> years and works well with bcache journal.
+On Tue, Jan 26, 2021 at 03:52:34PM +0100, Christoph Hellwig wrote:
+> bio_kmalloc shares almost no logic with the bio_set based fast path
+> in bio_alloc_bioset.  Split it into an entirely separate implementation.
+>=20
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  block/bio.c         | 167 ++++++++++++++++++++++----------------------
+>  include/linux/bio.h |   6 +-
+>  2 files changed, 86 insertions(+), 87 deletions(-)
 
-This is why in v3 and later, I migrated this to an unordered queue. I
-just wanted to keep the revert as-is, and then the follow-up patch
-will fix this. Is that okay or should I squash both commits?
+This patch causes current linux-next to OOM for me when running xfstests
+after about ten minutes.  Haven't looked into why yet, this is just the
+results of a git bisect.
 
-Thanks,
-Kai
+The qemu command line is:
 
-> > ---
-> >  drivers/md/bcache/bcache.h |  2 ++
-> >  drivers/md/bcache/btree.c  | 21 +++++++++++++++++++--
-> >  drivers/md/bcache/super.c  |  4 ++++
-> >  3 files changed, 25 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> > index 1d57f48307e66..b1ed16c7a5341 100644
-> > --- a/drivers/md/bcache/bcache.h
-> > +++ b/drivers/md/bcache/bcache.h
-> > @@ -1042,5 +1042,7 @@ void bch_debug_exit(void);
-> >  void bch_debug_init(void);
-> >  void bch_request_exit(void);
-> >  int bch_request_init(void);
-> > +void bch_btree_exit(void);
-> > +int bch_btree_init(void);
-> >
-> >  #endif /* _BCACHE_H */
-> > diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-> > index 910df242c83df..952f022db5a5f 100644
-> > --- a/drivers/md/bcache/btree.c
-> > +++ b/drivers/md/bcache/btree.c
-> > @@ -99,6 +99,8 @@
-> >  #define PTR_HASH(c, k)                                                       \
-> >       (((k)->ptr[0] >> c->bucket_bits) | PTR_GEN(k, 0))
-> >
-> > +static struct workqueue_struct *btree_io_wq;
-> > +
-> >  #define insert_lock(s, b)    ((b)->level <= (s)->lock)
-> >
-> >
-> > @@ -308,7 +310,7 @@ static void __btree_node_write_done(struct closure *cl)
-> >       btree_complete_write(b, w);
-> >
-> >       if (btree_node_dirty(b))
-> > -             schedule_delayed_work(&b->work, 30 * HZ);
-> > +             queue_delayed_work(btree_io_wq, &b->work, 30 * HZ);
-> >
-> >       closure_return_with_destructor(cl, btree_node_write_unlock);
-> >  }
-> > @@ -481,7 +483,7 @@ static void bch_btree_leaf_dirty(struct btree *b, atomic_t *journal_ref)
-> >       BUG_ON(!i->keys);
-> >
-> >       if (!btree_node_dirty(b))
-> > -             schedule_delayed_work(&b->work, 30 * HZ);
-> > +             queue_delayed_work(btree_io_wq, &b->work, 30 * HZ);
-> >
-> >       set_btree_node_dirty(b);
-> >
-> > @@ -2764,3 +2766,18 @@ void bch_keybuf_init(struct keybuf *buf)
-> >       spin_lock_init(&buf->lock);
-> >       array_allocator_init(&buf->freelist);
-> >  }
-> > +
-> > +void bch_btree_exit(void)
-> > +{
-> > +     if (btree_io_wq)
-> > +             destroy_workqueue(btree_io_wq);
-> > +}
-> > +
-> > +int __init bch_btree_init(void)
-> > +{
-> > +     btree_io_wq = create_singlethread_workqueue("bch_btree_io");
-> > +     if (!btree_io_wq)
-> > +             return -ENOMEM;
-> > +
-> > +     return 0;
-> > +}
-> > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> > index 2047a9cccdb5d..77c5d8b6d4316 100644
-> > --- a/drivers/md/bcache/super.c
-> > +++ b/drivers/md/bcache/super.c
-> > @@ -2821,6 +2821,7 @@ static void bcache_exit(void)
-> >               destroy_workqueue(bcache_wq);
-> >       if (bch_journal_wq)
-> >               destroy_workqueue(bch_journal_wq);
-> > +     bch_btree_exit();
-> >
-> >       if (bcache_major)
-> >               unregister_blkdev(bcache_major, "bcache");
-> > @@ -2876,6 +2877,9 @@ static int __init bcache_init(void)
-> >               return bcache_major;
-> >       }
-> >
-> > +     if (bch_btree_init())
-> > +             goto err;
-> > +
-> >       bcache_wq = alloc_workqueue("bcache", WQ_MEM_RECLAIM, 0);
-> >       if (!bcache_wq)
-> >               goto err;
-> >
->
+qemu-system-x86_64 -nodefaults -nographic -cpu host -machine accel=3Dkvm,nv=
+dimm -m 2G,slots=3D8,maxmem=3D1T -smp 6 -kernel /home/willy/kernel/folio/.b=
+uild_test_kernel-x86_64/kpgk/vmlinuz -append console=3Dhvc0 root=3D/dev/sda=
+ rw log_buf_len=3D8M ktest.dir=3D/home/willy/kernel/ktest ktest.env=3D/tmp/=
+build-test-kernel-nJO6QgxOmo/env quiet systemd.show_status=3D0 systemd.log-=
+target=3Djournal crashkernel=3D128M no_console_suspend -device virtio-seria=
+l -chardev stdio,id=3Dconsole -device virtconsole,chardev=3Dconsole -serial=
+ unix:/tmp/build-test-kernel-nJO6QgxOmo/vm-kgdb,server,nowait -monitor unix=
+:/tmp/build-test-kernel-nJO6QgxOmo/vm-mon,server,nowait -gdb unix:/tmp/buil=
+d-test-kernel-nJO6QgxOmo/vm-gdb,server,nowait -device virtio-rng-pci -virtf=
+s local,path=3D/,mount_tag=3Dhost,security_model=3Dnone -device virtio-scsi=
+-pci,id=3Dhba -nic user,model=3Dvirtio,hostfwd=3Dtcp:127.0.0.1:24674-:22 -d=
+rive if=3Dnone,format=3Draw,id=3Ddisk0,file=3D/var/lib/ktest/root.amd64,sna=
+pshot=3Don -device scsi-hd,bus=3Dhba.0,drive=3Ddisk0 -drive if=3Dnone,forma=
+t=3Draw,id=3Ddisk1,file=3D/tmp/build-test-kernel-nJO6QgxOmo/dev-1,cache=3Du=
+nsafe -device scsi-hd,bus=3Dhba.0,drive=3Ddisk1 -drive if=3Dnone,format=3Dr=
+aw,id=3Ddisk2,file=3D/tmp/build-test-kernel-nJO6QgxOmo/dev-2,cache=3Dunsafe=
+ -device scsi-hd,bus=3Dhba.0,drive=3Ddisk2 -drive if=3Dnone,format=3Draw,id=
+=3Ddisk3,file=3D/tmp/build-test-kernel-nJO6QgxOmo/dev-3,cache=3Dunsafe -dev=
+ice scsi-hd,bus=3Dhba.0,drive=3Ddisk3
+
