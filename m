@@ -2,112 +2,64 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDBED309DC5
-	for <lists+linux-bcache@lfdr.de>; Sun, 31 Jan 2021 17:00:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 110C830CDAE
+	for <lists+linux-bcache@lfdr.de>; Tue,  2 Feb 2021 22:10:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230038AbhAaP7c (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 31 Jan 2021 10:59:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44280 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229641AbhAaP7G (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 31 Jan 2021 10:59:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 134E8ABD6;
-        Sun, 31 Jan 2021 15:58:24 +0000 (UTC)
-Subject: Re: [PATCH 13/29] bcache: Avoid comma separated statements
-To:     Joe Perches <joe@perches.com>
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Kosina <trivial@kernel.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-References: <cover.1598331148.git.joe@perches.com>
- <99ba798329f7d957e75a22c8551e8bd22f70c626.1598331149.git.joe@perches.com>
- <14e1e776ceac5d4e84675bc70532aa30530eb8ec.camel@perches.com>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <9df71a2c-fdd1-b6b4-3f6e-750e2b23d48c@suse.de>
-Date:   Sun, 31 Jan 2021 23:58:17 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.0
+        id S232950AbhBBVKT (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 2 Feb 2021 16:10:19 -0500
+Received: from [20.39.40.203] ([20.39.40.203]:65313 "EHLO optinix.in"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S231256AbhBBVKS (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 2 Feb 2021 16:10:18 -0500
+dkim-signature: v=1; a=rsa-sha256; d=digitalsol.in; s=dkim;
+        c=relaxed/relaxed; q=dns/txt; h=From:Reply-To:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=wK2neTcOXNiSQ+RBxrnFed+mRrGUU/ndLGEgvo8IMCc=;
+        b=TP5ImnyHcJd6ZOutD2G4fr5f8wWoUQwQgOLW2PI/280OHeTqlZLToIxAIofahXeo75Wu3EjCyPUkWCAvONVwZu0fevODO9NabCWAisW+z0dGu9MXtR6qZycknhfK+mQQvORufc2uJdOyxsLmIaqgju02ah6NTaY7MUrrDAsnypqV/dHvFc1ZCeNq9M9cnBgI6P8moRvB3Uy5b0Di8H1i0zAyCi2Ui0iRGfGkTkO0ugXob5Evs8zBCz+bQn
+        OGNJsvkyEuoIiGf1dhK8ZygeNRPTDeubCEGrI3iP2v+CePRDNJj0O+GADoZLV93dYARi5DbbBgbqte2GtdOqu1KHIrhw==
+Received: from User (Unknown [52.231.31.5])
+        by optinix.in with ESMTP
+        ; Sat, 30 Jan 2021 02:13:52 +0000
+Message-ID: <8F335769-7194-475D-8960-10F7C26454EB@optinix.in>
+Reply-To: <ms.reem@yandex.com>
+From:   "Ms. Reem" <support@digitalsol.in>
+Subject: Re:read
+Date:   Sat, 30 Jan 2021 02:13:50 -0000
 MIME-Version: 1.0
-In-Reply-To: <14e1e776ceac5d4e84675bc70532aa30530eb8ec.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+        charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 1/31/21 2:59 AM, Joe Perches wrote:
-> On Mon, 2020-08-24 at 21:56 -0700, Joe Perches wrote:
->> Use semicolons and braces.
-> 
-> ping?
+Hello,
 
-It is in my for-next now, thanks for reminding.
+My name is Ms. Reem Ebrahim Al-Hashimi, I am the "Minister of state
+and Petroleum" also "Minister of State for International Cooperation"
+in UAE. I write to you on behalf of my other "three (3) colleagues"
+who has approved me to solicit for your "partnership in claiming of
+{us$47=Million}" from a Financial Home in Cambodia on their behalf and
+for our "Mutual Benefits".
 
+The Fund {us$47=Million} is our share from the (over-invoiced) Oil/Gas
+deal with Cambodian/Vietnam Government within 2013/2014, however, we
+don't want our government to know about the fund. If this proposal
+interests you, let me know, by sending me an email and I will send to
+you detailed information on how this business would be successfully
+transacted. Be informed that nobody knows about the secret of this
+fund except us, and we know how to carry out the entire transaction.
+So I am compelled to ask, that you will stand on our behalf and
+receive this fund into any account that is solely controlled by you.
 
-Coly Li
+We will compensate you with 15% of the total amount involved as
+gratification for being our partner in this transaction. Reply to:
+ms.reem@yandex.com
 
-
-> 
->> Signed-off-by: Joe Perches <joe@perches.com>
->> ---
->>  drivers/md/bcache/bset.c  | 12 ++++++++----
->>  drivers/md/bcache/sysfs.c |  6 ++++--
->>  2 files changed, 12 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
->> index 67a2c47f4201..94d38e8a59b3 100644
->> --- a/drivers/md/bcache/bset.c
->> +++ b/drivers/md/bcache/bset.c
->> @@ -712,8 +712,10 @@ void bch_bset_build_written_tree(struct btree_keys *b)
->>  	for (j = inorder_next(0, t->size);
->>  	     j;
->>  	     j = inorder_next(j, t->size)) {
->> -		while (bkey_to_cacheline(t, k) < cacheline)
->> -			prev = k, k = bkey_next(k);
->> +		while (bkey_to_cacheline(t, k) < cacheline) {
->> +			prev = k;
->> +			k = bkey_next(k);
->> +		}
->>  
->>
->>  		t->prev[j] = bkey_u64s(prev);
->>  		t->tree[j].m = bkey_to_cacheline_offset(t, cacheline++, k);
->> @@ -901,8 +903,10 @@ unsigned int bch_btree_insert_key(struct btree_keys *b, struct bkey *k,
->>  	status = BTREE_INSERT_STATUS_INSERT;
->>  
->>
->>  	while (m != bset_bkey_last(i) &&
->> -	       bkey_cmp(k, b->ops->is_extents ? &START_KEY(m) : m) > 0)
->> -		prev = m, m = bkey_next(m);
->> +	       bkey_cmp(k, b->ops->is_extents ? &START_KEY(m) : m) > 0) {
->> +		prev = m;
->> +		m = bkey_next(m);
->> +	}
->>  
->>
->>  	/* prev is in the tree, if we merge we're done */
->>  	status = BTREE_INSERT_STATUS_BACK_MERGE;
->> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
->> index ac06c0bc3c0a..1878c5ee53b6 100644
->> --- a/drivers/md/bcache/sysfs.c
->> +++ b/drivers/md/bcache/sysfs.c
->> @@ -1071,8 +1071,10 @@ SHOW(__bch_cache)
->>  			--n;
->>  
->>
->>  		while (cached < p + n &&
->> -		       *cached == BTREE_PRIO)
->> -			cached++, n--;
->> +		       *cached == BTREE_PRIO) {
->> +			cached++;
->> +			n--;
->> +		}
->>  
->>
->>  		for (i = 0; i < n; i++)
->>  			sum += INITIAL_PRIO - cached[i];
-> 
-> 
+Regards,
+Ms. Reem.
 
