@@ -2,64 +2,77 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DC69311254
-	for <lists+linux-bcache@lfdr.de>; Fri,  5 Feb 2021 21:26:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 621B8311BE1
+	for <lists+linux-bcache@lfdr.de>; Sat,  6 Feb 2021 08:21:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233532AbhBEShY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 5 Feb 2021 13:37:24 -0500
-Received: from [20.39.40.203] ([20.39.40.203]:54986 "EHLO optinix.in"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S233003AbhBEPJb (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 5 Feb 2021 10:09:31 -0500
-dkim-signature: v=1; a=rsa-sha256; d=digitalsol.in; s=dkim;
-        c=relaxed/relaxed; q=dns/txt; h=From:Reply-To:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=wK2neTcOXNiSQ+RBxrnFed+mRrGUU/ndLGEgvo8IMCc=;
-        b=UQEHlnVg5XQbvsB12U1Ol3bhaQI9w8E6XPoWFxWLZmrTEAjZvoQaEbrphRRSyBGIIWdRriBN1NgjJnIHHuwrDk7Jiepk7hcecgKlubZ8Cbf+eyLm3How+vKdkYfuxbESucRjBUGhM3uNAIEl+djc5YuHgus55Al0uLGG/w84VCgbq4C5haAYakmS1vYlSgFchzN2F++luNM29v8DFhI75uaDxJSrLZjsc+U9sEzNpAaOCR9pw2OgdpmsaX
-        RpEWSooLH5k7s+lJH9RwsRzupCIBYaSMrEgafQL+30fpkHM9MFjkLmthx4Z1XqGeg54bjdS4mLhUgJrpa/zvXopT6v+g==
-Received: from User (Unknown [52.231.31.5])
-        by optinix.in with ESMTP
-        ; Mon, 1 Feb 2021 08:49:51 +0000
-Message-ID: <7494048F-E4B5-4167-8C98-9021CA321467@optinix.in>
-Reply-To: <ms.reem@yandex.com>
-From:   "Ms. Reem" <support@digitalsol.in>
-Subject: Re:read
-Date:   Mon, 1 Feb 2021 08:49:50 -0000
+        id S229537AbhBFHUv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 6 Feb 2021 02:20:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47896 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229492AbhBFHUv (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 6 Feb 2021 02:20:51 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id F1D29ACB0;
+        Sat,  6 Feb 2021 07:20:08 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     linux-bcache@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>
+Subject: [PATCH 0/6] bcache-tools: store meta data on NVDIMM 
+Date:   Sat,  6 Feb 2021 15:19:59 +0800
+Message-Id: <20210206072005.24811-1-colyli@suse.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hello,
+This series is the first effort to support NVDIMM for bcache: store
+journal meta data on nvdimm namespace.
 
-My name is Ms. Reem Ebrahim Al-Hashimi, I am the "Minister of state
-and Petroleum" also "Minister of State for International Cooperation"
-in UAE. I write to you on behalf of my other "three (3) colleagues"
-who has approved me to solicit for your "partnership in claiming of
-{us$47=Million}" from a Financial Home in Cambodia on their behalf and
-for our "Mutual Benefits".
+With this series, a NVDIMM namespace can be formatted as a bcache
+meta device with '-M' option. This meta device can be shared among
+multiple cache sets.
 
-The Fund {us$47=Million} is our share from the (over-invoiced) Oil/Gas
-deal with Cambodian/Vietnam Government within 2013/2014, however, we
-don't want our government to know about the fund. If this proposal
-interests you, let me know, by sending me an email and I will send to
-you detailed information on how this business would be successfully
-transacted. Be informed that nobody knows about the secret of this
-fund except us, and we know how to carry out the entire transaction.
-So I am compelled to ask, that you will stand on our behalf and
-receive this fund into any account that is solely controlled by you.
+Except for adding BCH_FEATURE_INCOMPAT_NVDIMM_META to incompatible
+feature set, there is no on-disk layout change for supporting NVDIMM.
 
-We will compensate you with 15% of the total amount involved as
-gratification for being our partner in this transaction. Reply to:
-ms.reem@yandex.com
+A new super block format struct bch_nvm_pages_sb is introduced for
+the NVDIMM meta-data device, it might be changed time-to-time before
+the EXPERIMENTAL removed from Linux kernel code.
 
-Regards,
-Ms. Reem.
+This series is just enough to make things work, more changes will
+follow up to make more improvement later.
+
+Coly Li
+---
+
+Coly Li (6):
+  bcache-tools: add initial data structures for nvm_pages
+  bcache-tools: reduce parameters of write_sb()
+  bcache-tools: add BCH_FEATURE_INCOMPAT_NVDIMM_META to incompatible
+    feature set
+  bcache-tools: move super block info display routines into show.c
+  bcache-tools: write nvm namespace super block on nvdimm
+  bcache-tools: support "bcache show -d" for nvdimm-meta device
+
+ Makefile            |   2 +-
+ bcache-super-show.c |  24 ----
+ bcache.c            | 289 +--------------------------------------
+ bcache.h            |   7 +-
+ features.c          |   2 +
+ lib.c               | 158 +++++++++++++++++++---
+ lib.h               |  28 +++-
+ make.c              | 244 +++++++++++++++++++++++++++++----
+ nvm_pages.h         | 187 ++++++++++++++++++++++++++
+ show.c              | 321 ++++++++++++++++++++++++++++++++++++++++++++
+ show.h              |  10 ++
+ 11 files changed, 917 insertions(+), 355 deletions(-)
+ create mode 100644 nvm_pages.h
+ create mode 100644 show.c
+ create mode 100644 show.h
+
+-- 
+2.26.2
 
