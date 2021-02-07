@@ -2,69 +2,74 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E416311DB5
-	for <lists+linux-bcache@lfdr.de>; Sat,  6 Feb 2021 15:37:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B6A7312545
+	for <lists+linux-bcache@lfdr.de>; Sun,  7 Feb 2021 16:28:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbhBFOhC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 6 Feb 2021 09:37:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51328 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230071AbhBFOg6 (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 6 Feb 2021 09:36:58 -0500
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 562BEC06174A
-        for <linux-bcache@vger.kernel.org>; Sat,  6 Feb 2021 06:36:18 -0800 (PST)
-Received: by mail-oi1-x22d.google.com with SMTP id y199so8762980oia.4
-        for <linux-bcache@vger.kernel.org>; Sat, 06 Feb 2021 06:36:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=sY4fgq/DSyThalwU7QX+pWYKs/8sGH7ZznMUn5qQ1EY=;
-        b=vQPk4QBzzknwRKk9NbZgI9v3SP11k096pbElQEaGDSYesfwV+G/uRAGrjAXIuONHMG
-         wl9JqNdNBzSVpF30XbhRRjNuhfDvjWQFoED7dTce7sraS9aPZc9vVTR1PFBua2jEfZFW
-         NdE4oNZbB7ZTG2vZ2UU4X61ZIjnS6J9qltxa5mBfrua0gbkgQd7SEoZydUYuC8B851rw
-         yI3E6z7M+DMUnFyROKry861jz5ZISrNnmPc9yYQkcAKAHupyDNMiYacRdSUJ3+dGcNVG
-         FGU5uDW1UMo7WQpQ7Xs59OSCePIQhlun+nzEvdRRydQmKpv7S85IKYp7XnCk3vUSe5WE
-         RTmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=sY4fgq/DSyThalwU7QX+pWYKs/8sGH7ZznMUn5qQ1EY=;
-        b=VICUyUNr7cXB8QzV6y/5GniqOxVofv/34YGwzsPC9uH+p0tsw4J+9vN2gDs3vMzxfl
-         qXgK84TdsNMzcVTNqhnXMohIA4xgFrBMl/Lu3Sk4Y1qhfkPRxmmag+ZL9Vlzy7DfzL3Q
-         CXARXj/ZeQ+ml1IZ8XUbjyBGn+NAwncGwgq+G4zEV+dIthYO31Zu/ZtmIAbjFM/IxQ0Q
-         YIW8djxITZyqvh8OioQ2HsgIqlgeWP0Etf/aauk2H3vF95EHrvt+UnwNteciwUV0weRK
-         CQ3NqqFcs8CYYBNTB7fFX6eiivhmdW6u9c8XRYZDVewuk/bLz4qE8CvnGBzdy5EwBG8X
-         7uqA==
-X-Gm-Message-State: AOAM53166GUDJaNKwAgkkCAbCAzHME9EzE9MP7bBfawN01lB+cN6bzv3
-        8o12CI2gbhZGSUlmBbSDX/tV+Av2uran8HL/Ib8=
-X-Google-Smtp-Source: ABdhPJzbejAUBP9E6tb5PWPZjH/ziSP4bLKbN4ekn2LtLjKnGGfV8xb2y4w8pLI4bSVEWAUnQy8phl/jginP5WwYsL8=
-X-Received: by 2002:aca:c545:: with SMTP id v66mr92970oif.116.1612622177678;
- Sat, 06 Feb 2021 06:36:17 -0800 (PST)
+        id S229872AbhBGP10 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 7 Feb 2021 10:27:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35742 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230342AbhBGPZT (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 7 Feb 2021 10:25:19 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C443AACB7;
+        Sun,  7 Feb 2021 15:24:36 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     linux-bcache@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, jianpeng.ma@intel.com,
+        qiaowei.ren@intel.com, Coly Li <colyli@suse.de>
+Subject: [PATCH 0/6] bcache: store bcache journal on NVDIMM pages
+Date:   Sun,  7 Feb 2021 23:24:17 +0800
+Message-Id: <20210207152423.70697-1-colyli@suse.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Received: by 2002:a9d:3e4c:0:0:0:0:0 with HTTP; Sat, 6 Feb 2021 06:36:17 -0800 (PST)
-Reply-To: lawyer.nba@gmail.com
-From:   Barrister Daven Bango <stephennbada@gmail.com>
-Date:   Sat, 6 Feb 2021 15:36:17 +0100
-Message-ID: <CAO_fDi9g8soYgtqtwORWnbz3Sn4BSWvbiKeLxbjhYYC0zwUxug@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
---=20
-Korisnik fonda =C4=8Destitanja, Va=C5=A1a sredstva za naknadu od 850.000,00
-ameri=C4=8Dkih dolara odobrila je Me=C4=91unarodna monetarna organizacija (=
-MMF)
-u suradnji s (FBI) nakon mnogo istraga. =C4=8Cekamo da se obratimo za
-dodatne informacije
+Hi folks,
 
-Advokat: Daven Bango
-Telefon: +22891667276
-(URED MMF-a LOME TOGO)
+This is the first effort to store bcache meta data on NVDIMM, now the
+bcache journal can be stored on NVDIMM pages. 
+
+The bcache code does not directly support NVDIMM, the NVDIMM pages are
+managed with a simple buddy-like pages alocator nvm-pages. The nvm-pages
+allocator is developed by Jianpeng Ma and Qiaowei Ren from Intel. It
+could be a separated kernel module to manage NVDIMM space in form of
+pages and share them among multiple users (drivers). Now nvm-pages is
+directly included in bcache kernel module as EXPERIMENTAL function.
+
+This series is a just-enough code to work, we will continue to improve
+both bcache and nvm-pages allocator before removing the EXPERIMENTAL tag
+from Kconfig. In the very basic testing 30%+ IOPS increasing is observed
+for 512Byte random writes when storing bcache journal jset on NVDIMM
+namespace.
+
+Thanks to Jianpeng Ma and Qiaowei Re fo their contribution to the mini
+nvm-pages allocator, which helps a lot to allocate and release the pages
+from NVDIMM nagespace much simpler for bcache journaling.
+
+Coly Li
+---
+
+Coly Li (6):
+  bcache: use bucket index for SET_GC_MARK() in bch_btree_gc_finish()
+  bcache: add BCH_FEATURE_INCOMPAT_NVDIMM_META into incompat feature set
+  bcache: initialize bcache journal for NVDIMM meta device
+  bcache: support storing bcache journal into NVDIMM meta device
+  bache: read jset from NVDIMM pages for journal replay
+  bcache: add sysfs interface register_nvdimm_meta to register NVDIMM
+    meta device
+
+ drivers/md/bcache/btree.c    |   6 +-
+ drivers/md/bcache/features.h |   9 ++
+ drivers/md/bcache/journal.c  | 288 +++++++++++++++++++++++++++--------
+ drivers/md/bcache/journal.h  |   2 +-
+ drivers/md/bcache/super.c    |  38 ++++-
+ 5 files changed, 274 insertions(+), 69 deletions(-)
+
+-- 
+2.26.2
+
