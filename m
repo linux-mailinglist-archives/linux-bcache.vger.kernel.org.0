@@ -2,106 +2,59 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFE43312558
-	for <lists+linux-bcache@lfdr.de>; Sun,  7 Feb 2021 16:31:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41F2931255B
+	for <lists+linux-bcache@lfdr.de>; Sun,  7 Feb 2021 16:31:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230249AbhBGP34 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 7 Feb 2021 10:29:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36936 "EHLO mx2.suse.de"
+        id S229813AbhBGPat (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 7 Feb 2021 10:30:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37412 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230364AbhBGP2B (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 7 Feb 2021 10:28:01 -0500
+        id S229753AbhBGPaT (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 7 Feb 2021 10:30:19 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 84F3CAF69;
-        Sun,  7 Feb 2021 15:25:17 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id B9C93ACB7;
+        Sun,  7 Feb 2021 15:29:37 +0000 (UTC)
+Subject: Re: bch_cached_dev_attach() The obsoleted large bucket layout is
+ unsupported, set the bcache device into read-only
+To:     Rolf Fokkens <rolf@rolffokkens.nl>, linux-bcache@vger.kernel.org
+References: <96e89237-8abe-adf7-8cf0-7065cde81dc3@rolffokkens.nl>
 From:   Coly Li <colyli@suse.de>
-To:     linux-bcache@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, jianpeng.ma@intel.com,
-        qiaowei.ren@intel.com, Coly Li <colyli@suse.de>
-Subject: [PATCH 6/6] bcache: add sysfs interface register_nvdimm_meta to register NVDIMM meta device
-Date:   Sun,  7 Feb 2021 23:24:23 +0800
-Message-Id: <20210207152423.70697-7-colyli@suse.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210207152423.70697-1-colyli@suse.de>
-References: <20210207152423.70697-1-colyli@suse.de>
+Message-ID: <7049b813-df93-45ee-dfc3-93ab68065f18@suse.de>
+Date:   Sun, 7 Feb 2021 23:29:34 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <96e89237-8abe-adf7-8cf0-7065cde81dc3@rolffokkens.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch adds a sysfs interface register_nvdimm_meta to register
-NVDIMM meta device. The sysfs interface file only shows up when
-CONFIG_BCACHE_NVM_PAGES=y. Then a NVDIMM name space formatted by
-bcache-tools can be registered into bcache by e.g.,
-  echo /dev/pmem0 > /sys/fs/bcache/register_nvdimm_meta
+On 2/6/21 7:49 PM, Rolf Fokkens wrote:
+> Hi all,
+> 
+> Apparently some bcache users are hit by the message in the subject, see
+> https://bugzilla.redhat.com/show_bug.cgi?id=1922485
+> 
+> I personally cannot reproduce this, but if the provided info is correct,
+> a certain kernel upgrade will break existing bcache setups. Is this
+> really true?
+> 
+> If so, this is a breaking change, which is very harmful.
+> 
+> I hope some of you have suggestions for the people who apparently are
+> impacted by this.
 
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Jianpeng Ma <jianpeng.ma@intel.com>
-Cc: Qiaowei Ren <qiaowei.ren@intel.com>
----
- drivers/md/bcache/super.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+This is a regression and fixed in 5.11-rc6 by commit 0df28cad06eb
+("bcache: only check feature sets when sb->version >=
+BCACHE_SB_VERSION_CDEV_WITH_FEATURES").
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 262dae3ef030..7cbccc768468 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -2409,10 +2409,18 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
- 					 struct kobj_attribute *attr,
- 					 const char *buffer, size_t size);
-+#ifdef CONFIG_BCACHE_NVM_PAGES
-+static ssize_t register_nvdimm_meta(struct kobject *k,
-+				    struct kobj_attribute *attr,
-+				    const char *buffer, size_t size);
-+#endif
- 
- kobj_attribute_write(register,		register_bcache);
- kobj_attribute_write(register_quiet,	register_bcache);
- kobj_attribute_write(pendings_cleanup,	bch_pending_bdevs_cleanup);
-+#ifdef CONFIG_BCACHE_NVM_PAGES
-+kobj_attribute_write(register_nvdimm_meta, register_nvdimm_meta);
-+#endif
- 
- static bool bch_is_open_backing(dev_t dev)
- {
-@@ -2526,6 +2534,24 @@ static void register_device_aync(struct async_reg_args *args)
- 	queue_delayed_work(system_wq, &args->reg_work, 10);
- }
- 
-+#ifdef CONFIG_BCACHE_NVM_PAGES
-+static ssize_t register_nvdimm_meta(struct kobject *k, struct kobj_attribute *attr,
-+				    const char *buffer, size_t size)
-+{
-+	ssize_t ret = size;
-+
-+	struct bch_nvm_namespace *ns = bch_register_namespace(buffer);
-+
-+	if (IS_ERR(ns)) {
-+		pr_err("register nvdimm namespace %s for meta device failed.\n",
-+			buffer);
-+		ret = -EINVAL;
-+	}
-+
-+	return size;
-+}
-+#endif
-+
- static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 			       const char *buffer, size_t size)
- {
-@@ -2858,6 +2884,9 @@ static int __init bcache_init(void)
- 	static const struct attribute *files[] = {
- 		&ksysfs_register.attr,
- 		&ksysfs_register_quiet.attr,
-+#ifdef CONFIG_BCACHE_NVM_PAGES
-+		&ksysfs_register_nvdimm_meta.attr,
-+#endif
- 		&ksysfs_pendings_cleanup.attr,
- 		NULL
- 	};
--- 
-2.26.2
+Also the fix has been in stable kernels already last week. The fix
+should go into distribution very soon IMHO.
 
+Thanks.
+
+Coly Li
