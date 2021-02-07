@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 476FD312559
-	for <lists+linux-bcache@lfdr.de>; Sun,  7 Feb 2021 16:31:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFE43312558
+	for <lists+linux-bcache@lfdr.de>; Sun,  7 Feb 2021 16:31:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230202AbhBGPaD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 7 Feb 2021 10:30:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36938 "EHLO mx2.suse.de"
+        id S230249AbhBGP34 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 7 Feb 2021 10:29:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36936 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230365AbhBGP2C (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 7 Feb 2021 10:28:02 -0500
+        id S230364AbhBGP2B (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 7 Feb 2021 10:28:01 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 607B2AF50;
-        Sun,  7 Feb 2021 15:25:12 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 84F3CAF69;
+        Sun,  7 Feb 2021 15:25:17 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, jianpeng.ma@intel.com,
         qiaowei.ren@intel.com, Coly Li <colyli@suse.de>
-Subject: [PATCH 5/6] bache: read jset from NVDIMM pages for journal replay
-Date:   Sun,  7 Feb 2021 23:24:22 +0800
-Message-Id: <20210207152423.70697-6-colyli@suse.de>
+Subject: [PATCH 6/6] bcache: add sysfs interface register_nvdimm_meta to register NVDIMM meta device
+Date:   Sun,  7 Feb 2021 23:24:23 +0800
+Message-Id: <20210207152423.70697-7-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210207152423.70697-1-colyli@suse.de>
 References: <20210207152423.70697-1-colyli@suse.de>
@@ -31,185 +31,77 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch implements two methods to read jset from media for journal
-replay,
-- __jnl_rd_bkt() for block device
-  This is the legacy method to read jset via block device interface.
-- __jnl_rd_nvm_bkt() for NVDIMM
-  This is the method to read jset from NVDIMM memory interface, a.k.a
-  memcopy() from NVDIMM pages to DRAM pages.
-
-If BCH_FEATURE_INCOMPAT_NVDIMM_META is set in incompat feature set,
-during running cache set, journal_read_bucket() will read the journal
-content from NVDIMM by __jnl_rd_nvm_bkt(). The linear addresses of
-NVDIMM pages to read jset are stored in sb.d[SB_JOURNAL_BUCKETS], which
-were initialized and maintained in previous runs of the cache set.
-
-A thing should be noticed is, when bch_journal_read() is called, the
-linear address of NVDIMM pages is not loaded and initialized yet, it
-is necessary to call __bch_journal_nvdimm_init() before reading the jset
-from NVDIMM pages.
+This patch adds a sysfs interface register_nvdimm_meta to register
+NVDIMM meta device. The sysfs interface file only shows up when
+CONFIG_BCACHE_NVM_PAGES=y. Then a NVDIMM name space formatted by
+bcache-tools can be registered into bcache by e.g.,
+  echo /dev/pmem0 > /sys/fs/bcache/register_nvdimm_meta
 
 Signed-off-by: Coly Li <colyli@suse.de>
 Cc: Jianpeng Ma <jianpeng.ma@intel.com>
 Cc: Qiaowei Ren <qiaowei.ren@intel.com>
 ---
- drivers/md/bcache/journal.c | 81 ++++++++++++++++++++++++++-----------
- 1 file changed, 57 insertions(+), 24 deletions(-)
+ drivers/md/bcache/super.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index 243253974cab..d1c76facb6b2 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -34,60 +34,84 @@ static void journal_read_endio(struct bio *bio)
- 	closure_put(cl);
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 262dae3ef030..7cbccc768468 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2409,10 +2409,18 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
+ 					 struct kobj_attribute *attr,
+ 					 const char *buffer, size_t size);
++#ifdef CONFIG_BCACHE_NVM_PAGES
++static ssize_t register_nvdimm_meta(struct kobject *k,
++				    struct kobj_attribute *attr,
++				    const char *buffer, size_t size);
++#endif
+ 
+ kobj_attribute_write(register,		register_bcache);
+ kobj_attribute_write(register_quiet,	register_bcache);
+ kobj_attribute_write(pendings_cleanup,	bch_pending_bdevs_cleanup);
++#ifdef CONFIG_BCACHE_NVM_PAGES
++kobj_attribute_write(register_nvdimm_meta, register_nvdimm_meta);
++#endif
+ 
+ static bool bch_is_open_backing(dev_t dev)
+ {
+@@ -2526,6 +2534,24 @@ static void register_device_aync(struct async_reg_args *args)
+ 	queue_delayed_work(system_wq, &args->reg_work, 10);
  }
  
-+static struct jset *__jnl_rd_bkt(struct cache *ca, unsigned int bkt_idx,
-+				    unsigned int len, unsigned int offset,
-+				    struct closure *cl)
++#ifdef CONFIG_BCACHE_NVM_PAGES
++static ssize_t register_nvdimm_meta(struct kobject *k, struct kobj_attribute *attr,
++				    const char *buffer, size_t size)
 +{
-+	sector_t bucket = bucket_to_sector(ca->set, ca->sb.d[bkt_idx]);
-+	struct bio *bio = &ca->journal.bio;
-+	struct jset *data = ca->set->journal.w[0].data;
++	ssize_t ret = size;
 +
-+	bio_reset(bio);
-+	bio->bi_iter.bi_sector	= bucket + offset;
-+	bio_set_dev(bio, ca->bdev);
-+	bio->bi_iter.bi_size	= len << 9;
-+	bio->bi_end_io	= journal_read_endio;
-+	bio->bi_private = cl;
-+	bio_set_op_attrs(bio, REQ_OP_READ, 0);
-+	bch_bio_map(bio, data);
++	struct bch_nvm_namespace *ns = bch_register_namespace(buffer);
 +
-+	closure_bio_submit(ca->set, bio, cl);
-+	closure_sync(cl);
++	if (IS_ERR(ns)) {
++		pr_err("register nvdimm namespace %s for meta device failed.\n",
++			buffer);
++		ret = -EINVAL;
++	}
 +
-+	/* Indeed journal.w[0].data */
-+	return data;
++	return size;
 +}
++#endif
 +
-+static struct jset *__jnl_rd_nvm_bkt(struct cache *ca, unsigned int bkt_idx,
-+				     unsigned int len, unsigned int offset)
-+{
-+	void *jset_addr = (void *)ca->sb.d[bkt_idx] + (offset << 9);
-+	struct jset *data = ca->set->journal.w[0].data;
-+
-+	memcpy(data, jset_addr, len << 9);
-+
-+	/* Indeed journal.w[0].data */
-+	return data;
-+}
-+
- static int journal_read_bucket(struct cache *ca, struct list_head *list,
--			       unsigned int bucket_index)
-+			       unsigned int bucket_idx)
+ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 			       const char *buffer, size_t size)
  {
- 	struct journal_device *ja = &ca->journal;
--	struct bio *bio = &ja->bio;
- 
- 	struct journal_replay *i;
--	struct jset *j, *data = ca->set->journal.w[0].data;
-+	struct jset *j;
- 	struct closure cl;
- 	unsigned int len, left, offset = 0;
- 	int ret = 0;
--	sector_t bucket = bucket_to_sector(ca->set, ca->sb.d[bucket_index]);
- 
- 	closure_init_stack(&cl);
- 
--	pr_debug("reading %u\n", bucket_index);
-+	pr_debug("reading %u\n", bucket_idx);
- 
- 	while (offset < ca->sb.bucket_size) {
- reread:		left = ca->sb.bucket_size - offset;
- 		len = min_t(unsigned int, left, PAGE_SECTORS << JSET_BITS);
- 
--		bio_reset(bio);
--		bio->bi_iter.bi_sector	= bucket + offset;
--		bio_set_dev(bio, ca->bdev);
--		bio->bi_iter.bi_size	= len << 9;
--
--		bio->bi_end_io	= journal_read_endio;
--		bio->bi_private = &cl;
--		bio_set_op_attrs(bio, REQ_OP_READ, 0);
--		bch_bio_map(bio, data);
--
--		closure_bio_submit(ca->set, bio, &cl);
--		closure_sync(&cl);
-+		if (!bch_has_feature_nvdimm_meta(&ca->sb))
-+			j = __jnl_rd_bkt(ca, bucket_idx, len, offset, &cl);
-+		else
-+			j = __jnl_rd_nvm_bkt(ca, bucket_idx, len, offset);
- 
- 		/* This function could be simpler now since we no longer write
- 		 * journal entries that overlap bucket boundaries; this means
- 		 * the start of a bucket will always have a valid journal entry
- 		 * if it has any journal entries at all.
- 		 */
--
--		j = data;
- 		while (len) {
- 			struct list_head *where;
- 			size_t blocks, bytes = set_bytes(j);
- 
- 			if (j->magic != jset_magic(&ca->sb)) {
--				pr_debug("%u: bad magic\n", bucket_index);
-+				pr_debug("%u: bad magic\n", bucket_idx);
- 				return ret;
- 			}
- 
- 			if (bytes > left << 9 ||
- 			    bytes > PAGE_SIZE << JSET_BITS) {
- 				pr_info("%u: too big, %zu bytes, offset %u\n",
--					bucket_index, bytes, offset);
-+					bucket_idx, bytes, offset);
- 				return ret;
- 			}
- 
-@@ -96,7 +120,7 @@ reread:		left = ca->sb.bucket_size - offset;
- 
- 			if (j->csum != csum_set(j)) {
- 				pr_info("%u: bad csum, %zu bytes, offset %u\n",
--					bucket_index, bytes, offset);
-+					bucket_idx, bytes, offset);
- 				return ret;
- 			}
- 
-@@ -158,8 +182,8 @@ reread:		left = ca->sb.bucket_size - offset;
- 			list_add(&i->list, where);
- 			ret = 1;
- 
--			if (j->seq > ja->seq[bucket_index])
--				ja->seq[bucket_index] = j->seq;
-+			if (j->seq > ja->seq[bucket_idx])
-+				ja->seq[bucket_idx] = j->seq;
- next_set:
- 			offset	+= blocks * ca->sb.block_size;
- 			len	-= blocks * ca->sb.block_size;
-@@ -170,6 +194,8 @@ reread:		left = ca->sb.bucket_size - offset;
- 	return ret;
- }
- 
-+static int __bch_journal_nvdimm_init(struct cache *ca);
-+
- int bch_journal_read(struct cache_set *c, struct list_head *list)
- {
- #define read_bucket(b)							\
-@@ -188,6 +214,13 @@ int bch_journal_read(struct cache_set *c, struct list_head *list)
- 	unsigned int i, l, r, m;
- 	uint64_t seq;
- 
-+	/*
-+	 * Linear addresses of NVDIMM pages for journaling is not
-+	 * initialized yet, do it before read jset from NVDIMM pages.
-+	 */
-+	if (bch_has_feature_nvdimm_meta(&ca->sb))
-+		__bch_journal_nvdimm_init(ca);
-+
- 	bitmap_zero(bitmap, SB_JOURNAL_BUCKETS);
- 	pr_debug("%u journal buckets\n", ca->sb.njournal_buckets);
- 
+@@ -2858,6 +2884,9 @@ static int __init bcache_init(void)
+ 	static const struct attribute *files[] = {
+ 		&ksysfs_register.attr,
+ 		&ksysfs_register_quiet.attr,
++#ifdef CONFIG_BCACHE_NVM_PAGES
++		&ksysfs_register_nvdimm_meta.attr,
++#endif
+ 		&ksysfs_pendings_cleanup.attr,
+ 		NULL
+ 	};
 -- 
 2.26.2
 
