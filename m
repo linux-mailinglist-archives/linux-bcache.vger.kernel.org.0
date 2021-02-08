@@ -2,68 +2,86 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B363A312E21
-	for <lists+linux-bcache@lfdr.de>; Mon,  8 Feb 2021 10:59:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 319753133B4
+	for <lists+linux-bcache@lfdr.de>; Mon,  8 Feb 2021 14:51:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231980AbhBHJ41 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 8 Feb 2021 04:56:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38924 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232027AbhBHJt4 (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 8 Feb 2021 04:49:56 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9881DC061A2E
-        for <linux-bcache@vger.kernel.org>; Mon,  8 Feb 2021 01:46:11 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id d13so7536055plg.0
-        for <linux-bcache@vger.kernel.org>; Mon, 08 Feb 2021 01:46:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=z7Z/JdX0RhrlgqchmamXWMY47TIIKUp5Zm0+e0J1lMs=;
-        b=dAt0DPqe0Mujn1u+Uttoi2FnTsXNotLyGcx1zMqIocF32rJa8fdAXHfYgM4Olv0otZ
-         bUKd3wfft4YGCo03zfdn0HoOJV7dW2fpwETqgVjKuycFWibJ2nj9qfRqI46hBUNrvbs/
-         PVSEzR3Xb2AqQhEv0DygqPYCqRgCv6NwgkFYPGN319voxMy6tmErIF26r+5zNXkt2lBx
-         j/DD/oypjCdiVADQ5pRtY+sjUFHZDWtFRGikLumzZI1NjuLs39Tr5K1NwR8Zfavf7mLD
-         Ac39r8ksmSNZ1M4d6A52W4J/UgQi9Nnwdm9nGGvdr+GQtmke2Cvz9h6f+0W1TH5bUku2
-         3hFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=z7Z/JdX0RhrlgqchmamXWMY47TIIKUp5Zm0+e0J1lMs=;
-        b=gSBjSo35dawOJnXll3o/pkVNzoSUc/C9K9NIcFS4+lUHjp46ncZpVWLdS1bBnyHsce
-         c3RtRQZgJclnO/nzvkR1oH+H9piNCJibqaTx+QA+odIi0tvaHkIVx1N3ORuvPJUgPEe2
-         OruCRU6iL4B18zAhoi0JXYgjupuu06IqCwOXWwhxaL4GJ8z9VZLoR1cXd6gi5rbb7kMK
-         ZtbfiAqBwx8vUcmZ4vjf5fZwB8zCopT/AkLZxdBKDhxOSffiFn1WKy05FFFRhiXfxGSY
-         H18OkD11Dx2Mw60HXyaAj+9DqmbyM+uf7QCktXMM056qsMUuczZLtzfFd4vtNJEI0NA7
-         5oFA==
-X-Gm-Message-State: AOAM533smj+PWwIXHpQMWrURE3kjv4jXG00eDGtjvHEled22LTemPSMW
-        /6MI/FsuYv4kzfDUUKYx5p1X/wggSDxQyNv/7bo=
-X-Google-Smtp-Source: ABdhPJx+17ATKhXSfSmxcmHNoiAXPc5hq0SNyRxeqztxbAZ3R4vDl5TTrxROULrvZqwlssaFXPF5nFuQ9ygbxtYpTHs=
-X-Received: by 2002:a17:902:d304:b029:e1:7503:4dce with SMTP id
- b4-20020a170902d304b02900e175034dcemr15453730plc.23.1612777570994; Mon, 08
- Feb 2021 01:46:10 -0800 (PST)
+        id S230495AbhBHNuq (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 8 Feb 2021 08:50:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51434 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230310AbhBHNun (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 8 Feb 2021 08:50:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 686FEACF4;
+        Mon,  8 Feb 2021 13:50:01 +0000 (UTC)
+To:     Qiaowei Ren <qiaowei.ren@intel.com>,
+        Jianpeng Ma <jianpeng.ma@intel.com>
+Cc:     linux-bcache@vger.kernel.org
+References: <20210208142621.76815-1-qiaowei.ren@intel.com>
+From:   Coly Li <colyli@suse.de>
+Subject: Re: [RFC PATCH v6 0/7] nvm page allocator for bcache
+Message-ID: <0c4ba429-9697-be06-e5a4-4bd3a07c6275@suse.de>
+Date:   Mon, 8 Feb 2021 21:49:58 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.0
 MIME-Version: 1.0
-Received: by 2002:a17:90a:5d0a:0:0:0:0 with HTTP; Mon, 8 Feb 2021 01:46:10
- -0800 (PST)
-Reply-To: richadtomm@qq.com
-From:   "Mr.Richard Thomas" <tommiirrrch@gmail.com>
-Date:   Mon, 8 Feb 2021 01:46:10 -0800
-Message-ID: <CAGbSTZMPLOkHK2GLzTi+4k2XMyvDvecx548GS=b_0GSHwg=Ucw@mail.gmail.com>
-Subject: Re Thanks.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210208142621.76815-1-qiaowei.ren@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Dear Friend,
-I will be pleased if you can allow me to invest $104M Dollars in
-Estate Management,in your company or any area you best that will be
-of good profit to both of us
+On 2/8/21 10:26 PM, Qiaowei Ren wrote:
+> This series implements nvm pages allocator for bcache. This idea is from
+> one discussion about nvdimm use case in kernel together with Coly. Coly
+> sent the following email about this idea to give some introduction on what
+> we will do before:
+> 
+> https://lore.kernel.org/linux-bcache/bc7e71ec-97eb-b226-d4fc-d8b64c1ef41a@suse.de/
+> 
+> Here this series focus on the first step in above email, that is to say,
+> this patch set implements a generic framework in bcache to allocate/release
+> NV-memory pages, and provide allocated pages for each requestor after reboot.
+> In order to do this, one simple buddy system is implemented to manage NV-memory
+> pages.
+> 
+> This set includes one testing module which can be used for simple test cases.
+> Next need to stroe bcache log or internal btree nodes into nvdimm based on
+> these buddy apis to do more testing.
+> 
+> Qiaowei Ren (7):
+>   bcache: add initial data structures for nvm pages
+>   bcache: initialize the nvm pages allocator
+>   bcache: initialization of the buddy
+>   bcache: bch_nvm_alloc_pages() of the buddy
+>   bcache: bch_nvm_free_pages() of the buddy
+>   bcache: get allocated pages from specific owner
+>   bcache: persist owner info when alloc/free pages.
 
-Please do well to respond including your information for more details.
+I test the V6 patch set, it works with current bcache part change. Sorry
+for not response for the previous series in time on list, but thank you
+all to fix the known issues in previous version.
 
-Thanks.
-Mr.Richard Thomas
+Although the series is still marked as RFC patches, but IMHO they are in
+good shape for an EXPERIMENTAL series.
+
+I will have them with my other bcache changes in the v5.12 for-next, and
+it is so far so good in my smoking testing.
+
+There is one thing I feel should be clarified from you, I see some
+patches the author and the first signed-off-by person is not identical.
+Please make the first SOB people to be the same one in the From/Author
+field. And I guess maybe most of the work are done by both of you, if
+this is true, the second author can use a Co-authored-by: tag after the
+first Signed-off-by: person.
+
+The v6 series is under testing now, so it is unnecessary to post one
+more version for the above changes. I'd like to change them from my side
+if you may provide me some hints.
+
+Thanks for the contribution, the tiny NVDIMM pages allcoator works.
+
+Coly Li
