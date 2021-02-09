@@ -2,104 +2,80 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2478314715
-	for <lists+linux-bcache@lfdr.de>; Tue,  9 Feb 2021 04:30:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89F41314B33
+	for <lists+linux-bcache@lfdr.de>; Tue,  9 Feb 2021 10:12:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230038AbhBIDaU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 8 Feb 2021 22:30:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35356 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230374AbhBID1d (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 8 Feb 2021 22:27:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id F2DDFAB71;
-        Tue,  9 Feb 2021 03:26:12 +0000 (UTC)
-Subject: Re: [RFC PATCH v6 0/7] nvm page allocator for bcache
-To:     "Ren, Qiaowei" <qiaowei.ren@intel.com>,
-        "Ma, Jianpeng" <jianpeng.ma@intel.com>
-Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
-References: <20210208142621.76815-1-qiaowei.ren@intel.com>
- <0c4ba429-9697-be06-e5a4-4bd3a07c6275@suse.de>
- <BYAPR11MB26962B941509DA38036F852EF58E9@BYAPR11MB2696.namprd11.prod.outlook.com>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <d78d5992-dff0-e8fc-161e-1399b65fd604@suse.de>
-Date:   Tue, 9 Feb 2021 11:26:10 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.0
+        id S230227AbhBIJMl convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-bcache@lfdr.de>); Tue, 9 Feb 2021 04:12:41 -0500
+Received: from spam.auroraoh.com ([24.56.89.101]:37524 "EHLO
+        barracuda.auroraoh.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230019AbhBIJJq (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 9 Feb 2021 04:09:46 -0500
+X-Greylist: delayed 695 seconds by postgrey-1.27 at vger.kernel.org; Tue, 09 Feb 2021 04:09:45 EST
+X-ASG-Debug-ID: 1612860995-112c0d6a7998680001-VZtGTT
+Received: from COASRV-MAIL2.auroraoh.loc (coasrv-mail2.auroraoh.loc [10.3.1.15]) by barracuda.auroraoh.com with ESMTP id 2ZKpDVSFR76G7xpy; Tue, 09 Feb 2021 03:56:35 -0500 (EST)
+X-Barracuda-Envelope-From: JanuskaD@auroraoh.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.3.1.15
+Received: from [172.20.10.5] (197.210.29.8) by COASRV-MAIL2.auroraoh.loc
+ (10.3.1.15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 9 Feb 2021
+ 02:44:01 -0500
+Content-Type: text/plain; charset="iso-8859-1"
+X-Barracuda-RBL-Trusted-Forwarder: 172.20.10.5
 MIME-Version: 1.0
-In-Reply-To: <BYAPR11MB26962B941509DA38036F852EF58E9@BYAPR11MB2696.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: We are a registered Private Loan Investment Company in the United Kingdom,
+ we also registered with the Turkish British Chamber of Commerce and Industry
+ (TBCCI) we have operations in Europe and Asia.
+To:     Recipients <januskad@auroraoh.com>
+X-ASG-Orig-Subj: We are a registered Private Loan Investment Company in the United Kingdom,
+ we also registered with the Turkish British Chamber of Commerce and Industry
+ (TBCCI) we have operations in Europe and Asia.
+From:   <januskad@auroraoh.com>
+Date:   Tue, 9 Feb 2021 15:43:15 +0800
+Reply-To: <cfolimiited@gmail.com>
+X-Priority: 1 (High)
+X-Antivirus: Avast (VPS 210207-2, 02/07/2021), Outbound message
+X-Antivirus-Status: Clean
+Message-ID: <67115bd0-7ba7-4a38-8269-fd8c74a9c433@COASRV-MAIL2.auroraoh.loc>
+X-Originating-IP: [197.210.29.8]
+X-ClientProxiedBy: COASRV-MAIL3.auroraoh.loc (10.3.1.13) To
+ COASRV-MAIL2.auroraoh.loc (10.3.1.15)
+X-Barracuda-Connect: coasrv-mail2.auroraoh.loc[10.3.1.15]
+X-Barracuda-Start-Time: 1612860995
+X-Barracuda-URL: https://10.3.1.12:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at auroraoh.com
+X-Barracuda-Scan-Msg-Size: 755
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Spam-Score: 1.61
+X-Barracuda-Spam-Status: No, SCORE=1.61 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=5.0 tests=BSF_SC0_SA609_NRN, BSF_SC0_SA912_RP_FR, BSF_SC0_SA_TO_FROM_ADDR_MATCH, NO_REAL_NAME
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.87857
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        0.00 NO_REAL_NAME           From: does not include a real name
+        0.01 BSF_SC0_SA912_RP_FR    Custom Rule BSF_SC0_SA912_RP_FR
+        0.50 BSF_SC0_SA_TO_FROM_ADDR_MATCH Sender Address Matches Recipient
+                                   Address
+        1.10 BSF_SC0_SA609_NRN      Custom Rule SA609_NRN
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2/9/21 10:30 AM, Ren, Qiaowei wrote:
-> 
->> -----Original Message-----
->> From: Coly Li <colyli@suse.de>
->> Sent: Monday, February 8, 2021 9:50 PM
->> To: Ren, Qiaowei <qiaowei.ren@intel.com>; Ma, Jianpeng
->> <jianpeng.ma@intel.com>
->> Cc: linux-bcache@vger.kernel.org
->> Subject: Re: [RFC PATCH v6 0/7] nvm page allocator for bcache
->>
->> On 2/8/21 10:26 PM, Qiaowei Ren wrote:
->>> This series implements nvm pages allocator for bcache. This idea is
->>> from one discussion about nvdimm use case in kernel together with
->>> Coly. Coly sent the following email about this idea to give some
->>> introduction on what we will do before:
->>>
->>> https://lore.kernel.org/linux-bcache/bc7e71ec-97eb-b226-d4fc-d8b64c1ef
->>> 41a@suse.de/
->>>
->>> Here this series focus on the first step in above email, that is to
->>> say, this patch set implements a generic framework in bcache to
->>> allocate/release NV-memory pages, and provide allocated pages for each
->> requestor after reboot.
->>> In order to do this, one simple buddy system is implemented to manage
->>> NV-memory pages.
->>>
->>> This set includes one testing module which can be used for simple test
->> cases.
->>> Next need to stroe bcache log or internal btree nodes into nvdimm
->>> based on these buddy apis to do more testing.
->>>
->>> Qiaowei Ren (7):
->>>   bcache: add initial data structures for nvm pages
->>>   bcache: initialize the nvm pages allocator
->>>   bcache: initialization of the buddy
->>>   bcache: bch_nvm_alloc_pages() of the buddy
->>>   bcache: bch_nvm_free_pages() of the buddy
->>>   bcache: get allocated pages from specific owner
->>>   bcache: persist owner info when alloc/free pages.
->>
->> I test the V6 patch set, it works with current bcache part change. Sorry for
->> not response for the previous series in time on list, but thank you all to fix
->> the known issues in previous version.
->>
->> Although the series is still marked as RFC patches, but IMHO they are in good
->> shape for an EXPERIMENTAL series.
->>
->> I will have them with my other bcache changes in the v5.12 for-next, and it is
->> so far so good in my smoking testing.
->>
->> There is one thing I feel should be clarified from you, I see some patches the
->> author and the first signed-off-by person is not identical.
->> Please make the first SOB people to be the same one in the From/Author
->> field. And I guess maybe most of the work are done by both of you, if this is
->> true, the second author can use a Co-authored-by: tag after the first Signed-
->> off-by: person.
->>
-> Yes, it is true, but the From/Author field should be Jianpeng. Thanks.
+We are seeking for beneficiaries who source for fund to expand/relocating their business interest abroad. We are ready to fund projects outside Turkey and United Kingdom in the form of Soft Loan. We grant loans to both corporate and private entities at a low interest rate of 2% R.O.I per annul.
 
-OK, I will modify from my side, you don't need to post one more version
-for this.
+We like to grant loan in the following sectors: oil/Gas, banking, real estate, stock speculation and mining, transportation, health sector and tobacco, Communication Services, Agriculture Forestry & Fishing, thus any sector. The terms are very flexible and interesting.
 
-[snipped]
+Please contact us for more details;
 
-Thanks.
 
-Coly Li
+Kind regards,
+
+Paul McCann
+
+-- 
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
+
