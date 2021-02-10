@@ -2,27 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C22A7315EA4
-	for <lists+linux-bcache@lfdr.de>; Wed, 10 Feb 2021 06:09:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E1BD315EA5
+	for <lists+linux-bcache@lfdr.de>; Wed, 10 Feb 2021 06:09:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230000AbhBJFJb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 10 Feb 2021 00:09:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40716 "EHLO mx2.suse.de"
+        id S230015AbhBJFJc (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 10 Feb 2021 00:09:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40714 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230015AbhBJFJ0 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 10 Feb 2021 00:09:26 -0500
+        id S230308AbhBJFJ1 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 10 Feb 2021 00:09:27 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 33018B061;
-        Wed, 10 Feb 2021 05:08:10 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 22E37B062;
+        Wed, 10 Feb 2021 05:08:12 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Kai Krakow <kai@kaishome.de>, Coly Li <colyli@suse.de>,
-        stable@vger.kernel.org
-Subject: [PATCH 05/20] bcache: Move journal work to new flush wq
-Date:   Wed, 10 Feb 2021 13:07:27 +0800
-Message-Id: <20210210050742.31237-6-colyli@suse.de>
+        Joe Perches <joe@perches.com>, Coly Li <colyli@suse.de>
+Subject: [PATCH 06/20] bcache: Avoid comma separated statements
+Date:   Wed, 10 Feb 2021 13:07:28 +0800
+Message-Id: <20210210050742.31237-7-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210210050742.31237-1-colyli@suse.de>
 References: <20210210050742.31237-1-colyli@suse.de>
@@ -32,101 +31,64 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Kai Krakow <kai@kaishome.de>
+From: Joe Perches <joe@perches.com>
 
-This is potentially long running and not latency sensitive, let's get
-it out of the way of other latency sensitive events.
+Use semicolons and braces.
 
-As observed in the previous commit, the `system_wq` comes easily
-congested by bcache, and this fixes a few more stalls I was observing
-every once in a while.
-
-Let's not make this `WQ_MEM_RECLAIM` as it showed to reduce performance
-of boot and file system operations in my tests. Also, without
-`WQ_MEM_RECLAIM`, I no longer see desktop stalls. This matches the
-previous behavior as `system_wq` also does no memory reclaim:
-
-> // workqueue.c:
-> system_wq = alloc_workqueue("events", 0, 0);
-
-Cc: Coly Li <colyli@suse.de>
-Cc: stable@vger.kernel.org # 5.4+
-Signed-off-by: Kai Krakow <kai@kaishome.de>
+Signed-off-by: Joe Perches <joe@perches.com>
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/bcache.h  |  1 +
- drivers/md/bcache/journal.c |  4 ++--
- drivers/md/bcache/super.c   | 16 ++++++++++++++++
- 3 files changed, 19 insertions(+), 2 deletions(-)
+ drivers/md/bcache/bset.c  | 12 ++++++++----
+ drivers/md/bcache/sysfs.c |  6 ++++--
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 2b8c7dd2cfae..848dd4db1659 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -1005,6 +1005,7 @@ void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent);
+diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
+index 67a2c47f4201..94d38e8a59b3 100644
+--- a/drivers/md/bcache/bset.c
++++ b/drivers/md/bcache/bset.c
+@@ -712,8 +712,10 @@ void bch_bset_build_written_tree(struct btree_keys *b)
+ 	for (j = inorder_next(0, t->size);
+ 	     j;
+ 	     j = inorder_next(j, t->size)) {
+-		while (bkey_to_cacheline(t, k) < cacheline)
+-			prev = k, k = bkey_next(k);
++		while (bkey_to_cacheline(t, k) < cacheline) {
++			prev = k;
++			k = bkey_next(k);
++		}
  
- extern struct workqueue_struct *bcache_wq;
- extern struct workqueue_struct *bch_journal_wq;
-+extern struct workqueue_struct *bch_flush_wq;
- extern struct mutex bch_register_lock;
- extern struct list_head bch_cache_sets;
+ 		t->prev[j] = bkey_u64s(prev);
+ 		t->tree[j].m = bkey_to_cacheline_offset(t, cacheline++, k);
+@@ -901,8 +903,10 @@ unsigned int bch_btree_insert_key(struct btree_keys *b, struct bkey *k,
+ 	status = BTREE_INSERT_STATUS_INSERT;
  
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index aefbdb7e003b..c6613e817333 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -932,8 +932,8 @@ atomic_t *bch_journal(struct cache_set *c,
- 		journal_try_write(c);
- 	} else if (!w->dirty) {
- 		w->dirty = true;
--		schedule_delayed_work(&c->journal.work,
--				      msecs_to_jiffies(c->journal_delay_ms));
-+		queue_delayed_work(bch_flush_wq, &c->journal.work,
-+				   msecs_to_jiffies(c->journal_delay_ms));
- 		spin_unlock(&c->journal.lock);
- 	} else {
- 		spin_unlock(&c->journal.lock);
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 85a44a0cffe0..0228ccb293fc 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -49,6 +49,7 @@ static int bcache_major;
- static DEFINE_IDA(bcache_device_idx);
- static wait_queue_head_t unregister_wait;
- struct workqueue_struct *bcache_wq;
-+struct workqueue_struct *bch_flush_wq;
- struct workqueue_struct *bch_journal_wq;
+ 	while (m != bset_bkey_last(i) &&
+-	       bkey_cmp(k, b->ops->is_extents ? &START_KEY(m) : m) > 0)
+-		prev = m, m = bkey_next(m);
++	       bkey_cmp(k, b->ops->is_extents ? &START_KEY(m) : m) > 0) {
++		prev = m;
++		m = bkey_next(m);
++	}
  
+ 	/* prev is in the tree, if we merge we're done */
+ 	status = BTREE_INSERT_STATUS_BACK_MERGE;
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index eef15f8022ba..cc89f3156d1a 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -1094,8 +1094,10 @@ SHOW(__bch_cache)
+ 			--n;
  
-@@ -2821,6 +2822,8 @@ static void bcache_exit(void)
- 		destroy_workqueue(bcache_wq);
- 	if (bch_journal_wq)
- 		destroy_workqueue(bch_journal_wq);
-+	if (bch_flush_wq)
-+		destroy_workqueue(bch_flush_wq);
- 	bch_btree_exit();
+ 		while (cached < p + n &&
+-		       *cached == BTREE_PRIO)
+-			cached++, n--;
++		       *cached == BTREE_PRIO) {
++			cached++;
++			n--;
++		}
  
- 	if (bcache_major)
-@@ -2884,6 +2887,19 @@ static int __init bcache_init(void)
- 	if (!bcache_wq)
- 		goto err;
- 
-+	/*
-+	 * Let's not make this `WQ_MEM_RECLAIM` for the following reasons:
-+	 *
-+	 * 1. It used `system_wq` before which also does no memory reclaim.
-+	 * 2. With `WQ_MEM_RECLAIM` desktop stalls, increased boot times, and
-+	 *    reduced throughput can be observed.
-+	 *
-+	 * We still want to user our own queue to not congest the `system_wq`.
-+	 */
-+	bch_flush_wq = alloc_workqueue("bch_flush", 0, 0);
-+	if (!bch_flush_wq)
-+		goto err;
-+
- 	bch_journal_wq = alloc_workqueue("bch_journal", WQ_MEM_RECLAIM, 0);
- 	if (!bch_journal_wq)
- 		goto err;
+ 		for (i = 0; i < n; i++)
+ 			sum += INITIAL_PRIO - cached[i];
 -- 
 2.26.2
 
