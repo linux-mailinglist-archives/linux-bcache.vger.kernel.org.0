@@ -2,80 +2,123 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89F41314B33
-	for <lists+linux-bcache@lfdr.de>; Tue,  9 Feb 2021 10:12:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFCA6315E98
+	for <lists+linux-bcache@lfdr.de>; Wed, 10 Feb 2021 06:09:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230227AbhBIJMl convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-bcache@lfdr.de>); Tue, 9 Feb 2021 04:12:41 -0500
-Received: from spam.auroraoh.com ([24.56.89.101]:37524 "EHLO
-        barracuda.auroraoh.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230019AbhBIJJq (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 9 Feb 2021 04:09:46 -0500
-X-Greylist: delayed 695 seconds by postgrey-1.27 at vger.kernel.org; Tue, 09 Feb 2021 04:09:45 EST
-X-ASG-Debug-ID: 1612860995-112c0d6a7998680001-VZtGTT
-Received: from COASRV-MAIL2.auroraoh.loc (coasrv-mail2.auroraoh.loc [10.3.1.15]) by barracuda.auroraoh.com with ESMTP id 2ZKpDVSFR76G7xpy; Tue, 09 Feb 2021 03:56:35 -0500 (EST)
-X-Barracuda-Envelope-From: JanuskaD@auroraoh.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.3.1.15
-Received: from [172.20.10.5] (197.210.29.8) by COASRV-MAIL2.auroraoh.loc
- (10.3.1.15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 9 Feb 2021
- 02:44:01 -0500
-Content-Type: text/plain; charset="iso-8859-1"
-X-Barracuda-RBL-Trusted-Forwarder: 172.20.10.5
+        id S229863AbhBJFIq (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 10 Feb 2021 00:08:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40078 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229608AbhBJFIn (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 10 Feb 2021 00:08:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 7C5C4AC97;
+        Wed, 10 Feb 2021 05:08:00 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     axboe@kernel.dk
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Coly Li <colyli@suse.de>, Jianpeng Ma <jianpeng.ma@intel.com>,
+        Qiaowei Ren <qiaowei.ren@intel.com>,
+        Kai Krakow <kai@kaishome.de>
+Subject: [PATCH 00/20] bcache patches for Linux v5.12 
+Date:   Wed, 10 Feb 2021 13:07:22 +0800
+Message-Id: <20210210050742.31237-1-colyli@suse.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: We are a registered Private Loan Investment Company in the United Kingdom,
- we also registered with the Turkish British Chamber of Commerce and Industry
- (TBCCI) we have operations in Europe and Asia.
-To:     Recipients <januskad@auroraoh.com>
-X-ASG-Orig-Subj: We are a registered Private Loan Investment Company in the United Kingdom,
- we also registered with the Turkish British Chamber of Commerce and Industry
- (TBCCI) we have operations in Europe and Asia.
-From:   <januskad@auroraoh.com>
-Date:   Tue, 9 Feb 2021 15:43:15 +0800
-Reply-To: <cfolimiited@gmail.com>
-X-Priority: 1 (High)
-X-Antivirus: Avast (VPS 210207-2, 02/07/2021), Outbound message
-X-Antivirus-Status: Clean
-Message-ID: <67115bd0-7ba7-4a38-8269-fd8c74a9c433@COASRV-MAIL2.auroraoh.loc>
-X-Originating-IP: [197.210.29.8]
-X-ClientProxiedBy: COASRV-MAIL3.auroraoh.loc (10.3.1.13) To
- COASRV-MAIL2.auroraoh.loc (10.3.1.15)
-X-Barracuda-Connect: coasrv-mail2.auroraoh.loc[10.3.1.15]
-X-Barracuda-Start-Time: 1612860995
-X-Barracuda-URL: https://10.3.1.12:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at auroraoh.com
-X-Barracuda-Scan-Msg-Size: 755
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Spam-Score: 1.61
-X-Barracuda-Spam-Status: No, SCORE=1.61 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=5.0 tests=BSF_SC0_SA609_NRN, BSF_SC0_SA912_RP_FR, BSF_SC0_SA_TO_FROM_ADDR_MATCH, NO_REAL_NAME
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.87857
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
-        0.00 NO_REAL_NAME           From: does not include a real name
-        0.01 BSF_SC0_SA912_RP_FR    Custom Rule BSF_SC0_SA912_RP_FR
-        0.50 BSF_SC0_SA_TO_FROM_ADDR_MATCH Sender Address Matches Recipient
-                                   Address
-        1.10 BSF_SC0_SA609_NRN      Custom Rule SA609_NRN
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-We are seeking for beneficiaries who source for fund to expand/relocating their business interest abroad. We are ready to fund projects outside Turkey and United Kingdom in the form of Soft Loan. We grant loans to both corporate and private entities at a low interest rate of 2% R.O.I per annul.
+Hi Jens,
 
-We like to grant loan in the following sectors: oil/Gas, banking, real estate, stock speculation and mining, transportation, health sector and tobacco, Communication Services, Agriculture Forestry & Fishing, thus any sector. The terms are very flexible and interesting.
+This is the first wave bcache patches for Linux v5.12.
 
-Please contact us for more details;
+It is nice to see in this round we have 3 new patch contributors:
+Jianpeng Ma, Qiaowei Ren and Kai Krakow.
 
+In this series, the EXPERIMENTAL patches from Jianpeng Ma, Qiaowei Ren
+and me are initial effort to store bcache meta-data on NVDIMM namespace.
+The NVDIMM space is managed and mapped via DAX interface, and accessed
+by linear address. In this submission we store bcache journal on NVDIMM,
+in future bcache btree nodes and other meta data will be added in too,
+before we remove the EXPERIMENTAL statues.
 
-Kind regards,
+Dongdong Tao contributes a performance optimization when
+bcache cache buckets are highly fregmented, Dongdong's patch makes the
+dirty data writeback faster and from his benchmark reprots such changes
+have recognized improvement for randome write I/O thoughput and latency
+for highly fregmented buckets, and no regression for regular I/O
+observed.
 
-Paul McCann
+Kai Krakow contributes 4 patches to offload system_wq usage to separated
+btree_io_wq and bch_flush_wq. In his environment the daily backup job
+throughput increases from 60.2MB/s to 419MB/s and accomplished time
+reduced from 14h29m to 2h13m.
+
+Joe Perches also contributes a fine code stype fix which I pick for this
+submission.
+
+Please take them for Linux v5.12 merge window.
+
+Thank you in advance.
+
+Coly Li
+---
+
+Coly Li (8):
+  bcache: add initial data structures for nvm pages
+  bcache: use bucket index for SET_GC_MARK() in bch_btree_gc_finish()
+  bcache: add BCH_FEATURE_INCOMPAT_NVDIMM_META into incompat feature set
+  bcache: initialize bcache journal for NVDIMM meta device
+  bcache: support storing bcache journal into NVDIMM meta device
+  bcache: read jset from NVDIMM pages for journal replay
+  bcache: add sysfs interface register_nvdimm_meta to register NVDIMM
+    meta device
+  bcache: only initialize nvm-pages allocator when
+    CONFIG_BCACHE_NVM_PAGES configured
+
+Jianpeng Ma (6):
+  bcache: initialize the nvm pages allocator
+  bcache: initialization of the buddy
+  bcache: bch_nvm_alloc_pages() of the buddy
+  bcache: bch_nvm_free_pages() of the buddy
+  bcache: get allocated pages from specific owner
+  bcache: persist owner info when alloc/free pages.
+
+Joe Perches (1):
+  bcache: Avoid comma separated statements
+
+Kai Krakow (4):
+  bcache: Fix register_device_aync typo
+  Revert "bcache: Kill btree_io_wq"
+  bcache: Give btree_io_wq correct semantics again
+  bcache: Move journal work to new flush wq
+
+dongdong tao (1):
+  bcache: consider the fragmentation when update the writeback rate
+
+ drivers/md/bcache/Kconfig       |   6 +
+ drivers/md/bcache/Makefile      |   2 +-
+ drivers/md/bcache/bcache.h      |   7 +
+ drivers/md/bcache/bset.c        |  12 +-
+ drivers/md/bcache/btree.c       |  27 +-
+ drivers/md/bcache/features.h    |   9 +
+ drivers/md/bcache/journal.c     | 293 ++++++++---
+ drivers/md/bcache/journal.h     |   2 +-
+ drivers/md/bcache/nvm-pages.c   | 853 ++++++++++++++++++++++++++++++++
+ drivers/md/bcache/nvm-pages.h   | 112 +++++
+ drivers/md/bcache/super.c       |  76 ++-
+ drivers/md/bcache/sysfs.c       |  29 +-
+ drivers/md/bcache/writeback.c   |  42 ++
+ drivers/md/bcache/writeback.h   |   4 +
+ include/uapi/linux/bcache-nvm.h | 188 +++++++
+ 15 files changed, 1579 insertions(+), 83 deletions(-)
+ create mode 100644 drivers/md/bcache/nvm-pages.c
+ create mode 100644 drivers/md/bcache/nvm-pages.h
+ create mode 100644 include/uapi/linux/bcache-nvm.h
 
 -- 
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+2.26.2
 
