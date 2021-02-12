@@ -2,86 +2,86 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 245D531A095
-	for <lists+linux-bcache@lfdr.de>; Fri, 12 Feb 2021 15:26:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26F2C31A1BB
+	for <lists+linux-bcache@lfdr.de>; Fri, 12 Feb 2021 16:36:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231584AbhBLOXc (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 12 Feb 2021 09:23:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60160 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231768AbhBLOXc (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 12 Feb 2021 09:23:32 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 9BBE0B029;
-        Fri, 12 Feb 2021 14:22:50 +0000 (UTC)
-Subject: Re: [PATCH][next] bcache: Use 64-bit arithmetic instead of 32-bit
-To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        id S232160AbhBLPc6 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 12 Feb 2021 10:32:58 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:28149 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232096AbhBLPcz (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 12 Feb 2021 10:32:55 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id uk-mta-7-JP_7B2LuPXKpBjoyLqlaog-1;
+ Fri, 12 Feb 2021 15:31:17 +0000
+X-MC-Unique: JP_7B2LuPXKpBjoyLqlaog-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 12 Feb 2021 15:31:16 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 12 Feb 2021 15:31:16 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Coly Li' <colyli@suse.de>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
         Kent Overstreet <kent.overstreet@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Christina Jacob <cjacob@marvell.com>,
         Hariprasad Kelam <hkelam@marvell.com>,
         Sunil Goutham <sgoutham@marvell.com>,
         Jesse Brandeburg <jesse.brandeburg@intel.com>
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+CC:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH][next] bcache: Use 64-bit arithmetic instead of 32-bit
+Thread-Topic: [PATCH][next] bcache: Use 64-bit arithmetic instead of 32-bit
+Thread-Index: AQHXAUq33fUjMDIuaUm57r6l5bDb0apUpJ4g
+Date:   Fri, 12 Feb 2021 15:31:16 +0000
+Message-ID: <0a2eb2e143ad480cbce3f84c3c920b5f@AcuMS.aculab.com>
 References: <20210212125028.GA264620@embeddedor>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <ea24a361-ab1f-a330-b5e6-007bb9a1013b@suse.de>
-Date:   Fri, 12 Feb 2021 22:22:44 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.0
+ <ea24a361-ab1f-a330-b5e6-007bb9a1013b@suse.de>
+In-Reply-To: <ea24a361-ab1f-a330-b5e6-007bb9a1013b@suse.de>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-In-Reply-To: <20210212125028.GA264620@embeddedor>
-Content-Type: text/plain; charset=utf-8
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2/12/21 8:50 PM, Gustavo A. R. Silva wrote:
-> Cast multiple variables to (int64_t) in order to give the compiler
-> complete information about the proper arithmetic to use. Notice that
-> these variables are being used in contexts that expect expressions of
-> type int64_t  (64 bit, signed). And currently, such expressions are
-> being evaluated using 32-bit arithmetic.
-> 
-> Fixes: d0cf9503e908 ("octeontx2-pf: ethtool fec mode support")
-> Addresses-Coverity-ID: 1501724 ("Unintentional integer overflow")
-> Addresses-Coverity-ID: 1501725 ("Unintentional integer overflow")
-> Addresses-Coverity-ID: 1501726 ("Unintentional integer overflow")
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->  drivers/md/bcache/writeback.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-> index 82d4e0880a99..4fb635c0baa0 100644
-> --- a/drivers/md/bcache/writeback.c
-> +++ b/drivers/md/bcache/writeback.c
-> @@ -110,13 +110,13 @@ static void __update_writeback_rate(struct cached_dev *dc)
->  		int64_t fps;
->  
->  		if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID) {
-> -			fp_term = dc->writeback_rate_fp_term_low *
-> +			fp_term = (int64_t)dc->writeback_rate_fp_term_low *
->  			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW);
->  		} else if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH) {
-> -			fp_term = dc->writeback_rate_fp_term_mid *
-> +			fp_term = (int64_t)dc->writeback_rate_fp_term_mid *
->  			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID);
->  		} else {
-> -			fp_term = dc->writeback_rate_fp_term_high *
-> +			fp_term = (int64_t)dc->writeback_rate_fp_term_high *
->  			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH);
->  		}
->  		fps = div_s64(dirty, dirty_buckets) * fp_term;
-> 
+PiA+ICAJCWlmIChjLT5nY19zdGF0cy5pbl91c2UgPD0gQkNIX1dSSVRFQkFDS19GUkFHTUVOVF9U
+SFJFU0hPTERfTUlEKSB7DQo+ID4gLQkJCWZwX3Rlcm0gPSBkYy0+d3JpdGViYWNrX3JhdGVfZnBf
+dGVybV9sb3cgKg0KPiA+ICsJCQlmcF90ZXJtID0gKGludDY0X3QpZGMtPndyaXRlYmFja19yYXRl
+X2ZwX3Rlcm1fbG93ICoNCj4gPiAgCQkJKGMtPmdjX3N0YXRzLmluX3VzZSAtIEJDSF9XUklURUJB
+Q0tfRlJBR01FTlRfVEhSRVNIT0xEX0xPVyk7DQo+ID4gIAkJfSBlbHNlIGlmIChjLT5nY19zdGF0
+cy5pbl91c2UgPD0gQkNIX1dSSVRFQkFDS19GUkFHTUVOVF9USFJFU0hPTERfSElHSCkgew0KPiA+
+IC0JCQlmcF90ZXJtID0gZGMtPndyaXRlYmFja19yYXRlX2ZwX3Rlcm1fbWlkICoNCj4gPiArCQkJ
+ZnBfdGVybSA9IChpbnQ2NF90KWRjLT53cml0ZWJhY2tfcmF0ZV9mcF90ZXJtX21pZCAqDQo+ID4g
+IAkJCShjLT5nY19zdGF0cy5pbl91c2UgLSBCQ0hfV1JJVEVCQUNLX0ZSQUdNRU5UX1RIUkVTSE9M
+RF9NSUQpOw0KPiA+ICAJCX0gZWxzZSB7DQo+ID4gLQkJCWZwX3Rlcm0gPSBkYy0+d3JpdGViYWNr
+X3JhdGVfZnBfdGVybV9oaWdoICoNCj4gPiArCQkJZnBfdGVybSA9IChpbnQ2NF90KWRjLT53cml0
+ZWJhY2tfcmF0ZV9mcF90ZXJtX2hpZ2ggKg0KPiA+ICAJCQkoYy0+Z2Nfc3RhdHMuaW5fdXNlIC0g
+QkNIX1dSSVRFQkFDS19GUkFHTUVOVF9USFJFU0hPTERfSElHSCk7DQo+ID4gIAkJfQ0KPiA+ICAJ
+CWZwcyA9IGRpdl9zNjQoZGlydHksIGRpcnR5X2J1Y2tldHMpICogZnBfdGVybTsNCj4gPg0KPiAN
+Cj4gSG1tLCBzaG91bGQgc3VjaCB0aGluZyBiZSBoYW5kbGVkIGJ5IGNvbXBpbGVyID8gIE90aGVy
+d2lzZSB0aGlzIGtpbmQgb2YNCj4gcG90ZW50aWFsIG92ZXJmbG93IGlzc3VlIHdpbGwgYmUgZW5k
+bGVzcyB0aW1lIHRvIHRpbWUuDQo+IA0KPiBJIGFtIG5vdCBhIGNvbXBpbGVyIGV4cGVydCwgc2hv
+dWxkIHdlIGhhdmUgdG8gZG8gc3VjaCBleHBsaWNpdCB0eXBlIGNhc3QNCj4gYWxsIHRoZSB0aW1l
+ID8NCg0KV2UgZG8gdG8gZ2V0IGEgNjRiaXQgcHJvZHVjdCBmcm9tIHR3byAzMmJpdCB2YWx1ZXMu
+DQpBbiBhbHRlcm5hdGl2ZSBmb3IgdGhlIGFib3ZlIHdvdWxkIGJlOg0KCQlmcF90ZXJtID0gYy0+
+Z2Nfc3RhdHMuaW5fdXNlIC0gQkNIX1dSSVRFQkFDS19GUkFHTUVOVF9USFJFU0hPTERfSElHSDsN
+CgkJZnBfdGVybSAqPSBkYy0+d3JpdGViYWNrX3JhdGVfZnBfdGVybV9oaWdoOw0KDQpJIGhvcGUg
+QkNIX1dSSVRFQkFDS19GUkFHTUVOVF9USFJFU0hPTERfTE9XIGlzIHplcm8gOi0pDQoNCglEYXZp
+ZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQg
+RmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4
+NiAoV2FsZXMpDQo=
 
-Hmm, should such thing be handled by compiler ?  Otherwise this kind of
-potential overflow issue will be endless time to time.
-
-I am not a compiler expert, should we have to do such explicit type cast
-all the time ?
-
-Coly Li
