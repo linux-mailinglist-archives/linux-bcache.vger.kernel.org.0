@@ -2,106 +2,79 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5519331A245
-	for <lists+linux-bcache@lfdr.de>; Fri, 12 Feb 2021 17:03:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6E0A31A262
+	for <lists+linux-bcache@lfdr.de>; Fri, 12 Feb 2021 17:11:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230390AbhBLQCi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 12 Feb 2021 11:02:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52506 "EHLO mx2.suse.de"
+        id S229611AbhBLQK0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 12 Feb 2021 11:10:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35908 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229679AbhBLQCg (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 12 Feb 2021 11:02:36 -0500
+        id S229493AbhBLQKZ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 12 Feb 2021 11:10:25 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 704D5AC90;
-        Fri, 12 Feb 2021 16:01:53 +0000 (UTC)
-To:     David Laight <David.Laight@ACULAB.COM>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Christina Jacob <cjacob@marvell.com>,
-        Hariprasad Kelam <hkelam@marvell.com>,
-        Sunil Goutham <sgoutham@marvell.com>,
-        Jesse Brandeburg <jesse.brandeburg@intel.com>
-Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dongdong tao <dongdong.tao@canonical.com>
-References: <20210212125028.GA264620@embeddedor>
- <ea24a361-ab1f-a330-b5e6-007bb9a1013b@suse.de>
- <0a2eb2e143ad480cbce3f84c3c920b5f@AcuMS.aculab.com>
+        by mx2.suse.de (Postfix) with ESMTP id 4DF8EAD29;
+        Fri, 12 Feb 2021 16:09:42 +0000 (UTC)
+Subject: Re: [PATCH 00/20] bcache patches for Linux v5.12
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Jianpeng Ma <jianpeng.ma@intel.com>,
+        Qiaowei Ren <qiaowei.ren@intel.com>,
+        Kai Krakow <kai@kaishome.de>
+References: <20210210050742.31237-1-colyli@suse.de>
+ <50173dee-31dd-9951-bc7f-b5247a46ef5e@kernel.dk>
 From:   Coly Li <colyli@suse.de>
-Subject: Re: [PATCH][next] bcache: Use 64-bit arithmetic instead of 32-bit
-Message-ID: <cb3ffad1-e877-c6f9-168e-da7f55c59485@suse.de>
-Date:   Sat, 13 Feb 2021 00:01:47 +0800
+Message-ID: <4f6a39e3-f80b-cdc2-aa50-5aa44a6fb8eb@suse.de>
+Date:   Sat, 13 Feb 2021 00:09:38 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
  Gecko/20100101 Thunderbird/78.7.0
 MIME-Version: 1.0
-In-Reply-To: <0a2eb2e143ad480cbce3f84c3c920b5f@AcuMS.aculab.com>
+In-Reply-To: <50173dee-31dd-9951-bc7f-b5247a46ef5e@kernel.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2/12/21 11:31 PM, David Laight wrote:
->>>  		if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID) {
->>> -			fp_term = dc->writeback_rate_fp_term_low *
->>> +			fp_term = (int64_t)dc->writeback_rate_fp_term_low *
->>>  			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW);
->>>  		} else if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH) {
->>> -			fp_term = dc->writeback_rate_fp_term_mid *
->>> +			fp_term = (int64_t)dc->writeback_rate_fp_term_mid *
->>>  			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID);
->>>  		} else {
->>> -			fp_term = dc->writeback_rate_fp_term_high *
->>> +			fp_term = (int64_t)dc->writeback_rate_fp_term_high *
->>>  			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH);
->>>  		}
->>>  		fps = div_s64(dirty, dirty_buckets) * fp_term;
->>>
+On 2/10/21 11:11 PM, Jens Axboe wrote:
+> On 2/9/21 10:07 PM, Coly Li wrote:
+>> Hi Jens,
 >>
->> Hmm, should such thing be handled by compiler ?  Otherwise this kind of
->> potential overflow issue will be endless time to time.
+>> This is the first wave bcache patches for Linux v5.12.
 >>
->> I am not a compiler expert, should we have to do such explicit type cast
->> all the time ?
+>> It is nice to see in this round we have 3 new patch contributors:
+>> Jianpeng Ma, Qiaowei Ren and Kai Krakow.
+>>
+>> In this series, the EXPERIMENTAL patches from Jianpeng Ma, Qiaowei Ren
+>> and me are initial effort to store bcache meta-data on NVDIMM namespace.
+>> The NVDIMM space is managed and mapped via DAX interface, and accessed
+>> by linear address. In this submission we store bcache journal on NVDIMM,
+>> in future bcache btree nodes and other meta data will be added in too,
+>> before we remove the EXPERIMENTAL statues.
+>>
+>> Dongdong Tao contributes a performance optimization when
+>> bcache cache buckets are highly fregmented, Dongdong's patch makes the
+>> dirty data writeback faster and from his benchmark reprots such changes
+>> have recognized improvement for randome write I/O thoughput and latency
+>> for highly fregmented buckets, and no regression for regular I/O
+>> observed.
+>>
+>> Kai Krakow contributes 4 patches to offload system_wq usage to separated
+>> btree_io_wq and bch_flush_wq. In his environment the daily backup job
+>> throughput increases from 60.2MB/s to 419MB/s and accomplished time
+>> reduced from 14h29m to 2h13m.
+>>
+>> Joe Perches also contributes a fine code stype fix which I pick for this
+>> submission.
+>>
+>> Please take them for Linux v5.12 merge window.
 > 
-
-Hi David,
-
-I add Dongdong Tao Cced, who is author of this patch.
-
-Could you please offer me more information about the following lines?
-Let me ask more for my questions.
-
-> We do to get a 64bit product from two 32bit values.
-> An alternative for the above would be:
-> 		fp_term = c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH;
-> 		fp_term *= dc->writeback_rate_fp_term_high;
-
-The original line is,
-fp_term = dc->writeback_rate_fp_term_high * (c->gc_stats.in_use -
-BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH)
-
-The first value dc->writeback_rate_fp_term_high is unsigned int (32bit),
-and the second value (c->gc_stats.in_use -
-BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH) is unsigned int (32bit) too. And
-fp_term is 64bit, if the product is larger than 32bits, the compiler
-should know fp_term is 64bit and upgrade the product to 64bit.
-
-The above is just my guess, because I feel compiling should have the
-clue for the product upgrade to avoid overflow. But I almost know
-nothing about compiler internal ....
-
+> Applied 1-6 for now, that weird situation with the user visible header
+> needs to get resolved before it can go any further.
 > 
-> I hope BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW is zero :-)
-
-Why BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW being zero can be helpful to
-avoid the overflow ? Could you please to provide more detailed information.
-
-I am not challenging you, I just want to extend my knowledge by learning
-from you. Thanks in advance.
+Thanks for taking care of the patches and offering your opinion. I will
+ask you and other developers' suggestion for a proper form for the data
+structure definition.
 
 Coly Li
-
