@@ -2,28 +2,23 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2E1731A30D
-	for <lists+linux-bcache@lfdr.de>; Fri, 12 Feb 2021 17:46:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E14F631ACA7
+	for <lists+linux-bcache@lfdr.de>; Sat, 13 Feb 2021 16:42:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230405AbhBLQo1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 12 Feb 2021 11:44:27 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:36914 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229977AbhBLQoQ (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 12 Feb 2021 11:44:16 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-262-cLzRw_uIPoO1pDyclYXeKQ-1; Fri, 12 Feb 2021 16:42:28 +0000
-X-MC-Unique: cLzRw_uIPoO1pDyclYXeKQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 12 Feb 2021 16:42:21 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 12 Feb 2021 16:42:21 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Coly Li' <colyli@suse.de>,
+        id S229584AbhBMPmF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 13 Feb 2021 10:42:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40384 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229531AbhBMPmF (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sat, 13 Feb 2021 10:42:05 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C1DE9AC69;
+        Sat, 13 Feb 2021 15:41:20 +0000 (UTC)
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dongdong tao <dongdong.tao@canonical.com>,
         "Gustavo A. R. Silva" <gustavoars@kernel.org>,
         Kent Overstreet <kent.overstreet@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -31,98 +26,123 @@ To:     'Coly Li' <colyli@suse.de>,
         Hariprasad Kelam <hkelam@marvell.com>,
         Sunil Goutham <sgoutham@marvell.com>,
         Jesse Brandeburg <jesse.brandeburg@intel.com>
-CC:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dongdong tao <dongdong.tao@canonical.com>
-Subject: RE: [PATCH][next] bcache: Use 64-bit arithmetic instead of 32-bit
-Thread-Topic: [PATCH][next] bcache: Use 64-bit arithmetic instead of 32-bit
-Thread-Index: AQHXAUq33fUjMDIuaUm57r6l5bDb0apUpJ4ggAAJh4CAAAZ5cA==
-Date:   Fri, 12 Feb 2021 16:42:21 +0000
-Message-ID: <468c8699c8ea445cac433406be983e79@AcuMS.aculab.com>
 References: <20210212125028.GA264620@embeddedor>
  <ea24a361-ab1f-a330-b5e6-007bb9a1013b@suse.de>
  <0a2eb2e143ad480cbce3f84c3c920b5f@AcuMS.aculab.com>
  <cb3ffad1-e877-c6f9-168e-da7f55c59485@suse.de>
-In-Reply-To: <cb3ffad1-e877-c6f9-168e-da7f55c59485@suse.de>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+ <468c8699c8ea445cac433406be983e79@AcuMS.aculab.com>
+From:   Coly Li <colyli@suse.de>
+Subject: Re: [PATCH][next] bcache: Use 64-bit arithmetic instead of 32-bit
+Message-ID: <72d76785-3a03-78f4-bb80-ba1f4306d720@suse.de>
+Date:   Sat, 13 Feb 2021 23:41:11 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.0
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+In-Reply-To: <468c8699c8ea445cac433406be983e79@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-RnJvbTogQ29seSBMaSA8Y29seWxpQHN1c2UuZGU+DQo+IFNlbnQ6IDEyIEZlYnJ1YXJ5IDIwMjEg
-MTY6MDINCj4gDQo+IE9uIDIvMTIvMjEgMTE6MzEgUE0sIERhdmlkIExhaWdodCB3cm90ZToNCj4g
-Pj4+ICAJCWlmIChjLT5nY19zdGF0cy5pbl91c2UgPD0gQkNIX1dSSVRFQkFDS19GUkFHTUVOVF9U
-SFJFU0hPTERfTUlEKSB7DQo+ID4+PiAtCQkJZnBfdGVybSA9IGRjLT53cml0ZWJhY2tfcmF0ZV9m
-cF90ZXJtX2xvdyAqDQo+ID4+PiArCQkJZnBfdGVybSA9IChpbnQ2NF90KWRjLT53cml0ZWJhY2tf
-cmF0ZV9mcF90ZXJtX2xvdyAqDQo+ID4+PiAgCQkJKGMtPmdjX3N0YXRzLmluX3VzZSAtIEJDSF9X
-UklURUJBQ0tfRlJBR01FTlRfVEhSRVNIT0xEX0xPVyk7DQo+ID4+PiAgCQl9IGVsc2UgaWYgKGMt
-PmdjX3N0YXRzLmluX3VzZSA8PSBCQ0hfV1JJVEVCQUNLX0ZSQUdNRU5UX1RIUkVTSE9MRF9ISUdI
-KSB7DQo+ID4+PiAtCQkJZnBfdGVybSA9IGRjLT53cml0ZWJhY2tfcmF0ZV9mcF90ZXJtX21pZCAq
-DQo+ID4+PiArCQkJZnBfdGVybSA9IChpbnQ2NF90KWRjLT53cml0ZWJhY2tfcmF0ZV9mcF90ZXJt
-X21pZCAqDQo+ID4+PiAgCQkJKGMtPmdjX3N0YXRzLmluX3VzZSAtIEJDSF9XUklURUJBQ0tfRlJB
-R01FTlRfVEhSRVNIT0xEX01JRCk7DQo+ID4+PiAgCQl9IGVsc2Ugew0KPiA+Pj4gLQkJCWZwX3Rl
-cm0gPSBkYy0+d3JpdGViYWNrX3JhdGVfZnBfdGVybV9oaWdoICoNCj4gPj4+ICsJCQlmcF90ZXJt
-ID0gKGludDY0X3QpZGMtPndyaXRlYmFja19yYXRlX2ZwX3Rlcm1faGlnaCAqDQo+ID4+PiAgCQkJ
-KGMtPmdjX3N0YXRzLmluX3VzZSAtIEJDSF9XUklURUJBQ0tfRlJBR01FTlRfVEhSRVNIT0xEX0hJ
-R0gpOw0KPiA+Pj4gIAkJfQ0KPiA+Pj4gIAkJZnBzID0gZGl2X3M2NChkaXJ0eSwgZGlydHlfYnVj
-a2V0cykgKiBmcF90ZXJtOw0KPiA+Pj4NCj4gPj4NCj4gPj4gSG1tLCBzaG91bGQgc3VjaCB0aGlu
-ZyBiZSBoYW5kbGVkIGJ5IGNvbXBpbGVyID8gIE90aGVyd2lzZSB0aGlzIGtpbmQgb2YNCj4gPj4g
-cG90ZW50aWFsIG92ZXJmbG93IGlzc3VlIHdpbGwgYmUgZW5kbGVzcyB0aW1lIHRvIHRpbWUuDQo+
-ID4+DQo+ID4+IEkgYW0gbm90IGEgY29tcGlsZXIgZXhwZXJ0LCBzaG91bGQgd2UgaGF2ZSB0byBk
-byBzdWNoIGV4cGxpY2l0IHR5cGUgY2FzdA0KPiA+PiBhbGwgdGhlIHRpbWUgPw0KPiA+DQo+IA0K
-PiBIaSBEYXZpZCwNCj4gDQo+IEkgYWRkIERvbmdkb25nIFRhbyBDY2VkLCB3aG8gaXMgYXV0aG9y
-IG9mIHRoaXMgcGF0Y2guDQo+IA0KPiBDb3VsZCB5b3UgcGxlYXNlIG9mZmVyIG1lIG1vcmUgaW5m
-b3JtYXRpb24gYWJvdXQgdGhlIGZvbGxvd2luZyBsaW5lcz8NCj4gTGV0IG1lIGFzayBtb3JlIGZv
-ciBteSBxdWVzdGlvbnMuDQo+IA0KPiA+IFdlIGRvIHRvIGdldCBhIDY0Yml0IHByb2R1Y3QgZnJv
-bSB0d28gMzJiaXQgdmFsdWVzLg0KPiA+IEFuIGFsdGVybmF0aXZlIGZvciB0aGUgYWJvdmUgd291
-bGQgYmU6DQo+ID4gCQlmcF90ZXJtID0gYy0+Z2Nfc3RhdHMuaW5fdXNlIC0gQkNIX1dSSVRFQkFD
-S19GUkFHTUVOVF9USFJFU0hPTERfSElHSDsNCj4gPiAJCWZwX3Rlcm0gKj0gZGMtPndyaXRlYmFj
-a19yYXRlX2ZwX3Rlcm1faGlnaDsNCj4gDQo+IFRoZSBvcmlnaW5hbCBsaW5lIGlzLA0KPiBmcF90
-ZXJtID0gZGMtPndyaXRlYmFja19yYXRlX2ZwX3Rlcm1faGlnaCAqIChjLT5nY19zdGF0cy5pbl91
-c2UgLQ0KPiBCQ0hfV1JJVEVCQUNLX0ZSQUdNRU5UX1RIUkVTSE9MRF9ISUdIKQ0KPiANCj4gVGhl
-IGZpcnN0IHZhbHVlIGRjLT53cml0ZWJhY2tfcmF0ZV9mcF90ZXJtX2hpZ2ggaXMgdW5zaWduZWQg
-aW50ICgzMmJpdCksDQo+IGFuZCB0aGUgc2Vjb25kIHZhbHVlIChjLT5nY19zdGF0cy5pbl91c2Ug
-LQ0KPiBCQ0hfV1JJVEVCQUNLX0ZSQUdNRU5UX1RIUkVTSE9MRF9ISUdIKSBpcyB1bnNpZ25lZCBp
-bnQgKDMyYml0KSB0b28uIEFuZA0KPiBmcF90ZXJtIGlzIDY0Yml0LCBpZiB0aGUgcHJvZHVjdCBp
-cyBsYXJnZXIgdGhhbiAzMmJpdHMsIHRoZSBjb21waWxlcg0KPiBzaG91bGQga25vdyBmcF90ZXJt
-IGlzIDY0Yml0IGFuZCB1cGdyYWRlIHRoZSBwcm9kdWN0IHRvIDY0Yml0Lg0KPiANCj4gVGhlIGFi
-b3ZlIGlzIGp1c3QgbXkgZ3Vlc3MsIGJlY2F1c2UgSSBmZWVsIGNvbXBpbGluZyBzaG91bGQgaGF2
-ZSB0aGUNCj4gY2x1ZSBmb3IgdGhlIHByb2R1Y3QgdXBncmFkZSB0byBhdm9pZCBvdmVyZmxvdy4g
-QnV0IEkgYWxtb3N0IGtub3cNCj4gbm90aGluZyBhYm91dCBjb21waWxlciBpbnRlcm5hbCAuLi4u
-DQoNCk5vLCB0aGUgZXhwcmVzc2lvbiBpcyBldmFsdWF0ZWQgYXMgMzJiaXQgYW5kIHRoZW4gZXh0
-ZW5kZWQgZm9yIHRoZSBhc3NpZ25tZW50Lg0KDQpPciwgbW9yZSBjb3JyZWN0bHksIGludGVnZXIg
-dmFyaWFibGVzIHNtYWxsZXIgdGhhbiBpbnQgKHVzdWFsbHkgc2hvcnQgYW5kIGNoYXIpDQphcmUg
-ZXh0ZW5kZWQgdG8gaW50IHByaW9yIHRvIGFueSBhcml0aG1ldGljLg0KSWYgb25lIGFyZ3VtZW50
-IHRvIGFuIG9wZXJhdG9yIGlzIGxhcmdlciB0aGFuIGludCBpdCBpcyBleHRlbmRlZC4NCklmIHRo
-ZXJlIGlzIGEgc2lnbiB2IHVuc2lnbmVkIG1pc21hdGNoIHRoZSBzaWduZWQgdmFsdWUgaXMgY2Fz
-dCB0byB1bnNpZ25lZA0KKHNhbWUgYml0IHBhdHRlcm4gb24gMidzIGNvbXBsaW1lbnQgc3lzdGVt
-cykuDQoNClRoZXJlIGFyZSBzb21lIG9kZGl0aWVzOg0KLSAndW5zaWduZWQgY2hhci9zaG9ydCcg
-Z2V0cyBjb252ZXJ0ZWQgdG8gJ3NpZ25lZCBpbnQnIHVubGVzcw0KICBjaGFyL3Nob3J0IGFuZCBp
-bnQgYXJlIHRoZSBzYW1lIHNpemUgKHdoaWNoIGlzIGFsbG93ZWQpLg0KICAoQWx0aG91Z2ggaWYg
-Y2hhciBhbmQgaW50IGFyZSB0aGUgc2FtZSBzaXplIHRoZXJlIGFyZSBpc3N1ZXMNCiAgd2l0aCB0
-aGUgdmFsdWUgZm9yIEVPRi4pDQotICgxIDw8IDMxKSBpcyBhIHNpZ25lZCBpbnRlZ2VyLCBpdCB3
-aWxsIGdldCBzaWduIGV4dGVuZGVkIGlmIHVzZWQNCiAgdG8gbWFzayBhIDY0Yml0IHZhbHVlLg0K
-DQpLJlIgQyBjb252ZXJ0ZWQgJ3Vuc2lnbmVkIGNoYXInIHRvICd1bnNpZ25lZCBpbnQnIC0gYnV0
-IHRoZSBBTlNJDQpzdGFuZGFyZHMgYm9keSBkZWNpZGVkIG90aGVyd2lzZS4NCg0KVGhlIGNvbXBp
-bGVyIGlzIGFsbG93ZWQgdG8gdXNlIGFuICdhcyBpZicgcnVsZSB0byB1c2UgdGhlIDhiaXQgYW5k
-DQoxNmJpdCBhcml0aG1ldGljL3JlZ2lzdGVycyBvbiB4ODYuDQpCdXQgb24gYWxtb3N0IGV2ZXJ5
-dGhpbmcgZWxzZSBhcml0aG1ldGljIG9uIGNoYXIvc2hvcnQgbG9jYWwgdmFyaWFibGVzDQpyZXF1
-aXJlcyB0aGUgY29tcGlsZXIgcmVwZWF0ZWRseSBtYXNrIHRoZSB2YWx1ZSBiYWNrIHRvIDgvMTYg
-Yml0cy4NCg0KVGhlIEMgbGFuZ3VhZ2UgaGFzIHNvbWUgb3RoZXIgb2RkaXRpZXMgLSB0aGF0IGFy
-ZSBhbGxvd2VkIGJ1dCBuZXZlciBkb25lLg0KKEV4Y2VwdCBmb3IgJ3Rob3VnaHQtbWFjaGluZXMn
-IGluIGNvbXAubGFuZy5jKQ0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2Vz
-aWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVL
-DQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On 2/13/21 12:42 AM, David Laight wrote:
+> From: Coly Li <colyli@suse.de>
+>> Sent: 12 February 2021 16:02
+>>
+>> On 2/12/21 11:31 PM, David Laight wrote:
+>>>>>  		if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID) {
+>>>>> -			fp_term = dc->writeback_rate_fp_term_low *
+>>>>> +			fp_term = (int64_t)dc->writeback_rate_fp_term_low *
+>>>>>  			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW);
+>>>>>  		} else if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH) {
+>>>>> -			fp_term = dc->writeback_rate_fp_term_mid *
+>>>>> +			fp_term = (int64_t)dc->writeback_rate_fp_term_mid *
+>>>>>  			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID);
+>>>>>  		} else {
+>>>>> -			fp_term = dc->writeback_rate_fp_term_high *
+>>>>> +			fp_term = (int64_t)dc->writeback_rate_fp_term_high *
+>>>>>  			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH);
+>>>>>  		}
+>>>>>  		fps = div_s64(dirty, dirty_buckets) * fp_term;
+>>>>>
+>>>>
+>>>> Hmm, should such thing be handled by compiler ?  Otherwise this kind of
+>>>> potential overflow issue will be endless time to time.
+>>>>
+>>>> I am not a compiler expert, should we have to do such explicit type cast
+>>>> all the time ?
+>>>
+>>
+>> Hi David,
+>>
+>> I add Dongdong Tao Cced, who is author of this patch.
+>>
+>> Could you please offer me more information about the following lines?
+>> Let me ask more for my questions.
+>>
+>>> We do to get a 64bit product from two 32bit values.
+>>> An alternative for the above would be:
+>>> 		fp_term = c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH;
+>>> 		fp_term *= dc->writeback_rate_fp_term_high;
+>>
+>> The original line is,
+>> fp_term = dc->writeback_rate_fp_term_high * (c->gc_stats.in_use -
+>> BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH)
+>>
+>> The first value dc->writeback_rate_fp_term_high is unsigned int (32bit),
+>> and the second value (c->gc_stats.in_use -
+>> BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH) is unsigned int (32bit) too. And
+>> fp_term is 64bit, if the product is larger than 32bits, the compiler
+>> should know fp_term is 64bit and upgrade the product to 64bit.
+>>
+>> The above is just my guess, because I feel compiling should have the
+>> clue for the product upgrade to avoid overflow. But I almost know
+>> nothing about compiler internal ....
+> 
+> No, the expression is evaluated as 32bit and then extended for the assignment.
 
+I do some test, and you are right. I am so surprised that the product
+does not extended and the overflowed result is 0. Thank you for letting
+me know this, and I correct my mistaken concept not too late :-)
+
+If you want me to take this patch, it is OK to me. I will have it in
+v5.12. If you want to handle this patch to upstream in your track, you
+may have my
+	Acked-by: Coly Li <colyli@suse.de>
+
+Thanks for your patient explaining.
+
+> 
+> Or, more correctly, integer variables smaller than int (usually short and char)
+> are extended to int prior to any arithmetic.
+> If one argument to an operator is larger than int it is extended.
+> If there is a sign v unsigned mismatch the signed value is cast to unsigned
+> (same bit pattern on 2's compliment systems).
+> 
+> There are some oddities:
+> - 'unsigned char/short' gets converted to 'signed int' unless
+>   char/short and int are the same size (which is allowed).
+>   (Although if char and int are the same size there are issues
+>   with the value for EOF.)
+> - (1 << 31) is a signed integer, it will get sign extended if used
+>   to mask a 64bit value.
+> 
+> K&R C converted 'unsigned char' to 'unsigned int' - but the ANSI
+> standards body decided otherwise.
+> 
+> The compiler is allowed to use an 'as if' rule to use the 8bit and
+> 16bit arithmetic/registers on x86.
+> But on almost everything else arithmetic on char/short local variables
+> requires the compiler repeatedly mask the value back to 8/16 bits.
+> 
+> The C language has some other oddities - that are allowed but never done.
+> (Except for 'thought-machines' in comp.lang.c)
+
+I know the above things, but I DO NOT know product of two 32bit values
+multiplying does not extend to 64bit. Good to know the compiling is not
+that smart.
+
+Thank you!
+
+Coly Li
