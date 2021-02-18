@@ -2,121 +2,123 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B8731E48E
-	for <lists+linux-bcache@lfdr.de>; Thu, 18 Feb 2021 04:34:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E624131E738
+	for <lists+linux-bcache@lfdr.de>; Thu, 18 Feb 2021 09:04:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbhBRDe0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 17 Feb 2021 22:34:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56440 "EHLO mx2.suse.de"
+        id S230517AbhBRIAm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 18 Feb 2021 03:00:42 -0500
+Received: from mout.gmx.net ([212.227.15.19]:60223 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229864AbhBRDe0 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 17 Feb 2021 22:34:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A6AA9ACD4;
-        Thu, 18 Feb 2021 03:33:34 +0000 (UTC)
-Subject: Re: Obsoleted large bucket layout message once
-To:     Constantin Runge <c.runge@cssbook.de>
-References: <de528a90-6d3d-d324-ca22-73b635d5153f@cssbook.de>
-Cc:     linux-bcache@vger.kernel.org
-From:   Coly Li <colyli@suse.de>
-Message-ID: <66f67289-2142-1361-d10b-0fe520b80cd1@suse.de>
-Date:   Thu, 18 Feb 2021 11:33:30 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.1
+        id S231159AbhBRH6O (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 18 Feb 2021 02:58:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1613634989;
+        bh=QeAcWnwPblqNyubgFIFqLd8P/WvfTtzF5TIl0YCBXSo=;
+        h=X-UI-Sender-Class:To:From:Cc:Subject:Date;
+        b=LOoll5uv9f+m0Z7Yblp8RPNkulfN3WLjmZm/T6A221Gqw+oVmSqEkojOqpsnrtrl+
+         FkI2Z0BcVsiVrm8mLq/sbfUnD1rUrhVDBTpxhafZJDHfhD/QpH7Y86yuDW0NYp+mfd
+         u1aNeeR8aAchmZV9ocGBV1cuvbrvjoxYIBe6bGo0=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [10.10.213.91] ([103.59.50.2]) by mail.gmx.net (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MhlKs-1lqMe50tFI-00doMn; Thu, 18
+ Feb 2021 08:56:29 +0100
+To:     linux-bcache@vger.kernel.org
+From:   "Norman.Kern" <norman.kern@gmx.com>
+Cc:     linux-block@vger.kernel.org, colyli@suse.de, axboe@kernel.dk
+Subject: Large latency with bcache for Ceph OSD
+Message-ID: <3f3e20a3-c165-1de1-7fdd-f0bd4da598fe@gmx.com>
+Date:   Thu, 18 Feb 2021 15:56:25 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-In-Reply-To: <de528a90-6d3d-d324-ca22-73b635d5153f@cssbook.de>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: base64
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:SFAsE+ZgdK/hqWUb5d0Wzd+l5R38CWgeL19RhUk2IP1SyWXXWP8
+ RjJ3GtZgAsuaMb/IkUn5/qs6G0sVR4HRhb8FZUWLeRjWLOcmws/gyrjGJH50ZcauN/CUTZu
+ OB2SjED8/xL9IioWR5Wa9Upp2dTWKgkqN+uXf7MR0+MxtXXKZ4KP7xP0i+v4yKui2uewOZ6
+ hQWz9vbtPqYRDqtdzyZ0g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:E7Knp2pNKbc=:S4OCDcT8DFKiKhKM2iZ0ph
+ J8wq9DpTMXzxnIaTQrrpjLcMZcOEWzyMenf5eUrF0misyQazcPdqA5eGF3qw6KOXjrfR4K49N
+ x5dRmY4SZa9DYD2TKKTNuG8jttHoFtCr9Nuga6l75VHnEXGDJwpF2BlMP7l+rXQez6WyNMhzg
+ mf+5Bl8vVYfGC8jKX21/HvDUOf/AWvCcMWTv0ku2vVKSsLwWPx9vPYvEGx8cgbZIzkZMCiYfE
+ i27YX70lMdfCguV3bwBu3o2+4grYyXYHlDlYvHxqcKZbuWvmeEKAQR8BJnQzLxZsr2t1ZBN1g
+ SLIsB8u3Ttzccn9NsLzKv0aUVq1yxsl0uHq4wWRzu7jGm9TfYv+IA+DyPN1hcs4FFpysdat0V
+ bZN++UV25fh0UdBV6vohJeRI+RlvPuNWpVJIqtRfZnDeFcmotWglDvQJIlIkW+hDpj/SSdlTV
+ SCM48udNWuTn3LDiIdtAeCir1kB0nV1mmLi/Roi5/qrXofe2dTM6fSFMiQGOKUOJAoXUlY8Sn
+ vP2zqfFSBXGID9BGhVr4UGRBRSsYxaMCq0qYam5cUOQDuCuWyWVI/BvUisn6X5bcqfc62KmK1
+ 1IANX4kWk1k44BLydPiKpDxZZgfvzC6VlwLtVW641VivJdVX9PRnZIcy+L1N4yZH0MRbvfAvr
+ /M4aDBzTYu/DNA/Tjf508JkX/8Jy6Af12nXO2iH7Fk/54HOgaZVCy97UKXfAxHskhIsI0k0il
+ Co4ScHJVagpYUqvE5deYJhJMaq+pe+/PDFmTiGBMakKs7FZtlg14OFCUFIY03hr140AUZuOk9
+ 0vqynolnyNNQKaXRCuofjfgsM8p3niM26hfwI15Mt46Sx571XXqW/sY9k/wdC7B6i/UKml6h/
+ TDsXcpnuldgc6PtyHH8A==
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2/16/21 11:06 PM, Constantin Runge wrote:
-> Hi everybody,
-> 
-> when registering and mounting my bcache devices (unortunately my root
-> filesystem), the kernel informed me about `Detected obsoleted large
-> bucket layout, all attached bcache device will be read-only'.
-> 
-> Subsequently, my root fs was, in fact, read-only. Thus, I have no logs
-> for you unfortunately. As far as I remember, bcache-super-show showed
-> the same bucket and block sizes as always (except that the backing
-> device showed a clean cache state):
-> 
->> bcache-super-show /dev/sda6
-> sb.magic        ok
-> sb.first_sector        8 [match]
-> sb.csum            C5EB3BA8CA523D61 [match]
-> sb.version        4 [backing device]
-> 
-> dev.label        (empty)
-> dev.uuid        264d1acc-8461-4ddc-a825-f0acdeea3ede
-> dev.sectors_per_block    1
-> dev.sectors_per_bucket    1024
-> dev.data.first_sector    2048
-> dev.data.cache_mode    1 [writeback]
-> dev.data.cache_state    2 [dirty]
-> 
-> cset.uuid        755901be-a101-4581-b1d0-4d21d1619f27
->> bcache-super-show /dev/sdb3
-> sb.magic        ok
-> sb.first_sector        8 [match]
-> sb.csum            BDA92F1E72DBA095 [match]
-> sb.version        3 [cache device]
-> 
-> dev.label        (empty)
-> dev.uuid        25151c1a-904e-492e-b99b-6d07e13b047a
-> dev.sectors_per_block    1
-> dev.sectors_per_bucket    1024
-> dev.cache.first_sector    1024
-> dev.cache.cache_sectors    907564032
-> dev.cache.total_sectors    907565056
-> dev.cache.ordered    yes
-> dev.cache.discard    no
-> dev.cache.pos        0
-> dev.cache.replacement    0 [lru]
-> 
-> cset.uuid        755901be-a101-4581-b1d0-4d21d1619f27
-> 
-> 
-> For debugging purposes I tried to mount and chroot into my backing
-> device directly, using a loopback interface. I was not able to find an
-> offset for `losetup -f -o <offset> /dev/sda6', so that `mount -o loop
-> /dev/loop0 /mnt/mnt0' would not tell me that there was no filesystem.
-> Also, `for i in {0.2000}; do dd if=/dev/sda6 skip=$i | file -; done'
-> from [1] showed `data' for every offset.
-> 
-> After getting a little desperate, I booted into an older kernel
-> (although I didn't update my kernel or my bcache-tools since the last
-> boot) and everything worked. I then booted back into my current system
-> and everything worked again.
-> 
-> Is this a bug with bcache or do I need to change my setup to prevent
-> this from happening again? My bcache devices were created sometime
-> around 2015 or 2016.
-> 
-> System info:
-> uname -a: `Linux Horus 5.10.10-gentoo #1 SMP PREEMPT Mon Feb 15 15:00:49
-> CET 2021 x86_64 Intel(R) Core(TM) i7-4790K CPU @ 4.00GHz GenuineIntel
-> GNU/Linux'
-> bcache-tools version: 1.1
-> The older kernel is a 5.8.11-gentoo with voluntary preempt.
-> 
-> Best regards and thanks,
-> Constantin
-> 
-> 
->   [1]
-> https://stackoverflow.com/questions/22820492/how-to-revert-bcache-device-to-regular-device
-> 
-
-This is a regression and fixed in 5.11-rc6 by commit 0df28cad06eb
-("bcache: only check feature sets when sb->version >=
-BCACHE_SB_VERSION_CDEV_WITH_FEATURES"). This patch has been in stable
-kernel for a while, the distribution maintainer should have it in time.
-
-Thanks.
-
-Coly Li
+SGkgZ3V5cywNCg0KSSBhbSB0ZXN0aW5nIGNlcGggd2l0aCBiY2FjaGUsIEkgZm91bmQgc29tZSBJ
+L08gd2l0aCBPX1NZTkMgd3JpdGViYWNrIHRvIA0KSERELCB3aGljaCBjYXVzZWQgbGFyZ2UgbGF0
+ZW5jeSBvbiBIREQsIEkgdHJhY2UgdGhlIEkvTyB3aXRoIGlvc25vb3A6DQoNCi4vaW9zbm9vcMKg
+IC1RIC10cyAtZCAnOCwxOTINCg0KVHJhY2luZyBibG9jayBJL08gZm9yIDEgc2Vjb25kcyAoYnVm
+ZmVyZWQpLi4uDQpTVEFSVHPCoMKgwqDCoMKgwqDCoMKgwqAgRU5Ec8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgQ09NTcKgwqDCoMKgwqDCoMKgwqAgUElEwqDCoMKgIFRZUEUgREVWIA0KQkxPQ0vCoMKg
+wqDCoMKgwqDCoCBCWVRFU8KgwqDCoMKgIExBVG1zDQoNCjE4MDkyOTYuMjkyMzUwwqAgMTgwOTI5
+Ni4zMTkwNTLCoCB0cF9vc2RfdHDCoMKgwqAgMjIxOTHCoCBSwqDCoMKgIDgsMTkyIA0KNDU3ODk0
+MDI0MMKgwqAgMTYzODTCoMKgwqDCoCAyNi43MA0KMTgwOTI5Ni4yOTIzMzDCoCAxODA5Mjk2LjMy
+MDk3NMKgIHRwX29zZF90cMKgwqDCoCAyMjE5McKgIFLCoMKgwqAgOCwxOTIgDQo0NTc3OTM4NzA0
+wqDCoCAxNjM4NMKgwqDCoMKgIDI4LjY0DQoxODA5Mjk2LjI5MjYxNMKgIDE4MDkyOTYuMzIzMjky
+wqAgdHBfb3NkX3RwwqDCoMKgIDIyMTkxwqAgUsKgwqDCoCA4LDE5MiANCjQ2MDA0MDQzMDTCoMKg
+IDE2Mzg0wqDCoMKgwqAgMzAuNjgNCjE4MDkyOTYuMjkyMzUzwqAgMTgwOTI5Ni4zMjUzMDDCoCB0
+cF9vc2RfdHDCoMKgwqAgMjIxOTHCoCBSwqDCoMKgIDgsMTkyIA0KNDU3ODM0MzA4OMKgwqAgMTYz
+ODTCoMKgwqDCoCAzMi45NQ0KMTgwOTI5Ni4yOTIzNDDCoCAxODA5Mjk2LjMyODAxM8KgIHRwX29z
+ZF90cMKgwqDCoCAyMjE5McKgIFLCoMKgwqAgOCwxOTIgDQo0NTc4MDU1NDcywqDCoCAxNjM4NMKg
+wqDCoMKgIDM1LjY3DQoxODA5Mjk2LjI5MjYwNsKgIDE4MDkyOTYuMzMwNTE4wqAgdHBfb3NkX3Rw
+wqDCoMKgIDIyMTkxwqAgUsKgwqDCoCA4LDE5MiANCjQ1Nzg1ODE2NDjCoMKgIDE2Mzg0wqDCoMKg
+wqAgMzcuOTENCjE4MDkyOTUuMTY5MjY2wqAgMTgwOTI5Ni4zMzQwNDHCoCBic3RvcmVfa3ZfZmkg
+MTcyNjbCoCBXU8KgwqAgOCwxOTIgDQo0MjQ0OTk2MzYwwqDCoCA0MDk2wqDCoMKgIDExNjQuNzgN
+CjE4MDkyOTYuMjkyNjE4wqAgMTgwOTI5Ni4zMzYzNDnCoCB0cF9vc2RfdHDCoMKgwqAgMjIxOTHC
+oCBSwqDCoMKgIDgsMTkyIA0KNDYwMjYzMTc2MMKgwqAgMTYzODTCoMKgwqDCoCA0My43Mw0KMTgw
+OTI5Ni4yOTI2MTjCoCAxODA5Mjk2LjMzODgxMsKgIHRwX29zZF90cMKgwqDCoCAyMjE5McKgIFLC
+oMKgwqAgOCwxOTIgDQo0NjAyNjMyOTc2wqDCoCAxNjM4NMKgwqDCoMKgIDQ2LjE5DQoxODA5Mjk2
+LjAzMDEwM8KgIDE4MDkyOTYuMzQyNzgwwqAgdHBfb3NkX3RwwqDCoMKgIDIyMTgwwqAgV1PCoMKg
+IDgsMTkyIA0KNDc0MTI3NjA0OMKgwqAgMTMxMDcywqDCoCAzMTIuNjgNCjE4MDkyOTYuMjkyMzQ3
+wqAgMTgwOTI5Ni4zNDUwNDXCoCB0cF9vc2RfdHDCoMKgwqAgMjIxOTHCoCBSwqDCoMKgIDgsMTky
+IA0KNDYwOTAzNzg3MsKgwqAgMTYzODTCoMKgwqDCoCA1Mi43MA0KMTgwOTI5Ni4yOTI2MjDCoCAx
+ODA5Mjk2LjM0NTEwOcKgIHRwX29zZF90cMKgwqDCoCAyMjE5McKgIFLCoMKgwqAgOCwxOTIgDQo0
+NjA5MDM3OTA0wqDCoCAxNjM4NMKgwqDCoMKgIDUyLjQ5DQoxODA5Mjk2LjI5MjYxMsKgIDE4MDky
+OTYuMzQ3MjUxwqAgdHBfb3NkX3RwwqDCoMKgIDIyMTkxwqAgUsKgwqDCoCA4LDE5MiANCjQ1Nzg5
+Mzc2MTbCoMKgIDE2Mzg0wqDCoMKgwqAgNTQuNjQNCjE4MDkyOTYuMjkyNjIxwqAgMTgwOTI5Ni4z
+NTExMzbCoCB0cF9vc2RfdHDCoMKgwqAgMjIxOTHCoCBSwqDCoMKgIDgsMTkyIA0KNDYxMjY1NDk5
+MsKgwqAgMTYzODTCoMKgwqDCoCA1OC41MQ0KMTgwOTI5Ni4yOTIzNDHCoCAxODA5Mjk2LjM1MzQy
+OMKgIHRwX29zZF90cMKgwqDCoCAyMjE5McKgIFLCoMKgwqAgOCwxOTIgDQo0NTc4MjIwNjU2wqDC
+oCAxNjM4NMKgwqDCoMKgIDYxLjA5DQoxODA5Mjk2LjI5MjM0MsKgIDE4MDkyOTYuMzUzODY0wqAg
+dHBfb3NkX3RwwqDCoMKgIDIyMTkxwqAgUsKgwqDCoCA4LDE5MiANCjQ1NzgyMjA4ODDCoMKgIDE2
+Mzg0wqDCoMKgwqAgNjEuNTINCjE4MDkyOTUuMTY3NjUwwqAgMTgwOTI5Ni4zNTg1MTDCoCBic3Rv
+cmVfa3ZfZmkgMTcyNjbCoCBXU8KgwqAgOCwxOTIgDQo0OTIzNjk1OTYwwqDCoCA0MDk2wqDCoMKg
+IDExOTAuODYNCjE4MDkyOTYuMjkyMzQ3wqAgMTgwOTI5Ni4zNjE4ODXCoCB0cF9vc2RfdHDCoMKg
+wqAgMjIxOTHCoCBSwqDCoMKgIDgsMTkyIA0KNDYwNzQzNzEzNsKgwqAgMTYzODTCoMKgwqDCoCA2
+OS41NA0KMTgwOTI5Ni4wMjkzNjPCoCAxODA5Mjk2LjM2NzMxM8KgIHRwX29zZF90cMKgwqDCoCAy
+MjE4MMKgIFdTwqDCoCA4LDE5MiANCjQ3Mzk4MjQ0MDDCoMKgIDk4MzA0wqDCoMKgIDMzNy45NQ0K
+MTgwOTI5Ni4yOTIzNDnCoCAxODA5Mjk2LjM3MDI0NcKgIHRwX29zZF90cMKgwqDCoCAyMjE5McKg
+IFLCoMKgwqAgOCwxOTIgDQo0NTkxMzc5ODg4wqDCoCAxNjM4NMKgwqDCoMKgIDc3LjkwDQoxODA5
+Mjk2LjI5MjM0OMKgIDE4MDkyOTYuMzc2MjczwqAgdHBfb3NkX3RwwqDCoMKgIDIyMTkxwqAgUsKg
+wqDCoCA4LDE5MiANCjQ1OTEyODk1NTLCoMKgIDE2Mzg0wqDCoMKgwqAgODMuOTINCjE4MDkyOTYu
+MjkyMzUzwqAgMTgwOTI5Ni4zNzg2NTnCoCB0cF9vc2RfdHDCoMKgwqAgMjIxOTHCoCBSwqDCoMKg
+IDgsMTkyIA0KNDU3ODI0ODY1NsKgwqAgMTYzODTCoMKgwqDCoCA4Ni4zMQ0KMTgwOTI5Ni4yOTI2
+MTnCoCAxODA5Mjk2LjM4NDgzNcKgIHRwX29zZF90cMKgwqDCoCAyMjE5McKgIFLCoMKgwqAgOCwx
+OTIgDQo0NjE3NDk0MTYwwqDCoCA2NTUzNsKgwqDCoMKgIDkyLjIyDQoxODA5Mjk1LjE2NTQ1McKg
+IDE4MDkyOTYuMzkzNzE1wqAgYnN0b3JlX2t2X2ZpIDE3MjY2wqAgV1PCoMKgIDgsMTkyIA0KMTM1
+NTcwMzEyMMKgwqAgNDA5NsKgwqDCoCAxMjI4LjI2DQoxODA5Mjk1LjE2ODU5NcKgIDE4MDkyOTYu
+NDAxNTYwwqAgYnN0b3JlX2t2X2ZpIDE3MjY2wqAgV1PCoMKgIDgsMTkyIA0KMTEyMjIwMMKgwqDC
+oMKgwqAgNDA5NsKgwqDCoCAxMjMyLjk2DQoxODA5Mjk1LjE2NTIyMcKgIDE4MDkyOTYuNDA4MDE4
+wqAgYnN0b3JlX2t2X2ZpIDE3MjY2wqAgV1PCoMKgIDgsMTkyIA0KOTYwNjU2wqDCoMKgwqDCoMKg
+IDQwOTbCoMKgwqAgMTI0Mi44MA0KMTgwOTI5NS4xNjY3MzfCoCAxODA5Mjk2LjQxMTUwNcKgIGJz
+dG9yZV9rdl9maSAxNzI2NsKgIFdTwqDCoCA4LDE5MiANCjU3NjgyNTA0wqDCoMKgwqAgNDA5NsKg
+wqDCoCAxMjQ0Ljc3DQoxODA5Mjk2LjI5MjM1MsKgIDE4MDkyOTYuNDE4MTIzwqAgdHBfb3NkX3Rw
+wqDCoMKgIDIyMTkxwqAgUsKgwqDCoCA4LDE5MiANCjQ1Nzk0NTkwNTbCoMKgIDMyNzY4wqDCoMKg
+IDEyNS43Nw0KDQpJJ20gY29uZnVzZWQgd2h5IHdyaXRlIHdpdGggT19TWU5DIG11c3Qgd3JpdGVi
+YWNrIG9uIHRoZSBiYWNrZW5kIHN0b3JhZ2UgDQpkZXZpY2U/wqAgQW5kIHdoZW4gSSB1c2VkIGJj
+YWNoZSBmb3IgYSB0aW1lLA0KDQp0aGUgbGF0ZW5jeSBpbmNyZWFzZWQgYSBsb3QuKFRoZSBTU0Qg
+aXMgbm90IHZlcnkgYnVzeSksIFRoZXJlJ3Mgc29tZSANCmJlc3QgcHJhY3RpY2VzIG9uIGNvbmZp
+Z3VyYXRpb24/DQoNCg==
