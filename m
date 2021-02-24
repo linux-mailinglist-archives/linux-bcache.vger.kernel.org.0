@@ -2,60 +2,133 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 036E83229C3
-	for <lists+linux-bcache@lfdr.de>; Tue, 23 Feb 2021 12:54:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 671E9323910
+	for <lists+linux-bcache@lfdr.de>; Wed, 24 Feb 2021 09:53:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232519AbhBWLxv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 23 Feb 2021 06:53:51 -0500
-Received: from mail.jvpinto.com ([65.49.11.60]:49930 "EHLO mail.JVPinto.com"
+        id S234547AbhBXIxO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 24 Feb 2021 03:53:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55146 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232495AbhBWLxB (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 23 Feb 2021 06:53:01 -0500
-Received: from RW-EXC1.JVPinto.com (2002:ac20:10d::ac20:10d) by
- RW-EXC1.JVPinto.com (2002:ac20:10d::ac20:10d) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Tue, 23 Feb 2021 03:52:13 -0800
-Received: from User (52.231.198.195) by RW-EXC1.JVPinto.com (172.32.1.13) with
- Microsoft SMTP Server id 15.0.1497.2 via Frontend Transport; Tue, 23 Feb 2021
- 03:51:59 -0800
-Reply-To: <ms.reem@yandex.com>
-From:   "Ms. Reem" <johnpinto@jvpinto.com>
-Subject: Hello okay
-Date:   Tue, 23 Feb 2021 11:52:12 +0000
+        id S234605AbhBXIwz (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 24 Feb 2021 03:52:55 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 90F84AF3E;
+        Wed, 24 Feb 2021 08:52:05 +0000 (UTC)
+Subject: Re: Large latency with bcache for Ceph OSD
+To:     "Norman.Kern" <norman.kern@gmx.com>
+Cc:     linux-block@vger.kernel.org, axboe@kernel.dk,
+        linux-bcache@vger.kernel.org
+References: <3f3e20a3-c165-1de1-7fdd-f0bd4da598fe@gmx.com>
+ <632258f7-b138-3fba-456b-9da37c1de710@gmx.com>
+From:   Coly Li <colyli@suse.de>
+Message-ID: <5867daf1-0960-39aa-1843-1a76c1e9a28d@suse.de>
+Date:   Wed, 24 Feb 2021 16:52:01 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-ID: <a979b4e3f4df4cf8baf7c5db5d0603cc@RW-EXC1.JVPinto.com>
-To:     Undisclosed recipients:;
+In-Reply-To: <632258f7-b138-3fba-456b-9da37c1de710@gmx.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hello,
+On 2/22/21 7:48 AM, Norman.Kern wrote:
+> Ping.
+> 
+> I'm confused on the SYNC I/O on bcache. why SYNC I/O must be writen back
+> for persistent cache?  It can cause some latency.
+> 
+> @Coly, can you give help me to explain why bcache handle O_SYNC like this.?
+> 
+> 
 
-My name is Ms. Reem Ebrahim Al-Hashimi, I am the "Minister of state
-and Petroleum" also "Minister of State for International Cooperation"
-in UAE. I write to you on behalf of my other "three (3) colleagues"
-who has approved me to solicit for your "partnership in claiming of
-{us$47=Million}" from a Financial Home in Cambodia on their behalf and
-for our "Mutual Benefits".
+Hmm, normally we won't observe the application issuing I/Os on backing
+device except for,
+- I/O bypass by SSD congestion
+- Sequential I/O request
+- Dirty buckets exceeds the cutoff threshold
+- Write through mode
 
-The Fund {us$47=Million} is our share from the (over-invoiced) Oil/Gas
-deal with Cambodian/Vietnam Government within 2013/2014, however, we
-don't want our government to know about the fund. If this proposal
-interests you, let me know, by sending me an email and I will send to
-you detailed information on how this business would be successfully
-transacted. Be informed that nobody knows about the secret of this
-fund except us, and we know how to carry out the entire transaction.
-So I am compelled to ask, that you will stand on our behalf and
-receive this fund into any account that is solely controlled by you.
+Do you set the write/read congestion threshold to 0 ?
 
-We will compensate you with 15% of the total amount involved as
-gratification for being our partner in this transaction. Reply to:
-ms.reem@yandex.com
+Coly Li
 
-Regards,
-Ms. Reem.
+> On 2021/2/18 下午3:56, Norman.Kern wrote:
+>> Hi guys,
+>>
+>> I am testing ceph with bcache, I found some I/O with O_SYNC writeback
+>> to HDD, which caused large latency on HDD, I trace the I/O with iosnoop:
+>>
+>> ./iosnoop  -Q -ts -d '8,192
+>>
+>> Tracing block I/O for 1 seconds (buffered)...
+>> STARTs          ENDs            COMM         PID    TYPE DEV
+>> BLOCK        BYTES     LATms
+>>
+>> 1809296.292350  1809296.319052  tp_osd_tp    22191  R    8,192
+>> 4578940240   16384     26.70
+>> 1809296.292330  1809296.320974  tp_osd_tp    22191  R    8,192
+>> 4577938704   16384     28.64
+>> 1809296.292614  1809296.323292  tp_osd_tp    22191  R    8,192
+>> 4600404304   16384     30.68
+>> 1809296.292353  1809296.325300  tp_osd_tp    22191  R    8,192
+>> 4578343088   16384     32.95
+>> 1809296.292340  1809296.328013  tp_osd_tp    22191  R    8,192
+>> 4578055472   16384     35.67
+>> 1809296.292606  1809296.330518  tp_osd_tp    22191  R    8,192
+>> 4578581648   16384     37.91
+>> 1809295.169266  1809296.334041  bstore_kv_fi 17266  WS   8,192
+>> 4244996360   4096    1164.78
+>> 1809296.292618  1809296.336349  tp_osd_tp    22191  R    8,192
+>> 4602631760   16384     43.73
+>> 1809296.292618  1809296.338812  tp_osd_tp    22191  R    8,192
+>> 4602632976   16384     46.19
+>> 1809296.030103  1809296.342780  tp_osd_tp    22180  WS   8,192
+>> 4741276048   131072   312.68
+>> 1809296.292347  1809296.345045  tp_osd_tp    22191  R    8,192
+>> 4609037872   16384     52.70
+>> 1809296.292620  1809296.345109  tp_osd_tp    22191  R    8,192
+>> 4609037904   16384     52.49
+>> 1809296.292612  1809296.347251  tp_osd_tp    22191  R    8,192
+>> 4578937616   16384     54.64
+>> 1809296.292621  1809296.351136  tp_osd_tp    22191  R    8,192
+>> 4612654992   16384     58.51
+>> 1809296.292341  1809296.353428  tp_osd_tp    22191  R    8,192
+>> 4578220656   16384     61.09
+>> 1809296.292342  1809296.353864  tp_osd_tp    22191  R    8,192
+>> 4578220880   16384     61.52
+>> 1809295.167650  1809296.358510  bstore_kv_fi 17266  WS   8,192
+>> 4923695960   4096    1190.86
+>> 1809296.292347  1809296.361885  tp_osd_tp    22191  R    8,192
+>> 4607437136   16384     69.54
+>> 1809296.029363  1809296.367313  tp_osd_tp    22180  WS   8,192
+>> 4739824400   98304    337.95
+>> 1809296.292349  1809296.370245  tp_osd_tp    22191  R    8,192
+>> 4591379888   16384     77.90
+>> 1809296.292348  1809296.376273  tp_osd_tp    22191  R    8,192
+>> 4591289552   16384     83.92
+>> 1809296.292353  1809296.378659  tp_osd_tp    22191  R    8,192
+>> 4578248656   16384     86.31
+>> 1809296.292619  1809296.384835  tp_osd_tp    22191  R    8,192
+>> 4617494160   65536     92.22
+>> 1809295.165451  1809296.393715  bstore_kv_fi 17266  WS   8,192
+>> 1355703120   4096    1228.26
+>> 1809295.168595  1809296.401560  bstore_kv_fi 17266  WS   8,192
+>> 1122200      4096    1232.96
+>> 1809295.165221  1809296.408018  bstore_kv_fi 17266  WS   8,192
+>> 960656       4096    1242.80
+>> 1809295.166737  1809296.411505  bstore_kv_fi 17266  WS   8,192
+>> 57682504     4096    1244.77
+>> 1809296.292352  1809296.418123  tp_osd_tp    22191  R    8,192
+>> 4579459056   32768    125.77
+>>
+>> I'm confused why write with O_SYNC must writeback on the backend
+>> storage device?  And when I used bcache for a time,
+>>
+>> the latency increased a lot.(The SSD is not very busy), There's some
+>> best practices on configuration?
+>>
+
