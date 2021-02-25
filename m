@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE67B3248DC
-	for <lists+linux-bcache@lfdr.de>; Thu, 25 Feb 2021 03:24:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A27C3248DE
+	for <lists+linux-bcache@lfdr.de>; Thu, 25 Feb 2021 03:26:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232538AbhBYCXm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 24 Feb 2021 21:23:42 -0500
-Received: from mout.gmx.net ([212.227.17.22]:43307 "EHLO mout.gmx.net"
+        id S232086AbhBYCZI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 24 Feb 2021 21:25:08 -0500
+Received: from mout.gmx.net ([212.227.17.21]:40363 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232033AbhBYCXm (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 24 Feb 2021 21:23:42 -0500
+        id S232033AbhBYCZH (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 24 Feb 2021 21:25:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1614219728;
-        bh=6hUOQX6f82gvMuxzwmg2FCHNDbFWHryypB+CZ1EUbbo=;
+        s=badeba3b8450; t=1614219813;
+        bh=onxWgCyxaTGOD38y2anSIAoGQT5mCjHv8FiPC1q8PJU=;
         h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=TVYYelE2dEVWgavpx4U+cS73R9uoiSqBHPl5K+AypC2h7jl3eCOCGuw9D2DdpMuXW
-         ISRoxXoUlxYcE6jaXcvj9+vr7tetDZknVZ+OtcvfVgWo8pTbqo5UUdBmosCLy9IfKG
-         vyR87nZgojOLq5n9AjPAjQVFwp3hQ2C3XPe7ZYiE=
+        b=KX2Q3Tcz3CoyTqwY3kJYaDdfd+61AQlrLhVYnmugUj5gs8TQoDvqo8JIErdQGhtu3
+         yzaS2hSngp/aOz+WIFfhZ3mowM+9I1IZpXS5UP/UX+U5rzN6xDynRGnusTQsaRbB/T
+         OsMwinX5D5CR8jja5Out+/i/3eGDhvjEwo7UKPjA=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from [10.10.213.91] ([103.52.188.137]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MvbG2-1m4SWP3u8E-00si9B; Thu, 25
- Feb 2021 03:22:08 +0100
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1M59GG-1lE0Nk2QFA-0019ij; Thu, 25
+ Feb 2021 03:23:33 +0100
 Subject: Re: Large latency with bcache for Ceph OSD
 To:     Coly Li <colyli@suse.de>
 Cc:     linux-block@vger.kernel.org, axboe@kernel.dk,
@@ -30,8 +30,8 @@ References: <3f3e20a3-c165-1de1-7fdd-f0bd4da598fe@gmx.com>
  <632258f7-b138-3fba-456b-9da37c1de710@gmx.com>
  <5867daf1-0960-39aa-1843-1a76c1e9a28d@suse.de>
 From:   "Norman.Kern" <norman.kern@gmx.com>
-Message-ID: <d8f5aa09-ab43-bc03-8316-13fc0f3cde78@gmx.com>
-Date:   Thu, 25 Feb 2021 10:22:01 +0800
+Message-ID: <07bcb6c8-21e1-11de-d1f0-ffd417bd36ff@gmx.com>
+Date:   Thu, 25 Feb 2021 10:23:29 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.5.0
 MIME-Version: 1.0
@@ -39,25 +39,25 @@ In-Reply-To: <5867daf1-0960-39aa-1843-1a76c1e9a28d@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-X-Provags-ID: V03:K1:Mh5Bz/vVOrfBgI71gdpeQQvMvy70IjURIM0sERzPMcl1NoeSSUb
- 6EswDjfcxi4y2K7CjzOBVQuamQCJprTOF0kTo/wdl8mgi5+Uu4oC2cOK2Mb/SfJ05Fr1HcK
- GNsGCKFcCPUQimqvk+YqpLyoz5R35lR1crhcafD4D+FUoWdHm6qGSLRce+Jv0gUTq8Vfyyh
- EZbCyO0atausQum9T1uWg==
+X-Provags-ID: V03:K1:p1qqbpFusbZ9E+GzDum6822o2Bn7z/0VNUN7Jpkrh2q75rb06pT
+ iFcgHXCzllxqKitHCgr56zh+EDb95qagAGdRTSKw1wQTas2dZK5wD+nX06btZzfCFPJYd1s
+ 5ai+6+ySS2aeBzp4OIpkDvBwQkL24+y7/h3JnbFjBcwZDtO4WDjJgeJG2krHqdOReV6yg7c
+ zfdmJKX48ZjidJHsfDqKA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:LSjSPGqandc=:ze0YSHsStnRpx6Elq3tJYo
- qv7+OmkjlZaVQByJYrSAPd1r+A5LKOh5r/LuG0maJLurTBOYykeqyRVubuCFJAGVc2VGr97zr
- rIFCHBj39EiaY0SlSwWVrsOH6U0aHkm3Y6rqlaqZjuhherjntOOMsYG3CTa2/XGfsHZwPKLet
- S0Cg9iK4WYvde032oUQ8hwEMfxj/E+yqMRWOt2s3rN0Afxqij5VUZtMhASXs4Jysgkou466w+
- 1yxkk6yeEpe7kDOw6Gu9gOfGJENjVP+rIiPodkXW+CKXBEQ7vySF/46cz34O+kPox+94KRD+G
- LeGzsPrg2IcIGGEhbT56+K4lkf6bx8vdT2AHCvJJo2sy/3is98CzUd3eDWd5XHf48VlMIEVrk
- aIrglAfqnRyAAGIMgtocm5W9o73f4PAtlMsCZNH9zn6evRYf27gEvH0ummqOBf4PUicWgy5ts
- LqUlAhdNa/iZkMngRlSEcw7qeUehQQCYz2OMjhidTQU86G0gqch71MNiIRHzuWyS95LeLMJth
- pSLpEinQIUbXGkZlFmoiKQ4dH1T+owF6bw8W+3H8cCAL7E9NauqA2KFs7Jf14aJ0z02DCoQfv
- 05ByW/JLTchDWEgxSdunTUDUqi6cFRIXg1hG84hcVis91BJLjr8SgNGwa0WKspTeO2k8/6Nvl
- MqT1zCNNsmUs7cRyFczTfJgxBB6jPYmR2+XeNbnUK+WWuBNPOT7XFIwp05mbiteBDvMIqIEY+
- EqPKvZNatLFjkFLAUqnsctmeTBFiyt7yhYn+QSa8Ovi5ffu1E1MFyLuwqzB+hvUXjzXWVfN+i
- oDuh6TvlLqfjEqFEphMZF6aal3/BTKi7dAIES6DSe54pgA2ptc5PH9yIakcCzNc5FqkRFpkBD
- sufbZUkUAahoXTcIYtsg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:MIuOjKvF4AM=:qnu6K1Tsddh1wKUgtvfJtE
+ VzOtfTeGrP+kqWHKg4S3tx/XUF1fa+lnA+kRPQf3UN2H6y1ZRTNeYZ/GqWdNr8zylr0QnxJzT
+ fGH/UETD7ebApVsEFYcvU6q4nyIn2CTtb7IGA83XAs+YJ82ogMalmZlHOAVZfcd+VWjQXc0cw
+ jUovTerIwAWKZp6S3UwBm1GQ55fkZYelwzN2Yw2bSrKYMFR9YX4WvVVLytQx7tOErqcP4XFPC
+ gjOkzMXtnu8pVgaJdsQlVuAbk7ltoSYCt+++lbLFde6tWfEFDvQPVExvBCWCqCM6pMmGKZSZ6
+ F4X5STGOWVi9N36b51UKQUnztWV6R3q5ROXFZJUxHfB7nvx2zWrYeXjZrCVYyoTnRa9Pd14aG
+ kr5R+/pQLpXKpwXwV1G5Arsuy/qZrMkiXdvrmmCEoXwlRk2JCvPmW2YoceBkEIcupruX5eU1v
+ wtBC0721LyPIq9/YR+A0FC0lpOUFjgqvKg+ZXcJKKSUr50PerJSVtr6JoXeFxGYv5d3HOcPUI
+ qfBQ+izkY3yZhVkTBeGeI39r3lkrHEipJ9ljtnDEaKdPBofR9xj+4u5/gscebOrKnBY16o48h
+ yE6/k0AebWXRH9wo+t3V+xhnc0+bX631KpoXVuG0XS+nWlkmnuzgp9iPbJ87tcNKppo7wgYib
+ MSONQ6yIjFca83KA6OMZ9u2QV3qvXnbnFxaCjL7Xel5IE28vkmyAhqjP4HaynlZ0ZdvnjoDwC
+ 7qB4s/OquVWxzy0HPizrEsTNzQzf2YfpsEZtqJPsDRFhhxYrO+tG3JW1rPd0iDhW3BpWDJl+J
+ 9OjTwAIBj+8oJJ/N0sshDQDfo/JkdbrwiMkvASI9xbiyKFAXc2S+y29HOMjK0SK2wl30Qm1TP
+ t+2IXIwaYr1I85xk8lzA==
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
@@ -109,8 +109,8 @@ d48306468659/cache_available_percent
 root@WXS0106:/root/perf-tools# cat /sys/fs/bcache/d87713c6-2e76-4a09-8517-=
 d48306468659/internal/cutoff_writeback_sync
 70
-'Dirty buckets exceeds the cutoff threshold' caused the problem, is my con=
-fig wrong or other reasons?
+'Dirty buckets exceeds the cutoff threshold' caused the problem?=C2=A0 My =
+configs=C2=A0 are wrong or other reasons?
 
 >
 > Coly Li
