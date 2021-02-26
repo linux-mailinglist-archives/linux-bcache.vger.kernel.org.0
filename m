@@ -2,251 +2,225 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97266325353
-	for <lists+linux-bcache@lfdr.de>; Thu, 25 Feb 2021 17:16:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55B33325BDD
+	for <lists+linux-bcache@lfdr.de>; Fri, 26 Feb 2021 04:20:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233952AbhBYQP1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 25 Feb 2021 11:15:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60384 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233375AbhBYQNi (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 25 Feb 2021 11:13:38 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B64EDAFB5;
-        Thu, 25 Feb 2021 16:12:50 +0000 (UTC)
-To:     Martin Kennedy <hurricos@gmail.com>
-References: <CANA18Uzd6FK-vEOjakAPW5ZXPG=7OrzYSQvD8ycE5jyxDfAr6g@mail.gmail.com>
-From:   Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org
-Subject: Re: A note and a question on discarding, from a novice bcache user
-Message-ID: <e0969226-5352-6b57-8fe7-9e672e30174b@suse.de>
-Date:   Fri, 26 Feb 2021 00:12:46 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
- Gecko/20100101 Thunderbird/78.7.1
+        id S229460AbhBZDTm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 25 Feb 2021 22:19:42 -0500
+Received: from fzex.ruijie.com.cn ([120.35.11.201]:51172 "EHLO
+        FZEX3.ruijie.com.cn" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229586AbhBZDTi (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 25 Feb 2021 22:19:38 -0500
+Received: from FZEX6.ruijie.com.cn ([fe80::81ab:68a2:5882:ab67]) by
+ FZEX3.ruijie.com.cn ([fe80::9480:e49e:2190:b001%15]) with mapi id
+ 14.03.0123.003; Fri, 26 Feb 2021 11:17:00 +0800
+From:   <wubenqing@ruijie.com.cn>
+To:     <colyli@suse.de>
+CC:     <linux-bcache@vger.kernel.org>
+Subject: Re: bcacheX is missing after removing a backend and adding it again
+Thread-Topic: bcacheX is missing after removing a backend and adding it again
+Thread-Index: AdcL3QG1DlzruyiWRFOdV08NPS0ryg==
+Date:   Fri, 26 Feb 2021 03:16:59 +0000
+Message-ID: <82A10A71B70FF2449A8AD233969A45A101CCD9C3CD@FZEX6.ruijie.com.cn>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.20.102.126]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <CANA18Uzd6FK-vEOjakAPW5ZXPG=7OrzYSQvD8ycE5jyxDfAr6g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2/22/21 8:54 AM, Martin Kennedy wrote:
-> I use bcache on some Dell R510s, using an IT-mode HBA, 10 3TB SAS
-> drives and one 120GB, DRZAT-capable SSD as my caching device.
-> 
-> I noticed my `fio` benchmarks weren't what they once were, despite
-> starting with writeback caching, almost no dirty_data, and 10
-> writeback_percent. Running `fio -filename=/devel/testfio.file
-> -direct=1 -rw=randwrite -bs=4k -size=1G  -name=randwrite
-> -runtime=60`, I got:
-> 
-> 
-> randwrite: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B,
-> (T) 4096B-4096B, ioengine=psync, iodepth=1
-> fio-3.16
-> Starting 1 process
-> Jobs: 1 (f=1): [w(1)][100.0%][w=1100KiB/s][w=275 IOPS][eta 00m:00s]
-> randwrite: (groupid=0, jobs=1): err= 0: pid=961776: Sun Feb 21 23:50:25 2021
->   write: IOPS=710, BW=2841KiB/s (2909kB/s)(166MiB/60001msec); 0 zone resets
->     clat (usec): min=57, max=109650, avg=1403.63, stdev=5516.41
->      lat (usec): min=57, max=109651, avg=1404.13, stdev=5516.43
->     clat percentiles (usec):
->      |  1.00th=[    70],  5.00th=[   105], 10.00th=[   126], 20.00th=[   155],
->      | 30.00th=[   172], 40.00th=[   190], 50.00th=[   204], 60.00th=[   229],
->      | 70.00th=[   255], 80.00th=[   314], 90.00th=[  2933], 95.00th=[  8291],
->      | 99.00th=[ 14746], 99.50th=[ 18744], 99.90th=[ 89654], 99.95th=[ 96994],
->      | 99.99th=[101188]
->    bw (  KiB/s): min=  272, max=21672, per=100.00%, avg=2840.09,
-> stdev=5749.02, samples=120
->    iops        : min=   68, max= 5418, avg=709.97, stdev=1437.26, samples=120
->   lat (usec)   : 100=3.89%, 250=64.70%, 500=13.42%, 750=0.06%, 1000=0.14%
->   lat (msec)   : 2=4.17%, 4=4.37%, 10=7.02%, 20=1.80%, 50=0.10%
->   lat (msec)   : 100=0.31%, 250=0.02%
->   cpu          : usr=0.91%, sys=4.91%, ctx=45330, majf=0, minf=28
->   IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
->      submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
->      complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
->      issued rwts: total=0,42611,0,0 short=0,0,0,0 dropped=0,0,0,0
->      latency   : target=0, window=0, percentile=100.00%, depth=1
-> 
-> Run status group 0 (all jobs):
->   WRITE: bw=2841KiB/s (2909kB/s), 2841KiB/s-2841KiB/s
-> (2909kB/s-2909kB/s), io=166MiB (175MB), run=60001-60001msec
-> 
-> Disk stats (read/write):
->     dm-6: ios=0/42532, merge=0/0, ticks=0/58924, in_queue=58924,
-> util=51.03%, aggrios=0/42680, aggrmerge=0/0, aggrticks=0/60832,
-> aggrin_queue=60832, aggrutil=51.25%
->     bcache0: ios=0/42680, merge=0/0, ticks=0/60832, in_queue=60832,
-> util=51.25%, aggrios=25/21934, aggrmerge=0/4, aggrticks=744/27768,
-> aggrin_queue=21904, aggrutil=33.72%
->   sdh: ios=50/40244, merge=0/9, ticks=1488/55537, in_queue=43808, util=33.72%
->     md0: ios=0/3624, merge=0/0, ticks=0/0, in_queue=0, util=0.00%,
-> aggrios=0/801, aggrmerge=0/2, aggrticks=0/5289, aggrin_queue=3676,
-> aggrutil=9.98%
->   sdn: ios=0/810, merge=0/4, ticks=0/5367, in_queue=3820, util=9.63%
->   sdm: ios=0/804, merge=0/3, ticks=0/5332, in_queue=3672, util=9.75%
->   sdl: ios=0/771, merge=0/0, ticks=0/5041, in_queue=3484, util=9.18%
->   sdk: ios=0/771, merge=0/0, ticks=0/5097, in_queue=3532, util=9.20%
->   sdj: ios=0/796, merge=0/1, ticks=0/5464, in_queue=3792, util=9.60%
->   sdi: ios=0/810, merge=0/4, ticks=0/5184, in_queue=3616, util=9.68%
->   sdg: ios=0/826, merge=0/5, ticks=0/5396, in_queue=3716, util=9.98%
->   sdf: ios=0/804, merge=0/3, ticks=0/5259, in_queue=3632, util=9.68%
->   sde: ios=0/796, merge=0/1, ticks=0/5195, in_queue=3600, util=9.60%
->   sda: ios=0/826, merge=0/5, ticks=0/5555, in_queue=3896, util=9.95%
-> 
-> 
-> Discard was internally disabled. When this last came to a head, I'd
-> detached, unregistered, blkdiscarded and re-created the caching
-> device. I figured this time I'd record the difference:
-> 
-> 
-> randwrite: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B,
-> (T) 4096B-4096B, ioengine=psync, iodepth=1
-> fio-3.16
-> Starting 1 process
-> Jobs: 1 (f=1): [w(1)][100.0%][w=37.0MiB/s][w=9727 IOPS][eta 00m:00s]
-> randwrite: (groupid=0, jobs=1): err= 0: pid=964090: Mon Feb 22 00:18:58 2021
->   write: IOPS=12.0k, BW=46.0MiB/s (49.2MB/s)(1024MiB/21810msec); 0 zone resets
->     clat (usec): min=53, max=7696, avg=80.65, stdev=106.39
->      lat (usec): min=53, max=7696, avg=80.93, stdev=106.41
->     clat percentiles (usec):
->      |  1.00th=[   56],  5.00th=[   56], 10.00th=[   57], 20.00th=[   57],
->      | 30.00th=[   57], 40.00th=[   58], 50.00th=[   60], 60.00th=[   61],
->      | 70.00th=[   68], 80.00th=[   77], 90.00th=[  118], 95.00th=[  178],
->      | 99.00th=[  330], 99.50th=[  570], 99.90th=[ 1156], 99.95th=[ 1385],
->      | 99.99th=[ 5932]
->    bw (  KiB/s): min=21528, max=53232, per=100.00%, avg=48162.42,
-> stdev=5760.66, samples=43
->    iops        : min= 5382, max=13308, avg=12040.56, stdev=1440.15, samples=43
->   lat (usec)   : 100=87.07%, 250=10.97%, 500=1.31%, 750=0.33%, 1000=0.14%
->   lat (msec)   : 2=0.16%, 4=0.01%, 10=0.01%
->   cpu          : usr=5.64%, sys=28.81%, ctx=262153, majf=0, minf=28
->   IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
->      submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
->      complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
->      issued rwts: total=0,262144,0,0 short=0,0,0,0 dropped=0,0,0,0
->      latency   : target=0, window=0, percentile=100.00%, depth=1
-> 
-> Run status group 0 (all jobs):
->   WRITE: bw=46.0MiB/s (49.2MB/s), 46.0MiB/s-46.0MiB/s
-> (49.2MB/s-49.2MB/s), io=1024MiB (1074MB), run=21810-21810msec
-> 
-> Disk stats (read/write):
->     dm-6: ios=0/260278, merge=0/0, ticks=0/16632, in_queue=16632,
-> util=99.17%, aggrios=0/262165, aggrmerge=0/0, aggrticks=0/16316,
-> aggrin_queue=16316, aggrutil=99.10%
->     bcache0: ios=0/262165, merge=0/0, ticks=0/16316, in_queue=16316,
-> util=99.10%, aggrios=0/132040, aggrmerge=0/0, aggrticks=0/8358,
-> aggrin_queue=10, aggrutil=99.54%
->   sdh: ios=0/264068, merge=0/1, ticks=0/16716, in_queue=20, util=99.54%
->     md0: ios=0/12, merge=0/0, ticks=0/0, in_queue=0, util=0.00%,
-> aggrios=0/3, aggrmerge=0/0, aggrticks=0/49, aggrin_queue=44,
-> aggrutil=0.09%
->   sdn: ios=0/3, merge=0/0, ticks=0/24, in_queue=16, util=0.09%
->   sdm: ios=0/3, merge=0/0, ticks=0/37, in_queue=32, util=0.09%
->   sdl: ios=0/3, merge=0/0, ticks=0/28, in_queue=20, util=0.09%
->   sdk: ios=0/3, merge=0/0, ticks=0/37, in_queue=32, util=0.09%
->   sdj: ios=0/3, merge=0/0, ticks=0/41, in_queue=32, util=0.09%
->   sdi: ios=0/3, merge=0/0, ticks=0/33, in_queue=28, util=0.09%
->   sdg: ios=0/3, merge=0/0, ticks=0/39, in_queue=32, util=0.09%
->   sdf: ios=0/3, merge=0/0, ticks=0/206, in_queue=204, util=0.09%
->   sde: ios=0/3, merge=0/0, ticks=0/18, in_queue=16, util=0.07%
->   sda: ios=0/3, merge=0/0, ticks=0/36, in_queue=28, util=0.09%
-> 
-> 
-> I'm did one last, ten-times larger/longer `fio` with 1 in
-> /sys/fs/bcache/<CSET-UID>/cache0/discard to see how far performance
-> decreases with discard enabled:
-> 
-> 
-> randwrite: (g=0): rw=randwrite, bs=(R) 4096B-4096B, (W) 4096B-4096B,
-> (T) 4096B-4096B, ioengine=psync, iodepth=1
-> fio-3.16
-> Starting 1 process
-> randwrite: Laying out IO file (1 file / 10240MiB)
-> Jobs: 1 (f=1): [w(1)][100.0%][w=36.5MiB/s][w=9348 IOPS][eta 00m:00s]
-> randwrite: (groupid=0, jobs=1): err= 0: pid=965082: Mon Feb 22 00:42:15 2021
->   write: IOPS=4598, BW=17.0MiB/s (18.8MB/s)(10.0GiB/570024msec); 0 zone resets
->     clat (usec): min=62, max=3572.6k, avg=214.15, stdev=3139.18
->      lat (usec): min=62, max=3572.6k, avg=214.51, stdev=3139.18
->     clat percentiles (usec):
->      |  1.00th=[   73],  5.00th=[   74], 10.00th=[   75], 20.00th=[   77],
->      | 30.00th=[   79], 40.00th=[   82], 50.00th=[   88], 60.00th=[  109],
->      | 70.00th=[  133], 80.00th=[  178], 90.00th=[  253], 95.00th=[  322],
->      | 99.00th=[ 2868], 99.50th=[ 3294], 99.90th=[ 5800], 99.95th=[ 7177],
->      | 99.99th=[16581]
->    bw (  KiB/s): min=    8, max=40416, per=100.00%, avg=18686.70,
-> stdev=6454.00, samples=1122
->    iops        : min=    2, max=10104, avg=4671.65, stdev=1613.50, samples=1122
->   lat (usec)   : 100=56.23%, 250=33.37%, 500=6.13%, 750=0.25%, 1000=0.23%
->   lat (msec)   : 2=1.86%, 4=1.56%, 10=0.34%, 20=0.02%, 50=0.01%
->   lat (msec)   : 100=0.01%, 250=0.01%, 500=0.01%, 750=0.01%, 1000=0.01%
->   lat (msec)   : 2000=0.01%, >=2000=0.01%
->   cpu          : usr=2.98%, sys=24.09%, ctx=2627574, majf=0, minf=290
->   IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
->      submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
->      complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
->      issued rwts: total=0,2621440,0,0 short=0,0,0,0 dropped=0,0,0,0
->      latency   : target=0, window=0, percentile=100.00%, depth=1
-> 
-> Run status group 0 (all jobs):
->   WRITE: bw=17.0MiB/s (18.8MB/s), 17.0MiB/s-17.0MiB/s
-> (18.8MB/s-18.8MB/s), io=10.0GiB (10.7GB), run=570024-570024msec
-> 
-> Disk stats (read/write):
->     dm-6: ios=391/3106283, merge=0/0, ticks=736/4853852,
-> in_queue=4854588, util=95.23%, aggrios=391/3283448, aggrmerge=0/0,
-> aggrticks=736/6225524, aggrin_queue=6226260, aggrutil=95.26%
->     bcache0: ios=391/3283448, merge=0/0, ticks=736/6225524,
-> in_queue=6226260, util=95.26%, aggrios=757/1636344, aggrmerge=0/66269,
-> aggrticks=1091/448125, aggrin_queue=161104, aggrutil=96.70%
->   sdh: ios=1115/2834033, merge=0/132539, ticks=2182/896251,
-> in_queue=322208, util=96.70%
->     md0: ios=400/438656, merge=0/0, ticks=0/0, in_queue=0, util=0.00%,
-> aggrios=40/7874, aggrmerge=0/11639, aggrticks=72/58025,
-> aggrin_queue=42586, aggrutil=7.89%
->   sdn: ios=99/7785, merge=0/11272, ticks=150/53355, in_queue=37896, util=7.67%
->   sdm: ios=0/7980, merge=0/12045, ticks=0/64933, in_queue=49832, util=7.70%
->   sdl: ios=0/7837, merge=0/11695, ticks=0/57164, in_queue=41792, util=7.71%
->   sdk: ios=121/7828, merge=0/11704, ticks=175/58327, in_queue=42896, util=7.74%
->   sdj: ios=43/7859, merge=0/11688, ticks=130/60166, in_queue=44732, util=7.69%
->   sdi: ios=2/7790, merge=0/11267, ticks=30/55933, in_queue=40184, util=7.61%
->   sdg: ios=0/7913, merge=0/11496, ticks=0/54869, in_queue=39644, util=7.78%
->   sdf: ios=74/7975, merge=0/12050, ticks=103/59438, in_queue=44000, util=7.89%
->   sde: ios=0/7871, merge=0/11676, ticks=0/56695, in_queue=40908, util=7.68%
->   sda: ios=61/7906, merge=0/11503, ticks=133/59371, in_queue=43980, util=7.72%
-> 
-> 
-> So, a performance drop down to about 17MiB/s from the completely
-> fresh, discarded drive. I will have to wait and see if it drops any
-> further over time.
-> 
-> I'm aware of the main reason for not automatically enabling discard --
-> it's unqueued with earlier SATA revisions -- but are there any other
-> disadvantages to it? I can see why never discarding data would be
-> problematic for most consumer SSDs, but I'm not aware (and would like
-> to be) if there have been any reports of data getting eaten.
-> 
-> Thank you for bcache. Perhaps the silver lining here is that I could
-> wrangle with this issue without too much documentation or first
-> needing to poke the mailing list; I just wish some of these things
-> were more obvious.
-> 
-
-Bcache does gc when it has to, that means when the cache device is
-highly occupied, the garbage collected bucket will be allocated and used
-very soon. Therefore the discard hint to SSD controller might not help
-too much.
-
-In my testing I don't observe obvious performance advantage with discard
-enabled in heavy I/O load, for me the performance depends on how much
-internal space is reserved for the SSD.
-
-Thanks.
-
-Coly Li
-
+PiBPbiAyLzI1LzIxIDExOjEyIEFNLCB3dWJlbnFpbmdAcnVpamllLmNvbS5jbiB3cm90ZToNCj4g
+PiBIaSBndXlzLA0KPiA+IEkgYW0gdGVzdGluZyBhIHNjZW5hcmlvIHdoZXJlIG11bHRpcGxlIGJh
+Y2tlbmQgYXR0YWNoIG9uZSBjYWNoZS4gV2hlbiBJDQo+IHJlbW92ZWQgb25lIG9mIHRoZSBiYWNr
+ZW5kIGFuZCBhZGRlZCBpdCBiYWNrLCBJIGZvdW5kIHRoYXQgYmNhY2hlWCB3YXMNCj4gbWlzc2lu
+Zy4gSSBjb25maWd1cmVkIGNhY2hlX21vZGUgdG8gd3JpdGViYWNrLg0KPiA+DQo+ID4gQmVmb3Jl
+Og0KPiA+IC9kZXYvc2RkDQo+ID4gqbippGJjYWNoZTANCj4gPiAvZGV2L3NkYw0KPiA+IKm4qaRi
+Y2FjaGUxDQo+ID4NCj4gPiBBZnRlcjoNCj4gPiAvZGV2L3NkZw0KPiA+IC9kZXYvc2RjDQo+ID4g
+qbippGJjYWNoZTENCj4gPg0KPiA+DQo+ID4gVGhlIG5hbWUgb2YgdGhlIGJsb2NrIGRldmljZSAv
+ZGV2L3NkZCBpcyBjaGFuZ2VkIHRvIC9kZXYvc2RnLCBhbmQNCj4gYmNhY2hlMCBpcyBtaXNzaW5n
+IHdoZW4gZXhjdXRpbmcgbHNibGsuIEkgZm91bmQgdGhhdA0KPiAvc3lzL2Jrb2NrL2JhY2hlMC9i
+Y2FjaGUgbGluayB0byB0aGUgb2xkIGRldmljZSB3aGljaCBkb2VzIG5vdCBleGlzdC4NCj4gPiAj
+IGxsIC9zeXMvYmxvY2svYmNhY2hlMC9iY2FjaGUNCj4gPiBscnd4cnd4cnd4IDEgcm9vdCByb290
+IDAgRmViIDIzIDE3OjM2IC9zeXMvYmxvY2svYmNhY2hlMC9iY2FjaGUgLT4NCj4gPiAuLi8uLi8u
+Li9wY2kwMDAwOjgwLzAwMDA6ODA6MDEuMC8wMDAwOjgyOjAwLjAvaG9zdDEvcG9ydC0xOjMvZW5k
+X2RldmljDQo+ID4gZS0xOjMvdGFyZ2V0MTowOjMvMTowOjM6MC9ibG9jay9zZGQvYmNhY2hlDQo+
+ID4NCj4gPg0KPiA+IFRoZSBzdXBlciBibG9jayBvZiAvZGV2L3NkZyBzaG93cyB0aGF0IHRoZXJl
+IGlzIHN0aWxsIGRpcnR5IGRhdGEgc3RvcmVkIG9uDQo+IHRoZSBjYWNoZSBkZXZpY2UuDQo+ID4g
+IyBiY2FjaGUtc3VwZXItc2hvdyAvZGV2L3NkZw0KPiA+IHNiLm1hZ2ljb2sNCj4gPiBzYi5maXJz
+dF9zZWN0b3I4IFttYXRjaF0NCj4gPiBzYi5jc3VtIDgwQUU4Q0ZDQ0M3NDAwNzUgW21hdGNoXQ0K
+PiA+IHNiLnZlcnNpb24xIFtiYWNraW5nIGRldmljZV0NCj4gPg0KPiA+IGRldi5sYWJlbChlbXB0
+eSkNCj4gPiBkZXYudXVpZDIyY2I4ZTQ3LTY3ZDgtNGY1NC05N2I0LWE4Yzg2ZDk4NmFhYw0KPiA+
+IGRldi5zZWN0b3JzX3Blcl9ibG9jayAxDQo+ID4gZGV2LnNlY3RvcnNfcGVyX2J1Y2tldCAxMDI0
+DQo+ID4gZGV2LmRhdGEuZmlyc3Rfc2VjdG9yIDE2DQo+ID4gZGV2LmRhdGEuY2FjaGVfbW9kZSAx
+IFt3cml0ZWJhY2tdDQo+ID4gZGV2LmRhdGEuY2FjaGVfc3RhdGUgMiBbZGlydHldDQo+ID4NCj4g
+Pg0KPiA+IFdoZW4gSSBjaGVja2VkIHRoZSBrZXJuZWwgbG9nLCBJIGZvdW5kIHRoYXQ6DQo+ID4g
+Li4uDQo+ID4gWzgxNzAxLjQ0NzEzMF0gYmNhY2hlOiBiY2hfY291bnRfYmFja2luZ19pb19lcnJv
+cnMoKSBzZGQ6IElPIGVycm9yIG9uDQo+ID4gYmFja2luZyBkZXZpY2UsIHVucmVjb3ZlcmFibGUg
+WzgxNzAxLjQ4NzU0M10gYmNhY2hlOg0KPiA+IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygp
+IHNkZDogSU8gZXJyb3Igb24gYmFja2luZyBkZXZpY2UsDQo+ID4gdW5yZWNvdmVyYWJsZSBbODE3
+MDEuOTg1NTYyXSBiY2FjaGU6IGJjaF9jb3VudF9iYWNraW5nX2lvX2Vycm9ycygpDQo+ID4gc2Rk
+OiBJTyBlcnJvciBvbiBiYWNraW5nIGRldmljZSwgdW5yZWNvdmVyYWJsZSBbODE3MDIuNTkwNDM1
+XSBiY2FjaGU6DQo+ID4gYmFja2luZ19yZXF1ZXN0X2VuZGlvKCkgQ2FuJ3QgZmx1c2ggc2RkOiBy
+ZXR1cm5lZCBiaV9zdGF0dXMgMTANCj4gPg0KPiA+IC4uLg0KPiA+IFs4MTg0OS44OTA2MDRdIGJj
+YWNoZTogcmVnaXN0ZXJfYmRldigpIHJlZ2lzdGVyZWQgYmFja2luZyBkZXZpY2Ugc2RnDQo+ID4g
+WzgxODQ5Ljg5MDYwOF0gYmNhY2hlOiBiY2hfY2FjaGVkX2Rldl9hdHRhY2goKSBUcmllZCB0byBh
+dHRhY2ggc2RnIGJ1dA0KPiA+IGR1cGxpY2F0ZSBVVUlEIGFscmVhZHkgYXR0YWNoZWQNCj4gPg0K
+PiA+IC4uLg0KPiA+DQo+ID4gIklPIGVycm9yIG9uIGJhY2tpbmcgZGV2aWNlLCB1bnJlY292ZXJh
+YmxlIiBhcHBlYXJlZCA2MyB0aW1lcyBpbiB0b3RhbC4gSXQNCj4gbWF5IGJlIHRoYXQgdGhlIGlv
+X2Rpc2FibGUgb2YgdGhlIGJhY2tlbmQgZGV2aWNlIGlzIHNldCB0byB0cnVlIGR1ZSB0bw0KPiBp
+b19lcnJvcl9saW1pdCBpcyA2NCwgYnV0IEkgZGlkIG5vdCBmaW5kIHRoZSBsb2cgInRvbyBtYW55
+IElPIGVycm9ycyBvbiBiYWNraW5nDQo+IGRldmljZSIgd2hpY2ggYmNoX2NhY2hlZF9kZXZfZXJy
+b3Igd2lsbCBwcmludC4NCj4gPg0KPiA+IGJjaF93cml0ZWJhY2tfdGhyZWFkIGlzIHZlcnkgaGln
+aCBjcHUgdXNhZ2UgYW5kIHRoZSBTU0QoY2FjaGUpIHNob3dzDQo+IHZlcnkgaGlnaCByZWFkIHRy
+YWZmaWMgYnV0IG5vIHdyaXRlIHRyYWZmaWMuDQo+ID4NCj4gPiBEZXZpY2U6ICAgICAgICAgcnJx
+bS9zICAgd3JxbS9zICAgICByL3MgICAgIHcvcyAgICByTUIvcw0KPiB3TUIvcyBhdmdycS1zeiBh
+dmdxdS1zeiAgIGF3YWl0IHJfYXdhaXQgd19hd2FpdCAgc3ZjdG0gICV1dGlsDQo+ID4gbnZtZTBu
+MSAgICAgICAgICAgMC4wMCAgICAgMC4wMCAzMzgzNi4wMCAgICAwLjAwICAxNjE5LjA3DQo+IDAu
+MDAgICAgOTguMDAgICAgNzYuNTUgICAgMi42OCAgICAyLjY4ICAgIDAuMDAgICAwLjAzIDEwMC4w
+MA0KPiA+DQo+ID4NCj4gPiBUaGUgaW1wb3J0YW50IHByb2JsZW0gaXMgdGhhdCB0aGVyZSBpcyBu
+byB3YXkgdG8gcmVjb3ZlciBiY2FjaGUwLCBldmVuIGlmIEkNCj4gdHJ5IHRvIHJlLWV4ZWN1dGUg
+ImVjaG8gL2Rldi9zZGcgPiAvc3lzL2ZzL2JjYWNoZS9yZWdpc3RlciIuIFRoZSBrZXJuZWwgbG9n
+DQo+IHNob3dzIHRoYXQ6DQo+ID4gWzkxMDkxLjYyMTc3M10gYmNhY2hlOiByZWdpc3Rlcl9iY2Fj
+aGUoKSBlcnJvciA6IGRldmljZSBhbHJlYWR5DQo+ID4gcmVnaXN0ZXJlZA0KPiA+DQo+ID4gSSBz
+dXNwZWN0IHRoYXQgL2Rldi9zZGQgc3RpbGwgcmVtYWlucyBpbiBjLT5jYWNoZWRfZGV2cywgYW5k
+IGl0IGlzIHNldCB0bw0KPiBpb19kaXNhYmxlLCBhbmQgL2Rldi9zZGQgZG9lcyBub3QgZXhpc3Qg
+YW55bW9yZSwgc28gd3JpdGViYWNrIGNhbm5vdCBmbHVzaA0KPiBkaXJ0eSBkYXRhLiBTaW5jZSB0
+aGUgbmFtZSBvZiB0aGUgYmxvY2sgZGV2aWNlIGhhcyBiZWNvbWUgL2Rldi9zZGcsDQo+IC9kZXYv
+c2RnIGNhbm5vdCBiZSByZWF0dGFjaGVkIHN1Y2Nlc3NmdWxseS4NCj4gPiBEb2VzIGJjYWNoZSBz
+dXBwb3J0IGJhY2tlbmQgZm9yIGhvdC1zd2FwcGluZyBzY2VuYXJpb3M/IElmIG5vdCwgd2hhdA0K
+PiBjb21tYW5kIHNob3VsZCBJIHVzZSB0byBtYW51YWxseSByZXN0b3JlIGJjYWNoZTAuDQo+IA0K
+PiBXaGljaCBrZXJuZWwgdmVyc2lvbiBkbyB5b3UgdXNlID8NCj4gDQo+IEEgcmVib290IG1pZ2h0
+IHNvbHZlIHRoZSBwcm9ibGVtLiBCdXQgSSBmZWVsIGl0IGNvdWxkIGJlIGltcHJvdmVkIHRvIGF2
+b2lkDQo+IHRoZSBleHRyYSByZWJvb3QuDQo+IA0KPiBMZXQgbWUgYWRkIGl0IGludG8gbXkgdG9k
+byBsaXN0LCBpZiBubyBvbmUgZWxzZSBwb3N0cyBwYXRjaCBiZWZvcmUgSSB3b3JrIG9uDQo+IGl0
+Li4uDQo+IA0KPiBUaGFua3MgZm9yIHRoZSBzdWdnZXN0aW9uLg0KPiANCj4gQ29seSBMaQ0KDQpU
+aGFuayB5b3UsIHlvdXIgc3VnZ2VzdGlvbiB3b3JrZWQuIFdoZW4gSSByZXN0YXJ0ZWQgdGhlIG1h
+Y2hpbmUsIHRoZSBwcm9ibGVtIGRpc2FwcGVhcmVkLiBUaGUga2VybmVsIHZlcnNpb24gaXMgIjUu
+NC45MC0xLmVsNy5lbHJlcG8ueDg2XzY0Ii4gDQpXaGF0IGlzIHRoZSByZWFzb24gd2h5IGJjaF93
+cml0ZWJhY2tfdGhyZWFkIG9jY3VwaWVzIGEgaGlnaCBDUFUsIGFuZCBhbHdheXMgcmVhZHMgZGF0
+YSBmcm9tIFNTRHMgYXQgYSB2ZXJ5IGhpZ2ggcmF0ZS4gVGhpcyBwaGVub21lbm9uIGNvbnRpbnVl
+ZCBmb3Igc2V2ZXJhbCBob3VycyB1bnRpbCBJIHJlc3RhcnRlZCB0aGUgbWFjaGluZS4gUGxlYXNl
+IGhlbHAgdG8gY29uZmlybSB3aGV0aGVyIGl0IGlzIGEgYnVnLg0KDQpBbm90aGVyIHF1ZXN0aW9u
+IGlzIGFib3V0IHRoZSBjYWNoZSBkZXZpY2UuIEkgYWxzbyB1bnBsdWdnZWQgYW5kIHBsdWdnZWQg
+dGhlIGNhY2hlIGRldmljZSBhbmQgZm91bmQgYSBwcm9ibGVtLiBBZnRlciB0aGUgY2FjaGUgZGlz
+ayB3YXMgYmFjayBvbmxpbmUsIHRoZSBiYWNrZW5kIGRpZCBub3QgYXV0b21hdGljYWxseSBhdHRh
+Y2ggc3VjY2Vzc2Z1bGx5LiBBbmQgbWFudWFsbHkgdXNpbmcgdGhlIGNvbW1hbmQgY2FuIG9ubHkg
+bWFrZSBvbmUgb2YgdGhlIGJhY2tlbmQgYXR0YWNoIHN1Y2NlZWQsIGFuZCB0aGUgb3RoZXIgb25l
+IGZhaWxzLg0KDQpCZWZvcmU6DQpOQU1FICAgICAgICAgICAgICBNQUo6TUlOIFJNICAgU0laRSBS
+TyBUWVBFIE1PVU5UUE9JTlQNCnNkZCAgICAgICAgICAgICAgICAgODo0OCAgIDAgICA5LjFUICAw
+IGRpc2sgDQqpuKmkYmNhY2hlMCAgICAgICAgIDI1MjowICAgIDAgICA5LjFUICAwIGRpc2sgDQpz
+ZGIgICAgICAgICAgICAgICAgIDg6MTYgICAwIDkzMS41RyAgMCBkaXNrIA0KqbippGJjYWNoZTEg
+ICAgICAgICAyNTI6MTI4ICAwIDkzMS41RyAgMCBkaXNrIA0Kc2RoICAgICAgICAgICAgICAgICA4
+OjExMiAgMCA0NDcuMUcgIDAgZGlzayANCqnAqaRzZGgxICAgICAgICAgICAgICA4OjExMyAgMCAg
+IDIwMEcgIDAgcGFydCANCqmmIKnAqaRiY2FjaGUwICAgICAgIDI1MjowICAgIDAgICA5LjFUICAw
+IGRpc2sgDQqppiCpuKmkYmNhY2hlMSAgICAgICAyNTI6MTI4ICAwIDkzMS41RyAgMCBkaXNrIA0K
+qbippHNkaDIgICAgICAgICAgICAgIDg6MTE0ICAwIDI0Ny4xRyAgMCBwYXJ0DQovZGV2L3NkaCBp
+cyBjYWNoZSBkZXZpY2UuDQoNCkFmdGVyOg0KTkFNRSAgICAgICAgICAgICAgTUFKOk1JTiBSTSAg
+IFNJWkUgUk8gVFlQRSBNT1VOVFBPSU5UDQpzZGQgICAgICAgICAgICAgICAgIDg6NDggICAwICAg
+OS4xVCAgMCBkaXNrIA0KqbippGJjYWNoZTAgICAgICAgICAyNTI6MCAgICAwICAgOS4xVCAgMCBk
+aXNrIA0Kc2RiICAgICAgICAgICAgICAgICA4OjE2ICAgMCA5MzEuNUcgIDAgZGlzayANCqm4qaRi
+Y2FjaGUxICAgICAgICAgMjUyOjEyOCAgMCA5MzEuNUcgIDAgZGlzayANCnNkZyAgICAgICAgICAg
+ICAgICAgODo5NiAgIDAgNDQ3LjFHICAwIGRpc2sgDQqpwKmkc2RnMSAgICAgICAgICAgICAgODo5
+NyAgIDAgICAyMDBHICAwIHBhcnQgDQqpuKmkc2RnMiAgICAgICAgICAgICAgODo5OCAgIDAgMjQ3
+LjFHICAwIHBhcnQNCi9kZXYvc2RnIGlzIGNhY2hlIGRldmljZS4NCg0KVGhlIGtlcm5lbCBsb2cg
+aXM6DQouLi4NCls4MjU2Ni40MzYxNTddIGJsa191cGRhdGVfcmVxdWVzdDogSS9PIGVycm9yLCBk
+ZXYgc2RoLCBzZWN0b3IgMTc4Njg0MDAgb3AgMHgwOihSRUFEKSBmbGFncyAweDAgcGh5c19zZWcg
+MSBwcmlvIGNsYXNzIDANCls4MjU2Ni40MzYxNjJdIGJjYWNoZTogYmNoX2NvdW50X2lvX2Vycm9y
+cygpIHNkaDE6IElPIGVycm9yIG9uIHJlYWRpbmcgZnJvbSBjYWNoZSwgcmVjb3ZlcmluZy4NCls4
+MjU2Ni40MzYxNzFdIGJsa191cGRhdGVfcmVxdWVzdDogSS9PIGVycm9yLCBkZXYgc2RoLCBzZWN0
+b3IgMjgxOTI0OTYgb3AgMHgxOihXUklURSkgZmxhZ3MgMHgwIHBoeXNfc2VnIDQgcHJpbyBjbGFz
+cyAwDQpbODI1NjYuNDM2MTczXSBiY2FjaGU6IGJjaF9jb3VudF9pb19lcnJvcnMoKSBzZGgxOiBJ
+TyBlcnJvciBvbiB3cml0aW5nIGRhdGEgdG8gY2FjaGUuDQpbODI1NjYuNDM2MTc1XSBiY2FjaGU6
+IGJjaF9jb3VudF9pb19lcnJvcnMoKSBzZGgxOiBJTyBlcnJvciBvbiB3cml0aW5nIGRhdGEgdG8g
+Y2FjaGUuDQpbODI1NjYuNDM2MTgwXSBibGtfdXBkYXRlX3JlcXVlc3Q6IEkvTyBlcnJvciwgZGV2
+IHNkaCwgc2VjdG9yIDI5MzAzOTM2IG9wIDB4MTooV1JJVEUpIGZsYWdzIDB4MCBwaHlzX3NlZyAz
+IHByaW8gY2xhc3MgMA0KWzgyNTY2LjQzNjE4Ml0gYmNhY2hlOiBiY2hfY291bnRfaW9fZXJyb3Jz
+KCkgc2RoMTogSU8gZXJyb3Igb24gd3JpdGluZyBkYXRhIHRvIGNhY2hlLg0KWzgyNTY2LjQzNjE4
+Nl0gYmxrX3VwZGF0ZV9yZXF1ZXN0OiBJL08gZXJyb3IsIGRldiBzZGgsIHNlY3RvciAzMDQ2MjMy
+MCBvcCAweDE6KFdSSVRFKSBmbGFncyAweDAgcGh5c19zZWcgMSBwcmlvIGNsYXNzIDANCls4MjU2
+Ni40MzYxODhdIGJjYWNoZTogYmNoX2NvdW50X2lvX2Vycm9ycygpIHNkaDE6IElPIGVycm9yIG9u
+IHdyaXRpbmcgZGF0YSB0byBjYWNoZS4NCls4MjU2Ni40MzY2OTFdIGJjYWNoZTogYmNoX2NvdW50
+X2lvX2Vycm9ycygpIHNkaDE6IElPIGVycm9yIG9uIHdyaXRpbmcgZGF0YSB0byBjYWNoZS4NCls4
+MjU2Ni40Mzg2NTRdIGJsa191cGRhdGVfcmVxdWVzdDogSS9PIGVycm9yLCBkZXYgc2RoLCBzZWN0
+b3IgMjgxOTI1Mjggb3AgMHgxOihXUklURSkgZmxhZ3MgMHgwIHBoeXNfc2VnIDE2IHByaW8gY2xh
+c3MgMA0KWzgyNTY2LjQ0MDM1Nl0gYmNhY2hlOiBiY2hfY2FjaGVfc2V0X2Vycm9yKCkgYmNhY2hl
+OiBlcnJvciBvbiBmNGU4YjRkNi1jMzU0LTQ1YmUtOTUxMC03MjVmZTY5YzFiMTY6IA0KWzgyNTY2
+LjQ0MzIyN10gYmNhY2hlOiBiY2hfY2FjaGVfc2V0X2Vycm9yKCkgQ0FDSEVfU0VUX0lPX0RJU0FC
+TEUgYWxyZWFkeSBzZXQNCls4MjU2Ni40NDUxNTZdIHNkaDE6IHRvbyBtYW55IElPIGVycm9ycyB3
+cml0aW5nIGRhdGEgdG8gY2FjaGUNCls4MjU2Ni40NDUxNThdIGJjYWNoZTogYmNoX2NhY2hlX3Nl
+dF9lcnJvcigpICwgZGlzYWJsaW5nIGNhY2hpbmcNCg0KWzgyNTY2LjQ0NTE4M10gYmNhY2hlOiBj
+b25kaXRpb25hbF9zdG9wX2JjYWNoZV9kZXZpY2UoKSBzdG9wX3doZW5fY2FjaGVfc2V0X2ZhaWxl
+ZCBvZiBiY2FjaGUwIGlzICJhdXRvIiBhbmQgY2FjaGUgaXMgZGlydHksIHN0b3AgaXQgdG8gYXZv
+aWQgcG90ZW50aWFsIGRhdGEgY29ycnVwdGlvbi4NCls4MjU2Ni40NDg5ODNdIGJjYWNoZTogYmNo
+X2NhY2hlX3NldF9lcnJvcigpIGJjYWNoZTogZXJyb3Igb24gZjRlOGI0ZDYtYzM1NC00NWJlLTk1
+MTAtNzI1ZmU2OWMxYjE2OiANCls4MjU2Ni40NTA4NzVdIGJjYWNoZTogY29uZGl0aW9uYWxfc3Rv
+cF9iY2FjaGVfZGV2aWNlKCkgc3RvcF93aGVuX2NhY2hlX3NldF9mYWlsZWQgb2YgYmNhY2hlMSBp
+cyAiYXV0byIgYW5kIGNhY2hlIGlzIGNsZWFuLCBrZWVwIGl0IGFsaXZlLg0KWzgyNTY2LjQ1MjY1
+M10gc2RoMTogdG9vIG1hbnkgSU8gZXJyb3JzIHdyaXRpbmcgZGF0YSB0byBjYWNoZQ0KWzgyNTY2
+LjQ1MjY1NF0gYmNhY2hlOiBiY2hfY2FjaGVfc2V0X2Vycm9yKCkgLCBkaXNhYmxpbmcgY2FjaGlu
+Zw0KDQpbODI1NjYuNDU0NDUzXSBiY2FjaGU6IGNhY2hlZF9kZXZfZGV0YWNoX2ZpbmlzaCgpIENh
+Y2hpbmcgZGlzYWJsZWQgZm9yIHNkYg0KWzgyNTY2LjQ1OTAwNl0gYmNhY2hlOiBjYWNoZWRfZGV2
+X2RldGFjaF9maW5pc2goKSBDYWNoaW5nIGRpc2FibGVkIGZvciBzZGQNCls4MjU2Ni40OTkwMjVd
+IGJjYWNoZTogY2FjaGVfc2V0X2ZyZWUoKSBDYWNoZSBzZXQgZjRlOGI0ZDYtYzM1NC00NWJlLTk1
+MTAtNzI1ZmU2OWMxYjE2IHVucmVnaXN0ZXJlZA0KLi4uDQpbODI4NjYuMDk5MjE4XSBzY3NpIDE6
+MDoyOjA6IERpcmVjdC1BY2Nlc3MgICAgIEFUQSAgICAgIElOVEVMIFNTRFNDMktCNDggMDExMCBQ
+UTogMCBBTlNJOiA2DQpbODI4NjYuMDk5MjI5XSBzY3NpIDE6MDoyOjA6IFNBVEE6IGhhbmRsZSgw
+eDAwMGIpLCBzYXNfYWRkcigweDQ0MzMyMjExMDMwMDAwMDApLCBwaHkoMyksIGRldmljZV9uYW1l
+KDB4NTVjZDJlNDE1MjEyOGRhNCkNCls4Mjg2Ni4wOTkyMzJdIHNjc2kgMTowOjI6MDogZW5jbG9z
+dXJlIGxvZ2ljYWwgaWQgKDB4NTZjOTJiZjAwMDJiOTEwNSksIHNsb3QoMSkgDQpbODI4NjYuMDk5
+MjM0XSBzY3NpIDE6MDoyOjA6IGVuY2xvc3VyZSBsZXZlbCgweDAwMDApLCBjb25uZWN0b3IgbmFt
+ZSggICAgICkNCls4Mjg2Ni4wOTkyOThdIHNjc2kgMTowOjI6MDogYXRhcGkobiksIG5jcSh5KSwg
+YXN5bl9ub3RpZnkobiksIHNtYXJ0KHkpLCBmdWEoeSksIHN3X3ByZXNlcnZlKHkpDQpbODI4NjYu
+MTAwMDcyXSBzZCAxOjA6MjowOiBBdHRhY2hlZCBzY3NpIGdlbmVyaWMgc2czIHR5cGUgMA0KWzgy
+ODY2LjEwMTEyMV0gc2QgMTowOjI6MDogW3NkZ10gOTM3NzAzMDg4IDUxMi1ieXRlIGxvZ2ljYWwg
+YmxvY2tzOiAoNDgwIEdCLzQ0NyBHaUIpDQpbODI4NjYuMTAxMTI1XSBzZCAxOjA6MjowOiBbc2Rn
+XSA0MDk2LWJ5dGUgcGh5c2ljYWwgYmxvY2tzDQpbODI4NjYuMTAxMzY2XSBzZCAxOjA6MjowOiBb
+c2RnXSBXcml0ZSBQcm90ZWN0IGlzIG9mZg0KWzgyODY2LjEwMTM2OV0gc2QgMTowOjI6MDogW3Nk
+Z10gTW9kZSBTZW5zZTogOWIgMDAgMTAgMDgNCls4Mjg2Ni4xMDE2NDZdIHNkIDE6MDoyOjA6IFtz
+ZGddIFdyaXRlIGNhY2hlOiBlbmFibGVkLCByZWFkIGNhY2hlOiBlbmFibGVkLCBzdXBwb3J0cyBE
+UE8gYW5kIEZVQQ0KWzgyODY2LjExODIzNF0gIHNkZzogc2RnMSBzZGcyDQpbODI4NjYuMTIxMTAx
+XSBzZCAxOjA6MjowOiBbc2RnXSBBdHRhY2hlZCBTQ1NJIGRpc2sNCls4Mjg2Ni40MzIzODNdIGJj
+YWNoZTogYmNoX2pvdXJuYWxfcmVwbGF5KCkgam91cm5hbCByZXBsYXkgZG9uZSwgNzU0MDgga2V5
+cyBpbiAzNzYgZW50cmllcywgc2VxIDQ0ODMNCls4Mjg2Ni40MzI2NTVdIGJjYWNoZTogcmVnaXN0
+ZXJfY2FjaGUoKSByZWdpc3RlcmVkIGNhY2hlIGRldmljZSBzZGcxDQouLi4NCg0KIyBiY2FjaGUt
+c3VwZXItc2hvdyAvZGV2L3NkZA0Kc2IubWFnaWMJCW9rDQpzYi5maXJzdF9zZWN0b3IJCTggW21h
+dGNoXQ0Kc2IuY3N1bQkJCTU5QzZCNDAxNDk0RUFCMkYgW21hdGNoXQ0Kc2IudmVyc2lvbgkJMSBb
+YmFja2luZyBkZXZpY2VdDQoNCmRldi5sYWJlbAkJKGVtcHR5KQ0KZGV2LnV1aWQJCTgzMDdkYzEx
+LTRkZmYtNDI4Ni1hNGM1LTc2YTc5ZjUxOGIyNw0KZGV2LnNlY3RvcnNfcGVyX2Jsb2NrCTENCmRl
+di5zZWN0b3JzX3Blcl9idWNrZXQJMTAyNA0KZGV2LmRhdGEuZmlyc3Rfc2VjdG9yCTE2DQpkZXYu
+ZGF0YS5jYWNoZV9tb2RlCTEgW3dyaXRlYmFja10NCmRldi5kYXRhLmNhY2hlX3N0YXRlCTAgW2Rl
+dGFjaGVkXQ0KDQpjc2V0LnV1aWQJCTAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAw
+MA0KIyBiY2FjaGUtc3VwZXItc2hvdyAvZGV2L3NkYg0Kc2IubWFnaWMJCW9rDQpzYi5maXJzdF9z
+ZWN0b3IJCTggW21hdGNoXQ0Kc2IuY3N1bQkJCTRCREQ1RDU0NkVBMzVEOUUgW21hdGNoXQ0Kc2Iu
+dmVyc2lvbgkJMSBbYmFja2luZyBkZXZpY2VdDQoNCmRldi5sYWJlbAkJKGVtcHR5KQ0KZGV2LnV1
+aWQJCTA5OTZiODZlLWE0NjctNGRkYS05ZmEzLThmMmYzZGE4NTY3YQ0KZGV2LnNlY3RvcnNfcGVy
+X2Jsb2NrCTENCmRldi5zZWN0b3JzX3Blcl9idWNrZXQJMTAyNA0KZGV2LmRhdGEuZmlyc3Rfc2Vj
+dG9yCTE2DQpkZXYuZGF0YS5jYWNoZV9tb2RlCTEgW3dyaXRlYmFja10NCmRldi5kYXRhLmNhY2hl
+X3N0YXRlCTAgW2RldGFjaGVkXQ0KDQpjc2V0LnV1aWQJCTAwMDAwMDAwLTAwMDAtMDAwMC0wMDAw
+LTAwMDAwMDAwMDAwMA0KDQojIGJjYWNoZS1zdXBlci1zaG93IC9kZXYvc2RnMQ0Kc2IubWFnaWMJ
+CW9rDQpzYi5maXJzdF9zZWN0b3IJCTggW21hdGNoXQ0Kc2IuY3N1bQkJCTlENjdGQzgyRTlGODk1
+MkEgW21hdGNoXQ0Kc2IudmVyc2lvbgkJMyBbY2FjaGUgZGV2aWNlXQ0KDQpkZXYubGFiZWwJCShl
+bXB0eSkNCmRldi51dWlkCQkwMjFjMjA2NC1jYTU1LTQyMjgtOTdlMS1lOTVhZjRkZDkxMTMNCmRl
+di5zZWN0b3JzX3Blcl9ibG9jawkxDQpkZXYuc2VjdG9yc19wZXJfYnVja2V0CTEwMjQNCmRldi5j
+YWNoZS5maXJzdF9zZWN0b3IJMTAyNA0KZGV2LmNhY2hlLmNhY2hlX3NlY3RvcnMJNDE5NDI5Mzc2
+DQpkZXYuY2FjaGUudG90YWxfc2VjdG9ycwk0MTk0MzA0MDANCmRldi5jYWNoZS5vcmRlcmVkCXll
+cw0KZGV2LmNhY2hlLmRpc2NhcmQJbm8NCmRldi5jYWNoZS5wb3MJCTANCmRldi5jYWNoZS5yZXBs
+YWNlbWVudAkwIFtscnVdDQoNCmNzZXQudXVpZAkJZjRlOGI0ZDYtYzM1NC00NWJlLTk1MTAtNzI1
+ZmU2OWMxYjE2DQoNCmJjYWNoZTEgZmFpbGVkLiBJIGZpbmQgdGhhdCAvc3lzL2Jsb2NrL3NkZC9i
+Y2FjaGUgZGlzYXBwZWFyZWQsIGFuZCBJIGRvIG5vdCBrbm93IHdoeS4NCiMgZWNobyBmNGU4YjRk
+Ni1jMzU0LTQ1YmUtOTUxMC03MjVmZTY5YzFiMTYgPiAvc3lzL2Jsb2NrL2JjYWNoZTAvYmNhY2hl
+L2F0dGFjaA0KLWJhc2g6IC9zeXMvYmxvY2svYmNhY2hlMC9iY2FjaGUvYXR0YWNoOiBObyBzdWNo
+IGZpbGUgb3IgZGlyZWN0b3J5DQoNCkkgdHJpZWQgdG8gbWFudWFsbHkgcmVnaXN0ZXIgdGhlIGJh
+Y2tlbmQgYW5kIGl0IGZhaWxlZC4gSG93IGNhbiBJIHJlc3RvcmUgdGhlIGJhY2tlbmQncyBiY2Fj
+aGUgZGlyZWN0b3J5LCBpZiBJIGRvbid0IHJlc3RhcnQgdGhlIG1hY2hpbmUuDQojIGVjaG8gL2Rl
+di9zZGQgPiAvc3lzL2ZzL2JjYWNoZS9yZWdpc3Rlcg0KLWJhc2g6IGVjaG86IHdyaXRlIGVycm9y
+OiBJbnZhbGlkIGFyZ3VtZW50DQpbMTMyNzY3LjE3NDYzOF0gYmNhY2hlOiByZWdpc3Rlcl9iY2Fj
+aGUoKSBlcnJvciA6IGRldmljZSBhbHJlYWR5IHJlZ2lzdGVyZWQNCg0KYmNhY2hlMCBTdWNjZWVk
+Lg0KIyBlY2hvIGY0ZThiNGQ2LWMzNTQtNDViZS05NTEwLTcyNWZlNjljMWIxNiA+IC9zeXMvYmxv
+Y2svYmNhY2hlMS9iY2FjaGUvYXR0YWNoDQo=
