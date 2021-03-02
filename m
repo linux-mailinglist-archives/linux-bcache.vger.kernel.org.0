@@ -2,26 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 02B6632AEF8
-	for <lists+linux-bcache@lfdr.de>; Wed,  3 Mar 2021 04:13:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71E8832AF57
+	for <lists+linux-bcache@lfdr.de>; Wed,  3 Mar 2021 04:25:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232214AbhCCALy (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 2 Mar 2021 19:11:54 -0500
-Received: from mout.gmx.net ([212.227.15.19]:45213 "EHLO mout.gmx.net"
+        id S234131AbhCCARw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 2 Mar 2021 19:17:52 -0500
+Received: from mout.gmx.net ([212.227.17.21]:39555 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240706AbhCBCFx (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 1 Mar 2021 21:05:53 -0500
+        id S1577086AbhCBFma (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 2 Mar 2021 00:42:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1614650635;
+        s=badeba3b8450; t=1614663647;
         bh=vuF4asm5oftnr0ailpx2QxWzLruw3F+JLEa0u6Q/iz0=;
         h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=J3vMVIkQhE2CS6WsVY2LesmwrUrxzKoNhn8dzZ4QG+mS5iIG8zDVnuHmZPfcCJQoR
-         2invWuX8AcP/UjqswIVL/oAsvEA0/ggmTGRm8HcP34r6EMh+XSyQAXM9yZUFyjhvPr
-         50E3fxLkjnVu+Z14J2H3sDlerd8QVYiMueaQDctw=
+        b=bSC+pfyU2JXcnedNBCzpoIPZqWorJDIAAIH1FjECMK1k8kwuyPnbxEtYBsNe/liKo
+         oDBfGCfOEOA3p5iydEdCUP/ZsQFKGkGSqzHwYvG+ALyfryTF7g/VRmedwMNaziF/3z
+         cNvCQX+fTa3AlFSOiJF2bKF67dm1GShikoMmfcKY=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [10.10.213.91] ([103.52.188.137]) by mail.gmx.net (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1Mel3n-1loaa73Hcb-00anph; Tue, 02
- Mar 2021 03:03:55 +0100
+Received: from [10.10.213.91] ([103.52.188.137]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1Mwwdf-1m1Ehk2IJ9-00yTu4; Tue, 02
+ Mar 2021 06:30:28 +0100
 Subject: Re: Large latency with bcache for Ceph OSD
 To:     Coly Li <colyli@suse.de>
 Cc:     linux-block@vger.kernel.org, axboe@kernel.dk,
@@ -35,8 +35,8 @@ References: <3f3e20a3-c165-1de1-7fdd-f0bd4da598fe@gmx.com>
  <b808dde3-cb58-907b-4df0-e0eb2938b51e@gmx.com>
  <04770825-b1d2-8ec0-2345-77d49d99631a@suse.de>
 From:   "Norman.Kern" <norman.kern@gmx.com>
-Message-ID: <8eb6739c-090d-f925-333e-df34a6d05101@gmx.com>
-Date:   Tue, 2 Mar 2021 10:03:50 +0800
+Message-ID: <e67ea64d-7e36-761d-0e28-cc0d1012c3aa@gmx.com>
+Date:   Tue, 2 Mar 2021 13:30:21 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.5.0
 MIME-Version: 1.0
@@ -44,25 +44,25 @@ In-Reply-To: <04770825-b1d2-8ec0-2345-77d49d99631a@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-X-Provags-ID: V03:K1:zcUrsm3jMU5IwCt0k0hA8Cjb5TdcuCwoIFrRQMq33on95yaWdf1
- FKjkrI5Z8xufqT1DiDc2eUtRB9HpekTxQu+vjV46gw31LL7UrnqSoS5xJB/k3MMOZ8zJCmP
- JsgiGCaURW6jvyMWgRT/zL4hlGCW/ET6K59LpWPY0QE3C1tHtGeg6CCll61fjZKVKHGtBBn
- A9BV+t47sie7WBTA9z3UA==
+X-Provags-ID: V03:K1:xDgdIpJFStLSXW2RLKUWYAHjPp/5talER5FW8ivrkP11vqfNqM7
+ vVBWqAf0Qfu/KAD83otSeT0kHwnZlOaDEj5ZR4L1f2DotH8KCXYKJdUlW0osxd7L7O3k+DZ
+ gYSv3UJjEQqeAVnHMyMDVN6iWLEam5DssGsZngvjs0tpnJbZGWifqRvAVxMhNoXszKbBHX+
+ w9h4TQAjyLjCqDw4Hy/IA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Mv90uQif5z0=:mkPZnt/wAzgCji6VgOJveB
- 1f4EKQWxRHBiHrPiJxSu/+LY9k9C7xeeY3CRh69qmwh/t9NjjFjJm63vKx42nej7TjZN9GJh7
- OjeuL0QxP7YUDb7/uuatHAJFNRE+Qa09O/szoUK99lGojTqxSxZO4UMdpc8Fv8GaDxGLrymhk
- rENMJWZ4ZHom2LibiDweuPgZ9tBY8NfOg6pza4DxSVw5W/p2++yYwUtH/9AKkJIcBBT8iR6gR
- Up0dVsWBxMHtKqQp3LhgHXL7DZMigxJkW9fRgOAqsjjfTRhXjOKxzdUHMz368Pgd5ZBn5dKvX
- p7o8Ltb0h6X/Kp6GAXBNbjy58gfwBEQjsxsJZP3f862ttw+XrWwoR+swBknlPKpa43kMtwBwu
- St4YJAGElaG/D2345KpU5qqPHu2V19AkHtpy2gdMEKYQaKg6FxInZY8HjRaVKhYr+DeVu8LV1
- QyYb+OyLOoKL1s+Q9oLFzmqeCOxJkBcLv3P6r9y6rDptMLxCfkeXKK45EkJnaT/c4rMCVLmKp
- NeGdihft1aDpLCfnq557u/eEJHRIu9gBNbs7epPjK5QHvOCgheY+RfeHja0iepkogG3n5BfxY
- rIgy9CjsgLgqHH/3I2adhWPGyRfKQFaAz9m4rhQLxVpZxqb5GfD+lN63lDwpH3pFfq/6BLu9d
- QzqXjCfkCgD/rx1t7vwwRJ/GU05wveQ6gxMiPwtVIOMBrGqOP+T4F8PMw39+i4hRnMoFJhDFo
- zXXt+lfdZleTUXz1UfzFkxFEZCpRc6XFBUei1jiMveVeHnlqhGgcltC1m/UCaQWLqES74qZf9
- X8eaBqPK5WE8Mpu5AvIIOAe3Y/59oC6BKg5B1D8BUoiOgcjN9wa4H6TCuT0sKkGOmfbFgshAO
- nFI8b+r4uqhXmppGpGVg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:QcwdvkAQ6Ok=:Jlo5MXft9h7U8pJa8yHiaY
+ 6lTfiXUR3keB5WcCfL5vHZLoy5oOJLnuiCx4lfCbAwxingA9NbEZn5s4yaDsyGzzK7IGXhiOo
+ 6oSNds/8PGfHDiAfFme4rL4jEN/tDKi64EvnQ6i5YtFdEQKfumq72N3Md8Sh3K39i5suczZx3
+ UOpsMAFe7kD97NPkDe4nmwK1vkap04GSoJ18rh3upGaZNYwOmKSn0/aDEqnEUrSuQ915hx7Jy
+ yF2p+q3FS/SyZQ9n/kWoeLL5B6Q8QOoKTosebCVQ+9Bj9UYAD+OvKXhB+wEPFkXaKcG/pi+B3
+ RPHWCH5BKa7G/kG4/0slKAq4HMi+2mvFBKnHxX74lbJ2CpFSBoLiQnLO5SdeVtpEk17Rua2gh
+ yWjGlhnbcZnUb4MK+xLLAoySRMpuf/aNFg2Z1cIOOY8VNRVcQjENN88zlcPHmujbOVZLTx9Dn
+ CnX4mvVq+FwqOfa25r9sbbVRaioMVR1TGRzb5pL8imHQ3bD51q8U2rsBU8wUxPGOReO5j6pcV
+ xAS2p1/Mh/tQZr6Zq677fE0VX7VO4QNPwNDLG/wg32395wRtssC3iaf7scqv3EgC4gzDM1YYk
+ s8kw4cUeGbyId2WEqy5fE51EZHQlwV6nRqcr7NECGeyxgv+saALKOZH5K9m4Y9CiuoKWYXSQU
+ NjFtmzNr9yx2DlnBZPyHgztcN8lemMFh03iFsZz3snE5Svmp9xZHSpBL7x2HOedSxWasiKFCb
+ a1jgnZ8uojrctpGNqIwEKUoz0yJuqMToZitEI3bKD7aYuCBAKXLCZJVObPsWiGbUcek1vdQ/8
+ zSTbK+2n2TSV2JsYgz598940Jqc31xrbMF/veOIc5+phZIaP4KzTYsj5l8HQy6Ek7dCz5KCDQ
+ +jd0C8H8P2KLEJOYE8+g==
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
