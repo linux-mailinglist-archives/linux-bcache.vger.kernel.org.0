@@ -2,100 +2,63 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71E8832AF57
-	for <lists+linux-bcache@lfdr.de>; Wed,  3 Mar 2021 04:25:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C86132AF5D
+	for <lists+linux-bcache@lfdr.de>; Wed,  3 Mar 2021 04:26:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234131AbhCCARw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 2 Mar 2021 19:17:52 -0500
-Received: from mout.gmx.net ([212.227.17.21]:39555 "EHLO mout.gmx.net"
+        id S234470AbhCCASV (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 2 Mar 2021 19:18:21 -0500
+Received: from mout.gmx.net ([212.227.17.22]:56839 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1577086AbhCBFma (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 2 Mar 2021 00:42:30 -0500
+        id S1379962AbhCBKWe (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 2 Mar 2021 05:22:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1614663647;
-        bh=vuF4asm5oftnr0ailpx2QxWzLruw3F+JLEa0u6Q/iz0=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=bSC+pfyU2JXcnedNBCzpoIPZqWorJDIAAIH1FjECMK1k8kwuyPnbxEtYBsNe/liKo
-         oDBfGCfOEOA3p5iydEdCUP/ZsQFKGkGSqzHwYvG+ALyfryTF7g/VRmedwMNaziF/3z
-         cNvCQX+fTa3AlFSOiJF2bKF67dm1GShikoMmfcKY=
+        s=badeba3b8450; t=1614680430;
+        bh=EUSMcnw5u/o+Z6hT7LQOufUgCnNkWu4J1JQzsagLmqc=;
+        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
+        b=IuwDsqsb9L+rW5w9PlJxixE0u+jN08tdSZcgxObEhYL5eL7CCfvfzZ3pK4JmDRruD
+         67atTZ9vxn4CNB0drVrrCVYc329yaV+oA8xJ1GLHBhnUk5mSuDwd4pBudq86ACIi2x
+         UgkDnSupRKd9AB+NERls/2nIY/NE+jaOxHJxRMiI=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from [10.10.213.91] ([103.52.188.137]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1Mwwdf-1m1Ehk2IJ9-00yTu4; Tue, 02
- Mar 2021 06:30:28 +0100
-Subject: Re: Large latency with bcache for Ceph OSD
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MK3Rm-1lUrlD221O-00LYO2; Tue, 02
+ Mar 2021 11:20:30 +0100
 To:     Coly Li <colyli@suse.de>
-Cc:     linux-block@vger.kernel.org, axboe@kernel.dk,
-        linux-bcache@vger.kernel.org
-References: <3f3e20a3-c165-1de1-7fdd-f0bd4da598fe@gmx.com>
- <632258f7-b138-3fba-456b-9da37c1de710@gmx.com>
- <5867daf1-0960-39aa-1843-1a76c1e9a28d@suse.de>
- <07bcb6c8-21e1-11de-d1f0-ffd417bd36ff@gmx.com>
- <cfe2746f-18a7-a768-ea72-901793a3133e@gmx.com>
- <96daa0bf-c8e1-a334-14cb-2d260aed5115@suse.de>
- <b808dde3-cb58-907b-4df0-e0eb2938b51e@gmx.com>
- <04770825-b1d2-8ec0-2345-77d49d99631a@suse.de>
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
 From:   "Norman.Kern" <norman.kern@gmx.com>
-Message-ID: <e67ea64d-7e36-761d-0e28-cc0d1012c3aa@gmx.com>
-Date:   Tue, 2 Mar 2021 13:30:21 +0800
+Subject: Large latency with bcache for Ceph OSD(new mail thread)
+Message-ID: <9b7dfd49-67b0-53b1-96e1-3b90c2d9d09a@gmx.com>
+Date:   Tue, 2 Mar 2021 18:20:25 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.5.0
 MIME-Version: 1.0
-In-Reply-To: <04770825-b1d2-8ec0-2345-77d49d99631a@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-X-Provags-ID: V03:K1:xDgdIpJFStLSXW2RLKUWYAHjPp/5talER5FW8ivrkP11vqfNqM7
- vVBWqAf0Qfu/KAD83otSeT0kHwnZlOaDEj5ZR4L1f2DotH8KCXYKJdUlW0osxd7L7O3k+DZ
- gYSv3UJjEQqeAVnHMyMDVN6iWLEam5DssGsZngvjs0tpnJbZGWifqRvAVxMhNoXszKbBHX+
- w9h4TQAjyLjCqDw4Hy/IA==
+X-Provags-ID: V03:K1:k+4Miwh80poaIHYO/bhJibu4nYsd4O1YdR/pm1MgII1iBgBXz5d
+ bkALxAJD4jQMoJ9mPZBze2ylMYaIe22Aep6pNvMRo4wl/c8dqstc2EI6YbaQiLT8uOSEIUW
+ 4dul7Yv2SwEJtQahZTVjqhOT2/tBXIiOzsYH2SpP8WwX7FO7sb5TspgiWUelKgpTvnLG6iX
+ Q78Yx+VbmeBOzCno4c6QQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:QcwdvkAQ6Ok=:Jlo5MXft9h7U8pJa8yHiaY
- 6lTfiXUR3keB5WcCfL5vHZLoy5oOJLnuiCx4lfCbAwxingA9NbEZn5s4yaDsyGzzK7IGXhiOo
- 6oSNds/8PGfHDiAfFme4rL4jEN/tDKi64EvnQ6i5YtFdEQKfumq72N3Md8Sh3K39i5suczZx3
- UOpsMAFe7kD97NPkDe4nmwK1vkap04GSoJ18rh3upGaZNYwOmKSn0/aDEqnEUrSuQ915hx7Jy
- yF2p+q3FS/SyZQ9n/kWoeLL5B6Q8QOoKTosebCVQ+9Bj9UYAD+OvKXhB+wEPFkXaKcG/pi+B3
- RPHWCH5BKa7G/kG4/0slKAq4HMi+2mvFBKnHxX74lbJ2CpFSBoLiQnLO5SdeVtpEk17Rua2gh
- yWjGlhnbcZnUb4MK+xLLAoySRMpuf/aNFg2Z1cIOOY8VNRVcQjENN88zlcPHmujbOVZLTx9Dn
- CnX4mvVq+FwqOfa25r9sbbVRaioMVR1TGRzb5pL8imHQ3bD51q8U2rsBU8wUxPGOReO5j6pcV
- xAS2p1/Mh/tQZr6Zq677fE0VX7VO4QNPwNDLG/wg32395wRtssC3iaf7scqv3EgC4gzDM1YYk
- s8kw4cUeGbyId2WEqy5fE51EZHQlwV6nRqcr7NECGeyxgv+saALKOZH5K9m4Y9CiuoKWYXSQU
- NjFtmzNr9yx2DlnBZPyHgztcN8lemMFh03iFsZz3snE5Svmp9xZHSpBL7x2HOedSxWasiKFCb
- a1jgnZ8uojrctpGNqIwEKUoz0yJuqMToZitEI3bKD7aYuCBAKXLCZJVObPsWiGbUcek1vdQ/8
- zSTbK+2n2TSV2JsYgz598940Jqc31xrbMF/veOIc5+phZIaP4KzTYsj5l8HQy6Ek7dCz5KCDQ
- +jd0C8H8P2KLEJOYE8+g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:BJxmL4zPfo4=:kc4yx+y0T9ezrx8MLWcw2W
+ lU30R+y3uv/pEKCo2wqbqUrOwvTtHZAXDWuzZ3Oo1tbnLrGiE1hUW0kUmKNpDIJW/iAyIk/pv
+ 6+7Zk5KMfIuSrdSwMVCthLolEGfSvA39XAAyNqIo40U1MtSa7jSamgfOkg/uF09ciQxORf/xH
+ NUPubIBzIvkF6TwWxWefDXXVJgOQJZqej9hNq3fNiOO+8QUImzYs4ZRx+W22cfhoNsDd6WNB4
+ FvJSPGAsB2Ll/5ta4cZseNhbzmtRoF7UfYsl3rYQLG3wFQpHj/VfDYfflRZBwfVIkeXxMNCXp
+ NaPCikTgaPBS1caNW5nB/zM3zHX4DXZfUsIXcXcN+L28R5858hgRFn9WsZXC1Hzxvtb+V7AzZ
+ 3oEsa0bYGoD/Inyioef/yBEaFXGYZpUJJOf/FdgHeeddhdCpdlzMa8471qWp+FcKZxjeD9Xoq
+ qA4ji7XO0Dn1hdiQfYY1NiQaBew+OpESQ2akT2ulNxwHUU9kiXX7NgzWLVagsNC9tCff75YVl
+ YLdO9k+dhY1WUQnyRvsj5Z5q5VMGATvfKCI+IDhBdb8dSwZE1Y3xrO1vkCURdbYoNGquiGvoE
+ rLM0patp7R4AaEKN6UD68hRdWwaOJaMOt4uyZFWmVIMGiais4gxwmttStXPq+Y3TGmG0VwLG4
+ rm5Kt4eOMeU2GszJ5PlWaf5iWsghbR7eRuEDwLr6SrRwum79bYPhCIV+mAP24Em0wGk/ukOAG
+ YvmJWAgOTIjb/HDiTE7ODkhfqh/dh/SfBnRBGvqBYPLlwdAVyW/dAcipJR3AISAPYjc7NiOml
+ b9ogTHKkwc+/jlrfnv17yMVvWs76i6igKjjO9sd5tXUFctxHUplDuwN3U7um+XC0iK8fdGZNG
+ nA4JBkLfk9CN1vkpxrLQ==
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+Sorry for creating a new mail thread(the origin is so long...)
 
-On 2021/2/26 =E4=B8=8B=E5=8D=885:54, Coly Li wrote:
-> On 2/26/21 4:57 PM, Norman.Kern wrote:
-> [snipped]
->>> You may try to trigger a gc by writing to
->>> sys/fs/bcache/<cache-set-uuid>/internal/trigger_gc
->>>
->> When all cache had written back, I triggered gc, it recalled.
->>
->> root@WXS0106:~# cat /sys/block/bcache0/bcache/cache/cache_available_per=
-cent
->> 30
->>
->> root@WXS0106:~# echo 1 > /sys/block/bcache0/bcache/cache/internal/trigg=
-er_gc
->> root@WXS0106:~# cat /sys/block/bcache0/bcache/cache/cache_available_per=
-cent
->> 97
->>
->> Why must I trigger gc manually? Is not a default action of bcache-gc th=
-read? And I found it can only work when all dirty data written back.
->>
-> 1, GC is automatically triggered after some mount of data consumed. I
-> guess it is just not about time in your situation.
->
-> 2, Because the gc will shrink all cached clean data, which is very
-> unfriendly for read-intend workload. Therefore gc_after_writeback is
-> defaulted as 0, when this sysfs file content set to 1, a gc will trigger
-> after the writeback accomplished.
 
 I made a test again and get more infomation:
 
@@ -127,9 +90,3 @@ che_available_percent
 I read the source codes and found if cache_available_percent > 50, it shou=
 ld wakeup gc while doing writeback, but it seemed not work right.
 
->
-> Coly Li
->
->
->
->
