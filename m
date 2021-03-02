@@ -2,48 +2,47 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C32432AF69
-	for <lists+linux-bcache@lfdr.de>; Wed,  3 Mar 2021 04:27:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B2D432AF65
+	for <lists+linux-bcache@lfdr.de>; Wed,  3 Mar 2021 04:26:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236161AbhCCAUZ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 2 Mar 2021 19:20:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41958 "EHLO mx2.suse.de"
+        id S234797AbhCCATg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 2 Mar 2021 19:19:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42222 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1351183AbhCBNfC (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 2 Mar 2021 08:35:02 -0500
+        id S1351186AbhCBNfB (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 2 Mar 2021 08:35:01 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id CE75FACBC;
-        Tue,  2 Mar 2021 13:33:41 +0000 (UTC)
-Subject: Re: [PATCH] bcache-tools: fix potential memoryleak problem in,
- may_add_item()
-To:     Zhiqiang Liu <liuzhiqiang26@huawei.com>
+        by mx2.suse.de (Postfix) with ESMTP id CD33FAF8F;
+        Tue,  2 Mar 2021 13:33:59 +0000 (UTC)
+Subject: Re: [PATCH] bcache-tools: check whether allocating memory fails in
+ tree()
+To:     Zhiqiang Liu <liuzhiqiang26@huawei.com>,
+        linux-bcache@vger.kernel.org
 Cc:     linfeilong <linfeilong@huawei.com>,
-        lixiaokeng <lixiaokeng@huawei.com>, linux-bcache@vger.kernel.org
-References: <c475bf5f-d284-aea9-5898-6ef3581138fb@huawei.com>
+        lixiaokeng <lixiaokeng@huawei.com>,
+        "lijinlin (A)" <lijinlin3@huawei.com>
+References: <655607db-abc7-3241-cf14-e6efbec8331a@huawei.com>
 From:   Coly Li <colyli@suse.de>
-Message-ID: <9e68d3fe-52bc-a496-5cad-ec47c1d295c1@suse.de>
-Date:   Tue, 2 Mar 2021 21:33:37 +0800
+Message-ID: <66442e3c-7939-e4af-1924-2f742529383e@suse.de>
+Date:   Tue, 2 Mar 2021 21:33:55 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
  Gecko/20100101 Thunderbird/78.8.0
 MIME-Version: 1.0
-In-Reply-To: <c475bf5f-d284-aea9-5898-6ef3581138fb@huawei.com>
+In-Reply-To: <655607db-abc7-3241-cf14-e6efbec8331a@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2/27/21 10:38 AM, Zhiqiang Liu wrote:
+On 2/27/21 10:35 AM, Zhiqiang Liu wrote:
 > 
-> In may_add_item(), it will directly return 1 without freeing
-> variable tmp and closing fd, when the return value of detail_base()
-> is not equal to 0. In addition, we do not check whether
-> allocating memory for tmp is successful.
-> 
-> Here, we will check whether malloc() returns NULL, and
-> will free tmp and close fd when detail_base() fails.
+> In tree(), we do not check whether malloc() returns NULL,
+> it may cause potential Null pointer dereference problem.
+> In addition, when we fail to list devices, we should free(out)
+> before return.
 > 
 > Signed-off-by: ZhiqiangLiu <lzhq28@mail.ustc.edu.cn>
 
@@ -57,65 +56,37 @@ Coly Li
 
 
 > ---
->  lib.c | 28 +++++++++++++++++-----------
->  1 file changed, 17 insertions(+), 11 deletions(-)
+>  bcache.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 > 
-> diff --git a/lib.c b/lib.c
-> index 6341c61..745dab6 100644
-> --- a/lib.c
-> +++ b/lib.c
-> @@ -382,7 +382,7 @@ int may_add_item(char *devname, struct list_head *head)
->  	struct cache_sb sb;
->  	char dev[512];
->  	struct dev *tmp;
-> -	int ret;
-> +	int ret = 0;
+> diff --git a/bcache.c b/bcache.c
+> index 044d401..1c4cef9 100644
+> --- a/bcache.c
+> +++ b/bcache.c
+> @@ -174,7 +174,7 @@ void replace_line(char **dest, const char *from, const char *to)
 > 
->  	if (strcmp(devname, ".") == 0 || strcmp(devname, "..") == 0)
->  		return 0;
-> @@ -392,27 +392,33 @@ int may_add_item(char *devname, struct list_head *head)
->  	if (fd == -1)
->  		return 0;
+>  int tree(void)
+>  {
+> -	char *out = (char *)malloc(4096);
+> +	char *out;
+>  	const char *begin = ".\n";
+>  	const char *middle = "├─";
+>  	const char *tail = "└─";
+> @@ -184,8 +184,15 @@ int tree(void)
+>  	INIT_LIST_HEAD(&head);
+>  	int ret;
 > 
-> -	if (pread(fd, &sb_disk, sizeof(sb_disk), SB_START) != sizeof(sb_disk)) {
-> -		close(fd);
-> -		return 0;
-> -	}
-> +	if (pread(fd, &sb_disk, sizeof(sb_disk), SB_START) != sizeof(sb_disk))
-> +		goto out;
-> 
-> -	if (memcmp(sb_disk.magic, bcache_magic, 16)) {
-> -		close(fd);
-> -		return 0;
-> -	}
-> +	if (memcmp(sb_disk.magic, bcache_magic, 16))
-> +		goto out;
-> 
->  	to_cache_sb(&sb, &sb_disk);
-> 
->  	tmp = (struct dev *) malloc(DEVLEN);
-> +	if (tmp == NULL) {
+> +	out = (char *)malloc(4096);
+> +	if (out == NULL) {
 > +		fprintf(stderr, "Error: fail to allocate memory buffer\n");
-> +		ret = 1;
-> +		goto out;
+> +		return 1;
 > +	}
 > +
->  	tmp->csum = le64_to_cpu(sb_disk.csum);
->  	ret = detail_base(dev, sb, tmp);
+>  	ret = list_bdevs(&head);
 >  	if (ret != 0) {
->  		fprintf(stderr, "Failed to get information for %s\n", dev);
-> -		return 1;
-> +		free(tmp);
-> +		goto out;
+> +		free(out);
+>  		fprintf(stderr, "Failed to list devices\n");
+>  		return ret;
 >  	}
->  	list_add_tail(&tmp->dev_list, head);
-> -	return 0;
-> +
-> +out:
-> +	close(fd);
-> +	return ret;
->  }
-> 
->  int list_bdevs(struct list_head *head)
 > 
 
