@@ -2,127 +2,112 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E198232BD64
-	for <lists+linux-bcache@lfdr.de>; Wed,  3 Mar 2021 23:23:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 314C632DA5C
+	for <lists+linux-bcache@lfdr.de>; Thu,  4 Mar 2021 20:27:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231731AbhCCPyj (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 3 Mar 2021 10:54:39 -0500
-Received: from mout.gmx.net ([212.227.17.20]:58413 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242396AbhCCD2O (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 2 Mar 2021 22:28:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1614741941;
-        bh=Dbl45cYffM5VpBIUPk3aPwijqlx22eo8BibXzeyHTpA=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=FFJZU9w878QZNIgGE7AIcB530Gb8uX2kHutABSkzBx1ImYEUrLAuiRwZ9bh/KvlRI
-         qe4xMgD7EMul1aASa5um6GKcvQXZkN63MiIFH4HAkXI+bruYnvFls9Fk9sbI6HPgkc
-         cDfB085t7yVxNM7pLV2yBmVNn1a0oy3lCNUaCWlU=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [10.10.213.91] ([103.52.188.137]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MSKu0-1lO0Fg34A4-00ScLs; Wed, 03
- Mar 2021 04:25:41 +0100
-Subject: Re: Large latency with bcache for Ceph OSD(new mail thread)
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-References: <9b7dfd49-67b0-53b1-96e1-3b90c2d9d09a@gmx.com>
- <f6755b89-4d13-92a5-df1a-343602dec957@suse.de>
-From:   "Norman.Kern" <norman.kern@gmx.com>
-Message-ID: <f7b3c407-386f-ab3d-092d-890478abd2c9@gmx.com>
-Date:   Wed, 3 Mar 2021 11:25:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
-MIME-Version: 1.0
-In-Reply-To: <f6755b89-4d13-92a5-df1a-343602dec957@suse.de>
-Content-Type: text/plain; charset=utf-8
+        id S233950AbhCDT0n (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 4 Mar 2021 14:26:43 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58053 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233750AbhCDT0a (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 4 Mar 2021 14:26:30 -0500
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id ADA715C00D7
+        for <linux-bcache@vger.kernel.org>; Thu,  4 Mar 2021 14:25:24 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Thu, 04 Mar 2021 14:25:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=s4y.us; h=from
+        :content-type:content-transfer-encoding:mime-version:subject
+        :message-id:date:to; s=fm2; bh=fTgxpna9ZXxO2uK2ciptfV6IfmNCSEC4V
+        FGKdrM27zo=; b=xQfuf1gi6hCPhaS+BD8QeWMRDQrr/Cq1Pfr/HGNcB5aDVgASB
+        2U27dnC6RH0qxDjNy1MbZpqAfGBA6qKYrpMsJgOX3aPnnsnpSqk6LgCcLMnQmFQs
+        AuxO3b+N5blKTIxaYKDAWkWWdmk4896rhKLNkRkEveOTHTSP91Xs5ltXDIQ2feqw
+        G7dkq1x+OIifRxa5SFNwKLGxh5z8xJHy0HVcc6FW1LGeVPcdN/por/tk3+1Yn4dQ
+        O4gpPJHU8BgFycU2PYdPiWbCdMdk4nzH6RX8+XRXfykKDZGL86U9Sz/EMmtvSXYF
+        zdUGhsw0aFTmbqvwZPoDuwnB5Lms4bZUlQHvA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=content-transfer-encoding:content-type
+        :date:from:message-id:mime-version:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=fTgxpn
+        a9ZXxO2uK2ciptfV6IfmNCSEC4VFGKdrM27zo=; b=l/uf8E4zW6+6bymkX06saU
+        rGzf2GnyI3T5xIg9ua84Q6lIRtS5mOEDqMtEVzforhSvrt5n5YczsRbBHU4TD3aq
+        joEjUBNOVN1G9nVBGEJVveWY+iq9qw40YwjocruLKDoUfyKS5Wr/Vb1A11pewYMB
+        w1EDLJRBGwlVcFfSIxfcSVSlvnT3sGtmZv7Xn8X0CI4fvsR+E+TJLdRreGsDqO1x
+        v0k1lAiK0hbhA1AVnCbzSaD033g7lEucEyYA3qspxT9JMkTElc9Wur1h0JC6OJP/
+        N3DaUkBdAu7mHH12SHMMiDDwLvST3Qk7BkRl/m3FTu2pGZoFJFkwFJPwGlRH3TQw
+        ==
+X-ME-Sender: <xms:JDRBYCAXWlNX5Hq4J9EuYyXd7aJrWS_2UH52vK_eWlR12J39JEO_dw>
+    <xme:JDRBYMi0mMeh4mrS0Ch9xc_UFS101BviiHn-MX3oKhcpvF43HxXxeH9rlEzu39BWj
+    _rvjfaP9x68DUTub2M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledruddtgedgudduhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecunecujfgurhephfgtgfgguffkfffvofesthhqmh
+    dthhdtjeenucfhrhhomhepufhiughnvgihpgfurghnpgforghrthovnhcuoehsihgunhgv
+    hiessheghidruhhsqeenucggtffrrghtthgvrhhnpeetheetudeltddutdekgfegieehfe
+    evtdetuddvfefgieettddugfevleelieeltdenucffohhmrghinhepshhpihhnihgtshdr
+    nhgvthdpkhgvrhhnvghlrdhorhhgnecukfhppeejvddrvdefuddrtddrudegvdenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsihgunhgvhies
+    sheghidruhhs
+X-ME-Proxy: <xmx:JDRBYFkBMT5qYDOb7rCirqfvxzXEaN6ES0gad36za8HG5m7yZgZ77g>
+    <xmx:JDRBYAz1AjMOuOt7STzaQus_dn60C_J4GPkx1GWUcvgng9OoX22_TA>
+    <xmx:JDRBYHTivuvMOAT5B0tcyAnNSQ5J5TEmZfymtsE6yAGIk7W-r8kS7w>
+    <xmx:JDRBYOdF6nY8PpjNyL8eI69LlEgDbuTGYpC45k6cKUU2T86JhXezIw>
+Received: from s4y.s4y.us (cpe-72-231-0-142.nyc.res.rr.com [72.231.0.142])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 61326108005C
+        for <linux-bcache@vger.kernel.org>; Thu,  4 Mar 2021 14:25:24 -0500 (EST)
+From:   =?utf-8?Q?Sidney_San_Mart=C3=ADn?= <sidney@s4y.us>
+Content-Type: text/plain;
+        charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Provags-ID: V03:K1:WhGy41qMcy29eNrypJcrubMAdwVFszEDZZ8RDJx8QZTR6ZVQmXW
- JKXNrJO8AnRBfnBMrgcrqGSQeCiwcgFWISrnP+qfAzQtJTiUnZ+YvMCuLpDaGbXPnUTjWEb
- 9TgUDZD1X6CZTpoilFMDnAtQvueMlMNPWLlfRYbx/tKiiK4JfzTAxAkYiIMyiFmkXajbY+u
- MLJoFp+e8NC0NU4hmcHRg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:RR+Ia3bucGc=:kyBnJsTtx7xZoGvLiFalEs
- uOYgqdU/7UHXhYXYE2Wz/sPeNgoGOdkR6n7uHGZUcMgJn19TeWjMok/iBHdZNCAnXgnZ/jceN
- uPPB3C2cVR+O7WOXKJrk6TZ7R9EKRtPrOFWFhuYOlSI7FN+Rq9ArIm39kQNlv1rH6tmbgt7g0
- lmTFdQe7F23lvamu5u3zWpt7jHGSmgEtMbZVZw9uWwvO6iErXpMSnXvW0IRq/L5PHbF6lJzn+
- 6zy4AFoY6Qqr0+JxNNK/hD7BmQjZEfzJSQonKFC3eDLrRayk84PTXoAX9FUkeo5sglqPWqLjm
- OaGMCDsvHr5wyUUYlFsoN2owXa2mUXef0ksBdcwIKjR9+pD/0QXnhNMI/QpO7HO61WrWyEH7p
- 7r5HMkFUPN9Nn3H+hQPbKzei5F7zTWYs61aqH/T40RMucDgxy4KwFHwE2w4BUR8gt6H1YdnHd
- eyYqBGEapU8fFmZDeRfeaphuNFkfkryiSTDuuFwgHQ926lm+XDvuy1+xFeyV+oMOpuaykD2kL
- OMVdkydCx1EPHOk2BJ5Qc6kvex4GyexTaKxJ8r4UAg5yDRcMYM/gK8Ho6+9nwGtcqBEAykIhc
- T+xH3i+Se9ygdKwxGYKktXffz/VkVijz/91MalgEF2mD3SZKLrlktlFsUiMcci1Hs7brjvRb9
- Nf0HyJQ1liJFE11ESpS9Yb8+UEq3flDzJW/aLA20h1rqAFU21VPig822SjbkNCpMNm4b3RD5e
- htmP0AsT1e5V1StiRWc2lrz2D61ub+csRlSphkMZMF1oAsOodn+NzpbiPrt4J9QpplBLZbzOo
- 91kTdMHVVxGdJNLy12W1+ihWCo6QHFFiLPnSu62d/E9bsK4Njql+yeShmuU51K+WSXdYuYtQ7
- +/hNzUKCCrcyYSVWlzZQ==
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.60.0.2.21\))
+Subject: Can't mount filesystem after clean shutdown with discard enabled
+Message-Id: <06080D15-33CA-4CB8-9FF9-F6D0222E839E@s4y.us>
+Date:   Thu, 4 Mar 2021 14:25:23 -0500
+To:     linux-bcache@vger.kernel.org
+X-Mailer: Apple Mail (2.3654.60.0.2.21)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+I enabled discard on the bcache backing a large filesystem with =
+writeback caching a few weeks ago. Yesterday I restarted the system =
+cleanly and it failed to come back. I see the following in the log:
 
-On 2021/3/2 =E4=B8=8B=E5=8D=889:20, Coly Li wrote:
-> On 3/2/21 6:20 PM, Norman.Kern wrote:
->> Sorry for creating a new mail thread(the origin is so long...)
->>
->>
->> I made a test again and get more infomation:
->>
->> root@WXS0089:~# cat /sys/block/bcache0/bcache/dirty_data
->> 0.0k
->> root@WXS0089:~# lsblk /dev/sda
->> NAME=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 MAJ:MIN RM=C2=A0=C2=A0 SIZE RO TYPE =
-MOUNTPOINT
->> sda=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 8:0=C2=A0=C2=A0=C2=
-=A0 0 447.1G=C2=A0 0 disk
->> `-bcache0 252:0=C2=A0=C2=A0=C2=A0 0=C2=A0 10.9T=C2=A0 0 disk
->> root@WXS0089:~# cat /sys/block/sda/bcache/priority_stats
->> Unused:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1%
->> Clean:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 29%
->> Dirty:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 70%
->> Metadata:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0%
->> Average:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 49
->> Sectors per Q:=C2=A0 29184768
->> Quantiles:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [1 2 3 5 6 8 9 11 13 14 16 19 =
-21 23 26 29 32 36 39 43 48 53 59 65 73 83 94 109 129 156 203]
->> root@WXS0089:~# cat /sys/fs/bcache/066319e1-8680-4b5b-adb8-49596319154b=
-/internal/gc_after_writeback
->> 1
->> You have new mail in /var/mail/root
->> root@WXS0089:~# cat /sys/fs/bcache/066319e1-8680-4b5b-adb8-49596319154b=
-/cache_available_percent
->> 28
->>
->> I read the source codes and found if cache_available_percent > 50, it s=
-hould wakeup gc while doing writeback, but it seemed not work right.
->>
-> If gc_after_writeback is enabled, and after it is enabled and the cache
-> usage > 50%, a tag BCH_DO_AUTO_GC will be set to c->gc_after_writeback.
-> Then when the writeback completed the gc thread will wake up in force.
->
-> so the auto gc after writeback will be triggered when,
-> 1, the bcache device is in writeback mode
-> 2, gc_after_writeback set to 1
-> 3, After 2) done, the cache usage exceeds 50% threshold.
-> 4, writeback rate set to maximum rate when the bcache device is idle (no
-> regular I/O request)
-> 5, after the writeback accomplished, the gc thread will be waken up.
->
-> But /sys/block/bcache0/bcache/dirty_data is 0.0k doesn't mean the
-> writeback is accomplished. It is possible the writeback thread still
-> goes through all btree keys for the last try even all the dirty data are
-> flushed. Therefore you should check whether the writeback thread is
-> still active before a conclusion is made that the writeback is completed=
-.
->
-> BTW, do you try a Linux v5.8+ kernel and see how things are ?
-I stoped all rw tests for almost the whole day and no iops from iostat. Wh=
-en I echo 1 to trigger_gc the
+  Mar 04 19:04:18 archiso kernel: bcache: prio_read() bad csum reading =
+priorities
+  Mar 04 19:04:18 archiso kernel: bcache: bch_cache_set_error() error on =
+6432e656-f28e-49f8-943d-6307d42d37e9: IO error reading priorities, =
+disabling caching
 
-cache_available_percent changed for 29 to 100 in seconds.
-I will have a test on 5.8.0-44.
+The backing devices are all marked dirty when I check with =
+bcache-super-show. I see threads going back years mentioning this =
+problem:
 
->
-> Thanks.
->
-> Coly Li
+  https://www.spinics.net/lists/linux-bcache/msg02712.html
+  https://www.spinics.net/lists/linux-bcache/msg02954.html
+  https://www.spinics.net/lists/linux-bcache/msg04668.html
+  https://www.spinics.net/lists/linux-bcache/msg05279.html
+
+There is also a bug report: =
+https://bugzilla.kernel.org/show_bug.cgi?id=3D197377
+
+The cache device backs a large BTRFS volume made up of many spinning =
+disks and, while I have a backup, it=E2=80=99s offsite and will take a =
+huge amount of time to restore. Since I=E2=80=99m running BTRFS with =
+some redundancy, I would love to do whatever I can to get things back to =
+as good a state as possible and try a scrub.
+
+I tried building bcache myself and skipping loading priorities, since =
+comments suggest they=E2=80=99re nonessential, and the next thing I hit =
+is:
+
+  Mar 04 15:32:56 archiso kernel: bcache: bch_cache_set_error() error on =
+6432e656-f28e-49f8-943d-6307d42d37e9: unsupported bset version at bucket =
+108857, block 0, 79054670 keys, disabling caching
+
+Note that I=E2=80=99m not familiar with bcache internals and this is =
+actually my first time building a kernel module to debug something.
+
+What can I do here? And should discard even be available as an option if =
+it fails this badly?=
