@@ -2,100 +2,123 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C0E9532E59E
-	for <lists+linux-bcache@lfdr.de>; Fri,  5 Mar 2021 11:03:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84C9832F7E5
+	for <lists+linux-bcache@lfdr.de>; Sat,  6 Mar 2021 03:45:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbhCEKDX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 5 Mar 2021 05:03:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47710 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229520AbhCEKDQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 5 Mar 2021 05:03:16 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 50E3CAD29;
-        Fri,  5 Mar 2021 10:03:14 +0000 (UTC)
-Subject: Re: Large latency with bcache for Ceph OSD(new mail thread)
-To:     "Norman.Kern" <norman.kern@gmx.com>
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-References: <9b7dfd49-67b0-53b1-96e1-3b90c2d9d09a@gmx.com>
- <f6755b89-4d13-92a5-df1a-343602dec957@suse.de>
- <91cf3980-ed9d-a5f8-4f2d-d9a79b1cbed0@gmx.com>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <1fa52fcb-1886-148f-2d55-02060dce7f93@suse.de>
-Date:   Fri, 5 Mar 2021 18:03:11 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
- Gecko/20100101 Thunderbird/78.8.0
+        id S229576AbhCFCod (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 5 Mar 2021 21:44:33 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12701 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229616AbhCFCoM (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 5 Mar 2021 21:44:12 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Dspll23CTzlSgl;
+        Sat,  6 Mar 2021 10:41:55 +0800 (CST)
+Received: from [127.0.0.1] (10.174.176.117) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.498.0; Sat, 6 Mar 2021
+ 10:44:00 +0800
+To:     <colyli@suse.de>, <linux-bcache@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     linfeilong <linfeilong@huawei.com>, <liuzhiqiang26@huawei.com>,
+        lixiaokeng <lixiaokeng@huawei.com>,
+        lihaotian <lihaotian9@huawei.com>, <kent.overstreet@gmail.com>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Subject: [PATCH] bcache: reduce redundant code in bch_cached_dev_run()
+Message-ID: <84551e06-0a99-218f-a3b7-2694e1804d6e@huawei.com>
+Date:   Sat, 6 Mar 2021 10:43:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <91cf3980-ed9d-a5f8-4f2d-d9a79b1cbed0@gmx.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.176.117]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 3/5/21 5:00 PM, Norman.Kern wrote:
-> 
-> On 2021/3/2 下午9:20, Coly Li wrote:
->> On 3/2/21 6:20 PM, Norman.Kern wrote:
->>> Sorry for creating a new mail thread(the origin is so long...)
->>>
->>>
->>> I made a test again and get more infomation:
->>>
->>> root@WXS0089:~# cat /sys/block/bcache0/bcache/dirty_data
->>> 0.0k
->>> root@WXS0089:~# lsblk /dev/sda
->>> NAME      MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
->>> sda         8:0    0 447.1G  0 disk
->>> `-bcache0 252:0    0  10.9T  0 disk
->>> root@WXS0089:~# cat /sys/block/sda/bcache/priority_stats
->>> Unused:         1%
->>> Clean:          29%
->>> Dirty:          70%
->>> Metadata:       0%
->>> Average:        49
->>> Sectors per Q:  29184768
->>> Quantiles:      [1 2 3 5 6 8 9 11 13 14 16 19 21 23 26 29 32 36 39 43 48 53 59 65 73 83 94 109 129 156 203]
->>> root@WXS0089:~# cat /sys/fs/bcache/066319e1-8680-4b5b-adb8-49596319154b/internal/gc_after_writeback
->>> 1
->>> You have new mail in /var/mail/root
->>> root@WXS0089:~# cat /sys/fs/bcache/066319e1-8680-4b5b-adb8-49596319154b/cache_available_percent
->>> 28
->>>
->>> I read the source codes and found if cache_available_percent > 50, it should wakeup gc while doing writeback, but it seemed not work right.
->>>
->> If gc_after_writeback is enabled, and after it is enabled and the cache
->> usage > 50%, a tag BCH_DO_AUTO_GC will be set to c->gc_after_writeback.
->> Then when the writeback completed the gc thread will wake up in force.
->>
->> so the auto gc after writeback will be triggered when,
->> 1, the bcache device is in writeback mode
->> 2, gc_after_writeback set to 1
->> 3, After 2) done, the cache usage exceeds 50% threshold.
->> 4, writeback rate set to maximum rate when the bcache device is idle (no
->> regular I/O request)
->> 5, after the writeback accomplished, the gc thread will be waken up.
->>
->> But /sys/block/bcache0/bcache/dirty_data is 0.0k doesn't mean the
->> writeback is accomplished. It is possible the writeback thread still
->> goes through all btree keys for the last try even all the dirty data are
->> flushed. Therefore you should check whether the writeback thread is
->> still active before a conclusion is made that the writeback is completed.
->>
->> BTW, do you try a Linux v5.8+ kernel and see how things are ?
-> 
-> I have test on 5.8.X,  but it doesn't help. I test on the same config on another server(480G SSD + 8T HDD),
-> 
 
-What do you mean on "doesn't help" ?  Do you mean the force gc does not
-trigger, or something else.
+In bch_cached_dev_run(), free(env[1])|free(env[2])|free(buf)
+show up three times. This patch introduce out tag in
+which free(env[1])|free(env[2])|free(buf) are only called
+one time. If we need to call free() when errors occur,
+we can set error code to ret, and then goto out tag directly.
 
-> it can't reproduce, this really made me confused. I will compare the configs and try to find out the diffs.
+Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+---
+ drivers/md/bcache/super.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
-For which behavior that it don't reproduce ?
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 71691f32959b..1a8748050087 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1052,6 +1052,7 @@ static int cached_dev_status_update(void *arg)
 
-Thanks.
+ int bch_cached_dev_run(struct cached_dev *dc)
+ {
++	int ret = 0;
+ 	struct bcache_device *d = &dc->disk;
+ 	char *buf = kmemdup_nul(dc->sb.label, SB_LABEL_SIZE, GFP_KERNEL);
+ 	char *env[] = {
+@@ -1064,19 +1065,15 @@ int bch_cached_dev_run(struct cached_dev *dc)
+ 	if (dc->io_disable) {
+ 		pr_err("I/O disabled on cached dev %s\n",
+ 		       dc->backing_dev_name);
+-		kfree(env[1]);
+-		kfree(env[2]);
+-		kfree(buf);
+-		return -EIO;
++		ret = -EIO;
++		goto out;
+ 	}
 
-Coly Li
+ 	if (atomic_xchg(&dc->running, 1)) {
+-		kfree(env[1]);
+-		kfree(env[2]);
+-		kfree(buf);
+ 		pr_info("cached dev %s is running already\n",
+ 		       dc->backing_dev_name);
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto out;
+ 	}
+
+ 	if (!d->c &&
+@@ -1097,15 +1094,13 @@ int bch_cached_dev_run(struct cached_dev *dc)
+ 	 * only class / kset properties are persistent
+ 	 */
+ 	kobject_uevent_env(&disk_to_dev(d->disk)->kobj, KOBJ_CHANGE, env);
+-	kfree(env[1]);
+-	kfree(env[2]);
+-	kfree(buf);
+
+ 	if (sysfs_create_link(&d->kobj, &disk_to_dev(d->disk)->kobj, "dev") ||
+ 	    sysfs_create_link(&disk_to_dev(d->disk)->kobj,
+ 			      &d->kobj, "bcache")) {
+ 		pr_err("Couldn't create bcache dev <-> disk sysfs symlinks\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto out;
+ 	}
+
+ 	dc->status_update_thread = kthread_run(cached_dev_status_update,
+@@ -1114,7 +1109,11 @@ int bch_cached_dev_run(struct cached_dev *dc)
+ 		pr_warn("failed to create bcache_status_update kthread, continue to run without monitoring backing device status\n");
+ 	}
+
+-	return 0;
++out:
++	kfree(env[1]);
++	kfree(env[2]);
++	kfree(buf);
++	return ret;
+ }
+
+ /*
+-- 
+2.19.1
+
+
