@@ -2,82 +2,75 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 418F73339FC
-	for <lists+linux-bcache@lfdr.de>; Wed, 10 Mar 2021 11:29:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AC4B333B4C
+	for <lists+linux-bcache@lfdr.de>; Wed, 10 Mar 2021 12:26:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231790AbhCJK3V (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 10 Mar 2021 05:29:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60318 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231228AbhCJK3M (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 10 Mar 2021 05:29:12 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B81D1AE42;
-        Wed, 10 Mar 2021 10:29:10 +0000 (UTC)
-Subject: Re: [PATCH v2] include: Remove pagemap.h from blkdev.h
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-bcache@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-scsi@vger.kernel.org
-References: <20210309195747.283796-1-willy@infradead.org>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <4d6e3281-98e5-e161-3883-00ccc88e1682@suse.de>
-Date:   Wed, 10 Mar 2021 18:29:06 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
- Gecko/20100101 Thunderbird/78.8.1
+        id S229948AbhCJLYo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 10 Mar 2021 06:24:44 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:57427 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231161AbhCJLYR (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 10 Mar 2021 06:24:17 -0500
+Received: from mail-ot1-f44.google.com ([209.85.210.44]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MGQzj-1lWIM71eAv-00GoSe; Wed, 10 Mar 2021 12:23:58 +0100
+Received: by mail-ot1-f44.google.com with SMTP id x28so1271357otr.6;
+        Wed, 10 Mar 2021 03:23:57 -0800 (PST)
+X-Gm-Message-State: AOAM5339D7e95cwCcbZPCPbhyGrW/LOC6RZj7tAtqETACXCOPzqrqI1m
+        xbSoXNOvqgctYIV2tXq7t5Su2RBmFhIoZjimzWQ=
+X-Google-Smtp-Source: ABdhPJzSi9rQjVmQMcCdC3Ugc0EWFLl//ABE/fGqmyUE3BjBZcH2sAsjResUueB/qNZ0M5JXaPsoktuZzqJxAH31rsg=
+X-Received: by 2002:a05:6830:14c1:: with SMTP id t1mr2167623otq.305.1615375436800;
+ Wed, 10 Mar 2021 03:23:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210309195747.283796-1-willy@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210309181533.231573-1-willy@infradead.org>
+In-Reply-To: <20210309181533.231573-1-willy@infradead.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 10 Mar 2021 12:23:40 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a31=gJkF+GypnaznfhKCYSnwU1yF4u0tem==YSpz3pwXw@mail.gmail.com>
+Message-ID: <CAK8P3a31=gJkF+GypnaznfhKCYSnwU1yF4u0tem==YSpz3pwXw@mail.gmail.com>
+Subject: Re: [PATCH] include: Remove pagemap.h from blkdev.h
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-bcache@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-scsi <linux-scsi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:ZAMdrLCRoCgXj3tTGCPDyaMO7QGvyKUlz2EHeBiucgYdBifB9nF
+ PJ5b8WT7SWsdRy9ivuV9503hX0xNnHrYgtkQG+PUtIjdN7esmNers6qgqNOvGDJt6zuueb5
+ Nq7v3rBHycipdjqcDt3ptbbJG1hsm+6sql36pHv7Gaa8pgd4Wmj6JdvCw5SQl95Q2/XoZUa
+ L1ofXYif4PmcgUrbOclWA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3jyXK99JXM8=:VDoDom1E04Ct8FnIHdWHkg
+ 5Ia4vX9kWptKMWFI2zdlhOS1L40FOH7iyhTCZoJ12kCJjOgrNQdrwxevWz9IJdReQ2UPTUEEd
+ u3ZSsc8A/wAcv+XSW3uWZnntuFRWkAKHeF6hyKb8IFFjB660n3gFDfehLH2DsRe2GGLGHdkUq
+ tUggdFAmLCPZ/cPV7Dsnq8wm4zjBU1AGlsmPPS7s7s4WJ09528pUivexpAe/l+2suGTdRc8Av
+ FQ8i5bNuYbMs4xeIzFWCoiKGQyOEu2t9yHO+fboZRlz+z4nm6Rnpke7/WkHyKb0+czrBigcrl
+ 5dBXq0rJjNDeLX6laLu8FzJbqjR0qvXblJbXqp7LkN5O5Gi8s8Nogx8UG7A+o0MygmDU8yy6N
+ hK1kWDOapsDkcd2Ol+yrD3zFXsBclF/RIkBI5EXZKHDKJH1RpZRPqZnPnVd9K69dvIDPRhIbu
+ ifERUrrchHyrdg681fLrJet4UnLg+kd7yKddq1Z4quovkXRUimZ8plkiW/VZ+kslZVCUt7HWP
+ vBSRcO+OX30XqqSlcFpYHCzjkmhBE13iYDgWeFCGaWPraJY0vCQ5dwHYlf4m2Qwug==
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 3/10/21 3:57 AM, Matthew Wilcox (Oracle) wrote:
+On Tue, Mar 9, 2021 at 7:15 PM Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
+>
 > My UEK-derived config has 1030 files depending on pagemap.h before
-> this change.  Afterwards, just 326 files need to be rebuilt when I
+> this change.  Afterwards, just 240 files need to be rebuilt when I
 > touch pagemap.h.  I think blkdev.h is probably included too widely,
 > but untangling that dependency is harder and this solves my problem.
 > x86 allmodconfig builds, but there may be implicit include problems
 > on other architectures.
-> 
+>
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
-> v2: Fix CONFIG_SWAP=n implicit use of pagemap.h by swap.h.  Increases
->     the number of files from 240, but that's still a big win -- 68%
->     reduction instead of 77%.
-> 
->  block/blk-settings.c      | 1 +
->  drivers/block/brd.c       | 1 +
->  drivers/block/loop.c      | 1 +
->  drivers/md/bcache/super.c | 1 +
->  drivers/nvdimm/btt.c      | 1 +
->  drivers/nvdimm/pmem.c     | 1 +
->  drivers/scsi/scsicam.c    | 1 +
->  include/linux/blkdev.h    | 1 -
->  include/linux/swap.h      | 1 +
->  9 files changed, 8 insertions(+), 1 deletion(-)
-> 
-[snipped]
 
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 71691f32959b..f154c89d1326 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -16,6 +16,7 @@
->  #include "features.h"
->  
->  #include <linux/blkdev.h>
-> +#include <linux/pagemap.h>
->  #include <linux/debugfs.h>
->  #include <linux/genhd.h>
->  #include <linux/idr.h>[snipped]
+Good catch!
 
-For bcache part, Acked-by: Coly Li <colyli@suse.de>
+With the build regression fixed (I suppose you now need to include
+pagemap.h in swap.h):
 
-Thanks.
-
-Coly Li
+Acked-by: Arnd Bergmann <arnd@arndb.de>
