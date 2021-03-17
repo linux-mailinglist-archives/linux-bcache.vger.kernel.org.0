@@ -2,79 +2,83 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBAE133E88C
-	for <lists+linux-bcache@lfdr.de>; Wed, 17 Mar 2021 05:47:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5713B33EA91
+	for <lists+linux-bcache@lfdr.de>; Wed, 17 Mar 2021 08:31:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229469AbhCQErW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 17 Mar 2021 00:47:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34482 "EHLO mx2.suse.de"
+        id S229541AbhCQHbO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 17 Mar 2021 03:31:14 -0400
+Received: from mga09.intel.com ([134.134.136.24]:61940 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229492AbhCQErF (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 17 Mar 2021 00:47:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 61688AC17;
-        Wed, 17 Mar 2021 04:47:04 +0000 (UTC)
-Subject: Re: [PATCH] md: bcache: Trivial typo fixes in the file journal.c
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Cc:     rdunlap@infradead.org, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210317043018.4097983-1-unixbhaskar@gmail.com>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <f191b8a5-e168-a415-1e07-b49d229d7b64@suse.de>
-Date:   Wed, 17 Mar 2021 12:47:00 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
- Gecko/20100101 Thunderbird/78.8.1
+        id S229508AbhCQHas (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 17 Mar 2021 03:30:48 -0400
+IronPort-SDR: gKQHMT4e1+3UbGwzSn2Jx3YTqgHCHFcILbDkPc7BuK2rQ8aNd9eX/IXVAax4YnvKEW/xRrt84+
+ 0fOwuPttvWMw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9925"; a="189500587"
+X-IronPort-AV: E=Sophos;i="5.81,255,1610438400"; 
+   d="scan'208";a="189500587"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2021 00:30:43 -0700
+IronPort-SDR: ga+YfKLhIVPIr5FhGDjJaDwsC+pJ9BGRgueapjYJfPbw65eS1CKReMfNVoAKAeDOV+qBEX3fTk
+ uLxS6heno06A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,255,1610438400"; 
+   d="scan'208";a="602130258"
+Received: from ceph.sh.intel.com ([10.239.241.176])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Mar 2021 00:30:42 -0700
+From:   Qiaowei Ren <qiaowei.ren@intel.com>
+To:     Coly Li <colyli@suse.de>
+Cc:     Qiaowei Ren <qiaowei.ren@intel.com>,
+        Jianpeng Ma <jianpeng.ma@intel.com>,
+        linux-bcache@vger.kernel.org
+Subject: [bch-nvm-pages v7 0/6] nvm page allocator for bcache 
+Date:   Wed, 17 Mar 2021 11:10:23 -0400
+Message-Id: <20210317151029.40735-1-qiaowei.ren@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20210317043018.4097983-1-unixbhaskar@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 3/17/21 12:30 PM, Bhaskar Chowdhury wrote:
-> 
-> s/condidate/candidate/
-> s/folowing/following/
-> 
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+This series implements nvm pages allocator for bcache. This idea is from
+one discussion about nvdimm use case in kernel together with Coly. Coly
+sent the following email about this idea to give some introduction on what
+we will do before:
 
-I will add it in my for-next queue.
+https://lore.kernel.org/linux-bcache/bc7e71ec-97eb-b226-d4fc-d8b64c1ef41a@suse.de/
 
-Thanks.
+Here this series focus on the first step in above email, that is to say,
+this patch set implements a generic framework in bcache to allocate/release
+NV-memory pages, and provide allocated pages for each requestor after reboot.
+In order to do this, one simple buddy system is implemented to manage NV-memory
+pages.
 
-Coly Li
+This set includes one testing module which can be used for simple test cases.
+Next need to stroe bcache log or internal btree nodes into nvdimm based on
+these buddy apis to do more testing.
 
 
-> ---
->  drivers/md/bcache/journal.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-> index c6613e817333..9f2eb8dec803 100644
-> --- a/drivers/md/bcache/journal.c
-> +++ b/drivers/md/bcache/journal.c
-> @@ -111,7 +111,7 @@ reread:		left = ca->sb.bucket_size - offset;
->  			 * Check from the oldest jset for last_seq. If
->  			 * i->j.seq < j->last_seq, it means the oldest jset
->  			 * in list is expired and useless, remove it from
-> -			 * this list. Otherwise, j is a condidate jset for
-> +			 * this list. Otherwise, j is a candidate jset for
->  			 * further following checks.
->  			 */
->  			while (!list_empty(list)) {
-> @@ -498,7 +498,7 @@ static void btree_flush_write(struct cache_set *c)
->  		 * - If there are matched nodes recorded in btree_nodes[],
->  		 *   they are clean now (this is why and how the oldest
->  		 *   journal entry can be reclaimed). These selected nodes
-> -		 *   will be ignored and skipped in the folowing for-loop.
-> +		 *   will be ignored and skipped in the following for-loop.
->  		 */
->  		if (((btree_current_write(b)->journal - fifo_front_p) &
->  		     mask) != 0) {
-> --
-> 2.30.2
-> 
+Coly Li (1):
+  bcache: add initial data structures for nvm pages
+
+Jianpeng Ma (5):
+  bcache: initialize the nvm pages allocator
+  bcache: initialization of the buddy
+  bcache: bch_nvm_alloc_pages() of the buddy
+  bcache: bch_nvm_free_pages() of the buddy
+  bcache: get allocated pages from specific owner
+
+ drivers/md/bcache/Kconfig       |   6 +
+ drivers/md/bcache/Makefile      |   2 +-
+ drivers/md/bcache/nvm-pages.c   | 737 ++++++++++++++++++++++++++++++++
+ drivers/md/bcache/nvm-pages.h   |  91 ++++
+ drivers/md/bcache/super.c       |   3 +
+ include/uapi/linux/bcache-nvm.h | 196 +++++++++
+ 6 files changed, 1034 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/md/bcache/nvm-pages.c
+ create mode 100644 drivers/md/bcache/nvm-pages.h
+ create mode 100644 include/uapi/linux/bcache-nvm.h
+
+-- 
+2.25.1
 
