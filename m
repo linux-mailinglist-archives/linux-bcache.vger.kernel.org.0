@@ -2,57 +2,74 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D9F2352E31
-	for <lists+linux-bcache@lfdr.de>; Fri,  2 Apr 2021 19:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 501DC3538D4
+	for <lists+linux-bcache@lfdr.de>; Sun,  4 Apr 2021 18:23:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234488AbhDBRWk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 2 Apr 2021 13:22:40 -0400
-Received: from 93804.cloudwaysapps.com ([178.62.255.238]:43494 "EHLO
-        93804.cloudwaysapps.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229605AbhDBRWk (ORCPT
+        id S229861AbhDDQXv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 4 Apr 2021 12:23:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37824 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230210AbhDDQXv (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 2 Apr 2021 13:22:40 -0400
-X-Greylist: delayed 28686 seconds by postgrey-1.27 at vger.kernel.org; Fri, 02 Apr 2021 13:22:38 EDT
-Received: from 127.0.0.1 (93804.cloudwaysapps.com [127.0.0.1])
-        by 93804.cloudwaysapps.com (Postfix) with SMTP id 9FB1927B71;
-        Thu,  1 Apr 2021 22:32:59 +0000 (UTC)
-Received: from [160.113.140.206] by 127.0.0.1 id wpN7y8J7RUKf for <lintoe@ozemail.com.au>; Thu, 01 Apr 2021 20:30:07 -0300
-Message-ID: <e41332$x6eq4@m57.v734f>
-From:   "FM CONSULTING LTD" <fkinneyofd@tampabay.rr.com>
-Reply-To: "FM CONSULTING LTD" <fkinneyofd@tampabay.rr.com>
-To:     lintoe@ozemail.com.au
-Subject: WE OFFER  INVESTMENT FUNDING
-Date:   Thu, 01 Apr 21 20:30:07 GMT
-X-Mailer: Microsoft Outlook Express 5.50.4522.1200
+        Sun, 4 Apr 2021 12:23:51 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB3CDC061756
+        for <linux-bcache@vger.kernel.org>; Sun,  4 Apr 2021 09:23:44 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id m3so466955edv.5
+        for <linux-bcache@vger.kernel.org>; Sun, 04 Apr 2021 09:23:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mRbfSCYJ4blehV0uU8GLq4Xk3woSMBSdne0gifE4TyA=;
+        b=bhkYRKUAkus/uRi85dd9ASDJf7T3mYi0as3hWMlAjar82Mq8LPRER1zBzIl8aDulOV
+         yMvPKtVVjt9PN3MPksXEm3tm/jtAMxUBZIbCKuyMPcXbl0faMxMwVeeLvJ1oTtgmfhrS
+         0ZjGZHpFteXFQCvg1MCKLDNtbHYN5ISegVPc4KXeKzMw4Wtg5bP3JBqEzhQnZ/tLGYv3
+         Fz0v1b+Rrfitt0xayX+ankZOqdBxQQ+pC1/Z9gZOL/MKpDbwj2KYr5OStYaSQGkX+3tf
+         Ji+oi4GNluwtPmi+zYbbAnvnw3zPqLLiYTBNCY6BEjaMHaV0nrqfAiniCZmhswhwUxeI
+         KJTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mRbfSCYJ4blehV0uU8GLq4Xk3woSMBSdne0gifE4TyA=;
+        b=gAGgC3kGuRwlrBcRMyMEvOgZD3WKxlS2av4WFaHcqEcGR/phZY9iZxCioU5yLbYNe2
+         F5kkdgW22ddwz7NzN27Os/y2rWrCoXxGzycDZwBcHnzooAW7zso6CPpvYDq6ngCJ424Z
+         Er0JBtKoKUT+TrtuIFddN8GXk0qbOXkLqjGa/eK5Oqd8PGcCY1594AUS14Yf/F+IPYoG
+         CzJUqNymwc8Z7A8+sd2Wp0jAfJ+LqwyZREv6dAC7BH36cRibNlOwm2+bpCI+cARQlFOP
+         TCMid1MKHagah7wNdknrS29xWN8Upx3lqINokJsB7GIvWuaYVJ3SGJjzwQiH8i661ZTc
+         Vuvw==
+X-Gm-Message-State: AOAM5339xYV3Ozy1QvC0YpwFrK+/eNs/52cgE8YukUaU2NeklyduI//r
+        IX3T/bCCgFhFMQVczB2SyjhFjFwREwqBzw==
+X-Google-Smtp-Source: ABdhPJzuDGKaqJwy38CT39iP+zf3MGk1jBxWd38M0z2w+cAi1H4RHgnkgSA5EaT7Wg1nsAEEc4Ykjg==
+X-Received: by 2002:a05:6402:c8:: with SMTP id i8mr27135882edu.57.1617553423195;
+        Sun, 04 Apr 2021 09:23:43 -0700 (PDT)
+Received: from exnet.gdb.it (mob-5-90-68-228.net.vodafone.it. [5.90.68.228])
+        by smtp.gmail.com with ESMTPSA id a9sm8798576edt.82.2021.04.04.09.23.42
+        for <linux-bcache@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Apr 2021 09:23:42 -0700 (PDT)
+From:   Giuseppe Della Bianca <giusdbg@gmail.com>
+To:     linux-bcache@vger.kernel.org
+Subject: [CACHE DEVICE] Space usage
+Date:   Sun, 04 Apr 2021 18:15:51 +0200
+Message-ID: <4639704.31r3eYUQgx@exnet.gdb.it>
 MIME-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="F9C_16BD7D_06DC0"
-X-Priority: 3
-X-MSMail-Priority: Normal
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+Hi.
 
---F9C_16BD7D_06DC0
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+In SSDs, full use of available space causes speed and durability problems.
 
-We introduce ourselves as mandated capital providers. 
-We are interested in having your company represents us exclusively in your=
- jurisdiction for the placement of loan and investment financing.
-Being direct financiers we offer financing for businesses for expansion, w=
-orking capital, construction projects, factoring, energy, manufacturing, t=
-elecommunications and the real estate sector to name a few.
-Our pool of funds is provided by high net worth individuals, trust funds, =
-family office funds as well as corporate and institutional funds. We act a=
-s the direct custodian of these funds provided by our clients who request =
-that we operate with the utmost of privacy and discretion. As a result we =
-normally fund individual projects starting from USD3 million well into the=
- 100 to 200 million dollar range.
-Sincerely 
-Rix Anthony
-FM Consultant New Zealand
+bcahe uses all the available space in the cache device? 
 
---F9C_16BD7D_06DC0--
+I could not find information on the maximum space used or how to set it. 
+
+
+gdb
+
 
