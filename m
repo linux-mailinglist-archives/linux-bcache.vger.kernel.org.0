@@ -2,74 +2,97 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 501DC3538D4
-	for <lists+linux-bcache@lfdr.de>; Sun,  4 Apr 2021 18:23:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B521353988
+	for <lists+linux-bcache@lfdr.de>; Sun,  4 Apr 2021 21:42:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbhDDQXv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 4 Apr 2021 12:23:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37824 "EHLO
+        id S231438AbhDDTmI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 4 Apr 2021 15:42:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230210AbhDDQXv (ORCPT
+        with ESMTP id S231327AbhDDTmG (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 4 Apr 2021 12:23:51 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB3CDC061756
-        for <linux-bcache@vger.kernel.org>; Sun,  4 Apr 2021 09:23:44 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id m3so466955edv.5
-        for <linux-bcache@vger.kernel.org>; Sun, 04 Apr 2021 09:23:44 -0700 (PDT)
+        Sun, 4 Apr 2021 15:42:06 -0400
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1BA7C061756
+        for <linux-bcache@vger.kernel.org>; Sun,  4 Apr 2021 12:42:00 -0700 (PDT)
+Received: by mail-qk1-x72f.google.com with SMTP id c3so9843614qkc.5
+        for <linux-bcache@vger.kernel.org>; Sun, 04 Apr 2021 12:42:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mRbfSCYJ4blehV0uU8GLq4Xk3woSMBSdne0gifE4TyA=;
-        b=bhkYRKUAkus/uRi85dd9ASDJf7T3mYi0as3hWMlAjar82Mq8LPRER1zBzIl8aDulOV
-         yMvPKtVVjt9PN3MPksXEm3tm/jtAMxUBZIbCKuyMPcXbl0faMxMwVeeLvJ1oTtgmfhrS
-         0ZjGZHpFteXFQCvg1MCKLDNtbHYN5ISegVPc4KXeKzMw4Wtg5bP3JBqEzhQnZ/tLGYv3
-         Fz0v1b+Rrfitt0xayX+ankZOqdBxQQ+pC1/Z9gZOL/MKpDbwj2KYr5OStYaSQGkX+3tf
-         Ji+oi4GNluwtPmi+zYbbAnvnw3zPqLLiYTBNCY6BEjaMHaV0nrqfAiniCZmhswhwUxeI
-         KJTg==
+        d=kaishome.de; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dMLhR+aP0iV1lpMRRjVJynM5v+M9IqApQfb4HErFX9E=;
+        b=Tg2YBWNa5Gv3GmpTIgUXoPzxDA3CEfs2qhRo5fcmjKa4OjLAgr/1KeiFGqDii/sslF
+         F1wiH6YgEdR8H0Rzem8Z/sX3kkfLneOqs10eWqBWPOc7D/i0dfFe+5mT+bp5koyhc8uG
+         grRikfYLs4YPNSm5ojmOrSsLyrLcyP0IthJn0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mRbfSCYJ4blehV0uU8GLq4Xk3woSMBSdne0gifE4TyA=;
-        b=gAGgC3kGuRwlrBcRMyMEvOgZD3WKxlS2av4WFaHcqEcGR/phZY9iZxCioU5yLbYNe2
-         F5kkdgW22ddwz7NzN27Os/y2rWrCoXxGzycDZwBcHnzooAW7zso6CPpvYDq6ngCJ424Z
-         Er0JBtKoKUT+TrtuIFddN8GXk0qbOXkLqjGa/eK5Oqd8PGcCY1594AUS14Yf/F+IPYoG
-         CzJUqNymwc8Z7A8+sd2Wp0jAfJ+LqwyZREv6dAC7BH36cRibNlOwm2+bpCI+cARQlFOP
-         TCMid1MKHagah7wNdknrS29xWN8Upx3lqINokJsB7GIvWuaYVJ3SGJjzwQiH8i661ZTc
-         Vuvw==
-X-Gm-Message-State: AOAM5339xYV3Ozy1QvC0YpwFrK+/eNs/52cgE8YukUaU2NeklyduI//r
-        IX3T/bCCgFhFMQVczB2SyjhFjFwREwqBzw==
-X-Google-Smtp-Source: ABdhPJzuDGKaqJwy38CT39iP+zf3MGk1jBxWd38M0z2w+cAi1H4RHgnkgSA5EaT7Wg1nsAEEc4Ykjg==
-X-Received: by 2002:a05:6402:c8:: with SMTP id i8mr27135882edu.57.1617553423195;
-        Sun, 04 Apr 2021 09:23:43 -0700 (PDT)
-Received: from exnet.gdb.it (mob-5-90-68-228.net.vodafone.it. [5.90.68.228])
-        by smtp.gmail.com with ESMTPSA id a9sm8798576edt.82.2021.04.04.09.23.42
-        for <linux-bcache@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Apr 2021 09:23:42 -0700 (PDT)
-From:   Giuseppe Della Bianca <giusdbg@gmail.com>
-To:     linux-bcache@vger.kernel.org
-Subject: [CACHE DEVICE] Space usage
-Date:   Sun, 04 Apr 2021 18:15:51 +0200
-Message-ID: <4639704.31r3eYUQgx@exnet.gdb.it>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dMLhR+aP0iV1lpMRRjVJynM5v+M9IqApQfb4HErFX9E=;
+        b=W+g3d/aC+vbMk92Eow5uuUHZSlru+Pk/S1HSkT0c7zhEzSHBsZd+ZU8tdmXM39SRwH
+         E9CzgFwolO6Gmvaavowc+7T9dRmjuBjUqAzjEhhmQQKRbcVv3NaGclPtscMz2PD87CZ8
+         tNylskvkJae1eo3Y8iNmu4gDYiUfxxVzmm5SbEP7hU5/t4cJugaMU/zuOUK+NrTruBpr
+         wMB57szQo8AtzA5PsSgVKpXW6TSOSVc2EnyODjzpPIt01np/zAYIsr0SQ+jS2Vfm1oia
+         OswXON3M8VF8f9a+HenQ140eFJ7bGIHNi7Jg9Perl8sUdz6qstMxWiQgaLrbdu1DipLR
+         Zx0A==
+X-Gm-Message-State: AOAM531oKGjg/0I352am077d+XJfh+PTO/lFN/yNEfzmUUVTMaSNLJ5e
+        z2g2hsK/HXINxxEHZYHzc2O4lW6qwKswuvAiDbPqBF3/vQEFeg==
+X-Google-Smtp-Source: ABdhPJyvuLVBsobdHmPaSwtmeSSaLzydnjrCWtEqazgdpIK4PIt2CE4cHvtvjURI1Pyo1IBz59i9FDzT78bffjJ8EGY=
+X-Received: by 2002:a05:620a:1650:: with SMTP id c16mr21600812qko.477.1617565319886;
+ Sun, 04 Apr 2021 12:41:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <4639704.31r3eYUQgx@exnet.gdb.it>
+In-Reply-To: <4639704.31r3eYUQgx@exnet.gdb.it>
+From:   Kai Krakow <kai@kaishome.de>
+Date:   Sun, 4 Apr 2021 21:41:48 +0200
+Message-ID: <CAC2ZOYsWXUQ+AtQkoXXx50_XSQGMx9xBrgFNP7k0Mt8c79XMcQ@mail.gmail.com>
+Subject: Re: [CACHE DEVICE] Space usage
+To:     Giuseppe Della Bianca <giusdbg@gmail.com>
+Cc:     linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi.
+Hi!
 
-In SSDs, full use of available space causes speed and durability problems.
+Am So., 4. Apr. 2021 um 18:23 Uhr schrieb Giuseppe Della Bianca
+<giusdbg@gmail.com>:
+> In SSDs, full use of available space causes speed and durability problems.
+>
+> bcahe uses all the available space in the cache device?
+>
+> I could not find information on the maximum space used or how to set it.
 
-bcahe uses all the available space in the cache device? 
+There's no option for that in bcache. Instead, create a smaller
+partition for bcache, then create a second partition filling the rest
+of the device. You may want to use a size ratio of 80:20 for these
+partitions tho modern drives usually already have an internal reserve
+area, so 90:10 may be fine, too.
 
-I could not find information on the maximum space used or how to set it. 
+Now, use the blkdiscard command to trim the second partition. That way
+the SSD knows that this is unused space it can use for wear leveling.
+You may remove this second partition if you want to. In either case,
+don't write anything to this space in the future.
 
+Now continue to install bcache to the first partition created.
 
-gdb
+I've never seen any performance or endurance gains here using modern
+Samsung drives so I've gone with using 100% for bcache. But my older
+smaller drives had seen a benefit (usually better performance than
+better lifetime) from using 80:20 or 90:10. So I'd say the bigger the
+drive, the less likely you need to reserve any trimmed space.
 
+So currently I'm using a hybrid approach and made the second partition
+into a big swap partition: Most of it will stay trimmed but if the
+system has to swap, it will at least find fast swap space here, and it
+can be used for cold hibernation. You should not do that, tho, if your
+system is low on memory: Swap isn't meant as emergency memory, and it
+isn't meant as an extension to installed RAM. It's a space where the
+system can put anonymous memory that's never used to make space for
+disk caching. Only in that case, it's hardly ever written to or read
+from.
 
+Regards,
+Kai
