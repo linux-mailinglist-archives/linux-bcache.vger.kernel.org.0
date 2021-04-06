@@ -2,78 +2,69 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55C17355410
-	for <lists+linux-bcache@lfdr.de>; Tue,  6 Apr 2021 14:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DFB4355450
+	for <lists+linux-bcache@lfdr.de>; Tue,  6 Apr 2021 14:55:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239293AbhDFMhp (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 6 Apr 2021 08:37:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46934 "EHLO
+        id S243380AbhDFMzt (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 6 Apr 2021 08:55:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238946AbhDFMhp (ORCPT
+        with ESMTP id S243376AbhDFMzt (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 6 Apr 2021 08:37:45 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 630BFC06174A
-        for <linux-bcache@vger.kernel.org>; Tue,  6 Apr 2021 05:37:36 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id c4so14706687qkg.3
-        for <linux-bcache@vger.kernel.org>; Tue, 06 Apr 2021 05:37:36 -0700 (PDT)
+        Tue, 6 Apr 2021 08:55:49 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FD05C06174A
+        for <linux-bcache@vger.kernel.org>; Tue,  6 Apr 2021 05:55:40 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id b10so15427667iot.4
+        for <linux-bcache@vger.kernel.org>; Tue, 06 Apr 2021 05:55:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kaishome.de; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fUVONSEGu3HMQtrIco8Ba5zYIKpzT6n9erUrj5lGg58=;
-        b=lxhxK3V8oUQdKTAZUKYH9PcDlYJitu7MJL7+ICsvDkm2VI61s1aYYmCMeaYl9jNSvp
-         Bw1l8LCEs2Esnzwf8TNtBP34EpX0kZvnN7UxnDlaci9NgBANjnLkIzqH/TZQeBXEbB8o
-         yseT4PhPI7NEC+2uP/DlUUv5SRSAB3foD3/3A=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=Hbwd+YCIGcArHXDLOaOgaDXtF1rGTjl7XVhRNNFoySo=;
+        b=QFEDsRbCyPVDmQm5QpFyxb7BE39ncBLFfPomgSIHQjrM+p7DEnnvsyqNYUUQFhWJWJ
+         ZIvjuhSZfcFTreHkj+Dfj1CTZo0kNCzay5yb0aGMoRyxKa8QcggXrT2iFtChL2n2CZQz
+         eR5wdBvPdv7F53cBM44XkTMTTpEYly6y3dtVQeKy2q13GJjupy7qLg4ii2F9nJ4dHxFx
+         AbF4TYtvqkNtKuWEOD4lOkZz/Cvsv8d4slQDfN4sJQnYvhsOiEmWr2/npntQWiNEFHYe
+         UMfnnRPNac17kQUTbgNqwO3HhVTTl40jWvWpFJgAcAavfTfDVm4Zzkf/hPEJXlAyuX7j
+         1IZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fUVONSEGu3HMQtrIco8Ba5zYIKpzT6n9erUrj5lGg58=;
-        b=nUGrh8ONt8SIS019W6n97ePvRvEcWRnISX4OqMfIrdcHcc6xWy8/tUnPOcQTOlruUy
-         yglLa+XpGYZ5bRDoAY88g7Iggta3pPtmO9ijO6fQEJY6BM6Jk4jeyYyutwyXCiuCdrBG
-         ntN8ac67EUH6skxIO520NPGVZXGk0eO5cYZbm1FMgxuwF+oODst0qYL3k+2gPx5grBrm
-         25JPN28hEo3mrxUFWDQryJ0Jlz+0OaW10gFN+ATpaXiBxc4QiTO/QiXDxlLgZR472GuS
-         GeQBRX7tIaAkp+5Io3uVy0GbgsnzoO0fNkSxjUVsIct+8r+FAHcnDWIijOilNZv2Ha91
-         kVxA==
-X-Gm-Message-State: AOAM533jBpTkeUO20Y8gPPVYTSIufFEWLHWS0vO81M4nvSTtu+606up3
-        4IEUsvqEQ70uuWAV9vnJmcRmfjw7vU5pL4bW7Vgbpg==
-X-Google-Smtp-Source: ABdhPJypCMUh68YWDBf2p7iCCgLl/AxSPD7tJFrs/Xvg66ctHyWHPWxL8DEZW0E/lqfWif//3zaXx8PiB4mof6UoyqM=
-X-Received: by 2002:a37:a603:: with SMTP id p3mr28853103qke.362.1617712655668;
- Tue, 06 Apr 2021 05:37:35 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=Hbwd+YCIGcArHXDLOaOgaDXtF1rGTjl7XVhRNNFoySo=;
+        b=nUNDZ7MnqASCNktBvV/2Rf3xHtOjnXu+KoYIJKqP/o+j0pdrUpro/RdosRI0Solk6i
+         WsEN6LJZXOWqhTFyQo9lO7NhKdhlKrb3ePpUKreCGQKITw66vUtP3vXOPlt/SFq9S6S7
+         q3+pptuWL7kbG/4kYHlnL67dGM1jmT89pXhIWRhXTMcO5XwRvvd7krXwj7XBYBcOD1Nn
+         VfQhdrOH7Aox+A0IASElDDJBX7m1nFenjqVX80Emxw9rBCNFN0Rs7IqDUv5bk6QoEYtG
+         zK7HTYOTR3GUwWhX77g0p5fp6M3vqhRa9GbLb2/M/c73QaYJrLsfYTibkN95GfYKANXK
+         s16w==
+X-Gm-Message-State: AOAM531i6t8KrnQTiiLcpKYswhw0W0i+IdRkzyxwa1JghVYGqQMKwl0y
+        WNJTaO5bRMvGcWS0NdqjIRiRe0q8KCgjNef1B+Q=
+X-Google-Smtp-Source: ABdhPJzetg9Pb512p5grRZPAKl7L9IyXC5Me9/FtTtKAdn4Tm2QPuLywVJ2/TLve5FVEiaoJRaM6T/qcFl0Q00oZ7AY=
+X-Received: by 2002:a6b:c997:: with SMTP id z145mr22992631iof.36.1617713739452;
+ Tue, 06 Apr 2021 05:55:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <3030cad3-47e2-43b0-8a82-656c6b774c78@www.fastmail.com>
- <bcfeb53d-b8b0-883a-7a02-90b44b23f4dd@suse.de> <397bddb7-9750-4dd9-bf6e-2287d89778f1@www.fastmail.com>
- <CAH6h+hfN=L+DKGAZv9TUUNmFF4jHzyEeo=9Tr7rw5haLeM3CMQ@mail.gmail.com>
-In-Reply-To: <CAH6h+hfN=L+DKGAZv9TUUNmFF4jHzyEeo=9Tr7rw5haLeM3CMQ@mail.gmail.com>
-From:   Kai Krakow <kai@kaishome.de>
-Date:   Tue, 6 Apr 2021 14:37:24 +0200
-Message-ID: <CAC2ZOYsr9aQjJLa-e0F3cXyKmJmq+6BNZ=mUMmqw8bPxMpQWuw@mail.gmail.com>
-Subject: Re: Undoing an "Auto-Stop" when Cache device has recovered?
-To:     Marc Smith <msmith626@gmail.com>
-Cc:     Nikolaus Rath <nikolaus@rath.org>, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org
+Received: by 2002:a02:2b09:0:0:0:0:0 with HTTP; Tue, 6 Apr 2021 05:55:38 -0700 (PDT)
+Reply-To: sroomf70@gmail.com
+From:   "Prof. Dr Diane" <dflint909@gmail.com>
+Date:   Tue, 6 Apr 2021 05:55:38 -0700
+Message-ID: <CAFe5QT3nx89Vf5Yv1qQr_VByV5JLeMA66y4WMi4KYigsUHxW5Q@mail.gmail.com>
+Subject: Greetings,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Am Di., 6. Apr. 2021 um 14:16 Uhr schrieb Marc Smith <msmith626@gmail.com>:
+-- 
+Greetings,
+From Prof. Dr Diane, we notify you through our official mail but no
+respond from you before sending you with this private email hope you
+Received the Fund that was paid to your account? do not hesitate to
+keep us notice as soon as possible to enable us make the balance
+transfer into your nominated account. awaiting your urgent
+notification.
 
-> My thought was to use "panic" in the 'errors' sysfs attribute so the
-> machine panics instead of detaching the cache device. Otherwise, it
-> seems the cache device gets detached with dirty data present, and the
-> backing device is started (yet data is not present).
->
-> I'll work on reproducing the original case with the "unregister" value
-> and provide logs, as it sounds like this behavior is unexpected (eg, a
-> cache device should only detach if there is NO dirty data present).
-
-It could be useful to switch the caching mode to write-around at the
-same time, so no data would be written to the device accidentally.
-
-For consistency reasons, the backing device should become inaccessible
-when the cache device with dirty data goes away. If the cache is
-clean, the cache can just be detached. So it should have an "auto"
-option which does either the one or the other thing depending on
-caching state.
+Best regards
+Prof. Dr Diane
+Head of Foreign Operation
