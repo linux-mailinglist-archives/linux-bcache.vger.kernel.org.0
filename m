@@ -2,69 +2,107 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DFB4355450
-	for <lists+linux-bcache@lfdr.de>; Tue,  6 Apr 2021 14:55:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB88B3567E8
+	for <lists+linux-bcache@lfdr.de>; Wed,  7 Apr 2021 11:24:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243380AbhDFMzt (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 6 Apr 2021 08:55:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243376AbhDFMzt (ORCPT
+        id S234477AbhDGJZA (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 7 Apr 2021 05:25:00 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15940 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231287AbhDGJZA (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 6 Apr 2021 08:55:49 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FD05C06174A
-        for <linux-bcache@vger.kernel.org>; Tue,  6 Apr 2021 05:55:40 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id b10so15427667iot.4
-        for <linux-bcache@vger.kernel.org>; Tue, 06 Apr 2021 05:55:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Hbwd+YCIGcArHXDLOaOgaDXtF1rGTjl7XVhRNNFoySo=;
-        b=QFEDsRbCyPVDmQm5QpFyxb7BE39ncBLFfPomgSIHQjrM+p7DEnnvsyqNYUUQFhWJWJ
-         ZIvjuhSZfcFTreHkj+Dfj1CTZo0kNCzay5yb0aGMoRyxKa8QcggXrT2iFtChL2n2CZQz
-         eR5wdBvPdv7F53cBM44XkTMTTpEYly6y3dtVQeKy2q13GJjupy7qLg4ii2F9nJ4dHxFx
-         AbF4TYtvqkNtKuWEOD4lOkZz/Cvsv8d4slQDfN4sJQnYvhsOiEmWr2/npntQWiNEFHYe
-         UMfnnRPNac17kQUTbgNqwO3HhVTTl40jWvWpFJgAcAavfTfDVm4Zzkf/hPEJXlAyuX7j
-         1IZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Hbwd+YCIGcArHXDLOaOgaDXtF1rGTjl7XVhRNNFoySo=;
-        b=nUNDZ7MnqASCNktBvV/2Rf3xHtOjnXu+KoYIJKqP/o+j0pdrUpro/RdosRI0Solk6i
-         WsEN6LJZXOWqhTFyQo9lO7NhKdhlKrb3ePpUKreCGQKITw66vUtP3vXOPlt/SFq9S6S7
-         q3+pptuWL7kbG/4kYHlnL67dGM1jmT89pXhIWRhXTMcO5XwRvvd7krXwj7XBYBcOD1Nn
-         VfQhdrOH7Aox+A0IASElDDJBX7m1nFenjqVX80Emxw9rBCNFN0Rs7IqDUv5bk6QoEYtG
-         zK7HTYOTR3GUwWhX77g0p5fp6M3vqhRa9GbLb2/M/c73QaYJrLsfYTibkN95GfYKANXK
-         s16w==
-X-Gm-Message-State: AOAM531i6t8KrnQTiiLcpKYswhw0W0i+IdRkzyxwa1JghVYGqQMKwl0y
-        WNJTaO5bRMvGcWS0NdqjIRiRe0q8KCgjNef1B+Q=
-X-Google-Smtp-Source: ABdhPJzetg9Pb512p5grRZPAKl7L9IyXC5Me9/FtTtKAdn4Tm2QPuLywVJ2/TLve5FVEiaoJRaM6T/qcFl0Q00oZ7AY=
-X-Received: by 2002:a6b:c997:: with SMTP id z145mr22992631iof.36.1617713739452;
- Tue, 06 Apr 2021 05:55:39 -0700 (PDT)
+        Wed, 7 Apr 2021 05:25:00 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FFf7J4y90zyNbZ;
+        Wed,  7 Apr 2021 17:22:36 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.82) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 7 Apr 2021 17:24:41 +0800
+From:   Zheng Yongjun <zhengyongjun3@huawei.com>
+To:     <colyli@suse.de>, <kent.overstreet@gmail.com>,
+        <linux-bcache@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next v2] bcache: use DEFINE_MUTEX() for mutex lock
+Date:   Wed, 7 Apr 2021 17:38:48 +0800
+Message-ID: <20210407093848.567720-1-zhengyongjun3@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Received: by 2002:a02:2b09:0:0:0:0:0 with HTTP; Tue, 6 Apr 2021 05:55:38 -0700 (PDT)
-Reply-To: sroomf70@gmail.com
-From:   "Prof. Dr Diane" <dflint909@gmail.com>
-Date:   Tue, 6 Apr 2021 05:55:38 -0700
-Message-ID: <CAFe5QT3nx89Vf5Yv1qQr_VByV5JLeMA66y4WMi4KYigsUHxW5Q@mail.gmail.com>
-Subject: Greetings,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.104.82]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
--- 
-Greetings,
-From Prof. Dr Diane, we notify you through our official mail but no
-respond from you before sending you with this private email hope you
-Received the Fund that was paid to your account? do not hesitate to
-keep us notice as soon as possible to enable us make the balance
-transfer into your nominated account. awaiting your urgent
-notification.
+mutex lock can be initialized automatically with DEFINE_MUTEX() rather
+than explicitly calling mutex_init().
 
-Best regards
-Prof. Dr Diane
-Head of Foreign Operation
+this patch will reduce the size of bcache.ko about 64 bytes, the reason
+as follows:
+
+though this patch will increase the size of .data segment about 32 bytes,
+it will also reduce the size of .init.text and .rodata.str1.1(at x86_64),
+.rodata_str1.8(at arm64) and .bss segment total about 96 bytes which reduce
+ the size more than .data segment;
+
+here is the statistics:
+Sections: (arm64 platform)
+Idx name		size
+-.init.text		00000240
++.init.text		00000228
+
+-.rodata.str1.8	000012cd
++.rodata.str1.8	000012b5
+
+-.data			00000c60
++.data			00000c80
+
+-.bss			00000080
++.bss			00000060
+
+Sections: (x86 platform)
+Idx name		size
+-.init.text		000001d9
++.init.text		000001bf
+
+-.rodata.str1.1	00000c80
++.rodata.str1.1	00000c6d
+
+-.data			00000cc0
++.data			00000ce0
+
+-.bss			00000080
++.bss			00000070
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+---
+ drivers/md/bcache/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 03e1fe4de53d..3635f454309e 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -40,7 +40,7 @@ static const char invalid_uuid[] = {
+ };
+ 
+ static struct kobject *bcache_kobj;
+-struct mutex bch_register_lock;
++DEFINE_MUTEX(bch_register_lock);
+ bool bcache_is_reboot;
+ LIST_HEAD(bch_cache_sets);
+ static LIST_HEAD(uncached_devices);
+@@ -2869,7 +2869,6 @@ static int __init bcache_init(void)
+ 
+ 	check_module_parameters();
+ 
+-	mutex_init(&bch_register_lock);
+ 	init_waitqueue_head(&unregister_wait);
+ 	register_reboot_notifier(&reboot);
+ 
+-- 
+2.25.1
+
