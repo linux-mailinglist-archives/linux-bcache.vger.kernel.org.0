@@ -2,27 +2,26 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15C0935B4FE
-	for <lists+linux-bcache@lfdr.de>; Sun, 11 Apr 2021 15:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 068EE35B50A
+	for <lists+linux-bcache@lfdr.de>; Sun, 11 Apr 2021 15:49:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235983AbhDKNog (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 11 Apr 2021 09:44:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47568 "EHLO mx2.suse.de"
+        id S235857AbhDKNoy (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 11 Apr 2021 09:44:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47604 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235822AbhDKNoM (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 11 Apr 2021 09:44:12 -0400
+        id S235848AbhDKNoQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 11 Apr 2021 09:44:16 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id F22A5AD2D;
-        Sun, 11 Apr 2021 13:43:54 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 352B9AFF4;
+        Sun, 11 Apr 2021 13:43:59 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Coly Li <colyli@suse.de>
-Subject: [PATCH 6/7] bcache: Use 64-bit arithmetic instead of 32-bit
-Date:   Sun, 11 Apr 2021 21:43:15 +0800
-Message-Id: <20210411134316.80274-7-colyli@suse.de>
+        Coly Li <colyli@suse.de>, Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 7/7] bcache: fix a regression of code compiling failure in debug.c
+Date:   Sun, 11 Apr 2021 21:43:16 +0800
+Message-Id: <20210411134316.80274-8-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210411134316.80274-1-colyli@suse.de>
 References: <20210411134316.80274-1-colyli@suse.de>
@@ -32,45 +31,37 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+The patch "bcache: remove PTR_CACHE" introduces a compiling failure in
+debug.c with following error message,
+  In file included from drivers/md/bcache/bcache.h:182:0,
+                   from drivers/md/bcache/debug.c:9:
+  drivers/md/bcache/debug.c: In function 'bch_btree_verify':
+  drivers/md/bcache/debug.c:53:19: error: 'c' undeclared (first use in
+  this function)
+    bio_set_dev(bio, c->cache->bdev);
+                     ^
+This patch fixes the regression by replacing c->cache->bdev by b->c->
+cache->bdev.
 
-Cast multiple variables to (int64_t) in order to give the compiler
-complete information about the proper arithmetic to use. Notice that
-these variables are being used in contexts that expect expressions of
-type int64_t  (64 bit, signed). And currently, such expressions are
-being evaluated using 32-bit arithmetic.
-
-Fixes: d0cf9503e908 ("octeontx2-pf: ethtool fec mode support")
-Addresses-Coverity-ID: 1501724 ("Unintentional integer overflow")
-Addresses-Coverity-ID: 1501725 ("Unintentional integer overflow")
-Addresses-Coverity-ID: 1501726 ("Unintentional integer overflow")
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 Signed-off-by: Coly Li <colyli@suse.de>
+Cc: Christoph Hellwig <hch@lst.de>
 ---
- drivers/md/bcache/writeback.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/md/bcache/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index bcd550a2b0da..8120da278161 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -110,13 +110,13 @@ static void __update_writeback_rate(struct cached_dev *dc)
- 		int64_t fps;
+diff --git a/drivers/md/bcache/debug.c b/drivers/md/bcache/debug.c
+index 589a052efeb1..116edda845c3 100644
+--- a/drivers/md/bcache/debug.c
++++ b/drivers/md/bcache/debug.c
+@@ -50,7 +50,7 @@ void bch_btree_verify(struct btree *b)
+ 	v->keys.ops = b->keys.ops;
  
- 		if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID) {
--			fp_term = dc->writeback_rate_fp_term_low *
-+			fp_term = (int64_t)dc->writeback_rate_fp_term_low *
- 			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW);
- 		} else if (c->gc_stats.in_use <= BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH) {
--			fp_term = dc->writeback_rate_fp_term_mid *
-+			fp_term = (int64_t)dc->writeback_rate_fp_term_mid *
- 			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_MID);
- 		} else {
--			fp_term = dc->writeback_rate_fp_term_high *
-+			fp_term = (int64_t)dc->writeback_rate_fp_term_high *
- 			(c->gc_stats.in_use - BCH_WRITEBACK_FRAGMENT_THRESHOLD_HIGH);
- 		}
- 		fps = div_s64(dirty, dirty_buckets) * fp_term;
+ 	bio = bch_bbio_alloc(b->c);
+-	bio_set_dev(bio, c->cache->bdev);
++	bio_set_dev(bio, b->c->cache->bdev);
+ 	bio->bi_iter.bi_sector	= PTR_OFFSET(&b->key, 0);
+ 	bio->bi_iter.bi_size	= KEY_SIZE(&v->key) << 9;
+ 	bio->bi_opf		= REQ_OP_READ | REQ_META;
 -- 
 2.26.2
 
