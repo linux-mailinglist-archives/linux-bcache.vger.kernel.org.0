@@ -2,131 +2,113 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C09D374E40
-	for <lists+linux-bcache@lfdr.de>; Thu,  6 May 2021 06:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D368A37503B
+	for <lists+linux-bcache@lfdr.de>; Thu,  6 May 2021 09:36:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbhEFEKF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 6 May 2021 00:10:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46112 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229605AbhEFEKF (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 6 May 2021 00:10:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D11B4B03B;
-        Thu,  6 May 2021 04:09:06 +0000 (UTC)
-To:     Marc Smith <msmith626@gmail.com>
-References: <CAH6h+hc2quJhhBindQwQdK5pfsJRZWk5tX95RT3U_shuN1D=eQ@mail.gmail.com>
-From:   Coly Li <colyli@suse.de>
-Cc:     linux-bcache <linux-bcache@vger.kernel.org>
-Subject: Re: [PATCH v2] RFC - Write Bypass Race Bug
-Message-ID: <d616e7c1-2406-472f-0653-39612250c2f0@suse.de>
-Date:   Thu, 6 May 2021 12:09:04 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.0
+        id S233380AbhEFHhP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 6 May 2021 03:37:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39464 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233281AbhEFHhO (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 6 May 2021 03:37:14 -0400
+Received: from polaris.dblsaiko.net (polaris.dblsaiko.net [IPv6:2a01:4f9:c010:c011::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88AD2C061574
+        for <linux-bcache@vger.kernel.org>; Thu,  6 May 2021 00:36:16 -0700 (PDT)
+Received: from invader.localnet (p200300D3870Ff4007799d4FCc5f4C978.dip0.t-ipconnect.de [IPv6:2003:d3:870f:f400:7799:d4fc:c5f4:c978])
+        by polaris.dblsaiko.net (Postfix) with ESMTPSA id 7FFAE7F4BF;
+        Thu,  6 May 2021 09:30:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dblsaiko.net;
+        s=dkim; t=1620286223;
+        bh=/J48kgPnd8jlRm0kdHhropv0QbB8zT45Ep0bQtOQjCg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=qaAtX5aIv/c0DAFeqc+iNfLkf0ioJ7E556GJMu/wbM31+YI3ENoUvfkGrzMMPk9af
+         qgl+sidct8dcojmBrCd4Y0HU8bYV6MuWPRpe6HDWb9/b5wAzU+pAM7y8eXujlaK8ZQ
+         GCwgT3d6txIQ82ImqZHEIXuqTnTY6PgRgXa7PdjhLBlzJXarNeCjV9f16XY6k44kRD
+         Qs2miUF2AJPdJLooGHORllqDEcASj/rabFRFvb2M0d6QgDhUJWXyZN8LDk7N6EK33L
+         byaJWKwRrNbzCHQ6o1lkoUF9wgAEKH6ZXah7nMTkSoHwFni26N9XQyFUwNF/EnBWBo
+         /wFmVnfm/J+wQ==
+From:   Marco Rebhan <me@dblsaiko.net>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org, victor@westerhu.is
+Subject: Re: Kernel Oops: kernel BUG at block/bio.c:52
+Date:   Thu, 06 May 2021 09:36:13 +0200
+Message-ID: <1783900.tdWV9SEqCh@invader>
+In-Reply-To: <104da4a6-61be-63f9-8670-6243e9625e5a@suse.de>
+References: <5607192.MhkbZ0Pkbq@invader> <104da4a6-61be-63f9-8670-6243e9625e5a@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <CAH6h+hc2quJhhBindQwQdK5pfsJRZWk5tX95RT3U_shuN1D=eQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart2064133.irdbgypaU6"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 4/30/21 10:44 PM, Marc Smith wrote:
-> The problem:
-> If an inflight backing WRITE operation for a block is performed that
-> meets the criteria for bypassing the cache and that takes a long time
-> to complete, a READ operation for the same block may be fully
-> processed in the interim that populates the cache with the device
-> content from before the inflight WRITE. When the inflight WRITE
-> finally completes, since it was marked for bypass, the cache is not
-> subsequently updated, and the stale data populated by the READ request
-> remains in cache. While there is code in bcache for invalidating the
-> cache when a bypassed WRITE is performed, this is done prior to
-> issuing the backing I/O so it does not help.
-> 
-> The proposed fix:
-> Add two new lists to the cached_dev structure to track inflight
-> "bypass" write requests and inflight read requests that have have
-> missed cache. These are called "inflight_bypass_write_list" and
-> "inflight_read_list", respectively, and are protected by a spinlock
-> called the "inflight_lock"
-> 
-> When a WRITE is bypassing the cache, check whether there is an
-> overlapping inflight read. If so, set bypass = false to essentially
-> convert the bypass write into a writethrough write. Otherwise, if
-> there is no overlapping inflight read, then add the "search" structure
-> to the inflight bypass write list.
+--nextPart2064133.irdbgypaU6
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Marco Rebhan <me@dblsaiko.net>
+To: Coly Li <colyli@suse.de>
+Cc: linux-bcache@vger.kernel.org, victor@westerhu.is
+Subject: Re: Kernel Oops: kernel BUG at block/bio.c:52
+Date: Thu, 06 May 2021 09:36:13 +0200
+Message-ID: <1783900.tdWV9SEqCh@invader>
+In-Reply-To: <104da4a6-61be-63f9-8670-6243e9625e5a@suse.de>
+References: <5607192.MhkbZ0Pkbq@invader> <104da4a6-61be-63f9-8670-6243e9625e5a@suse.de>
 
-Hi Marc,
+On Thursday, 6 May 2021 04:50:06 CEST Coly Li wrote:
+> Could you please try the attached patch ?  If a suspicious bio
+> allocation happens, this patch will print out a warning kernel message
+> and avoid the BUG() panic.
 
-Could you please explain a bit more why the above thing is necessary ?
-Please help me to understand your idea more clear :-)
+Looks like the patch works. Here's a dmesg log that comes from starting
+up a game with a bunch of large files (which I'm guessing are what
+makes this happen more often?)
 
-> 
-> When a READ misses cache, check whether there is an overlapping
-> inflight write. If so, set a new flag in the search structure called
-> "do_not_cache" which causes cache population to be skipped after the
-> backing I/O completes. Otherwise, if there is no overlapping inflight
-> write, then add the "search" structure to the inflight read list.
-> 
-> The rest of the changes are to add a new stat called
-> "bypass_cache_insert_races" to track how many times the race was
-> encountered. Example:
-> cat /sys/fs/bcache/0c9b7a62-b431-4328-9dcb-a81e322238af/bdev0/stats_total/cache_bypass_races
-> 16577
-> 
+[   39.284230] bcache: cached_dev_cache_miss() inserting bio is too large: 344 iovecs, not intsert.
+[   65.415896] bcache: cached_dev_cache_miss() inserting bio is too large: 282 iovecs, not intsert.
+[   65.446327] bcache: cached_dev_cache_miss() inserting bio is too large: 946 iovecs, not intsert.
+[   88.116826] bcache: cached_dev_cache_miss() inserting bio is too large: 342 iovecs, not intsert.
+[   88.957691] bcache: cached_dev_cache_miss() inserting bio is too large: 342 iovecs, not intsert.
+[   89.020544] bcache: cached_dev_cache_miss() inserting bio is too large: 332 iovecs, not intsert.
+[   90.531875] bcache: cached_dev_cache_miss() inserting bio is too large: 261 iovecs, not intsert.
+[  111.464124] bcache: cached_dev_cache_miss() inserting bio is too large: 342 iovecs, not intsert.
+[  111.497049] bcache: cached_dev_cache_miss() inserting bio is too large: 262 iovecs, not intsert.
+[  111.638928] bcache: cached_dev_cache_miss() inserting bio is too large: 318 iovecs, not intsert.
+[  155.884142] bcache: cached_dev_cache_miss() inserting bio is too large: 447 iovecs, not intsert.
+[  156.146070] bcache: cached_dev_cache_miss() inserting bio is too large: 512 iovecs, not intsert.
+[  156.223795] bcache: cached_dev_cache_miss() inserting bio is too large: 277 iovecs, not intsert.
+[  156.326145] bcache: cached_dev_cache_miss() inserting bio is too large: 342 iovecs, not intsert.
+[  156.602906] bcache: cached_dev_cache_miss() inserting bio is too large: 290 iovecs, not intsert.
+[  156.646365] bcache: cached_dev_cache_miss() inserting bio is too large: 341 iovecs, not intsert.
+[  156.671285] bcache: cached_dev_cache_miss() inserting bio is too large: 501 iovecs, not intsert.
+[  157.216087] bcache: cached_dev_cache_miss() inserting bio is too large: 258 iovecs, not intsert.
+[  165.010961] bcache: cached_dev_cache_miss() inserting bio is too large: 413 iovecs, not intsert.
+[  165.386483] bcache: cached_dev_cache_miss() inserting bio is too large: 260 iovecs, not intsert.
 
-The stat counters make sense.
+Thanks,
+Marco
+--nextPart2064133.irdbgypaU6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-> Assuming this is the correct approach, areas to look at:
-> 1) Searching linked lists doesn't scale. Can something like an
-> interval tree be used here instead?
+-----BEGIN PGP SIGNATURE-----
 
-Tree is not good. Heavy I/O may add and delete many nodes in and from
-the tree, the operation is heavy and congested, especially this is a
-balanced tree.
+iQIzBAABCAAdFiEEUuA5X09baU5GfLYxyND744GinTYFAmCTnG0ACgkQyND744Gi
+nTb2NRAArwgIa7RkDDoJBf59NWmxFxmiLh9GqCVieUdlEPO149K+BzFtZj1vKWwM
+HlEYE/EiRTrNjSRRJuz4qsAjSc/kofdngu88EEVN6P9lxU969xiZ2v8OrFpauXEK
+E1bzppQDG4EZKk/pF8y5gosjOh+TPHFWx6imz0m60QtjCwaNO53lYcyWZGUWoOKA
+Rx+8xD8zQAVsXS2AMwSjwuhF7XNuJ3BapnDI0wllOVpGysvYi59eBvdN5o5IubQJ
+NP5Za+YMCwMYo7h5KCGfTvRti8eHtif7MhUphiX9bgoK1iiXaZrzxKzoD+A0qz6x
+6tshoPUaMxcZekmGxmUvuaCWCPr98ub1PI1mGbqQWrtP+aW23zU1ubgD0x1UZNaV
+96qaVaGYsXpGKRE1S0oq1JRF+foBVOO4HjdhaGofEyRb276ABiYnac7IIRWxAeNi
+TJ6i1ymNMYs90dpEz89x+yHyzK4plr/3Yygph137msr2VMfW+iL9FfbE6kgmEAh5
+AoBmRMaABbC84Q7fgx37VfQtgpjpo1/PsVu8It8LZhKNkhtwWwiIiNhFr/a2B8az
+rg+iv6j12/HMROFz7m4GEIyoeP8zXvlutohM+qz8SDZs6JOhFcfJjJgH9oRqqqCR
+Z7Fv7Lg2bMDErUAOvXssjKy2YPKQfLbHss2kwiS43kzHg+j0Mc0=
+=mQ/K
+-----END PGP SIGNATURE-----
 
-
-> 2) Can this be restructured so that the inflight_lock doesn't have to
-> be accessed with interrupts disabled? Note that search_free() can be
-> called in interrupt context.
-
-Yes it is possible, with a lockless approach. What is needed is an array
-to atomic counter. Each element of the array covers a range of LBA, if a
-bypass write hits a range of LBA, increases the atomic counter from
-corresponding element(s). For the cache miss read, just do an atomic
-read without tree iteration and any lock protection.
-
-An array of atomic counters should work but not space efficient, memory
-should be allocated for all LBA ranges even most of the counters not
-touched during the whole system up time.
-
-Maybe xarray works, but I don't look into the xarray api carefully yet.
-
-> 3) Can do_not_cache just be another (1-bit) flag in the search
-> structure instead of occupying its own "int" ?
-
-At this moment, taking an int space is OK.
+--nextPart2064133.irdbgypaU6--
 
 
-Thanks for the patch.
-
-Coly Li
-
-> 
-> v1 -> v2 changes:
-> - Use interval trees instead of linked lists to track inflight requests.
-> - Change code order to avoid acquiring lock in search_free().
-> ---
->  drivers/md/bcache/bcache.h  |  4 ++
->  drivers/md/bcache/request.c | 88 ++++++++++++++++++++++++++++++++++++-
->  drivers/md/bcache/stats.c   | 14 ++++++
->  drivers/md/bcache/stats.h   |  4 ++
->  drivers/md/bcache/super.c   |  4 ++
->  5 files changed, 113 insertions(+), 1 deletion(-)
-> 
-
-[snipped]
 
