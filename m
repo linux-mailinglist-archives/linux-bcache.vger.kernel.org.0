@@ -2,80 +2,95 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B3B3751EE
-	for <lists+linux-bcache@lfdr.de>; Thu,  6 May 2021 12:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB44C3757D2
+	for <lists+linux-bcache@lfdr.de>; Thu,  6 May 2021 17:46:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234310AbhEFKFD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 6 May 2021 06:05:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58140 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231194AbhEFKFD (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 6 May 2021 06:05:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 9722FAEAA;
-        Thu,  6 May 2021 10:04:04 +0000 (UTC)
-Subject: Re: Kernel Oops: kernel BUG at block/bio.c:52
-To:     Marco Rebhan <me@dblsaiko.net>
+        id S235293AbhEFPrM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 6 May 2021 11:47:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36744 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235136AbhEFPrL (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 6 May 2021 11:47:11 -0400
+Received: from polaris.dblsaiko.net (polaris.dblsaiko.net [IPv6:2a01:4f9:c010:c011::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C9B8C061574
+        for <linux-bcache@vger.kernel.org>; Thu,  6 May 2021 08:46:13 -0700 (PDT)
+Received: from invader.localnet (p200300D3870ff4007799D4fCc5f4C978.dip0.t-ipconnect.de [IPv6:2003:d3:870f:f400:7799:d4fc:c5f4:c978])
+        by polaris.dblsaiko.net (Postfix) with ESMTPSA id B13207F4BF;
+        Thu,  6 May 2021 17:40:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dblsaiko.net;
+        s=dkim; t=1620315618;
+        bh=FMvOItwWyfqz3ENsdNme9UjmUccfuVTIPjxCfFLD000=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=T9HaIQCIv0Q/ue3HteUvtj/ZLZi472HOYU6ibtZ8KvgtCa2KGMGpWAZWhEEnzVsyD
+         6H11IYyTfvbZ6FirfMCvgURDohqMaa/dO4NhYHdI75V/d7XvY9rNlkevzB5CkWqw9E
+         ecMIBzAsvGQgoG2hug29r7iZpKRzXk4Uwqf6LkJWso/Hmyf8vxx625WNFpehaolH7p
+         jenuCcRDcyj3iX3Y+Sk5/e8V2vZRFc7goh5bBkkcJD6jLZ+7n0YPues+vCDPJrJu9d
+         ceAjiMrDaZj4VK0hizR/ZEpEQ4xN0Sb5WGwI2TJPcMJKOgt4wGJjFeHeYIWUb3YHtp
+         HgQWneYtjz2xQ==
+From:   Marco Rebhan <me@dblsaiko.net>
+To:     Coly Li <colyli@suse.de>
 Cc:     linux-bcache@vger.kernel.org, victor@westerhu.is
-References: <5607192.MhkbZ0Pkbq@invader>
- <104da4a6-61be-63f9-8670-6243e9625e5a@suse.de> <1783900.tdWV9SEqCh@invader>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <4b6c9608-84e9-e20b-ac84-c4fd0a536f29@suse.de>
-Date:   Thu, 6 May 2021 18:04:00 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.0
+Subject: Re: Kernel Oops: kernel BUG at block/bio.c:52
+Date:   Thu, 06 May 2021 17:46:07 +0200
+Message-ID: <2209740.ElGaqSPkdT@invader>
+In-Reply-To: <4b6c9608-84e9-e20b-ac84-c4fd0a536f29@suse.de>
+References: <5607192.MhkbZ0Pkbq@invader> <1783900.tdWV9SEqCh@invader> <4b6c9608-84e9-e20b-ac84-c4fd0a536f29@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <1783900.tdWV9SEqCh@invader>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="nextPart4633445.GXAFRqVoOG"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 5/6/21 3:36 PM, Marco Rebhan wrote:
-> On Thursday, 6 May 2021 04:50:06 CEST Coly Li wrote:
->> Could you please try the attached patch ?  If a suspicious bio
->> allocation happens, this patch will print out a warning kernel message
->> and avoid the BUG() panic.
-> 
-> Looks like the patch works. Here's a dmesg log that comes from starting
-> up a game with a bunch of large files (which I'm guessing are what
-> makes this happen more often?)
-> 
+--nextPart4633445.GXAFRqVoOG
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Marco Rebhan <me@dblsaiko.net>
+To: Coly Li <colyli@suse.de>
+Cc: linux-bcache@vger.kernel.org, victor@westerhu.is
+Subject: Re: Kernel Oops: kernel BUG at block/bio.c:52
+Date: Thu, 06 May 2021 17:46:07 +0200
+Message-ID: <2209740.ElGaqSPkdT@invader>
+In-Reply-To: <4b6c9608-84e9-e20b-ac84-c4fd0a536f29@suse.de>
+References: <5607192.MhkbZ0Pkbq@invader> <1783900.tdWV9SEqCh@invader> <4b6c9608-84e9-e20b-ac84-c4fd0a536f29@suse.de>
 
-Before 5.12, the allocation failure returns a NULL pointer, so such
-issue was hidden. I will post a quick fix to emulate previous code logic
-without bothering bio_alloc_bioset().
+On Thursday, 6 May 2021 12:04:00 CEST Coly Li wrote:
+> Before 5.12, the allocation failure returns a NULL pointer, so such
+> issue was hidden. I will post a quick fix to emulate previous code
+> logic without bothering bio_alloc_bioset().
 
-Thanks for the quick test and verification.
+Ah, I see. I guess that means then I can actually use this patch until 
+that fix is mainlined :)
 
-Coly Li
+> Thanks for the quick test and verification.
+
+Glad to help!
+
+Thanks,
+Marco
+--nextPart4633445.GXAFRqVoOG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEUuA5X09baU5GfLYxyND744GinTYFAmCUDz8ACgkQyND744Gi
+nTZTow/+OvXrBlHJTIynhpqvtmFYKtIyUvXMSFiNsPDalOyuHFf6QIsHvIOGnI9b
+Rtazi1nNnY2lXZtqIAMctMdbbYsEmT4yRnBxGBACxjvbUqx0/WQ4hY8M2/KrlsJJ
+SAAyn77oxGD43Fiw30c5ntstCDS6RK5pQNqH9xWEcm1mYBeRE0jh88DhnWcXaxrX
+X3e7PynDYp7abZAcIPEPzHrvuSMAEpujqz2nxYmwkMOQ+FDHvMjrxU3pnc7iUWFl
+JKmbWLOXUPh/3us95GAlIHlXDZWF0OUmkpaqeitlG1iei5OGuobSzoO3ToGemasj
+mxboIafIKePbKFaFJwp1uyQrNAJoHIBFlCvgJ1xfxQ/VngSwgb6S93vJj9wHu3TS
++eokA91MRwR+24QGNldsd7Mcj+rQrgEBBDtjD5NTnaoQjBcKXR7ENUf4tsHULM/Y
++XNRGX6JadXv0UpJgJtxf3Kxd9iSpYMLUdV5iCG6hK/FW7kxwB1WvVKc5W6jfaxS
+NbyqXXVpFAuAqxpOjbNHlDz9eXOCOf0Ycj8CPa6txC1TAq1FAKkJCMnq0oyACwJ2
+DidPpuFD/Y2Wht4KC7nTP9R+h3i1EaN83I9WxjLf0+CYhTA5HdYZbfX5R2nWQ7px
+tLoX0DfThjcQd4fwPvz/NVI8JJN8CQf+Xs0KDwfDpDsRAwo2PoE=
+=eU18
+-----END PGP SIGNATURE-----
+
+--nextPart4633445.GXAFRqVoOG--
 
 
-> [   39.284230] bcache: cached_dev_cache_miss() inserting bio is too large: 344 iovecs, not intsert.
-> [   65.415896] bcache: cached_dev_cache_miss() inserting bio is too large: 282 iovecs, not intsert.
-> [   65.446327] bcache: cached_dev_cache_miss() inserting bio is too large: 946 iovecs, not intsert.
-> [   88.116826] bcache: cached_dev_cache_miss() inserting bio is too large: 342 iovecs, not intsert.
-> [   88.957691] bcache: cached_dev_cache_miss() inserting bio is too large: 342 iovecs, not intsert.
-> [   89.020544] bcache: cached_dev_cache_miss() inserting bio is too large: 332 iovecs, not intsert.
-> [   90.531875] bcache: cached_dev_cache_miss() inserting bio is too large: 261 iovecs, not intsert.
-> [  111.464124] bcache: cached_dev_cache_miss() inserting bio is too large: 342 iovecs, not intsert.
-> [  111.497049] bcache: cached_dev_cache_miss() inserting bio is too large: 262 iovecs, not intsert.
-> [  111.638928] bcache: cached_dev_cache_miss() inserting bio is too large: 318 iovecs, not intsert.
-> [  155.884142] bcache: cached_dev_cache_miss() inserting bio is too large: 447 iovecs, not intsert.
-> [  156.146070] bcache: cached_dev_cache_miss() inserting bio is too large: 512 iovecs, not intsert.
-> [  156.223795] bcache: cached_dev_cache_miss() inserting bio is too large: 277 iovecs, not intsert.
-> [  156.326145] bcache: cached_dev_cache_miss() inserting bio is too large: 342 iovecs, not intsert.
-> [  156.602906] bcache: cached_dev_cache_miss() inserting bio is too large: 290 iovecs, not intsert.
-> [  156.646365] bcache: cached_dev_cache_miss() inserting bio is too large: 341 iovecs, not intsert.
-> [  156.671285] bcache: cached_dev_cache_miss() inserting bio is too large: 501 iovecs, not intsert.
-> [  157.216087] bcache: cached_dev_cache_miss() inserting bio is too large: 258 iovecs, not intsert.
-> [  165.010961] bcache: cached_dev_cache_miss() inserting bio is too large: 413 iovecs, not intsert.
-> [  165.386483] bcache: cached_dev_cache_miss() inserting bio is too large: 260 iovecs, not intsert.
-> 
-> Thanks,
-> Marco
-> 
 
