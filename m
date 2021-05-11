@@ -2,31 +2,31 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F2F5379F38
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 May 2021 07:35:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD82937A70E
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 May 2021 14:49:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230237AbhEKFgV (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 11 May 2021 01:36:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46230 "EHLO mx2.suse.de"
+        id S231679AbhEKMuR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 11 May 2021 08:50:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41732 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229885AbhEKFgV (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 11 May 2021 01:36:21 -0400
+        id S231644AbhEKMuQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 11 May 2021 08:50:16 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A0E1FACB1;
-        Tue, 11 May 2021 05:35:14 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 789ACAF79;
+        Tue, 11 May 2021 12:49:09 +0000 (UTC)
 To:     Qiaowei Ren <qiaowei.ren@intel.com>, jianpeng.ma@intel.com
 Cc:     linux-bcache@vger.kernel.org
 References: <20210428213952.197504-1-qiaowei.ren@intel.com>
- <20210428213952.197504-4-qiaowei.ren@intel.com>
+ <20210428213952.197504-5-qiaowei.ren@intel.com>
 From:   Coly Li <colyli@suse.de>
-Subject: Re: [bch-nvm-pages v9 3/6] bcache: initialization of the buddy
-Message-ID: <fdf7d186-c803-7944-518a-24f42b695d13@suse.de>
-Date:   Tue, 11 May 2021 13:35:09 +0800
+Subject: Re: [bch-nvm-pages v9 4/6] bcache: bch_nvm_alloc_pages() of the buddy
+Message-ID: <0a3540c1-1af2-7b06-0e1c-634ab57c62b6@suse.de>
+Date:   Tue, 11 May 2021 20:49:05 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20210428213952.197504-4-qiaowei.ren@intel.com>
+In-Reply-To: <20210428213952.197504-5-qiaowei.ren@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -37,343 +37,283 @@ X-Mailing-List: linux-bcache@vger.kernel.org
 On 4/29/21 5:39 AM, Qiaowei Ren wrote:
 > From: Jianpeng Ma <jianpeng.ma@intel.com>
 > 
-> This nvm pages allocator will implement the simple buddy to manage the
-> nvm address space. This patch initializes this buddy for new namespace.
+> This patch implements the bch_nvm_alloc_pages() of the buddy.
+> In terms of function, this func is like current-page-buddy-alloc.
+> But the differences are:
+> a: it need owner_uuid as parameter which record owner info. And it
+> make those info persistence.
+> b: it don't need flags like GFP_*. All allocs are the equal.
+> c: it don't trigger other ops etc swap/recycle.
 > 
-> the unit of alloc/free of the buddy is page. DAX device has their
-> struct page(in dram or PMEM).
-> 
->         struct {        /* ZONE_DEVICE pages */
->                 /** @pgmap: Points to the hosting device page map. */
->                 struct dev_pagemap *pgmap;
->                 void *zone_device_data;
->                 /*
->                  * ZONE_DEVICE private pages are counted as being
->                  * mapped so the next 3 words hold the mapping, index,
->                  * and private fields from the source anonymous or
->                  * page cache page while the page is migrated to device
->                  * private memory.
->                  * ZONE_DEVICE MEMORY_DEVICE_FS_DAX pages also
->                  * use the mapping, index, and private fields when
->                  * pmem backed DAX files are mapped.
->                  */
->         };
-> 
-> ZONE_DEVICE pages only use pgmap. Other 4 words[16/32 bytes] don't use.
-> So the second/third word will be used as 'struct list_head ' which list
-> in buddy. The fourth word(that is normal struct page::index) store pgoff
-> which the page-offset in the dax device. And the fifth word (that is
-> normal struct page::private) store order of buddy. page_type will be used
-> to store buddy flags.
-> 
-> V9:
->  -Kernel test robot report the build-in u64/u32 in init_owner_info()
->   don't work for m68k arch.explicit div_u64() should be used.(Coly fix)
->  -GCC report warning: Unsigned variable 'i' can't be negative so it
->   is unnecessary to test it. [unsignedPositive] (Reproted-by Dan)
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 > Signed-off-by: Jianpeng Ma <jianpeng.ma@intel.com>
 > Co-developed-by: Qiaowei Ren <qiaowei.ren@intel.com>
 > Signed-off-by: Qiaowei Ren <qiaowei.ren@intel.com>
+> [colyli: fix typo in commit log]
+
+Once you fixed the typo in this version, you may remove the above line
+from this patch. Such comment is used when I submit patches to mainline
+kernel.
+
 > Signed-off-by: Coly Li <colyli@suse.de>
+
+And this is maintainer's SOB not author's, you may remove it from all
+rested patches except for the first one of this series.
+
+
 > ---
->  drivers/md/bcache/nvm-pages.c   | 142 +++++++++++++++++++++++++++++++-
->  drivers/md/bcache/nvm-pages.h   |   6 ++
->  include/uapi/linux/bcache-nvm.h |  12 ++-
->  3 files changed, 153 insertions(+), 7 deletions(-)
+>  drivers/md/bcache/nvm-pages.c | 172 ++++++++++++++++++++++++++++++++++
+>  drivers/md/bcache/nvm-pages.h |   6 ++
+>  2 files changed, 178 insertions(+)
 > 
 > diff --git a/drivers/md/bcache/nvm-pages.c b/drivers/md/bcache/nvm-pages.c
-> index 976ab9002c17..810f65cf756a 100644
+> index 810f65cf756a..2647ff997fab 100644
 > --- a/drivers/md/bcache/nvm-pages.c
 > +++ b/drivers/md/bcache/nvm-pages.c
-> @@ -34,6 +34,10 @@ static void release_nvm_namespaces(struct bch_nvm_set *nvm_set)
->  	for (i = 0; i < nvm_set->total_namespaces_nr; i++) {
->  		ns = nvm_set->nss[i];
->  		if (ns) {
-> +			kvfree(ns->pages_bitmap);
-> +			if (ns->pgalloc_recs_bitmap)
-> +				bitmap_free(ns->pgalloc_recs_bitmap);
-> +
->  			blkdev_put(ns->bdev, FMODE_READ|FMODE_WRITE|FMODE_EXEC);
->  			kfree(ns);
->  		}
-> @@ -48,17 +52,122 @@ static void release_nvm_set(struct bch_nvm_set *nvm_set)
->  	kfree(nvm_set);
+> @@ -68,6 +68,178 @@ static inline void remove_owner_space(struct bch_nvm_namespace *ns,
+>  	bitmap_set(ns->pages_bitmap, pgoff, nr);
 >  }
 >  
-> +static struct page *nvm_vaddr_to_page(struct bch_nvm_namespace *ns, void *addr)
+> +/* If not found, it will create if create == true */
+> +static struct bch_nvm_pages_owner_head *find_owner_head(const char *owner_uuid, bool create)
 > +{
-> +	return virt_to_page(addr);
+> +	struct bch_owner_list_head *owner_list_head = only_set->owner_list_head;
+> +	struct bch_nvm_pages_owner_head *owner_head = NULL;
+> +	int i;
+> +
+> +	if (owner_list_head == NULL)
+> +		goto out;
+> +
+> +	for (i = 0; i < only_set->owner_list_used; i++) {
+> +		if (!memcmp(owner_uuid, owner_list_head->heads[i].uuid, 16)) {
+> +			owner_head = &(owner_list_head->heads[i]);
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!owner_head && create) {
+> +		int used = only_set->owner_list_used;
+> +
+> +		BUG_ON((used > 0) && (only_set->owner_list_size == used));
+
+
+It seems the above condition may happen when owner_list is full? Maybe
+return NULL for a full-occupied owner header list can be better?
+
+
+> +		memcpy_flushcache(owner_list_head->heads[used].uuid, owner_uuid, 16);
+> +		only_set->owner_list_used++;
+> +
+> +		owner_list_head->used++;
+> +		owner_head = &(owner_list_head->heads[used]);
+> +	}
+> +
+> +out:
+> +	return owner_head;
 > +}
 > +
-> +static void *nvm_pgoff_to_vaddr(struct bch_nvm_namespace *ns, pgoff_t pgoff)
+> +static struct bch_nvm_pgalloc_recs *find_empty_pgalloc_recs(void)
 > +{
-> +	return ns->kaddr + (pgoff << PAGE_SHIFT);
+> +	unsigned int start;
+> +	struct bch_nvm_namespace *ns = only_set->nss[0];
+> +	struct bch_nvm_pgalloc_recs *recs;
+> +
+> +	start = bitmap_find_next_zero_area(ns->pgalloc_recs_bitmap, BCH_MAX_PGALLOC_RECS, 0, 1, 0);
+
+We cannot assume all space in [BCH_NVM_PAGES_SYS_RECS_HEAD_OFFSET,
+BCH_NVM_PAGES_OFFSET) are dedicated to recs structures.
+
+Right now each bch_nvm_pgalloc_recs is 8KB, we can assume the
+BCH_MAX_PGALLOC_RECS to be 64, that means 512KB space starts at
+BCH_NVM_PAGES_SYS_RECS_HEAD_OFFSET. we won't exceed the limition in next
+12 months at least.
+
+
+> +	if (start > BCH_MAX_PGALLOC_RECS) {
+> +		pr_info("no free struct bch_nvm_pgalloc_recs\n");
+> +		return NULL;
+> +	}
+> +
+> +	bitmap_set(ns->pgalloc_recs_bitmap, start, 1);
+> +	recs = (struct bch_nvm_pgalloc_recs *)(ns->kaddr + BCH_NVM_PAGES_SYS_RECS_HEAD_OFFSET)
+> +		+ start;
+> +	return recs;
 > +}
 > +
-> +static inline void remove_owner_space(struct bch_nvm_namespace *ns,
-> +					pgoff_t pgoff, u32 nr)
+> +static struct bch_nvm_pgalloc_recs *find_nvm_pgalloc_recs(struct bch_nvm_namespace *ns,
+> +		struct bch_nvm_pages_owner_head *owner_head, bool create)
 > +{
+> +	int ns_nr = ns->sb->this_namespace_nr;
+> +	struct bch_nvm_pgalloc_recs *prev_recs = NULL, *recs = owner_head->recs[ns_nr];
+> +
+> +	/* If create=false, we return recs[nr] */
+> +	if (!create)
+> +		return recs;
+> +
 
-Parameter nr should be 64bit value here. rec->order is 6 bits, the
-maximum value can be (1<<64)-1, 1<<rec->order may overflow 32bit width.
+I assume when create == false, at least the first non-full recs
+structure should be returned before iterated all the list nodes. How
+about return recs by the way in my next comment.
 
-Myabe (correct me if I am wrong) you may change "u32 nr" to "unsigned
-long order", then do something like this,
 
-/* value range of order is [0, 1<<64) */
-unsigned long total = 1 << order,
-while (total > 0) {
-	unsigned int nr = UINT_MAX;
-	if (nr > total)
-		nr = total;
-	bitmap_set(ns->pages_bitmap, pgoff, nr);
-	pg_off += nr;
-	total -= nr;
-};
 
-Similar problem also exists for pg_off. The second parameter of
-bitmap_set() is in unsigned int type, pgoff_t pgoff may also overflow on
-it. But this is not critical, it seems the overflow may happen on order
-0 with single name space is larger than 128TB for 4KB kernel page size.
-Currently we don't need to worry about this.
+> +	/*
+> +	 * If create=true, it mean we need a empty struct bch_pgalloc_rec
+> +	 * So we should find non-empty struct bch_nvm_pgalloc_recs or alloc
+> +	 * new struct bch_nvm_pgalloc_recs. And return this bch_nvm_pgalloc_recs
+> +	 */
+> +	while (recs && (recs->used == recs->size)) {
+> +		prev_recs = recs;
+> +		recs = recs->next;
+> +	}
+> +
+> +	/* Found empty struct bch_nvm_pgalloc_recs */
+> +	if (recs)
+> +		return recs;
 
-Just my suggestion for your reference.
+If recs is NULL here, and create == false, we may return the NULL as
+well here,
 
-> +	bitmap_set(ns->pages_bitmap, pgoff, nr);
+	if (recs || !create)
+		return recs;
+
+Just for your reference.
+
+> +	/* Need alloc new struct bch_nvm_galloc_recs */
+> +	recs = find_empty_pgalloc_recs();
+> +	if (recs) {
+> +		recs->next = NULL;
+> +		recs->owner = owner_head;
+> +		strncpy(recs->magic, bch_nvm_pages_pgalloc_magic, 16);
+> +		strncpy(recs->owner_uuid, owner_head->uuid, 16);
+
+Maybe memcpy_flushcache() is better here.
+
+> +		recs->size = BCH_MAX_RECS;
+> +		recs->used = 0;
+> +
+> +		if (prev_recs)
+> +			prev_recs->next = recs;
+> +		else
+> +			owner_head->recs[ns_nr] = recs;
+> +	}
+> +
+> +	return recs;
 > +}
+> +
+> +static void add_pgalloc_rec(struct bch_nvm_pgalloc_recs *recs, void *kaddr, int order)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < recs->size; i++) {
+> +		if (recs->recs[i].pgoff == 0) {
+> +			recs->recs[i].pgoff = (unsigned long)kaddr >> PAGE_SHIFT;
+> +			recs->recs[i].order = order;
+> +			recs->used++;
+> +			break;
+> +		}
+> +	}
+> +	BUG_ON(i == recs->size);> +}
+> +
+> +void *bch_nvm_alloc_pages(int order, const char *owner_uuid)
+> +{
+> +	void *kaddr = NULL;
+> +	struct bch_nvm_pgalloc_recs *pgalloc_recs;
+> +	struct bch_nvm_pages_owner_head *owner_head;
+> +	int i, j;
+> +
+> +	mutex_lock(&only_set->lock);
+> +	owner_head = find_owner_head(owner_uuid, true);
+> +
+> +	if (!owner_head) {
+> +		pr_err("can't find bch_nvm_pgalloc_recs by(uuid=%s)\n", owner_uuid);
+> +		goto unlock;
+> +	}
+> +
+> +	for (j = 0; j < only_set->total_namespaces_nr; j++) {
+> +		struct bch_nvm_namespace *ns = only_set->nss[j];
+> +
+> +		if (!ns || (ns->free < (1 << order)))
+> +			continue;
+> +
+> +		for (i = order; i < BCH_MAX_ORDER; i++) {
+> +			struct list_head *list;
+> +			struct page *page, *buddy_page;
+> +
+> +			if (list_empty(&ns->free_area[i]))
+> +				continue;
+> +
+> +			list = ns->free_area[i].next;
+> +			page = container_of((void *)list, struct page, zone_device_data);
+> +
+> +			list_del(list);
+> +
+> +			while (i != order) {
+> +				buddy_page = nvm_vaddr_to_page(ns,
+> +					nvm_pgoff_to_vaddr(ns, page->index + (1 << (i - 1))));
+> +				set_page_private(buddy_page, i - 1);
+> +				buddy_page->index = page->index + (1 << (i - 1));
+> +				__SetPageBuddy(buddy_page);
+> +				list_add((struct list_head *)&buddy_page->zone_device_data,
+> +					&ns->free_area[i - 1]);
+> +				i--;
+> +			}
+> +
+> +			set_page_private(page, order);
+> +			__ClearPageBuddy(page);
+> +			ns->free -= 1 << order;
+> +			kaddr = nvm_pgoff_to_vaddr(ns, page->index);
+> +			break;
+> +		}
+> +
+> +		if (i != BCH_MAX_ORDER) {
+
+In case to avoid an invalid order is sent in, maybe it is better to be
+		if (i < BCH_MAX_ORDER) {
+
+
+> +			pgalloc_recs = find_nvm_pgalloc_recs(ns, owner_head, true);
+> +			/* ToDo: handle pgalloc_recs==NULL */
+> +			add_pgalloc_rec(pgalloc_recs, kaddr, order);
+> +			break;
+> +		}
+> +	}
+> +
+> +unlock:
+> +	mutex_unlock(&only_set->lock);
+> +	return kaddr;
+> +}
+> +EXPORT_SYMBOL_GPL(bch_nvm_alloc_pages);
 > +
 >  static int init_owner_info(struct bch_nvm_namespace *ns)
 >  {
 >  	struct bch_owner_list_head *owner_list_head = ns->sb->owner_list_head;
-> +	struct bch_nvm_pgalloc_recs *sys_recs;
-> +	int i, j, k, rc = 0;
->  
->  	mutex_lock(&only_set->lock);
->  	only_set->owner_list_head = owner_list_head;
->  	only_set->owner_list_size = owner_list_head->size;
->  	only_set->owner_list_used = owner_list_head->used;
-> +
-> +	/* remove used space */
-> +	remove_owner_space(ns, 0, div_u64(ns->pages_offset, ns->page_size));
-> +
-> +	sys_recs = ns->kaddr + BCH_NVM_PAGES_SYS_RECS_HEAD_OFFSET;
-> +	/* suppose no hole in array */
-> +	for (i = 0; i < owner_list_head->used; i++) {
-> +		struct bch_nvm_pages_owner_head *head = &owner_list_head->heads[i];
-> +
-> +		for (j = 0; j < BCH_NVM_PAGES_NAMESPACES_MAX; j++) {
-> +			struct bch_nvm_pgalloc_recs *pgalloc_recs = head->recs[j];
-> +			unsigned long offset = (unsigned long)ns->kaddr >> PAGE_SHIFT;
-> +			struct page *page;
-> +
-> +			while (pgalloc_recs) {
-> +				u32 pgalloc_recs_pos = (unsigned long)(pgalloc_recs - sys_recs);
-> +
-> +				if (memcmp(pgalloc_recs->magic, bch_nvm_pages_pgalloc_magic, 16)) {
-> +					pr_info("invalid bch_nvm_pages_pgalloc_magic\n");
-> +					rc = -EINVAL;
-> +					goto unlock;
-> +				}
-> +				if (memcmp(pgalloc_recs->owner_uuid, head->uuid, 16)) {
-> +					pr_info("invalid owner_uuid in bch_nvm_pgalloc_recs\n");
-> +					rc = -EINVAL;
-> +					goto unlock;
-> +				}
-> +				if (pgalloc_recs->owner != head) {
-> +					pr_info("invalid owner in bch_nvm_pgalloc_recs\n");
-> +					rc = -EINVAL;
-> +					goto unlock;
-> +				}
-> +
-> +				/* recs array can has hole */
-> +				for (k = 0; k < pgalloc_recs->size; k++) {
-> +					struct bch_pgalloc_rec *rec = &pgalloc_recs->recs[k];
-> +
-> +					if (rec->pgoff) {
-> +						BUG_ON(rec->pgoff <= offset);
-> +
-> +						/* init struct page: index/private */
-> +						page = nvm_vaddr_to_page(ns,
-> +							BCH_PGOFF_TO_KVADDR(rec->pgoff));
-> +
-> +						set_page_private(page, rec->order);
-> +						page->index = rec->pgoff - offset;
-> +
-> +						remove_owner_space(ns,
-> +							rec->pgoff - offset,
-> +							1 << rec->order);
-
-Here is potential overflow. rec->order is 6 bit value, the maximum value
-can be (1<<6)-1 = 63. But nr in remove_owner_space() is u32 ...
-
-> +					}
-> +				}
-> +				bitmap_set(ns->pgalloc_recs_bitmap, pgalloc_recs_pos, 1);
-> +				pgalloc_recs = pgalloc_recs->next;
-> +			}
-> +		}
-> +	}
-> +unlock:
->  	mutex_unlock(&only_set->lock);
->  
-> -	return 0;
-> +	return rc;
-> +}
-> +
-> +static void init_nvm_free_space(struct bch_nvm_namespace *ns)
-> +{
-> +	unsigned int start, end, pages;
-> +	int i;
-> +	struct page *page;
-> +	pgoff_t pgoff_start;
-> +
-> +	bitmap_for_each_clear_region(ns->pages_bitmap, start, end, 0, ns->pages_total) {
-> +		pgoff_start = start;
-> +		pages = end - start;
-> +
-> +		while (pages) {
-> +			for (i = BCH_MAX_ORDER - 1; i >= 0 ; i--) {
-> +				if ((pgoff_start % (1 << i) == 0) && (pages >= (1 << i)))
-> +					break;
-> +			}
-> +
-> +			page = nvm_vaddr_to_page(ns, nvm_pgoff_to_vaddr(ns, pgoff_start));
-> +			page->index = pgoff_start;
-> +			set_page_private(page, i);
-> +			__SetPageBuddy(page);
-> +			list_add((struct list_head *)&page->zone_device_data, &ns->free_area[i]);
-> +
-> +			pgoff_start += 1 << i;
-> +			pages -= 1 << i;
-> +		}
-> +	}
->  }
->  
->  static bool attach_nvm_set(struct bch_nvm_namespace *ns)
-> @@ -123,7 +232,7 @@ static int read_nvdimm_meta_super(struct block_device *bdev,
->  struct bch_nvm_namespace *bch_register_namespace(const char *dev_path)
->  {
->  	struct bch_nvm_namespace *ns;
-> -	int err;
-> +	int i, err;
->  	pgoff_t pgoff;
->  	char buf[BDEVNAME_SIZE];
->  	struct block_device *bdev;
-> @@ -239,18 +348,43 @@ struct bch_nvm_namespace *bch_register_namespace(const char *dev_path)
->  	ns->nvm_set = only_set;
->  	mutex_init(&ns->lock);
->  
-> +	ns->pages_bitmap = kvcalloc(BITS_TO_LONGS(ns->pages_total),
-> +					sizeof(unsigned long), GFP_KERNEL);
-> +	if (!ns->pages_bitmap) {
-> +		err = -ENOMEM;
-> +		goto clear_ns_nr;
-> +	}
-> +
-> +	if (ns->sb->this_namespace_nr == 0) {
-> +		ns->pgalloc_recs_bitmap = bitmap_zalloc(BCH_MAX_PGALLOC_RECS, GFP_KERNEL);
-> +		if (ns->pgalloc_recs_bitmap == NULL) {
-> +			err = -ENOMEM;
-> +			goto free_pages_bitmap;
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < BCH_MAX_ORDER; i++)
-> +		INIT_LIST_HEAD(&ns->free_area[i]);
-> +
->  	if (ns->sb->this_namespace_nr == 0) {
->  		pr_info("only first namespace contain owner info\n");
->  		err = init_owner_info(ns);
->  		if (err < 0) {
->  			pr_info("init_owner_info met error %d\n", err);
-> -			only_set->nss[ns->sb->this_namespace_nr] = NULL;
-> -			goto free_ns;
-> +			goto free_recs_bitmap;
->  		}
-> +		/* init buddy allocator */
-> +		init_nvm_free_space(ns);
->  	}
->  
->  	kfree(path);
->  	return ns;
-> +free_recs_bitmap:
-> +	bitmap_free(ns->pgalloc_recs_bitmap);
-> +free_pages_bitmap:
-> +	kvfree(ns->pages_bitmap);
-> +clear_ns_nr:
-> +	only_set->nss[ns->sb->this_namespace_nr] = NULL;
->  free_ns:
->  	kfree(ns);
->  bdput:
 > diff --git a/drivers/md/bcache/nvm-pages.h b/drivers/md/bcache/nvm-pages.h
-> index 87a0d2c46788..e08864af96a0 100644
+> index e08864af96a0..4fd5205146a2 100644
 > --- a/drivers/md/bcache/nvm-pages.h
 > +++ b/drivers/md/bcache/nvm-pages.h
-> @@ -16,6 +16,7 @@
->   * to which owner. After reboot from power failure, they will be initialized
->   * based on nvm pages superblock in NVDIMM device.
->   */
-> +#define BCH_MAX_ORDER 20
->  struct bch_nvm_namespace {
->  	struct bch_nvm_pages_sb *sb;
->  	void *kaddr;
-> @@ -27,6 +28,11 @@ struct bch_nvm_namespace {
->  	u64 pages_total;
->  	pfn_t start_pfn;
+> @@ -62,6 +62,7 @@ extern struct bch_nvm_set *only_set;
+>  struct bch_nvm_namespace *bch_register_namespace(const char *dev_path);
+>  int bch_nvm_init(void);
+>  void bch_nvm_exit(void);
+> +void *bch_nvm_alloc_pages(int order, const char *owner_uuid);
 >  
-> +	unsigned long *pages_bitmap;
-> +	struct list_head free_area[BCH_MAX_ORDER];
-> +
-> +	unsigned long *pgalloc_recs_bitmap;
-> +
->  	struct dax_device *dax_dev;
->  	struct block_device *bdev;
->  	struct bch_nvm_set *nvm_set;
-> diff --git a/include/uapi/linux/bcache-nvm.h b/include/uapi/linux/bcache-nvm.h
-> index 1d62e9f0d4bf..7df0934d8756 100644
-> --- a/include/uapi/linux/bcache-nvm.h
-> +++ b/include/uapi/linux/bcache-nvm.h
-> @@ -114,6 +114,8 @@ struct bch_pgalloc_rec {
->  	__u64	reserved:6;
->  };
+>  #else
 >  
-> +#define BCH_PGOFF_TO_KVADDR(pgoff) ((void *)((unsigned long)pgoff << PAGE_SHIFT))
-
-
-BCH_PGOFF_TO_KVADDR is not used inside this header, and no on-media
-format involved in. It is used in nvm-pages.c, maybe it can be moved
-into drivers/md/bcache/nvm-pages.h
-
-
-
+> @@ -74,6 +75,11 @@ static inline int bch_nvm_init(void)
+>  	return 0;
+>  }
+>  static inline void bch_nvm_exit(void) { }
+> +static inline void *bch_nvm_alloc_pages(int order, const char *owner_uuid)
+> +{
+> +	return NULL;
+> +}
 > +
->  struct bch_nvm_pgalloc_recs {
->  union {
->  	struct {
-> @@ -130,11 +132,15 @@ union {
->  };
->  };
 >  
-> -#define BCH_MAX_RECS					\
-> -	((sizeof(struct bch_nvm_pgalloc_recs) -		\
-> -	 offsetof(struct bch_nvm_pgalloc_recs, recs)) /	\
-> +#define BCH_MAX_RECS							\
-> +	((sizeof(struct bch_nvm_pgalloc_recs) -				\
-> +	 offsetof(struct bch_nvm_pgalloc_recs, recs)) /			\
->  	 sizeof(struct bch_pgalloc_rec))
+>  #endif /* CONFIG_BCACHE_NVM_PAGES */
 >  
-> +#define BCH_MAX_PGALLOC_RECS						\
-> +	((BCH_NVM_PAGES_OFFSET - BCH_NVM_PAGES_SYS_RECS_HEAD_OFFSET) /	\
-> +	 sizeof(struct bch_nvm_pgalloc_recs))
-> +
->  struct bch_nvm_pages_owner_head {
->  	unsigned char			uuid[16];
->  	unsigned char			label[BCH_NVM_PAGES_LABEL_SIZE];
 > 
 
-The rested looks fine to me. Thanks for the great work :-)
+The rested are fine to me. Thanks for the great work :-)
 
 Coly Li
+
