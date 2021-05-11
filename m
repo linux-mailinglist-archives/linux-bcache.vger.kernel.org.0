@@ -2,97 +2,79 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7A8037A7FE
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 May 2021 15:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E611937AF10
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 May 2021 21:06:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231587AbhEKNq0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 11 May 2021 09:46:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59964 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231461AbhEKNqY (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 11 May 2021 09:46:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id BFB35AE81;
-        Tue, 11 May 2021 13:45:16 +0000 (UTC)
-Subject: Re: [bch-nvm-pages v9 6/6] bcache: get allocated pages from specific
- owner
-To:     Qiaowei Ren <qiaowei.ren@intel.com>, jianpeng.ma@intel.com
-Cc:     linux-bcache@vger.kernel.org
-References: <20210428213952.197504-1-qiaowei.ren@intel.com>
- <20210428213952.197504-7-qiaowei.ren@intel.com>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <dc4386c6-dc67-08da-cf45-2c983aea7ddc@suse.de>
-Date:   Tue, 11 May 2021 21:45:12 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.1
+        id S231808AbhEKTHe (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 11 May 2021 15:07:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55770 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231896AbhEKTHc (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 11 May 2021 15:07:32 -0400
+Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A65EAC061574
+        for <linux-bcache@vger.kernel.org>; Tue, 11 May 2021 12:06:24 -0700 (PDT)
+Received: by mail-ua1-x92e.google.com with SMTP id x9so6701361uao.3
+        for <linux-bcache@vger.kernel.org>; Tue, 11 May 2021 12:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=F76vG1gC7d8o85NuUCHS0JQi8tlB4XaKklqFSK0fkm4=;
+        b=ZyJKo23ZrkD3EA5+UltBKjPEfle1l48iB7c1pkZZrpWeZMNDiRJZ7AlIyeMWRtklZ8
+         I56LoDYwmrD74xkpInaYe4D6el6Jc2xM79QjTs1E9IA4/MZOEoR7nDSUV39IOCTQY3Kq
+         S3N0EGErWUF3Useu8MAYbj+PTO///Tw7ZkjCXgBCOWYAh+g17KtdXtloIpm2QZWlhv0u
+         tje5fJU3s7v+LWvuOb24BXb+rlxrm5ocDd9TQbFX4FcE1hmhmYy2Szoie2xW2ZAivM7o
+         k1rqoewxpAE8r2EMuAzWKm3LxZmwn/rRyuVRM2fd6SkW+wX9ujM8Jgwa6SSXMDUKXW1+
+         EwLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=F76vG1gC7d8o85NuUCHS0JQi8tlB4XaKklqFSK0fkm4=;
+        b=JdWc7acerdZK/GutR07kht57wgBEiJyhq9voOFlqq6Ne93aqiPbeIl6k54O3DABvnT
+         DWqGlvz/EwFpFrNPJ5C7D/Y/z1zqQN9elDOoELNTv4vxGkILoUsvjJ2YRySawbQIieVy
+         FDfJdroNREE96KR3z/L5YJQK69rszjSgnH/6/NVf4NpztsXoshAC+j/KIeQWUAWOmebA
+         ORMb2oq+9ibBTS4zWweWXi2LtC4H/X7tyjFZPityvkTkbxMacHuILCm9pvaq8r8nEFPc
+         YVO4HnWZwvqilJrrdRaIFoJRS4Tr+Q7u/cRxu4Sn3v9CBEljV8fwk25qyuaunavFj8uy
+         CCSw==
+X-Gm-Message-State: AOAM530lMENnDmKZthLL+tT0woxR3UVFdbDvmtt/yUD/NTq35alM615u
+        hn2guNz7q8LpJ3qWA47kCAct19UYDmIbIKrOxHzRR3TFM8I=
+X-Google-Smtp-Source: ABdhPJzVCG/RgZcY0PJtfEv0ItcTqso09V99fMOZq4QXiXQQctfmK2T5rxCU/q0EcK3zC0AOmkuh8nEJihGTsZ9fPDQ=
+X-Received: by 2002:ab0:5a61:: with SMTP id m30mr27013359uad.125.1620759983605;
+ Tue, 11 May 2021 12:06:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210428213952.197504-7-qiaowei.ren@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Marc Smith <msmith626@gmail.com>
+Date:   Tue, 11 May 2021 15:06:12 -0400
+Message-ID: <CAH6h+he=rxPq9E8zmenmLp9vc9X4D1-6OQqVm0XyeMei3uLgqg@mail.gmail.com>
+Subject: [PATCH] bcache-tools: bcache-export-cached doesn't match backing
+ device w/ offset, features
+To:     linux-bcache <linux-bcache@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 4/29/21 5:39 AM, Qiaowei Ren wrote:
-> From: Jianpeng Ma <jianpeng.ma@intel.com>
-> 
-> This patch implements bch_get_allocated_pages() of the buddy to be used to
-> get allocated pages from specific owner.
-> 
-> Signed-off-by: Jianpeng Ma <jianpeng.ma@intel.com>
-> Co-developed-by: Qiaowei Ren <qiaowei.ren@intel.com>
-> Signed-off-by: Qiaowei Ren <qiaowei.ren@intel.com>
-> Signed-off-by: Coly Li <colyli@suse.de>
-> ---
->  drivers/md/bcache/nvm-pages.c | 6 ++++++
->  drivers/md/bcache/nvm-pages.h | 5 +++++
->  2 files changed, 11 insertions(+)
-> 
-> diff --git a/drivers/md/bcache/nvm-pages.c b/drivers/md/bcache/nvm-pages.c
-> index 39807046ecce..0be89a03255c 100644
-> --- a/drivers/md/bcache/nvm-pages.c
-> +++ b/drivers/md/bcache/nvm-pages.c
-> @@ -389,6 +389,12 @@ void *bch_nvm_alloc_pages(int order, const char *owner_uuid)
->  }
->  EXPORT_SYMBOL_GPL(bch_nvm_alloc_pages);
->  
-> +struct bch_nvm_pages_owner_head *bch_get_allocated_pages(const char *owner_uuid)
-> +{
-> +	return find_owner_head(owner_uuid, false);
-> +}
-> +EXPORT_SYMBOL_GPL(bch_get_allocated_pages);
-> +
->  static int init_owner_info(struct bch_nvm_namespace *ns)
->  {
->  	struct bch_owner_list_head *owner_list_head = ns->sb->owner_list_head;
-> diff --git a/drivers/md/bcache/nvm-pages.h b/drivers/md/bcache/nvm-pages.h
-> index 918aee6a9afc..cfb3e8ef01ee 100644
-> --- a/drivers/md/bcache/nvm-pages.h
-> +++ b/drivers/md/bcache/nvm-pages.h
-> @@ -64,6 +64,7 @@ int bch_nvm_init(void);
->  void bch_nvm_exit(void);
->  void *bch_nvm_alloc_pages(int order, const char *owner_uuid);
->  void bch_nvm_free_pages(void *addr, int order, const char *owner_uuid);
-> +struct bch_nvm_pages_owner_head *bch_get_allocated_pages(const char *owner_uuid);
->  
->  #else
->  
-> @@ -81,6 +82,10 @@ static inline void *bch_nvm_alloc_pages(int order, const char *owner_uuid)
->  	return NULL;
->  }
->  static inline void bch_nvm_free_pages(void *addr, int order, const char *owner_uuid) { }
-> +static inline struct bch_nvm_pages_owner_head *bch_get_allocated_pages(const char *owner_uuid)
-> +{
-> +	return NULL;
-> +}
->  
->  #endif /* CONFIG_BCACHE_NVM_PAGES */
->  
-> 
+updated the awk snippet used in 'bcache-export-cached' so it matches the three
+current superblock versions of a "backing" device (BCACHE_SB_VERSION_BDEV,
+BCACHE_SB_VERSION_BDEV_WITH_OFFSET, BCACHE_SB_VERSION_BDEV_WITH_FEATURES)
 
-It looks fine to me. Thanks for the great work :-)
+Signed-off-by: Marc A. Smith <marc.smith@quantum.com>
+---
+ bcache-export-cached | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Coly Li
-
+diff --git a/bcache-export-cached b/bcache-export-cached
+index b345922..e6c1bc3 100644
+--- a/bcache-export-cached
++++ b/bcache-export-cached
+@@ -19,7 +19,7 @@ for slave in "/sys/class/block/$DEVNAME/slaves"/*; do
+             $1 == "dev.uuid" { uuid=$2; }
+             $1 == "dev.label" && $2 != "(empty)" { label=$2; }
+             END {
+-                if (sbver == 1 && uuid) {
++                if ((sbver == 1 || sbver == 4 || sbver == 6) && uuid) {
+                     print("CACHED_UUID=" uuid)
+                     if (label) print("CACHED_LABEL=" label)
+                     exit(0)
+-- 
+2.20.1
