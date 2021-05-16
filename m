@@ -2,133 +2,228 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B06CA381F51
-	for <lists+linux-bcache@lfdr.de>; Sun, 16 May 2021 16:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A05381F64
+	for <lists+linux-bcache@lfdr.de>; Sun, 16 May 2021 16:58:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234255AbhEPOox (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 16 May 2021 10:44:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44170 "EHLO mx2.suse.de"
+        id S233616AbhEPPAK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 16 May 2021 11:00:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48770 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230324AbhEPOox (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 16 May 2021 10:44:53 -0400
+        id S229807AbhEPPAK (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 16 May 2021 11:00:10 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 5082AB07B;
-        Sun, 16 May 2021 14:43:37 +0000 (UTC)
-Subject: Re: PROBLEM: bcache related kernel BUG() since Linux 5.12
-To:     Matthias Ferdinand <bcache@mfedv.net>,
-        Thorsten Knabe <linux@thorsten-knabe.de>
-Cc:     linux-bcache@vger.kernel.org
-References: <58f92cd7-38d1-bc16-2b5f-b68b2db2233b@thorsten-knabe.de>
- <YKDa9IOPsDJ0Wa8i@xoff>
+        by mx2.suse.de (Postfix) with ESMTP id 067C6ABED;
+        Sun, 16 May 2021 14:58:55 +0000 (UTC)
+To:     Marc Smith <msmith626@gmail.com>
+Cc:     linux-bcache <linux-bcache@vger.kernel.org>
+References: <CAH6h+hc2quJhhBindQwQdK5pfsJRZWk5tX95RT3U_shuN1D=eQ@mail.gmail.com>
+ <d616e7c1-2406-472f-0653-39612250c2f0@suse.de>
+ <CAH6h+hfXoRdsTQZJ-y2zAkCwcQiBN_fZtEuZdy3yCKoXRzpeVA@mail.gmail.com>
 From:   Coly Li <colyli@suse.de>
-Message-ID: <1f1c49d2-6291-f8b5-3627-08ed88114e88@suse.de>
-Date:   Sun, 16 May 2021 22:43:33 +0800
+Subject: Re: [PATCH v2] RFC - Write Bypass Race Bug
+Message-ID: <504aedf3-f550-5ce3-1851-c20754a2a851@suse.de>
+Date:   Sun, 16 May 2021 22:58:50 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <YKDa9IOPsDJ0Wa8i@xoff>
-Content-Type: multipart/mixed;
- boundary="------------2FA4DE397A0807C8B37B1358"
+In-Reply-To: <CAH6h+hfXoRdsTQZJ-y2zAkCwcQiBN_fZtEuZdy3yCKoXRzpeVA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------2FA4DE397A0807C8B37B1358
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-
-On 5/16/21 4:42 PM, Matthias Ferdinand wrote:
-> On Sat, May 15, 2021 at 09:06:07PM +0200, Thorsten Knabe wrote:
->> Hello.
+On 5/11/21 5:06 AM, Marc Smith wrote:
+> On Thu, May 6, 2021 at 12:09 AM Coly Li <colyli@suse.de> wrote:
 >>
->> Starting with Linux 5.12 bcache triggers a BUG() after a few minutes of
->> usage.
+>> On 4/30/21 10:44 PM, Marc Smith wrote:
+>>> The problem:
+>>> If an inflight backing WRITE operation for a block is performed that
+>>> meets the criteria for bypassing the cache and that takes a long time
+>>> to complete, a READ operation for the same block may be fully
+>>> processed in the interim that populates the cache with the device
+>>> content from before the inflight WRITE. When the inflight WRITE
+>>> finally completes, since it was marked for bypass, the cache is not
+>>> subsequently updated, and the stale data populated by the READ request
+>>> remains in cache. While there is code in bcache for invalidating the
+>>> cache when a bypassed WRITE is performed, this is done prior to
+>>> issuing the backing I/O so it does not help.
+>>>
+>>> The proposed fix:
+>>> Add two new lists to the cached_dev structure to track inflight
+>>> "bypass" write requests and inflight read requests that have have
+>>> missed cache. These are called "inflight_bypass_write_list" and
+>>> "inflight_read_list", respectively, and are protected by a spinlock
+>>> called the "inflight_lock"
+>>>
+>>> When a WRITE is bypassing the cache, check whether there is an
+>>> overlapping inflight read. If so, set bypass = false to essentially
+>>> convert the bypass write into a writethrough write. Otherwise, if
+>>> there is no overlapping inflight read, then add the "search" structure
+>>> to the inflight bypass write list.
 >>
->> Linux up to 5.11.x is not affected by this bug.
+>> Hi Marc,
 >>
->> Environment:
->> - Debian 10 AMD 64
->> - Kernel 5.12 - 5.12.4
->> - Filesystem ext4
->> - Backing device: degraded software RAID-6 (MD) with 3 of 4 disks active
->>   (unsure if the degraded RAID-6 has an effect or not)
->> - Cache device: Single SSD
+>> Could you please explain a bit more why the above thing is necessary ?
+>> Please help me to understand your idea more clear :-)
+>>
 > 
-> Sorry I can't immediately help with bcache, but for DRBD, there was a
-> similar problem with DRBD on degraded md-raid fixed just recently:
+> As stated previously, the race condition involves two requests attempting
+> I/O on the same block. One is a bypass write and the other is a normal
+> read that misses the cache.
 > 
->     https://lists.linbit.com/pipermail/drbd-user/2021-May/025904.html
+> The simplest form of the race is the following:
 > 
-> Although they had silent data corruption AFAICT, not a loud BUG(), and
-> they stated problems started with kernel 4.3.
+> 1.  BYPASS WRITER starts processing bcache request
+> 2.  BYPASS WRITER invalidates block in the cache
+> 3.  NORMAL READER starts processing bcache request
+> 4.  NORMAL READER misses cache, issues READ request to backing device
+> 5.  NORMAL READER processes completion of backing dev request
+> 6.  NORMAL READER populates cache with stale data
+> 7.  NORMAL READER completes
+> 8.  BYPASS WRITER issues WRITE request to backing device
+> 9.  BYPASS WRITER processes completion of backing dev request
+> 10. BYPASS WRITER completes
 > 
-> For DRBD it had to do with split BIOs and readahead, which degraded
-> md-raid may or may not fail, and missing a fail on parts of a split-up
-> readahead BIO.
+> An approach to avoiding the race is to add the following steps:
 > 
-> Matthias
+> 1.5 BYPASS WRITER adds the sector range to a data structure that holds
+>     inflight writes. (As currently coded, this data structure is an
+>     interval tree.)
+> 
+> 5.5 NORMAL READER checks the data structure to see if there are any
+>     inflight bypass writers having overlapping sectors. If so, skip
+>     step 6.
+> 
+> 9.5 BYPASS WRITER removes sector range added in step 1.5
+> 
+> If this were the only order of operations for the race, then the 3 added
+> steps would be sufficient and only inflight BYPASS WRITES would need
+> to be tracked.
+> 
+> However, consider the following ordering with new steps above added:
+> 
+> 1.  NORMAL READER starts processing bcache request
+> 2.  NORMAL READER misses cache, issues READ request to backing device
+> 3.  NORMAL READER processes completion of backing dev request
+> 4.  NORMAL READER checks the data structure to see if there are any
+>     inflight bypass writers having overlapping sectors. None are found.
+> 5.  BYPASS WRITER starts processing bcache request
+> 6.  BYPASS WRITER adds the sector range to a data structure that holds
+>     inflight writes.
+> 7.  BYPASS WRITER invalidates block in the cache
+> 8.  BYPASS WRITER issues WRITE request to backing device
+> 9 . NORMAL READER populates cache with stale data
+> 10. NORMAL READER completes
+> 11. BYPASS WRITER processes completion of backing dev request
+> 12. BYPASS WRITER removes sector range added in step 6.
+> 13. BYPASS WRITER completes
+> 
+> With this order of operations, the added steps don't solve the problem
+> as stale data is added in step #9 and never corrected.
 > 
 
+I am not sure whether the above condition can take place. For a cache
+missing, before reading the missing data from backing device, a replace
+key is inserted into the btree as a check key. After the missing data is
+read form backing device, the data is returned to caller firstly, and
+inserted into btree.
 
-This is caused by a hidden issue which is triggered by the bio code
-change in v5.12.
+There is a trick for the second-insert, if there is a matching check key
+is founded, then the data of read missing is inserted into btree. If the
+check key is not find, it means there is another key inserted and
+overwritten the check key, than the btree insert for read-missing data
+will give up to avoid a race.
 
-The attached patch can help to avoid the panic, and the finally fixes
-are under testing and will be posted very soon.
+So I feel current code may avoid the above race condition. For the first
+race condition, I agree that it exists and should be fixed.
+
+
+> So to cover both scenarios (and potentially others), both inflight bypass
+> WRITEs and normal READs are tracked. If a BYPASS WRITE is being performed,
+> it checks for an inflight overlapping read. If one exists, the BYPASS
+> WRITE coverts itself to a WRITETHROUGH, which essentially "neutralizes" it
+> from the race. If, however, there are no overlapping READs, it adds itself
+> to a tracking data structure. When a normal read is issued that misses
+> the cache, a check is made for an inflight overlapping BYPASS WRITE. If
+> one exists, the READ sets the "do_not_cache" flag which neutralizes it
+> from the race. If, however, there are no inflight overlapping BYPASS
+> WRITEs, the sector range is added to the data structure holding
+> inflight reads.
+> 
+> This effectively adds/modifies the following steps:
+> 
+> 1.5 NORMAL READER adds its sector range to a data structure that holds
+>     inflight writes.
+> 
+> 5.5 BYPASS WRITER checks for the data structure to see if there is an
+>     inflight overlapping READ. There is one! So it coverts itself to
+>     a WRITETHROUGH write.
+> 
+> 8.  [WRITETHROUGH] WRITER issues WRITE request to BOTH the cache
+>     and the backing device. A writethrough racing with a reader (step 9)
+>     is already correctly handled by bcache (I think.)
+> 
+> 9.5 NORMAL READER removes the sector range added in step 1.5
+> 
+> In summary, when a BYPASS WRITE is racing with a normal READ,
+> one of them needs to take evasive maneuvers to avoid corruption. The
+> BYPASS WRITE can convert itself to a WRITETHROUGH WRITE or the READ
+> can skip populating the cache. To handle all order of operations, it
+> appears that support for both are needed depending on whether the
+> BYPASS WRITE or normal READ arrives first. Therefore, both BYPASS WRITES
+> and normal READS need to be tracked.
+> 
+> 
+>>>
+>>> When a READ misses cache, check whether there is an overlapping
+>>> inflight write. If so, set a new flag in the search structure called
+>>> "do_not_cache" which causes cache population to be skipped after the
+>>> backing I/O completes. Otherwise, if there is no overlapping inflight
+>>> write, then add the "search" structure to the inflight read list.
+>>>
+>>> The rest of the changes are to add a new stat called
+>>> "bypass_cache_insert_races" to track how many times the race was
+>>> encountered. Example:
+>>> cat /sys/fs/bcache/0c9b7a62-b431-4328-9dcb-a81e322238af/bdev0/stats_total/cache_bypass_races
+>>> 16577
+>>>
+>>
+>> The stat counters make sense.
+>>
+>>> Assuming this is the correct approach, areas to look at:
+>>> 1) Searching linked lists doesn't scale. Can something like an
+>>> interval tree be used here instead?
+>>
+>> Tree is not good. Heavy I/O may add and delete many nodes in and from
+>> the tree, the operation is heavy and congested, especially this is a
+>> balanced tree.
+>>
+>>
+>>> 2) Can this be restructured so that the inflight_lock doesn't have to
+>>> be accessed with interrupts disabled? Note that search_free() can be
+>>> called in interrupt context.
+>>
+>> Yes it is possible, with a lockless approach. What is needed is an array
+>> to atomic counter. Each element of the array covers a range of LBA, if a
+>> bypass write hits a range of LBA, increases the atomic counter from
+>> corresponding element(s). For the cache miss read, just do an atomic
+>> read without tree iteration and any lock protection.
+>>
+>> An array of atomic counters should work but not space efficient, memory
+>> should be allocated for all LBA ranges even most of the counters not
+>> touched during the whole system up time.
+>>
+>> Maybe xarray works, but I don't look into the xarray api carefully yet.
+> 
+> Okay, we'll look into using this data structure, thanks.
+> 
+
+There is spinlock inside xarray, I am not sure whether it scales well in
+random I/O on large LBA range. We need to try.
+
+[snipped]
 
 Coly Li
-
---------------2FA4DE397A0807C8B37B1358
-Content-Type: text/plain; charset=UTF-8; x-mac-type="0"; x-mac-creator="0";
- name="0001-bcache-avoid-oversized-bio_alloc_bioset-call-in-cach.patch"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename*0="0001-bcache-avoid-oversized-bio_alloc_bioset-call-in-cach.pa";
- filename*1="tch"
-
-RnJvbSA2ZjJlZGVlNzEwMGVmYWJmMmNjY2NiODRlNGE5MmNjYmZiZGRkOGM1IE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBDb2x5IExpIDxjb2x5bGlAc3VzZS5kZT4KRGF0ZTog
-VGh1LCA2IE1heSAyMDIxIDEwOjM4OjQxICswODAwClN1YmplY3Q6IFtQQVRDSF0gYmNhY2hl
-OiBhdm9pZCBvdmVyc2l6ZWQgYmlvX2FsbG9jX2Jpb3NldCgpIGNhbGwgaW4KIGNhY2hlZF9k
-ZXZfY2FjaGVfbWlzcygpCgpTaW5jZSBMaW51eCB2NS4xMiwgY2FsbGluZyBiaW9fYWxsb2Nf
-Ymlvc2V0KCkgd2l0aCBvdmVyc2l6ZWQgYmlvIHZlY3RvcnMKbnVtYmVyIHdpbGwgY2F1c2Ug
-YSBCVUcoKSBwYW5pYyBpbiBiaW92ZWNfc2xhYigpLiBUaGVyZSBhcmUgMiBsb2NhdGlvbnMK
-aW4gYmNhY2hlIGNvZGUgY2FsbGluZyBiaW9fYWxsb2NfYmlvc2V0KCksIGFuZCBvbmx5IHRo
-ZSBsb2NhdGlvbiBpbgpjYWNoZWRfZGV2X2NhY2hlX21pc3MoKSBoYXMgc3VjaCBwb3RlbnRp
-YWwgb3ZlcnNpemVkIHJpc2suCgpJbiBjYWNoZWRfZGV2X2NhY2hlX21pc3MoKSB0aGUgYmlv
-IHZlY3RvcnMgbnVtYmVyIGlzIGNhbGN1bGF0ZWQgYnkKRElWX1JPVU5EX1VQKHMtPmluc2Vy
-dF9iaW9fc2VjdG9ycywgUEFHRV9TRUNUT1JTKSwgdGhpcyBwYXRjaCBjaGVja3MgdGhlCmNh
-bGN1bGF0ZWQgcmVzdWx0LCBpZiBpdCBpcyBsYXJnZXIgdGhhbiBCSU9fTUFYX1ZFQ1MsIHRo
-ZW4gZ2l2ZSB1cCB0aGUKYWxsb2NhdGlvbiBvZiBjYWNoZV9iaW8gYW5kIHNlbmRpbmcgcmVx
-dWVzdCB0byBiYWNraW5nIGRldmljZSBkaXJlY3RseS4KCkJ5IHRoaXMgcmVzdHJpY3Rpb24s
-IHRoZSBwb3RlbnRpYWwgQlVHKCkgcGFuaWMgY2FuIGJlIGF2b2lkZWQgZnJvbSB0aGUKY2Fj
-aGUgbWlzc2luZyBjb2RlIHBhdGguCgpTaWduZWQtb2ZmLWJ5OiBDb2x5IExpIDxjb2x5bGlA
-c3VzZS5kZT4KLS0tCiBkcml2ZXJzL21kL2JjYWNoZS9yZXF1ZXN0LmMgfCAxMyArKysrKysr
-KystLS0tCiAxIGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygt
-KQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWQvYmNhY2hlL3JlcXVlc3QuYyBiL2RyaXZlcnMv
-bWQvYmNhY2hlL3JlcXVlc3QuYwppbmRleCAyOWMyMzE3NTgyOTMuLmE2NTdkM2EyYjYyNCAx
-MDA2NDQKLS0tIGEvZHJpdmVycy9tZC9iY2FjaGUvcmVxdWVzdC5jCisrKyBiL2RyaXZlcnMv
-bWQvYmNhY2hlL3JlcXVlc3QuYwpAQCAtODc5LDcgKzg3OSw3IEBAIHN0YXRpYyB2b2lkIGNh
-Y2hlZF9kZXZfcmVhZF9kb25lX2JoKHN0cnVjdCBjbG9zdXJlICpjbCkKIHN0YXRpYyBpbnQg
-Y2FjaGVkX2Rldl9jYWNoZV9taXNzKHN0cnVjdCBidHJlZSAqYiwgc3RydWN0IHNlYXJjaCAq
-cywKIAkJCQkgc3RydWN0IGJpbyAqYmlvLCB1bnNpZ25lZCBpbnQgc2VjdG9ycykKIHsKLQlp
-bnQgcmV0ID0gTUFQX0NPTlRJTlVFOworCWludCByZXQgPSBNQVBfQ09OVElOVUUsIG5yX2lv
-dmVjcyA9IDA7CiAJdW5zaWduZWQgaW50IHJlYWRhID0gMDsKIAlzdHJ1Y3QgY2FjaGVkX2Rl
-diAqZGMgPSBjb250YWluZXJfb2Yocy0+ZCwgc3RydWN0IGNhY2hlZF9kZXYsIGRpc2spOwog
-CXN0cnVjdCBiaW8gKm1pc3MsICpjYWNoZV9iaW87CkBAIC05MTYsOSArOTE2LDE0IEBAIHN0
-YXRpYyBpbnQgY2FjaGVkX2Rldl9jYWNoZV9taXNzKHN0cnVjdCBidHJlZSAqYiwgc3RydWN0
-IHNlYXJjaCAqcywKIAkvKiBidHJlZV9zZWFyY2hfcmVjdXJzZSgpJ3MgYnRyZWUgaXRlcmF0
-b3IgaXMgbm8gZ29vZCBhbnltb3JlICovCiAJcmV0ID0gbWlzcyA9PSBiaW8gPyBNQVBfRE9O
-RSA6IC1FSU5UUjsKIAotCWNhY2hlX2JpbyA9IGJpb19hbGxvY19iaW9zZXQoR0ZQX05PV0FJ
-VCwKLQkJCURJVl9ST1VORF9VUChzLT5pbnNlcnRfYmlvX3NlY3RvcnMsIFBBR0VfU0VDVE9S
-UyksCi0JCQkmZGMtPmRpc2suYmlvX3NwbGl0KTsKKwlucl9pb3ZlY3MgPSBESVZfUk9VTkRf
-VVAocy0+aW5zZXJ0X2Jpb19zZWN0b3JzLCBQQUdFX1NFQ1RPUlMpOworCWlmIChucl9pb3Zl
-Y3MgPiBCSU9fTUFYX1ZFQ1MpIHsKKwkJcHJfd2FybigiaW5zZXJ0aW5nIGJpbyBpcyB0b28g
-bGFyZ2U6ICVkIGlvdmVjcywgbm90IGludHNlcnQuXG4iLAorCQkJbnJfaW92ZWNzKTsKKwkJ
-Z290byBvdXRfc3VibWl0OworCX0KKwljYWNoZV9iaW8gPSBiaW9fYWxsb2NfYmlvc2V0KEdG
-UF9OT1dBSVQsIG5yX2lvdmVjcywKKwkJCQkgICAgICZkYy0+ZGlzay5iaW9fc3BsaXQpOwog
-CWlmICghY2FjaGVfYmlvKQogCQlnb3RvIG91dF9zdWJtaXQ7CiAKLS0gCjIuMjYuMgoK
---------------2FA4DE397A0807C8B37B1358--
