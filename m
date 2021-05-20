@@ -2,95 +2,61 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF64A389406
-	for <lists+linux-bcache@lfdr.de>; Wed, 19 May 2021 18:43:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A60F389F6F
+	for <lists+linux-bcache@lfdr.de>; Thu, 20 May 2021 10:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240464AbhESQpB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 19 May 2021 12:45:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60298 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237611AbhESQpB (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 19 May 2021 12:45:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 449C7ADAA;
-        Wed, 19 May 2021 16:43:40 +0000 (UTC)
-Subject: Re: [PATCH] bcache: fix error info in register_bcache()
-To:     Chao Yu <chao@kernel.org>
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>
-References: <20210519132823.14920-1-chao@kernel.org>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <8c9f1ee7-553c-d795-40c2-7de2e0a0c4ac@suse.de>
-Date:   Thu, 20 May 2021 00:43:36 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.1
+        id S230383AbhETIHq (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 20 May 2021 04:07:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54162 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229953AbhETIHo (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 20 May 2021 04:07:44 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0571C061574;
+        Thu, 20 May 2021 01:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=EnMP33KD+v1NrZLekTHVvqXVLcSZIAG5TyluA2WJ8xo=; b=VBOQN5YQLqy9hFu1pzd15ldk0y
+        iAt19jFhSEpbvZ1+Q5i649CVOMlTcX4wJFDz0K2mS6FalkPvOwtApOyYYTE6ztaWgacQD5nXnK8WP
+        xKZpNhvwKwiNHg8tWrb3zJvmOcHGoplx2s1DbyJrkQMrDGizj50ZiK0jcODlFJuasSrlrGz9Fobyj
+        iZ5z2jSSyGMJzyaephsd/TyQWpDQShzjsf51XJ6PjHFoLQBPdYsBu2K8u8mdfrvbcR0A9VurYVnQc
+        HmwYVZHicIjB2xZjcen1GpH2xP3B65fgz6pQJIymEoDFwumw8YBsiCpD4qnplFzTGb0KxLz6L7Rx1
+        09J8yQjw==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1ljdg5-00FiuP-QZ; Thu, 20 May 2021 08:05:38 +0000
+Date:   Thu, 20 May 2021 09:05:09 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     colyli@suse.de
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Diego Ercolani <diego.ercolani@gmail.com>,
+        Jan Szubiak <jan.szubiak@linuxpolska.pl>,
+        Marco Rebhan <me@dblsaiko.net>,
+        Matthias Ferdinand <bcache@mfedv.net>,
+        Thorsten Knabe <linux@thorsten-knabe.de>,
+        Victor Westerhuis <victor@westerhu.is>,
+        Vojtech Pavlik <vojtech@suse.cz>, stable@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Subject: Re: [PATCH v3] bcache: avoid oversized read request in cache missing
+ code path
+Message-ID: <YKYYNVD+NsXaOFNe@infradead.org>
+References: <20210518110009.11413-1-colyli@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20210519132823.14920-1-chao@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210518110009.11413-1-colyli@suse.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 5/19/21 9:28 PM, Chao Yu wrote:
-> From: Chao Yu <yuchao0@huawei.com>
-> 
-> In register_bcache(), there are several cases we didn't set
-> correct error info (return value and/or error message):
-> - if kzalloc() fails, it needs to return ENOMEM and print
-> "cannot allocate memory";
-> - if register_cache() fails, it's better to propagate its
-> return value rather than using default EINVAL.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+This fix is pretty gross.  Adding pages to bios can fail for all kinds
+of reasons, so the fix is to use bio_add_page and check its return
+value, and if it needs another bio keep looping and chaining more bios.
 
-Will add it to my test queue.
-
-Thanks.
-
-Coly Li
-
-
-> ---
->  drivers/md/bcache/super.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index bea8c4429ae8..0a20ccf5a1db 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -2620,8 +2620,11 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->  	if (SB_IS_BDEV(sb)) {
->  		struct cached_dev *dc = kzalloc(sizeof(*dc), GFP_KERNEL);
->  
-> -		if (!dc)
-> +		if (!dc) {
-> +			ret = -ENOMEM;
-> +			err = "cannot allocate memory";
->  			goto out_put_sb_page;
-> +		}
->  
->  		mutex_lock(&bch_register_lock);
->  		ret = register_bdev(sb, sb_disk, bdev, dc);
-> @@ -2632,11 +2635,15 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->  	} else {
->  		struct cache *ca = kzalloc(sizeof(*ca), GFP_KERNEL);
->  
-> -		if (!ca)
-> +		if (!ca) {
-> +			ret = -ENOMEM;
-> +			err = "cannot allocate memory";
->  			goto out_put_sb_page;
-> +		}
->  
->  		/* blkdev_put() will be called in bch_cache_release() */
-> -		if (register_cache(sb, sb_disk, bdev, ca) != 0)
-> +		ret = register_cache(sb, sb_disk, bdev, ca);
-> +		if (ret)
->  			goto out_free_sb;
->  	}
->  
-> 
-
+And maybe capping the readahead to some sane upper bound still makes
+sense, but it should never look at BIO_MAX_VECS for that.
