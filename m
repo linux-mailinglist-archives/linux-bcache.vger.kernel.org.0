@@ -2,32 +2,32 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6266238BE00
-	for <lists+linux-bcache@lfdr.de>; Fri, 21 May 2021 07:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17E4438BE07
+	for <lists+linux-bcache@lfdr.de>; Fri, 21 May 2021 07:51:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234050AbhEUFxF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 21 May 2021 01:53:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37182 "EHLO
+        id S234162AbhEUFxI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 21 May 2021 01:53:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232090AbhEUFxF (ORCPT
+        with ESMTP id S232090AbhEUFxH (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 21 May 2021 01:53:05 -0400
+        Fri, 21 May 2021 01:53:07 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5FA8C061574;
-        Thu, 20 May 2021 22:51:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4CB7C061574;
+        Thu, 20 May 2021 22:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
         Content-ID:Content-Description:In-Reply-To:References;
-        bh=1uf84BS8Q7NSBXg1yQR5EC+qaCg2ZgLYmuXoDkaPjCQ=; b=yVac5N8yUOzpUTxL5O1tvL86te
-        m3UAUEPJY/af59veHnMPwBOnJ7BRLcZrKIKt8Dh7YPbjkftLfLGTS4VhKOyyyjq3VjpC44ktitdB9
-        IGcelhE3Oa213g7yVLse3bazcfqBPE0AjzvZkAoIGc9XTXbidpJpsbluOmOOc3JrOP6KXc8MYblK4
-        oHQQgY+u4rceYmhcSMGEEbuC03JwZPicLhzcbKv5cdyhrdklHJY1gLYGuEEO6TAkLoGvvppviy5Hp
-        K3tkB8PLSkhH6CJEnd2fuR+rb3FAaFtYutga3kk4PwncNu4+e+dofRaE7iKfkJNVvZr+BYooXFvLx
-        bVfJReyA==;
+        bh=1uf84BS8Q7NSBXg1yQR5EC+qaCg2ZgLYmuXoDkaPjCQ=; b=qYec4TV3LzKaP2n3ES94XtwLuN
+        Rl9ETp00pxgXHWMiVaqU1NEHjsNwBCAops8oVhfDa5QRHrJNSDaCyti+sJNn9rvf1uYQ4GA3DB0Ay
+        esSC0cXIU4CdBCqSiNTamsYa4lzWuaGSed8x/wHvY7MdpjXgBIZn9QNf9s12VopHptNQ1EM12ISrT
+        hM1YZI/vDanDsnHTFFMGFC3HnZQJPaZqKiEjRjgXepy1pmMTbEztkloYN/Ou7kNDoHST4Fhsl9hNE
+        VGbBjm4DHc6wZjNzBVhkjnxdDik0YPHERe6nTK4ik7Pt9SDxqpIkw+czTDWp9qLqL4XzR0WKvEHUH
+        XEcT4yBA==;
 Received: from [2001:4bb8:180:5add:4fd7:4137:d2f2:46e6] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1ljy3s-00Gpw6-Eq; Fri, 21 May 2021 05:51:04 +0000
+        id 1ljy47-00Gpwf-GU; Fri, 21 May 2021 05:51:19 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -53,14 +53,13 @@ To:     Jens Axboe <axboe@kernel.dk>,
         Christian Borntraeger <borntraeger@de.ibm.com>
 Cc:     linux-block@vger.kernel.org, dm-devel@redhat.com,
         linux-m68k@lists.linux-m68k.org, linux-xtensa@linux-xtensa.org,
-        drbd-dev@lists.linbit.com,
-        linuxppc-dev@lists.ozlabs.org (open list:PS3 PLATFORM SUPPORT),
+        drbd-dev@lists.linbit.com, linuxppc-dev@lists.ozlabs.org,
         linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
         linux-mmc@vger.kernel.org, nvdimm@lists.linux.dev,
         linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org
 Subject: simplify gendisk and request_queue allocation for bio based drivers
-Date:   Fri, 21 May 2021 07:50:35 +0200
-Message-Id: <20210521055102.1053529-1-hch@lst.de>
+Date:   Fri, 21 May 2021 07:50:50 +0200
+Message-Id: <20210521055116.1053587-1-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
