@@ -2,67 +2,92 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D03AF38C1CB
-	for <lists+linux-bcache@lfdr.de>; Fri, 21 May 2021 10:28:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5148838C210
+	for <lists+linux-bcache@lfdr.de>; Fri, 21 May 2021 10:38:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231674AbhEUIaP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 21 May 2021 04:30:15 -0400
-Received: from m12-14.163.com ([220.181.12.14]:48956 "EHLO m12-14.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229659AbhEUIaP (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 21 May 2021 04:30:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=m/4ob
-        kjV8lIhm04fJfncJB1YfWCrR+GPtUWQsPNwOVU=; b=C5Bk4S752HQeVlomogWdr
-        RQr+H67TtBMnBy9nl7CODAQguak/fI5oCqBZqRx8xqIuR+dJrUYXagA8grargGNL
-        kDDmXU0rnUa/9Mnc961TZV211/Did8JupZhZno3x6yLT+SVOERElFJxkUqeKjlN2
-        Dqvai5jub9wr5BMGeE2by4=
-Received: from COOL-20201222LC.ccdomain.com (unknown [218.94.48.178])
-        by smtp10 (Coremail) with SMTP id DsCowADX5089b6dgyf2LKA--.17856S2;
-        Fri, 21 May 2021 16:28:46 +0800 (CST)
-From:   dingsenjie@163.com
-To:     colyli@suse.de, kent.overstreet@gmail.com
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ding Senjie <dingsenjie@yulong.com>
-Subject: [PATCH] md: bcache: Fix spelling of 'acquire'
-Date:   Fri, 21 May 2021 16:28:25 +0800
-Message-Id: <20210521082825.21736-1-dingsenjie@163.com>
-X-Mailer: git-send-email 2.21.0.windows.1
+        id S233239AbhEUIjd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 21 May 2021 04:39:33 -0400
+Received: from mail-vk1-f173.google.com ([209.85.221.173]:38726 "EHLO
+        mail-vk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233066AbhEUIjc (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 21 May 2021 04:39:32 -0400
+Received: by mail-vk1-f173.google.com with SMTP id o24so1981967vkf.5;
+        Fri, 21 May 2021 01:38:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RVHzs0poOF+hVS1v1BAW6iRpurNI2FLCHK2qQooBQc8=;
+        b=ckdvfHYBrLrpwASgs+RmUT5WDLn+xzDOnpk0GW32CBzsHEL+OR51W8SqH+PuTXYuOU
+         NA1Z9A2i0p0k9EKdpyq7l894jTdd7a5h3VW4Bf5FYQjGeFqtWMOjhFw0UxrWd58TiBGI
+         U4nodKBAMR8Cua58UW3umsqA4NCSHNff4pSXVglPeyX1ZJMvY7xTj/i8G19vkZnrZdlb
+         Sb9Y0FObHzUeIPTjxTfLL3gB4CNHQ9KMt6ZnbhZ4Wdb0wsDEMPa/rmAcj64g6lE0RYbW
+         aEXSv+oOA+rYqmSa3CAWSubWP7qEjqu+HSFsl5MPkffi/9/X1YJ+x0o96wrOFwnoiqu/
+         oRZg==
+X-Gm-Message-State: AOAM531gau/vGmYh6dvJUF66yiiIWInbif2MhbK8Szohb7L4z7jyKZ0I
+        zgVJkNij3BVPmmrWIiXxa7Ll1KJw1qy0EFFKI0Y=
+X-Google-Smtp-Source: ABdhPJzGTg0SxZhAyS6W3ANe8pj0R0i+6+zDbI/+BVCcJpHhTvw5AwmdUSLpxqeMfSWaogZWi2MJbcqhNDfvoXw93hU=
+X-Received: by 2002:a1f:2504:: with SMTP id l4mr9071521vkl.5.1621586288105;
+ Fri, 21 May 2021 01:38:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DsCowADX5089b6dgyf2LKA--.17856S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GF4fKFW3CF47KrWUKFWfXwb_yoWfGrc_ua
-        1Sqay29w45Kr1xXr13Gw4fZrW0qw1kurn5Jan7JrW3uF15Zr47Wry3Wr1UXr15ua18C3Zr
-        Ar1jgr45tw1xCjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8UKsUUUUUU==
-X-Originating-IP: [218.94.48.178]
-X-CM-SenderInfo: 5glqw25hqmxvi6rwjhhfrp/1tbipR6ZyFUMeOko1gAAsc
+References: <20210521055116.1053587-1-hch@lst.de> <20210521055116.1053587-20-hch@lst.de>
+In-Reply-To: <20210521055116.1053587-20-hch@lst.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 21 May 2021 10:37:56 +0200
+Message-ID: <CAMuHMdUReZCGwii_rJuOOag+jmn4E3yfH+=P3a=5bJDf8CJvrQ@mail.gmail.com>
+Subject: Re: [PATCH 19/26] nfblock: convert to blk_alloc_disk/blk_cleanup_disk
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jim Paris <jim@jtan.com>,
+        Joshua Morris <josh.h.morris@us.ibm.com>,
+        Philip Kelleher <pjk1939@linux.ibm.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Matias Bjorling <mb@lightnvm.io>, Coly Li <colyli@suse.de>,
+        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>,
+        Lars Ellenberg <drbd-dev@lists.linbit.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        nvdimm@lists.linux.dev, linux-nvme@lists.infradead.org,
+        linux-s390 <linux-s390@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Ding Senjie <dingsenjie@yulong.com>
+On Fri, May 21, 2021 at 7:52 AM Christoph Hellwig <hch@lst.de> wrote:
+> Convert the nfblock driver to use the blk_alloc_disk and blk_cleanup_disk
+> helpers to simplify gendisk and request_queue allocation.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-acqurie -> acquire
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Signed-off-by: Ding Senjie <dingsenjie@yulong.com>
----
- drivers/md/bcache/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 2047a9c..c8d5942 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -2752,7 +2752,7 @@ static int bcache_reboot(struct notifier_block *n, unsigned long code, void *x)
- 		 * The reason bch_register_lock is not held to call
- 		 * bch_cache_set_stop() and bcache_device_stop() is to
- 		 * avoid potential deadlock during reboot, because cache
--		 * set or bcache device stopping process will acqurie
-+		 * set or bcache device stopping process will acquire
- 		 * bch_register_lock too.
- 		 *
- 		 * We are safe here because bcache_is_reboot sets to
+                        Geert
+
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
