@@ -2,92 +2,68 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5148838C210
-	for <lists+linux-bcache@lfdr.de>; Fri, 21 May 2021 10:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C646A38C638
+	for <lists+linux-bcache@lfdr.de>; Fri, 21 May 2021 14:06:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233239AbhEUIjd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 21 May 2021 04:39:33 -0400
-Received: from mail-vk1-f173.google.com ([209.85.221.173]:38726 "EHLO
-        mail-vk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233066AbhEUIjc (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 21 May 2021 04:39:32 -0400
-Received: by mail-vk1-f173.google.com with SMTP id o24so1981967vkf.5;
-        Fri, 21 May 2021 01:38:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RVHzs0poOF+hVS1v1BAW6iRpurNI2FLCHK2qQooBQc8=;
-        b=ckdvfHYBrLrpwASgs+RmUT5WDLn+xzDOnpk0GW32CBzsHEL+OR51W8SqH+PuTXYuOU
-         NA1Z9A2i0p0k9EKdpyq7l894jTdd7a5h3VW4Bf5FYQjGeFqtWMOjhFw0UxrWd58TiBGI
-         U4nodKBAMR8Cua58UW3umsqA4NCSHNff4pSXVglPeyX1ZJMvY7xTj/i8G19vkZnrZdlb
-         Sb9Y0FObHzUeIPTjxTfLL3gB4CNHQ9KMt6ZnbhZ4Wdb0wsDEMPa/rmAcj64g6lE0RYbW
-         aEXSv+oOA+rYqmSa3CAWSubWP7qEjqu+HSFsl5MPkffi/9/X1YJ+x0o96wrOFwnoiqu/
-         oRZg==
-X-Gm-Message-State: AOAM531gau/vGmYh6dvJUF66yiiIWInbif2MhbK8Szohb7L4z7jyKZ0I
-        zgVJkNij3BVPmmrWIiXxa7Ll1KJw1qy0EFFKI0Y=
-X-Google-Smtp-Source: ABdhPJzGTg0SxZhAyS6W3ANe8pj0R0i+6+zDbI/+BVCcJpHhTvw5AwmdUSLpxqeMfSWaogZWi2MJbcqhNDfvoXw93hU=
-X-Received: by 2002:a1f:2504:: with SMTP id l4mr9071521vkl.5.1621586288105;
- Fri, 21 May 2021 01:38:08 -0700 (PDT)
+        id S229655AbhEUMHz (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 21 May 2021 08:07:55 -0400
+Received: from correo01.aragon.es ([188.244.81.25]:17164 "EHLO aragon.es"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229507AbhEUMHy (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 21 May 2021 08:07:54 -0400
+X-Greylist: delayed 605 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 May 2021 08:07:53 EDT
+Received: from aragon.es ([172.30.3.33])
+        by FM3.aragon.es  with ESMTP id 14LBuHLm031712-14LBuHLn031712
+        for <linux-bcache@vger.kernel.org>; Fri, 21 May 2021 13:56:17 +0200
+Received: from [1.8.2.59] (account scastillo@aragon.es [1.8.2.59] verified)
+  by aragon.es (CommuniGate Pro SMTP 6.2.12)
+  with ESMTPSA id 91114546 for linux-bcache@vger.kernel.org; Fri, 21 May 2021 13:56:17 +0200
+To:     linux-bcache@vger.kernel.org
+From:   Santiago Castillo Oli <scastillo@aragon.es>
+Subject: Best strategy for caching VMs storage
+Message-ID: <08e95aaf-a5e5-fb32-31ea-ca35cc028fac@aragon.es>
+Date:   Fri, 21 May 2021 13:56:16 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
 MIME-Version: 1.0
-References: <20210521055116.1053587-1-hch@lst.de> <20210521055116.1053587-20-hch@lst.de>
-In-Reply-To: <20210521055116.1053587-20-hch@lst.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 21 May 2021 10:37:56 +0200
-Message-ID: <CAMuHMdUReZCGwii_rJuOOag+jmn4E3yfH+=P3a=5bJDf8CJvrQ@mail.gmail.com>
-Subject: Re: [PATCH 19/26] nfblock: convert to blk_alloc_disk/blk_cleanup_disk
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jim Paris <jim@jtan.com>,
-        Joshua Morris <josh.h.morris@us.ibm.com>,
-        Philip Kelleher <pjk1939@linux.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Nitin Gupta <ngupta@vflare.org>,
-        Matias Bjorling <mb@lightnvm.io>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        "open list:TENSILICA XTENSA PORT (xtensa)" 
-        <linux-xtensa@linux-xtensa.org>,
-        Lars Ellenberg <drbd-dev@lists.linbit.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        nvdimm@lists.linux.dev, linux-nvme@lists.infradead.org,
-        linux-s390 <linux-s390@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: es-ES
+X-FE-Policy-ID: 21:5:5:aragon.es
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Fri, May 21, 2021 at 7:52 AM Christoph Hellwig <hch@lst.de> wrote:
-> Convert the nfblock driver to use the blk_alloc_disk and blk_cleanup_disk
-> helpers to simplify gendisk and request_queue allocation.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Hi there.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Gr{oetje,eeting}s,
+I have a host running 4 VMs using qcow2 storage on a ext4 fs over HDD. 
+Each VM has 3 qcow files (system, data and swap). I know I have an I/O 
+bottleneck.
 
-                        Geert
+I want to use bcache with an SSD to accelerate disk access but I´m not 
+sure where should I put bcache on storage stack.
+
+
+Should I use bcache on host or in guests?
+
+Just one bcache backing device for a single (ext4) filesystem with all 
+qcow files there, or different bcache and backing devices for each qcow2 
+file?
+
+
+Right know, I prefer qcow2 over thin-lvm for storage, but i could change 
+my mind if thin-lvm is a much better combination for bcache.
+
+
+What would be the best strategy for caching VMs storage ?
+
+Any recommendation, please?
+
+
+Regards and thank you
+
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+___________________________________________________________
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
