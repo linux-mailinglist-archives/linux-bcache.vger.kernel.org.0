@@ -2,91 +2,137 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCB0938C684
-	for <lists+linux-bcache@lfdr.de>; Fri, 21 May 2021 14:29:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7790438CBC3
+	for <lists+linux-bcache@lfdr.de>; Fri, 21 May 2021 19:16:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232338AbhEUMbN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 21 May 2021 08:31:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42576 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbhEUMbM (ORCPT
+        id S230144AbhEURSN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 21 May 2021 13:18:13 -0400
+Received: from mail-pl1-f173.google.com ([209.85.214.173]:34801 "EHLO
+        mail-pl1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230051AbhEURSM (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 21 May 2021 08:31:12 -0400
-Received: from smtp.mfedv.net (smtp.mfedv.net [IPv6:2a04:6c0:2::19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 230B9C061574
-        for <linux-bcache@vger.kernel.org>; Fri, 21 May 2021 05:29:47 -0700 (PDT)
-Received: from suse92host.mfedv.net (suse92host.mfedv.net [IPv6:2a04:6c0:2:3:0:0:0:ffff])
-        by smtp.mfedv.net (8.15.2/8.15.2/Debian-10) with ESMTP id 14LCTegk013902;
-        Fri, 21 May 2021 12:29:41 GMT
-Received: from xoff (klappe2.mfedv.net [192.168.71.72])
-        by suse92host.mfedv.net (Postfix) with ESMTP id 58068C80C5;
-        Fri, 21 May 2021 14:29:40 +0200 (CEST)
-        (envelope-from bcache@mfedv.net)
-Date:   Fri, 21 May 2021 14:29:40 +0200
-From:   Matthias Ferdinand <bcache@mfedv.net>
-To:     Santiago Castillo Oli <scastillo@aragon.es>
-Cc:     linux-bcache@vger.kernel.org
-Subject: Re: Best strategy for caching VMs storage
-Message-ID: <YKentDNRwAmEGb8X@xoff>
-References: <08e95aaf-a5e5-fb32-31ea-ca35cc028fac@aragon.es>
+        Fri, 21 May 2021 13:18:12 -0400
+Received: by mail-pl1-f173.google.com with SMTP id e15so4699241plh.1;
+        Fri, 21 May 2021 10:16:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/6CTfoP+3YhIDA2Sa2Vg3MwIl/4IQc5OvLMHtpk2uwk=;
+        b=uUL5NavBU2xwKN6mGV5kA8d9Gkt0Qux+tv7X+/hrXJEiwJ7untsMp6/UHMOsol0vL2
+         G7yCZX8gj9KJHM6rmUoAV50awHqUUJukNvIO97PoZUpu+zbghal5o14wiNL+QIfvkuS3
+         a0D+IDDgTh+Eb9+5cHAcLa5XNhdiDPE2Db6QkN1h0R8ro07UlNrfjvyA53+4ldUQ2CIN
+         mV2X+6CWXii9CDqEQ1d2N1LprWXbQD1yRn55G/pNWU2O0iVChlquXdgFYnxEMMvR3gn4
+         McUhkITWDOI693qGYEhDc35FYa/UUte8Woo8IeCJKL4AYBafGN/UomaezUAERf9smzSE
+         rA8w==
+X-Gm-Message-State: AOAM5330YeP/FhjIlTGl3J32VNv4eXihG3L574df9UhrEyNGL81wlcGT
+        xm9IW8IQnhiBHGoujk+DcSw=
+X-Google-Smtp-Source: ABdhPJxtynqdEQ1F/D+2PqiHL9NmQC5jqLXgWhG+E7yzr8uLp59ObRLAPQ67LxwzZAhslkMqhOa4cA==
+X-Received: by 2002:a17:90a:590d:: with SMTP id k13mr12082927pji.68.1621617409049;
+        Fri, 21 May 2021 10:16:49 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id q24sm4964064pgb.19.2021.05.21.10.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 May 2021 10:16:47 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 6461E423A3; Fri, 21 May 2021 17:16:46 +0000 (UTC)
+Date:   Fri, 21 May 2021 17:16:46 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jim Paris <jim@jtan.com>,
+        Joshua Morris <josh.h.morris@us.ibm.com>,
+        Philip Kelleher <pjk1939@linux.ibm.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Matias Bjorling <mb@lightnvm.io>, Coly Li <colyli@suse.de>,
+        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-xtensa@linux-xtensa.org, linux-m68k@vger.kernel.org,
+        linux-raid@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-s390@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-bcache@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        drbd-dev@tron.linbit.com, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [dm-devel] [PATCH 01/26] block: refactor device number setup in
+ __device_add_disk
+Message-ID: <20210521171646.GA25017@42.do-not-panic.com>
+References: <20210521055116.1053587-1-hch@lst.de>
+ <20210521055116.1053587-2-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <08e95aaf-a5e5-fb32-31ea-ca35cc028fac@aragon.es>
+In-Reply-To: <20210521055116.1053587-2-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Fri, May 21, 2021 at 01:56:16PM +0200, Santiago Castillo Oli wrote:
-> Hi there.
-> 
-> 
-> I have a host running 4 VMs using qcow2 storage on a ext4 fs over HDD. Each
-> VM has 3 qcow files (system, data and swap). I know I have an I/O
-> bottleneck.
-> 
-> I want to use bcache with an SSD to accelerate disk access but I´m not sure
-> where should I put bcache on storage stack.
-> 
-> 
-> Should I use bcache on host or in guests?
-> 
-> Just one bcache backing device for a single (ext4) filesystem with all qcow
-> files there, or different bcache and backing devices for each qcow2 file?
-> 
-> 
-> Right know, I prefer qcow2 over thin-lvm for storage, but i could change my
-> mind if thin-lvm is a much better combination for bcache.
-> 
-> 
-> What would be the best strategy for caching VMs storage ?
-> 
-> Any recommendation, please?
+On Fri, May 21, 2021 at 07:50:51AM +0200, Christoph Hellwig wrote:
+> diff --git a/block/genhd.c b/block/genhd.c
+> index 39ca97b0edc6..2c00bc3261d9 100644
+> --- a/block/genhd.c
+> +++ b/block/genhd.c
+> @@ -335,52 +335,22 @@ static int blk_mangle_minor(int minor)
 
+<-- snip -->
 
-Hi,
+> -int blk_alloc_devt(struct block_device *bdev, dev_t *devt)
+> +int blk_alloc_ext_minor(void)
+>  {
+> -	struct gendisk *disk = bdev->bd_disk;
+>  	int idx;
+>  
+> -	/* in consecutive minor range? */
+> -	if (bdev->bd_partno < disk->minors) {
+> -		*devt = MKDEV(disk->major, disk->first_minor + bdev->bd_partno);
+> -		return 0;
+> -	}
+> -
 
-not claiming to know "the best" strategy, but I would recommend
+It is not obviously clear to me, why this was part of add_disk()
+path, and ...
 
-  - use a single bcache device on the host
+> diff --git a/block/partitions/core.c b/block/partitions/core.c
+> index dc60ecf46fe6..504297bdc8bf 100644
+> --- a/block/partitions/core.c
+> +++ b/block/partitions/core.c
+> @@ -379,9 +380,15 @@ static struct block_device *add_partition(struct gendisk *disk, int partno,
+>  	pdev->type = &part_type;
+>  	pdev->parent = ddev;
+>  
+> -	err = blk_alloc_devt(bdev, &devt);
+> -	if (err)
+> -		goto out_put;
+> +	/* in consecutive minor range? */
+> +	if (bdev->bd_partno < disk->minors) {
+> +		devt = MKDEV(disk->major, disk->first_minor + bdev->bd_partno);
+> +	} else {
+> +		err = blk_alloc_ext_minor();
+> +		if (err < 0)
+> +			goto out_put;
+> +		devt = MKDEV(BLOCK_EXT_MAJOR, err);
+> +	}
+>  	pdev->devt = devt;
+>  
+>  	/* delay uevent until 'holders' subdir is created */
 
-  - either use LVM (thick provisioned) to provide block devices
-    to VMs, or put a filesystem on it and store qcow2 files there as
-    you did before
+... and why we only add this here now.
 
-With lvm-thin you have all metadata activity for all your VMs in one
-place. Any error there and you might lose all your VM storage at once.
-Of course you should do regular backups of your VMs anyway, but I would
-not start using lvm-thin unless I can have the relevant metadata volume
-on redundant storage because of the blast radius.
-Just my paranoic 2c :-)
+Other than that, this looks like a super nice cleanup!
 
-Speaking of blast radius: adding an SSD to the stack will make your VMs
-storage performance and availability depend on two devices, not just
-one, so this might increase your failure rate. Choose a high-quality
-SSD, preferably datacenter-grade equipment. And of course, do your own
-performance tests to see if there is enough performance improvement to
-justify the higher risk of failure.
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Matthias
+  Luis
