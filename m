@@ -2,98 +2,67 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 67A0938C09B
-	for <lists+linux-bcache@lfdr.de>; Fri, 21 May 2021 09:20:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D03AF38C1CB
+	for <lists+linux-bcache@lfdr.de>; Fri, 21 May 2021 10:28:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233298AbhEUHVa (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 21 May 2021 03:21:30 -0400
-Received: from mga04.intel.com ([192.55.52.120]:16559 "EHLO mga04.intel.com"
+        id S231674AbhEUIaP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 21 May 2021 04:30:15 -0400
+Received: from m12-14.163.com ([220.181.12.14]:48956 "EHLO m12-14.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230427AbhEUHVa (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 21 May 2021 03:21:30 -0400
-IronPort-SDR: 2rozh19LiM+m06MmU5nvTW+xP7SAmiOX1Y3AuzUTPIPTS1NRIpiwLpzuI891AC+o9kgJMMSrXR
- hL303Un3lZPQ==
-X-IronPort-AV: E=McAfee;i="6200,9189,9990"; a="199484342"
-X-IronPort-AV: E=Sophos;i="5.82,313,1613462400"; 
-   d="scan'208";a="199484342"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2021 00:20:07 -0700
-IronPort-SDR: RgQB9ZkNsOBnVWrOjdeGG47b1pWD0CpUHbZGw723qkKIHqALYCEEe6MT73RZ7qBO2yHeQCjLvT
- RPrJwu9UWzww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,313,1613462400"; 
-   d="scan'208";a="440817178"
-Received: from ceph.sh.intel.com ([10.239.241.176])
-  by orsmga008.jf.intel.com with ESMTP; 21 May 2021 00:20:06 -0700
-From:   Qiaowei Ren <qiaowei.ren@intel.com>
-To:     linux-bcache@vger.kernel.org
-Cc:     qiaowei.ren@intel.com, jianpeng.ma@intel.com, colyli@suse.de,
-        rdunlap@infradead.oom
-Subject: [bch-nvm-pages v10 6/6] bcache: get allocated pages from specific owner
-Date:   Fri, 21 May 2021 10:57:26 -0400
-Message-Id: <20210521145726.154276-7-qiaowei.ren@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210521145726.154276-1-qiaowei.ren@intel.com>
-References: <20210521145726.154276-1-qiaowei.ren@intel.com>
+        id S229659AbhEUIaP (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 21 May 2021 04:30:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=m/4ob
+        kjV8lIhm04fJfncJB1YfWCrR+GPtUWQsPNwOVU=; b=C5Bk4S752HQeVlomogWdr
+        RQr+H67TtBMnBy9nl7CODAQguak/fI5oCqBZqRx8xqIuR+dJrUYXagA8grargGNL
+        kDDmXU0rnUa/9Mnc961TZV211/Did8JupZhZno3x6yLT+SVOERElFJxkUqeKjlN2
+        Dqvai5jub9wr5BMGeE2by4=
+Received: from COOL-20201222LC.ccdomain.com (unknown [218.94.48.178])
+        by smtp10 (Coremail) with SMTP id DsCowADX5089b6dgyf2LKA--.17856S2;
+        Fri, 21 May 2021 16:28:46 +0800 (CST)
+From:   dingsenjie@163.com
+To:     colyli@suse.de, kent.overstreet@gmail.com
+Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ding Senjie <dingsenjie@yulong.com>
+Subject: [PATCH] md: bcache: Fix spelling of 'acquire'
+Date:   Fri, 21 May 2021 16:28:25 +0800
+Message-Id: <20210521082825.21736-1-dingsenjie@163.com>
+X-Mailer: git-send-email 2.21.0.windows.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DsCowADX5089b6dgyf2LKA--.17856S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GF4fKFW3CF47KrWUKFWfXwb_yoWfGrc_ua
+        1Sqay29w45Kr1xXr13Gw4fZrW0qw1kurn5Jan7JrW3uF15Zr47Wry3Wr1UXr15ua18C3Zr
+        Ar1jgr45tw1xCjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8UKsUUUUUU==
+X-Originating-IP: [218.94.48.178]
+X-CM-SenderInfo: 5glqw25hqmxvi6rwjhhfrp/1tbipR6ZyFUMeOko1gAAsc
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Jianpeng Ma <jianpeng.ma@intel.com>
+From: Ding Senjie <dingsenjie@yulong.com>
 
-This patch implements bch_get_allocated_pages() of the buddy to be used to
-get allocated pages from specific owner.
+acqurie -> acquire
 
-Signed-off-by: Jianpeng Ma <jianpeng.ma@intel.com>
-Co-developed-by: Qiaowei Ren <qiaowei.ren@intel.com>
-Signed-off-by: Qiaowei Ren <qiaowei.ren@intel.com>
+Signed-off-by: Ding Senjie <dingsenjie@yulong.com>
 ---
- drivers/md/bcache/nvm-pages.c | 6 ++++++
- drivers/md/bcache/nvm-pages.h | 5 +++++
- 2 files changed, 11 insertions(+)
+ drivers/md/bcache/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/nvm-pages.c b/drivers/md/bcache/nvm-pages.c
-index 755f3727a468..4f7fde0286a3 100644
---- a/drivers/md/bcache/nvm-pages.c
-+++ b/drivers/md/bcache/nvm-pages.c
-@@ -395,6 +395,12 @@ void *bch_nvm_alloc_pages(int order, const char *owner_uuid)
- }
- EXPORT_SYMBOL_GPL(bch_nvm_alloc_pages);
- 
-+struct bch_nvm_pages_owner_head *bch_get_allocated_pages(const char *owner_uuid)
-+{
-+	return find_owner_head(owner_uuid, false);
-+}
-+EXPORT_SYMBOL_GPL(bch_get_allocated_pages);
-+
- #define BCH_PGOFF_TO_KVADDR(pgoff) ((void *)((unsigned long)pgoff << PAGE_SHIFT))
- 
- static int init_owner_info(struct bch_nvm_namespace *ns)
-diff --git a/drivers/md/bcache/nvm-pages.h b/drivers/md/bcache/nvm-pages.h
-index 918aee6a9afc..cfb3e8ef01ee 100644
---- a/drivers/md/bcache/nvm-pages.h
-+++ b/drivers/md/bcache/nvm-pages.h
-@@ -64,6 +64,7 @@ int bch_nvm_init(void);
- void bch_nvm_exit(void);
- void *bch_nvm_alloc_pages(int order, const char *owner_uuid);
- void bch_nvm_free_pages(void *addr, int order, const char *owner_uuid);
-+struct bch_nvm_pages_owner_head *bch_get_allocated_pages(const char *owner_uuid);
- 
- #else
- 
-@@ -81,6 +82,10 @@ static inline void *bch_nvm_alloc_pages(int order, const char *owner_uuid)
- 	return NULL;
- }
- static inline void bch_nvm_free_pages(void *addr, int order, const char *owner_uuid) { }
-+static inline struct bch_nvm_pages_owner_head *bch_get_allocated_pages(const char *owner_uuid)
-+{
-+	return NULL;
-+}
- 
- #endif /* CONFIG_BCACHE_NVM_PAGES */
- 
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 2047a9c..c8d5942 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2752,7 +2752,7 @@ static int bcache_reboot(struct notifier_block *n, unsigned long code, void *x)
+ 		 * The reason bch_register_lock is not held to call
+ 		 * bch_cache_set_stop() and bcache_device_stop() is to
+ 		 * avoid potential deadlock during reboot, because cache
+-		 * set or bcache device stopping process will acqurie
++		 * set or bcache device stopping process will acquire
+ 		 * bch_register_lock too.
+ 		 *
+ 		 * We are safe here because bcache_is_reboot sets to
 -- 
-2.25.1
+1.9.1
 
