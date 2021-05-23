@@ -2,98 +2,72 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F4538DA78
-	for <lists+linux-bcache@lfdr.de>; Sun, 23 May 2021 10:26:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DB4038DBD8
+	for <lists+linux-bcache@lfdr.de>; Sun, 23 May 2021 18:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231701AbhEWI1a (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 23 May 2021 04:27:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53062 "EHLO mx2.suse.de"
+        id S231829AbhEWQUr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 23 May 2021 12:20:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39702 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231602AbhEWI1a (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 23 May 2021 04:27:30 -0400
+        id S231818AbhEWQUr (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 23 May 2021 12:20:47 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1621758362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1621786759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=hlqRxOUJg8ro6FdR4GG4NQMpti6i5SUgHnJ8xUlCIzE=;
-        b=CRIbDLacjuVQ3M+pGak5UgZmyZY0D7jBCACHvWeQU7Wo+pYAYRWturOg7iyiCd96kdNK8A
-        QcUCSG9ymf0NB2PgaYdNJIMEcAP633K69S3vGvxTDWvhVqczhlQuRuM4nJbPnXBSKu254A
-        DIpDEyPmmnUe4Dot2UQ9St+zg+Pmjqk=
+        bh=s6GvmKnl6c+HUBr9f6RwC3ENu3vpt2erfbeupmo1Z84=;
+        b=yyPFVjIkzfcTSoZrJscEsHIItA0oLtphlEhmOjbXYR+37Pgb+fWRUcIdGc+VTxPsDL9mh7
+        ZRk7fD4V6Z77ZccRQ2CzLT6Ii4dX1jbT0SDTo+DuVOBic62fKZd2NPjnR5LqejnZvvPMoK
+        rvCakT+BPwP2L4LHhIzK7atXoWlJrg8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1621758362;
+        s=susede2_ed25519; t=1621786759;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=hlqRxOUJg8ro6FdR4GG4NQMpti6i5SUgHnJ8xUlCIzE=;
-        b=AqSURhgRXG5TBNCVHILRg5sIEfI7H5Fh4NpqkXXm1v7A9QLWam2T9+XuNJnTIdVC3KL368
-        jOoh2YYB4bdllsBw==
+        bh=s6GvmKnl6c+HUBr9f6RwC3ENu3vpt2erfbeupmo1Z84=;
+        b=5DFIBBRSSmf1pk5mfb5aQjrw3PQ/r9vzq6fiwUutelRcwfOpSXxg5BnR0IftxLLoPfIYvw
+        9tQs6AdZ5Cy2FzCQ==
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 95EF6AB7C;
-        Sun, 23 May 2021 08:26:02 +0000 (UTC)
-Subject: Re: [PATCH 26/26] block: unexport blk_alloc_queue
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jim Paris <jim@jtan.com>,
-        Philip Kelleher <pjk1939@linux.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Nitin Gupta <ngupta@vflare.org>,
-        Matias Bjorling <mb@lightnvm.io>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-m68k@lists.linux-m68k.org, linux-xtensa@linux-xtensa.org,
-        drbd-dev@lists.linbit.com, linuxppc-dev@lists.ozlabs.org,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-mmc@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org
+        by mx2.suse.de (Postfix) with ESMTP id 452DFAB5F;
+        Sun, 23 May 2021 16:19:19 +0000 (UTC)
+Subject: Re: [PATCH 12/26] bcache: convert to blk_alloc_disk/blk_cleanup_disk
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org
 References: <20210521055116.1053587-1-hch@lst.de>
- <20210521055116.1053587-27-hch@lst.de>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <18812066-bdbe-6787-b71c-57ca9957f0f1@suse.de>
-Date:   Sun, 23 May 2021 10:26:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+ <20210521055116.1053587-13-hch@lst.de>
+ <d4f1c005-2ce0-51b5-c861-431f0ffb3dcf@suse.de>
+ <20210521062301.GA10244@lst.de>
+From:   Coly Li <colyli@suse.de>
+Message-ID: <1adaadde-642d-c386-2f70-85669c37e67d@suse.de>
+Date:   Mon, 24 May 2021 00:19:16 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.10.2
 MIME-Version: 1.0
-In-Reply-To: <20210521055116.1053587-27-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20210521062301.GA10244@lst.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 5/21/21 7:51 AM, Christoph Hellwig wrote:
-> blk_alloc_queue is just an internal helper now, unexport it and remove
-> it from the public header.
+On 5/21/21 2:23 PM, Christoph Hellwig wrote:
+> On Fri, May 21, 2021 at 02:15:32PM +0800, Coly Li wrote:
+>> The  above 2 lines are added on purpose to prevent an refcount
+>> underflow. It is from commit 86da9f736740 ("bcache: fix refcount
+>> underflow in bcache_device_free()").
+>>
+>> Maybe add a parameter to blk_cleanup_disk() or checking (disk->flags &
+>> GENHD_FL_UP) inside blk_cleanup_disk() ?
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   block/blk-core.c       | 1 -
->   block/blk.h            | 2 ++
->   include/linux/blkdev.h | 1 -
->   3 files changed, 2 insertions(+), 2 deletions(-)
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Please take a look at patch 4 in the series.
+> 
 
-Cheers,
+Thanks for the hint. I will reply in your patch.
 
-Hannes
--- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
+
+Coly Li
