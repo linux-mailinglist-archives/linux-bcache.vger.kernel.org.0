@@ -2,38 +2,38 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6329938DA0A
-	for <lists+linux-bcache@lfdr.de>; Sun, 23 May 2021 10:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B69138DA14
+	for <lists+linux-bcache@lfdr.de>; Sun, 23 May 2021 10:14:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231690AbhEWIPA (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 23 May 2021 04:15:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49132 "EHLO mx2.suse.de"
+        id S231655AbhEWIPs (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 23 May 2021 04:15:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49506 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231636AbhEWIPA (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 23 May 2021 04:15:00 -0400
+        id S231599AbhEWIPn (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 23 May 2021 04:15:43 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1621757613; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1621757655; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=tI2srXPKL1sfFSsq/mH3bRr/xYcU9gLEPvDxnRGnFkc=;
-        b=1rRY+x+jwuLrSlX62D57der6kilmshvZfzKCkK7odG4vZE5sSfeTwBWPdTtbwdIAEzQ35V
-        hyYDGVVVtFJhIfj6Y/8gnBajvsdCzW+OEnVfsoi2o5528aCTU1Fit1n1MBRuG5lRjcB2ai
-        iPiGur9nfjjqktHzQKkHw4eeOg9d86o=
+        bh=qndw/8cRfR4n5MxN573Up92okpro6jHBBSJUlmT8TIg=;
+        b=BboH4k8Cgtr8ut3UnJS7S2lcjUSVsG7bLs55qAKpnYW7W6yzl7lrzmSCJs8gJAAyQHkPls
+        Cqzncpt6NU6MBbTplNLSwznQQLj0oej9F0hTcII+iaq2eB+edEZrKejx/CEg/1vJmgEse1
+        Xb/WD7COir2jUA6PLoQQx1M9hQilQc4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1621757613;
+        s=susede2_ed25519; t=1621757655;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=tI2srXPKL1sfFSsq/mH3bRr/xYcU9gLEPvDxnRGnFkc=;
-        b=PASSAcahtrFI1qnKoO3sHUsCZUedel5O6is8TbwZ0aX6aAJtVVVIHh2N7GPT9Sl/4OkX6I
-        mOYmmYc8O/F6sFAg==
+        bh=qndw/8cRfR4n5MxN573Up92okpro6jHBBSJUlmT8TIg=;
+        b=ZWkRqzGdCAwcqXvet4aJDvklif5PL9OFvnqYcpjg1x2JORSYO/pj7EFixuKPkE9QN8Zw/p
+        ddjCgprrATKXjMCw==
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id CD1E0AB5F;
-        Sun, 23 May 2021 08:13:32 +0000 (UTC)
-Subject: Re: [PATCH 15/26] nvdimm-blk: convert to
+        by mx2.suse.de (Postfix) with ESMTP id B877DAAFD;
+        Sun, 23 May 2021 08:14:15 +0000 (UTC)
+Subject: Re: [PATCH 16/26] nvdimm-btt: convert to
  blk_alloc_disk/blk_cleanup_disk
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -63,14 +63,14 @@ Cc:     linux-block@vger.kernel.org, dm-devel@redhat.com,
         linux-mmc@vger.kernel.org, nvdimm@lists.linux.dev,
         linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org
 References: <20210521055116.1053587-1-hch@lst.de>
- <20210521055116.1053587-16-hch@lst.de>
+ <20210521055116.1053587-17-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <8dd784bd-8fcc-57b6-bdc7-474a170e1c4b@suse.de>
-Date:   Sun, 23 May 2021 10:13:31 +0200
+Message-ID: <7c4aa44c-5cd7-5ff5-4641-052f337067ab@suse.de>
+Date:   Sun, 23 May 2021 10:14:14 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210521055116.1053587-16-hch@lst.de>
+In-Reply-To: <20210521055116.1053587-17-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -79,15 +79,17 @@ List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
 On 5/21/21 7:51 AM, Christoph Hellwig wrote:
-> Convert the nvdimm-blk driver to use the blk_alloc_disk and
+> Convert the nvdimm-btt driver to use the blk_alloc_disk and
 > blk_cleanup_disk helpers to simplify gendisk and request_queue
 > allocation.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   drivers/nvdimm/blk.c | 26 ++++++--------------------
->   1 file changed, 6 insertions(+), 20 deletions(-)
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
+>   drivers/nvdimm/btt.c | 24 +++++++-----------------
+>   drivers/nvdimm/btt.h |  2 --
+>   2 files changed, 7 insertions(+), 19 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,
 
