@@ -2,38 +2,38 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 044CF38DA40
-	for <lists+linux-bcache@lfdr.de>; Sun, 23 May 2021 10:22:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B49E38DA48
+	for <lists+linux-bcache@lfdr.de>; Sun, 23 May 2021 10:22:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231293AbhEWIXb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 23 May 2021 04:23:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51318 "EHLO mx2.suse.de"
+        id S231654AbhEWIYH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 23 May 2021 04:24:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51608 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231153AbhEWIXa (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 23 May 2021 04:23:30 -0400
+        id S231153AbhEWIYG (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 23 May 2021 04:24:06 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1621758123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1621758159; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=YQQWRoogfmmaPmjYDnUApC/urhgC3ohzJzGclI+kNAY=;
-        b=QAvm8xM1Tu7PTIZR2c618jxA4gFNehSBGvBbJRfsqKxfckk9nXpp181gck8Ltqu93C1u6o
-        WdQSkxWK2H+hL6xavq/F066nKUun4peZXFjY+uG/nRAFvp/LOHP6cHvC8qW3dF8U4EyOCL
-        CPZniffut/KbCywfhiFjLs0PyQs/nS0=
+        bh=S1y74Yz8aRDmaEpP4USMBwGPpMEghkmdz7uUjWMk06s=;
+        b=gVo/Rp9xVv3RM0rK56RgaIrVdgQ5+xPUCaCJ9huA7R098TWdnoGhVqlpNeh3f2fc//8Bqt
+        MhOjYgIPBG43WD6PMu/5H//gtao1z/x53ygH/nndaqazp3rBIVxgJQteyG8eL+vGEMn0D6
+        M8na4uHWh+OLKyfMTLmux77AU5bhKrs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1621758123;
+        s=susede2_ed25519; t=1621758159;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=YQQWRoogfmmaPmjYDnUApC/urhgC3ohzJzGclI+kNAY=;
-        b=hfVPioppNG9oLDkzP4Hfy0sygQgH2uM6EnHs7gLEgwzV3/Ha9WTbtyFP3W8vQkimSGpUH4
-        lFUfy1w+NRCbOkBw==
+        bh=S1y74Yz8aRDmaEpP4USMBwGPpMEghkmdz7uUjWMk06s=;
+        b=XR8EkU8yWIajZjsc2/yz6GRtH/oBvAI4XOjK022mKTC6szMsfZgk34MSoeHVzdzJATjoIt
+        H7rfc2a0rjG3FvDg==
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 03346ABB1;
-        Sun, 23 May 2021 08:22:03 +0000 (UTC)
-Subject: Re: [PATCH 20/26] simdisk: convert to blk_alloc_disk/blk_cleanup_disk
+        by mx2.suse.de (Postfix) with ESMTP id 21638AB7C;
+        Sun, 23 May 2021 08:22:39 +0000 (UTC)
+Subject: Re: [PATCH 21/26] n64cart: convert to blk_alloc_disk
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Chris Zankel <chris@zankel.net>,
@@ -62,14 +62,14 @@ Cc:     linux-block@vger.kernel.org, dm-devel@redhat.com,
         linux-mmc@vger.kernel.org, nvdimm@lists.linux.dev,
         linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org
 References: <20210521055116.1053587-1-hch@lst.de>
- <20210521055116.1053587-21-hch@lst.de>
+ <20210521055116.1053587-22-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <5ca7f9e3-b682-429f-0fc3-db4930e45d86@suse.de>
-Date:   Sun, 23 May 2021 10:22:01 +0200
+Message-ID: <d1935d23-a45c-af53-e60c-cdc3b2ca0dc9@suse.de>
+Date:   Sun, 23 May 2021 10:22:37 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210521055116.1053587-21-hch@lst.de>
+In-Reply-To: <20210521055116.1053587-22-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -78,14 +78,15 @@ List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
 On 5/21/21 7:51 AM, Christoph Hellwig wrote:
-> Convert the simdisk driver to use the blk_alloc_disk and blk_cleanup_disk
-> helpers to simplify gendisk and request_queue allocation.
+> Convert the n64cart driver to use the blk_alloc_disk helper to simplify
+> gendisk and request_queue allocation.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   arch/xtensa/platforms/iss/simdisk.c | 29 +++++++----------------------
->   1 file changed, 7 insertions(+), 22 deletions(-)
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
+>   drivers/block/n64cart.c | 6 +-----
+>   1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,
 
