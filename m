@@ -2,20 +2,20 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBC7B38E167
-	for <lists+linux-bcache@lfdr.de>; Mon, 24 May 2021 09:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A06338E179
+	for <lists+linux-bcache@lfdr.de>; Mon, 24 May 2021 09:22:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232279AbhEXHVq (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 24 May 2021 03:21:46 -0400
-Received: from verein.lst.de ([213.95.11.211]:53368 "EHLO verein.lst.de"
+        id S232318AbhEXHX6 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 24 May 2021 03:23:58 -0400
+Received: from verein.lst.de ([213.95.11.211]:53400 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232128AbhEXHVq (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 24 May 2021 03:21:46 -0400
+        id S232249AbhEXHX4 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 24 May 2021 03:23:56 -0400
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id A686B67373; Mon, 24 May 2021 09:20:13 +0200 (CEST)
-Date:   Mon, 24 May 2021 09:20:13 +0200
+        id 383C967373; Mon, 24 May 2021 09:22:24 +0200 (CEST)
+Date:   Mon, 24 May 2021 09:22:23 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     Luis Chamberlain <mcgrof@kernel.org>
+To:     Hannes Reinecke <hare@suse.de>
 Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Chris Zankel <chris@zankel.net>,
@@ -38,61 +38,28 @@ Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
         Heiko Carstens <hca@linux.ibm.com>,
         Vasily Gorbik <gor@linux.ibm.com>,
         Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-xtensa@linux-xtensa.org, linux-m68k@vger.kernel.org,
-        linux-raid@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-s390@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-bcache@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, dm-devel@redhat.com,
-        drbd-dev@tron.linbit.com, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [dm-devel] [PATCH 01/26] block: refactor device number setup
- in __device_add_disk
-Message-ID: <20210524072013.GA23890@lst.de>
-References: <20210521055116.1053587-1-hch@lst.de> <20210521055116.1053587-2-hch@lst.de> <20210521171646.GA25017@42.do-not-panic.com>
+        linux-m68k@lists.linux-m68k.org, linux-xtensa@linux-xtensa.org,
+        drbd-dev@lists.linbit.com, linuxppc-dev@lists.ozlabs.org,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-mmc@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 01/26] block: refactor device number setup in
+ __device_add_disk
+Message-ID: <20210524072223.GB23890@lst.de>
+References: <20210521055116.1053587-1-hch@lst.de> <20210521055116.1053587-2-hch@lst.de> <d55cba32-b114-513b-09d9-40c289fa95c3@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210521171646.GA25017@42.do-not-panic.com>
+In-Reply-To: <d55cba32-b114-513b-09d9-40c289fa95c3@suse.de>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Fri, May 21, 2021 at 05:16:46PM +0000, Luis Chamberlain wrote:
-> > -	/* in consecutive minor range? */
-> > -	if (bdev->bd_partno < disk->minors) {
-> > -		*devt = MKDEV(disk->major, disk->first_minor + bdev->bd_partno);
-> > -		return 0;
-> > -	}
-> > -
-> 
-> It is not obviously clear to me, why this was part of add_disk()
-> path, and ...
-> 
-> > diff --git a/block/partitions/core.c b/block/partitions/core.c
-> > index dc60ecf46fe6..504297bdc8bf 100644
-> > --- a/block/partitions/core.c
-> > +++ b/block/partitions/core.c
-> > @@ -379,9 +380,15 @@ static struct block_device *add_partition(struct gendisk *disk, int partno,
-> >  	pdev->type = &part_type;
-> >  	pdev->parent = ddev;
-> >  
-> > -	err = blk_alloc_devt(bdev, &devt);
-> > -	if (err)
-> > -		goto out_put;
-> > +	/* in consecutive minor range? */
-> > +	if (bdev->bd_partno < disk->minors) {
-> > +		devt = MKDEV(disk->major, disk->first_minor + bdev->bd_partno);
-> > +	} else {
-> > +		err = blk_alloc_ext_minor();
-> > +		if (err < 0)
-> > +			goto out_put;
-> > +		devt = MKDEV(BLOCK_EXT_MAJOR, err);
-> > +	}
-> >  	pdev->devt = devt;
-> >  
-> >  	/* delay uevent until 'holders' subdir is created */
-> 
-> ... and why we only add this here now.
+On Sun, May 23, 2021 at 09:46:01AM +0200, Hannes Reinecke wrote:
+> ... and also fixes an issue with GENHD_FL_UP remained set in an error path 
+> in __device_add_disk().
 
-For the genhd minors == 0 (aka GENHD_FL_EXT_DEVT) implies having to
-allocate a dynamic dev_t, so it can be folded into another conditional.
+Well, the error path in __device_add_disk is a complete disaster right
+now, but Luis is looking into it fortunately.
