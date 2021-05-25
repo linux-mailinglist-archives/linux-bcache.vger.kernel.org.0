@@ -2,107 +2,73 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8971938E242
-	for <lists+linux-bcache@lfdr.de>; Mon, 24 May 2021 10:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FCB1390B01
+	for <lists+linux-bcache@lfdr.de>; Tue, 25 May 2021 23:05:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232318AbhEXI2r (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 24 May 2021 04:28:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43162 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232311AbhEXI2r (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 24 May 2021 04:28:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1621844838; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q1F35rBDncf+ODcVO5jTKQ+c6J+Bpaijj4tb+WLiO1U=;
-        b=hWbnJCzrn8D8sq7QiamSboM/nv6TN+2iWleusnloao35oVE4OyeDX0eKAMzya8OGGThQFh
-        zl1nxRchNuFxstuajSgFtmryku8O1hRGBIRcM0SbrM2Dt3hLAz/KodIIf9vgrdWDs21AJk
-        09tFtAADDGOyfSpK1oh2IZudvgHfbuQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1621844838;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q1F35rBDncf+ODcVO5jTKQ+c6J+Bpaijj4tb+WLiO1U=;
-        b=/Ey/RBTrd/apAViE3Xd9DP0Lfre1LBpPPlJZl5IzG70TmMypTfoLUolyItvUQoIO9R6YkJ
-        B6psOuCyZCUW50Cw==
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id CBD6EAB6D;
-        Mon, 24 May 2021 08:27:17 +0000 (UTC)
-Subject: Re: [PATCH 14/26] md: convert to blk_alloc_disk/blk_cleanup_disk
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jim Paris <jim@jtan.com>,
-        Joshua Morris <josh.h.morris@us.ibm.com>,
-        Philip Kelleher <pjk1939@linux.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Nitin Gupta <ngupta@vflare.org>,
-        Matias Bjorling <mb@lightnvm.io>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-m68k@lists.linux-m68k.org, linux-xtensa@linux-xtensa.org,
-        drbd-dev@lists.linbit.com, linuxppc-dev@lists.ozlabs.org,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-mmc@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org
-References: <20210521055116.1053587-1-hch@lst.de>
- <20210521055116.1053587-15-hch@lst.de>
- <e65de9e6-337c-3e41-b5c2-d033ff236582@suse.de>
- <20210524072642.GF23890@lst.de>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <1360c598-44a9-e0c5-dd81-695cb1ec8ccf@suse.de>
-Date:   Mon, 24 May 2021 10:27:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        id S231402AbhEYVHG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 25 May 2021 17:07:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52444 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229790AbhEYVHF (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 25 May 2021 17:07:05 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ED80C061574
+        for <linux-bcache@vger.kernel.org>; Tue, 25 May 2021 14:05:35 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id c20so49539146ejm.3
+        for <linux-bcache@vger.kernel.org>; Tue, 25 May 2021 14:05:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vh4Y5oSvfCLd7BU9KHaFxMu0Fxq/DYXyt+pqODhP7cA=;
+        b=a1RUdDMSGi+kcv4BmFbxDLhZqWU5dMWdU6Z+e2zFvGfqpec/1iv7abO37ddJEHHBeY
+         zHAPTh2uIRhURu0dGqAMxJBg2YzI5FRUpkP5KAZdtyfBHq1LvzpOJAeZKmQPHPHBMSWu
+         JIQEwgJJBVsHvJQmbV1oohmofn9VosSZRVkBhOX27KS2BCPrMqqZEK3kvHMM2eyfL7Yn
+         Ievv0RaXWTl6ddJ4aFwo+VEVdiCASeA7Zo8pNPPglCb2PxCq16zSo4R4t4gVzoNcLFn6
+         f9PFWrP4b60IlNPIrKQFrJubP7eLnhRX2/5CMIfWckepgWkctxhwGFMlWD5WHpXT1cht
+         8dCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vh4Y5oSvfCLd7BU9KHaFxMu0Fxq/DYXyt+pqODhP7cA=;
+        b=qcGVDj0QvPLroNTuWsugpbUHdVqus7y1C6gJ8XK4nEr3orycwnPWs0s0rBtXsZC/3y
+         /eAll/DDpdPJsCQNrtQ8Gug6XrlkeOG20y7bsiJUGDVyYuvzEQc+HDJb4sSkJeC02U28
+         Pj8giU30ps/T4ohPREr3mz6n/uqSIsBuFPefBImwpYwP/mXykAC0tj/JbTKNSo5MPB1e
+         IeDh7z0sajy2s7PckkuJ+5n7ihO2Fl8SU2Q+XBx6LvQ2/UcFlkwGKyVvfP8/lY+uViyf
+         dKwPvkEVJl95p/7iQnhq24JkvlnxrVcIJjfkiuz2ohXbA8wo0RkLDGs9O7nR8Z0NAZVk
+         OkhQ==
+X-Gm-Message-State: AOAM531JmMdSkdk7R4ZFF7N693LSmMKohUiAMQYY6v6Uu3Vs082wSFi8
+        fN3aQxdNyUE6OIwZEcoraw3E0q9Mqgk=
+X-Google-Smtp-Source: ABdhPJxk+tM8pP9srXbyc9bDPLwKvXi6Mt2ctc+T2D0eA2YS1gkrKNy2imVtX6bFt3sST6t+Ik3W5Q==
+X-Received: by 2002:a17:907:105e:: with SMTP id oy30mr30476689ejb.258.1621976733932;
+        Tue, 25 May 2021 14:05:33 -0700 (PDT)
+Received: from exnet.gdb.it (mob-5-90-82-147.net.vodafone.it. [5.90.82.147])
+        by smtp.gmail.com with ESMTPSA id b16sm11527478edu.53.2021.05.25.14.05.32
+        for <linux-bcache@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 May 2021 14:05:33 -0700 (PDT)
+From:   Giuseppe Della Bianca <giusdbg@gmail.com>
+To:     linux-bcache@vger.kernel.org
+Subject: [BCACHE KERNEL OOPS AND PANIC] System not boot on fedora 34 with 5.12.5-6 kernel versions
+Date:   Tue, 25 May 2021 23:04:50 +0200
+Message-ID: <2214829.ElGaqSPkdT@exnet.gdb.it>
 MIME-Version: 1.0
-In-Reply-To: <20210524072642.GF23890@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 5/24/21 9:26 AM, Christoph Hellwig wrote:
-> On Sun, May 23, 2021 at 10:12:49AM +0200, Hannes Reinecke wrote:
->>> +	blk_set_stacking_limits(&mddev->queue->limits);
->>>    	blk_queue_write_cache(mddev->queue, true, true);
->>>    	/* Allow extended partitions.  This makes the
->>>    	 * 'mdp' device redundant, but we can't really
->>>
->> Wouldn't it make sense to introduce a helper 'blk_queue_from_disk()' or
->> somesuch to avoid having to keep an explicit 'queue' pointer?
-> 
-> My rought plan is that a few series from now bio based drivers will
-> never directly deal with the request_queue at all.
-> 
-Go for it.
+Hi.
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+On fedora 34 with 5.12.5-6 kernel version, kernel oops and panic on booting 
+when accessing the nvme cache device (I don't know a way to report the many 
+kernel messages, the system won't boot).
 
-Cheers,
+Detaching the cache device from the bcache device, the system boot.
 
-Hannes
--- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
+gdb
+
+
