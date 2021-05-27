@@ -2,82 +2,224 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 83F3A39251B
-	for <lists+linux-bcache@lfdr.de>; Thu, 27 May 2021 04:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41149392CD9
+	for <lists+linux-bcache@lfdr.de>; Thu, 27 May 2021 13:36:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232088AbhE0C4t (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 26 May 2021 22:56:49 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:54638 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbhE0C4s (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 26 May 2021 22:56:48 -0400
-Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 606F5218E1;
-        Thu, 27 May 2021 02:55:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1622084115; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=69Q2fUXLBqf8vNF74HnM/hoHoUEhYgwv+9sIEJxxfwY=;
-        b=yJ9QV0SxrTAbPG0VM0fOqEU+p7IzYwJSIf0whJGZMrDhOt7/dshYHyZziVahvrWpbYVRnL
-        NaZAuoubPzXzTeuR//gHzaZ+fjjiuoLsXzAy3V5PCw9Q9bbsPhQW1coSZNmzhDBJ/NYiSE
-        j8rryvhEIw7ABbL4DLGPmAhUEi99gnU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1622084115;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=69Q2fUXLBqf8vNF74HnM/hoHoUEhYgwv+9sIEJxxfwY=;
-        b=cjzbLsi8plJWQeu9ROtixPP70NJQeGr/eroAFnXGIdyIlNQO3LQ7gEWl0S6wTscdfNAOJ2
-        DWa3D/55egzRS0Cw==
-Received: from director2.suse.de (director2.suse-dmz.suse.de [192.168.254.72])
-        by imap.suse.de (Postfix) with ESMTPSA id B28E811A98;
-        Thu, 27 May 2021 02:55:14 +0000 (UTC)
-To:     Nix <nix@esperi.org.uk>
-Cc:     linux-bcache@vger.kernel.org
+        id S233773AbhE0LiH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 27 May 2021 07:38:07 -0400
+Received: from verein.lst.de ([213.95.11.211]:38425 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232766AbhE0LiG (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 27 May 2021 07:38:06 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 5899B68AFE; Thu, 27 May 2021 13:36:30 +0200 (CEST)
+Date:   Thu, 27 May 2021 13:36:29 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Diego Ercolani <diego.ercolani@gmail.com>,
+        Jan Szubiak <jan.szubiak@linuxpolska.pl>,
+        Marco Rebhan <me@dblsaiko.net>,
+        Matthias Ferdinand <bcache@mfedv.net>,
+        Thorsten Knabe <linux@thorsten-knabe.de>,
+        Victor Westerhuis <victor@westerhu.is>,
+        Vojtech Pavlik <vojtech@suse.cz>, stable@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH v4] bcache: avoid oversized read request in cache
+ missing code path
+Message-ID: <20210527113629.GA17266@lst.de>
 References: <20210526151450.45211-1-colyli@suse.de>
- <87tumpiiyz.fsf@esperi.org.uk>
-From:   Coly Li <colyli@suse.de>
-Subject: Re: [PATCH v4] bcache: avoid oversized read request in cache missing
- code path
-Message-ID: <2ca4d125-c1d0-0ed0-f654-1b816432ed2e@suse.de>
-Date:   Thu, 27 May 2021 10:55:12 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.2
 MIME-Version: 1.0
-In-Reply-To: <87tumpiiyz.fsf@esperi.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210526151450.45211-1-colyli@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 5/26/21 11:59 PM, Nix wrote:
-> On 26 May 2021, Coly Li said:
->> Current problmatic code can be partially found since Linux v5.13-rc1,
->> therefore all maintained stable kernels should try to apply this fix.
+On Wed, May 26, 2021 at 11:14:50PM +0800, Coly Li wrote:
+> In the cache missing code path of cached device, if a proper location
+> from the internal B+ tree is matched for a cache miss range, function
+> cached_dev_cache_miss() will be called in cache_lookup_fn() in the
+> following code block,
+> [code block 1]
+>   526         unsigned int sectors = KEY_INODE(k) == s->iop.inode
+>   527                 ? min_t(uint64_t, INT_MAX,
+>   528                         KEY_START(k) - bio->bi_iter.bi_sector)
+>   529                 : INT_MAX;
+>   530         int ret = s->d->cache_miss(b, s, bio, sectors);
 > 
-> I thought this crash was observed with 5.12 originally? (I know that's
-> why I'm still on 5.11 :) )
+> Here s->d->cache_miss() is the call backfunction pointer initialized as
+> cached_dev_cache_miss(), the last parameter 'sectors' is an important
+> hint to calculate the size of read request to backing device of the
+> missing cache data.
 > 
+> Current calculation in above code block may generate oversized value of
+> 'sectors', which consequently may trigger 2 different potential kernel
+> panics by BUG() or BUG_ON() as listed below,
+> 
+> 1) BUG_ON() inside bch_btree_insert_key(),
+> [code block 2]
+>    886         BUG_ON(b->ops->is_extents && !KEY_SIZE(k));
+> 2) BUG() inside biovec_slab(),
+> [code block 3]
+>    51         default:
+>    52                 BUG();
+>    53                 return NULL;
+> 
+> All the above panics are original from cached_dev_cache_miss() by the
+> oversized parameter 'sectors'.
+> 
+> Inside cached_dev_cache_miss(), parameter 'sectors' is used to calculate
+> the size of data read from backing device for the cache missing. This
+> size is stored in s->insert_bio_sectors by the following lines of code,
+> [code block 4]
+>   909    s->insert_bio_sectors = min(sectors, bio_sectors(bio) + reada);
+> 
+> Then the actual key inserting to the internal B+ tree is generated and
+> stored in s->iop.replace_key by the following lines of code,
+> [code block 5]
+>   911   s->iop.replace_key = KEY(s->iop.inode,
+>   912                    bio->bi_iter.bi_sector + s->insert_bio_sectors,
+>   913                    s->insert_bio_sectors);
+> The oversized parameter 'sectors' may trigger panic 1) by BUG_ON() from
+> the above code block.
+> 
+> And the bio sending to backing device for the missing data is allocated
+> with hint from s->insert_bio_sectors by the following lines of code,
+> [code block 6]
+>   926    cache_bio = bio_alloc_bioset(GFP_NOWAIT,
+>   927                 DIV_ROUND_UP(s->insert_bio_sectors, PAGE_SECTORS),
+>   928                 &dc->disk.bio_split);
+> The oversized parameter 'sectors' may trigger panic 2) by BUG() from the
+> agove code block.
+> 
+> Now let me explain how the panics happen with the oversized 'sectors'.
+> In code block 5, replace_key is generated by macro KEY(). From the
+> definition of macro KEY(),
+> [code block 7]
+>   71 #define KEY(inode, offset, size)                                  \
+>   72 ((struct bkey) {                                                  \
+>   73      .high = (1ULL << 63) | ((__u64) (size) << 20) | (inode),     \
+>   74      .low = (offset)                                              \
+>   75 })
+> 
+> Here 'size' is 16bits width embedded in 64bits member 'high' of struct
+> bkey. But in code block 1, if "KEY_START(k) - bio->bi_iter.bi_sector" is
+> very probably to be larger than (1<<16) - 1, which makes the bkey size
+> calculation in code block 5 is overflowed. In one bug report the value
+> of parameter 'sectors' is 131072 (= 1 << 17), the overflowed 'sectors'
+> results the overflowed s->insert_bio_sectors in code block 4, then makes
+> size field of s->iop.replace_key to be 0 in code block 5. Then the 0-
+> sized s->iop.replace_key is inserted into the internal B+ tree as cache
+> missing check key (a special key to detect and avoid a racing between
+> normal write request and cache missing read request) as,
+> [code block 8]
+>   915   ret = bch_btree_insert_check_key(b, &s->op, &s->iop.replace_key);
+> 
+> Then the 0-sized s->iop.replace_key as 3rd parameter triggers the bkey
+> size check BUG_ON() in code block 2, and causes the kernel panic 1).
+> 
+> Another kernel panic is from code block 6, is by the bvecs number
+> oversized value s->insert_bio_sectors from code block 4,
+> 	min(sectors, bio_sectors(bio) + reada)
+> There are two possibility for oversized reresult,
+> - bio_sectors(bio) is valid, but bio_sectors(bio) + reada is oversized.
+> - sectors < bio_sectors(bio) + reada, but sectors is oversized.
+> 
+> >From a bug report the result of "DIV_ROUND_UP(s->insert_bio_sectors,
+> PAGE_SECTORS)" from code block 6 can be 344, 282, 946, 342 and many
+> other values which larther than BIO_MAX_VECS (a.k.a 256). When calling
+> bio_alloc_bioset() with such larger-than-256 value as the 2nd parameter,
+> this value will eventually be sent to biovec_slab() as parameter
+> 'nr_vecs' in following code path,
+>    bio_alloc_bioset() ==> bvec_alloc() ==> biovec_slab()
+> Because parameter 'nr_vecs' is larger-than-256 value, the panic by BUG()
+> in code block 3 is triggered inside biovec_slab().
+> 
+> >From the above analysis, we know that the 4th parameter 'sector' sent
+> into cached_dev_cache_miss() may cause overflow in code block 5 and 6,
+> and finally cause kernel panic in code block 2 and 3. And if result of
+> bio_sectors(bio) + reada exceeds valid bvecs number, it may also trigger
+> kernel panic in code block 3 from code block 6.
+> 
+> In this patch, the above two panics are avoided by the following
+> changes,
+> - If DIV_ROUND_UP(bio_sectors(bio) + reada, PAGE_SECTORS) exceeds the
+>   maximum bvecs counter, reduce reada to make sure the DIV_ROUND_UP()
+>   result won't generate a oversized s->insert_bio_sectors to cause
+>   invalid bvecs number to cache_bio.
+> - If sectors exceeds the maximum bkey size, then set the maximum valid
+>   bkey size to sectors.
+> 
+> By the above changes, in code block 5 the size value in KEY() macro will
+> always be in valid range. As well in code block 6, the nr_iovecs
+> parameter of bio_alloc_bioset() calculated by
+> DIV_ROUND_UP(s->insert_bio_sectors, PAGE_SECTORS) will always be a valid
+> bvecs number. Now both panics won't happen anymore.
+> 
+> Current problmatic code can be partially found since Linux v5.13-rc1,
+> therefore all maintained stable kernels should try to apply this fix.
+> 
+> Reported-by: Diego Ercolani <diego.ercolani@gmail.com>
+> Reported-by: Jan Szubiak <jan.szubiak@linuxpolska.pl>
+> Reported-by: Marco Rebhan <me@dblsaiko.net>
+> Reported-by: Matthias Ferdinand <bcache@mfedv.net>
+> Reported-by: Thorsten Knabe <linux@thorsten-knabe.de>
+> Reported-by: Victor Westerhuis <victor@westerhu.is>
+> Reported-by: Vojtech Pavlik <vojtech@suse.cz>
+> Signed-off-by: Coly Li <colyli@suse.de>
+> Cc: stable@vger.kernel.org
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> Cc: Takashi Iwai <tiwai@suse.com>
+> ---
+> Changelog:
+> v4, not directly access BIO_MAX_VECS and reduce reada value to avoid
+>     oversized bvecs number, by hint from Christoph Hellwig. 
+> v3, fix typo in v2.
+> v2, fix the bypass bio size calculation in v1.
+> v1, the initial version
+> 
+>  drivers/md/bcache/request.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+> index 29c231758293..054948f037ed 100644
+> --- a/drivers/md/bcache/request.c
+> +++ b/drivers/md/bcache/request.c
+> @@ -883,6 +883,7 @@ static int cached_dev_cache_miss(struct btree *b, struct search *s,
+>  	unsigned int reada = 0;
+>  	struct cached_dev *dc = container_of(s->d, struct cached_dev, disk);
+>  	struct bio *miss, *cache_bio;
+> +	unsigned int nr_bvecs, max_segs;
+>  
+>  	s->cache_missed = 1;
+>  
+> @@ -899,6 +900,24 @@ static int cached_dev_cache_miss(struct btree *b, struct search *s,
+>  			      get_capacity(bio->bi_bdev->bd_disk) -
+>  			      bio_end_sector(bio));
+>  
+> +	/*
+> +	 * If "bio_sectors(bio) + reada" may causes an oversized bio bvecs
+> +	 * number, reada size must be deducted to make sure the following
+> +	 * calculated s->insert_bio_sectors won't cause oversized bvecs number
+> +	 * to cache_bio.
+> +	 */
+> +	nr_bvecs = DIV_ROUND_UP(bio_sectors(bio) + reada, PAGE_SECTORS);
 
-My typo, sigh....
+Can't this overflow if bio_sectors(bio) is close to UINT_MAX already?
 
-The problematic code was in such form since Linux v3.13-rc1,
-- the bio related panic was explicitly triggered due to bio changes
-since v5.12.
-- the overflowed bkey size issue exists for long time too, just no one
-reports it before.
+> +	/*
+> +	 * Make sure sectors won't exceed (1 << KEY_SIZE_BITS) - 1, which is
+> +	 * the maximum bkey size in unit of sector. Then s->insert_bio_sectors
+> +	 * will always be a valid bio in valid bkey size range.
+> +	 */
+> +	if (sectors > ((1 << KEY_SIZE_BITS) - 1))
+> +		sectors = (1 << KEY_SIZE_BITS) - 1;
 
-Maybe the issue can be found in pre-v3.13 code, but I don't check
-because the code logic was not in current form.
-
-Thank you for figure out the typo, I will fix it in next version.
-
-Coly Li
+This should use min() or min_t().
