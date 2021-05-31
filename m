@@ -2,222 +2,263 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B853A395831
-	for <lists+linux-bcache@lfdr.de>; Mon, 31 May 2021 11:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACDD63963CC
+	for <lists+linux-bcache@lfdr.de>; Mon, 31 May 2021 17:34:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230501AbhEaJin (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 31 May 2021 05:38:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34822 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231219AbhEaJin (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 31 May 2021 05:38:43 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B167AC061574
-        for <linux-bcache@vger.kernel.org>; Mon, 31 May 2021 02:37:03 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id b11so5941732edy.4
-        for <linux-bcache@vger.kernel.org>; Mon, 31 May 2021 02:37:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rolffokkens-nl.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-transfer-encoding:content-language;
-        bh=fxGXlbNCX2sVhaalVF25+gaYVT2oNT13xFgo+6Qr1Ec=;
-        b=OxxwsoQBbRPPJgGvk1Np9J4dlM8tIowzqtA0/wC/WQAEqUsS255HmDZMCt1FIEV56L
-         ToML1K+QWj/wK0wAxXmTsc9XeKIj4b8Y0jJ43zQ06+2VQDVv4+PfYmiScSMCqHpqrbi7
-         1atDYptI0aEQTu2WAxuRPhzkayFVdMXgBLalqXzBonbU8ClCqPORxnYImUQgL8TbhQwG
-         Y/7Kmv6oB0DMNRjbJ+DmgHsZzgtwFTrydCZlVu5s0BvbOktQLsjSDS63nSsNysAI/zV9
-         FvAl8VlBDE4Qt01V+WRAZ2MTadcbeXyXbqNjxyhZ+yZ6YWllT2v0kH8IjBkl7pTYHf1W
-         m74A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=fxGXlbNCX2sVhaalVF25+gaYVT2oNT13xFgo+6Qr1Ec=;
-        b=KsOiMHoCPjxoWUvYmWpT+t1YbeX4NcvFnB2YE6OyT605aUSflC2nhdVUVQ8WXMH7bY
-         6PDjd8M0K0B80pig7mwEpuP1g3OaDK7u06y5Iw9A5/wCzb/tZ/qgTa85xueStUOQzJgt
-         enrs2FwLWE+sPyia06cR078FU7liolkOWmkMkYmrNkaucNLH01O2bsrMaVt6M5g4qNcG
-         79si7GrtSIjnQZlpxUb1fGLf3zQhFNT8xnPxttmyfqHTSNcXdYVACokxYGJGUhFrJt2M
-         IIW9B+kzjl0jrKBxxVzmhaJAHyTnhgHy98yvKJrjVrnJYSQmDGmfAUBRxpBxQnYZl1eh
-         vkgg==
-X-Gm-Message-State: AOAM531ItBNCuEXjkZwuPHBxLlUC4oRP/HD3I/mn/SYGx+bYm/ubxGhu
-        l9QOMmGNA1BKJrg77ZDYTLzjyC/hwxYNIw==
-X-Google-Smtp-Source: ABdhPJyHncXY6N+ZJMJ8sLJ7slh+wjemcl5yQSW+oFU2Gw/A270bJHFjIJ6p2MM8kYmyqHPNigcy1A==
-X-Received: by 2002:a05:6402:274b:: with SMTP id z11mr6096323edd.225.1622453821974;
-        Mon, 31 May 2021 02:37:01 -0700 (PDT)
-Received: from home07.rolf-en-monique.lan (94-212-138-219.cable.dynamic.v4.ziggo.nl. [94.212.138.219])
-        by smtp.gmail.com with ESMTPSA id u17sm3979946edx.16.2021.05.31.02.37.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 May 2021 02:37:01 -0700 (PDT)
-Subject: Re: PROBLEM: bcache related kernel BUG() since Linux 5.12
-To:     Thorsten Knabe <linux@thorsten-knabe.de>,
-        linux-bcache@vger.kernel.org
-References: <58f92cd7-38d1-bc16-2b5f-b68b2db2233b@thorsten-knabe.de>
-From:   Rolf Fokkens <rolf@rolffokkens.nl>
-Message-ID: <f2f917d5-330b-a5cc-cca1-fe79a32c2140@rolffokkens.nl>
-Date:   Mon, 31 May 2021 11:37:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S234500AbhEaPfm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 31 May 2021 11:35:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36084 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232714AbhEaPdk (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 31 May 2021 11:33:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1622475088; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=I60sauJbssabG644Z4BAOlmybgkmLbQVB49IVDTjRFE=;
+        b=QhXRNf69C7biYqjcq2CBKG+SwOHF4ShJ6YcYyrylYwaCCJMXaIq8Pc/dH2H8O7xO/KsXwr
+        TI87rQmxB2rWlb4eULKLXg0OUnffCD10242+p2stB1O58kqZCGtdYQgqiboEYPKWks9llq
+        aG0vodi4ehxMDDxpa4TWaMjQ8r9XJDM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1622475088;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=I60sauJbssabG644Z4BAOlmybgkmLbQVB49IVDTjRFE=;
+        b=HVJT/QbqHBu5RWap79syaZhfdiyq94aFouSE8cV50nLL0NcRlvdhP73kXbbniwkwDO4TdG
+        hXhWQDE7ICE+KWCQ==
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 6665BB4AF;
+        Mon, 31 May 2021 15:31:28 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     linux-bcache@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Coly Li <colyli@suse.de>,
+        Alexander Ullrich <ealex1979@gmail.com>,
+        Diego Ercolani <diego.ercolani@gmail.com>,
+        Jan Szubiak <jan.szubiak@linuxpolska.pl>,
+        Marco Rebhan <me@dblsaiko.net>,
+        Matthias Ferdinand <bcache@mfedv.net>,
+        Thorsten Knabe <linux@thorsten-knabe.de>,
+        Victor Westerhuis <victor@westerhu.is>,
+        Vojtech Pavlik <vojtech@suse.cz>, stable@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Nix <nix@esperi.org.uk>, Takashi Iwai <tiwai@suse.com>
+Subject: [PATCH v5 1/2] bcache: remove bcache device self-defined readahead
+Date:   Mon, 31 May 2021 23:31:13 +0800
+Message-Id: <20210531153114.51085-1-colyli@suse.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <58f92cd7-38d1-bc16-2b5f-b68b2db2233b@thorsten-knabe.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Same here, more details: https://bugzilla.redhat.com/show_bug.cgi?id=1965809
+For read cache missing, bcache defines a readahead size for the read I/O
+request to the backing device for the missing data. This readahead size
+is initialized to 0, and almost no one uses it to avoid unnecessary read
+amplifying onto backing device and write amplifying onto cache device.
+Considering upper layer file system code has readahead logic allready
+and works fine with readahead_cache_policy sysfile interface, we don't
+have to keep bcache self-defined readahead anymore.
 
-On 5/15/21 9:06 PM, Thorsten Knabe wrote:
-> Hello.
->
-> Starting with Linux 5.12 bcache triggers a BUG() after a few minutes of
-> usage.
->
-> Linux up to 5.11.x is not affected by this bug.
->
-> Environment:
-> - Debian 10 AMD 64
-> - Kernel 5.12 - 5.12.4
-> - Filesystem ext4
-> - Backing device: degraded software RAID-6 (MD) with 3 of 4 disks active
->   (unsure if the degraded RAID-6 has an effect or not)
-> - Cache device: Single SSD
->
-> Kernel log:
->
-> May 12 20:22:24 tek04 kernel: nr_vecs=472
-> May 12 20:22:24 tek04 kernel: ------------[ cut here ]------------
-> May 12 20:22:24 tek04 kernel: kernel BUG at block/bio.c:53!
-> May 12 20:22:24 tek04 kernel: invalid opcode: 0000 [#1] PREEMPT SMP PTI
-> May 12 20:22:24 tek04 kernel: CPU: 1 PID: 1670 Comm: grep Tainted: G
->       I       5.12.3 #2
-> May 12 20:22:24 tek04 kernel: Hardware name: To Be Filled By O.E.M. To
-> Be Filled By O.E.M./X58 Deluxe, BIOS P2.20 10/30/2009
-> May 12 20:22:24 tek04 kernel: RIP: 0010:biovec_slab.cold.45+0xf/0x11
-> May 12 20:22:24 tek04 kernel: Code: b3 ae ff 89 c6 48 c7 c7 30 82 21 82
-> e8 03 81 fe ff b8 b6 ff ff ff e9 3d bc ae ff 0f b7 f7 48 c7 c7 c4 82 21
-> 82 e8 ea 80 fe ff <0f> 0b 49 8b b4 24 d0 00 00 00 48 c7 c7 40 84 21 82
-> e8 d4 80 fe ff
-> May 12 20:22:24 tek04 kernel: RSP: 0018:ffffc9000274b730 EFLAGS: 00010292
-> May 12 20:22:24 tek04 kernel: RAX: 000000000000000b RBX:
-> ffffc9000274b764 RCX: 0000000000000000
-> May 12 20:22:24 tek04 kernel: bch_count_backing_io_errors: 1 callbacks
-> suppressed
-> May 12 20:22:24 tek04 kernel: bcache: bch_count_backing_io_errors() md1:
-> Read-ahead I/O failed on backing device, ignore
-> May 12 20:22:24 tek04 kernel: RDX: ffff888333c5e400 RSI:
-> ffff888333c57480 RDI: ffff888333c57480
-> May 12 20:22:24 tek04 kernel: RBP: 0000000000000800 R08:
-> 0000000000000000 R09: c0000000ffffdfff
-> May 12 20:22:24 tek04 kernel: R10: ffffc9000274b580 R11:
-> ffffc9000274b578 R12: ffff8881170f0118
-> May 12 20:22:24 tek04 kernel: R13: ffff888109911b00 R14:
-> ffff8881170f00d0 R15: 0000000000000800
-> May 12 20:22:24 tek04 kernel: FS:  00007f3a1ca7cb80(0000)
-> GS:ffff888333c40000(0000) knlGS:0000000000000000
-> May 12 20:22:24 tek04 kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
-> 0000000080050033
-> May 12 20:22:24 tek04 kernel: CR2: 00005628963f4fd0 CR3:
-> 000000016c43c000 CR4: 00000000000006e0
-> May 12 20:22:24 tek04 kernel: Call Trace:
-> May 12 20:22:24 tek04 kernel:  bvec_alloc+0x22/0x90
-> May 12 20:22:24 tek04 kernel:  bio_alloc_bioset+0x176/0x230
-> May 12 20:22:24 tek04 kernel:  cached_dev_cache_miss+0x1a8/0x300
-> May 12 20:22:24 tek04 kernel:  cache_lookup_fn+0x110/0x2e0
-> May 12 20:22:24 tek04 kernel:  ? bch_ptr_invalid+0x10/0x10
-> May 12 20:22:24 tek04 kernel:  ? bch_btree_iter_next_filter+0x1af/0x2d0
-> May 12 20:22:24 tek04 kernel:  ? cache_lookup+0x190/0x190
-> May 12 20:22:24 tek04 kernel:  bch_btree_map_keys_recurse+0x69/0x160
-> May 12 20:22:24 tek04 kernel:  ? __bch_bset_search+0x315/0x440
-> May 12 20:22:24 tek04 kernel:  ? downgrade_write+0xb0/0xb0
-> May 12 20:22:24 tek04 kernel:  ? cache_lookup+0x190/0x190
-> May 12 20:22:24 tek04 kernel:  bch_btree_map_keys_recurse+0xcf/0x160
-> May 12 20:22:24 tek04 kernel:  ? raid5_make_request+0x5c4/0xaa0
-> May 12 20:22:24 tek04 kernel:  ? recalibrate_cpu_khz+0x10/0x10
-> May 12 20:22:24 tek04 kernel:  ? kmem_cache_alloc+0x30/0x400
-> May 12 20:22:24 tek04 kernel:  ? rwsem_wake.isra.11+0x80/0x80
-> May 12 20:22:24 tek04 kernel:  bch_btree_map_keys+0xf2/0x140
-> May 12 20:22:24 tek04 kernel:  ? cache_lookup+0x190/0x190
-> May 12 20:22:24 tek04 kernel:  cache_lookup+0xb1/0x190
-> May 12 20:22:24 tek04 kernel:  cached_dev_submit_bio+0x9ab/0xc90
-> May 12 20:22:24 tek04 kernel:  ? submit_bio_checks+0x197/0x4a0
-> May 12 20:22:24 tek04 kernel:  ? kmem_cache_alloc+0x3b7/0x400
-> May 12 20:22:24 tek04 kernel:  submit_bio_noacct+0x10e/0x4c0
-> May 12 20:22:24 tek04 kernel:  submit_bio+0x2e/0x160
-> May 12 20:22:24 tek04 kernel:  ? xa_load+0x66/0x70
-> May 12 20:22:24 tek04 kernel:  ? bio_add_page+0x2f/0x70
-> May 12 20:22:24 tek04 kernel:  ext4_mpage_readpages+0x1ae/0xa00
-> May 12 20:22:24 tek04 kernel:  ? __mod_lruvec_state+0x29/0x60
-> May 12 20:22:24 tek04 kernel:  read_pages+0x78/0x1d0
-> May 12 20:22:24 tek04 kernel:  page_cache_ra_unbounded+0x127/0x1b0
-> May 12 20:22:24 tek04 kernel:  filemap_get_pages+0x1d0/0x4a0
-> May 12 20:22:24 tek04 kernel:  filemap_read+0x91/0x2d0
-> May 12 20:22:24 tek04 kernel:  new_sync_read+0x103/0x180
-> May 12 20:22:24 tek04 kernel:  vfs_read+0x11b/0x1b0
-> May 12 20:22:24 tek04 kernel:  ksys_read+0x55/0xd0
-> May 12 20:22:24 tek04 kernel:  do_syscall_64+0x33/0x80
-> May 12 20:22:24 tek04 kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> May 12 20:22:24 tek04 kernel: RIP: 0033:0x7f3a1cb89461
-> May 12 20:22:24 tek04 kernel: Code: fe ff ff 50 48 8d 3d fe d0 09 00 e8
-> e9 03 02 00 66 0f 1f 84 00 00 00 00 00 48 8d 05 99 62 0d 00 8b 00 85 c0
-> 75 13 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 57 c3 66 0f 1f 44 00 00 41 54
-> 49 89 d4 55 48
-> May 12 20:22:24 tek04 kernel: RSP: 002b:00007fff4052fff8 EFLAGS:
-> 00000246 ORIG_RAX: 0000000000000000
-> May 12 20:22:24 tek04 kernel: RAX: ffffffffffffffda RBX:
-> 0000000000018000 RCX: 00007f3a1cb89461
-> May 12 20:22:24 tek04 kernel: RDX: 0000000000018000 RSI:
-> 000055ff0d01a000 RDI: 0000000000000004
-> May 12 20:22:24 tek04 kernel: RBP: 0000000000018000 R08:
-> 0000000000000002 R09: 000055ff0d0194b0
-> May 12 20:22:24 tek04 kernel: R10: 0000000000000000 R11:
-> 0000000000000246 R12: 000055ff0d01a000
-> May 12 20:22:24 tek04 kernel: R13: 0000000000000004 R14:
-> 000055ff0d0194b0 R15: 0000000000000004
-> May 12 20:22:24 tek04 kernel: Modules linked in: cmac bnep
-> intel_powerclamp snd_hda_codec_realtek snd_hda_codec_generic btusb
-> ledtrig_audio snd_hda_codec_hdmi btrtl kvm_intel snd_hda_intel btbcm
-> snd_intel_dspcfg btintel kvm snd_hda_codec irqbypass bluetooth serio_raw
-> pcspkr hfcpci snd_hda_core iTCO_wdt evdev input_leds joydev sg snd_hwdep
-> intel_pmc_bxt ecdh_generic rfkill iTCO_vendor_support mISDN_core ecc
-> snd_pcm snd_timer tiny_power_button snd soundcore button i7core_edac
-> acpi_cpufreq wmi nft_counter nf_log_ipv6 nf_log_ipv
-> May 12 20:22:24 tek04 kernel: ---[ end trace 9a03f30c7b4aa246 ]---
-> May 12 20:22:25 tek04 kernel: RIP: 0010:biovec_slab.cold.45+0xf/0x11
-> May 12 20:22:25 tek04 kernel: Code: b3 ae ff 89 c6 48 c7 c7 30 82 21 82
-> e8 03 81 fe ff b8 b6 ff ff ff e9 3d bc ae ff 0f b7 f7 48 c7 c7 c4 82 21
-> 82 e8 ea 80 fe ff <0f> 0b 49 8b b4 24 d0 00 00 00 48 c7 c7 40 84 21 82
-> e8 d4 80 fe ff
-> May 12 20:22:25 tek04 kernel: RSP: 0018:ffffc9000274b730 EFLAGS: 00010292
-> May 12 20:22:25 tek04 kernel: RAX: 000000000000000b RBX:
-> ffffc9000274b764 RCX: 0000000000000000
-> May 12 20:22:25 tek04 kernel: RDX: ffff888333c5e400 RSI:
-> ffff888333c57480 RDI: ffff888333c57480
-> May 12 20:22:25 tek04 kernel: RBP: 0000000000000800 R08:
-> 0000000000000000 R09: c0000000ffffdfff
-> May 12 20:22:25 tek04 kernel: R10: ffffc9000274b580 R11:
-> ffffc9000274b578 R12: ffff8881170f0118
-> May 12 20:22:25 tek04 kernel: R13: ffff888109911b00 R14:
-> ffff8881170f00d0 R15: 0000000000000800
-> May 12 20:22:25 tek04 kernel: FS:  00007f3a1ca7cb80(0000)
-> GS:ffff888333c40000(0000) knlGS:0000000000000000
-> May 12 20:22:25 tek04 kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
-> 0000000080050033
-> May 12 20:22:25 tek04 kernel: CR2: 00005628963f4fd0 CR3:
-> 000000016c43c000 CR4: 00000000000006e0
->
-> A printk has been added to line 52 of block/bio.c to dump the nr_vecs
-> variable to the kernel log before the BUG(). Obviously nr_vecs (472
-> logged) is bigger than expected by bvec_alloc/bio_alloc_bioset (max
-> 256), which finally triggers the BUG().
->
-> Removing the BUG() from line 52 of block/bio.c, thus basically restoring
-> the Linux 5.11.x behavior of bvec_alloc/bio_alloc_bioset to just return
-> NULL, when nr_vecs is too big seems to resolve the issue.
->
-> Regards
-> Thorsten
->
+This patch removes the bcache self-defined readahead for cache missing
+request for backing device, and the readahead sysfs file interfaces are
+removed as well.
+
+This is the preparation for next patch to fix potential kernel panic due
+to oversized request in a simpler method.
+
+Reported-by: Alexander Ullrich <ealex1979@gmail.com>
+Reported-by: Diego Ercolani <diego.ercolani@gmail.com>
+Reported-by: Jan Szubiak <jan.szubiak@linuxpolska.pl>
+Reported-by: Marco Rebhan <me@dblsaiko.net>
+Reported-by: Matthias Ferdinand <bcache@mfedv.net>
+Reported-by: Thorsten Knabe <linux@thorsten-knabe.de>
+Reported-by: Victor Westerhuis <victor@westerhu.is>
+Reported-by: Vojtech Pavlik <vojtech@suse.cz>
+Signed-off-by: Coly Li <colyli@suse.de>
+Cc: stable@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: Nix <nix@esperi.org.uk>
+Cc: Takashi Iwai <tiwai@suse.com>
+---
+Changlog,
+v1, the initial version by hint from  Christoph Hellwig.
+
+ drivers/md/bcache/bcache.h  |  1 -
+ drivers/md/bcache/request.c | 13 +------------
+ drivers/md/bcache/stats.c   | 14 --------------
+ drivers/md/bcache/stats.h   |  1 -
+ drivers/md/bcache/sysfs.c   |  4 ----
+ 5 files changed, 1 insertion(+), 32 deletions(-)
+
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 0a4551e165ab..5fc989a6d452 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -364,7 +364,6 @@ struct cached_dev {
+ 
+ 	/* The rest of this all shows up in sysfs */
+ 	unsigned int		sequential_cutoff;
+-	unsigned int		readahead;
+ 
+ 	unsigned int		io_disable:1;
+ 	unsigned int		verify:1;
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index 29c231758293..ab8ff18df32a 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -880,7 +880,6 @@ static int cached_dev_cache_miss(struct btree *b, struct search *s,
+ 				 struct bio *bio, unsigned int sectors)
+ {
+ 	int ret = MAP_CONTINUE;
+-	unsigned int reada = 0;
+ 	struct cached_dev *dc = container_of(s->d, struct cached_dev, disk);
+ 	struct bio *miss, *cache_bio;
+ 
+@@ -892,14 +891,7 @@ static int cached_dev_cache_miss(struct btree *b, struct search *s,
+ 		goto out_submit;
+ 	}
+ 
+-	if (!(bio->bi_opf & REQ_RAHEAD) &&
+-	    !(bio->bi_opf & (REQ_META|REQ_PRIO)) &&
+-	    s->iop.c->gc_stats.in_use < CUTOFF_CACHE_READA)
+-		reada = min_t(sector_t, dc->readahead >> 9,
+-			      get_capacity(bio->bi_bdev->bd_disk) -
+-			      bio_end_sector(bio));
+-
+-	s->insert_bio_sectors = min(sectors, bio_sectors(bio) + reada);
++	s->insert_bio_sectors = min(sectors, bio_sectors(bio));
+ 
+ 	s->iop.replace_key = KEY(s->iop.inode,
+ 				 bio->bi_iter.bi_sector + s->insert_bio_sectors,
+@@ -933,9 +925,6 @@ static int cached_dev_cache_miss(struct btree *b, struct search *s,
+ 	if (bch_bio_alloc_pages(cache_bio, __GFP_NOWARN|GFP_NOIO))
+ 		goto out_put;
+ 
+-	if (reada)
+-		bch_mark_cache_readahead(s->iop.c, s->d);
+-
+ 	s->cache_miss	= miss;
+ 	s->iop.bio	= cache_bio;
+ 	bio_get(cache_bio);
+diff --git a/drivers/md/bcache/stats.c b/drivers/md/bcache/stats.c
+index 503aafe188dc..4c7ee5fedb9d 100644
+--- a/drivers/md/bcache/stats.c
++++ b/drivers/md/bcache/stats.c
+@@ -46,7 +46,6 @@ read_attribute(cache_misses);
+ read_attribute(cache_bypass_hits);
+ read_attribute(cache_bypass_misses);
+ read_attribute(cache_hit_ratio);
+-read_attribute(cache_readaheads);
+ read_attribute(cache_miss_collisions);
+ read_attribute(bypassed);
+ 
+@@ -64,7 +63,6 @@ SHOW(bch_stats)
+ 		    DIV_SAFE(var(cache_hits) * 100,
+ 			     var(cache_hits) + var(cache_misses)));
+ 
+-	var_print(cache_readaheads);
+ 	var_print(cache_miss_collisions);
+ 	sysfs_hprint(bypassed,	var(sectors_bypassed) << 9);
+ #undef var
+@@ -86,7 +84,6 @@ static struct attribute *bch_stats_files[] = {
+ 	&sysfs_cache_bypass_hits,
+ 	&sysfs_cache_bypass_misses,
+ 	&sysfs_cache_hit_ratio,
+-	&sysfs_cache_readaheads,
+ 	&sysfs_cache_miss_collisions,
+ 	&sysfs_bypassed,
+ 	NULL
+@@ -113,7 +110,6 @@ void bch_cache_accounting_clear(struct cache_accounting *acc)
+ 	acc->total.cache_misses = 0;
+ 	acc->total.cache_bypass_hits = 0;
+ 	acc->total.cache_bypass_misses = 0;
+-	acc->total.cache_readaheads = 0;
+ 	acc->total.cache_miss_collisions = 0;
+ 	acc->total.sectors_bypassed = 0;
+ }
+@@ -145,7 +141,6 @@ static void scale_stats(struct cache_stats *stats, unsigned long rescale_at)
+ 		scale_stat(&stats->cache_misses);
+ 		scale_stat(&stats->cache_bypass_hits);
+ 		scale_stat(&stats->cache_bypass_misses);
+-		scale_stat(&stats->cache_readaheads);
+ 		scale_stat(&stats->cache_miss_collisions);
+ 		scale_stat(&stats->sectors_bypassed);
+ 	}
+@@ -168,7 +163,6 @@ static void scale_accounting(struct timer_list *t)
+ 	move_stat(cache_misses);
+ 	move_stat(cache_bypass_hits);
+ 	move_stat(cache_bypass_misses);
+-	move_stat(cache_readaheads);
+ 	move_stat(cache_miss_collisions);
+ 	move_stat(sectors_bypassed);
+ 
+@@ -209,14 +203,6 @@ void bch_mark_cache_accounting(struct cache_set *c, struct bcache_device *d,
+ 	mark_cache_stats(&c->accounting.collector, hit, bypass);
+ }
+ 
+-void bch_mark_cache_readahead(struct cache_set *c, struct bcache_device *d)
+-{
+-	struct cached_dev *dc = container_of(d, struct cached_dev, disk);
+-
+-	atomic_inc(&dc->accounting.collector.cache_readaheads);
+-	atomic_inc(&c->accounting.collector.cache_readaheads);
+-}
+-
+ void bch_mark_cache_miss_collision(struct cache_set *c, struct bcache_device *d)
+ {
+ 	struct cached_dev *dc = container_of(d, struct cached_dev, disk);
+diff --git a/drivers/md/bcache/stats.h b/drivers/md/bcache/stats.h
+index abfaabf7e7fc..ca4f435f7216 100644
+--- a/drivers/md/bcache/stats.h
++++ b/drivers/md/bcache/stats.h
+@@ -7,7 +7,6 @@ struct cache_stat_collector {
+ 	atomic_t cache_misses;
+ 	atomic_t cache_bypass_hits;
+ 	atomic_t cache_bypass_misses;
+-	atomic_t cache_readaheads;
+ 	atomic_t cache_miss_collisions;
+ 	atomic_t sectors_bypassed;
+ };
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index cc89f3156d1a..05ac1d6fbbf3 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -137,7 +137,6 @@ rw_attribute(io_disable);
+ rw_attribute(discard);
+ rw_attribute(running);
+ rw_attribute(label);
+-rw_attribute(readahead);
+ rw_attribute(errors);
+ rw_attribute(io_error_limit);
+ rw_attribute(io_error_halflife);
+@@ -260,7 +259,6 @@ SHOW(__bch_cached_dev)
+ 	var_printf(partial_stripes_expensive,	"%u");
+ 
+ 	var_hprint(sequential_cutoff);
+-	var_hprint(readahead);
+ 
+ 	sysfs_print(running,		atomic_read(&dc->running));
+ 	sysfs_print(state,		states[BDEV_STATE(&dc->sb)]);
+@@ -365,7 +363,6 @@ STORE(__cached_dev)
+ 	sysfs_strtoul_clamp(sequential_cutoff,
+ 			    dc->sequential_cutoff,
+ 			    0, UINT_MAX);
+-	d_strtoi_h(readahead);
+ 
+ 	if (attr == &sysfs_clear_stats)
+ 		bch_cache_accounting_clear(&dc->accounting);
+@@ -538,7 +535,6 @@ static struct attribute *bch_cached_dev_files[] = {
+ 	&sysfs_running,
+ 	&sysfs_state,
+ 	&sysfs_label,
+-	&sysfs_readahead,
+ #ifdef CONFIG_BCACHE_DEBUG
+ 	&sysfs_verify,
+ 	&sysfs_bypass_torture_test,
+-- 
+2.26.2
 
