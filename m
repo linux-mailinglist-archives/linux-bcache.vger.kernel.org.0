@@ -2,265 +2,222 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 03B2E39580A
-	for <lists+linux-bcache@lfdr.de>; Mon, 31 May 2021 11:23:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B853A395831
+	for <lists+linux-bcache@lfdr.de>; Mon, 31 May 2021 11:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230449AbhEaJZF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 31 May 2021 05:25:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60042 "EHLO
+        id S230501AbhEaJin (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 31 May 2021 05:38:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230476AbhEaJZF (ORCPT
+        with ESMTP id S231219AbhEaJin (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 31 May 2021 05:25:05 -0400
+        Mon, 31 May 2021 05:38:43 -0400
 Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBAA1C061574
-        for <linux-bcache@vger.kernel.org>; Mon, 31 May 2021 02:23:24 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id dj8so449494edb.6
-        for <linux-bcache@vger.kernel.org>; Mon, 31 May 2021 02:23:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B167AC061574
+        for <linux-bcache@vger.kernel.org>; Mon, 31 May 2021 02:37:03 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id b11so5941732edy.4
+        for <linux-bcache@vger.kernel.org>; Mon, 31 May 2021 02:37:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rolffokkens-nl.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:references:message-id:date:user-agent:mime-version
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-transfer-encoding:content-language;
-        bh=pTxGEsubUZCwHh4Sz8clWfweJaz0THwbpR07rhWBZPI=;
-        b=cF5EYSTOfSAFUeC1BeP06Twbpw6peArTyW1ayoxaq0rzNU4cswh7iOCvUcg3si6djk
-         wdiu1ctf3bxMedmkFJSF+pdzGIDHxFj5RuWuYoGaZTTKBM9sWUIgBupd2V8p8H0MIJJM
-         qIgqfjaY5RezQokHbYWgWoYzq0pd5pMj6d0ijsluK6/wSENARFNc3cR7nTibwdNSkg2m
-         IGgFFxD8h6YkWCk4fQoN0uOYtgYUj7kQ09Stk5yDN68nwE9dHrSuDXPQ5flPtQmQLNGT
-         VCDaSMiWgqJjLCjAJhaFGM0R5OYHpYobWpbjYMKyAiDznaGuV6GMCiH98Nj2/OO2frmh
-         +EeQ==
+        bh=fxGXlbNCX2sVhaalVF25+gaYVT2oNT13xFgo+6Qr1Ec=;
+        b=OxxwsoQBbRPPJgGvk1Np9J4dlM8tIowzqtA0/wC/WQAEqUsS255HmDZMCt1FIEV56L
+         ToML1K+QWj/wK0wAxXmTsc9XeKIj4b8Y0jJ43zQ06+2VQDVv4+PfYmiScSMCqHpqrbi7
+         1atDYptI0aEQTu2WAxuRPhzkayFVdMXgBLalqXzBonbU8ClCqPORxnYImUQgL8TbhQwG
+         Y/7Kmv6oB0DMNRjbJ+DmgHsZzgtwFTrydCZlVu5s0BvbOktQLsjSDS63nSsNysAI/zV9
+         FvAl8VlBDE4Qt01V+WRAZ2MTadcbeXyXbqNjxyhZ+yZ6YWllT2v0kH8IjBkl7pTYHf1W
+         m74A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:references:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=pTxGEsubUZCwHh4Sz8clWfweJaz0THwbpR07rhWBZPI=;
-        b=n/6X/f848AJaMZkK+Cgx68ElYtUXgXv/SEQwR5zVNW9+i9MTZHoP7MLCioVn2YPFSP
-         fR9Nv5SwhvM9+xbvnl12IfvOrmxNYiT+64sDAXT3A12qf3OYg7o5bow4FKxd2a5jzd0Y
-         9rYHbxfBdPSfv2c3XMw8pvJgF4RdxuPYeLUF6BQIdkaNw61CrBeGXdDBIduv1DNJFiOi
-         ZCmN/nkfFM9PU/6WRgADMAQf/Txnq5DZqHrgRgwTOH1jiVUvgyStU1HCZY0eOcFXF9qy
-         UvKT9m0MeGbL7BNm2XDp2D7r4B/oWkqcmCv+2y+CwK4Pf4dTusEt2YVz+gx01/F+CdEX
-         U4eA==
-X-Gm-Message-State: AOAM532QXi40rU58/+/B8i0GYaxOQUpJNJIxRpbi2ozSyDIZU1SRL0vr
-        r6W85yq7D3s4cB/HYPQfpbOr8qXbZ5ZPPQ==
-X-Google-Smtp-Source: ABdhPJzrjvFzZaV0/KPBSbzyRvok3Y9RfVoDa2rGsToOICJVWNUYhWBpLo3c4MR6xRAH36AScBe9FA==
-X-Received: by 2002:a05:6402:1153:: with SMTP id g19mr24193427edw.179.1622453003100;
-        Mon, 31 May 2021 02:23:23 -0700 (PDT)
+        bh=fxGXlbNCX2sVhaalVF25+gaYVT2oNT13xFgo+6Qr1Ec=;
+        b=KsOiMHoCPjxoWUvYmWpT+t1YbeX4NcvFnB2YE6OyT605aUSflC2nhdVUVQ8WXMH7bY
+         6PDjd8M0K0B80pig7mwEpuP1g3OaDK7u06y5Iw9A5/wCzb/tZ/qgTa85xueStUOQzJgt
+         enrs2FwLWE+sPyia06cR078FU7liolkOWmkMkYmrNkaucNLH01O2bsrMaVt6M5g4qNcG
+         79si7GrtSIjnQZlpxUb1fGLf3zQhFNT8xnPxttmyfqHTSNcXdYVACokxYGJGUhFrJt2M
+         IIW9B+kzjl0jrKBxxVzmhaJAHyTnhgHy98yvKJrjVrnJYSQmDGmfAUBRxpBxQnYZl1eh
+         vkgg==
+X-Gm-Message-State: AOAM531ItBNCuEXjkZwuPHBxLlUC4oRP/HD3I/mn/SYGx+bYm/ubxGhu
+        l9QOMmGNA1BKJrg77ZDYTLzjyC/hwxYNIw==
+X-Google-Smtp-Source: ABdhPJyHncXY6N+ZJMJ8sLJ7slh+wjemcl5yQSW+oFU2Gw/A270bJHFjIJ6p2MM8kYmyqHPNigcy1A==
+X-Received: by 2002:a05:6402:274b:: with SMTP id z11mr6096323edd.225.1622453821974;
+        Mon, 31 May 2021 02:37:01 -0700 (PDT)
 Received: from home07.rolf-en-monique.lan (94-212-138-219.cable.dynamic.v4.ziggo.nl. [94.212.138.219])
-        by smtp.gmail.com with ESMTPSA id p5sm5658123ejm.115.2021.05.31.02.23.22
+        by smtp.gmail.com with ESMTPSA id u17sm3979946edx.16.2021.05.31.02.37.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 May 2021 02:23:22 -0700 (PDT)
+        Mon, 31 May 2021 02:37:01 -0700 (PDT)
+Subject: Re: PROBLEM: bcache related kernel BUG() since Linux 5.12
+To:     Thorsten Knabe <linux@thorsten-knabe.de>,
+        linux-bcache@vger.kernel.org
+References: <58f92cd7-38d1-bc16-2b5f-b68b2db2233b@thorsten-knabe.de>
 From:   Rolf Fokkens <rolf@rolffokkens.nl>
-Subject: Re: [BCACHE KERNEL OOPS AND PANIC] System not boot on fedora 34 with
- 5.12.5-6 kernel versions
-To:     Giuseppe Della Bianca <giusdbg@gmail.com>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>
-References: <2214829.ElGaqSPkdT@exnet.gdb.it>
-Message-ID: <00ff0a20-a620-d2d4-926e-e672d8b3d61e@rolffokkens.nl>
-Date:   Mon, 31 May 2021 11:23:22 +0200
+Message-ID: <f2f917d5-330b-a5cc-cca1-fe79a32c2140@rolffokkens.nl>
+Date:   Mon, 31 May 2021 11:37:00 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <2214829.ElGaqSPkdT@exnet.gdb.it>
+In-Reply-To: <58f92cd7-38d1-bc16-2b5f-b68b2db2233b@thorsten-knabe.de>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Ran into the same thing probably. More info here:
-https://bugzilla.redhat.com/show_bug.cgi?id=1965809
+Same here, more details: https://bugzilla.redhat.com/show_bug.cgi?id=1965809
 
-The oops:
-
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085344] kernel BUG at
-block/bio.c:52!
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085352] invalid
-opcode: 0000 [#1] SMP PTI
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085355] CPU: 3 PID:
-2829 Comm: Xorg Tainted: P           OE     5.12.7-200.fc33.x86_64 #1
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085358] Hardware
-name: System manufacturer System Product Name/PRIME B250M-A, BIOS 0614
-04/18/2017
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085360] RIP:
-0010:biovec_slab.part.0+0x5/0x10
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085364] Code: b1 3a
-04 00 48 83 3b 00 74 08 48 89 df e8 f3 fe ff ff 48 c7 03 00 00 00 00 5b
-c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 <0f> 0b 66 0f 1f 84 00
-00 00 00 00 0f 1f 44 00 00 48 83 7f 40 00 75
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085366] RSP:
-0000:ffffc0cc82a33780 EFLAGS: 00010212
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085369] RAX:
-0000000000000081 RBX: ffffc0cc82a337b4 RCX: 00000000000000e8
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085370] RDX:
-0000000000000800 RSI: ffffc0cc82a337b4 RDI: ffff9e060c300118
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085372] RBP:
-0000000000000800 R08: ffff9e060c300118 R09: ffff9e060e5334d8
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085373] R10:
-ffff9e060e228570 R11: 0000000000000001 R12: ffff9e060c300118
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085375] R13:
-0000000000000800 R14: 0000000000000800 R15: ffff9e060c3000d0
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085376] FS: 
-00007f7d034eaa80(0000) GS:ffff9e0926d80000(0000) knlGS:0000000000000000
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085378] CS:  0010 DS:
-0000 ES: 0000 CR0: 0000000080050033
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085380] CR2:
-00007f7d0170ea4c CR3: 0000000118d5a006 CR4: 00000000003706e0
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085382] Call Trace:
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085384] 
-bvec_alloc+0x90/0xc0
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085388] 
-bio_alloc_bioset+0x1b3/0x260
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085391] 
-cached_dev_cache_miss+0xf6/0x2f0 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085409] 
-cache_lookup_fn+0xf2/0x2e0 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085419]  ?
-bch_btree_iter_next_filter+0x1ad/0x2e0 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085427]  ?
-bch_ptr_invalid+0x10/0x10 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085435]  ?
-bch_data_invalidate+0x160/0x160 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085443] 
-bch_btree_map_keys_recurse+0x70/0x170 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085452]  ?
-bch_btree_node_get.part.0+0x190/0x2c0 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085460]  ?
-rwsem_mark_wake+0x2a0/0x2a0
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085462]  ?
-bch_data_invalidate+0x160/0x160 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085471] 
-bch_btree_map_keys_recurse+0xd7/0x170 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085479]  ?
-mempool_alloc+0x5b/0x150
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085540] 
-bch_btree_map_keys+0x163/0x1b0 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085548]  ?
-bch_data_invalidate+0x160/0x160 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085557] 
-cache_lookup+0x93/0x140 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085565] 
-cached_dev_submit_bio+0x9f3/0xd60 [bcache]
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085574]  ?
-dm_submit_bio+0x187/0x3d0
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085577]  ?
-blk_queue_enter+0x181/0x230
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085580] 
-submit_bio_noacct+0x112/0x4d0
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085584] 
-ext4_mpage_readpages+0x33f/0xb00
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085588]  ?
-__mod_memcg_lruvec_state+0x22/0xe0
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085591]  ?
-__add_to_page_cache_locked+0x1da/0x430
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085594] 
-read_pages+0x5d/0x2c0
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085596] 
-page_cache_ra_unbounded+0x1ab/0x230
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085599] 
-filemap_fault+0x694/0xa60
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085602]  ?
-__alloc_pages_nodemask+0x16c/0x340
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085606] 
-ext4_filemap_fault+0x2d/0x40
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085608] 
-__do_fault+0x36/0x100
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085611] 
-__handle_mm_fault+0x6ca/0x15d0
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085614] 
-handle_mm_fault+0xd5/0x2b0
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085616] 
-do_user_addr_fault+0x1ba/0x690
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085619]  ?
-ksys_mmap_pgoff+0x102/0x220
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085622] 
-exc_page_fault+0x67/0x150
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085625]  ?
-asm_exc_page_fault+0x8/0x30
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085642] 
-asm_exc_page_fault+0x1e/0x30
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085644] RIP:
-0033:0x7f7d04306ea3
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085646] Code: 0f 7f
-44 17 f0 f3 0f 7f 07 c3 48 83 fa 40 77 16 f3 0f 7f 07 f3 0f 7f 47 10 f3
-0f 7f 44 17 f0 f3 0f 7f 44 17 e0 c3 48 8d 4f 40 <f3> 0f 7f 07 48 83 e1
-c0 f3 0f 7f 44 17 f0 f3 0f 7f 47 10 f3 0f 7f
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085648] RSP:
-002b:00007ffd525db8a8 EFLAGS: 00010206
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085650] RAX:
-00007f7d0170ea4c RBX: 0000000000000002 RCX: 00007f7d0170ea8c
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085652] RDX:
-00000000000005b4 RSI: 0000000000000000 RDI: 00007f7d0170ea4c
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085667] RBP:
-00007ffd525dbb60 R08: 00007f7d0170ea4c R09: 00000000016f9000
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085669] R10:
-0000000000000003 R11: 0000000000000206 R12: 0000559d50818840
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085670] R13:
-00007ffd525db8e0 R14: 00007f7d0170f000 R15: 0000000000000000
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085673] Modules
-linked in: xt_CHECKSUM xt_MASQUERADE nf_nat_tftp nf_conntrack_tftp xt_CT
-tun bridge stp llc netconsole cfg80211 ip6t_REJECT nf_reject_ipv6
-ip6t_rpfilter ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat
-ebtable_broute ip6table_nat ip6table_mangle ip6table_raw
-ip6table_security iptable_nat nf_nat nf_conntrack nf_defrag_ipv6
-nf_defrag_ipv4 iptable_mangle iptable_raw iptable_security ip_set
-nfnetlink ebtable_filter ebtables ip6table_filter ip6_tables
-iptable_filter nct6775 hwmon_vid lm92 sunrpc nvidia_drm(POE)
-nvidia_modeset(POE) intel_rapl_msr intel_rapl_common raid1 uvcvideo
-x86_pkg_temp_thermal intel_powerclamp coretemp videobuf2_vmalloc ee1004
-ppdev videobuf2_memops mei_hdcp videobuf2_v4l2 iTCO_wdt intel_pmc_bxt
-iTCO_vendor_support kvm_intel snd_usb_audio videobuf2_common kvm
-videodev snd_usbmidi_lib snd_hda_codec_realtek snd_hda_codec_generic
-snd_hda_codec_hdmi ledtrig_audio snd_rawmidi snd_hda_intel nvidia(POE)
-snd_intel_dspcfg snd_intel_sdw_acpi joydev mc
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085710]  irqbypass
-snd_hda_codec snd_hda_core rapl snd_hwdep intel_cstate snd_seq
-intel_uncore snd_seq_device eeepc_wmi asus_wmi snd_pcm sparse_keymap
-rfkill pcspkr wmi_bmof snd_timer i2c_i801 i2c_smbus drm_kms_helper snd
-cec soundcore parport_pc parport mei_me mei acpi_pad essiv authenc drm
-binfmt_misc ip_tables dm_crypt trusted raid456 async_raid6_recov
-async_memcpy async_pq async_xor async_tx bcache crc64 mxm_wmi
-crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel serio_raw
-nvme r8169 nvme_core wmi video fuse ecryptfs
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085747] ---[ end
-trace 06c92d68c51b74c5 ]---
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085749] RIP:
-0010:biovec_slab.part.0+0x5/0x10
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085752] Code: b1 3a
-04 00 48 83 3b 00 74 08 48 89 df e8 f3 fe ff ff 48 c7 03 00 00 00 00 5b
-c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 <0f> 0b 66 0f 1f 84 00
-00 00 00 00 0f 1f 44 00 00 48 83 7f 40 00 75
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085755] RSP:
-0000:ffffc0cc82a33780 EFLAGS: 00010212
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085756] RAX:
-0000000000000081 RBX: ffffc0cc82a337b4 RCX: 00000000000000e8
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085758] RDX:
-0000000000000800 RSI: ffffc0cc82a337b4 RDI: ffff9e060c300118
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085759] RBP:
-0000000000000800 R08: ffff9e060c300118 R09: ffff9e060e5334d8
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085761] R10:
-ffff9e060e228570 R11: 0000000000000001 R12: ffff9e060c300118
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085762] R13:
-0000000000000800 R14: 0000000000000800 R15: ffff9e060c3000d0
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085764] FS: 
-00007f7d034eaa80(0000) GS:ffff9e0926d80000(0000) knlGS:0000000000000000
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085788] CS:  0010 DS:
-0000 ES: 0000 CR0: 0000000080050033
-May 31 10:57:20 home07.rolf-en-monique.lan  [   40.085846] CR2:
-00007f7d0170ea4c CR3: 0000000118d5a006 CR4: 00000000003706e0
-
-
-On 5/25/21 11:04 PM, Giuseppe Della Bianca wrote:
-> Hi.
+On 5/15/21 9:06 PM, Thorsten Knabe wrote:
+> Hello.
 >
-> On fedora 34 with 5.12.5-6 kernel version, kernel oops and panic on
-> booting when accessing the nvme cache device (I don't know a way to
-> report the many kernel messages, the system won't boot).
+> Starting with Linux 5.12 bcache triggers a BUG() after a few minutes of
+> usage.
 >
-> Detaching the cache device from the bcache device, the system boot.
+> Linux up to 5.11.x is not affected by this bug.
 >
-> gdb
+> Environment:
+> - Debian 10 AMD 64
+> - Kernel 5.12 - 5.12.4
+> - Filesystem ext4
+> - Backing device: degraded software RAID-6 (MD) with 3 of 4 disks active
+>   (unsure if the degraded RAID-6 has an effect or not)
+> - Cache device: Single SSD
 >
+> Kernel log:
 >
-
+> May 12 20:22:24 tek04 kernel: nr_vecs=472
+> May 12 20:22:24 tek04 kernel: ------------[ cut here ]------------
+> May 12 20:22:24 tek04 kernel: kernel BUG at block/bio.c:53!
+> May 12 20:22:24 tek04 kernel: invalid opcode: 0000 [#1] PREEMPT SMP PTI
+> May 12 20:22:24 tek04 kernel: CPU: 1 PID: 1670 Comm: grep Tainted: G
+>       I       5.12.3 #2
+> May 12 20:22:24 tek04 kernel: Hardware name: To Be Filled By O.E.M. To
+> Be Filled By O.E.M./X58 Deluxe, BIOS P2.20 10/30/2009
+> May 12 20:22:24 tek04 kernel: RIP: 0010:biovec_slab.cold.45+0xf/0x11
+> May 12 20:22:24 tek04 kernel: Code: b3 ae ff 89 c6 48 c7 c7 30 82 21 82
+> e8 03 81 fe ff b8 b6 ff ff ff e9 3d bc ae ff 0f b7 f7 48 c7 c7 c4 82 21
+> 82 e8 ea 80 fe ff <0f> 0b 49 8b b4 24 d0 00 00 00 48 c7 c7 40 84 21 82
+> e8 d4 80 fe ff
+> May 12 20:22:24 tek04 kernel: RSP: 0018:ffffc9000274b730 EFLAGS: 00010292
+> May 12 20:22:24 tek04 kernel: RAX: 000000000000000b RBX:
+> ffffc9000274b764 RCX: 0000000000000000
+> May 12 20:22:24 tek04 kernel: bch_count_backing_io_errors: 1 callbacks
+> suppressed
+> May 12 20:22:24 tek04 kernel: bcache: bch_count_backing_io_errors() md1:
+> Read-ahead I/O failed on backing device, ignore
+> May 12 20:22:24 tek04 kernel: RDX: ffff888333c5e400 RSI:
+> ffff888333c57480 RDI: ffff888333c57480
+> May 12 20:22:24 tek04 kernel: RBP: 0000000000000800 R08:
+> 0000000000000000 R09: c0000000ffffdfff
+> May 12 20:22:24 tek04 kernel: R10: ffffc9000274b580 R11:
+> ffffc9000274b578 R12: ffff8881170f0118
+> May 12 20:22:24 tek04 kernel: R13: ffff888109911b00 R14:
+> ffff8881170f00d0 R15: 0000000000000800
+> May 12 20:22:24 tek04 kernel: FS:  00007f3a1ca7cb80(0000)
+> GS:ffff888333c40000(0000) knlGS:0000000000000000
+> May 12 20:22:24 tek04 kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
+> 0000000080050033
+> May 12 20:22:24 tek04 kernel: CR2: 00005628963f4fd0 CR3:
+> 000000016c43c000 CR4: 00000000000006e0
+> May 12 20:22:24 tek04 kernel: Call Trace:
+> May 12 20:22:24 tek04 kernel:  bvec_alloc+0x22/0x90
+> May 12 20:22:24 tek04 kernel:  bio_alloc_bioset+0x176/0x230
+> May 12 20:22:24 tek04 kernel:  cached_dev_cache_miss+0x1a8/0x300
+> May 12 20:22:24 tek04 kernel:  cache_lookup_fn+0x110/0x2e0
+> May 12 20:22:24 tek04 kernel:  ? bch_ptr_invalid+0x10/0x10
+> May 12 20:22:24 tek04 kernel:  ? bch_btree_iter_next_filter+0x1af/0x2d0
+> May 12 20:22:24 tek04 kernel:  ? cache_lookup+0x190/0x190
+> May 12 20:22:24 tek04 kernel:  bch_btree_map_keys_recurse+0x69/0x160
+> May 12 20:22:24 tek04 kernel:  ? __bch_bset_search+0x315/0x440
+> May 12 20:22:24 tek04 kernel:  ? downgrade_write+0xb0/0xb0
+> May 12 20:22:24 tek04 kernel:  ? cache_lookup+0x190/0x190
+> May 12 20:22:24 tek04 kernel:  bch_btree_map_keys_recurse+0xcf/0x160
+> May 12 20:22:24 tek04 kernel:  ? raid5_make_request+0x5c4/0xaa0
+> May 12 20:22:24 tek04 kernel:  ? recalibrate_cpu_khz+0x10/0x10
+> May 12 20:22:24 tek04 kernel:  ? kmem_cache_alloc+0x30/0x400
+> May 12 20:22:24 tek04 kernel:  ? rwsem_wake.isra.11+0x80/0x80
+> May 12 20:22:24 tek04 kernel:  bch_btree_map_keys+0xf2/0x140
+> May 12 20:22:24 tek04 kernel:  ? cache_lookup+0x190/0x190
+> May 12 20:22:24 tek04 kernel:  cache_lookup+0xb1/0x190
+> May 12 20:22:24 tek04 kernel:  cached_dev_submit_bio+0x9ab/0xc90
+> May 12 20:22:24 tek04 kernel:  ? submit_bio_checks+0x197/0x4a0
+> May 12 20:22:24 tek04 kernel:  ? kmem_cache_alloc+0x3b7/0x400
+> May 12 20:22:24 tek04 kernel:  submit_bio_noacct+0x10e/0x4c0
+> May 12 20:22:24 tek04 kernel:  submit_bio+0x2e/0x160
+> May 12 20:22:24 tek04 kernel:  ? xa_load+0x66/0x70
+> May 12 20:22:24 tek04 kernel:  ? bio_add_page+0x2f/0x70
+> May 12 20:22:24 tek04 kernel:  ext4_mpage_readpages+0x1ae/0xa00
+> May 12 20:22:24 tek04 kernel:  ? __mod_lruvec_state+0x29/0x60
+> May 12 20:22:24 tek04 kernel:  read_pages+0x78/0x1d0
+> May 12 20:22:24 tek04 kernel:  page_cache_ra_unbounded+0x127/0x1b0
+> May 12 20:22:24 tek04 kernel:  filemap_get_pages+0x1d0/0x4a0
+> May 12 20:22:24 tek04 kernel:  filemap_read+0x91/0x2d0
+> May 12 20:22:24 tek04 kernel:  new_sync_read+0x103/0x180
+> May 12 20:22:24 tek04 kernel:  vfs_read+0x11b/0x1b0
+> May 12 20:22:24 tek04 kernel:  ksys_read+0x55/0xd0
+> May 12 20:22:24 tek04 kernel:  do_syscall_64+0x33/0x80
+> May 12 20:22:24 tek04 kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> May 12 20:22:24 tek04 kernel: RIP: 0033:0x7f3a1cb89461
+> May 12 20:22:24 tek04 kernel: Code: fe ff ff 50 48 8d 3d fe d0 09 00 e8
+> e9 03 02 00 66 0f 1f 84 00 00 00 00 00 48 8d 05 99 62 0d 00 8b 00 85 c0
+> 75 13 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 57 c3 66 0f 1f 44 00 00 41 54
+> 49 89 d4 55 48
+> May 12 20:22:24 tek04 kernel: RSP: 002b:00007fff4052fff8 EFLAGS:
+> 00000246 ORIG_RAX: 0000000000000000
+> May 12 20:22:24 tek04 kernel: RAX: ffffffffffffffda RBX:
+> 0000000000018000 RCX: 00007f3a1cb89461
+> May 12 20:22:24 tek04 kernel: RDX: 0000000000018000 RSI:
+> 000055ff0d01a000 RDI: 0000000000000004
+> May 12 20:22:24 tek04 kernel: RBP: 0000000000018000 R08:
+> 0000000000000002 R09: 000055ff0d0194b0
+> May 12 20:22:24 tek04 kernel: R10: 0000000000000000 R11:
+> 0000000000000246 R12: 000055ff0d01a000
+> May 12 20:22:24 tek04 kernel: R13: 0000000000000004 R14:
+> 000055ff0d0194b0 R15: 0000000000000004
+> May 12 20:22:24 tek04 kernel: Modules linked in: cmac bnep
+> intel_powerclamp snd_hda_codec_realtek snd_hda_codec_generic btusb
+> ledtrig_audio snd_hda_codec_hdmi btrtl kvm_intel snd_hda_intel btbcm
+> snd_intel_dspcfg btintel kvm snd_hda_codec irqbypass bluetooth serio_raw
+> pcspkr hfcpci snd_hda_core iTCO_wdt evdev input_leds joydev sg snd_hwdep
+> intel_pmc_bxt ecdh_generic rfkill iTCO_vendor_support mISDN_core ecc
+> snd_pcm snd_timer tiny_power_button snd soundcore button i7core_edac
+> acpi_cpufreq wmi nft_counter nf_log_ipv6 nf_log_ipv
+> May 12 20:22:24 tek04 kernel: ---[ end trace 9a03f30c7b4aa246 ]---
+> May 12 20:22:25 tek04 kernel: RIP: 0010:biovec_slab.cold.45+0xf/0x11
+> May 12 20:22:25 tek04 kernel: Code: b3 ae ff 89 c6 48 c7 c7 30 82 21 82
+> e8 03 81 fe ff b8 b6 ff ff ff e9 3d bc ae ff 0f b7 f7 48 c7 c7 c4 82 21
+> 82 e8 ea 80 fe ff <0f> 0b 49 8b b4 24 d0 00 00 00 48 c7 c7 40 84 21 82
+> e8 d4 80 fe ff
+> May 12 20:22:25 tek04 kernel: RSP: 0018:ffffc9000274b730 EFLAGS: 00010292
+> May 12 20:22:25 tek04 kernel: RAX: 000000000000000b RBX:
+> ffffc9000274b764 RCX: 0000000000000000
+> May 12 20:22:25 tek04 kernel: RDX: ffff888333c5e400 RSI:
+> ffff888333c57480 RDI: ffff888333c57480
+> May 12 20:22:25 tek04 kernel: RBP: 0000000000000800 R08:
+> 0000000000000000 R09: c0000000ffffdfff
+> May 12 20:22:25 tek04 kernel: R10: ffffc9000274b580 R11:
+> ffffc9000274b578 R12: ffff8881170f0118
+> May 12 20:22:25 tek04 kernel: R13: ffff888109911b00 R14:
+> ffff8881170f00d0 R15: 0000000000000800
+> May 12 20:22:25 tek04 kernel: FS:  00007f3a1ca7cb80(0000)
+> GS:ffff888333c40000(0000) knlGS:0000000000000000
+> May 12 20:22:25 tek04 kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
+> 0000000080050033
+> May 12 20:22:25 tek04 kernel: CR2: 00005628963f4fd0 CR3:
+> 000000016c43c000 CR4: 00000000000006e0
+>
+> A printk has been added to line 52 of block/bio.c to dump the nr_vecs
+> variable to the kernel log before the BUG(). Obviously nr_vecs (472
+> logged) is bigger than expected by bvec_alloc/bio_alloc_bioset (max
+> 256), which finally triggers the BUG().
+>
+> Removing the BUG() from line 52 of block/bio.c, thus basically restoring
+> the Linux 5.11.x behavior of bvec_alloc/bio_alloc_bioset to just return
+> NULL, when nr_vecs is too big seems to resolve the issue.
+>
+> Regards
+> Thorsten
+>
 
