@@ -2,32 +2,33 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7236339B8D3
-	for <lists+linux-bcache@lfdr.de>; Fri,  4 Jun 2021 14:12:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9F9E39B91A
+	for <lists+linux-bcache@lfdr.de>; Fri,  4 Jun 2021 14:36:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230039AbhFDMOd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 4 Jun 2021 08:14:33 -0400
-Received: from correo01.aragon.es ([188.244.81.25]:29652 "EHLO aragon.es"
+        id S230041AbhFDMiE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 4 Jun 2021 08:38:04 -0400
+Received: from correo01.aragon.es ([188.244.81.25]:40574 "EHLO aragon.es"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230034AbhFDMOd (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 4 Jun 2021 08:14:33 -0400
+        id S229718AbhFDMiE (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 4 Jun 2021 08:38:04 -0400
 Received: from aragon.es ([172.30.3.33])
-        by FM2.aragon.es  with ESMTP id 154CCjSC030111-154CCjSD030111;
-        Fri, 4 Jun 2021 14:12:45 +0200
+        by FM2.aragon.es  with ESMTP id 154CZuZT010910-154CZuZU010910;
+        Fri, 4 Jun 2021 14:35:56 +0200
 Received: from [1.8.2.59] (account scastillo@aragon.es [1.8.2.59] verified)
   by aragon.es (CommuniGate Pro SMTP 6.2.12)
-  with ESMTPSA id 92491107; Fri, 04 Jun 2021 14:12:45 +0200
+  with ESMTPSA id 92496978; Fri, 04 Jun 2021 14:35:56 +0200
 Subject: Re: Low hit ratio and cache usage
-To:     Pierre Juhen <pierre.juhen@orange.fr>, linux-bcache@vger.kernel.org
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org
 References: <5b01087b-6e56-0396-774a-1c1a71fe50df@aragon.es>
- <f25c7f91-433e-d699-c1f6-7e828023167f@orange.fr>
+ <4cc064bc-36f3-cb15-0240-610a45e49300@suse.de>
 From:   Santiago Castillo Oli <scastillo@aragon.es>
-Message-ID: <6f1e1665-a231-47e2-5271-588d79915f66@aragon.es>
-Date:   Fri, 4 Jun 2021 14:12:44 +0200
+Message-ID: <62f20c57-d502-c362-da84-61a47c891e6d@aragon.es>
+Date:   Fri, 4 Jun 2021 14:35:56 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.2
 MIME-Version: 1.0
-In-Reply-To: <f25c7f91-433e-d699-c1f6-7e828023167f@orange.fr>
+In-Reply-To: <4cc064bc-36f3-cb15-0240-610a45e49300@suse.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
@@ -36,96 +37,39 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Pierre!
+Hi Coli!
 
 
-I see your point about Copy On Write, but in this scenario most of the 
-data is only written once and read many times. I hoped bcache to perform 
-better as a read cache. I´m afraid that bcache is only caching written 
-(new and modified) blocks, not blocks already in backing device but not 
-in cache device. Cache device was attached with most of data already 
-resting on backing device.
+El 04/06/2021 a las 14:05, Coly Li escribió:
+> What is the kernel version and where do you have the kernel ?  And what
+> is the workload on your machine ?
+
+I'm using debian 10 with default debian kernel (4.19.0-16-amd64) in host 
+and guests.
+
+For virtualization I'm using KVM.
 
 
-What other setup would you say to be an optimal configuration to speed 
-up VMs I/O using qcow2 files?
+There is a host, where bcache is running. The filesystem over bcache 
+device is ext4. In that filesystem there is only 9 qcow2 files user by 
+three VM guests. Two VM are running small nextcloud instances, another 
+one is running transmission (bittorrent) for feeding debian and other 
+distro iso files (30 files - 60 GiB approx.)
 
 
-Thank you and regards
+> Most of the read requests are missing, so they will read from backing
+> device and refilled into cache device as used-and-clean data. Once there
+> is no enough space to hold more read-cached data, garbage colleague may
+> retire the used-and-clean data very fast and make available room for new
+> refilling read data. The 19GB data might be existing data from last time gc.
+
+Is it possible to know GC last execution time?
 
 
-El 04/06/2021 a las 14:00, Pierre Juhen escribió:
->
-> Hi !
->
-> COW from qcow2 means Copy On Write.
->
-> It means that a new block is written for each modification on an 
-> existing block.
->
-> Therefore, a "living" block is read only once, and the statistics are 
-> not favorable keep the blocks in the cache.
->
-> Only the "static" files (OS and frequently used program) benefit from 
-> the cache.
->
-> So I think that qcow2 and bcache might not be a optimal configuration.
->
-> Any complement on this quick analysis ?
->
-> Regards,
->
->
-> Le 04/06/2021 à 13:07, Santiago Castillo Oli a écrit :
->> Hi all!
->>
->>
->> I'm using bcache and I think I have a rather low hit ratio and cache 
->> occupation.
->>
->>
->> My setup is:
->>
->> - Cache device: 82 GiB partition on a SSD drive. Bucket size=4M. The 
->> partition is aligned on a Gigabyte boundary.
->>
->> - Backing device: 3.6 TiB partition on a HDD drive. There is 732 GiB 
->> of data usage on this partition. This 732 GiB are used by 9 qcow2 
->> files assigned to 3 VMs running on the host.
->>
->> - Neither the SDD nor HDD drives have another partitions in use.
->>
->> - After 24 hours of use, according to priority_stats the cache is 75% 
->> Unused (63 GiB Unused - 19 GiB used), but...
->>
->> - ... according to "smartctl -a" in those 24 hours "Writes to Flash" 
->> has increased in 160 GiB and "GB written from host" has increased in 
->> 90 GiB
->>
->> - cache_hit_ratio is 10 %
->>
->>
->>
->> - I'm using maximum bucket size (4M) trying to minimize write 
->> amplification. With this bucket size, "Writes to Flash" (160) to "GB 
->> written from host"(90) ratio is 1,78. Previously, some days ago, I 
->> was using default bucket size. The write amplification ratio then was 
->> 2,01.
->>
->> - Isn't the cache_hit_ratio (10%) a bit low?
->>
->> - Is it normal that, after 24 hours running, the cache occupation is 
->> that low (82-63 = 19GiB, 25%)  when the host has written 90 GiB to 
->> the cache device in the same period? I don´t understand why 90 GiB of 
->> data has been written to fill 19 GiB of cache.
->>
->>
->> Any ideas?
->>
->>
->> Thank you and regards.
->>
->>
+Regards and thank you.
+
+
 -- 
+
 ___________________________________________________________
 
