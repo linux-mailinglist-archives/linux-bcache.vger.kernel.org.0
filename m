@@ -2,120 +2,158 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B12E39D420
-	for <lists+linux-bcache@lfdr.de>; Mon,  7 Jun 2021 06:43:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F24439D954
+	for <lists+linux-bcache@lfdr.de>; Mon,  7 Jun 2021 12:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbhFGEpG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 7 Jun 2021 00:45:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36162 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbhFGEpF (ORCPT
+        id S230131AbhFGKNW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 7 Jun 2021 06:13:22 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:56632 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230127AbhFGKNW (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 7 Jun 2021 00:45:05 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF75CC061766
-        for <linux-bcache@vger.kernel.org>; Sun,  6 Jun 2021 21:43:14 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id d5-20020a17090ab305b02901675357c371so10778403pjr.1
-        for <linux-bcache@vger.kernel.org>; Sun, 06 Jun 2021 21:43:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CRj471fcopWwQDLwVjladgw5/TWtqNQ37b4ozfCN7s8=;
-        b=mUwrryrMK2/51rlcR19uFKtt3Uz+vhowS1qfTyT3U4jbSFAWkNWauh6vZ1LO5VmIVs
-         5ECi3fnIpqEf7SJMnMZB8oq3crwKNTWITd/ZeOFm876BQIrYAX3u/vNdV2CgZCK01tkz
-         C8YU7ud0HQKax1RxO59EYt6KRwvWGHRSNo9PWsgDov28KfdcU8hcxJqxXgxw+nPdjo7K
-         342fva71vreSrrP8Kmd82X7Kbm8YcsSnvq3hNSryExEQqxyEuVJkiKabNqk+zLsUk8un
-         QX0WKhwpmqtVabr66aXRDGAcLJ6aoyf/DzL3OqIqE10TWaZPFDhN5OQPz3qcG9KZwqa3
-         ZqZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CRj471fcopWwQDLwVjladgw5/TWtqNQ37b4ozfCN7s8=;
-        b=HqecS20QApSVJzb5NKBn1bf0RPYiNQWGiCyrO4ZY9WXmj1LHqpLT+s7H2PbQOAdyKe
-         WOH+QZezVHOXDrLBYDppmPYXt9Y00i9rxH31zgugAdZUzPExAhQI2Mk67SJDpdt3Z1VX
-         GNc+qiSLDwU9kqYyuTMuNPMiU81hEaRVwvpl4HIAvCRBknUCNY1TVmlmXz5ODnfYJgUJ
-         lmJhTG2QHitRH/CgOWK/sfMfTzP1edKfaNbW9Y7Mco7IQVm3HaBi7AP2UAlhj3kVtctC
-         1irg6vWXZcLIqyVjmkD5ScXQ0EsppEUsDXdKEhBZlbIWR1j4aPoFIWHgKD/GpkEAOm2N
-         yHbQ==
-X-Gm-Message-State: AOAM531RXKesIBiwsEwtWdf6yKQ84mwjbQx2eHaqFCbXDSE7WzlvwvDN
-        xBDAoWMq0QXXWrQIDGS+vMEp6RwCsdU45MfwwAQHZQ==
-X-Google-Smtp-Source: ABdhPJylkfr3HkdoqNF9xRMFqCn7oO5cpDCL+nuDgN1ppB6ZETr18hlSAOgBmuySRxZfODa5nUP7K4JpxKKLUl+WZPE=
-X-Received: by 2002:a17:902:f1cb:b029:10c:5c6d:88b with SMTP id
- e11-20020a170902f1cbb029010c5c6d088bmr16307416plc.52.1623040994149; Sun, 06
- Jun 2021 21:43:14 -0700 (PDT)
+        Mon, 7 Jun 2021 06:13:22 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D18D121A6C;
+        Mon,  7 Jun 2021 10:11:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1623060690; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oTpTn43XQSlxJcbV6MwwVU1W80MKxmRlm/6BT9VyCWM=;
+        b=lxaCt6vXtB4NzAPnbMQOKyFzOGe5L1lXAAba4RKmLfXfhwWMpTPzyrquN3xxyhgqnJDapH
+        g3MPTvdcPRmR2hlvNVIap5dz6Rrwe8oQapcIujeG4fvlj1oJNPf7OMznj8bkbDl6K1dBfb
+        ZihBxFQcdqfbUJ0uHgtQ0z2VOAt6q04=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1623060690;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oTpTn43XQSlxJcbV6MwwVU1W80MKxmRlm/6BT9VyCWM=;
+        b=0MskGXn7MMqZkeFwWBHJrwphM9kmyqB4rFQZiCbjuEkhek1KkMRD191LE4o9TeprgeILor
+        Ido+mJ+9jJHrBDDw==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 11EBB118DD;
+        Mon,  7 Jun 2021 10:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1623060690; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oTpTn43XQSlxJcbV6MwwVU1W80MKxmRlm/6BT9VyCWM=;
+        b=lxaCt6vXtB4NzAPnbMQOKyFzOGe5L1lXAAba4RKmLfXfhwWMpTPzyrquN3xxyhgqnJDapH
+        g3MPTvdcPRmR2hlvNVIap5dz6Rrwe8oQapcIujeG4fvlj1oJNPf7OMznj8bkbDl6K1dBfb
+        ZihBxFQcdqfbUJ0uHgtQ0z2VOAt6q04=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1623060690;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oTpTn43XQSlxJcbV6MwwVU1W80MKxmRlm/6BT9VyCWM=;
+        b=0MskGXn7MMqZkeFwWBHJrwphM9kmyqB4rFQZiCbjuEkhek1KkMRD191LE4o9TeprgeILor
+        Ido+mJ+9jJHrBDDw==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id Agw4NdHwvWDJKwAALh3uQQ
+        (envelope-from <colyli@suse.de>); Mon, 07 Jun 2021 10:11:29 +0000
+Subject: Re: PROBLEM: bcache related kernel BUG() since Linux 5.12
+To:     Rolf Fokkens <rolf@rolffokkens.nl>,
+        Thorsten Knabe <linux@thorsten-knabe.de>
+Cc:     linux-bcache@vger.kernel.org
+References: <58f92cd7-38d1-bc16-2b5f-b68b2db2233b@thorsten-knabe.de>
+ <f2f917d5-330b-a5cc-cca1-fe79a32c2140@rolffokkens.nl>
+ <7e3c8a62-71d4-11a7-5dd7-137c030f5aad@suse.de>
+ <92f2fb24-0d19-939d-a37a-91b9c1da4ac1@thorsten-knabe.de>
+ <2a37723c-bc91-351d-5b0e-e7d104f88141@rolffokkens.nl>
+ <69319c4e-71fe-5c7d-955f-801fdb9d9cba@suse.de>
+ <5df1c881-02e9-f951-5dbd-016a390d8d54@rolffokkens.nl>
+ <709c9a11-686d-9b82-b016-e65fdca41f01@suse.de>
+ <ec9f73fa-a16c-b0c1-d1f8-2bf4e585be5f@rolffokkens.nl>
+From:   Coly Li <colyli@suse.de>
+Message-ID: <2d1d76b3-5eca-f0a6-c300-8e16d25ea1cf@suse.de>
+Date:   Mon, 7 Jun 2021 18:11:04 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <20210521055116.1053587-1-hch@lst.de> <20210521055116.1053587-18-hch@lst.de>
-In-Reply-To: <20210521055116.1053587-18-hch@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Sun, 6 Jun 2021 21:43:03 -0700
-Message-ID: <CAPcyv4gFEbZH4sXbkvQ32Xv1HiZ6JPL04efGpAWCqaJP_X9jaA@mail.gmail.com>
-Subject: Re: [PATCH 17/26] nvdimm-pmem: convert to blk_alloc_disk/blk_cleanup_disk
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jim Paris <jim@jtan.com>,
-        Joshua Morris <josh.h.morris@us.ibm.com>,
-        Philip Kelleher <pjk1939@linux.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Nitin Gupta <ngupta@vflare.org>,
-        Matias Bjorling <mb@lightnvm.io>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-block@vger.kernel.org,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-m68k@lists.linux-m68k.org, linux-xtensa@linux-xtensa.org,
-        drbd-dev@lists.linbit.com,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-bcache@vger.kernel.org,
-        linux-raid <linux-raid@vger.kernel.org>,
-        linux-mmc@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-nvme@lists.infradead.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Sachin Sant <sachinp@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ec9f73fa-a16c-b0c1-d1f8-2bf4e585be5f@rolffokkens.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-[ add Sachin who reported this commit in -next ]
+On 6/4/21 9:38 PM, Rolf Fokkens wrote:
+> Hoi Coly,
+>
+> The common applications I used, which for sure benefit from bcache:
+>
+>   * Gnome 3.38
+>   * Libreoffice-7.0.6.2
+>   * teams-1.4.00.7556
+>   * Terminator
+>   * Evolution-3.38.4
+>   * Thunderbird evolution-3.38.4
+>   * thunderbird-78.10.1
+>   * firefox-88.0.1
+>   * google-chrome-stable-91.0.4472.77
+>
+> So it's a typical desktop wordload with most I/O during startup of
+> applications.
+>
+> For overall stress/stability testing:
+>
+>   * Doom (steam/proton)
+>   * Rise of the Tombraider (steam)
+>   * The Witcher 3 (steam)
+>
+> Overall stats after (should have done before) starting the steam games:
+>
+> bash-5.0$ bcache-status
+> --- bcache ---
+> UUID                        b191549d-4455-43ca-b9b8-8e32dd68751c
+> Block Size                  512 B
+> Bucket Size                 512.00 KiB
+> Congested?                  False
+> Read Congestion             0.0ms
+> Write Congestion            20.0ms
+> Total Cache Size            128 GiB
+> Total Cache Used            128 GiB    (100%)
+> Total Cache Unused          0 B    (0%)
+> Evictable Cache             106 GiB    (83%)
+> Replacement Policy          [lru] fifo random
+> Cache Mode                  writethrough [writeback] writearound none
+> Total Hits                  3006361    (95%)
+> Total Misses                126463
+> Total Bypass Hits           4552    (68%)
+> Total Bypass Misses         2061
+> Total Bypassed              730.1 MiB
+> bash-5.0$
+>
+> Hope this gives you a good impression of the workload.
+>
+> Let me know if you like me to do specific stress tests.
 
-On Thu, May 20, 2021 at 10:52 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> Convert the nvdimm-pmem driver to use the blk_alloc_disk and
-> blk_cleanup_disk helpers to simplify gendisk and request_queue
-> allocation.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/nvdimm/pmem.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 968b8483c763..9fcd05084564 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -338,7 +338,7 @@ static void pmem_pagemap_cleanup(struct dev_pagemap *pgmap)
->         struct request_queue *q =
->                 container_of(pgmap->ref, struct request_queue, q_usage_counter);
->
-> -       blk_cleanup_queue(q);
-> +       blk_cleanup_disk(queue_to_disk(q));
+[snipped]
 
-This is broken. This comes after del_gendisk() which means the queue
-device is no longer associated with its disk parent. Perhaps @pmem
-could be stashed in pgmap->owner and then this can use pmem->disk? Not
-see any other readily available ways to get back to the disk from here
-after del_gendisk().
+Hi Rolf and Thorsten,
+
+I run the following workloads for 48+ hours, no panic or data corruption
+so far,
+- tar, untar, gzip, gunzip
+- git clone/fsck/gc/archive
+- copy iso files, checksum calculation and check for all the iso files
+- kernel source code compiling
+- ext4 file system check
+
+The fix might not be perfect yet, but IMHO we should provide a fix now.
+If there is any other known issue triggered, let's fix and verify later.
+
+Thank you all for the testing and verification these days.
+
+Coly Li
+
