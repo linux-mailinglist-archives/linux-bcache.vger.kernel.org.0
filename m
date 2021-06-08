@@ -2,255 +2,100 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0C8B39DCFA
-	for <lists+linux-bcache@lfdr.de>; Mon,  7 Jun 2021 14:52:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25EEA39FCC3
+	for <lists+linux-bcache@lfdr.de>; Tue,  8 Jun 2021 18:46:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230414AbhFGMxw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 7 Jun 2021 08:53:52 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:36162 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230242AbhFGMxv (ORCPT
+        id S232064AbhFHQs0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 8 Jun 2021 12:48:26 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:60452 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230440AbhFHQs0 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 7 Jun 2021 08:53:51 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 913B01FDA5;
-        Mon,  7 Jun 2021 12:51:58 +0000 (UTC)
+        Tue, 8 Jun 2021 12:48:26 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 9EFBB219A9;
+        Tue,  8 Jun 2021 16:46:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1623070318; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
+        t=1623170792; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=XBQr6H8ri4vWm9Xy7iNag9IvGXyic7/DyTx09M050lo=;
-        b=nPT5l+P/2jV4efxRb4D1EUFUabSV1XNGHM8oYfxKKiCVbS+hmK5xzcjw+IfFO8WLP7qYYJ
-        AtMQIf/RA88zmlcaIUd9P04M/N5LrHrO2DnTuXCeKV20yIeDVVr/vC91v3GhvNyENsvP33
-        x45mxQ2IsZS7V03JTBvs2UbDS1iUseo=
+        bh=33jLIAvIm2z9Jg9x4C1CkV9izeapcj9TUgCOO9wW74U=;
+        b=J6oGOLsIawBNEO5FldXZcP5ueTPO4+FIQoB/zOmX9hr5stCsRQX1pruRgrRsy6YFX5EzCD
+        YDnTUplL2MHDduYKp7ZhuOUlSp3vYznSAx1wFMUMU3QqhvhZBkQSbJGb4OZFqz7nOulx99
+        HXZcs7hZ4znZNDGLT6Agd074jDtIyf8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1623070318;
+        s=susede2_ed25519; t=1623170792;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=XBQr6H8ri4vWm9Xy7iNag9IvGXyic7/DyTx09M050lo=;
-        b=3aDoVIqDVJa7S1/HyEyMc5ZcirLobfVBQoAzqN/JO9yn+5whthRfyuMT7QAAQR+ahKfUMk
-        dU/xukskVJa3QfCA==
-Received: from localhost.localdomain (unknown [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id 6DD21A3B92;
-        Mon,  7 Jun 2021 12:51:40 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
+        bh=33jLIAvIm2z9Jg9x4C1CkV9izeapcj9TUgCOO9wW74U=;
+        b=HY6ShxTxAQynep9u9DtC5AFlkYljduQSTo7Joo+bcA3OVCVtvCEPxtbDtwISPvg97HYZcv
+        GF8HH8D8zVjQInDg==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 13B31118DD;
+        Tue,  8 Jun 2021 16:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1623170792; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=33jLIAvIm2z9Jg9x4C1CkV9izeapcj9TUgCOO9wW74U=;
+        b=J6oGOLsIawBNEO5FldXZcP5ueTPO4+FIQoB/zOmX9hr5stCsRQX1pruRgrRsy6YFX5EzCD
+        YDnTUplL2MHDduYKp7ZhuOUlSp3vYznSAx1wFMUMU3QqhvhZBkQSbJGb4OZFqz7nOulx99
+        HXZcs7hZ4znZNDGLT6Agd074jDtIyf8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1623170792;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=33jLIAvIm2z9Jg9x4C1CkV9izeapcj9TUgCOO9wW74U=;
+        b=HY6ShxTxAQynep9u9DtC5AFlkYljduQSTo7Joo+bcA3OVCVtvCEPxtbDtwISPvg97HYZcv
+        GF8HH8D8zVjQInDg==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id EvHfJ+aev2DZXQAALh3uQQ
+        (envelope-from <colyli@suse.de>); Tue, 08 Jun 2021 16:46:30 +0000
+Subject: Re: [PATCH v2 0/2] bcache fixes for Linux v5.13-rc6
 To:     axboe@kernel.dk
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hch@lst.de, Coly Li <colyli@suse.de>,
-        Alexander Ullrich <ealex1979@gmail.com>,
-        Diego Ercolani <diego.ercolani@gmail.com>,
-        Jan Szubiak <jan.szubiak@linuxpolska.pl>,
-        Marco Rebhan <me@dblsaiko.net>,
-        Matthias Ferdinand <bcache@mfedv.net>,
-        Victor Westerhuis <victor@westerhu.is>,
-        Vojtech Pavlik <vojtech@suse.cz>,
-        Rolf Fokkens <rolf@rolffokkens.nl>,
-        Thorsten Knabe <linux@thorsten-knabe.de>,
-        stable@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Nix <nix@esperi.org.uk>, Takashi Iwai <tiwai@suse.com>
-Subject: [PATCH 2/2] bcache: avoid oversized read request in cache missing code path
-Date:   Mon,  7 Jun 2021 20:50:52 +0800
-Message-Id: <20210607125052.21277-3-colyli@suse.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210607125052.21277-1-colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org, hch@lst.de
 References: <20210607125052.21277-1-colyli@suse.de>
+From:   Coly Li <colyli@suse.de>
+Message-ID: <974c6f2f-5a19-bd0a-5180-53e78c6d1a76@suse.de>
+Date:   Wed, 9 Jun 2021 00:46:27 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210607125052.21277-1-colyli@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In the cache missing code path of cached device, if a proper location
-from the internal B+ tree is matched for a cache miss range, function
-cached_dev_cache_miss() will be called in cache_lookup_fn() in the
-following code block,
-[code block 1]
-  526         unsigned int sectors = KEY_INODE(k) == s->iop.inode
-  527                 ? min_t(uint64_t, INT_MAX,
-  528                         KEY_START(k) - bio->bi_iter.bi_sector)
-  529                 : INT_MAX;
-  530         int ret = s->d->cache_miss(b, s, bio, sectors);
+On 6/7/21 8:50 PM, Coly Li wrote:
+> Hi Jens,
+>
+> This series is important for recent reported bcache panic partially
+> triggered by recent bio changes since Linux v5.12.
+>
+> Current fix is 5th version since the first effort, it might not be
+> perfect yet, but it survives from different workloads from Rolf,
+> Thorsten and me for more than 1 week in total.
+>
+> Considering many people are waiting for a stable enough fix and it is
+> kind of such fix. Please take them for Linux v5.13-rc6.
+>
+> Thank you in advance for taking care of them.
 
-Here s->d->cache_miss() is the call backfunction pointer initialized as
-cached_dev_cache_miss(), the last parameter 'sectors' is an important
-hint to calculate the size of read request to backing device of the
-missing cache data.
+Hi Jens,
 
-Current calculation in above code block may generate oversized value of
-'sectors', which consequently may trigger 2 different potential kernel
-panics by BUG() or BUG_ON() as listed below,
+Could you please take a look on this ? Thanks.
 
-1) BUG_ON() inside bch_btree_insert_key(),
-[code block 2]
-   886         BUG_ON(b->ops->is_extents && !KEY_SIZE(k));
-2) BUG() inside biovec_slab(),
-[code block 3]
-   51         default:
-   52                 BUG();
-   53                 return NULL;
-
-All the above panics are original from cached_dev_cache_miss() by the
-oversized parameter 'sectors'.
-
-Inside cached_dev_cache_miss(), parameter 'sectors' is used to calculate
-the size of data read from backing device for the cache missing. This
-size is stored in s->insert_bio_sectors by the following lines of code,
-[code block 4]
-  909    s->insert_bio_sectors = min(sectors, bio_sectors(bio) + reada);
-
-Then the actual key inserting to the internal B+ tree is generated and
-stored in s->iop.replace_key by the following lines of code,
-[code block 5]
-  911   s->iop.replace_key = KEY(s->iop.inode,
-  912                    bio->bi_iter.bi_sector + s->insert_bio_sectors,
-  913                    s->insert_bio_sectors);
-The oversized parameter 'sectors' may trigger panic 1) by BUG_ON() from
-the above code block.
-
-And the bio sending to backing device for the missing data is allocated
-with hint from s->insert_bio_sectors by the following lines of code,
-[code block 6]
-  926    cache_bio = bio_alloc_bioset(GFP_NOWAIT,
-  927                 DIV_ROUND_UP(s->insert_bio_sectors, PAGE_SECTORS),
-  928                 &dc->disk.bio_split);
-The oversized parameter 'sectors' may trigger panic 2) by BUG() from the
-agove code block.
-
-Now let me explain how the panics happen with the oversized 'sectors'.
-In code block 5, replace_key is generated by macro KEY(). From the
-definition of macro KEY(),
-[code block 7]
-  71 #define KEY(inode, offset, size)                                  \
-  72 ((struct bkey) {                                                  \
-  73      .high = (1ULL << 63) | ((__u64) (size) << 20) | (inode),     \
-  74      .low = (offset)                                              \
-  75 })
-
-Here 'size' is 16bits width embedded in 64bits member 'high' of struct
-bkey. But in code block 1, if "KEY_START(k) - bio->bi_iter.bi_sector" is
-very probably to be larger than (1<<16) - 1, which makes the bkey size
-calculation in code block 5 is overflowed. In one bug report the value
-of parameter 'sectors' is 131072 (= 1 << 17), the overflowed 'sectors'
-results the overflowed s->insert_bio_sectors in code block 4, then makes
-size field of s->iop.replace_key to be 0 in code block 5. Then the 0-
-sized s->iop.replace_key is inserted into the internal B+ tree as cache
-missing check key (a special key to detect and avoid a racing between
-normal write request and cache missing read request) as,
-[code block 8]
-  915   ret = bch_btree_insert_check_key(b, &s->op, &s->iop.replace_key);
-
-Then the 0-sized s->iop.replace_key as 3rd parameter triggers the bkey
-size check BUG_ON() in code block 2, and causes the kernel panic 1).
-
-Another kernel panic is from code block 6, is by the bvecs number
-oversized value s->insert_bio_sectors from code block 4,
-        min(sectors, bio_sectors(bio) + reada)
-There are two possibility for oversized reresult,
-- bio_sectors(bio) is valid, but bio_sectors(bio) + reada is oversized.
-- sectors < bio_sectors(bio) + reada, but sectors is oversized.
-
-From a bug report the result of "DIV_ROUND_UP(s->insert_bio_sectors,
-PAGE_SECTORS)" from code block 6 can be 344, 282, 946, 342 and many
-other values which larther than BIO_MAX_VECS (a.k.a 256). When calling
-bio_alloc_bioset() with such larger-than-256 value as the 2nd parameter,
-this value will eventually be sent to biovec_slab() as parameter
-'nr_vecs' in following code path,
-   bio_alloc_bioset() ==> bvec_alloc() ==> biovec_slab()
-Because parameter 'nr_vecs' is larger-than-256 value, the panic by BUG()
-in code block 3 is triggered inside biovec_slab().
-
-From the above analysis, we know that the 4th parameter 'sector' sent
-into cached_dev_cache_miss() may cause overflow in code block 5 and 6,
-and finally cause kernel panic in code block 2 and 3. And if result of
-bio_sectors(bio) + reada exceeds valid bvecs number, it may also trigger
-kernel panic in code block 3 from code block 6.
-
-Now the almost-useless readahead size for cache missing request back to
-backing device is removed, this patch can fix the oversized issue with
-more simpler method.
-- add a local variable size_limit,  set it by the minimum value from
-  the max bkey size and max bio bvecs number.
-- set s->insert_bio_sectors by the minimum value from size_limit,
-  sectors, and the sectors size of bio.
-- replace sectors by s->insert_bio_sectors to do bio_next_split.
-
-By the above method with size_limit, s->insert_bio_sectors will never
-result oversized replace_key size or bio bvecs number. And split bio
-'miss' from bio_next_split() will always match the size of 'cache_bio',
-that is the current maximum bio size we can sent to backing device for
-fetching the cache missing data.
-
-Current problmatic code can be partially found since Linux v3.13-rc1,
-therefore all maintained stable kernels should try to apply this fix.
-
-Reported-by: Alexander Ullrich <ealex1979@gmail.com>
-Reported-by: Diego Ercolani <diego.ercolani@gmail.com>
-Reported-by: Jan Szubiak <jan.szubiak@linuxpolska.pl>
-Reported-by: Marco Rebhan <me@dblsaiko.net>
-Reported-by: Matthias Ferdinand <bcache@mfedv.net>
-Reported-by: Victor Westerhuis <victor@westerhu.is>
-Reported-by: Vojtech Pavlik <vojtech@suse.cz>
-Reported-and-tested-by: Rolf Fokkens <rolf@rolffokkens.nl>
-Reported-and-tested-by: Thorsten Knabe <linux@thorsten-knabe.de>
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: stable@vger.kernel.org
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Nix <nix@esperi.org.uk>
-Cc: Takashi Iwai <tiwai@suse.com>
----
-Changelog,
-v6, Use BIO_MAX_VECS back and keep 80 chars line limit by request
-    from Christoph Hellwig.
-v5, improvement and fix based on v4 comments from Christoph Hellwig
-    and Nix.
-v4, not directly access BIO_MAX_VECS and reduce reada value to avoid
-    oversized bvecs number, by hint from Christoph Hellwig.
-v3, fix typo in v2.
-v2, fix the bypass bio size calculation in v1.
-v1, the initial version.
-
- drivers/md/bcache/request.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index ab8ff18df32a..6d1de889baeb 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -882,6 +882,7 @@ static int cached_dev_cache_miss(struct btree *b, struct search *s,
- 	int ret = MAP_CONTINUE;
- 	struct cached_dev *dc = container_of(s->d, struct cached_dev, disk);
- 	struct bio *miss, *cache_bio;
-+	unsigned int size_limit;
- 
- 	s->cache_missed = 1;
- 
-@@ -891,7 +892,10 @@ static int cached_dev_cache_miss(struct btree *b, struct search *s,
- 		goto out_submit;
- 	}
- 
--	s->insert_bio_sectors = min(sectors, bio_sectors(bio));
-+	/* Limitation for valid replace key size and cache_bio bvecs number */
-+	size_limit = min_t(unsigned int, BIO_MAX_VECS * PAGE_SECTORS,
-+			   (1 << KEY_SIZE_BITS) - 1);
-+	s->insert_bio_sectors = min3(size_limit, sectors, bio_sectors(bio));
- 
- 	s->iop.replace_key = KEY(s->iop.inode,
- 				 bio->bi_iter.bi_sector + s->insert_bio_sectors,
-@@ -903,7 +907,8 @@ static int cached_dev_cache_miss(struct btree *b, struct search *s,
- 
- 	s->iop.replace = true;
- 
--	miss = bio_next_split(bio, sectors, GFP_NOIO, &s->d->bio_split);
-+	miss = bio_next_split(bio, s->insert_bio_sectors, GFP_NOIO,
-+			      &s->d->bio_split);
- 
- 	/* btree_search_recurse()'s btree iterator is no good anymore */
- 	ret = miss == bio ? MAP_DONE : -EINTR;
--- 
-2.26.2
+Coly Li
 
