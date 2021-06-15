@@ -2,86 +2,109 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34FC03A0587
-	for <lists+linux-bcache@lfdr.de>; Tue,  8 Jun 2021 23:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4691C3A769E
+	for <lists+linux-bcache@lfdr.de>; Tue, 15 Jun 2021 07:49:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234078AbhFHVIv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 8 Jun 2021 17:08:51 -0400
-Received: from mail-pg1-f170.google.com ([209.85.215.170]:40628 "EHLO
-        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229845AbhFHVIu (ORCPT
+        id S230064AbhFOFvk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 15 Jun 2021 01:51:40 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:57260 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229811AbhFOFvf (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 8 Jun 2021 17:08:50 -0400
-Received: by mail-pg1-f170.google.com with SMTP id j12so17566427pgh.7
-        for <linux-bcache@vger.kernel.org>; Tue, 08 Jun 2021 14:06:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rTsMdC4BXmfgTF7pG31W014xkPHrZAxJCnEYouFG+gQ=;
-        b=oMzG0SfeYUnoGEuhJHQ7htz2XgVPAaGjqbJCsNrsjv0VT/wTC6by508zL98Ft+ChNL
-         YJ3flE4tYQf42oFERX+vkSK+a1A5e4FDwYQxuFNtDDwNBoSr0N2mvxKytkLtUpU7uzYP
-         cCJ7OGIf+41isZ2k+YShyaRwJv7hxwyaBHtqHPlKg5tCRB6TQBWf58QBiNkLGtLQdawx
-         mzMrlPKtVgQqgY+3J9TPxWERH/iVjIoJCKCCU5CTjjS+L967Mhu/k+frrX4pWsD0reVX
-         qZ1uRRRruSBovnL0kBpyCSxnp7Id1hloFaT2wzGWDYiWrFTykDalzKCkMJE8e3LIeJ3k
-         VDpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rTsMdC4BXmfgTF7pG31W014xkPHrZAxJCnEYouFG+gQ=;
-        b=EYrFn8Os27GLluzftCfq4s5uzZOS7nE0Ds1Ylk3cnAK+z5yo6MPIILl37frarfEE+V
-         bgSl1yZsKloouNnXrxWyBXt+XG6u4bMr9k1RE2XtJAOjpxZQyR9Esh/6cD/AtzHlM24a
-         jVOk4G3prjTgIfv2jHAObnKsbJUn8COlUxSg634TtZ9zwFOJJb66NAqXAjyjeqDYDoA+
-         xwCHLPf5xTv9XQnoqUAJJOdep9rQ/uNATQuONihg22kxc8Jy+dK9Z569wL3UFXnyUaHb
-         WBf7oq5HukThfiVWjO6eqyEc33eXg+1xSuTGsiR9nb3+CLlxi8XQLJ62KcW0ABears2f
-         DsWg==
-X-Gm-Message-State: AOAM531MsThWYVzs1beULX9a5fkzqbVlnJn4jS0B1hKlYsta5vqPPobt
-        /QptzKhHdUhYMvFVhluSJgGbzQ==
-X-Google-Smtp-Source: ABdhPJxmIxuV54xftG6ihDeETBpL1x1bpTjcbMTDiFUjG1Hdy0sEIgM/suXMIB2EpZgu4yPgzkKiqQ==
-X-Received: by 2002:a63:1349:: with SMTP id 9mr130994pgt.235.1623186357366;
-        Tue, 08 Jun 2021 14:05:57 -0700 (PDT)
-Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
-        by smtp.gmail.com with ESMTPSA id a66sm9471059pfb.162.2021.06.08.14.05.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jun 2021 14:05:56 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] bcache fixes for Linux v5.13-rc6
-To:     Coly Li <colyli@suse.de>
+        Tue, 15 Jun 2021 01:51:35 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 4ED7C2199E;
+        Tue, 15 Jun 2021 05:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1623736170; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=BXCyu2euPTfpv7PpxCFAmxZIxIC3RUGtfRe2pjjCvc8=;
+        b=uJiEIjxOyXDJJH4JWU08tn8pGkPOaIOPJCEO58ETX+P+bYJQbqlca9v/18DsZMcIFS4E7u
+        3QB/PTyXni8c66uRK6GxxGtaFuifNdlA5Sh5TFhROyhLn+JWPozNL7vAi1+ib6AGQmm95S
+        JwKcqUkoOXa9L9s+5JCZ5Rk8lX1vDi4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1623736170;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=BXCyu2euPTfpv7PpxCFAmxZIxIC3RUGtfRe2pjjCvc8=;
+        b=037nPfkE5lwLlrhdO+lZ4altLBshEPtByHkNIk+L4Eh8KM1CwFTxwjvPEpaDR2mywBtQfb
+        FWT7fsCUOwl9wbAQ==
+Received: from localhost.localdomain (unknown [10.163.16.22])
+        by relay2.suse.de (Postfix) with ESMTP id EBFD7A3B98;
+        Tue, 15 Jun 2021 05:49:28 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hch@lst.de
-References: <20210607125052.21277-1-colyli@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <180599cb-7c2e-da35-96a5-225462c6cd71@kernel.dk>
-Date:   Tue, 8 Jun 2021 15:06:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Coly Li <colyli@suse.de>
+Subject: [PATCH 00/14] bcache patches for Linux v5.14
+Date:   Tue, 15 Jun 2021 13:49:07 +0800
+Message-Id: <20210615054921.101421-1-colyli@suse.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <20210607125052.21277-1-colyli@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 6/7/21 6:50 AM, Coly Li wrote:
-> Hi Jens,
-> 
-> This series is important for recent reported bcache panic partially
-> triggered by recent bio changes since Linux v5.12.
-> 
-> Current fix is 5th version since the first effort, it might not be
-> perfect yet, but it survives from different workloads from Rolf,
-> Thorsten and me for more than 1 week in total.
-> 
-> Considering many people are waiting for a stable enough fix and it is
-> kind of such fix. Please take them for Linux v5.13-rc6.
-> 
-> Thank you in advance for taking care of them.
+Hi Jens,
 
-Applied, thanks.
+Here are the bcache patches for Linux v5.14.
+
+The patches from Chao Yu and Ding Senjie are useful code cleanup. The
+rested patches for the NVDIMM support to bcache journaling.
+
+For the series to support NVDIMM to bache journaling, all reported
+issue since last merge window are all fixed. And no more issue detected
+during our testing or by the kernel test robot. If there is any issue
+reported during they stay in linux-next, I, Jianpang and Qiaowei will
+response and fix immediately.
+
+Please take them for Linux v5.14.
+
+Thank you in advance.
+
+Coly Li
+---
+
+Chao Yu (1):
+  bcache: fix error info in register_bcache()
+
+Coly Li (7):
+  bcache: add initial data structures for nvm pages
+  bcache: use bucket index to set GC_MARK_METADATA for journal buckets
+    in bch_btree_gc_finish()
+  bcache: add BCH_FEATURE_INCOMPAT_NVDIMM_META into incompat feature set
+  bcache: initialize bcache journal for NVDIMM meta device
+  bcache: support storing bcache journal into NVDIMM meta device
+  bcache: read jset from NVDIMM pages for journal replay
+  bcache: add sysfs interface register_nvdimm_meta to register NVDIMM
+    meta device
+
+Ding Senjie (1):
+  md: bcache: Fix spelling of 'acquire'
+
+Jianpeng Ma (5):
+  bcache: initialize the nvm pages allocator
+  bcache: initialization of the buddy
+  bcache: bch_nvm_alloc_pages() of the buddy
+  bcache: bch_nvm_free_pages() of the buddy
+  bcache: get allocated pages from specific owner
+
+ drivers/md/bcache/Kconfig       |  10 +
+ drivers/md/bcache/Makefile      |   1 +
+ drivers/md/bcache/btree.c       |   6 +-
+ drivers/md/bcache/features.h    |   9 +
+ drivers/md/bcache/journal.c     | 317 ++++++++++---
+ drivers/md/bcache/journal.h     |   2 +-
+ drivers/md/bcache/nvm-pages.c   | 773 ++++++++++++++++++++++++++++++++
+ drivers/md/bcache/nvm-pages.h   |  93 ++++
+ drivers/md/bcache/super.c       |  91 +++-
+ include/uapi/linux/bcache-nvm.h | 206 +++++++++
+ 10 files changed, 1432 insertions(+), 76 deletions(-)
+ create mode 100644 drivers/md/bcache/nvm-pages.c
+ create mode 100644 drivers/md/bcache/nvm-pages.h
+ create mode 100644 include/uapi/linux/bcache-nvm.h
 
 -- 
-Jens Axboe
+2.26.2
 
