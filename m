@@ -2,128 +2,78 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E34553A76BB
-	for <lists+linux-bcache@lfdr.de>; Tue, 15 Jun 2021 07:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BEDE3A911A
+	for <lists+linux-bcache@lfdr.de>; Wed, 16 Jun 2021 07:19:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230236AbhFOFwI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 15 Jun 2021 01:52:08 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:57394 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbhFOFwG (ORCPT
+        id S231276AbhFPFVF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 16 Jun 2021 01:21:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41440 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231268AbhFPFVE (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 15 Jun 2021 01:52:06 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id C9BE8219C5;
-        Tue, 15 Jun 2021 05:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1623736201; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=C3Np6UpmqYzZ4kH5SUJzYj4UbsK192DUNvW0ehDEFvc=;
-        b=0sdVN7Hz8iMI0Vf1UUB6ZRDa1Y58PjjZ2+7kehlOoG7SmjWCDwtmagBk14T+27yIVM4wpQ
-        ltLn00X3kKRnNDA4p1bYMWpTgise7tFN6HLgcYWI1ahXzk6sKlArSAXQtgMf6I/c/cxj5W
-        wO29l5Fd7ldSiSQFCQudC8iMg14/uTk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1623736201;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=C3Np6UpmqYzZ4kH5SUJzYj4UbsK192DUNvW0ehDEFvc=;
-        b=WZ1JcYJie3OGdDArDpcqNs6cfA64enkm+26hb8dGdbuVnLImafTmQ6V+FA5fqNXyKTw/s5
-        hjuekLxXWrKuy5Ag==
-Received: from localhost.localdomain (unknown [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id 0B026A3BB7;
-        Tue, 15 Jun 2021 05:49:59 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     axboe@kernel.dk
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Jianpeng Ma <jianpeng.ma@intel.com>,
-        Qiaowei Ren <qiaowei.ren@intel.com>
-Subject: [PATCH 14/14] bcache: add sysfs interface register_nvdimm_meta to register NVDIMM meta device
-Date:   Tue, 15 Jun 2021 13:49:21 +0800
-Message-Id: <20210615054921.101421-15-colyli@suse.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210615054921.101421-1-colyli@suse.de>
-References: <20210615054921.101421-1-colyli@suse.de>
+        Wed, 16 Jun 2021 01:21:04 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27AE0C061760
+        for <linux-bcache@vger.kernel.org>; Tue, 15 Jun 2021 22:18:58 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id og14so1658746ejc.5
+        for <linux-bcache@vger.kernel.org>; Tue, 15 Jun 2021 22:18:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=L0V3tEWU6RXdv4sHk2WURUiKYv8hNk/3Vb4RrbCcOlY=;
+        b=IQKHz9ZfxvKAVGBYoUcXHQzcL7UgPABjzLyotDAOhMdo/ltFm+YbYQQeYXERWQ3UjG
+         +hhf87nkvGQEVaBwzaOjK375x6CUwmxrclTkSYx5H8/CVh0GTGuz012X/7y9X9H6SEM3
+         A8ttX+L167AAa6TrHWCR9SYjq9iBDbAaK17H7pD3j0CON4a8/BX48Oi928szvoYy5nnA
+         z/ElNPD47s3CFKzD8tSaRNfWVx6iFllDbPmroQh8AB48lhfKPo/v4eA/oBMO2JlTLFBt
+         oS1aP2vJvv9mYAjfksYBCzRY8ea5WiV8x6gt2kekRNcU0sOIfqCVG18egVjm23+EIW6g
+         /myQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=L0V3tEWU6RXdv4sHk2WURUiKYv8hNk/3Vb4RrbCcOlY=;
+        b=Pxq/17A/zJ+uUJE0Ptb0E8RT1NNfuECdfKPHN+BpCbGi7WbAgwuP4IHguumGT14k2D
+         d26DitT/Wbu8LKkLyzfApk6r7lMkv30GSCwVv4CgIpnmMEJFqKO1AsN8wCiX1IbhagSm
+         nb6HRTid9FeI8R3An5RXKTsUSVjBnpQqCYanFufMHsdRBVeDuwhuAwdoE+ol757cAwO6
+         On1VTxZy26ksCKVLuhagOGZqEosWpSZeprA2QLrJKtdfcTGVOYUQVNN7xoyF4MGXzeJn
+         3Q+CJwFS6ew1ghYOZ6UfEvmjUAwsJaSLgMZWXuTfOxpa19BVwB064/LbJQW+t2Tg+XDs
+         hskA==
+X-Gm-Message-State: AOAM53139McwcPj6mujIRbaJwG86DWU+wxUupHe5jCZG4lOxnxGyBo/H
+        8XZMJCFFsuxVfp2/qz+WZJ6DplKePVJSNK48fuw=
+X-Google-Smtp-Source: ABdhPJzutzF6n4XTwfu4Htur3cHrRJiMJskCNYwr/fUjDDVT9Wc5OVBaFTDRHUNtNQc0QcXaw3Nwv+V/g/4izT/upQU=
+X-Received: by 2002:a17:906:5407:: with SMTP id q7mr3404285ejo.158.1623820736632;
+ Tue, 15 Jun 2021 22:18:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a17:906:6410:0:0:0:0 with HTTP; Tue, 15 Jun 2021 22:18:56
+ -0700 (PDT)
+Reply-To: ayishagddafio@mail.ru
+From:   "Aisha.Gaddafi" <fasoburkina03@gmail.com>
+Date:   Tue, 15 Jun 2021 22:18:56 -0700
+Message-ID: <CALcAMQJ-84jWa8Hax6z=X5Ca5XptCjWuHy3RAPBvcdzdBRGKgQ@mail.gmail.com>
+Subject: Liebster Freund,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch adds a sysfs interface register_nvdimm_meta to register
-NVDIMM meta device. The sysfs interface file only shows up when
-CONFIG_BCACHE_NVM_PAGES=y. Then a NVDIMM name space formatted by
-bcache-tools can be registered into bcache by e.g.,
-  echo /dev/pmem0 > /sys/fs/bcache/register_nvdimm_meta
+--=20
+Liebster Freund,
 
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Jianpeng Ma <jianpeng.ma@intel.com>
-Cc: Qiaowei Ren <qiaowei.ren@intel.com>
----
- drivers/md/bcache/super.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+Im Namen Gottes, des gn=C3=A4digsten, barmherzigsten.
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 4d6666d03aa7..9d506d053548 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -2439,10 +2439,18 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
- 					 struct kobj_attribute *attr,
- 					 const char *buffer, size_t size);
-+#if defined(CONFIG_BCACHE_NVM_PAGES)
-+static ssize_t register_nvdimm_meta(struct kobject *k,
-+				    struct kobj_attribute *attr,
-+				    const char *buffer, size_t size);
-+#endif
- 
- kobj_attribute_write(register,		register_bcache);
- kobj_attribute_write(register_quiet,	register_bcache);
- kobj_attribute_write(pendings_cleanup,	bch_pending_bdevs_cleanup);
-+#if defined(CONFIG_BCACHE_NVM_PAGES)
-+kobj_attribute_write(register_nvdimm_meta, register_nvdimm_meta);
-+#endif
- 
- static bool bch_is_open_backing(dev_t dev)
- {
-@@ -2556,6 +2564,24 @@ static void register_device_async(struct async_reg_args *args)
- 	queue_delayed_work(system_wq, &args->reg_work, 10);
- }
- 
-+#if defined(CONFIG_BCACHE_NVM_PAGES)
-+static ssize_t register_nvdimm_meta(struct kobject *k, struct kobj_attribute *attr,
-+				    const char *buffer, size_t size)
-+{
-+	ssize_t ret = size;
-+
-+	struct bch_nvm_namespace *ns = bch_register_namespace(buffer);
-+
-+	if (IS_ERR(ns)) {
-+		pr_err("register nvdimm namespace %s for meta device failed.\n",
-+			buffer);
-+		ret = -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+#endif
-+
- static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 			       const char *buffer, size_t size)
- {
-@@ -2898,6 +2924,9 @@ static int __init bcache_init(void)
- 	static const struct attribute *files[] = {
- 		&ksysfs_register.attr,
- 		&ksysfs_register_quiet.attr,
-+#if defined(CONFIG_BCACHE_NVM_PAGES)
-+		&ksysfs_register_nvdimm_meta.attr,
-+#endif
- 		&ksysfs_pendings_cleanup.attr,
- 		NULL
- 	};
--- 
-2.26.2
+Friede sei mit dir und Barmherzigkeit sei mit dir und Segen sei mit dir.
+Ich habe die Summe von 27,5 Millionen USD f=C3=BCr Investitionen, ich
+interessiere mich f=C3=BCr Sie f=C3=BCr die Unterst=C3=BCtzung von
+Investitionsprojekten in Ihrem Land. Mein Name ist Aisha Gaddafi und
+lebe derzeit im Oman, ich bin eine Witwe und alleinerziehende Mutter
+mit drei Kindern, die einzige leibliche Tochter des verstorbenen
+libyschen Pr=C3=A4sidenten (dem verstorbenen Oberst Muammar Gaddafi) und
+stehe derzeit unter politischem Asylschutz der omanischen Regierung.
 
+Bitte antworten Sie dringend f=C3=BCr weitere Details.
+
+Vielen Dank
+Mit freundlichen Gr=C3=BC=C3=9Fen Aisha
