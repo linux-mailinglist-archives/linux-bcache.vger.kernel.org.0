@@ -2,76 +2,60 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B03F3A9EB2
-	for <lists+linux-bcache@lfdr.de>; Wed, 16 Jun 2021 17:13:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4250E3AAD86
+	for <lists+linux-bcache@lfdr.de>; Thu, 17 Jun 2021 09:26:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234499AbhFPPPL (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 16 Jun 2021 11:15:11 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:38028 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234498AbhFPPPL (ORCPT
+        id S229887AbhFQH2K convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-bcache@lfdr.de>); Thu, 17 Jun 2021 03:28:10 -0400
+Received: from 6-200-5-45.rpnnetprovedor.com.br ([45.5.200.6]:35238 "EHLO
+        srv01.rpnnetprovedor.com.br" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229709AbhFQH2J (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 16 Jun 2021 11:15:11 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 566981FD47;
-        Wed, 16 Jun 2021 15:13:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1623856384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=RAkhWSADyaoHLpylPeq+igwC/iINB5l6eElYHNFu8Zc=;
-        b=d91Ph8y197lXG8M3CRmR1X5W7YVWzdy7Aq7ecUYMRN2vLU7dJOy1846p2DNj0/o8U589Ud
-        sMhEufqs5wSpNzB75r8OdHG92vUGDvBCkyRcrVKZaT4LCZoADTX97x2TtG96xSFK493EO8
-        0QQHjJsBv5x/VwpNiQCahNpU/1HlfdA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1623856384;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=RAkhWSADyaoHLpylPeq+igwC/iINB5l6eElYHNFu8Zc=;
-        b=kD3OEcqJrQqJW8xIFzfL1DQxurK4K23as+AxRB+jzyuJfWv7Tzk6eY708qP9Pw1bkQizyn
-        IrSHvemsfvK/WvBg==
-Received: from localhost.localdomain (unknown [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id 7240AA3BB3;
-        Wed, 16 Jun 2021 15:13:02 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     linux-bcache@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>, Shaoxiong Li <dahefanteng@gmail.com>
-Subject: [PATCH] bcache-tools: only discard cache device during making when discard is enabled
-Date:   Wed, 16 Jun 2021 23:12:49 +0800
-Message-Id: <20210616151249.123773-1-colyli@suse.de>
-X-Mailer: git-send-email 2.26.2
+        Thu, 17 Jun 2021 03:28:09 -0400
+X-Greylist: delayed 5792 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Jun 2021 03:28:09 EDT
+Received: from [84.38.130.143] (helo=IP-130-143.dataclub.eu)
+        by srv01.rpnnetprovedor.com.br with esmtpa (Exim 4.92.2)
+        (envelope-from <robertnellsona@citromail.hu>)
+        id 1ltku8-0000zD-46
+        for linux-bcache@vger.kernel.org; Thu, 17 Jun 2021 02:49:28 -0300
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: CAN YOU INVEST WITH ME?...6
+To:     linux-bcache@vger.kernel.org
+From:   "Mr.  Robert" <robertnellsona@citromail.hu>
+Date:   Thu, 17 Jun 2021 08:49:20 +0300
+Reply-To: robertnellsona@citromail.hu
+Message-Id: <E1ltku8-0000zD-46@srv01.rpnnetprovedor.com.br>
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Currently in cache device making time, discard is always issued onto the
-cache device. It is unncessary and might be slow if the cache device is
-combined by md raid device (e.g. raid10).
 
-Therefore when making a new cache device, this patch only issue discard
-when it is explicitly enabled by --discard option.
+ATTENTION; linux-bcache@vger.kernel.org,
 
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Shaoxiong Li <dahefanteng@gmail.com>
----
- make.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+IMPORTANT INVESTMENT INFORMATION
 
-diff --git a/make.c b/make.c
-index 4ca7734..34d8011 100644
---- a/make.c
-+++ b/make.c
-@@ -446,7 +446,8 @@ static void write_sb(char *dev, struct sb_context *sbc, bool bdev, bool force)
- 
- 		/* Attempting to discard cache device
- 		 */
--		blkdiscard_all(dev, fd);
-+		if (discard)
-+			blkdiscard_all(dev, fd);
- 		putchar('\n');
- 	}
- 
--- 
-2.26.2
+We have a good investment program going on now.
+We have $95m USD for Investment in your Country.
+We use this opportunity to invest you to join the investment program and you will never regret it.
+Please kindly invest with us and you will be receiving monthly income/return/profit every month.
+We can also give you Loan, 
 
+We have: 
+
+1. Short Term Loan, 
+
+2. Medium Term Loan 
+
+3. and Long Term Loan, 
+
+There is no need of collateral security. We will use our company to sign agreement and guarantee on your behalf and our Lawyer will sign on your behalf.
+
+Reply for more detail.
+
+Thank you Sir.
+
+Robert Nellson.
+INVESTMENT MANAGER.
