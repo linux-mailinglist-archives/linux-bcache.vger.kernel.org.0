@@ -2,78 +2,79 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8072B3B01DC
-	for <lists+linux-bcache@lfdr.de>; Tue, 22 Jun 2021 12:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 486753B01DF
+	for <lists+linux-bcache@lfdr.de>; Tue, 22 Jun 2021 12:55:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229912AbhFVK41 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 22 Jun 2021 06:56:27 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:45620 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229831AbhFVK41 (ORCPT
+        id S229831AbhFVK5d (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 22 Jun 2021 06:57:33 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:47206 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229567AbhFVK5d (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 22 Jun 2021 06:56:27 -0400
+        Tue, 22 Jun 2021 06:57:33 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 8EE5A1FD45;
-        Tue, 22 Jun 2021 10:54:10 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 996AC21988;
+        Tue, 22 Jun 2021 10:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624359250; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624359316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=i1Ni/Gzg9uvlmrsWko5N6LHxC1c+x+FU+0x79XPnh40=;
-        b=xkjdSOPa1/mO8RpEyDYT5rWIAl73UEo1ZMj80AhMiiQRQp62xKeG7QEDjphQk+2EsWaGk/
-        KBBjvPIGeRsAj8as8841gCoGSbty6ujXR6d1cocEnB3RDUUqiGd0qwjPJ/0BjVly/a70k4
-        /Mz1hdAP7ymwClO7voo0/4+x0fygIS4=
+        bh=OdhOkHb563nioODxq403p3Sqwc3FVVAkpApSQUm4Rag=;
+        b=hSZl8vRPzichV06o5RV4ybG6Ebi7jFC4E/2W/FOCrvqMObn9i33VL+k6XuCWy3OT23BZBm
+        8UKMUaRHWDXq/rRZYfCDp66w7SzZ7sK2eoiwRJ3VgHlNb+66ALBtSn+fq//O4iGVVQyrn5
+        Qg3uear5RHY+O9ImUGNqvNKU48ZACvY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624359250;
+        s=susede2_ed25519; t=1624359316;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=i1Ni/Gzg9uvlmrsWko5N6LHxC1c+x+FU+0x79XPnh40=;
-        b=Cukq1yruwf2qKCWT6/tIULGAzIIaKn18OZgYLwKPG/dykR2YeLeHiaghaj3H5JuB/s0z1m
-        fUKEO8vDLBKaLwDw==
+        bh=OdhOkHb563nioODxq403p3Sqwc3FVVAkpApSQUm4Rag=;
+        b=YRzrmAINpK1rqqMJ5BL22n+4ZasakU2Igg010RW6eot932WvTf5iqm+nAsnwIuyk8tGmyk
+        uSorcpPxStId8jAQ==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 81225118DD;
-        Tue, 22 Jun 2021 10:54:10 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id 8AE7D118DD;
+        Tue, 22 Jun 2021 10:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624359250; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624359316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=i1Ni/Gzg9uvlmrsWko5N6LHxC1c+x+FU+0x79XPnh40=;
-        b=xkjdSOPa1/mO8RpEyDYT5rWIAl73UEo1ZMj80AhMiiQRQp62xKeG7QEDjphQk+2EsWaGk/
-        KBBjvPIGeRsAj8as8841gCoGSbty6ujXR6d1cocEnB3RDUUqiGd0qwjPJ/0BjVly/a70k4
-        /Mz1hdAP7ymwClO7voo0/4+x0fygIS4=
+        bh=OdhOkHb563nioODxq403p3Sqwc3FVVAkpApSQUm4Rag=;
+        b=hSZl8vRPzichV06o5RV4ybG6Ebi7jFC4E/2W/FOCrvqMObn9i33VL+k6XuCWy3OT23BZBm
+        8UKMUaRHWDXq/rRZYfCDp66w7SzZ7sK2eoiwRJ3VgHlNb+66ALBtSn+fq//O4iGVVQyrn5
+        Qg3uear5RHY+O9ImUGNqvNKU48ZACvY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624359250;
+        s=susede2_ed25519; t=1624359316;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=i1Ni/Gzg9uvlmrsWko5N6LHxC1c+x+FU+0x79XPnh40=;
-        b=Cukq1yruwf2qKCWT6/tIULGAzIIaKn18OZgYLwKPG/dykR2YeLeHiaghaj3H5JuB/s0z1m
-        fUKEO8vDLBKaLwDw==
+        bh=OdhOkHb563nioODxq403p3Sqwc3FVVAkpApSQUm4Rag=;
+        b=YRzrmAINpK1rqqMJ5BL22n+4ZasakU2Igg010RW6eot932WvTf5iqm+nAsnwIuyk8tGmyk
+        uSorcpPxStId8jAQ==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id 7F9sH1LB0WDmWgAALh3uQQ
-        (envelope-from <hare@suse.de>); Tue, 22 Jun 2021 10:54:10 +0000
-Subject: Re: [PATCH 08/14] bcache: get allocated pages from specific owner
+        id vmOjIZTB0WB/WwAALh3uQQ
+        (envelope-from <hare@suse.de>); Tue, 22 Jun 2021 10:55:16 +0000
+Subject: Re: [PATCH 09/14] bcache: use bucket index to set GC_MARK_METADATA
+ for journal buckets in bch_btree_gc_finish()
 To:     Coly Li <colyli@suse.de>, axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
         Jianpeng Ma <jianpeng.ma@intel.com>,
         Qiaowei Ren <qiaowei.ren@intel.com>
 References: <20210615054921.101421-1-colyli@suse.de>
- <20210615054921.101421-9-colyli@suse.de>
+ <20210615054921.101421-10-colyli@suse.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <42724b1b-8b6d-8118-84c6-ec76f3f78e19@suse.de>
-Date:   Tue, 22 Jun 2021 12:54:10 +0200
+Message-ID: <c1f06286-fd5f-163e-c4a7-bf193b3c804f@suse.de>
+Date:   Tue, 22 Jun 2021 12:55:16 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.9.1
 MIME-Version: 1.0
-In-Reply-To: <20210615054921.101421-9-colyli@suse.de>
+In-Reply-To: <20210615054921.101421-10-colyli@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -82,63 +83,41 @@ List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
 On 6/15/21 7:49 AM, Coly Li wrote:
-> From: Jianpeng Ma <jianpeng.ma@intel.com>
+> Currently the meta data bucket locations on cache device are reserved
+> after the meta data stored on NVDIMM pages, for the meta data layout
+> consistentcy temporarily. So these buckets are still marked as meta data
+> by SET_GC_MARK() in bch_btree_gc_finish().
 > 
-> This patch implements bch_get_allocated_pages() of the buddy to be used to
-
-buddy allocator
-
-> get allocated pages from specific owner.
+> When BCH_FEATURE_INCOMPAT_NVDIMM_META is set, the sb.d[] stores linear
+> address of NVDIMM pages and not bucket index anymore. Therefore we
+> should avoid to find bucket index from sb.d[], and directly use bucket
+> index from ca->sb.first_bucket to (ca->sb.first_bucket +
+> ca->sb.njournal_bucketsi) for setting the gc mark of journal bucket.
 > 
-> Signed-off-by: Jianpeng Ma <jianpeng.ma@intel.com>
-> Co-developed-by: Qiaowei Ren <qiaowei.ren@intel.com>
-> Signed-off-by: Qiaowei Ren <qiaowei.ren@intel.com>
 > Signed-off-by: Coly Li <colyli@suse.de>
+> Cc: Jianpeng Ma <jianpeng.ma@intel.com>
+> Cc: Qiaowei Ren <qiaowei.ren@intel.com>
 > ---
->  drivers/md/bcache/nvm-pages.c | 6 ++++++
->  drivers/md/bcache/nvm-pages.h | 5 +++++
->  2 files changed, 11 insertions(+)
+>  drivers/md/bcache/btree.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/md/bcache/nvm-pages.c b/drivers/md/bcache/nvm-pages.c
-> index 74d08950c67c..42b0504d9564 100644
-> --- a/drivers/md/bcache/nvm-pages.c
-> +++ b/drivers/md/bcache/nvm-pages.c
-> @@ -397,6 +397,12 @@ void *bch_nvm_alloc_pages(int order, const char *owner_uuid)
->  }
->  EXPORT_SYMBOL_GPL(bch_nvm_alloc_pages);
+> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+> index 183a58c89377..e0d7135669ca 100644
+> --- a/drivers/md/bcache/btree.c
+> +++ b/drivers/md/bcache/btree.c
+> @@ -1761,8 +1761,10 @@ static void bch_btree_gc_finish(struct cache_set *c)
+>  	ca = c->cache;
+>  	ca->invalidate_needs_gc = 0;
 >  
-> +struct bch_nvm_pages_owner_head *bch_get_allocated_pages(const char *owner_uuid)
-> +{
-> +	return find_owner_head(owner_uuid, false);
-> +}
-> +EXPORT_SYMBOL_GPL(bch_get_allocated_pages);
-> +
->  #define BCH_PGOFF_TO_KVADDR(pgoff) ((void *)((unsigned long)pgoff << PAGE_SHIFT))
+> -	for (k = ca->sb.d; k < ca->sb.d + ca->sb.keys; k++)
+> -		SET_GC_MARK(ca->buckets + *k, GC_MARK_METADATA);
+> +	/* Range [first_bucket, first_bucket + keys) is for journal buckets */
+> +	for (i = ca->sb.first_bucket;
+> +	     i < ca->sb.first_bucket + ca->sb.njournal_buckets; i++)
+> +		SET_GC_MARK(ca->buckets + i, GC_MARK_METADATA);
 >  
->  static int init_owner_info(struct bch_nvm_namespace *ns)
-> diff --git a/drivers/md/bcache/nvm-pages.h b/drivers/md/bcache/nvm-pages.h
-> index 0ca699166855..c763bf2e2721 100644
-> --- a/drivers/md/bcache/nvm-pages.h
-> +++ b/drivers/md/bcache/nvm-pages.h
-> @@ -64,6 +64,7 @@ int bch_nvm_init(void);
->  void bch_nvm_exit(void);
->  void *bch_nvm_alloc_pages(int order, const char *owner_uuid);
->  void bch_nvm_free_pages(void *addr, int order, const char *owner_uuid);
-> +struct bch_nvm_pages_owner_head *bch_get_allocated_pages(const char *owner_uuid);
->  
->  #else
->  
-> @@ -81,6 +82,10 @@ static inline void *bch_nvm_alloc_pages(int order, const char *owner_uuid)
->  	return NULL;
->  }
->  static inline void bch_nvm_free_pages(void *addr, int order, const char *owner_uuid) { }
-> +static inline struct bch_nvm_pages_owner_head *bch_get_allocated_pages(const char *owner_uuid)
-> +{
-> +	return NULL;
-> +}
->  
->  #endif /* CONFIG_BCACHE_NVM_PAGES */
->  
+>  	for (k = ca->prio_buckets;
+>  	     k < ca->prio_buckets + prio_buckets(ca) * 2; k++)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
