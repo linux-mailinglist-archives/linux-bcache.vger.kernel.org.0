@@ -2,79 +2,79 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 486753B01DF
-	for <lists+linux-bcache@lfdr.de>; Tue, 22 Jun 2021 12:55:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFF4D3B0222
+	for <lists+linux-bcache@lfdr.de>; Tue, 22 Jun 2021 12:59:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229831AbhFVK5d (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 22 Jun 2021 06:57:33 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:47206 "EHLO
+        id S230103AbhFVLB7 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 22 Jun 2021 07:01:59 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:47326 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbhFVK5d (ORCPT
+        with ESMTP id S230114AbhFVLB6 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 22 Jun 2021 06:57:33 -0400
+        Tue, 22 Jun 2021 07:01:58 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 996AC21988;
-        Tue, 22 Jun 2021 10:55:16 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id DA1BA2196D;
+        Tue, 22 Jun 2021 10:59:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624359316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624359581; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OdhOkHb563nioODxq403p3Sqwc3FVVAkpApSQUm4Rag=;
-        b=hSZl8vRPzichV06o5RV4ybG6Ebi7jFC4E/2W/FOCrvqMObn9i33VL+k6XuCWy3OT23BZBm
-        8UKMUaRHWDXq/rRZYfCDp66w7SzZ7sK2eoiwRJ3VgHlNb+66ALBtSn+fq//O4iGVVQyrn5
-        Qg3uear5RHY+O9ImUGNqvNKU48ZACvY=
+        bh=PffBQGqiSbrArOVxeRaiCq2+fO3Ji1PAj4wruiJ+XNw=;
+        b=jrSr2XoBEOmuE0piC1z8E7LZESR795xq/DZ6jrHy/N199LUOT85JPvQpH3kjKBtRplRfFc
+        p1z+HPovfDJc8KiV0Wrwj69RQGJWa7dwzp3GJc+SGCjkIbYs5XFRJas6V7raoKZcReKlAS
+        +bNFmpYcBVFohNzAx4CfuD9SuHN2UBY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624359316;
+        s=susede2_ed25519; t=1624359581;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OdhOkHb563nioODxq403p3Sqwc3FVVAkpApSQUm4Rag=;
-        b=YRzrmAINpK1rqqMJ5BL22n+4ZasakU2Igg010RW6eot932WvTf5iqm+nAsnwIuyk8tGmyk
-        uSorcpPxStId8jAQ==
+        bh=PffBQGqiSbrArOVxeRaiCq2+fO3Ji1PAj4wruiJ+XNw=;
+        b=Am0+izuYQiJ7iJDdPA66NOdH+6t+upyY0pc8hQYaYnirikvAo1OxodBHMX3WtnJ96cCsdN
+        cXEb/WpyVjRd2rCQ==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 8AE7D118DD;
-        Tue, 22 Jun 2021 10:55:16 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id C948D118DD;
+        Tue, 22 Jun 2021 10:59:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624359316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624359581; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OdhOkHb563nioODxq403p3Sqwc3FVVAkpApSQUm4Rag=;
-        b=hSZl8vRPzichV06o5RV4ybG6Ebi7jFC4E/2W/FOCrvqMObn9i33VL+k6XuCWy3OT23BZBm
-        8UKMUaRHWDXq/rRZYfCDp66w7SzZ7sK2eoiwRJ3VgHlNb+66ALBtSn+fq//O4iGVVQyrn5
-        Qg3uear5RHY+O9ImUGNqvNKU48ZACvY=
+        bh=PffBQGqiSbrArOVxeRaiCq2+fO3Ji1PAj4wruiJ+XNw=;
+        b=jrSr2XoBEOmuE0piC1z8E7LZESR795xq/DZ6jrHy/N199LUOT85JPvQpH3kjKBtRplRfFc
+        p1z+HPovfDJc8KiV0Wrwj69RQGJWa7dwzp3GJc+SGCjkIbYs5XFRJas6V7raoKZcReKlAS
+        +bNFmpYcBVFohNzAx4CfuD9SuHN2UBY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624359316;
+        s=susede2_ed25519; t=1624359581;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OdhOkHb563nioODxq403p3Sqwc3FVVAkpApSQUm4Rag=;
-        b=YRzrmAINpK1rqqMJ5BL22n+4ZasakU2Igg010RW6eot932WvTf5iqm+nAsnwIuyk8tGmyk
-        uSorcpPxStId8jAQ==
+        bh=PffBQGqiSbrArOVxeRaiCq2+fO3Ji1PAj4wruiJ+XNw=;
+        b=Am0+izuYQiJ7iJDdPA66NOdH+6t+upyY0pc8hQYaYnirikvAo1OxodBHMX3WtnJ96cCsdN
+        cXEb/WpyVjRd2rCQ==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id vmOjIZTB0WB/WwAALh3uQQ
-        (envelope-from <hare@suse.de>); Tue, 22 Jun 2021 10:55:16 +0000
-Subject: Re: [PATCH 09/14] bcache: use bucket index to set GC_MARK_METADATA
- for journal buckets in bch_btree_gc_finish()
+        id TWOdMJ3C0WAUXgAALh3uQQ
+        (envelope-from <hare@suse.de>); Tue, 22 Jun 2021 10:59:41 +0000
+Subject: Re: [PATCH 10/14] bcache: add BCH_FEATURE_INCOMPAT_NVDIMM_META into
+ incompat feature set
 To:     Coly Li <colyli@suse.de>, axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
         Jianpeng Ma <jianpeng.ma@intel.com>,
         Qiaowei Ren <qiaowei.ren@intel.com>
 References: <20210615054921.101421-1-colyli@suse.de>
- <20210615054921.101421-10-colyli@suse.de>
+ <20210615054921.101421-11-colyli@suse.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <c1f06286-fd5f-163e-c4a7-bf193b3c804f@suse.de>
-Date:   Tue, 22 Jun 2021 12:55:16 +0200
+Message-ID: <f49f2939-5cd6-6741-f53e-b1c0473bc686@suse.de>
+Date:   Tue, 22 Jun 2021 12:59:41 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.9.1
 MIME-Version: 1.0
-In-Reply-To: <20210615054921.101421-10-colyli@suse.de>
+In-Reply-To: <20210615054921.101421-11-colyli@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -83,41 +83,53 @@ List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
 On 6/15/21 7:49 AM, Coly Li wrote:
-> Currently the meta data bucket locations on cache device are reserved
-> after the meta data stored on NVDIMM pages, for the meta data layout
-> consistentcy temporarily. So these buckets are still marked as meta data
-> by SET_GC_MARK() in bch_btree_gc_finish().
+> This patch adds BCH_FEATURE_INCOMPAT_NVDIMM_META (value 0x0004) into the
+> incompat feature set. When this bit is set by bcache-tools, it indicates
+> bcache meta data should be stored on specific NVDIMM meta device.
 > 
-> When BCH_FEATURE_INCOMPAT_NVDIMM_META is set, the sb.d[] stores linear
-> address of NVDIMM pages and not bucket index anymore. Therefore we
-> should avoid to find bucket index from sb.d[], and directly use bucket
-> index from ca->sb.first_bucket to (ca->sb.first_bucket +
-> ca->sb.njournal_bucketsi) for setting the gc mark of journal bucket.
+> The bcache meta data mainly includes journal and btree nodes, when this
+> bit is set in incompat feature set, bcache will ask the nvm-pages
+> allocator for NVDIMM space to store the meta data.
 > 
 > Signed-off-by: Coly Li <colyli@suse.de>
 > Cc: Jianpeng Ma <jianpeng.ma@intel.com>
 > Cc: Qiaowei Ren <qiaowei.ren@intel.com>
 > ---
->  drivers/md/bcache/btree.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/md/bcache/features.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-> index 183a58c89377..e0d7135669ca 100644
-> --- a/drivers/md/bcache/btree.c
-> +++ b/drivers/md/bcache/btree.c
-> @@ -1761,8 +1761,10 @@ static void bch_btree_gc_finish(struct cache_set *c)
->  	ca = c->cache;
->  	ca->invalidate_needs_gc = 0;
+> diff --git a/drivers/md/bcache/features.h b/drivers/md/bcache/features.h
+> index d1c8fd3977fc..45d2508d5532 100644
+> --- a/drivers/md/bcache/features.h
+> +++ b/drivers/md/bcache/features.h
+> @@ -17,11 +17,19 @@
+>  #define BCH_FEATURE_INCOMPAT_OBSO_LARGE_BUCKET		0x0001
+>  /* real bucket size is (1 << bucket_size) */
+>  #define BCH_FEATURE_INCOMPAT_LOG_LARGE_BUCKET_SIZE	0x0002
+> +/* store bcache meta data on nvdimm */
+> +#define BCH_FEATURE_INCOMPAT_NVDIMM_META		0x0004
 >  
-> -	for (k = ca->sb.d; k < ca->sb.d + ca->sb.keys; k++)
-> -		SET_GC_MARK(ca->buckets + *k, GC_MARK_METADATA);
-> +	/* Range [first_bucket, first_bucket + keys) is for journal buckets */
-> +	for (i = ca->sb.first_bucket;
-> +	     i < ca->sb.first_bucket + ca->sb.njournal_buckets; i++)
-> +		SET_GC_MARK(ca->buckets + i, GC_MARK_METADATA);
+>  #define BCH_FEATURE_COMPAT_SUPP		0
+>  #define BCH_FEATURE_RO_COMPAT_SUPP	0
+> +#if defined(CONFIG_BCACHE_NVM_PAGES)
+> +#define BCH_FEATURE_INCOMPAT_SUPP	(BCH_FEATURE_INCOMPAT_OBSO_LARGE_BUCKET| \
+> +					 BCH_FEATURE_INCOMPAT_LOG_LARGE_BUCKET_SIZE| \
+> +					 BCH_FEATURE_INCOMPAT_NVDIMM_META)
+> +#else
+>  #define BCH_FEATURE_INCOMPAT_SUPP	(BCH_FEATURE_INCOMPAT_OBSO_LARGE_BUCKET| \
+>  					 BCH_FEATURE_INCOMPAT_LOG_LARGE_BUCKET_SIZE)
+> +#endif
 >  
->  	for (k = ca->prio_buckets;
->  	     k < ca->prio_buckets + prio_buckets(ca) * 2; k++)
+>  #define BCH_HAS_COMPAT_FEATURE(sb, mask) \
+>  		((sb)->feature_compat & (mask))
+> @@ -89,6 +97,7 @@ static inline void bch_clear_feature_##name(struct cache_sb *sb) \
+>  
+>  BCH_FEATURE_INCOMPAT_FUNCS(obso_large_bucket, OBSO_LARGE_BUCKET);
+>  BCH_FEATURE_INCOMPAT_FUNCS(large_bucket, LOG_LARGE_BUCKET_SIZE);
+> +BCH_FEATURE_INCOMPAT_FUNCS(nvdimm_meta, NVDIMM_META);
+>  
+>  static inline bool bch_has_unknown_compat_features(struct cache_sb *sb)
+>  {
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
