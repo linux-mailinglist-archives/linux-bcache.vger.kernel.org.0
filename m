@@ -2,81 +2,81 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FBD23B16A8
-	for <lists+linux-bcache@lfdr.de>; Wed, 23 Jun 2021 11:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E083B16B8
+	for <lists+linux-bcache@lfdr.de>; Wed, 23 Jun 2021 11:20:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbhFWJSs (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 23 Jun 2021 05:18:48 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:58122 "EHLO
+        id S229918AbhFWJXM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 23 Jun 2021 05:23:12 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:58910 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229833AbhFWJSs (ORCPT
+        with ESMTP id S229833AbhFWJXM (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 23 Jun 2021 05:18:48 -0400
+        Wed, 23 Jun 2021 05:23:12 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 21BA721981;
-        Wed, 23 Jun 2021 09:16:30 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2A7E22192D;
+        Wed, 23 Jun 2021 09:20:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624439790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624440054; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NokfFS3lgRkXtDowvvd0f8BMjh9mmmgD1Q9zGGcCgrQ=;
-        b=A7yAKFUrSV2T4hb1dKoerxOidG9M/2Hlh35ZESLNvS/eq7+Av4ZPEGJ7ThVVIsYb+QMrUt
-        5RhYqGZhX6H6IEeZhZNALhWEjp7gKOuA4kR/QACrsDfJ9HIOFguvoaDSxX+eKX5o50SmyT
-        hHpLEfjiraje5gNtJMHc/zB7KfhR7hM=
+        bh=/FRBshTT8omLwrxeq9RsRpIQLIp8vcSDRiAJJhWqos4=;
+        b=ujhTWDpafAz+6WIaXSwZwe9J3vP6jqVfwJ9zDQkvIQd+U/QNlRXTLhyjYUE83qd2aKIdah
+        N9YMRpZxGr8w/mHc7IIY6DKTblsT48RJ01jECqUJUPHMHF1DgOfHeps4f+X0H6Cs34fyWL
+        9LFfSYCuAzMGRJ3Gt+YNI9cCIiDLZQs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624439790;
+        s=susede2_ed25519; t=1624440054;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NokfFS3lgRkXtDowvvd0f8BMjh9mmmgD1Q9zGGcCgrQ=;
-        b=c0qCwrPUYZFpBZgMxfmY+4lFOiG4j6xXgv/qfDtmN1yTjVYvpp8PC1x0KLMs5HnWSeqLff
-        PTQISNrfJG0+eqCg==
+        bh=/FRBshTT8omLwrxeq9RsRpIQLIp8vcSDRiAJJhWqos4=;
+        b=CnvWrEVeej21txNfnRmQuf5egWvbGZ1i2gwyGqqS5f+gFPbOMcRM+r67UKgklhd63HTgUm
+        FLWiT7DNBGwxfPCQ==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id DD9AB11A97;
-        Wed, 23 Jun 2021 09:16:29 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id 0633B11A97;
+        Wed, 23 Jun 2021 09:20:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624439790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624440054; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NokfFS3lgRkXtDowvvd0f8BMjh9mmmgD1Q9zGGcCgrQ=;
-        b=A7yAKFUrSV2T4hb1dKoerxOidG9M/2Hlh35ZESLNvS/eq7+Av4ZPEGJ7ThVVIsYb+QMrUt
-        5RhYqGZhX6H6IEeZhZNALhWEjp7gKOuA4kR/QACrsDfJ9HIOFguvoaDSxX+eKX5o50SmyT
-        hHpLEfjiraje5gNtJMHc/zB7KfhR7hM=
+        bh=/FRBshTT8omLwrxeq9RsRpIQLIp8vcSDRiAJJhWqos4=;
+        b=ujhTWDpafAz+6WIaXSwZwe9J3vP6jqVfwJ9zDQkvIQd+U/QNlRXTLhyjYUE83qd2aKIdah
+        N9YMRpZxGr8w/mHc7IIY6DKTblsT48RJ01jECqUJUPHMHF1DgOfHeps4f+X0H6Cs34fyWL
+        9LFfSYCuAzMGRJ3Gt+YNI9cCIiDLZQs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624439790;
+        s=susede2_ed25519; t=1624440054;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NokfFS3lgRkXtDowvvd0f8BMjh9mmmgD1Q9zGGcCgrQ=;
-        b=c0qCwrPUYZFpBZgMxfmY+4lFOiG4j6xXgv/qfDtmN1yTjVYvpp8PC1x0KLMs5HnWSeqLff
-        PTQISNrfJG0+eqCg==
+        bh=/FRBshTT8omLwrxeq9RsRpIQLIp8vcSDRiAJJhWqos4=;
+        b=CnvWrEVeej21txNfnRmQuf5egWvbGZ1i2gwyGqqS5f+gFPbOMcRM+r67UKgklhd63HTgUm
+        FLWiT7DNBGwxfPCQ==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id jGlsNO370mAhOAAALh3uQQ
-        (envelope-from <hare@suse.de>); Wed, 23 Jun 2021 09:16:29 +0000
-Subject: Re: [PATCH 04/14] bcache: initialize the nvm pages allocator
+        id 5jiHAPb80mDROgAALh3uQQ
+        (envelope-from <hare@suse.de>); Wed, 23 Jun 2021 09:20:54 +0000
+Subject: Re: [PATCH 11/14] bcache: initialize bcache journal for NVDIMM meta
+ device
 To:     Coly Li <colyli@suse.de>
 Cc:     linux-bcache@vger.kernel.org, axboe@kernel.dk,
         linux-block@vger.kernel.org, Jianpeng Ma <jianpeng.ma@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
         Qiaowei Ren <qiaowei.ren@intel.com>
 References: <20210615054921.101421-1-colyli@suse.de>
- <20210615054921.101421-5-colyli@suse.de>
- <39c118e3-ddc9-f417-a929-fc21e761a4ac@suse.de>
- <fc5b8586-0181-da7b-ba1f-73f7b00b8d16@suse.de>
+ <20210615054921.101421-12-colyli@suse.de>
+ <97aaab72-30ba-d030-1be0-5aef1026150e@suse.de>
+ <635b8138-22c5-9467-f99f-585a248872d3@suse.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <48cab671-d4d6-d5f2-29bf-b2f19e04e533@suse.de>
-Date:   Wed, 23 Jun 2021 11:16:28 +0200
+Message-ID: <6e15a2fb-5452-6e60-5bde-1edc076ed6db@suse.de>
+Date:   Wed, 23 Jun 2021 11:20:52 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.0
 MIME-Version: 1.0
-In-Reply-To: <fc5b8586-0181-da7b-ba1f-73f7b00b8d16@suse.de>
+In-Reply-To: <635b8138-22c5-9467-f99f-585a248872d3@suse.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -84,407 +84,223 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 6/23/21 7:26 AM, Coly Li wrote:
-> On 6/22/21 6:39 PM, Hannes Reinecke wrote:
+On 6/23/21 8:17 AM, Coly Li wrote:
+> On 6/22/21 7:01 PM, Hannes Reinecke wrote:
 >> On 6/15/21 7:49 AM, Coly Li wrote:
->>> From: Jianpeng Ma <jianpeng.ma@intel.com>
+>>> The nvm-pages allocator may store and index the NVDIMM pages allocated
+>>> for bcache journal. This patch adds the initialization to store bcache
+>>> journal space on NVDIMM pages if BCH_FEATURE_INCOMPAT_NVDIMM_META bit is
+>>> set by bcache-tools.
 >>>
->>> This patch define the prototype data structures in memory and
->>> initializes the nvm pages allocator.
+>>> If BCH_FEATURE_INCOMPAT_NVDIMM_META is set, get_nvdimm_journal_space()
+>>> will return the linear address of NVDIMM pages for bcache journal,
+>>> - If there is previously allocated space, find it from nvm-pages owner
+>>>    list and return to bch_journal_init().
+>>> - If there is no previously allocated space, require a new NVDIMM range
+>>>    from the nvm-pages allocator, and return it to bch_journal_init().
 >>>
->>> The nvm address space which is managed by this allocator can consist of
->>> many nvm namespaces, and some namespaces can compose into one nvm set,
->>> like cache set. For this initial implementation, only one set can be
->>> supported.
+>>> And in bch_journal_init(), keys in sb.d[] store the corresponding linear
+>>> address from NVDIMM into sb.d[i].ptr[0] where 'i' is the bucket index to
+>>> iterate all journal buckets.
 >>>
->>> The users of this nvm pages allocator need to call register_namespace()
->>> to register the nvdimm device (like /dev/pmemX) into this allocator as
->>> the instance of struct nvm_namespace.
+>>> Later when bcache journaling code stores the journaling jset, the target
+>>> NVDIMM linear address stored (and updated) in sb.d[i].ptr[0] can be used
+>>> directly in memory copy from DRAM pages into NVDIMM pages.
 >>>
->>> Reported-by: Randy Dunlap <rdunlap@infradead.org>
->>> Signed-off-by: Jianpeng Ma <jianpeng.ma@intel.com>
->>> Co-developed-by: Qiaowei Ren <qiaowei.ren@intel.com>
->>> Signed-off-by: Qiaowei Ren <qiaowei.ren@intel.com>
 >>> Signed-off-by: Coly Li <colyli@suse.de>
+>>> Cc: Jianpeng Ma <jianpeng.ma@intel.com>
+>>> Cc: Qiaowei Ren <qiaowei.ren@intel.com>
 >>> ---
->>>   drivers/md/bcache/Kconfig     |  10 ++
->>>   drivers/md/bcache/Makefile    |   1 +
->>>   drivers/md/bcache/nvm-pages.c | 295 ++++++++++++++++++++++++++++++++++
->>>   drivers/md/bcache/nvm-pages.h |  74 +++++++++
->>>   drivers/md/bcache/super.c     |   3 +
->>>   5 files changed, 383 insertions(+)
->>>   create mode 100644 drivers/md/bcache/nvm-pages.c
->>>   create mode 100644 drivers/md/bcache/nvm-pages.h
+>>>   drivers/md/bcache/journal.c | 105 ++++++++++++++++++++++++++++++++++++
+>>>   drivers/md/bcache/journal.h |   2 +-
+>>>   drivers/md/bcache/super.c   |  16 +++---
+>>>   3 files changed, 115 insertions(+), 8 deletions(-)
 >>>
->>> diff --git a/drivers/md/bcache/Kconfig b/drivers/md/bcache/Kconfig
->>> index d1ca4d059c20..a69f6c0e0507 100644
->>> --- a/drivers/md/bcache/Kconfig
->>> +++ b/drivers/md/bcache/Kconfig
->>> @@ -35,3 +35,13 @@ config BCACHE_ASYNC_REGISTRATION
->>>   	device path into this file will returns immediately and the real
->>>   	registration work is handled in kernel work queue in asynchronous
->>>   	way.
->>> +
->>> +config BCACHE_NVM_PAGES
->>> +	bool "NVDIMM support for bcache (EXPERIMENTAL)"
->>> +	depends on BCACHE
->>> +	depends on 64BIT
->>> +	depends on LIBNVDIMM
->>> +	depends on DAX
->>> +	help
->>> +	  Allocate/release NV-memory pages for bcache and provide allocated pages
->>> +	  for each requestor after system reboot.
->>> diff --git a/drivers/md/bcache/Makefile b/drivers/md/bcache/Makefile
->>> index 5b87e59676b8..2397bb7c7ffd 100644
->>> --- a/drivers/md/bcache/Makefile
->>> +++ b/drivers/md/bcache/Makefile
->>> @@ -5,3 +5,4 @@ obj-$(CONFIG_BCACHE)	+= bcache.o
->>>   bcache-y		:= alloc.o bset.o btree.o closure.o debug.o extents.o\
->>>   	io.o journal.o movinggc.o request.o stats.o super.o sysfs.o trace.o\
->>>   	util.o writeback.o features.o
->>> +bcache-$(CONFIG_BCACHE_NVM_PAGES) += nvm-pages.o
->>> diff --git a/drivers/md/bcache/nvm-pages.c b/drivers/md/bcache/nvm-pages.c
->>> new file mode 100644
->>> index 000000000000..18fdadbc502f
->>> --- /dev/null
->>> +++ b/drivers/md/bcache/nvm-pages.c
->>> @@ -0,0 +1,295 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Nvdimm page-buddy allocator
->>> + *
->>> + * Copyright (c) 2021, Intel Corporation.
->>> + * Copyright (c) 2021, Qiaowei Ren <qiaowei.ren@intel.com>.
->>> + * Copyright (c) 2021, Jianpeng Ma <jianpeng.ma@intel.com>.
->>> + */
+>>> diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+>>> index 61bd79babf7a..32599d2ff5d2 100644
+>>> --- a/drivers/md/bcache/journal.c
+>>> +++ b/drivers/md/bcache/journal.c
+>>> @@ -9,6 +9,8 @@
+>>>   #include "btree.h"
+>>>   #include "debug.h"
+>>>   #include "extents.h"
+>>> +#include "nvm-pages.h"
+>>> +#include "features.h"
+>>>   
+>>>   #include <trace/events/bcache.h>
+>>>   
+>>> @@ -982,3 +984,106 @@ int bch_journal_alloc(struct cache_set *c)
+>>>   
+>>>   	return 0;
+>>>   }
 >>> +
 >>> +#if defined(CONFIG_BCACHE_NVM_PAGES)
 >>> +
->> No need for this 'if' statement as it'll be excluded by the Makefile
->> anyway if the config option isn't set.
-> 
-> Such if is necessary because stub routines are defined when
-> CONFIG_BCACHE_NVM_PAGES is not defined, e.g.
-> 
-> 426 +#else
-> 427 +
-> 428 +static inline struct bch_nvm_namespace
-> *bch_register_namespace(const char *dev_path)
-> 429 +{
-> 430 +       return NULL;
-> 431 +}
-> 432 +static inline int bch_nvm_init(void)
-> 433 +{
-> 434 +       return 0;
-> 435 +}
-> 436 +static inline void bch_nvm_exit(void) { }
-> 437 +
-> 438 +#endif /* CONFIG_BCACHE_NVM_PAGES */
-> 
-But then these stubs should be defined in the header file, not here.
-
-[ .. ]
-
->>> +			rc = -ENOMEM;
->>> +			goto unlock;
+>>> +static void *find_journal_nvm_base(struct bch_nvm_pages_owner_head *owner_list,
+>>> +				   struct cache *ca)
+>>> +{
+>>> +	unsigned long addr = 0;
+>>> +	struct bch_nvm_pgalloc_recs *recs_list = owner_list->recs[0];
+>>> +
+>>> +	while (recs_list) {
+>>> +		struct bch_pgalloc_rec *rec;
+>>> +		unsigned long jnl_pgoff;
+>>> +		int i;
+>>> +
+>>> +		jnl_pgoff = ((unsigned long)ca->sb.d[0]) >> PAGE_SHIFT;
+>>> +		rec = recs_list->recs;
+>>> +		for (i = 0; i < recs_list->used; i++) {
+>>> +			if (rec->pgoff == jnl_pgoff)
+>>> +				break;
+>>> +			rec++;
 >>> +		}
->>> +	}
->>> +
->>> +	only_set->nss[ns->sb->this_namespace_nr] = ns;
->>> +
->>> +	/* Firstly attach */
->> Initial attach?
-> 
-> Will fix in next post.
-> 
->>
->>> +	if ((unsigned long)ns->sb->owner_list_head == BCH_NVM_PAGES_OWNER_LIST_HEAD_OFFSET) {
->>> +		struct bch_nvm_pages_owner_head *sys_owner_head;
->>> +		struct bch_nvm_pgalloc_recs *sys_pgalloc_recs;
->>> +
->>> +		ns->sb->owner_list_head = ns->kaddr + BCH_NVM_PAGES_OWNER_LIST_HEAD_OFFSET;
->>> +		sys_pgalloc_recs = ns->kaddr + BCH_NVM_PAGES_SYS_RECS_HEAD_OFFSET;
->>> +
->>> +		sys_owner_head = &(ns->sb->owner_list_head->heads[0]);
->>> +		sys_owner_head->recs[0] = sys_pgalloc_recs;
->>> +		ns->sb->csum = csum_set(ns->sb);
->>> +
->> Hmm. You are trying to pick up the 'list_head' structure from NVM, right?
-> 
-> No, this is not READ, it's WRITE onto NVDIMM.
-> 
-> sys_owner_head points to NVDIMM, since ns->sb->owner_list_head is updated,
-> the checksum of ns->sb should be updated to new value onto the NVDIMM.
-> This is what the above line does.
-> 
-> 
-Ah, right.
-
->>
->> In doing so, don't you need to validate the structure (eg by checking
->> the checksum) before doing so to ensure that the contents are valid?
-> 
-> The check sum checking for READ is done in read_nvdimm_meta_super() in
-> following lines,
-> 198 +       r = -EINVAL;
-> 199 +       expected_csum = csum_set(sb);
-> 200 +       if (expected_csum != sb->csum) {
-> 201 +               pr_info("csum is not match with expected one\n");
-> 202 +               goto put_page;
-> 203 +       }
-> 
-> Once thing to note is, currently all NVDIMM update is not power failure
-> considered. This is the next big task to do after the first small code
-> base merged.
-> 
-> 
->>> +		sys_pgalloc_recs->owner = sys_owner_head;
->>> +	} else
->>> +		BUG_ON(ns->sb->owner_list_head !=
->>> +			(ns->kaddr + BCH_NVM_PAGES_OWNER_LIST_HEAD_OFFSET));
->>> +
->>> +unlock:
->>> +	mutex_unlock(&only_set->lock);
->>> +	return rc;
->>> +}
->>> +
->>> +static int read_nvdimm_meta_super(struct block_device *bdev,
->>> +			      struct bch_nvm_namespace *ns)
->>> +{
->>> +	struct page *page;
->>> +	struct bch_nvm_pages_sb *sb;
->>> +	int r = 0;
->>> +	uint64_t expected_csum = 0;
->>> +
->>> +	page = read_cache_page_gfp(bdev->bd_inode->i_mapping,
->>> +			BCH_NVM_PAGES_SB_OFFSET >> PAGE_SHIFT, GFP_KERNEL);
->>> +
->>> +	if (IS_ERR(page))
->>> +		return -EIO;
->>> +
->>> +	sb = (struct bch_nvm_pages_sb *)(page_address(page) +
->>> +					offset_in_page(BCH_NVM_PAGES_SB_OFFSET));
->>> +	r = -EINVAL;
->>> +	expected_csum = csum_set(sb);
->>> +	if (expected_csum != sb->csum) {
->>> +		pr_info("csum is not match with expected one\n");
->>> +		goto put_page;
->>> +	}
->>> +
->>> +	if (memcmp(sb->magic, bch_nvm_pages_magic, 16)) {
->>> +		pr_info("invalid bch_nvm_pages_magic\n");
->>> +		goto put_page;
->>> +	}
->>> +
->>> +	if (sb->total_namespaces_nr != 1) {
->>> +		pr_info("currently only support one nvm device\n");
->>> +		goto put_page;
->>> +	}
->>> +
->>> +	if (sb->sb_offset != BCH_NVM_PAGES_SB_OFFSET) {
->>> +		pr_info("invalid superblock offset\n");
->>> +		goto put_page;
->>> +	}
->>> +
->>> +	r = 0;
->>> +	/* temporary use for DAX API */
->>> +	ns->page_size = sb->page_size;
->>> +	ns->pages_total = sb->pages_total;
->>> +
->>> +put_page:
->>> +	put_page(page);
->>> +	return r;
->>> +}
->>> +
->>> +struct bch_nvm_namespace *bch_register_namespace(const char *dev_path)
->>> +{
->>> +	struct bch_nvm_namespace *ns;
->>> +	int err;
->>> +	pgoff_t pgoff;
->>> +	char buf[BDEVNAME_SIZE];
->>> +	struct block_device *bdev;
->>> +	int id;
->>> +	char *path = NULL;
->>> +
->>> +	path = kstrndup(dev_path, 512, GFP_KERNEL);
->>> +	if (!path) {
->>> +		pr_err("kstrndup failed\n");
->>> +		return ERR_PTR(-ENOMEM);
->>> +	}
->>> +
->>> +	bdev = blkdev_get_by_path(strim(path),
->>> +				  FMODE_READ|FMODE_WRITE|FMODE_EXEC,
->>> +				  only_set);
->>> +	if (IS_ERR(bdev)) {
->>> +		pr_info("get %s error: %ld\n", dev_path, PTR_ERR(bdev));
->>> +		kfree(path);
->>> +		return ERR_PTR(PTR_ERR(bdev));
->>> +	}
->>> +
->>> +	err = -ENOMEM;
->>> +	ns = kzalloc(sizeof(struct bch_nvm_namespace), GFP_KERNEL);
->>> +	if (!ns)
->>> +		goto bdput;
->>> +
->>> +	err = -EIO;
->>> +	if (read_nvdimm_meta_super(bdev, ns)) {
->>> +		pr_info("%s read nvdimm meta super block failed.\n",
->>> +			bdevname(bdev, buf));
->>> +		goto free_ns;
->>> +	}
->>> +
->>> +	err = -EOPNOTSUPP;
->>> +	if (!bdev_dax_supported(bdev, ns->page_size)) {
->>> +		pr_info("%s don't support DAX\n", bdevname(bdev, buf));
->>> +		goto free_ns;
->>> +	}
->>> +
->>> +	err = -EINVAL;
->>> +	if (bdev_dax_pgoff(bdev, 0, ns->page_size, &pgoff)) {
->>> +		pr_info("invalid offset of %s\n", bdevname(bdev, buf));
->>> +		goto free_ns;
->>> +	}
->>> +
->>> +	err = -ENOMEM;
->>> +	ns->dax_dev = fs_dax_get_by_bdev(bdev);
->>> +	if (!ns->dax_dev) {
->>> +		pr_info("can't by dax device by %s\n", bdevname(bdev, buf));
->>> +		goto free_ns;
->>> +	}
->>> +
->>> +	err = -EINVAL;
->>> +	id = dax_read_lock();
->>> +	if (dax_direct_access(ns->dax_dev, pgoff, ns->pages_total,
->>> +			      &ns->kaddr, &ns->start_pfn) <= 0) {
->>> +		pr_info("dax_direct_access error\n");
->>> +		dax_read_unlock(id);
->>> +		goto free_ns;
->>> +	}
->>> +	dax_read_unlock(id);
->>> +
->>> +	ns->sb = ns->kaddr + BCH_NVM_PAGES_SB_OFFSET;
->>> +
->> You already read the superblock in read_nvdimm_meta_super(), right?
->> Wouldn't it be better to first do the 'dax_direct_access()' call, and
->> then check the superblock?
->> That way you'll ensure that dax_direct_access()' did the right thing;
->> with the current code you are using two different methods of accessing
->> the superblock, which theoretically can result in one method succeeding,
->> the other not ...
-> 
-> We have to do it. Because the mapping size of dax_direct_access() is
-> from ns->pages_total, it is stored on NVDIMM. Before calling
-> dax_direct_acess()
-> we need to make sure ns is an valid super block stored on NVDIMM, then
-> we can
-> trust value of ns->pages_total to do the DAX mapping.
-> 
-> Another method is firstly mapping a small fixed range (e.g. 1GB), and
-> check whether the super block on NVDIMM is valid. If yes, re-map the
-> whole space indicated by ns->pages_total. But the two-times accessing cannot
-> be avoided.
-> 
-Oh, indeed, you are correct. Disregard my comments here.
-
->>> +	err = -EINVAL;
->>> +	/* Check magic again to make sure DAX mapping is correct */
->>> +	if (memcmp(ns->sb->magic, bch_nvm_pages_magic, 16)) {
->>> +		pr_info("invalid bch_nvm_pages_magic after DAX mapping\n");
->>> +		goto free_ns;
->>> +	}
->>> +
->>> +	err = attach_nvm_set(ns);
->>> +	if (err < 0)
->>> +		goto free_ns;
->>> +
->>> +	ns->page_size = ns->sb->page_size;
->>> +	ns->pages_offset = ns->sb->pages_offset;
->>> +	ns->pages_total = ns->sb->pages_total;
->>> +	ns->free = 0;
->>> +	ns->bdev = bdev;
->>> +	ns->nvm_set = only_set;
->>> +	mutex_init(&ns->lock);
->>> +
->>> +	if (ns->sb->this_namespace_nr == 0) {
->>> +		pr_info("only first namespace contain owner info\n");
->>> +		err = init_owner_info(ns);
->>> +		if (err < 0) {
->>> +			pr_info("init_owner_info met error %d\n", err);
->>> +			only_set->nss[ns->sb->this_namespace_nr] = NULL;
->>> +			goto free_ns;
+>>> +		if (i < recs_list->used) {
+>>> +			addr = rec->pgoff << PAGE_SHIFT;
+>>> +			break;
 >>> +		}
+>>> +		recs_list = recs_list->next;
+>>> +	}
+>>> +	return (void *)addr;
+>>> +}
+>>> +
+>>> +static void *get_nvdimm_journal_space(struct cache *ca)
+>>> +{
+>>> +	struct bch_nvm_pages_owner_head *owner_list = NULL;
+>>> +	void *ret = NULL;
+>>> +	int order;
+>>> +
+>>> +	owner_list = bch_get_allocated_pages(ca->sb.set_uuid);
+>>> +	if (owner_list) {
+>>> +		ret = find_journal_nvm_base(owner_list, ca);
+>>> +		if (ret)
+>>> +			goto found;
 >>> +	}
 >>> +
->>> +	kfree(path);
->>> +	return ns;
->>> +free_ns:
->>> +	kfree(ns);
->>> +bdput:
->>> +	blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXEC);
->>> +	kfree(path);
->>> +	return ERR_PTR(err);
->>> +}
->>> +EXPORT_SYMBOL_GPL(bch_register_namespace);
+>>> +	order = ilog2(ca->sb.bucket_size *
+>>> +		      ca->sb.njournal_buckets / PAGE_SECTORS);
+>>> +	ret = bch_nvm_alloc_pages(order, ca->sb.set_uuid);
+>>> +	if (ret)
+>>> +		memset(ret, 0, (1 << order) * PAGE_SIZE);
 >>> +
->>> +int __init bch_nvm_init(void)
->>> +{
->>> +	only_set = kzalloc(sizeof(*only_set), GFP_KERNEL);
->>> +	if (!only_set)
->>> +		return -ENOMEM;
->>> +
->>> +	only_set->total_namespaces_nr = 0;
->>> +	only_set->owner_list_head = NULL;
->>> +	only_set->nss = NULL;
->>> +
->>> +	mutex_init(&only_set->lock);
->>> +
->>> +	pr_info("bcache nvm init\n");
->>> +	return 0;
+>>> +found:
+>>> +	return ret;
 >>> +}
 >>> +
->>> +void bch_nvm_exit(void)
+>>> +static int __bch_journal_nvdimm_init(struct cache *ca)
 >>> +{
->>> +	release_nvm_set(only_set);
->>> +	pr_info("bcache nvm exit\n");
+>>> +	int i, ret = 0;
+>>> +	void *journal_nvm_base = NULL;
+>>> +
+>>> +	journal_nvm_base = get_nvdimm_journal_space(ca);
+>>> +	if (!journal_nvm_base) {
+>>> +		pr_err("Failed to get journal space from nvdimm\n");
+>>> +		ret = -1;
+>>> +		goto out;
+>>> +	}
+>>> +
+>>> +	/* Iniialized and reloaded from on-disk super block already */
+>>> +	if (ca->sb.d[0] != 0)
+>>> +		goto out;
+>>> +
+>>> +	for (i = 0; i < ca->sb.keys; i++)
+>>> +		ca->sb.d[i] =
+>>> +			(u64)(journal_nvm_base + (ca->sb.bucket_size * i));
+>>> +
+>>> +out:
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +#else /* CONFIG_BCACHE_NVM_PAGES */
+>>> +
+>>> +static int __bch_journal_nvdimm_init(struct cache *ca)
+>>> +{
+>>> +	return -1;
 >>> +}
 >>> +
 >>> +#endif /* CONFIG_BCACHE_NVM_PAGES */
->>> diff --git a/drivers/md/bcache/nvm-pages.h b/drivers/md/bcache/nvm-pages.h
->>> new file mode 100644
->>> index 000000000000..3e24c4dee7fd
->>> --- /dev/null
->>> +++ b/drivers/md/bcache/nvm-pages.h
->>> @@ -0,0 +1,74 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
 >>> +
->>> +#ifndef _BCACHE_NVM_PAGES_H
->>> +#define _BCACHE_NVM_PAGES_H
+>>> +int bch_journal_init(struct cache_set *c)
+>>> +{
+>>> +	int i, ret = 0;
+>>> +	struct cache *ca = c->cache;
 >>> +
+>>> +	ca->sb.keys = clamp_t(int, ca->sb.nbuckets >> 7,
+>>> +				2, SB_JOURNAL_BUCKETS);
+>>> +
+>>> +	if (!bch_has_feature_nvdimm_meta(&ca->sb)) {
+>>> +		for (i = 0; i < ca->sb.keys; i++)
+>>> +			ca->sb.d[i] = ca->sb.first_bucket + i;
+>>> +	} else {
+>>> +		ret = __bch_journal_nvdimm_init(ca);
+>>> +	}
+>>> +
+>>> +	return ret;
+>>> +}
+>>> diff --git a/drivers/md/bcache/journal.h b/drivers/md/bcache/journal.h
+>>> index f2ea34d5f431..e3a7fa5a8fda 100644
+>>> --- a/drivers/md/bcache/journal.h
+>>> +++ b/drivers/md/bcache/journal.h
+>>> @@ -179,7 +179,7 @@ void bch_journal_mark(struct cache_set *c, struct list_head *list);
+>>>   void bch_journal_meta(struct cache_set *c, struct closure *cl);
+>>>   int bch_journal_read(struct cache_set *c, struct list_head *list);
+>>>   int bch_journal_replay(struct cache_set *c, struct list_head *list);
+>>> -
+>>> +int bch_journal_init(struct cache_set *c);
+>>>   void bch_journal_free(struct cache_set *c);
+>>>   int bch_journal_alloc(struct cache_set *c);
+>>>   
+>>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+>>> index ce22aefb1352..cce0f6bf0944 100644
+>>> --- a/drivers/md/bcache/super.c
+>>> +++ b/drivers/md/bcache/super.c
+>>> @@ -147,10 +147,15 @@ static const char *read_super_common(struct cache_sb *sb,  struct block_device *
+>>>   		goto err;
+>>>   
+>>>   	err = "Journal buckets not sequential";
 >>> +#if defined(CONFIG_BCACHE_NVM_PAGES)
->>> +#include <linux/bcache-nvm.h>
->>> +#endif /* CONFIG_BCACHE_NVM_PAGES */
->>> +
->> Hmm? What is that doing here?
->> Please move it into the source file.
+>>> +	if (!bch_has_feature_nvdimm_meta(sb)) {
+>>> +#endif
+>>>   	for (i = 0; i < sb->keys; i++)
+>>>   		if (sb->d[i] != sb->first_bucket + i)
+>>>   			goto err;
+>>> -
+>>> +#ifdef CONFIG_BCACHE_NVM_PAGES
+>>> +	} /* bch_has_feature_nvdimm_meta */
+>>> +#endif
+>>>   	err = "Too many journal buckets";
+>>>   	if (sb->first_bucket + sb->keys > sb->nbuckets)
+>>>   		goto err;
+>> Extremely awkward.
 > 
-> This is temporary before the whole NVDIMM support for bcache is completed.
-> 
-> drivers/md/bcache/nvm-pages.h has to be included because there are still
-> stub
-> routines in this header. Such stub routines like,
-> 
-> +static inline struct bch_nvm_namespace *bch_register_namespace(const char *dev_path)
-> +{
-> +	return NULL;
-> +}
-> 
-> will be removed after the whole code completed and merged. So currently we have to
-> do this to make sure the NVDIMM related code won't be leaked out if such experimental
-> configure is not enabled.
+> After the feature settled and not marked as EXPERIMENTAL, such condition
+> code will be removed.
 > 
 > 
-> Thanks for your review. The addressed issue will be fixed and updated in next post.
+>> Make 'bch_has_feature_nvdimm_meta()' generally available, and have it
+>> return 'false' if the config feature isn't enabled.
 > 
+> bch_has_feature_nvdimm_meta() is defined as,
+> 
+> 
+>   41 #define BCH_FEATURE_COMPAT_FUNCS(name, flagname) \
+>   42 static inline int bch_has_feature_##name(struct cache_sb *sb) \
+>   43 { \
+>   44         if (sb->version < BCACHE_SB_VERSION_CDEV_WITH_FEATURES) \
+>   45                 return 0; \
+>   46         return (((sb)->feature_compat & \
+>   47                 BCH##_FEATURE_COMPAT_##flagname) != 0); \
+>   48 } \
+> 
+> It is not easy to check a specific Kconfig item in the above code block,
+> this is why
+> we choose the compiling condition to disable nvdimm related code here,
+> before we remove
+> the EXPERIMENTAL mark in Kconfig.
+> 
+But you can have the flag defined in general (ie outside the config 
+ifdefs), and only set it if the code is enabled, right?
+Then the check will work always and do what we want, or?
+
 Cheers,
 
 Hannes
