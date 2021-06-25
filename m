@@ -2,216 +2,255 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AFF13B3A74
+	by mail.lfdr.de (Postfix) with ESMTP id A08863B3A75
 	for <lists+linux-bcache@lfdr.de>; Fri, 25 Jun 2021 03:31:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232906AbhFYBdv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        id S232911AbhFYBdv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
         Thu, 24 Jun 2021 21:33:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52606 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229712AbhFYBdq (ORCPT
+        with ESMTP id S229712AbhFYBdv (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 24 Jun 2021 21:33:46 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBFAEC061574
-        for <linux-bcache@vger.kernel.org>; Thu, 24 Jun 2021 18:31:25 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id pf4-20020a17090b1d84b029016f6699c3f2so7028200pjb.0
-        for <linux-bcache@vger.kernel.org>; Thu, 24 Jun 2021 18:31:25 -0700 (PDT)
+        Thu, 24 Jun 2021 21:33:51 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 088D2C061756
+        for <linux-bcache@vger.kernel.org>; Thu, 24 Jun 2021 18:31:30 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id v7so6278571pgl.2
+        for <linux-bcache@vger.kernel.org>; Thu, 24 Jun 2021 18:31:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=sjCNTcqNmvlSVfPI4HQi7RzVQGP2vgCOKaUVCr3Crwo=;
-        b=tqHemavXV2l4kxa3mdC6OIWELy0/K8s9qfUAdUmk1CM9lrXlj1frm+HnZBPpIIfhIS
-         38vXp7O9J/Jdb7BFBB5B7PVm8BvjPwY2EAvRZfh3VLL5VprkcOBv5B2WXq2U7yVHDqdN
-         /1Q8OuOe16uP2M7cvZJAsPv7dSQ8ny7CUIBn9TansCduQpgvW+onArU/S/j8K1ZVXhrG
-         MP+yh0JuMkX3293g8uK3c6YjOLFMZaRnOxUZjVoQwAJRiJ6QluM+CdeC2pF+3KMO1Bbj
-         gNzs3b5ZuDPFVFrgNXmNcibpZC7fkhbUGERg8YkXOaQiJ5I52VJFDIWBwQ1ZHzWZy58b
-         ATBw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ZmdlkLb9qygG+BsoJAXXq0E8pwt0TZLM8iArnZO4P3g=;
+        b=ZDfFvhxYhcrtchEoJxGdhPdPx20bow2ypX7HqruDhOtN8lnPoa1sx1jAnfktArHajZ
+         1/6dznIg2FnDo4HOjXugOwG7vhWu0SVPTacsevlVWFIa92Do38NPZSDfw3EQwwEKoJ6t
+         aq5oGDL9CIjajGBzX20p4QH52XKP5aR5e6loAChvRW6ls+X79MZRCzF94pwVp6KuuqWi
+         2W3hmWFnTksxNpiurgk1t8kcFAVHyAdUyLp6Cad30lYlgO/pKJR1ocUOoIuJR0k6YjVF
+         ITbdas1dHVQ8jzREZ2U9agGzbcGaAvPw1GpbB7LKKSjZI9EuvWCP+kMDEmCH6iV57v/H
+         gayg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sjCNTcqNmvlSVfPI4HQi7RzVQGP2vgCOKaUVCr3Crwo=;
-        b=gBDNygwNBfgOBIW2m4IptdhWMbzGBV3meCIeCB0rgB3ZIa7Ittz0tsawlc8ljWtlbY
-         eXzMsL1dgtqY7m/gTtCk7ySFYXxRIxrZK2apclLAKs68sEraaeATo9v9EiqqWi6OJL2q
-         mOau8ZZ2HzLrkN+vyBD+CEVPnVcD/+K0WHUtEruRC2X9npIkwlWEFMQ1eVfyiLGHxW7T
-         9x+BAbia5IyHfz9d65chyc6meGk9jV7OH0ykORUxG2VRBhPOjSvAtRrJyLbTsKTrDfbj
-         tKneFo60Fv8EW8hdF3voc1Luhgt/ogWDKhIgneG6DhLdyzEZ8BM96q6PGwDosIvnPbsB
-         wmng==
-X-Gm-Message-State: AOAM5306UYoefndajjD/PDxV/sGM/fkAaolIAIxvWlItfYWianR4qo5P
-        o/cF7lq+w1+ZS9fKmN39U71A0Qf1gnCmB2zJ
-X-Google-Smtp-Source: ABdhPJyiGsIHP4yglihy4TgmDm8itrhdFd8DWqNLp93tSCngdLrJaZ4H3+q+2Pk86f+a9IEbRzHozQ==
-X-Received: by 2002:a17:90b:810:: with SMTP id bk16mr8454119pjb.2.1624584684947;
-        Thu, 24 Jun 2021 18:31:24 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ZmdlkLb9qygG+BsoJAXXq0E8pwt0TZLM8iArnZO4P3g=;
+        b=kLSm3ABDNsaEwiXqf0zIGHwfWXapGeIs9J023Q9oeaIR0dzEZz1fNSeCb8huul9nWu
+         jj9Cjk+Qz82gOAE8xL/nJoiaYkbM+KZRI+kUhWz9MNleKriIMoYP6bANh6c1jUr+Sghp
+         gr/FgMDW5nw8XDjbD4R/r/Az45cUHX9lITFwfPHeCf0SNZWUVoM3SJjqehi2VY6OvGaT
+         aXmsxzJ+YdmGhJ9SuLq3gauO4/Fc9hyCRUqbHo90711BgWUdeuLB5fOr1fvZ1LeIb5lP
+         0eXSAg8AltZJRjyhSSrYoXFpBJA4cNgGwghwWq99kGsd+Lh6cvqQcoPJqRmeD98h0dvQ
+         OwAQ==
+X-Gm-Message-State: AOAM530Wg2LkXrgnsf3o1cAG4J1/gHVeVQBHRVduWGtMp4hPn+eZFhHP
+        LjtHwGvw2rWrzOzHzvuyMKGnr95JH2Jy++8g
+X-Google-Smtp-Source: ABdhPJytInSY7LZQ+139PXicGZ8tdcUdf60lr46/Hj4K/6oxOFIK6UnOcAuva5qQXiDtysOL5ev+3A==
+X-Received: by 2002:a05:6a00:852:b029:2f9:e608:e10d with SMTP id q18-20020a056a000852b02902f9e608e10dmr7876031pfk.71.1624584689320;
+        Thu, 24 Jun 2021 18:31:29 -0700 (PDT)
 Received: from instance-1.asia-east2-b.c.zippy-catwalk-317715.internal (2.31.92.34.bc.googleusercontent.com. [34.92.31.2])
-        by smtp.gmail.com with ESMTPSA id y8sm4168612pfe.162.2021.06.24.18.31.23
+        by smtp.gmail.com with ESMTPSA id y8sm4168612pfe.162.2021.06.24.18.31.27
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jun 2021 18:31:24 -0700 (PDT)
+        Thu, 24 Jun 2021 18:31:28 -0700 (PDT)
 From:   yanhuan916@gmail.com
 To:     linux-bcache@vger.kernel.org
 Cc:     colyli@suse.de, dahefanteng@gmail.com,
         Huan Yan <yanhuan916@gmail.com>
-Subject: [PATCH 1/2] bcache-tools: make --discard a per device option
-Date:   Fri, 25 Jun 2021 09:30:29 +0800
-Message-Id: <1624584630-9283-1-git-send-email-yanhuan916@gmail.com>
+Subject: [PATCH 2/2] bcache-tools: Correct super block version check codes
+Date:   Fri, 25 Jun 2021 09:30:30 +0800
+Message-Id: <1624584630-9283-2-git-send-email-yanhuan916@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1624584630-9283-1-git-send-email-yanhuan916@gmail.com>
+References: <1624584630-9283-1-git-send-email-yanhuan916@gmail.com>
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
 From: Huan Yan <yanhuan916@gmail.com>
 
-This patch make --discard option more flexible, it can be indicated after each
-backing or cache device.
+This patch add missing super block version below:
+BCACHE_SB_VERSION_CDEV_WITH_UUID
+BCACHE_SB_VERSION_BDEV_WITH_OFFSET
+BCACHE_SB_VERSION_CDEV_WITH_FEATURES
+BCACHE_SB_VERSION_BDEV_WITH_FEATURES
 ---
- make.c | 62 ++++++++++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 48 insertions(+), 14 deletions(-)
+ bcache.c | 22 +++++++++++++++-------
+ bcache.h |  3 ++-
+ lib.c    | 15 ++++++++++-----
+ make.c   |  8 ++++++--
+ show.c   |  6 ++++--
+ 5 files changed, 37 insertions(+), 17 deletions(-)
 
+diff --git a/bcache.c b/bcache.c
+index 1c4cef9..62ed08d 100644
+--- a/bcache.c
++++ b/bcache.c
+@@ -199,7 +199,8 @@ int tree(void)
+ 	sprintf(out, "%s", begin);
+ 	list_for_each_entry_safe(devs, n, &head, dev_list) {
+ 		if ((devs->version == BCACHE_SB_VERSION_CDEV
+-		     || devs->version == BCACHE_SB_VERSION_CDEV_WITH_UUID)
++		     || devs->version == BCACHE_SB_VERSION_CDEV_WITH_UUID
++		     || devs->version == BCACHE_SB_VERSION_CDEV_WITH_FEATURES)
+ 		    && strcmp(devs->state, BCACHE_BASIC_STATE_ACTIVE) == 0) {
+ 			sprintf(out + strlen(out), "%s\n", devs->name);
+ 			list_for_each_entry_safe(tmp, m, &head, dev_list) {
+@@ -231,7 +232,8 @@ int attach_both(char *cdev, char *backdev)
+ 	if (ret != 0)
+ 		return ret;
+ 	if (type != BCACHE_SB_VERSION_BDEV
+-	    && type != BCACHE_SB_VERSION_BDEV_WITH_OFFSET) {
++	    && type != BCACHE_SB_VERSION_BDEV_WITH_OFFSET
++	    && type != BCACHE_SB_VERSION_BDEV_WITH_FEATURES) {
+ 		fprintf(stderr, "%s is not an backend device\n", backdev);
+ 		return 1;
+ 	}
+@@ -244,7 +246,8 @@ int attach_both(char *cdev, char *backdev)
+ 	if (strlen(cdev) != 36) {
+ 		ret = detail_dev(cdev, &bd, &cd, NULL, &type);
+ 		if (type != BCACHE_SB_VERSION_CDEV
+-		    && type != BCACHE_SB_VERSION_CDEV_WITH_UUID) {
++		    && type != BCACHE_SB_VERSION_CDEV_WITH_UUID
++		    && type != BCACHE_SB_VERSION_CDEV_WITH_FEATURES) {
+ 			fprintf(stderr, "%s is not an cache device\n", cdev);
+ 			return 1;
+ 		}
+@@ -359,10 +362,13 @@ int main(int argc, char **argv)
+ 		ret = detail_dev(devname, &bd, &cd, NULL, &type);
+ 		if (ret != 0)
+ 			return ret;
+-		if (type == BCACHE_SB_VERSION_BDEV) {
++		if (type == BCACHE_SB_VERSION_BDEV
++		    || type == BCACHE_SB_VERSION_BDEV_WITH_OFFSET
++		    || type == BCACHE_SB_VERSION_BDEV_WITH_FEATURES) {
+ 			return stop_backdev(devname);
+ 		} else if (type == BCACHE_SB_VERSION_CDEV
+-			   || type == BCACHE_SB_VERSION_CDEV_WITH_UUID) {
++			   || type == BCACHE_SB_VERSION_CDEV_WITH_UUID
++			   || type == BCACHE_SB_VERSION_CDEV_WITH_FEATURES) {
+ 			return unregister_cset(cd.base.cset);
+ 		}
+ 		return 1;
+@@ -408,7 +414,8 @@ int main(int argc, char **argv)
+ 			return ret;
+ 		}
+ 		if (type != BCACHE_SB_VERSION_BDEV
+-		    && type != BCACHE_SB_VERSION_BDEV_WITH_OFFSET) {
++		    && type != BCACHE_SB_VERSION_BDEV_WITH_OFFSET
++		    && type != BCACHE_SB_VERSION_BDEV_WITH_FEATURES) {
+ 			fprintf(stderr,
+ 				"Only backend device is suppported\n");
+ 			return 1;
+@@ -434,7 +441,8 @@ int main(int argc, char **argv)
+ 			return ret;
+ 		}
+ 		if (type != BCACHE_SB_VERSION_BDEV
+-		    && type != BCACHE_SB_VERSION_BDEV_WITH_OFFSET) {
++		    && type != BCACHE_SB_VERSION_BDEV_WITH_OFFSET
++		    && type != BCACHE_SB_VERSION_BDEV_WITH_FEATURES) {
+ 			fprintf(stderr,
+ 				"Only backend device is suppported\n");
+ 			return 1;
+diff --git a/bcache.h b/bcache.h
+index 2ae25ee..b10d4c0 100644
+--- a/bcache.h
++++ b/bcache.h
+@@ -164,7 +164,8 @@ struct cache_sb {
+ static inline bool SB_IS_BDEV(const struct cache_sb *sb)
+ {
+ 	return sb->version == BCACHE_SB_VERSION_BDEV
+-		|| sb->version == BCACHE_SB_VERSION_BDEV_WITH_OFFSET;
++		|| sb->version == BCACHE_SB_VERSION_BDEV_WITH_OFFSET
++		|| sb->version == BCACHE_SB_VERSION_BDEV_WITH_FEATURES;
+ }
+ 
+ BITMASK(CACHE_SYNC,		struct cache_sb, flags, 0, 1);
+diff --git a/lib.c b/lib.c
+index 745dab6..ea1f18d 100644
+--- a/lib.c
++++ b/lib.c
+@@ -281,10 +281,12 @@ int get_dev_bname(char *devname, char *bname)
+ int get_bname(struct dev *dev, char *bname)
+ {
+ 	if (dev->version == BCACHE_SB_VERSION_CDEV
+-	    || dev->version == BCACHE_SB_VERSION_CDEV_WITH_UUID)
++	    || dev->version == BCACHE_SB_VERSION_CDEV_WITH_UUID
++	    || dev->version == BCACHE_SB_VERSION_CDEV_WITH_FEATURES)
+ 		strcpy(bname, BCACHE_NO_SUPPORT);
+ 	else if (dev->version == BCACHE_SB_VERSION_BDEV
+-		   || dev->version == BCACHE_SB_VERSION_BDEV_WITH_OFFSET)
++		 || dev->version == BCACHE_SB_VERSION_BDEV_WITH_OFFSET
++		 || dev->version == BCACHE_SB_VERSION_BDEV_WITH_FEATURES)
+ 		return get_dev_bname(dev->name, bname);
+ 	return 0;
+ }
+@@ -317,10 +319,12 @@ int get_backdev_attachpoint(char *devname, char *point)
+ int get_point(struct dev *dev, char *point)
+ {
+ 	if (dev->version == BCACHE_SB_VERSION_CDEV
+-	    || dev->version == BCACHE_SB_VERSION_CDEV_WITH_UUID)
++	    || dev->version == BCACHE_SB_VERSION_CDEV_WITH_UUID
++	    || dev->version == BCACHE_SB_VERSION_CDEV_WITH_FEATURES)
+ 		strcpy(point, BCACHE_NO_SUPPORT);
+ 	else if (dev->version == BCACHE_SB_VERSION_BDEV
+-		   || dev->version == BCACHE_SB_VERSION_BDEV_WITH_OFFSET)
++		 || dev->version == BCACHE_SB_VERSION_BDEV_WITH_OFFSET
++		 || dev->version == BCACHE_SB_VERSION_BDEV_WITH_FEATURES)
+ 		return get_backdev_attachpoint(dev->name, point);
+ 	return 0;
+ }
+@@ -331,7 +335,8 @@ int cset_to_devname(struct list_head *head, char *cset, char *devname)
+ 
+ 	list_for_each_entry(dev, head, dev_list) {
+ 		if ((dev->version == BCACHE_SB_VERSION_CDEV
+-		     || dev->version == BCACHE_SB_VERSION_CDEV_WITH_UUID)
++		     || dev->version == BCACHE_SB_VERSION_CDEV_WITH_UUID
++		     || dev->version == BCACHE_SB_VERSION_CDEV_WITH_FEATURES)
+ 		    && strcmp(dev->cset, cset) == 0)
+ 			strcpy(devname, dev->name);
+ 	}
 diff --git a/make.c b/make.c
-index 34d8011..39b381a 100644
+index 39b381a..d3b4baa 100644
 --- a/make.c
 +++ b/make.c
-@@ -402,6 +402,18 @@ static void write_sb(char *dev, struct sb_context *sbc, bool bdev, bool force)
- 		       (unsigned int) sb.version,
- 		       sb.block_size,
- 		       data_offset);
-+
-+		/* Attempting to discard backing device
-+		 */
-+		if (discard) {
-+			if (blkdiscard_all(dev, fd) < 0) {
-+				fprintf(stderr,
-+					"Failed to discard device %s, %s\n",
-+					dev, strerror(errno));
-+				exit(EXIT_FAILURE);
-+			}
-+		}
-+
- 		putchar('\n');
- 	} else {
- 		if (nvdimm_meta)
-@@ -446,8 +458,15 @@ static void write_sb(char *dev, struct sb_context *sbc, bool bdev, bool force)
- 
- 		/* Attempting to discard cache device
- 		 */
--		if (discard)
--			blkdiscard_all(dev, fd);
-+		if (discard) {
-+			if (blkdiscard_all(dev, fd) < 0) {
-+				fprintf(stderr,
-+					"Failed to discard device %s, %s\n",
-+					dev, strerror(errno));
-+				exit(EXIT_FAILURE);
-+			}
-+		}
-+
- 		putchar('\n');
- 	}
- 
-@@ -660,21 +679,27 @@ static unsigned int get_blocksize(const char *path)
- int make_bcache(int argc, char **argv)
- {
- 	int c;
--	unsigned int i;
-+	unsigned int i, n;
- 	int cdev = -1, bdev = -1, mdev = -1;
- 	unsigned int ncache_devices = 0, ncache_nvm_devices = 0;
- 	unsigned int nbacking_devices = 0;
- 	char *cache_devices[argc];
- 	char *cache_nvm_devices[argc];
- 	char *backing_devices[argc];
-+	bool cache_devices_discard[argc];
-+	bool backing_devices_discard[argc];
-+	bool *device_discard = NULL;
- 	char label[SB_LABEL_SIZE] = { 0 };
- 	unsigned int block_size = 0, bucket_size = 1024;
--	int writeback = 0, discard = 0, wipe_bcache = 0, force = 0;
-+	int writeback = 0, wipe_bcache = 0, force = 0;
- 	unsigned int cache_replacement_policy = 0;
- 	uint64_t data_offset = BDEV_DATA_START_DEFAULT;
- 	uuid_t set_uuid;
- 	struct sb_context sbc;
- 
-+	memset(cache_devices_discard, 0, sizeof(cache_devices_discard));
-+	memset(backing_devices_discard, 0, sizeof(backing_devices_discard));
-+
- 	uuid_generate(set_uuid);
- 
- 	struct option opts[] = {
-@@ -685,10 +710,8 @@ int make_bcache(int argc, char **argv)
- 		{ "block",		1, NULL,	'w' },
- 		{ "writeback",		0, &writeback,	1 },
- 		{ "wipe-bcache",	0, &wipe_bcache,	1 },
--		{ "discard",		0, &discard,	1 },
--		{ "cache_replacement_policy", 1, NULL, 'p' },
-+		{ "discard",		0, NULL,	'd' },
- 		{ "cache-replacement-policy", 1, NULL, 'p' },
--		{ "data_offset",	1, NULL,	'o' },
- 		{ "data-offset",	1, NULL,	'o' },
- 		{ "cset-uuid",		1, NULL,	'u' },
- 		{ "help",		0, NULL,	'h' },
-@@ -710,6 +733,10 @@ int make_bcache(int argc, char **argv)
- 		case 'M':
- 			mdev = 1;
- 			break;
-+		case 'd':
-+			if (device_discard)
-+				*device_discard = true;
-+			break;
- 		case 'b':
- 			bucket_size =
- 				hatoi_validate(optarg, "bucket size", UINT_MAX);
-@@ -762,15 +789,20 @@ int make_bcache(int argc, char **argv)
- 			}
- 
- 			if (bdev > 0) {
--				backing_devices[nbacking_devices++] = optarg;
--				printf("backing_devices[%d]: %s\n", nbacking_devices - 1, optarg);
-+				n = nbacking_devices++;
-+				backing_devices[n] = optarg;
-+				printf("backing_devices[%d]: %s\n", n, optarg);
-+				device_discard = &backing_devices_discard[n];
- 				bdev = -1;
- 			} else if (cdev > 0) {
--				cache_devices[ncache_devices++] = optarg;
--				printf("cache_devices[%d]: %s\n", ncache_devices - 1, optarg);
-+				n = ncache_devices++;
-+				cache_devices[n] = optarg;
-+				printf("cache_devices[%d]: %s\n", n, optarg);
-+				device_discard = &cache_devices_discard[n];
- 				cdev = -1;
- 			} else if (mdev > 0) {
--				cache_nvm_devices[ncache_nvm_devices++] = optarg;
-+				n = ncache_nvm_devices++;
-+				cache_nvm_devices[n] = optarg;
- 				mdev = -1;
- 			}
- 			break;
-@@ -806,7 +838,6 @@ int make_bcache(int argc, char **argv)
- 	sbc.block_size = block_size;
- 	sbc.bucket_size = bucket_size;
- 	sbc.writeback = writeback;
--	sbc.discard = discard;
- 	sbc.wipe_bcache = wipe_bcache;
- 	sbc.cache_replacement_policy = cache_replacement_policy;
- 	sbc.data_offset = data_offset;
-@@ -814,13 +845,16 @@ int make_bcache(int argc, char **argv)
- 	sbc.label = label;
- 	sbc.nvdimm_meta = (ncache_nvm_devices > 0) ? true : false;
- 
--	for (i = 0; i < ncache_devices; i++)
-+	for (i = 0; i < ncache_devices; i++) {
-+		sbc.discard = cache_devices_discard[i];
- 		write_sb(cache_devices[i], &sbc, false, force);
-+	}
- 
- 	for (i = 0; i < nbacking_devices; i++) {
- 		check_data_offset_for_zoned_device(backing_devices[i],
- 						   &sbc.data_offset);
- 
-+		sbc.discard = backing_devices_discard[i];
- 		write_sb(backing_devices[i], &sbc, true, force);
- 	}
- 
+@@ -272,10 +272,14 @@ static void write_sb(char *dev, struct sb_context *sbc, bool bdev, bool force)
+ 			ret = detail_dev(dev, &bd, &cd, NULL, &type);
+ 			if (ret != 0)
+ 				exit(EXIT_FAILURE);
+-			if (type == BCACHE_SB_VERSION_BDEV) {
++			if (type == BCACHE_SB_VERSION_BDEV
++			    || type == BCACHE_SB_VERSION_BDEV_WITH_OFFSET
++			    || type == BCACHE_SB_VERSION_BDEV_WITH_FEATURES) {
+ 				ret = stop_backdev(dev);
+ 			} else if (type == BCACHE_SB_VERSION_CDEV
+-				|| type == BCACHE_SB_VERSION_CDEV_WITH_UUID) {
++				   || type == BCACHE_SB_VERSION_CDEV_WITH_UUID
++				   || type ==
++				   BCACHE_SB_VERSION_CDEV_WITH_FEATURES) {
+ 				ret = unregister_cset(cd.base.cset);
+ 			} else {
+ 				fprintf(stderr,
+diff --git a/show.c b/show.c
+index 6175f3f..15cdb95 100644
+--- a/show.c
++++ b/show.c
+@@ -75,8 +75,9 @@ int show_bdevs_detail(void)
+ 		if (strlen(devs->attachuuid) == 36) {
+ 			cset_to_devname(&head, devs->cset, attachdev);
+ 		} else if (devs->version == BCACHE_SB_VERSION_CDEV
++			   || devs->version == BCACHE_SB_VERSION_CDEV_WITH_UUID
+ 			   || devs->version ==
+-			   BCACHE_SB_VERSION_CDEV_WITH_UUID) {
++			   BCACHE_SB_VERSION_CDEV_WITH_FEATURES) {
+ 			strcpy(attachdev, BCACHE_NO_SUPPORT);
+ 		} else {
+ 			strcpy(attachdev, BCACHE_ATTACH_ALONE);
+@@ -135,8 +136,9 @@ int show_bdevs(void)
+ 		if (strlen(devs->attachuuid) == 36) {
+ 			cset_to_devname(&head, devs->cset, attachdev);
+ 		} else if (devs->version == BCACHE_SB_VERSION_CDEV
++			   || devs->version == BCACHE_SB_VERSION_CDEV_WITH_UUID
+ 			   || devs->version ==
+-			   BCACHE_SB_VERSION_CDEV_WITH_UUID) {
++			   BCACHE_SB_VERSION_CDEV_WITH_FEATURES) {
+ 			strcpy(attachdev, BCACHE_NO_SUPPORT);
+ 		} else {
+ 			strcpy(attachdev, BCACHE_ATTACH_ALONE);
 -- 
 1.8.3.1
 
