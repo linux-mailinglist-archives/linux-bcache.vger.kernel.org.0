@@ -2,32 +2,32 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3944D3DFEF3
-	for <lists+linux-bcache@lfdr.de>; Wed,  4 Aug 2021 12:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45C063DFEFA
+	for <lists+linux-bcache@lfdr.de>; Wed,  4 Aug 2021 12:06:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236414AbhHDKG1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 4 Aug 2021 06:06:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50986 "EHLO
+        id S237405AbhHDKHB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 4 Aug 2021 06:07:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235066AbhHDKG0 (ORCPT
+        with ESMTP id S232707AbhHDKG7 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 4 Aug 2021 06:06:26 -0400
+        Wed, 4 Aug 2021 06:06:59 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4A3DC0613D5;
-        Wed,  4 Aug 2021 03:06:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61AB9C0613D5;
+        Wed,  4 Aug 2021 03:06:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=MYjzWIN6XQEFICmldZLH3sdyvOqOWK9wZMA+6ihrUcA=; b=O7IBlhny6ifqtHjxI13sOJWXUs
-        eeyTtmk4QewshMsEtOW3eNvrRQdNTcXOqBxV3+wJs6R9AS4qvUGsrAbhJOf5pIfAicSiQG7xPlYoE
-        t+emk+wZ437kh/Dkf98G6hRKjtjigq73lKnJTtZVrWzzNyhvnyouHG6kCdQuqD4YYZ0AIOgCBLbif
-        O8hVmpGx7+skcpmL0Q4/OraMOJuqr0hM3s6GRzB40hkeNoAwdK/wELmR3ASeiq4pCL6TaK3mp0BIF
-        orbY/uIw8fuLR4GQAqS5iVsyFQ5ZJvfJ+12oftCbUxX0/Gj3WN49MT2HDXMh9xeeaimKyiag4GfBO
-        nS8YaNXg==;
+        bh=dYcXyjvxFPaNEf5TNwLHSpdHad4RJoLUYH/Eh2LY224=; b=M53rJ+CQ8lQ4cD7WtCKS/GnMEp
+        odCybjbHRrL6lXoV/C4xRLyzI3taQPoI5jeicWaJKCFztdZWjTcUyCISpGMaPta3MOa/dW3GPAJXi
+        NZizDS/+2ezXcfB4Z5v0ipw/q8fzOnp+93V+AIQSmf+Um+lCBP3IQuVu9DH4qzGA4odDqxR6+Dbyq
+        jbtPWT4pJbPEsvgX4jFyWinGFi+017VlG4xfdXAJqDMjWiB0Tewr9GBWCVI24qNaCZOnnXM5pag4g
+        rZhKGgG18ckW2QamG0HaY188YH4xbwMuGQhuQRojd55CrYDHWEzPTM9PBroO1FVr7G6wqdCzH8FTF
+        TxAjFTOQ==;
 Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mBDkP-005fZa-K7; Wed, 04 Aug 2021 10:03:49 +0000
+        id 1mBDlD-005fg4-2r; Wed, 04 Aug 2021 10:04:34 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Richard Weinberger <richard@nod.at>,
@@ -47,9 +47,9 @@ Cc:     Richard Weinberger <richard@nod.at>,
         linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
         linux-scsi@vger.kernel.org
-Subject: [PATCH 09/15] bcache: use bvec_virt
-Date:   Wed,  4 Aug 2021 11:56:28 +0200
-Message-Id: <20210804095634.460779-10-hch@lst.de>
+Subject: [PATCH 10/15] sd: use bvec_virt
+Date:   Wed,  4 Aug 2021 11:56:29 +0200
+Message-Id: <20210804095634.460779-11-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210804095634.460779-1-hch@lst.de>
 References: <20210804095634.460779-1-hch@lst.de>
@@ -60,28 +60,26 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Use bvec_virt instead of open coding it.  Note that the existing code is
-fine despite ignoring bv_offset as the bio is known to contain exactly
-one page from the page allocator per bio_vec.
+Use bvec_virt instead of open coding it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/md/bcache/btree.c | 2 +-
+ drivers/scsi/sd.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 183a58c89377..0595559de174 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -378,7 +378,7 @@ static void do_btree_node_write(struct btree *b)
- 		struct bvec_iter_all iter_all;
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index b8d55af763f9..5b5b8266e142 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -886,7 +886,7 @@ static blk_status_t sd_setup_unmap_cmnd(struct scsi_cmnd *cmd)
+ 	cmd->cmnd[0] = UNMAP;
+ 	cmd->cmnd[8] = 24;
  
- 		bio_for_each_segment_all(bv, b->bio, iter_all) {
--			memcpy(page_address(bv->bv_page), addr, PAGE_SIZE);
-+			memcpy(bvec_virt(bv), addr, PAGE_SIZE);
- 			addr += PAGE_SIZE;
- 		}
- 
+-	buf = page_address(rq->special_vec.bv_page);
++	buf = bvec_virt(&rq->special_vec);
+ 	put_unaligned_be16(6 + 16, &buf[0]);
+ 	put_unaligned_be16(16, &buf[2]);
+ 	put_unaligned_be64(lba, &buf[8]);
 -- 
 2.30.2
 
