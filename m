@@ -2,32 +2,32 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A01F53DFF23
-	for <lists+linux-bcache@lfdr.de>; Wed,  4 Aug 2021 12:10:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 287E83DFF34
+	for <lists+linux-bcache@lfdr.de>; Wed,  4 Aug 2021 12:12:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236822AbhHDKKK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 4 Aug 2021 06:10:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51860 "EHLO
+        id S237472AbhHDKMS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 4 Aug 2021 06:12:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236492AbhHDKKH (ORCPT
+        with ESMTP id S237586AbhHDKLC (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 4 Aug 2021 06:10:07 -0400
+        Wed, 4 Aug 2021 06:11:02 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5115DC0613D5;
-        Wed,  4 Aug 2021 03:09:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F5A3C0617A0;
+        Wed,  4 Aug 2021 03:10:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=6DgUtwKNyR1a0g7YYdfnNpZ/CC1UQP+ErbVil3kCh1c=; b=hZg7Heuoi1cW7PM8NkA+rSJm9t
-        I2KlL1Sq8tSDfak/FYjW0iTlFpdM5JzQt+VxoIwm3u6Cf0t5JALt5DeWfL4rLzTCjZs067eyLYZLM
-        oAktJ5QR1BLAByF6wFWgdt4Vf1Khj9xH1AL98dEMW+T87DmVpV4fRP4C7bDFj9sy6O3iVhyU//xl6
-        P6JCchl+81L6Iok4jXIyH34HXYiPyikdLQOYd+laX0rbeAjKMSfl89ueQtR3ycxjZ4FbfjSD8Ew5Y
-        CAibi0DxATQ3bTiNdF5b7p1AIZ6NMjq/rlAWEiXu+FBq1odEVzUr/20Am2cHt5372vzKoxOhgZisY
-        TVzqe11g==;
+        bh=GMfM9EsZUBHncaik750rjQrck1K0EDt7Zyd8DyDsQR8=; b=tr+JWjNanWktxua2tu8KBEVQPM
+        VyctgS15pe259rzKfF5Cnl9zsGOZwGuYm9KKXEG9KkVU/OXjXmoutUxD3KtVa1hc7sIzDOL0xBHg6
+        ouWKg49YE/w0a3I/5CyE5im2/IkgIt5h36qDG6iEVKLdm0bYYEaWZQNNpQ3/ly3BhHTT+VGChTRSA
+        t1t4AV538fKbiuL2Yzgst/hi/JUFHCOzwHqdzg8ut46IDHJ3Z60UfyB0/ffmOuu7Ku3k+weyK559G
+        73X58xMPec7XJUSNLOyS/qJ7yYdzHQEljjfYG426vMaByMMBIZ1fvI2CSO1n9hwhGNLZQ/aY/Dvn+
+        uR6ZApew==;
 Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mBDnx-005g2S-Sm; Wed, 04 Aug 2021 10:07:32 +0000
+        id 1mBDoj-005g7I-Ho; Wed, 04 Aug 2021 10:08:23 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Richard Weinberger <richard@nod.at>,
@@ -47,9 +47,9 @@ Cc:     Richard Weinberger <richard@nod.at>,
         linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
         linux-scsi@vger.kernel.org
-Subject: [PATCH 14/15] dcssblk: use bvec_virt
-Date:   Wed,  4 Aug 2021 11:56:33 +0200
-Message-Id: <20210804095634.460779-15-hch@lst.de>
+Subject: [PATCH 15/15] nvme: use bvec_virt
+Date:   Wed,  4 Aug 2021 11:56:34 +0200
+Message-Id: <20210804095634.460779-16-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210804095634.460779-1-hch@lst.de>
 References: <20210804095634.460779-1-hch@lst.de>
@@ -64,23 +64,28 @@ Use bvec_virt instead of open coding it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/s390/block/dcssblk.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/nvme/host/core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
-index 29180bdf0977..5be3d1c39a78 100644
---- a/drivers/s390/block/dcssblk.c
-+++ b/drivers/s390/block/dcssblk.c
-@@ -892,8 +892,7 @@ dcssblk_submit_bio(struct bio *bio)
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index dfd9dec0c1f6..02ce94b2906b 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -968,12 +968,11 @@ void nvme_cleanup_cmd(struct request *req)
+ {
+ 	if (req->rq_flags & RQF_SPECIAL_PAYLOAD) {
+ 		struct nvme_ctrl *ctrl = nvme_req(req)->ctrl;
+-		struct page *page = req->special_vec.bv_page;
  
- 	index = (bio->bi_iter.bi_sector >> 3);
- 	bio_for_each_segment(bvec, bio, iter) {
--		page_addr = (unsigned long)
--			page_address(bvec.bv_page) + bvec.bv_offset;
-+		page_addr = (unsigned long)bvec_virt(&bvec);
- 		source_addr = dev_info->start + (index<<12) + bytes_done;
- 		if (unlikely((page_addr & 4095) != 0) || (bvec.bv_len & 4095) != 0)
- 			// More paranoia.
+-		if (page == ctrl->discard_page)
++		if (req->special_vec.bv_page == ctrl->discard_page)
+ 			clear_bit_unlock(0, &ctrl->discard_page_busy);
+ 		else
+-			kfree(page_address(page) + req->special_vec.bv_offset);
++			kfree(bvec_virt(&req->special_vec));
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(nvme_cleanup_cmd);
 -- 
 2.30.2
 
