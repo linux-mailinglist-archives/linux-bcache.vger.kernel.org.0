@@ -2,75 +2,66 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C93B73DCF3F
-	for <lists+linux-bcache@lfdr.de>; Mon,  2 Aug 2021 06:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A7103DFE81
+	for <lists+linux-bcache@lfdr.de>; Wed,  4 Aug 2021 11:59:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230525AbhHBEYM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 2 Aug 2021 00:24:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43578 "EHLO
+        id S237269AbhHDJ7Q (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 4 Aug 2021 05:59:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbhHBEYL (ORCPT
+        with ESMTP id S236659AbhHDJ7M (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 2 Aug 2021 00:24:11 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F874C061796
-        for <linux-bcache@vger.kernel.org>; Sun,  1 Aug 2021 21:23:58 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id x90so22642318ede.8
-        for <linux-bcache@vger.kernel.org>; Sun, 01 Aug 2021 21:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=JbMtpdZj7sghISs4e5T5yryQDvERMuYalazmdQP0RcA=;
-        b=czeOQMYeZau4ejaBbgDdCuklRCyHoHRlo6xUfJcAj3bciaGtFBitiUib5a5MwOumE9
-         w7/Jn7bBNsLcP1+CHZ7cIXH8h+QOe2ioJtROZD2bqhS/lqEvaNcrldVE+LZBhK9CNKw9
-         GasUZeZx/Kcocc9jX4O3VqyeOrpbJXFle0t9OXPFTLvjA0ffc0WpqgkYu8CQSXrFRLzD
-         Yc8UR7mKpLCqpwn4ZFojN5x09EwrnOTDpyVyuL9REZStwkguR4uL/4srDE+vjWW4JCu8
-         Sy5z9ei3l3c7g9TC5s6E8Wj1tuL0hGAP5lkkVvlHQCNnMoccEAC8Z+koQ2tbRnEruEUY
-         O8Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=JbMtpdZj7sghISs4e5T5yryQDvERMuYalazmdQP0RcA=;
-        b=id2o+lCsdW/VBUz8CsxK1RA3yDb3cMhIpz4HifzZP11kaMn63hG8ZeKlwaGmDx3AtB
-         W1nteX/gF2K2DMX79vgCNVs+FSxsjx7IgQz/SkYwHQfjpHg6e3mqlxK2uhj7e7uiTqkJ
-         nsPqC560kyWl/Wcfa/o5xz6lpR/Y1dGiVqn+B97debtFtF+7+5EmSSX3asPyGMYcyK2E
-         pjj3Yrtiw4Ew+L0xCzYFrhpyXTBxlyeOknobFOOFql8llr24dcKJahFKNegaRBzD0EYi
-         ikSXW9LzC+Y+7e/tiGb/KoP/R08LtaGTSIQhoOYw8nWFwO26gJk9sRF4DGMThdr+HTyH
-         rYFw==
-X-Gm-Message-State: AOAM532xPAFgi+JATAvcTgS3new3Tt/MuEJ18RPGshNvY3fT72AR2V66
-        sSCRndV7/vLVb7y9ecMNp2oDPWPtWBNqbBUn2WM=
-X-Google-Smtp-Source: ABdhPJxItSnYdNOJr/eCcDJG9Ed81FEJCtux30e3VMRN30hf/TzQyuXNRWDf+H2IgaMscJY+xnmH/x8e0HLuRnwx6WI=
-X-Received: by 2002:a50:d70a:: with SMTP id t10mr16749153edi.253.1627878237019;
- Sun, 01 Aug 2021 21:23:57 -0700 (PDT)
+        Wed, 4 Aug 2021 05:59:12 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE59CC0613D5;
+        Wed,  4 Aug 2021 02:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=iCTES/jGTKt1OfjMrhlawZMqwAYC0jLr5onZbcA+m34=; b=MDee0jbdda1PrONJpVeGXBHuy2
+        LiDExJ1f33ybqwNU2QnJ/zuXxPMiScGpo40hRx6L4ii8AUAzsuebyiUWtS9zvLF7q+Ka5kMVTDPh9
+        GcqOhcoXzHpVJ+dojfU8bSR3PX0eP54r+VDeH1/tOCEmdw6dAQl8OEBaZTEuHkJnXx6jJm5kLbPO4
+        IVqrFUlh+79JwZstyhZObANnUAWrLsC2zqzgIT9gSEEWEajGiCV6n5zEByE225A3OuRC9YJoaOlyn
+        VgMpMPa2NomKilnlgfwNo3r/5Rf0MeeVqrrcgekL/QJNSydK2F0Ww0wJ4ImIooU5q76l6VltgmP8Y
+        K5ofBj+g==;
+Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mBDdb-005eoq-AF; Wed, 04 Aug 2021 09:56:44 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Geoff Levand <geoff@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Song Liu <song@kernel.org>, Mike Snitzer <snitzer@redhat.com>,
+        Coly Li <colyli@suse.de>, Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Subject: add a bvec_virt helper
+Date:   Wed,  4 Aug 2021 11:56:19 +0200
+Message-Id: <20210804095634.460779-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Received: by 2002:a17:907:d0b:0:0:0:0 with HTTP; Sun, 1 Aug 2021 21:23:56
- -0700 (PDT)
-Reply-To: ablahikazabl67@gmail.com
-From:   Abdoulahi Kazim <drwilliamcuthbert@gmail.com>
-Date:   Mon, 2 Aug 2021 05:23:56 +0100
-Message-ID: <CAKwBCXvLzgfEHCKMKUxki4k1yYap9oH1ox=muoK9koBZXish5g@mail.gmail.com>
-Subject: More Authentic Information
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
--- 
-Dear Partner,
+Hi Jens,
 
-I am soliciting your partnership to relocate $12.5 Million to your
-country for investment on my behalf and you will be entitled to 30% of
-the sum once the transaction is successful made.
-
-Please indicate your genuine interest if you are capable so that i
-will send you the authentic details and documents of the transaction
-in awareness with some of my fellow Directors in the bank.
-
-If you are interested, here is my private Email address:
-(ablahikazabl67@gmail.com)
-For more authentic and legit information.
-
-
-Regards :  Abdoulahi Kazim
+this series adds a bvec_virt helper to return the virtual address of the
+data in bvec to replace the open coded calculation, and as a reminder
+that generall bio/bvec data can be in high memory unless it is caller
+controller or in an architecture specific driver where highmem is
+impossible.
