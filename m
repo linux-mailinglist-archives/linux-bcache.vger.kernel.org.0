@@ -2,100 +2,107 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A95313E16C7
-	for <lists+linux-bcache@lfdr.de>; Thu,  5 Aug 2021 16:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A413C3E1990
+	for <lists+linux-bcache@lfdr.de>; Thu,  5 Aug 2021 18:31:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240451AbhHEOSW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 5 Aug 2021 10:18:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56441 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240436AbhHEOSW (ORCPT
+        id S235426AbhHEQb5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 5 Aug 2021 12:31:57 -0400
+Received: from mail-pj1-f44.google.com ([209.85.216.44]:56138 "EHLO
+        mail-pj1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235024AbhHEQb0 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 5 Aug 2021 10:18:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628173087;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CgTtaO9aoRpCiTYl9JW5StPBedgaEjV6BwrhWwCNWbE=;
-        b=ObCrZoAvBCWnS3OzXauXmGkt+Oo00XSKI2oLhf1Q9LRbimBCoDlSKVxyfpb94hULet9Pv0
-        mU0ur1DGFgYfXwrGsnWn+AcwnYPntH4y+dFvZlx3orYymGpCIg/Czp3mTc997W5O8QuLeV
-        W8AXdLp69E01NjbSNNOULAf/DXngilA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-121-c6z6JEHGMJe0DH8ARyr-fg-1; Thu, 05 Aug 2021 10:18:04 -0400
-X-MC-Unique: c6z6JEHGMJe0DH8ARyr-fg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F369693925;
-        Thu,  5 Aug 2021 14:18:00 +0000 (UTC)
-Received: from localhost (unknown [10.39.193.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A98375D6A1;
-        Thu,  5 Aug 2021 14:17:52 +0000 (UTC)
-Date:   Thu, 5 Aug 2021 15:17:51 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Geoff Levand <geoff@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Song Liu <song@kernel.org>, Mike Snitzer <snitzer@redhat.com>,
-        Coly Li <colyli@suse.de>, Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
+        Thu, 5 Aug 2021 12:31:26 -0400
+Received: by mail-pj1-f44.google.com with SMTP id ca5so10130954pjb.5;
+        Thu, 05 Aug 2021 09:31:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hHUTsKDnxap0EiJI1vbHiNIpoH+R0H2TboThtqpCWSc=;
+        b=lhkCxai7p7X3kxlL+3aFu4AkkT/AuEAkn4qjbZ5qp7nA2Ve4sA9kaHiXjwKbegxXxl
+         bdDFiS35OADff4FyLBYrr+MIJOFxvC/z7uIma/WqUWN1gR75oE51jG8z+0DV9FY9iVtA
+         AhaUsltZUkl0UcQPG3YZUVQf2mtUqZ1BQQZOQ7AgxpNXQ2dIFZA+stbDCUHxi0jyB8r1
+         YtF5f/F0OSHgERAttAZpWuSdVMauY8O/qRqs0YXTBkaF6kSCTIebS9eQC6VAu2cNynsK
+         r1vGbFMBECcXVlYtH9t72lBoIqfxq2qqw/4YyJZMQR5E2j5SaGAHtoDExfDtYwSi/Pn/
+         7NIw==
+X-Gm-Message-State: AOAM532NVQvi01jv+RTHcRVQQEM2540eDDCJlxLSDDFCCq3csShDM8I/
+        3CXxi/n2nx1Fkt/eca0RHO8=
+X-Google-Smtp-Source: ABdhPJyCuisk5RzZy6da7AsZoR/DaZLZHn4oZn9ITXuwK2Rjv1pBKXahTV8aXSruiOZbF6hVQSA8vQ==
+X-Received: by 2002:a17:90a:9f91:: with SMTP id o17mr15924247pjp.29.1628181071870;
+        Thu, 05 Aug 2021 09:31:11 -0700 (PDT)
+Received: from bvanassche-linux.mtv.corp.google.com ([2620:15c:211:1:93c2:eaf5:530d:627d])
+        by smtp.gmail.com with ESMTPSA id r4sm6334361pjo.46.2021.08.05.09.31.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Aug 2021 09:31:10 -0700 (PDT)
+Subject: Re: [dm-devel] [PATCH 10/15] sd: use bvec_virt
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        linux-nvme@lists.infradead.org,
         virtualization@lists.linux-foundation.org,
+        Song Liu <song@kernel.org>, dm-devel@redhat.com,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        linux-um@lists.infradead.org, Coly Li <colyli@suse.de>,
         linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH 08/15] virtio_blk: use bvec_virt
-Message-ID: <YQvzD4FlF7+AgrSw@stefanha-x1.localdomain>
+        Stefan Haberland <sth@linux.ibm.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Geoff Levand <geoff@infradead.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>
 References: <20210804095634.460779-1-hch@lst.de>
- <20210804095634.460779-9-hch@lst.de>
+ <20210804095634.460779-11-hch@lst.de>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <8b487c0f-71be-19d6-249c-9cd1ba228548@acm.org>
+Date:   Thu, 5 Aug 2021 09:31:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZDhkEMoj7rmqL+Fh"
-Content-Disposition: inline
-In-Reply-To: <20210804095634.460779-9-hch@lst.de>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <20210804095634.460779-11-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-
---ZDhkEMoj7rmqL+Fh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 04, 2021 at 11:56:27AM +0200, Christoph Hellwig wrote:
+On 8/4/21 2:56 AM, Christoph Hellwig wrote:
 > Use bvec_virt instead of open coding it.
->=20
+> 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  drivers/block/virtio_blk.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+>   drivers/scsi/sd.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index b8d55af763f9..5b5b8266e142 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -886,7 +886,7 @@ static blk_status_t sd_setup_unmap_cmnd(struct scsi_cmnd *cmd)
+>   	cmd->cmnd[0] = UNMAP;
+>   	cmd->cmnd[8] = 24;
+>   
+> -	buf = page_address(rq->special_vec.bv_page);
+> +	buf = bvec_virt(&rq->special_vec);
+>   	put_unaligned_be16(6 + 16, &buf[0]);
+>   	put_unaligned_be16(16, &buf[2]);
+>   	put_unaligned_be64(lba, &buf[8]);
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+The patch description is not correct. The above patch involves a 
+functional change while the patch description suggests that no 
+functionality has been changed.
 
---ZDhkEMoj7rmqL+Fh
-Content-Type: application/pgp-signature; name="signature.asc"
+Although the above patch looks fine to me, why has page_address() been 
+changed into bvec_virt() in the sd driver? My understanding is that the 
+sd driver always sets bv_offset to zero.
 
------BEGIN PGP SIGNATURE-----
+Thanks,
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmEL8w8ACgkQnKSrs4Gr
-c8jPdgf+PcMouWs94g0uS6wpaN9fVvtvzsyRrLa0a4jPqggbtSulcjUYQzYZ9BGX
-1xnrp3ABDt4KhYhX+iAsAxc4LmWEAYUruE6WxqsxaPKE19XcFuwM/tpwcv5U8/x+
-2GvsXderla2RbbwTzdCFUf1m538Dw+eqH8+6Dt0Q6QjCC4EAX3ubWU+pX0K5rLNX
-d7M7JCyOzOdU/VJYYVQDs1Vkpu/2AFtQT+hnq7veWzgQD+iFkLNZUEBVFm4jRbkC
-5cfC+IUVtDkCjhD2offyhX+djtvDy5IZAnHEMv/ulIMmCzc0o1VgEy/5zNiKnjgg
-5CdxbrfAKcA734P4gNIy/UD+hGlM6g==
-=Cztj
------END PGP SIGNATURE-----
+Bart.
 
---ZDhkEMoj7rmqL+Fh--
 
