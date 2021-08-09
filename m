@@ -2,32 +2,32 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1115D3E4068
-	for <lists+linux-bcache@lfdr.de>; Mon,  9 Aug 2021 08:45:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 221223E406F
+	for <lists+linux-bcache@lfdr.de>; Mon,  9 Aug 2021 08:46:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233427AbhHIGqE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 9 Aug 2021 02:46:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51506 "EHLO
+        id S233289AbhHIGrR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 9 Aug 2021 02:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233278AbhHIGqE (ORCPT
+        with ESMTP id S233274AbhHIGrR (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 9 Aug 2021 02:46:04 -0400
+        Mon, 9 Aug 2021 02:47:17 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63DEDC0613D3;
-        Sun,  8 Aug 2021 23:45:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E8BAC0613D3;
+        Sun,  8 Aug 2021 23:46:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=NyjYltYC/raPlF4XHxY3F3mjS/roqOl5OXN2A+UG0sI=; b=XZ6Fe+c5WNOFVTjVMBbxBIYwan
-        kL5bvLiWDk3ACEJbkJIh5zEAbxuSN+MsbJDwesuoaxxImWmaxyXh/frS+U19dFu0G7r9/n+9tlNHz
-        VCtOyz+kJ/h1Nlx/nuaBBjuoeTAKm2ii/Hq0fHLb7IPwS6LMFgk7zoD/2UOlQpY+nt7yhpfPkGGLu
-        RaLw1uVCSJbyPY4Inv/2gCXwYecsVAxRjZdErcC0yH69I0/+GOkhPyqJo+w+anKm0FMDxNM7IV9IX
-        eZVSzPRvs1YMM4n1j+x0rg2PLhIiOU9w97Z8MeA3grTRsoWNxGe5o0odFl2MQkpEiCXhaaAoHSeWe
-        J8SpJHQg==;
+        bh=2PUg8TD54X+a+8A8rMLEejxIQ+qkWq2AjkJmKrVeDxw=; b=b4tOoPmwQd+crYJCpCx1iG9g4l
+        RlE6R1qccfuDeNqWl0NCLbSrEpI8/o22zI/ri0UPqsR/LvTzcdz+rDSB/AMzXpoYVgv4UcyfeZCKg
+        ZtEq5VNw8F/j/hQfVA+AZ6LP4rXNKRBpeqcCuC3Mwr08Hzlv4HRaR+d8viAlVr4qNU36T9vv0sEpz
+        IuCHhcPqquilvquiiSWmGF1DD7w5DEtzpjQi7uYEODw7XOGbguvZ2zk6TKZewHJ0DgYwuCZ6ILeV4
+        m2ypujmPZIeZjyHNoc7Ig3yIxz2Utee3+rA5P+44Zey8BhvISjqFHnlYYrzpGgePzxecsjxo6xQWV
+        +Q0Xdqow==;
 Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mCz1G-00Aild-HU; Mon, 09 Aug 2021 06:44:31 +0000
+        id 1mCz1y-00Aip9-5f; Mon, 09 Aug 2021 06:45:11 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Coly Li <colyli@suse.de>, Song Liu <song@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     Coly Li <colyli@suse.de>, Song Liu <song@kernel.org>,
         linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-nvme@lists.infradead.org
-Subject: [PATCH 4/8] nvme: replace the GENHD_FL_UP check in nvme_mpath_shutdown_disk
-Date:   Mon,  9 Aug 2021 08:40:24 +0200
-Message-Id: <20210809064028.1198327-5-hch@lst.de>
+Subject: [PATCH 5/8] sx8: use the internal state machine to check if del_gendisk needs to be called
+Date:   Mon,  9 Aug 2021 08:40:25 +0200
+Message-Id: <20210809064028.1198327-6-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210809064028.1198327-1-hch@lst.de>
 References: <20210809064028.1198327-1-hch@lst.de>
@@ -49,27 +49,27 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Use the nvme-internal NVME_NSHEAD_DISK_LIVE flag instead of abusing
-the block layer state.
+Remove usage of the block layer internal GENHD_FL_UP by just looking
+at the host state.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/nvme/host/multipath.c | 2 +-
+ drivers/block/sx8.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 3f32c5e86bfc..37ce3e8b1db2 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -765,7 +765,7 @@ void nvme_mpath_shutdown_disk(struct nvme_ns_head *head)
- 	if (!head->disk)
+diff --git a/drivers/block/sx8.c b/drivers/block/sx8.c
+index 7b54353ee92b..420cd952ddc4 100644
+--- a/drivers/block/sx8.c
++++ b/drivers/block/sx8.c
+@@ -1373,7 +1373,7 @@ static void carm_free_disk(struct carm_host *host, unsigned int port_no)
+ 	if (!disk)
  		return;
- 	kblockd_schedule_work(&head->requeue_work);
--	if (head->disk->flags & GENHD_FL_UP) {
-+	if (test_bit(NVME_NSHEAD_DISK_LIVE, &head->flags)) {
- 		nvme_cdev_del(&head->cdev, &head->cdev_device);
- 		del_gendisk(head->disk);
- 	}
+ 
+-	if (disk->flags & GENHD_FL_UP)
++	if (host->state > HST_DEV_ACTIVATE)
+ 		del_gendisk(disk);
+ 	blk_cleanup_disk(disk);
+ }
 -- 
 2.30.2
 
