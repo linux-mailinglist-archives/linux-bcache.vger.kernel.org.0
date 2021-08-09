@@ -2,194 +2,243 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90C043E407B
-	for <lists+linux-bcache@lfdr.de>; Mon,  9 Aug 2021 08:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62D413E44E6
+	for <lists+linux-bcache@lfdr.de>; Mon,  9 Aug 2021 13:31:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233386AbhHIGuP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 9 Aug 2021 02:50:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52452 "EHLO
+        id S235200AbhHILbQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 9 Aug 2021 07:31:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233267AbhHIGuP (ORCPT
+        with ESMTP id S235183AbhHILbP (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 9 Aug 2021 02:50:15 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EB69C0613CF;
-        Sun,  8 Aug 2021 23:49:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=K2Uv5ue006I47lu2IjgV56o9UA3rTDZwUcup9SB25L4=; b=bJQHL3JhvOvIxfkQZMTpV7hYpq
-        Grk9Z1xhJ9w5VWJKwcyvoUaTM69dIAqHEJ+BK7Wb0p9LfpsqI7erQbkX2hPSRWHGUdhpYSDwnHqJk
-        yCqXDUTbJEPuC43nPVsKPmJ7+MEjQgmHW31YP38WuxXposcZl52+csW9QqErysbxgD1txY4bewrOx
-        9l6/QA/e2FVfN5TOTUdxAD1MDAHv7XeOGak6r+0pr22Y/j8sLcUnhYUoapWRZbpfSAAbYmIxya+MV
-        lEk6IdN+JdvtsbIXGNvtij+tsbqzEoR4wmw4YmQiaMTpg1RDn1UrUexEweJj3owqltZLkhKRqPs5l
-        xGqD4wAw==;
-Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mCz50-00Aj2V-Co; Mon, 09 Aug 2021 06:48:28 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Coly Li <colyli@suse.de>, Song Liu <song@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Subject: [PATCH 8/8] block: remove GENHD_FL_UP
-Date:   Mon,  9 Aug 2021 08:40:28 +0200
-Message-Id: <20210809064028.1198327-9-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210809064028.1198327-1-hch@lst.de>
-References: <20210809064028.1198327-1-hch@lst.de>
+        Mon, 9 Aug 2021 07:31:15 -0400
+Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8DA2C061799
+        for <linux-bcache@vger.kernel.org>; Mon,  9 Aug 2021 04:30:55 -0700 (PDT)
+Received: by mail-vs1-xe33.google.com with SMTP id e9so1934224vst.6
+        for <linux-bcache@vger.kernel.org>; Mon, 09 Aug 2021 04:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fOiX5Fq3KXnBSLuawZfkvyDmjzsFYZZ+98EOQpFNGTM=;
+        b=Uqs8Zs2QVxW19OPp6ZaYropMD8wq8XzkZj7QkVLqpPM9d4D1VE73zWGn2Wd4wVWWKo
+         dCiEE20W3t4lEemNh9QhNYlHhoPpHwiij4/ziwEVih9Dv2II0zRp36htHJQnUV2V3WAN
+         O3jpAmIUQ6x2uVTrMnu5r3hD17yyOicUYsFwihDXtVyLWJBVa8NqrtYlkcV1Lf7YLJMn
+         9ILGVliAuaAmSDBjeEjxnw2gB0BnYc2oZAxv7NlNmtNgoZDf251iTf/dNeOLBlVK2opR
+         GfIiXhpUH1vkvSo3w0n/gNe2zE30sKnNIiqxyZ0E3/cg3vcOLsR06s9dCjztnYA6RJQZ
+         CeKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fOiX5Fq3KXnBSLuawZfkvyDmjzsFYZZ+98EOQpFNGTM=;
+        b=oEd16KIt/Qvk1h/umG9Tn8eDqQMpyegxmqO1q8rUzLGuir65ujI8KptcZNHOu1CrC1
+         8bcjc1sFwQZ6KJzXs1A+Sap1rcm55NhSNmBDRpo123Publ6awjLPrGA79IUUB0HAeN4N
+         ewOIxcg5oDFnVWwTPdSU9fEKN9US9faAXYXyiW8mL+jEhmayKhzQG4TShBKpQk4V1eCg
+         l9hni3ScB9DPyPllg3EORB+ufv0hTNNkgofBW/k31mAxGLSiGQhyJHM8nuU69+u/vakb
+         0RHaj4JI6HRHzv8oaugB75q/gjJJgHLh+yw7Ivc4MVM2wHpn6WIey/5snds+ZMH2ogNr
+         03oQ==
+X-Gm-Message-State: AOAM530uKnrArl3leacj2neRmRAjdYsOvyoqmP4lzp7cPp2KnbU93tpU
+        La9MEpiv4HBONbbBtHe43vyrMpoNF6LeUFv/uwSejQ==
+X-Google-Smtp-Source: ABdhPJzFsvgytRJWqLZxvtQilzSUmLu3e4lpYoG45hUphYdCxvnwzfo5c76bu9iRy/GrvrZdQeDel/HkqPDrIvVs0T8=
+X-Received: by 2002:a67:7c11:: with SMTP id x17mr15676775vsc.55.1628508654832;
+ Mon, 09 Aug 2021 04:30:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <20210809064028.1198327-1-hch@lst.de> <20210809064028.1198327-2-hch@lst.de>
+In-Reply-To: <20210809064028.1198327-2-hch@lst.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 9 Aug 2021 13:30:18 +0200
+Message-ID: <CAPDyKFrpKqadCXZNypdk2rp8n1T1Xk-BO2B0FQ=rzbKyz_k8wg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] mmc: block: let device_add_disk create disk attributes
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Coly Li <colyli@suse.de>,
+        Song Liu <song@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-nvme@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Just check inode_unhashed on the whole device bdev inode instead,
-and provide a helper to check for that information.
+On Mon, 9 Aug 2021 at 08:43, Christoph Hellwig <hch@lst.de> wrote:
+>
+> Pass the attribute group for the attributes on the gendisk to
+> device_add_disk so that they are created atomically with the
+> disk creation.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/genhd.c            | 6 ++----
- block/partitions/core.c  | 4 ++--
- drivers/md/md.h          | 4 +---
- drivers/nvme/host/core.c | 2 +-
- fs/block_dev.c           | 2 +-
- include/linux/genhd.h    | 9 +++++----
- 6 files changed, 12 insertions(+), 15 deletions(-)
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-diff --git a/block/genhd.c b/block/genhd.c
-index a4817e42f3a3..9021c8ce3869 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -77,7 +77,8 @@ bool set_capacity_and_notify(struct gendisk *disk, sector_t size)
- 	 * initial capacity during probing.
- 	 */
- 	if (size == capacity ||
--	    (disk->flags & (GENHD_FL_UP | GENHD_FL_HIDDEN)) != GENHD_FL_UP)
-+	    !disk_live(disk) ||
-+	    (disk->flags & GENHD_FL_HIDDEN))
- 		return false;
- 
- 	pr_info("%s: detected capacity change from %lld to %lld\n",
-@@ -519,8 +520,6 @@ static void __device_add_disk(struct device *parent, struct gendisk *disk,
- 		disk->flags |= GENHD_FL_EXT_DEVT;
- 	}
- 
--	disk->flags |= GENHD_FL_UP;
--
- 	disk_alloc_events(disk);
- 
- 	if (disk->flags & GENHD_FL_HIDDEN) {
-@@ -604,7 +603,6 @@ void del_gendisk(struct gendisk *disk)
- 
- 	mutex_lock(&disk->open_mutex);
- 	remove_inode_hash(disk->part0->bd_inode);
--	disk->flags &= ~GENHD_FL_UP;
- 	blk_drop_partitions(disk);
- 	mutex_unlock(&disk->open_mutex);
- 
-diff --git a/block/partitions/core.c b/block/partitions/core.c
-index fb3a556cacce..c6738ccbcee5 100644
---- a/block/partitions/core.c
-+++ b/block/partitions/core.c
-@@ -459,7 +459,7 @@ int bdev_add_partition(struct block_device *bdev, int partno,
- 	int ret;
- 
- 	mutex_lock(&disk->open_mutex);
--	if (!(disk->flags & GENHD_FL_UP)) {
-+	if (!disk_live(disk)) {
- 		ret = -ENXIO;
- 		goto out;
- 	}
-@@ -669,7 +669,7 @@ int bdev_disk_changed(struct gendisk *disk, bool invalidate)
- 
- 	lockdep_assert_held(&disk->open_mutex);
- 
--	if (!(disk->flags & GENHD_FL_UP))
-+	if (!disk_live(disk))
- 		return -ENXIO;
- 
- rescan:
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index 832547cf038f..4c96c36bd01a 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -764,9 +764,7 @@ struct md_rdev *md_find_rdev_rcu(struct mddev *mddev, dev_t dev);
- 
- static inline bool is_mddev_broken(struct md_rdev *rdev, const char *md_type)
- {
--	int flags = rdev->bdev->bd_disk->flags;
--
--	if (!(flags & GENHD_FL_UP)) {
-+	if (!disk_live(rdev->bdev->bd_disk)) {
- 		if (!test_and_set_bit(MD_BROKEN, &rdev->mddev->flags))
- 			pr_warn("md: %s: %s array has a missing/failed member\n",
- 				mdname(rdev->mddev), md_type);
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index e24a0143fd87..cb12d8b94e82 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1822,7 +1822,7 @@ static void nvme_update_disk_info(struct gendisk *disk,
- static inline bool nvme_first_scan(struct gendisk *disk)
- {
- 	/* nvme_alloc_ns() scans the disk prior to adding it */
--	return !(disk->flags & GENHD_FL_UP);
-+	return !disk_live(disk);
- }
- 
- static void nvme_set_chunk_sectors(struct nvme_ns *ns, struct nvme_id_ns *id)
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 6658f40ae492..ab50428b328b 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1374,7 +1374,7 @@ struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder)
- 
- 	mutex_lock(&disk->open_mutex);
- 	ret = -ENXIO;
--	if (!(disk->flags & GENHD_FL_UP))
-+	if (!disk_live(disk))
- 		goto abort_claiming;
- 	if (bdev_is_partition(bdev))
- 		ret = blkdev_get_part(bdev, mode);
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 849486de81c6..ddd02def1ed4 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -60,9 +60,6 @@ struct partition_meta_info {
-  * device.
-  * Affects responses to the ``CDROM_GET_CAPABILITY`` ioctl.
-  *
-- * ``GENHD_FL_UP`` (0x0010): indicates that the block device is "up",
-- * with a similar meaning to network interfaces.
-- *
-  * ``GENHD_FL_SUPPRESS_PARTITION_INFO`` (0x0020): don't include
-  * partition information in ``/proc/partitions`` or in the output of
-  * printk_all_partitions().
-@@ -97,7 +94,6 @@ struct partition_meta_info {
- /* 2 is unused (used to be GENHD_FL_DRIVERFS) */
- /* 4 is unused (used to be GENHD_FL_MEDIA_CHANGE_NOTIFY) */
- #define GENHD_FL_CD				0x0008
--#define GENHD_FL_UP				0x0010
- #define GENHD_FL_SUPPRESS_PARTITION_INFO	0x0020
- #define GENHD_FL_EXT_DEVT			0x0040
- #define GENHD_FL_NATIVE_CAPACITY		0x0080
-@@ -175,6 +171,11 @@ struct gendisk {
- 	u64 diskseq;
- };
- 
-+static inline bool disk_live(struct gendisk *disk)
-+{
-+	return !inode_unhashed(disk->part0->bd_inode);
-+}
-+
- /*
-  * The gendisk is refcounted by the part0 block_device, and the bd_device
-  * therein is also used for device model presentation in sysfs.
--- 
-2.30.2
+Let's try to funnel this via Jens' tree. As long as his tree is based
+upon v5.14-rc3 or later I don't think we should have any problem with
+conflicts.
 
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/mmc/core/block.c | 102 +++++++++++++++++----------------------
+>  1 file changed, 45 insertions(+), 57 deletions(-)
+>
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index ce8aed562929..4ac3e1b93e7e 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -128,8 +128,6 @@ struct mmc_blk_data {
+>          * track of the current selected device partition.
+>          */
+>         unsigned int    part_curr;
+> -       struct device_attribute force_ro;
+> -       struct device_attribute power_ro_lock;
+>         int     area_type;
+>
+>         /* debugfs files (only in main mmc_blk_data) */
+> @@ -281,6 +279,9 @@ static ssize_t power_ro_lock_store(struct device *dev,
+>         return count;
+>  }
+>
+> +static DEVICE_ATTR(ro_lock_until_next_power_on, 0,
+> +               power_ro_lock_show, power_ro_lock_store);
+> +
+>  static ssize_t force_ro_show(struct device *dev, struct device_attribute *attr,
+>                              char *buf)
+>  {
+> @@ -313,6 +314,44 @@ static ssize_t force_ro_store(struct device *dev, struct device_attribute *attr,
+>         return ret;
+>  }
+>
+> +static DEVICE_ATTR(force_ro, 0644, force_ro_show, force_ro_store);
+> +
+> +static struct attribute *mmc_disk_attrs[] = {
+> +       &dev_attr_force_ro.attr,
+> +       &dev_attr_ro_lock_until_next_power_on.attr,
+> +       NULL,
+> +};
+> +
+> +static umode_t mmc_disk_attrs_is_visible(struct kobject *kobj,
+> +               struct attribute *a, int n)
+> +{
+> +       struct device *dev = container_of(kobj, struct device, kobj);
+> +       struct mmc_blk_data *md = mmc_blk_get(dev_to_disk(dev));
+> +       umode_t mode = a->mode;
+> +
+> +       if (a == &dev_attr_ro_lock_until_next_power_on.attr &&
+> +           (md->area_type & MMC_BLK_DATA_AREA_BOOT) &&
+> +           md->queue.card->ext_csd.boot_ro_lockable) {
+> +               mode = S_IRUGO;
+> +               if (!(md->queue.card->ext_csd.boot_ro_lock &
+> +                               EXT_CSD_BOOT_WP_B_PWR_WP_DIS))
+> +                       mode |= S_IWUSR;
+> +       }
+> +
+> +       mmc_blk_put(md);
+> +       return mode;
+> +}
+> +
+> +static const struct attribute_group mmc_disk_attr_group = {
+> +       .is_visible     = mmc_disk_attrs_is_visible,
+> +       .attrs          = mmc_disk_attrs,
+> +};
+> +
+> +static const struct attribute_group *mmc_disk_attr_groups[] = {
+> +       &mmc_disk_attr_group,
+> +       NULL,
+> +};
+> +
+>  static int mmc_blk_open(struct block_device *bdev, fmode_t mode)
+>  {
+>         struct mmc_blk_data *md = mmc_blk_get(bdev->bd_disk);
+> @@ -2644,15 +2683,8 @@ static void mmc_blk_remove_req(struct mmc_blk_data *md)
+>                  * from being accepted.
+>                  */
+>                 card = md->queue.card;
+> -               if (md->disk->flags & GENHD_FL_UP) {
+> -                       device_remove_file(disk_to_dev(md->disk), &md->force_ro);
+> -                       if ((md->area_type & MMC_BLK_DATA_AREA_BOOT) &&
+> -                                       card->ext_csd.boot_ro_lockable)
+> -                               device_remove_file(disk_to_dev(md->disk),
+> -                                       &md->power_ro_lock);
+> -
+> +               if (md->disk->flags & GENHD_FL_UP)
+>                         del_gendisk(md->disk);
+> -               }
+>                 mmc_cleanup_queue(&md->queue);
+>                 mmc_blk_put(md);
+>         }
+> @@ -2679,51 +2711,6 @@ static void mmc_blk_remove_parts(struct mmc_card *card,
+>         }
+>  }
+>
+> -static int mmc_add_disk(struct mmc_blk_data *md)
+> -{
+> -       int ret;
+> -       struct mmc_card *card = md->queue.card;
+> -
+> -       device_add_disk(md->parent, md->disk, NULL);
+> -       md->force_ro.show = force_ro_show;
+> -       md->force_ro.store = force_ro_store;
+> -       sysfs_attr_init(&md->force_ro.attr);
+> -       md->force_ro.attr.name = "force_ro";
+> -       md->force_ro.attr.mode = S_IRUGO | S_IWUSR;
+> -       ret = device_create_file(disk_to_dev(md->disk), &md->force_ro);
+> -       if (ret)
+> -               goto force_ro_fail;
+> -
+> -       if ((md->area_type & MMC_BLK_DATA_AREA_BOOT) &&
+> -            card->ext_csd.boot_ro_lockable) {
+> -               umode_t mode;
+> -
+> -               if (card->ext_csd.boot_ro_lock & EXT_CSD_BOOT_WP_B_PWR_WP_DIS)
+> -                       mode = S_IRUGO;
+> -               else
+> -                       mode = S_IRUGO | S_IWUSR;
+> -
+> -               md->power_ro_lock.show = power_ro_lock_show;
+> -               md->power_ro_lock.store = power_ro_lock_store;
+> -               sysfs_attr_init(&md->power_ro_lock.attr);
+> -               md->power_ro_lock.attr.mode = mode;
+> -               md->power_ro_lock.attr.name =
+> -                                       "ro_lock_until_next_power_on";
+> -               ret = device_create_file(disk_to_dev(md->disk),
+> -                               &md->power_ro_lock);
+> -               if (ret)
+> -                       goto power_ro_lock_fail;
+> -       }
+> -       return ret;
+> -
+> -power_ro_lock_fail:
+> -       device_remove_file(disk_to_dev(md->disk), &md->force_ro);
+> -force_ro_fail:
+> -       del_gendisk(md->disk);
+> -
+> -       return ret;
+> -}
+> -
+>  #ifdef CONFIG_DEBUG_FS
+>
+>  static int mmc_dbg_card_status_get(void *data, u64 *val)
+> @@ -2919,12 +2906,13 @@ static int mmc_blk_probe(struct mmc_card *card)
+>
+>         dev_set_drvdata(&card->dev, md);
+>
+> -       ret = mmc_add_disk(md);
+> +       device_add_disk(md->parent, md->disk, mmc_disk_attr_groups);
+>         if (ret)
+>                 goto out;
+>
+>         list_for_each_entry(part_md, &md->part, part) {
+> -               ret = mmc_add_disk(part_md);
+> +               device_add_disk(part_md->parent, part_md->disk,
+> +                               mmc_disk_attr_groups);
+>                 if (ret)
+>                         goto out;
+>         }
+> --
+> 2.30.2
+>
