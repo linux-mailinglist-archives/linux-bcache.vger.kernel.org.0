@@ -2,32 +2,32 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E15A03E4074
-	for <lists+linux-bcache@lfdr.de>; Mon,  9 Aug 2021 08:48:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02AF23E4077
+	for <lists+linux-bcache@lfdr.de>; Mon,  9 Aug 2021 08:48:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233443AbhHIGsW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 9 Aug 2021 02:48:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52038 "EHLO
+        id S233429AbhHIGtB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 9 Aug 2021 02:49:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233274AbhHIGsV (ORCPT
+        with ESMTP id S233274AbhHIGtB (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 9 Aug 2021 02:48:21 -0400
+        Mon, 9 Aug 2021 02:49:01 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B538BC0613CF;
-        Sun,  8 Aug 2021 23:48:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30813C0613CF;
+        Sun,  8 Aug 2021 23:48:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=qYkQEi6HH6tvHJ3WGzG2rS1R73q8dommZSiqNjJoSCA=; b=jBSZvbu754g0AV8kqgcNftqE18
-        KfQpQ+3bKWRniE3K6zSo59PHQbebitiho92LtSu27MAvSeWBj8hWoyBqERmS0ZTesLdds70wbG/4Y
-        13r5QBsmjQNjnoyUB0SL/E53BtvGWEDw0rUjZzsZpBetSk4CTwLkP/CA76aCj+IG9UgdkxmamoV2C
-        pGTxEC1Os4BZ5BzuSQfsTc7j9hNygWnhUYhjKXcW9/RIVMLa3FxvTFA2I3TucaM5VcpFfsTNGMjSn
-        orrq6Nt9qDu+Y/u1isJfSC8PxioeBnjnFqchiB4LB93BmH+hZMBez9lBctaAd+M0imhX3I2DwYqzm
-        kuhw/Xfw==;
+        bh=AZuLPYkl9A2TXa8srNWxLAXsGFr2mUQNc5qPxoXeO+o=; b=p+Kqgs8Q9em5vJFdvVXwzlx4Qu
+        Wk301OPqqjb4quMM61zs0a44piuBoqarMJKmJyKrY5e1CUsFMSMMqwfWN0eD0LZ3QNHHwyeo3r461
+        3W8UrzS7Evc5AVef/20lL69MRpaodg+KRuq1IJbIoKfQAdr54YOfv10nHtBRX2nBoZFMGvF2jOGv4
+        fFS99XeZe2uxrfYucpsf/QVKMCLVY2q6jZSOU1OR+4vyUgEtvjZDprBgbv6z8houTwu9FT8AQXwzR
+        WrgXBeR5z2r4Cc00+e5Jyt3trR2wc1NXlw67L/n7Ug/JTjwd1j3rkXuphd422Tui0IqTwBRByVims
+        N6pMuQDQ==;
 Received: from [2a02:1205:5023:1f80:c068:bd3d:78b3:7d37] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mCz3A-00Aisv-0r; Mon, 09 Aug 2021 06:46:29 +0000
+        id 1mCz4A-00AizF-Lt; Mon, 09 Aug 2021 06:47:46 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Coly Li <colyli@suse.de>, Song Liu <song@kernel.org>,
@@ -36,9 +36,9 @@ Cc:     Coly Li <colyli@suse.de>, Song Liu <song@kernel.org>,
         linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-nvme@lists.infradead.org
-Subject: [PATCH 6/8] bcache: add proper error unwinding in bcache_device_init
-Date:   Mon,  9 Aug 2021 08:40:26 +0200
-Message-Id: <20210809064028.1198327-7-hch@lst.de>
+Subject: [PATCH 7/8] bcache: move the del_gendisk call out of bcache_device_free
+Date:   Mon,  9 Aug 2021 08:40:27 +0200
+Message-Id: <20210809064028.1198327-8-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210809064028.1198327-1-hch@lst.de>
 References: <20210809064028.1198327-1-hch@lst.de>
@@ -49,59 +49,51 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Except for the IDA none of the allocations in bcache_device_init is
-unwound on error, fix that.
+Let the callers call del_gendisk so that we can check if add_disk
+has been called properly for the cached device case instead of relying
+on the block layer internal GENHD_FL_UP flag.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/md/bcache/super.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ drivers/md/bcache/super.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 185246a0d855..d0f08e946453 100644
+index d0f08e946453..f2874c77ff79 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -931,20 +931,20 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
- 	n = BITS_TO_LONGS(d->nr_stripes) * sizeof(unsigned long);
- 	d->full_dirty_stripes = kvzalloc(n, GFP_KERNEL);
- 	if (!d->full_dirty_stripes)
--		return -ENOMEM;
-+		goto out_free_stripe_sectors_dirty;
+@@ -885,11 +885,6 @@ static void bcache_device_free(struct bcache_device *d)
+ 		bcache_device_detach(d);
  
- 	idx = ida_simple_get(&bcache_device_idx, 0,
- 				BCACHE_DEVICE_IDX_MAX, GFP_KERNEL);
- 	if (idx < 0)
--		return idx;
-+		goto out_free_full_dirty_stripes;
+ 	if (disk) {
+-		bool disk_added = (disk->flags & GENHD_FL_UP) != 0;
+-
+-		if (disk_added)
+-			del_gendisk(disk);
+-
+ 		blk_cleanup_disk(disk);
+ 		ida_simple_remove(&bcache_device_idx,
+ 				  first_minor_to_idx(disk->first_minor));
+@@ -1371,8 +1366,10 @@ static void cached_dev_free(struct closure *cl)
  
- 	if (bioset_init(&d->bio_split, 4, offsetof(struct bbio, bio),
- 			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER))
--		goto err;
-+		goto out_ida_remove;
+ 	mutex_lock(&bch_register_lock);
  
- 	d->disk = blk_alloc_disk(NUMA_NO_NODE);
- 	if (!d->disk)
--		goto err;
-+		goto out_bioset_exit;
+-	if (atomic_read(&dc->running))
++	if (atomic_read(&dc->running)) {
+ 		bd_unlink_disk_holder(dc->bdev, dc->disk.disk);
++		del_gendisk(dc->disk.disk);
++	}
+ 	bcache_device_free(&dc->disk);
+ 	list_del(&dc->list);
  
- 	set_capacity(d->disk, sectors);
- 	snprintf(d->disk->disk_name, DISK_NAME_LEN, "bcache%i", idx);
-@@ -987,8 +987,14 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
- 
- 	return 0;
- 
--err:
-+out_bioset_exit:
-+	bioset_exit(&d->bio_split);
-+out_ida_remove:
- 	ida_simple_remove(&bcache_device_idx, idx);
-+out_free_full_dirty_stripes:
-+	kvfree(d->full_dirty_stripes);
-+out_free_stripe_sectors_dirty:
-+	kvfree(d->stripe_sectors_dirty);
- 	return -ENOMEM;
- 
- }
+@@ -1518,6 +1515,7 @@ static void flash_dev_free(struct closure *cl)
+ 	mutex_lock(&bch_register_lock);
+ 	atomic_long_sub(bcache_dev_sectors_dirty(d),
+ 			&d->c->flash_dev_dirty_sectors);
++	del_gendisk(d->disk);
+ 	bcache_device_free(d);
+ 	mutex_unlock(&bch_register_lock);
+ 	kobject_put(&d->kobj);
 -- 
 2.30.2
 
