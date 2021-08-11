@@ -2,51 +2,51 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF5E53E9677
-	for <lists+linux-bcache@lfdr.de>; Wed, 11 Aug 2021 19:04:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B30393E9679
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 Aug 2021 19:04:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230230AbhHKREw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 11 Aug 2021 13:04:52 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:58610 "EHLO
+        id S230137AbhHKRFH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 Aug 2021 13:05:07 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:58626 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbhHKREv (ORCPT
+        with ESMTP id S229905AbhHKRFG (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 11 Aug 2021 13:04:51 -0400
+        Wed, 11 Aug 2021 13:05:06 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 2E9B820193;
-        Wed, 11 Aug 2021 17:04:27 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 8733A20185;
+        Wed, 11 Aug 2021 17:04:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1628701467; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1628701481; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=laAwESEAf1HwUo02bMecdYHi6y4qQbivmyWQ7n28vLM=;
-        b=kL8U39qfAGHlfIpFKSdlb2jrwBzFmmUCbuKHdvnI5e85FkNvJFP3O1BJ06q3ES/IeJQhWf
-        yByFx91+xFcC+91UKtqBaioVexFYMwDkYlqbRGPkArYHsLluWVAtFchyc9yWVZREnObCzX
-        5GmsU6pjWTsitNFHOpXgJLb32Wm3p8A=
+        bh=wtwFnp4xZMjddc3KByFiXKLm0ST5Cfz+TLDQyLU1/5Q=;
+        b=OoxG+Fdr5sgZySs1KR8cWyYjVrhjTS2nJnHprvqfRGcVMNrmhp6EavaOB2mx38OivNnB2/
+        CFu8JGkBtOdhkTzIqwpuQ/HWo9I2iNul7/M05qxZ5TAH6G8RQDdAaVYy8GNOeR7gNEoye+
+        wiL57XghNaw3e8uhLXmgcMQorbwsrEQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1628701467;
+        s=susede2_ed25519; t=1628701481;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=laAwESEAf1HwUo02bMecdYHi6y4qQbivmyWQ7n28vLM=;
-        b=C9v12mtL3QesmsinphdNJhXzTH3yKw6zj+xrgVu7N2XGLMqnd1sJx+niQ+a/xSwqRJCffV
-        BTRbzpg67QbE3yBQ==
+        bh=wtwFnp4xZMjddc3KByFiXKLm0ST5Cfz+TLDQyLU1/5Q=;
+        b=fA2/MOmq+ILLxRzTje5wEhnlZtkuxCtLLAUPtHcsO42L8SYAaZxdXC7zfRF3OEicHbt920
+        GHqgDXV2b0YcO3DQ==
 Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id 0CB9AA3D62;
-        Wed, 11 Aug 2021 17:04:21 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTP id F21DFA3D65;
+        Wed, 11 Aug 2021 17:04:27 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, linux-nvdimm@lists.linux.dev,
         axboe@kernel.dk, hare@suse.com, jack@suse.cz,
         dan.j.williams@intel.com, hch@lst.de, ying.huang@intel.com,
+        Coly Li <colyli@suse.de>, Hannes Reinecke <hare@suse.de>,
         Jianpeng Ma <jianpeng.ma@intel.com>,
-        Qiaowei Ren <qiaowei.ren@intel.com>,
-        Hannes Reinecke <hare@suse.de>
-Subject: [PATCH v12 06/12] bcache: get recs list head for allocated pages by specific uuid
-Date:   Thu, 12 Aug 2021 01:02:18 +0800
-Message-Id: <20210811170224.42837-7-colyli@suse.de>
+        Qiaowei Ren <qiaowei.ren@intel.com>
+Subject: [PATCH v12 07/12] bcache: use bucket index to set GC_MARK_METADATA for journal buckets in bch_btree_gc_finish()
+Date:   Thu, 12 Aug 2021 01:02:19 +0800
+Message-Id: <20210811170224.42837-8-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210811170224.42837-1-colyli@suse.de>
 References: <20210811170224.42837-1-colyli@suse.de>
@@ -56,66 +56,45 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Jianpeng Ma <jianpeng.ma@intel.com>
+Currently the meta data bucket locations on cache device are reserved
+after the meta data stored on NVDIMM pages, for the meta data layout
+consistentcy temporarily. So these buckets are still marked as meta data
+by SET_GC_MARK() in bch_btree_gc_finish().
 
-This patch implements bch_get_nvmpg_head() of the buddy allocator
-to be used to get recs list head for allocated pages by specific
-uuid. Then the requester (owner) can find all previous allocated
-nvdimm pages by iterating the recs list.
+When BCH_FEATURE_INCOMPAT_NVDIMM_META is set, the sb.d[] stores linear
+address of NVDIMM pages and not bucket index anymore. Therefore we
+should avoid to find bucket index from sb.d[], and directly use bucket
+index from ca->sb.first_bucket to (ca->sb.first_bucket +
+ca->sb.njournal_bucketsi) for setting the gc mark of journal bucket.
 
-Signed-off-by: Jianpeng Ma <jianpeng.ma@intel.com>
-Co-developed-by: Qiaowei Ren <qiaowei.ren@intel.com>
-Signed-off-by: Qiaowei Ren <qiaowei.ren@intel.com>
+Signed-off-by: Coly Li <colyli@suse.de>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Jianpeng Ma <jianpeng.ma@intel.com>
+Cc: Qiaowei Ren <qiaowei.ren@intel.com>
 ---
- drivers/md/bcache/nvm-pages.c | 6 ++++++
- drivers/md/bcache/nvm-pages.h | 6 ++++++
- 2 files changed, 12 insertions(+)
+ drivers/md/bcache/btree.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/bcache/nvm-pages.c b/drivers/md/bcache/nvm-pages.c
-index ef61fdaaac28..497360c60f26 100644
---- a/drivers/md/bcache/nvm-pages.c
-+++ b/drivers/md/bcache/nvm-pages.c
-@@ -523,6 +523,12 @@ void *bch_nvmpg_alloc_pages(int order, const char *uuid)
- }
- EXPORT_SYMBOL_GPL(bch_nvmpg_alloc_pages);
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 183a58c89377..e0d7135669ca 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -1761,8 +1761,10 @@ static void bch_btree_gc_finish(struct cache_set *c)
+ 	ca = c->cache;
+ 	ca->invalidate_needs_gc = 0;
  
-+struct bch_nvmpg_head *bch_get_nvmpg_head(const char *uuid)
-+{
-+	return find_nvmpg_head(uuid, false);
-+}
-+EXPORT_SYMBOL_GPL(bch_get_nvmpg_head);
-+
- static inline void *nvm_end_addr(struct bch_nvmpg_ns *ns)
- {
- 	return ns->base_addr + (ns->pages_total << PAGE_SHIFT);
-diff --git a/drivers/md/bcache/nvm-pages.h b/drivers/md/bcache/nvm-pages.h
-index 2529dc8b9d49..2f6f2ffbfd80 100644
---- a/drivers/md/bcache/nvm-pages.h
-+++ b/drivers/md/bcache/nvm-pages.h
-@@ -93,6 +93,7 @@ int bch_nvmpg_init(void);
- void bch_nvmpg_exit(void);
- void *bch_nvmpg_alloc_pages(int order, const char *uuid);
- void bch_nvmpg_free_pages(void *addr, int order, const char *uuid);
-+struct bch_nvmpg_head *bch_get_nvmpg_head(const char *uuid);
+-	for (k = ca->sb.d; k < ca->sb.d + ca->sb.keys; k++)
+-		SET_GC_MARK(ca->buckets + *k, GC_MARK_METADATA);
++	/* Range [first_bucket, first_bucket + keys) is for journal buckets */
++	for (i = ca->sb.first_bucket;
++	     i < ca->sb.first_bucket + ca->sb.njournal_buckets; i++)
++		SET_GC_MARK(ca->buckets + i, GC_MARK_METADATA);
  
- #else
- 
-@@ -115,6 +116,11 @@ static inline void *bch_nvmpg_alloc_pages(int order, const char *uuid)
- 
- static inline void bch_nvmpg_free_pages(void *addr, int order, const char *uuid) { }
- 
-+static inline struct bch_nvmpg_head *bch_get_nvmpg_head(const char *uuid)
-+{
-+	return NULL;
-+}
-+
- #endif /* CONFIG_BCACHE_NVM_PAGES */
- 
- #endif /* _BCACHE_NVM_PAGES_H */
+ 	for (k = ca->prio_buckets;
+ 	     k < ca->prio_buckets + prio_buckets(ca) * 2; k++)
 -- 
 2.26.2
 
