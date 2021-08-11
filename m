@@ -2,53 +2,51 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D9BB3E9684
-	for <lists+linux-bcache@lfdr.de>; Wed, 11 Aug 2021 19:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76DCE3E9686
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 Aug 2021 19:05:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229905AbhHKRFl (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 11 Aug 2021 13:05:41 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:58662 "EHLO
+        id S230394AbhHKRFr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 Aug 2021 13:05:47 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:58684 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230391AbhHKRFk (ORCPT
+        with ESMTP id S229530AbhHKRFr (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 11 Aug 2021 13:05:40 -0400
+        Wed, 11 Aug 2021 13:05:47 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id F2BB120192;
-        Wed, 11 Aug 2021 17:05:15 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id A3A4E20195;
+        Wed, 11 Aug 2021 17:05:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1628701515; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1628701521; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=1Mi4GxxoJ8bz3IvlDPgn+MPYGjz3ma/b9rGB0Qg8+hQ=;
-        b=R1qaMiaLvckFg2eiSKehzmIKHwCDVy5lPLHSWsQUIQqjceMhKCIyg2iEExH2ZO9r8QOUPo
-        u36wJBINAvyyqAf52iI2T1VBzDxhoH4GGHKvR7adu+cWmJBkiArlqKLp6gzhZDIAkQKslh
-        gRlPYzYkeZDDwyYjh4cI2QiO02ADT0Q=
+        bh=efsOw98AEBFshxhhH9/n3GRQdv2ksVkqaTCb57JSsqU=;
+        b=FRR4OFK3s6fk7teQ4WATZ3QEJHo5och1ZjfgFXygxnp8Rc/ube6zMpRQGu2Go5USA+MmjH
+        Utk0j9944xnayK9aiIeVUCxOLL1RHlsbT8KKcuJ1jdIazbWH4LiMgfw+Q8EV4uq45Z2KdZ
+        S3K9brjiqqkxdvENy5sG7fkVDCve07Q=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1628701515;
+        s=susede2_ed25519; t=1628701521;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=1Mi4GxxoJ8bz3IvlDPgn+MPYGjz3ma/b9rGB0Qg8+hQ=;
-        b=+vsQc7/Bbc4SbdRNP1WoLxhzQvsofdp5YuSQN5l75ikBizzX0mE9wviRL4IFLVP40Sv6fg
-        NGswjFNS+r78niAA==
+        bh=efsOw98AEBFshxhhH9/n3GRQdv2ksVkqaTCb57JSsqU=;
+        b=tZa4CLdOvovYtOXexaq9cWlVntxJgOGmy71E79JNPrcVmpTagz5+uNMhYuXlOlJ+eej4Ta
+        LVmrvUAu1ZQY9xBQ==
 Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id A936CA3D5E;
-        Wed, 11 Aug 2021 17:05:10 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTP id 9AC0AA3D61;
+        Wed, 11 Aug 2021 17:05:16 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     linux-block@vger.kernel.org, linux-nvdimm@lists.linux.dev,
         axboe@kernel.dk, hare@suse.com, jack@suse.cz,
         dan.j.williams@intel.com, hch@lst.de, ying.huang@intel.com,
-        Coly Li <colyli@suse.de>, kernel test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Hannes Reinecke <hare@suse.de>,
+        Coly Li <colyli@suse.de>, Hannes Reinecke <hare@suse.de>,
         Jianpeng Ma <jianpeng.ma@intel.com>,
         Qiaowei Ren <qiaowei.ren@intel.com>
-Subject: [PATCH v12 11/12] bcache: read jset from NVDIMM pages for journal replay
-Date:   Thu, 12 Aug 2021 01:02:23 +0800
-Message-Id: <20210811170224.42837-12-colyli@suse.de>
+Subject: [PATCH v12 12/12] bcache: add sysfs interface register_nvdimm_meta to register NVDIMM meta device
+Date:   Thu, 12 Aug 2021 01:02:24 +0800
+Message-Id: <20210811170224.42837-13-colyli@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210811170224.42837-1-colyli@suse.de>
 References: <20210811170224.42837-1-colyli@suse.de>
@@ -58,179 +56,81 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch implements two methods to read jset from media for journal
-replay,
-- __jnl_rd_bkt() for block device
-  This is the legacy method to read jset via block device interface.
-- __jnl_rd_nvm_bkt() for NVDIMM
-  This is the method to read jset from NVDIMM memory interface, a.k.a
-  memcopy() from NVDIMM pages to DRAM pages.
-
-If BCH_FEATURE_INCOMPAT_NVDIMM_META is set in incompat feature set,
-during running cache set, journal_read_bucket() will read the journal
-content from NVDIMM by __jnl_rd_nvm_bkt(). The linear addresses of
-NVDIMM pages to read jset are stored in sb.d[SB_JOURNAL_BUCKETS], which
-were initialized and maintained in previous runs of the cache set.
-
-A thing should be noticed is, when bch_journal_read() is called, the
-linear address of NVDIMM pages is not loaded and initialized yet, it
-is necessary to call __bch_journal_nvdimm_init() before reading the jset
-from NVDIMM pages.
-
-The code comments added in journal_read_bucket() is noticed by kernel
-test robot and Dan Carpenter, it explains why it is safe to only check
-!bch_has_feature_nvdimm_meta() condition in the if() statement when
-CONFIG_BCACHE_NVM_PAGES is not configured. To avoid confusion from the
-bogus warning message from static checking tool.
+This patch adds a sysfs interface register_nvdimm_meta to register
+NVDIMM meta device. The sysfs interface file only shows up when
+CONFIG_BCACHE_NVM_PAGES=y. Then a NVDIMM name space formatted by
+bcache-tools can be registered into bcache by e.g.,
+  echo /dev/pmem0 > /sys/fs/bcache/register_nvdimm_meta
 
 Signed-off-by: Coly Li <colyli@suse.de>
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Hannes Reinecke <hare@suse.de>
 Cc: Jens Axboe <axboe@kernel.dk>
 Cc: Jianpeng Ma <jianpeng.ma@intel.com>
 Cc: Qiaowei Ren <qiaowei.ren@intel.com>
 ---
- drivers/md/bcache/journal.c | 88 ++++++++++++++++++++++++++++++-------
- 1 file changed, 71 insertions(+), 17 deletions(-)
+ drivers/md/bcache/super.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index 8cd0c4dc9137..987306b4db20 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -34,18 +34,60 @@ static void journal_read_endio(struct bio *bio)
- 	closure_put(cl);
- }
- 
-+static struct jset *__jnl_rd_bkt(struct cache *ca, unsigned int bkt_idx,
-+				    unsigned int len, unsigned int offset,
-+				    struct closure *cl)
-+{
-+	sector_t bucket = bucket_to_sector(ca->set, ca->sb.d[bkt_idx]);
-+	struct bio *bio = &ca->journal.bio;
-+	struct jset *data = ca->set->journal.w[0].data;
-+
-+	bio_reset(bio);
-+	bio->bi_iter.bi_sector	= bucket + offset;
-+	bio_set_dev(bio, ca->bdev);
-+	bio->bi_iter.bi_size	= len << 9;
-+
-+	bio->bi_end_io	= journal_read_endio;
-+	bio->bi_private = cl;
-+	bio_set_op_attrs(bio, REQ_OP_READ, 0);
-+	bch_bio_map(bio, data);
-+
-+	closure_bio_submit(ca->set, bio, cl);
-+	closure_sync(cl);
-+
-+	/* Indeed journal.w[0].data */
-+	return data;
-+}
-+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 24734250d005..434739594baf 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2403,10 +2403,18 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
+ 					 struct kobj_attribute *attr,
+ 					 const char *buffer, size_t size);
 +#if defined(CONFIG_BCACHE_NVM_PAGES)
-+
-+static struct jset *__jnl_rd_nvm_bkt(struct cache *ca, unsigned int bkt_idx,
-+				     unsigned int len, unsigned int offset)
-+{
-+	void *jset_addr;
-+	struct jset *data;
-+
-+	jset_addr = bch_nvmpg_offset_to_ptr(ca->sb.d[bkt_idx]) + (offset << 9);
-+	data = ca->set->journal.w[0].data;
-+
-+	memcpy(data, jset_addr, len << 9);
-+
-+	/* Indeed journal.w[0].data */
-+	return data;
-+}
-+
-+#endif /* CONFIG_BCACHE_NVM_PAGES */
-+
- static int journal_read_bucket(struct cache *ca, struct list_head *list,
- 			       unsigned int bucket_index)
- {
- 	struct journal_device *ja = &ca->journal;
--	struct bio *bio = &ja->bio;
- 
- 	struct journal_replay *i;
--	struct jset *j, *data = ca->set->journal.w[0].data;
-+	struct jset *j;
- 	struct closure cl;
- 	unsigned int len, left, offset = 0;
- 	int ret = 0;
--	sector_t bucket = bucket_to_sector(ca->set, ca->sb.d[bucket_index]);
- 
- 	closure_init_stack(&cl);
- 
-@@ -55,26 +97,27 @@ static int journal_read_bucket(struct cache *ca, struct list_head *list,
- reread:		left = ca->sb.bucket_size - offset;
- 		len = min_t(unsigned int, left, PAGE_SECTORS << JSET_BITS);
- 
--		bio_reset(bio);
--		bio->bi_iter.bi_sector	= bucket + offset;
--		bio_set_dev(bio, ca->bdev);
--		bio->bi_iter.bi_size	= len << 9;
--
--		bio->bi_end_io	= journal_read_endio;
--		bio->bi_private = &cl;
--		bio_set_op_attrs(bio, REQ_OP_READ, 0);
--		bch_bio_map(bio, data);
--
--		closure_bio_submit(ca->set, bio, &cl);
--		closure_sync(&cl);
-+		if (!bch_has_feature_nvdimm_meta(&ca->sb))
-+			j = __jnl_rd_bkt(ca, bucket_index, len, offset, &cl);
-+		/*
-+		 * If CONFIG_BCACHE_NVM_PAGES is not defined, the feature bit
-+		 * BCH_FEATURE_INCOMPAT_NVDIMM_META won't in incompatible
-+		 * support feature set, a cache device format with feature bit
-+		 * BCH_FEATURE_INCOMPAT_NVDIMM_META will fail much earlier in
-+		 * read_super() by bch_has_unknown_incompat_features().
-+		 * Therefore when CONFIG_BCACHE_NVM_PAGES is not define, it is
-+		 * safe to ignore the bch_has_feature_nvdimm_meta() condition.
-+		 */
-+#if defined(CONFIG_BCACHE_NVM_PAGES)
-+		else
-+			j = __jnl_rd_nvm_bkt(ca, bucket_index, len, offset);
++static ssize_t register_nvdimm_meta(struct kobject *k,
++				    struct kobj_attribute *attr,
++				    const char *buffer, size_t size);
 +#endif
  
- 		/* This function could be simpler now since we no longer write
- 		 * journal entries that overlap bucket boundaries; this means
- 		 * the start of a bucket will always have a valid journal entry
- 		 * if it has any journal entries at all.
- 		 */
--
--		j = data;
- 		while (len) {
- 			struct list_head *where;
- 			size_t blocks, bytes = set_bytes(j);
-@@ -170,6 +213,8 @@ reread:		left = ca->sb.bucket_size - offset;
- 	return ret;
+ kobj_attribute_write(register,		register_bcache);
+ kobj_attribute_write(register_quiet,	register_bcache);
+ kobj_attribute_write(pendings_cleanup,	bch_pending_bdevs_cleanup);
++#if defined(CONFIG_BCACHE_NVM_PAGES)
++kobj_attribute_write(register_nvdimm_meta, register_nvdimm_meta);
++#endif
+ 
+ static bool bch_is_open_backing(dev_t dev)
+ {
+@@ -2520,6 +2528,24 @@ static void register_device_async(struct async_reg_args *args)
+ 	queue_delayed_work(system_wq, &args->reg_work, 10);
  }
  
-+static int __bch_journal_nvdimm_init(struct cache *ca);
++#if defined(CONFIG_BCACHE_NVM_PAGES)
++static ssize_t register_nvdimm_meta(struct kobject *k, struct kobj_attribute *attr,
++				    const char *buffer, size_t size)
++{
++	ssize_t ret = size;
 +
- int bch_journal_read(struct cache_set *c, struct list_head *list)
- {
- #define read_bucket(b)							\
-@@ -188,6 +233,15 @@ int bch_journal_read(struct cache_set *c, struct list_head *list)
- 	unsigned int i, l, r, m;
- 	uint64_t seq;
- 
-+	/*
-+	 * Linear addresses of NVDIMM pages for journaling is not
-+	 * initialized yet, do it before read jset from NVDIMM pages.
-+	 */
-+	if (bch_has_feature_nvdimm_meta(&ca->sb)) {
-+		if (__bch_journal_nvdimm_init(ca) < 0)
-+			return -ENXIO;
++	struct bch_nvmpg_ns *ns = bch_register_namespace(buffer);
++
++	if (IS_ERR(ns)) {
++		pr_err("register nvdimm namespace %s for meta device failed.\n",
++			buffer);
++		ret = -EINVAL;
 +	}
 +
- 	bitmap_zero(bitmap, SB_JOURNAL_BUCKETS);
- 	pr_debug("%u journal buckets\n", ca->sb.njournal_buckets);
- 
++	return ret;
++}
++#endif
++
+ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 			       const char *buffer, size_t size)
+ {
+@@ -2855,6 +2881,9 @@ static int __init bcache_init(void)
+ 	static const struct attribute *files[] = {
+ 		&ksysfs_register.attr,
+ 		&ksysfs_register_quiet.attr,
++#if defined(CONFIG_BCACHE_NVM_PAGES)
++		&ksysfs_register_nvdimm_meta.attr,
++#endif
+ 		&ksysfs_pendings_cleanup.attr,
+ 		NULL
+ 	};
 -- 
 2.26.2
 
