@@ -2,135 +2,66 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76DCE3E9686
-	for <lists+linux-bcache@lfdr.de>; Wed, 11 Aug 2021 19:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C84CD3E9672
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 Aug 2021 19:04:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230394AbhHKRFr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 11 Aug 2021 13:05:47 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:58684 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbhHKRFr (ORCPT
+        id S229976AbhHKRE0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 Aug 2021 13:04:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37760 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229958AbhHKREZ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 11 Aug 2021 13:05:47 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id A3A4E20195;
-        Wed, 11 Aug 2021 17:05:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1628701521; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=efsOw98AEBFshxhhH9/n3GRQdv2ksVkqaTCb57JSsqU=;
-        b=FRR4OFK3s6fk7teQ4WATZ3QEJHo5och1ZjfgFXygxnp8Rc/ube6zMpRQGu2Go5USA+MmjH
-        Utk0j9944xnayK9aiIeVUCxOLL1RHlsbT8KKcuJ1jdIazbWH4LiMgfw+Q8EV4uq45Z2KdZ
-        S3K9brjiqqkxdvENy5sG7fkVDCve07Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1628701521;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=efsOw98AEBFshxhhH9/n3GRQdv2ksVkqaTCb57JSsqU=;
-        b=tZa4CLdOvovYtOXexaq9cWlVntxJgOGmy71E79JNPrcVmpTagz5+uNMhYuXlOlJ+eej4Ta
-        LVmrvUAu1ZQY9xBQ==
-Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id 9AC0AA3D61;
-        Wed, 11 Aug 2021 17:05:16 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     linux-bcache@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, linux-nvdimm@lists.linux.dev,
-        axboe@kernel.dk, hare@suse.com, jack@suse.cz,
-        dan.j.williams@intel.com, hch@lst.de, ying.huang@intel.com,
-        Coly Li <colyli@suse.de>, Hannes Reinecke <hare@suse.de>,
-        Jianpeng Ma <jianpeng.ma@intel.com>,
-        Qiaowei Ren <qiaowei.ren@intel.com>
-Subject: [PATCH v12 12/12] bcache: add sysfs interface register_nvdimm_meta to register NVDIMM meta device
-Date:   Thu, 12 Aug 2021 01:02:24 +0800
-Message-Id: <20210811170224.42837-13-colyli@suse.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210811170224.42837-1-colyli@suse.de>
-References: <20210811170224.42837-1-colyli@suse.de>
+        Wed, 11 Aug 2021 13:04:25 -0400
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2323EC061765
+        for <linux-bcache@vger.kernel.org>; Wed, 11 Aug 2021 10:04:02 -0700 (PDT)
+Received: by mail-il1-x12c.google.com with SMTP id j18so3590277ile.8
+        for <linux-bcache@vger.kernel.org>; Wed, 11 Aug 2021 10:04:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=McdVIlYU3ieCpIDSRMO8yBjLAcID0U1ZmmUY+ikwuW4=;
+        b=uucjqa7IpcmJxESRxLXQ3Fk8rkI6VbyuQiPcAyUINHVX6OLZ3FGw6/uy8VAeAS8Njs
+         Rz8i7IrQrqAMKGEoGFPkyySVZTviwBHSYYGTGwevG/3WPCV2T/NrJR7qiqZzDRHfQsC6
+         /wPm0Mk8/iEJz8rn71w3vzhbuoYuglNZu2SJSovO/WGLT633/cGGrHJGJ0owEYPupbaX
+         lJbQVYyfh6k4IAA8CG4kLrge3PlgHP8aKwdvu8ygz44ndt2YOK5hc8N3JTLSh7iJV55f
+         RgsXRqvlJcswgf83/9ZrzalXOU/Zkz+XhFgu38XxMpv0sjOj2/ikcm1vblZabUWDfhSn
+         M/Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=McdVIlYU3ieCpIDSRMO8yBjLAcID0U1ZmmUY+ikwuW4=;
+        b=SKlT1PkqbmPZtgHrnYWdXfGCrZtJvD396qZY8jTFFxJD5TNRwCrI06BeTR9/Joqvq9
+         QtcWRsdkyXErb1tYJZF2GgrhdogbUKIe7xz+imxnnbZCM6GpVM+CVU2AqORy/aVUlyn0
+         IPJZm9S8vq8Dp7sXJVnNCyDra3xGylQ3jlqUBxfsDhiaecvgZxl7kTd8kmYNvGa2/X1d
+         uMU4yjGgKbxCkwE0PLbLIsnUZ/19hrvVwq1pElmdBiKpDRaXS5HwmDPgvEV69KIymHnw
+         6CLdUgC47FQsCRMZxpWfTjvayeRs8DiXXN1RYgo9JXbpFgssFFdAhWl+1C3VvoGjnF5P
+         uDJw==
+X-Gm-Message-State: AOAM530Fg+RHXcA6Xtn7bVhXlZlhpFZYdKG60225idYYd+tqtYSsvdVF
+        UjFvz+H/oTH1qKDWh+BxxCdONJpEkeJByk/ncZ8=
+X-Google-Smtp-Source: ABdhPJyif+CsQU8pYve6bzbDflGrLxKSW+gRSWNDb+hJQ0AbImVZbRGPHfOG7mWktHx7KGFzAl7F5atbnfsDvRtWP/Q=
+X-Received: by 2002:a05:6e02:1905:: with SMTP id w5mr723845ilu.270.1628701441621;
+ Wed, 11 Aug 2021 10:04:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a4f:f549:0:0:0:0:0 with HTTP; Wed, 11 Aug 2021 10:04:01
+ -0700 (PDT)
+Reply-To: peacemaurice124@gmail.com
+From:   Peace Maurice <fbidepartmentofjusticeus@gmail.com>
+Date:   Wed, 11 Aug 2021 17:04:01 +0000
+Message-ID: <CANKVmnr6CQG9Utp+5jDa1e_SDDbu-M2O1rkgsh1CtzO5bF4kSw@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch adds a sysfs interface register_nvdimm_meta to register
-NVDIMM meta device. The sysfs interface file only shows up when
-CONFIG_BCACHE_NVM_PAGES=y. Then a NVDIMM name space formatted by
-bcache-tools can be registered into bcache by e.g.,
-  echo /dev/pmem0 > /sys/fs/bcache/register_nvdimm_meta
+K=C3=B6nnen wir bitte reden?
+Es ist gerade etwas passiert und es ist sehr dringend, bitte brauche
+ich Ihre Aufmerksamkeit.
 
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Jianpeng Ma <jianpeng.ma@intel.com>
-Cc: Qiaowei Ren <qiaowei.ren@intel.com>
----
- drivers/md/bcache/super.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 24734250d005..434739594baf 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -2403,10 +2403,18 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
- 					 struct kobj_attribute *attr,
- 					 const char *buffer, size_t size);
-+#if defined(CONFIG_BCACHE_NVM_PAGES)
-+static ssize_t register_nvdimm_meta(struct kobject *k,
-+				    struct kobj_attribute *attr,
-+				    const char *buffer, size_t size);
-+#endif
- 
- kobj_attribute_write(register,		register_bcache);
- kobj_attribute_write(register_quiet,	register_bcache);
- kobj_attribute_write(pendings_cleanup,	bch_pending_bdevs_cleanup);
-+#if defined(CONFIG_BCACHE_NVM_PAGES)
-+kobj_attribute_write(register_nvdimm_meta, register_nvdimm_meta);
-+#endif
- 
- static bool bch_is_open_backing(dev_t dev)
- {
-@@ -2520,6 +2528,24 @@ static void register_device_async(struct async_reg_args *args)
- 	queue_delayed_work(system_wq, &args->reg_work, 10);
- }
- 
-+#if defined(CONFIG_BCACHE_NVM_PAGES)
-+static ssize_t register_nvdimm_meta(struct kobject *k, struct kobj_attribute *attr,
-+				    const char *buffer, size_t size)
-+{
-+	ssize_t ret = size;
-+
-+	struct bch_nvmpg_ns *ns = bch_register_namespace(buffer);
-+
-+	if (IS_ERR(ns)) {
-+		pr_err("register nvdimm namespace %s for meta device failed.\n",
-+			buffer);
-+		ret = -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+#endif
-+
- static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 			       const char *buffer, size_t size)
- {
-@@ -2855,6 +2881,9 @@ static int __init bcache_init(void)
- 	static const struct attribute *files[] = {
- 		&ksysfs_register.attr,
- 		&ksysfs_register_quiet.attr,
-+#if defined(CONFIG_BCACHE_NVM_PAGES)
-+		&ksysfs_register_nvdimm_meta.attr,
-+#endif
- 		&ksysfs_pendings_cleanup.attr,
- 		NULL
- 	};
--- 
-2.26.2
-
+Gr=C3=BC=C3=9Fe
+Frieden Maurice.
