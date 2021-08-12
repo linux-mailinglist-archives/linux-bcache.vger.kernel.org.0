@@ -2,66 +2,130 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C84CD3E9672
-	for <lists+linux-bcache@lfdr.de>; Wed, 11 Aug 2021 19:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 837A43E9BB1
+	for <lists+linux-bcache@lfdr.de>; Thu, 12 Aug 2021 02:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229976AbhHKRE0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 11 Aug 2021 13:04:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37760 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229958AbhHKREZ (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 11 Aug 2021 13:04:25 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2323EC061765
-        for <linux-bcache@vger.kernel.org>; Wed, 11 Aug 2021 10:04:02 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id j18so3590277ile.8
-        for <linux-bcache@vger.kernel.org>; Wed, 11 Aug 2021 10:04:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=McdVIlYU3ieCpIDSRMO8yBjLAcID0U1ZmmUY+ikwuW4=;
-        b=uucjqa7IpcmJxESRxLXQ3Fk8rkI6VbyuQiPcAyUINHVX6OLZ3FGw6/uy8VAeAS8Njs
-         Rz8i7IrQrqAMKGEoGFPkyySVZTviwBHSYYGTGwevG/3WPCV2T/NrJR7qiqZzDRHfQsC6
-         /wPm0Mk8/iEJz8rn71w3vzhbuoYuglNZu2SJSovO/WGLT633/cGGrHJGJ0owEYPupbaX
-         lJbQVYyfh6k4IAA8CG4kLrge3PlgHP8aKwdvu8ygz44ndt2YOK5hc8N3JTLSh7iJV55f
-         RgsXRqvlJcswgf83/9ZrzalXOU/Zkz+XhFgu38XxMpv0sjOj2/ikcm1vblZabUWDfhSn
-         M/Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=McdVIlYU3ieCpIDSRMO8yBjLAcID0U1ZmmUY+ikwuW4=;
-        b=SKlT1PkqbmPZtgHrnYWdXfGCrZtJvD396qZY8jTFFxJD5TNRwCrI06BeTR9/Joqvq9
-         QtcWRsdkyXErb1tYJZF2GgrhdogbUKIe7xz+imxnnbZCM6GpVM+CVU2AqORy/aVUlyn0
-         IPJZm9S8vq8Dp7sXJVnNCyDra3xGylQ3jlqUBxfsDhiaecvgZxl7kTd8kmYNvGa2/X1d
-         uMU4yjGgKbxCkwE0PLbLIsnUZ/19hrvVwq1pElmdBiKpDRaXS5HwmDPgvEV69KIymHnw
-         6CLdUgC47FQsCRMZxpWfTjvayeRs8DiXXN1RYgo9JXbpFgssFFdAhWl+1C3VvoGjnF5P
-         uDJw==
-X-Gm-Message-State: AOAM530Fg+RHXcA6Xtn7bVhXlZlhpFZYdKG60225idYYd+tqtYSsvdVF
-        UjFvz+H/oTH1qKDWh+BxxCdONJpEkeJByk/ncZ8=
-X-Google-Smtp-Source: ABdhPJyif+CsQU8pYve6bzbDflGrLxKSW+gRSWNDb+hJQ0AbImVZbRGPHfOG7mWktHx7KGFzAl7F5atbnfsDvRtWP/Q=
-X-Received: by 2002:a05:6e02:1905:: with SMTP id w5mr723845ilu.270.1628701441621;
- Wed, 11 Aug 2021 10:04:01 -0700 (PDT)
+        id S233159AbhHLAo3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 Aug 2021 20:44:29 -0400
+Received: from out0.migadu.com ([94.23.1.103]:27945 "EHLO out0.migadu.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233065AbhHLAo3 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 11 Aug 2021 20:44:29 -0400
+Subject: Re: [PATCH] block: move some macros to blkdev.h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1628729043;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LTvInOe+77jTgYT6AUCc9vroZVFQjq9sVUHRwZ4VN+s=;
+        b=FzN/xYM/O+AciSnpg4lP7oaFLNtlGzXTECaSjr82vovdaVa8/6bhNiHq4EB6g+BupVc8kD
+        Ea/hKlPVkcHQhLXMjtyeq7C5R9YwXwl61wZAx4ytK6bdWm8v9pv26k4hwuoj4HisAqWAa/
+        jq2cRx7DRDPI9n3JXNrUhHvwi04nOgo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Guoqing Jiang <guoqing.jiang@linux.dev>
+To:     axboe@kernel.dk, colyli@suse.de, kent.overstreet@gmail.com,
+        agk@redhat.com, snitzer@redhat.com
+Cc:     dm-devel@redhat.com, linux-block@vger.kernel.org,
+        linux-bcache@vger.kernel.org
+References: <20210721025315.1729118-1-guoqing.jiang@linux.dev>
+Message-ID: <318fe9e7-1136-5716-f600-709f1fe321d8@linux.dev>
+Date:   Thu, 12 Aug 2021 08:43:54 +0800
 MIME-Version: 1.0
-Received: by 2002:a4f:f549:0:0:0:0:0 with HTTP; Wed, 11 Aug 2021 10:04:01
- -0700 (PDT)
-Reply-To: peacemaurice124@gmail.com
-From:   Peace Maurice <fbidepartmentofjusticeus@gmail.com>
-Date:   Wed, 11 Aug 2021 17:04:01 +0000
-Message-ID: <CANKVmnr6CQG9Utp+5jDa1e_SDDbu-M2O1rkgsh1CtzO5bF4kSw@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210721025315.1729118-1-guoqing.jiang@linux.dev>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: guoqing.jiang@linux.dev
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-K=C3=B6nnen wir bitte reden?
-Es ist gerade etwas passiert und es ist sehr dringend, bitte brauche
-ich Ihre Aufmerksamkeit.
+Gentle ping ...
 
-Gr=C3=BC=C3=9Fe
-Frieden Maurice.
+On 7/21/21 10:53 AM, Guoqing Jiang wrote:
+> From: Guoqing Jiang <jiangguoqing@kylinos.cn>
+>
+> Move them (PAGE_SECTORS_SHIFT, PAGE_SECTORS and SECTOR_MASK) to the
+> generic header file to remove redundancy.
+>
+> Signed-off-by: Guoqing Jiang <jiangguoqing@kylinos.cn>
+> ---
+>   drivers/block/brd.c           | 3 ---
+>   drivers/block/null_blk/main.c | 4 ----
+>   drivers/md/bcache/util.h      | 2 --
+>   include/linux/blkdev.h        | 4 ++++
+>   include/linux/device-mapper.h | 1 -
+>   5 files changed, 4 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+> index 95694113e38e..58ec167aa018 100644
+> --- a/drivers/block/brd.c
+> +++ b/drivers/block/brd.c
+> @@ -27,9 +27,6 @@
+>   
+>   #include <linux/uaccess.h>
+>   
+> -#define PAGE_SECTORS_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
+> -#define PAGE_SECTORS		(1 << PAGE_SECTORS_SHIFT)
+> -
+>   /*
+>    * Each block ramdisk device has a radix_tree brd_pages of pages that stores
+>    * the pages containing the block device's contents. A brd page's ->index is
+> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+> index d734e9ee1546..f128242d1170 100644
+> --- a/drivers/block/null_blk/main.c
+> +++ b/drivers/block/null_blk/main.c
+> @@ -11,10 +11,6 @@
+>   #include <linux/init.h>
+>   #include "null_blk.h"
+>   
+> -#define PAGE_SECTORS_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
+> -#define PAGE_SECTORS		(1 << PAGE_SECTORS_SHIFT)
+> -#define SECTOR_MASK		(PAGE_SECTORS - 1)
+> -
+>   #define FREE_BATCH		16
+>   
+>   #define TICKS_PER_SEC		50ULL
+> diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
+> index bca4a7c97da7..b64460a76267 100644
+> --- a/drivers/md/bcache/util.h
+> +++ b/drivers/md/bcache/util.h
+> @@ -15,8 +15,6 @@
+>   
+>   #include "closure.h"
+>   
+> -#define PAGE_SECTORS		(PAGE_SIZE / 512)
+> -
+>   struct closure;
+>   
+>   #ifdef CONFIG_BCACHE_DEBUG
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 3177181c4326..0d0b6967c954 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -941,6 +941,10 @@ static inline struct request_queue *bdev_get_queue(struct block_device *bdev)
+>   #define SECTOR_SIZE (1 << SECTOR_SHIFT)
+>   #endif
+>   
+> +#define PAGE_SECTORS_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
+> +#define PAGE_SECTORS		(1 << PAGE_SECTORS_SHIFT)
+> +#define SECTOR_MASK		(PAGE_SECTORS - 1)
+> +
+>   /*
+>    * blk_rq_pos()			: the current sector
+>    * blk_rq_bytes()		: bytes left in the entire request
+> diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+> index 7457d49acf9a..94f2cd6a8e83 100644
+> --- a/include/linux/device-mapper.h
+> +++ b/include/linux/device-mapper.h
+> @@ -151,7 +151,6 @@ typedef size_t (*dm_dax_copy_iter_fn)(struct dm_target *ti, pgoff_t pgoff,
+>   		void *addr, size_t bytes, struct iov_iter *i);
+>   typedef int (*dm_dax_zero_page_range_fn)(struct dm_target *ti, pgoff_t pgoff,
+>   		size_t nr_pages);
+> -#define PAGE_SECTORS (PAGE_SIZE / 512)
+>   
+>   void dm_error(const char *message);
+>   
+
