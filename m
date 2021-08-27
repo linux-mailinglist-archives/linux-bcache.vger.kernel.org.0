@@ -2,98 +2,83 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E74153EDB42
-	for <lists+linux-bcache@lfdr.de>; Mon, 16 Aug 2021 18:51:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC0C53F9FBE
+	for <lists+linux-bcache@lfdr.de>; Fri, 27 Aug 2021 21:18:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229803AbhHPQvu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 16 Aug 2021 12:51:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41704 "EHLO
+        id S231146AbhH0TTR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 27 Aug 2021 15:19:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229761AbhHPQvt (ORCPT
+        with ESMTP id S230355AbhH0TTN (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 16 Aug 2021 12:51:49 -0400
-Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F33BC0613A4
-        for <linux-bcache@vger.kernel.org>; Mon, 16 Aug 2021 09:51:16 -0700 (PDT)
-Received: by mail-oi1-x22e.google.com with SMTP id t128so27627953oig.1
-        for <linux-bcache@vger.kernel.org>; Mon, 16 Aug 2021 09:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lkHKKxx6E91blWpox1bXj/LIePIAFS6deUe/aal8ts0=;
-        b=2M7PsQmoW0m68H0tIVJvrAROv1UoWp/uy48nnzobRrc03mo4J/lqcPLEQEF1kpJUHw
-         HQBa4gX5fuTsQap76AZD/5O7VV8iT7vusfHhUAUKN78fP0BZSnTbz5bFFrpuEHica0IG
-         vNOnPFWucI7QTNpQA0kxldWWTEaok+vCXtpMF9OBhganoAYTPaU0jWc3pk2ipYfiP3qw
-         KJv7dYM9ZKsD48MEvHmMnjHIhntqyqYB/aLy5wa1Nk3VqVwfnK6sD7DQ+glML2iy7RW5
-         8bKOFtNVZE+7XBNUsAmXKRXSN7yXiZDUd4eqzd5A6g+KiYc52tKP/BJj3qVXfxUmmZ/Y
-         b/Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lkHKKxx6E91blWpox1bXj/LIePIAFS6deUe/aal8ts0=;
-        b=QHMR3CHzAkAXJCoxmBqiZmWzVAEEl8isCCfa/phM4ljJPFCkNkjoP2cW5ClTMrO/MH
-         TF94wgNpOYfDULHNyq56YzfFKXo7PpBUED1OWVKve2OBRKCU8YT1vbgrnCtRu9pckemn
-         e82wEHApvm/DYdwkPuZpwjkwLffLOty8NKOj0BYtNkWX6m2jjD+OJn5+qDTqsnAaBn2X
-         uuh24B5FmgU0Dt6NX3tzDYagXWHVg1QXulAxxFic+QyF9j2PJxkNuqZJSfrax6aLXNcR
-         gGphlQrwlkyRP0MBJofj72LKfc3myTJhnNCuyrjE5z2YQr+QtSEPAoTBgKx7Z5QMolgI
-         /haw==
-X-Gm-Message-State: AOAM5316K+ReKUjo9jpYts/XJd3t66M1YoSjWofptYTRfLKkF5VNKCNm
-        YfgSDClF5KDY/kJqQUT0AXbBog==
-X-Google-Smtp-Source: ABdhPJwPiJZucbHV+gTb5R7I/kfPLblHKKXb+EIub7hcvBOP41sFKxi/Q6epHu0YRXyVvO62JSl/PA==
-X-Received: by 2002:a54:4619:: with SMTP id p25mr42850oip.5.1629132675579;
-        Mon, 16 Aug 2021 09:51:15 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id u18sm2018498ooi.40.2021.08.16.09.51.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Aug 2021 09:51:15 -0700 (PDT)
-Subject: Re: add a bvec_virt helper
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Geoff Levand <geoff@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Song Liu <song@kernel.org>, Mike Snitzer <snitzer@redhat.com>,
-        Coly Li <colyli@suse.de>, Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-References: <20210804095634.460779-1-hch@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <4e321dab-188d-ca0a-a98c-4a587e7b5f27@kernel.dk>
-Date:   Mon, 16 Aug 2021 10:51:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 27 Aug 2021 15:19:13 -0400
+Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEA25C0613CF;
+        Fri, 27 Aug 2021 12:18:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=+haEytmu63y3zWbWZRI3xhnFTvWyZ+JIjCoqN6FFLWY=; b=K2x3pPY1MjMXFVBKWItW/EUmz3
+        oXTuPhFDfnmLiBjDzjBod7BEzvqr8kGcf5ytJZUzzsGuIUfqyRpJhcX80zL0lRzDZAS9amWITcPsM
+        XVvA+RKxBCvgNSjP0X1szvA7ZlpF/3YjoBZ33+dmPNEx+hJ1CCVAsBc4AYNyAlx/cVlQ6F2TbPjmu
+        7C6yudMpOkpOSu4bkqcbhoJA70i0CfddYCZwj22VzG6stQYi8XFhm14+Dp+G+0cLOSi3k21VwV2Xi
+        ADNTqx7RTt769nCMLIQRhz78hIfqIY3Fg7E30rRJeeLZOxfb1Xp0sNZYlrB6721r6oUAljCk750jK
+        ihFnTrMQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mJhMg-00D5Ao-Ti; Fri, 27 Aug 2021 19:18:10 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     axboe@kernel.dk, colyli@suse.de, kent.overstreet@gmail.com,
+        kbusch@kernel.org, sagi@grimberg.me, vishal.l.verma@intel.com,
+        dan.j.williams@intel.com, dave.jiang@intel.com,
+        ira.weiny@intel.com, konrad.wilk@oracle.com, roger.pau@citrix.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        sstabellini@kernel.org, minchan@kernel.org, ngupta@vflare.org,
+        senozhatsky@chromium.org
+Cc:     xen-devel@lists.xenproject.org, nvdimm@lists.linux.dev,
+        linux-nvme@lists.infradead.org, linux-bcache@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH 00/10] block: first batch of add_disk() error handling conversions
+Date:   Fri, 27 Aug 2021 12:17:59 -0700
+Message-Id: <20210827191809.3118103-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210804095634.460779-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 8/4/21 3:56 AM, Christoph Hellwig wrote:
-> Hi Jens,
-> 
-> this series adds a bvec_virt helper to return the virtual address of the
-> data in bvec to replace the open coded calculation, and as a reminder
-> that generall bio/bvec data can be in high memory unless it is caller
-> controller or in an architecture specific driver where highmem is
-> impossible.
+This is my second batch of driver conversions to use add_disk() error
+handling. Please review and let me know if you spot any issues. This is
+part of a larger effort to covert all drivers over to use the new
+add_disk() error handling. The entire work can be found on my branch
+dedicated for this work [0]
 
-Applied, thanks.
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=20210827-for-axboe-add-disk-error-handling-next-2nd
+
+Luis Chamberlain (10):
+  block/brd: add error handling support for add_disk()
+  bcache: add error handling support for add_disk()
+  nvme-multipath: add error handling support for add_disk()
+  nvdimm/btt: do not call del_gendisk() if not needed
+  nvdimm/btt: use goto error labels on btt_blk_init()
+  nvdimm/btt: add error handling support for add_disk()
+  nvdimm/blk: avoid calling del_gendisk() on early failures
+  nvdimm/blk: add error handling support for add_disk()
+  xen-blkfront: add error handling support for add_disk()
+  zram: add error handling support for add_disk()
+
+ drivers/block/brd.c           | 10 ++++++++--
+ drivers/block/xen-blkfront.c  |  8 +++++++-
+ drivers/block/zram/zram_drv.c |  6 +++++-
+ drivers/md/bcache/super.c     | 17 ++++++++++++-----
+ drivers/nvdimm/blk.c          | 21 +++++++++++++++------
+ drivers/nvdimm/btt.c          | 24 +++++++++++++++---------
+ drivers/nvme/host/multipath.c | 10 +++++++---
+ 7 files changed, 69 insertions(+), 27 deletions(-)
 
 -- 
-Jens Axboe
+2.30.2
 
