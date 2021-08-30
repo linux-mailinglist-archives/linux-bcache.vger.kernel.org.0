@@ -2,83 +2,80 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F26923FB139
-	for <lists+linux-bcache@lfdr.de>; Mon, 30 Aug 2021 08:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A07B3FBDED
+	for <lists+linux-bcache@lfdr.de>; Mon, 30 Aug 2021 23:09:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233350AbhH3GbO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 30 Aug 2021 02:31:14 -0400
-Received: from smtp.h3c.com ([221.12.31.56]:56092 "EHLO h3cspam02-ex.h3c.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233306AbhH3GbN (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 30 Aug 2021 02:31:13 -0400
-Received: from DAG2EX06-IDC.srv.huawei-3com.com ([10.8.0.69])
-        by h3cspam02-ex.h3c.com with ESMTP id 17U6Thbu073167;
-        Mon, 30 Aug 2021 14:29:44 +0800 (GMT-8)
-        (envelope-from xi.fengfei@h3c.com)
-Received: from DAG2EX05-BASE.srv.huawei-3com.com (10.8.0.68) by
- DAG2EX06-IDC.srv.huawei-3com.com (10.8.0.69) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.12; Mon, 30 Aug 2021 14:29:46 +0800
-Received: from DAG2EX05-BASE.srv.huawei-3com.com ([fe80::f963:2fad:283e:6b1c])
- by DAG2EX05-BASE.srv.huawei-3com.com ([fe80::f963:2fad:283e:6b1c%2]) with
- mapi id 15.01.2242.012; Mon, 30 Aug 2021 14:29:46 +0800
-From:   Xifengfei <xi.fengfei@h3c.com>
-To:     Coly Li <colyli@suse.de>
-CC:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kent.overstreet@gmail.com" <kent.overstreet@gmail.com>
-Subject: Re: [PATCH] bcache: remove the redundant judgment on bi_size
-Thread-Topic: [PATCH] bcache: remove the redundant judgment on bi_size
-Thread-Index: AdedZ0n5UnkcexYQTOSkKpzakNUUpQAAPKRw
-Date:   Mon, 30 Aug 2021 06:29:45 +0000
-Message-ID: <ed49f33da50e4f5c88f986c8ed239e78@h3c.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.99.152.246]
-x-sender-location: DAG2
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S235663AbhH3VKB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 30 Aug 2021 17:10:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57396 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235412AbhH3VKB (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Mon, 30 Aug 2021 17:10:01 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FB32C061575;
+        Mon, 30 Aug 2021 14:09:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xFWTIefdsBbNHRGePjMVKB25ot+nXFfcxkVreKDH86Y=; b=FgSmTd/fRmS0xbTiIlIubbvcQF
+        l8NXkScGBRAvafpu0rVHoH9iy35oqe0ZVhZrGw9F+vPsXmVAXAHRi9bLTOz/vVwm017PysQxzjdwR
+        2Z7yKblSpY23X+mBYcbPR7HSt5+du9vMR0yd4OGtU//TsQa3L9dQPWUzn+aBwsb7TTLrFsa5Z1yBC
+        cHAjsVtZF1FFvy5cgIFuUbxSa/UXcDJEnINnwNpFBMc/dx4nsSKskeqvJF2m/6ZEJ/y+wT83/RDx5
+        Pxwk7umAbXCBGozfp+iGo+sUQFP9mBj3TSyahaTBMA85l5Ypzlz3qTA3rqa10UKRTSgpCacUNkUG2
+        tjolFDlQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mKoWS-000bKI-22; Mon, 30 Aug 2021 21:08:52 +0000
+Date:   Mon, 30 Aug 2021 14:08:52 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     axboe@kernel.dk, colyli@suse.de, kent.overstreet@gmail.com,
+        sagi@grimberg.me, vishal.l.verma@intel.com,
+        dan.j.williams@intel.com, dave.jiang@intel.com,
+        ira.weiny@intel.com, konrad.wilk@oracle.com, roger.pau@citrix.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        sstabellini@kernel.org, minchan@kernel.org, ngupta@vflare.org,
+        senozhatsky@chromium.org, xen-devel@lists.xenproject.org,
+        nvdimm@lists.linux.dev, linux-nvme@lists.infradead.org,
+        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/10] nvme-multipath: add error handling support for
+ add_disk()
+Message-ID: <YS1I5DuGr0q7/uow@bombadil.infradead.org>
+References: <20210827191809.3118103-1-mcgrof@kernel.org>
+ <20210827191809.3118103-4-mcgrof@kernel.org>
+ <20210827202932.GA82376@dhcp-10-100-145-180.wdc.com>
 MIME-Version: 1.0
-X-DNSRBL: 
-X-MAIL: h3cspam02-ex.h3c.com 17U6Thbu073167
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210827202932.GA82376@dhcp-10-100-145-180.wdc.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-77yIU29ycnksIHRoZXJlIHdhcyBhbiBvYnZpb3VzIHR5cG8gaW4gdGhlIGxhc3QgZW1haWzvvIkN
-ClRoYW5rcyBhIGxvdC4gSSB1bmRlcnN0YW5kIHRoZSBwdXJwb3NlLg0KU28gaXMgdGhlIG9yaWdp
-bmFsIGp1ZGdtZW50IHByb2Nlc3MgdG9vIGNvbXBsaWNhdGVkPyAgQ2FuIHdlIGp1ZGdlIGJpX3Np
-emUgZGlyZWN0bHk/ICBUaGlzIHdpbGwgYmUgbW9yZSBjb25jaXNlDQoNCkBAIC00MjMsNyArNDIz
-LDcgQEAgc3RhdGljIGJvb2wgY2hlY2tfc2hvdWxkX2J5cGFzcyhzdHJ1Y3QgY2FjaGVkX2RldiAq
-ZGMsIHN0cnVjdCBiaW8gKmJpbykNCiAgICAgICAgYWRkX3NlcXVlbnRpYWwodGFzayk7DQogICAg
-ICAgIGktPnNlcXVlbnRpYWwgPSAwOw0KIGZvdW5kOg0KLSAgICAgICBpZiAoaS0+c2VxdWVudGlh
-bCArIGJpby0+YmlfaXRlci5iaV9zaXplID4gaS0+c2VxdWVudGlhbCkNCisgICAgICAgaWYgKGJp
-by0+YmlfaXRlci5iaV9zaXplKQ0KICAgICAgICAgICAgICAgIGktPnNlcXVlbnRpYWwgICArPSBi
-aW8tPmJpX2l0ZXIuYmlfc2l6ZTsNCg0KICAgICAgICBpLT5sYXN0ICAgICAgICAgICAgICAgICAg
-PSBiaW9fZW5kX3NlY3RvcihiaW8pOw0KDQpUaGFua3MNCkZlbmdmZWkNCg0KLS0tLS3pgq7ku7bl
-jp/ku7YtLS0tLQ0K5Y+R5Lu25Lq6OiBDb2x5IExpIFttYWlsdG86Y29seWxpQHN1c2UuZGVdDQrl
-j5HpgIHml7bpl7Q6IDIwMjHlubQ45pyIMjnml6UgMTU6NTANCuaUtuS7tuS6ujogeGlmZW5nZmVp
-IChSRCkgPHhpLmZlbmdmZWlAaDNjLmNvbT4NCuaKhOmAgTogbGludXgtYmNhY2hlQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsga2VudC5vdmVyc3RyZWV0QGdt
-YWlsLmNvbQ0K5Li76aKYOiBSZTogW1BBVENIXSBiY2FjaGU6IHJlbW92ZSB0aGUgcmVkdW5kYW50
-IGp1ZGdtZW50IG9uIGJpX3NpemUNCg0KT24gOC8yOS8yMSAxMjo0OSBQTSwgRmVuZ2ZlaSBYaSB3
-cm90ZToNCj4gVGhlIGJpX3NpemUgaXMgdW5zaWduZWQgaW50IHR5cGUgZGF0YSBub3QgbGVzcyB0
-aGFuIDAsIHNvIHdlIGNhbiANCj4gZGlyZWN0bHkgYWRkIGJpX3NpemUgd2l0aG91dCBleHRyYSBq
-dWRnbWVudA0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBGZW5nZmVpIFhpIDx4aS5mZW5nZmVpQGgzYy5j
-b20+DQoNCk5BQ0suIFRoZSBjaGVjayBpcyBuZWNlc3NhcnkgdG8gYXZvaWQgcmVkdW5kYW50IGFu
-ZCB1bm5lY2Vzc2FyeSBtZW1vcnkgd3JpdGUuDQoNCkNvbHkgTGkNCg0KPiAtLS0NCj4gICBkcml2
-ZXJzL21kL2JjYWNoZS9yZXF1ZXN0LmMgfCA0ICstLS0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMSBp
-bnNlcnRpb24oKyksIDMgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21k
-L2JjYWNoZS9yZXF1ZXN0LmMgYi9kcml2ZXJzL21kL2JjYWNoZS9yZXF1ZXN0LmMgDQo+IGluZGV4
-IDZkMWRlODg5Yi4uMjc4OGVlYzNhIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL21kL2JjYWNoZS9y
-ZXF1ZXN0LmMNCj4gKysrIGIvZHJpdmVycy9tZC9iY2FjaGUvcmVxdWVzdC5jDQo+IEBAIC00MjMs
-OSArNDIzLDcgQEAgc3RhdGljIGJvb2wgY2hlY2tfc2hvdWxkX2J5cGFzcyhzdHJ1Y3QgY2FjaGVk
-X2RldiAqZGMsIHN0cnVjdCBiaW8gKmJpbykNCj4gICAJYWRkX3NlcXVlbnRpYWwodGFzayk7DQo+
-ICAgCWktPnNlcXVlbnRpYWwgPSAwOw0KPiAgIGZvdW5kOg0KPiAtCWlmIChpLT5zZXF1ZW50aWFs
-ICsgYmlvLT5iaV9pdGVyLmJpX3NpemUgPiBpLT5zZXF1ZW50aWFsKQ0KPiAtCQlpLT5zZXF1ZW50
-aWFsCSs9IGJpby0+YmlfaXRlci5iaV9zaXplOw0KPiAtDQo+ICsJaS0+c2VxdWVudGlhbAkJKz0g
-YmlvLT5iaV9pdGVyLmJpX3NpemU7DQo+ICAgCWktPmxhc3QJCQkgPSBiaW9fZW5kX3NlY3Rvcihi
-aW8pOw0KPiAgIAlpLT5qaWZmaWVzCQkgPSBqaWZmaWVzICsgbXNlY3NfdG9famlmZmllcyg1MDAw
-KTsNCj4gICAJdGFzay0+c2VxdWVudGlhbF9pbwkgPSBpLT5zZXF1ZW50aWFsOw0KDQo=
+On Fri, Aug 27, 2021 at 01:29:32PM -0700, Keith Busch wrote:
+> On Fri, Aug 27, 2021 at 12:18:02PM -0700, Luis Chamberlain wrote:
+> > @@ -479,13 +479,17 @@ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl, struct nvme_ns_head *head)
+> >  static void nvme_mpath_set_live(struct nvme_ns *ns)
+> >  {
+> >  	struct nvme_ns_head *head = ns->head;
+> > +	int rc;
+> >  
+> >  	if (!head->disk)
+> >  		return;
+> >  
+> > -	if (!test_and_set_bit(NVME_NSHEAD_DISK_LIVE, &head->flags)) {
+> > -		device_add_disk(&head->subsys->dev, head->disk,
+> > -				nvme_ns_id_attr_groups);
+> > +	if (!test_bit(NVME_NSHEAD_DISK_LIVE, &head->flags)) {
+> 
+> This should still be test_and_set_bit() because it is protecting against
+> two nvme paths simultaneously calling device_add_disk() on the same
+> namespace head.
+
+Interesting, I'll add a comment as well, as this was not clear with the drive
+by effort.
+
+  Luis
