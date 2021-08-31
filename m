@@ -2,80 +2,131 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A07B3FBDED
-	for <lists+linux-bcache@lfdr.de>; Mon, 30 Aug 2021 23:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAD953FC081
+	for <lists+linux-bcache@lfdr.de>; Tue, 31 Aug 2021 03:35:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235663AbhH3VKB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 30 Aug 2021 17:10:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57396 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235412AbhH3VKB (ORCPT
+        id S239273AbhHaBgI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 30 Aug 2021 21:36:08 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:43290 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231297AbhHaBgH (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 30 Aug 2021 17:10:01 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FB32C061575;
-        Mon, 30 Aug 2021 14:09:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=xFWTIefdsBbNHRGePjMVKB25ot+nXFfcxkVreKDH86Y=; b=FgSmTd/fRmS0xbTiIlIubbvcQF
-        l8NXkScGBRAvafpu0rVHoH9iy35oqe0ZVhZrGw9F+vPsXmVAXAHRi9bLTOz/vVwm017PysQxzjdwR
-        2Z7yKblSpY23X+mBYcbPR7HSt5+du9vMR0yd4OGtU//TsQa3L9dQPWUzn+aBwsb7TTLrFsa5Z1yBC
-        cHAjsVtZF1FFvy5cgIFuUbxSa/UXcDJEnINnwNpFBMc/dx4nsSKskeqvJF2m/6ZEJ/y+wT83/RDx5
-        Pxwk7umAbXCBGozfp+iGo+sUQFP9mBj3TSyahaTBMA85l5Ypzlz3qTA3rqa10UKRTSgpCacUNkUG2
-        tjolFDlQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mKoWS-000bKI-22; Mon, 30 Aug 2021 21:08:52 +0000
-Date:   Mon, 30 Aug 2021 14:08:52 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     axboe@kernel.dk, colyli@suse.de, kent.overstreet@gmail.com,
-        sagi@grimberg.me, vishal.l.verma@intel.com,
-        dan.j.williams@intel.com, dave.jiang@intel.com,
-        ira.weiny@intel.com, konrad.wilk@oracle.com, roger.pau@citrix.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        sstabellini@kernel.org, minchan@kernel.org, ngupta@vflare.org,
-        senozhatsky@chromium.org, xen-devel@lists.xenproject.org,
-        nvdimm@lists.linux.dev, linux-nvme@lists.infradead.org,
-        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/10] nvme-multipath: add error handling support for
- add_disk()
-Message-ID: <YS1I5DuGr0q7/uow@bombadil.infradead.org>
-References: <20210827191809.3118103-1-mcgrof@kernel.org>
- <20210827191809.3118103-4-mcgrof@kernel.org>
- <20210827202932.GA82376@dhcp-10-100-145-180.wdc.com>
+        Mon, 30 Aug 2021 21:36:07 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 371982210E;
+        Tue, 31 Aug 2021 01:35:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1630373712; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3UH8M/pg2BA9Ia7QWWGOMnNyT+jpZieQFNdDUlPPWRg=;
+        b=oZB/zcjwAuccWfpsHincIY8Nz7MvOvWbdzF0BJXlVwGB/mgRKEhK4zscUI2iUab4uRqzZb
+        Q0Fbx7B23UB88PLpBgHxopA3t3UvyQ9sAQNuwWLfyLiiSHDrmV0fgK9aqR3YA3FUOfMuBO
+        JAax/fdZbBLe8T1q0h3b1FIb/fMPrHI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1630373712;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3UH8M/pg2BA9Ia7QWWGOMnNyT+jpZieQFNdDUlPPWRg=;
+        b=qiFqiAYGptpOB4GkE3nrWVVWK+9g0Qs7rnXLfj3C6QigO6rHz4Kx8LE8OJG/pc0VbquZE7
+        cSQyewfNhUG5qyCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3453F13A9B;
+        Tue, 31 Aug 2021 01:35:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id UP32AE+HLWFgWgAAMHmgww
+        (envelope-from <colyli@suse.de>); Tue, 31 Aug 2021 01:35:11 +0000
+Subject: Re: [PATCH] bcache: remove the redundant judgment on bi_size
+To:     Xifengfei <xi.fengfei@h3c.com>
+Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kent.overstreet@gmail.com" <kent.overstreet@gmail.com>
+References: <ed49f33da50e4f5c88f986c8ed239e78@h3c.com>
+From:   Coly Li <colyli@suse.de>
+Message-ID: <51b8745f-a41e-a8cb-7921-847bcee4a157@suse.de>
+Date:   Tue, 31 Aug 2021 09:35:09 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210827202932.GA82376@dhcp-10-100-145-180.wdc.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <ed49f33da50e4f5c88f986c8ed239e78@h3c.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 01:29:32PM -0700, Keith Busch wrote:
-> On Fri, Aug 27, 2021 at 12:18:02PM -0700, Luis Chamberlain wrote:
-> > @@ -479,13 +479,17 @@ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl, struct nvme_ns_head *head)
-> >  static void nvme_mpath_set_live(struct nvme_ns *ns)
-> >  {
-> >  	struct nvme_ns_head *head = ns->head;
-> > +	int rc;
-> >  
-> >  	if (!head->disk)
-> >  		return;
-> >  
-> > -	if (!test_and_set_bit(NVME_NSHEAD_DISK_LIVE, &head->flags)) {
-> > -		device_add_disk(&head->subsys->dev, head->disk,
-> > -				nvme_ns_id_attr_groups);
-> > +	if (!test_bit(NVME_NSHEAD_DISK_LIVE, &head->flags)) {
-> 
-> This should still be test_and_set_bit() because it is protecting against
-> two nvme paths simultaneously calling device_add_disk() on the same
-> namespace head.
+On 8/30/21 2:29 PM, Xifengfei wrote:
+> （Sorry, there was an obvious typo in the last email）
+> Thanks a lot. I understand the purpose.
+> So is the original judgment process too complicated?  Can we judge bi_size directly?  This will be more concise
+>
+> @@ -423,7 +423,7 @@ static bool check_should_bypass(struct cached_dev *dc, struct bio *bio)
+>          add_sequential(task);
+>          i->sequential = 0;
+>   found:
+> -       if (i->sequential + bio->bi_iter.bi_size > i->sequential)
+> +       if (bio->bi_iter.bi_size)
+>                  i->sequential   += bio->bi_iter.bi_size;
+>
+>          i->last                  = bio_end_sector(bio);
 
-Interesting, I'll add a comment as well, as this was not clear with the drive
-by effort.
+The above change works, but the code readability decreased because 
+how/why i->sequential is maintained is not that directly visible.
 
-  Luis
+This is a difference of coding styles. IMHO for this particular case, 
+the readability is more important than less CPU instructions.
+
+Thanks.
+
+Coly Li
+
+> Thanks
+> Fengfei
+>
+> -----邮件原件-----
+> 发件人: Coly Li [mailto:colyli@suse.de]
+> 发送时间: 2021年8月29日 15:50
+> 收件人: xifengfei (RD) <xi.fengfei@h3c.com>
+> 抄送: linux-bcache@vger.kernel.org; linux-kernel@vger.kernel.org; kent.overstreet@gmail.com
+> 主题: Re: [PATCH] bcache: remove the redundant judgment on bi_size
+>
+> On 8/29/21 12:49 PM, Fengfei Xi wrote:
+>> The bi_size is unsigned int type data not less than 0, so we can
+>> directly add bi_size without extra judgment
+>>
+>> Signed-off-by: Fengfei Xi <xi.fengfei@h3c.com>
+> NACK. The check is necessary to avoid redundant and unnecessary memory write.
+>
+> Coly Li
+>
+>> ---
+>>    drivers/md/bcache/request.c | 4 +---
+>>    1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+>> index 6d1de889b..2788eec3a 100644
+>> --- a/drivers/md/bcache/request.c
+>> +++ b/drivers/md/bcache/request.c
+>> @@ -423,9 +423,7 @@ static bool check_should_bypass(struct cached_dev *dc, struct bio *bio)
+>>    	add_sequential(task);
+>>    	i->sequential = 0;
+>>    found:
+>> -	if (i->sequential + bio->bi_iter.bi_size > i->sequential)
+>> -		i->sequential	+= bio->bi_iter.bi_size;
+>> -
+>> +	i->sequential		+= bio->bi_iter.bi_size;
+>>    	i->last			 = bio_end_sector(bio);
+>>    	i->jiffies		 = jiffies + msecs_to_jiffies(5000);
+>>    	task->sequential_io	 = i->sequential;
+
