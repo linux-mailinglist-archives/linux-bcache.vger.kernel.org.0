@@ -2,97 +2,73 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 665AE3FC0B0
-	for <lists+linux-bcache@lfdr.de>; Tue, 31 Aug 2021 04:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77AAD3FDD49
+	for <lists+linux-bcache@lfdr.de>; Wed,  1 Sep 2021 15:50:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239395AbhHaCGr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 30 Aug 2021 22:06:47 -0400
-Received: from smtp.h3c.com ([221.12.31.13]:45288 "EHLO h3cspam01-ex.h3c.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239348AbhHaCGr (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 30 Aug 2021 22:06:47 -0400
-Received: from DAG2EX05-BASE.srv.huawei-3com.com ([10.8.0.68])
-        by h3cspam01-ex.h3c.com with ESMTP id 17V25KDU066512;
-        Tue, 31 Aug 2021 10:05:20 +0800 (GMT-8)
-        (envelope-from xi.fengfei@h3c.com)
-Received: from DAG2EX05-BASE.srv.huawei-3com.com (10.8.0.68) by
- DAG2EX05-BASE.srv.huawei-3com.com (10.8.0.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2242.12; Tue, 31 Aug 2021 10:05:21 +0800
-Received: from DAG2EX05-BASE.srv.huawei-3com.com ([fe80::f963:2fad:283e:6b1c])
- by DAG2EX05-BASE.srv.huawei-3com.com ([fe80::f963:2fad:283e:6b1c%2]) with
- mapi id 15.01.2242.012; Tue, 31 Aug 2021 10:05:21 +0800
-From:   Xifengfei <xi.fengfei@h3c.com>
-To:     Coly Li <colyli@suse.de>
-CC:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kent.overstreet@gmail.com" <kent.overstreet@gmail.com>
-Subject: Re: [PATCH] bcache: remove the redundant judgment on bi_size
-Thread-Topic: [PATCH] bcache: remove the redundant judgment on bi_size
-Thread-Index: AdeeDBa9/WMeMJ4kT3KL2Y0pxfhQgA==
-Date:   Tue, 31 Aug 2021 02:05:20 +0000
-Message-ID: <7a523ae04e6c412e98ca00275ed4ad1a@h3c.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.99.152.246]
-x-sender-location: DAG2
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S243062AbhIAN0A (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 1 Sep 2021 09:26:00 -0400
+Received: from icebox.esperi.org.uk ([81.187.191.129]:43502 "EHLO
+        mail.esperi.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234295AbhIAN0A (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Wed, 1 Sep 2021 09:26:00 -0400
+X-Greylist: delayed 551 seconds by postgrey-1.27 at vger.kernel.org; Wed, 01 Sep 2021 09:26:00 EDT
+Received: from loom (nix@sidle.srvr.nix [192.168.14.8])
+        by mail.esperi.org.uk (8.16.1/8.16.1) with ESMTPS id 181DFo2h018476
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
+        for <linux-bcache@vger.kernel.org>; Wed, 1 Sep 2021 14:15:50 +0100
+From:   Nix <nix@esperi.org.uk>
+To:     linux-bcache@vger.kernel.org
+Subject: 5.11: WARN on long-running system
+Emacs:  Our Lady of Perpetual Garbage Collection
+Date:   Wed, 01 Sep 2021 14:15:50 +0100
+Message-ID: <87o89c4et5.fsf@esperi.org.uk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2.50 (gnu/linux)
 MIME-Version: 1.0
-X-DNSRBL: 
-X-MAIL: h3cspam01-ex.h3c.com 17V25KDU066512
+Content-Type: text/plain
+X-DCC--Metrics: loom 1481; Body=1 Fuz1=1 Fuz2=1
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-T0suIFRoYW5rcyBmb3Igb3VyIGV4cGxhbmF0aW9uLiAgIF5fXg0KDQpGZW5nIGZlaQ0KDQotLS0t
-LemCruS7tuWOn+S7ti0tLS0tDQrlj5Hku7bkuro6IENvbHkgTGkgW21haWx0bzpjb2x5bGlAc3Vz
-ZS5kZV0gDQrlj5HpgIHml7bpl7Q6IDIwMjHlubQ45pyIMzHml6UgOTozNQ0K5pS25Lu25Lq6OiB4
-aWZlbmdmZWkgKFJEKSA8eGkuZmVuZ2ZlaUBoM2MuY29tPg0K5oqE6YCBOiBsaW51eC1iY2FjaGVA
-dmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBrZW50Lm92ZXJz
-dHJlZXRAZ21haWwuY29tDQrkuLvpopg6IFJlOiBbUEFUQ0hdIGJjYWNoZTogcmVtb3ZlIHRoZSBy
-ZWR1bmRhbnQganVkZ21lbnQgb24gYmlfc2l6ZQ0KDQpPbiA4LzMwLzIxIDI6MjkgUE0sIFhpZmVu
-Z2ZlaSB3cm90ZToNCj4g77yIU29ycnksIHRoZXJlIHdhcyBhbiBvYnZpb3VzIHR5cG8gaW4gdGhl
-IGxhc3QgZW1haWzvvIkNCj4gVGhhbmtzIGEgbG90LiBJIHVuZGVyc3RhbmQgdGhlIHB1cnBvc2Uu
-DQo+IFNvIGlzIHRoZSBvcmlnaW5hbCBqdWRnbWVudCBwcm9jZXNzIHRvbyBjb21wbGljYXRlZD8g
-IENhbiB3ZSBqdWRnZSANCj4gYmlfc2l6ZSBkaXJlY3RseT8gIFRoaXMgd2lsbCBiZSBtb3JlIGNv
-bmNpc2UNCj4NCj4gQEAgLTQyMyw3ICs0MjMsNyBAQCBzdGF0aWMgYm9vbCBjaGVja19zaG91bGRf
-YnlwYXNzKHN0cnVjdCBjYWNoZWRfZGV2ICpkYywgc3RydWN0IGJpbyAqYmlvKQ0KPiAgICAgICAg
-ICBhZGRfc2VxdWVudGlhbCh0YXNrKTsNCj4gICAgICAgICAgaS0+c2VxdWVudGlhbCA9IDA7DQo+
-ICAgZm91bmQ6DQo+IC0gICAgICAgaWYgKGktPnNlcXVlbnRpYWwgKyBiaW8tPmJpX2l0ZXIuYmlf
-c2l6ZSA+IGktPnNlcXVlbnRpYWwpDQo+ICsgICAgICAgaWYgKGJpby0+YmlfaXRlci5iaV9zaXpl
-KQ0KPiAgICAgICAgICAgICAgICAgIGktPnNlcXVlbnRpYWwgICArPSBiaW8tPmJpX2l0ZXIuYmlf
-c2l6ZTsNCj4NCj4gICAgICAgICAgaS0+bGFzdCAgICAgICAgICAgICAgICAgID0gYmlvX2VuZF9z
-ZWN0b3IoYmlvKTsNCg0KVGhlIGFib3ZlIGNoYW5nZSB3b3JrcywgYnV0IHRoZSBjb2RlIHJlYWRh
-YmlsaXR5IGRlY3JlYXNlZCBiZWNhdXNlIGhvdy93aHkgaS0+c2VxdWVudGlhbCBpcyBtYWludGFp
-bmVkIGlzIG5vdCB0aGF0IGRpcmVjdGx5IHZpc2libGUuDQoNClRoaXMgaXMgYSBkaWZmZXJlbmNl
-IG9mIGNvZGluZyBzdHlsZXMuIElNSE8gZm9yIHRoaXMgcGFydGljdWxhciBjYXNlLCB0aGUgcmVh
-ZGFiaWxpdHkgaXMgbW9yZSBpbXBvcnRhbnQgdGhhbiBsZXNzIENQVSBpbnN0cnVjdGlvbnMuDQoN
-ClRoYW5rcy4NCg0KQ29seSBMaQ0KDQo+IFRoYW5rcw0KPiBGZW5nZmVpDQo+DQo+IC0tLS0t6YKu
-5Lu25Y6f5Lu2LS0tLS0NCj4g5Y+R5Lu25Lq6OiBDb2x5IExpIFttYWlsdG86Y29seWxpQHN1c2Uu
-ZGVdDQo+IOWPkemAgeaXtumXtDogMjAyMeW5tDjmnIgyOeaXpSAxNTo1MA0KPiDmlLbku7bkuro6
-IHhpZmVuZ2ZlaSAoUkQpIDx4aS5mZW5nZmVpQGgzYy5jb20+DQo+IOaKhOmAgTogbGludXgtYmNh
-Y2hlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgDQo+IGtl
-bnQub3ZlcnN0cmVldEBnbWFpbC5jb20NCj4g5Li76aKYOiBSZTogW1BBVENIXSBiY2FjaGU6IHJl
-bW92ZSB0aGUgcmVkdW5kYW50IGp1ZGdtZW50IG9uIGJpX3NpemUNCj4NCj4gT24gOC8yOS8yMSAx
-Mjo0OSBQTSwgRmVuZ2ZlaSBYaSB3cm90ZToNCj4+IFRoZSBiaV9zaXplIGlzIHVuc2lnbmVkIGlu
-dCB0eXBlIGRhdGEgbm90IGxlc3MgdGhhbiAwLCBzbyB3ZSBjYW4gDQo+PiBkaXJlY3RseSBhZGQg
-Ymlfc2l6ZSB3aXRob3V0IGV4dHJhIGp1ZGdtZW50DQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogRmVu
-Z2ZlaSBYaSA8eGkuZmVuZ2ZlaUBoM2MuY29tPg0KPiBOQUNLLiBUaGUgY2hlY2sgaXMgbmVjZXNz
-YXJ5IHRvIGF2b2lkIHJlZHVuZGFudCBhbmQgdW5uZWNlc3NhcnkgbWVtb3J5IHdyaXRlLg0KPg0K
-PiBDb2x5IExpDQo+DQo+PiAtLS0NCj4+ICAgIGRyaXZlcnMvbWQvYmNhY2hlL3JlcXVlc3QuYyB8
-IDQgKy0tLQ0KPj4gICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAzIGRlbGV0aW9u
-cygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21kL2JjYWNoZS9yZXF1ZXN0LmMgDQo+
-PiBiL2RyaXZlcnMvbWQvYmNhY2hlL3JlcXVlc3QuYyBpbmRleCA2ZDFkZTg4OWIuLjI3ODhlZWMz
-YSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvbWQvYmNhY2hlL3JlcXVlc3QuYw0KPj4gKysrIGIv
-ZHJpdmVycy9tZC9iY2FjaGUvcmVxdWVzdC5jDQo+PiBAQCAtNDIzLDkgKzQyMyw3IEBAIHN0YXRp
-YyBib29sIGNoZWNrX3Nob3VsZF9ieXBhc3Moc3RydWN0IGNhY2hlZF9kZXYgKmRjLCBzdHJ1Y3Qg
-YmlvICpiaW8pDQo+PiAgICAJYWRkX3NlcXVlbnRpYWwodGFzayk7DQo+PiAgICAJaS0+c2VxdWVu
-dGlhbCA9IDA7DQo+PiAgICBmb3VuZDoNCj4+IC0JaWYgKGktPnNlcXVlbnRpYWwgKyBiaW8tPmJp
-X2l0ZXIuYmlfc2l6ZSA+IGktPnNlcXVlbnRpYWwpDQo+PiAtCQlpLT5zZXF1ZW50aWFsCSs9IGJp
-by0+YmlfaXRlci5iaV9zaXplOw0KPj4gLQ0KPj4gKwlpLT5zZXF1ZW50aWFsCQkrPSBiaW8tPmJp
-X2l0ZXIuYmlfc2l6ZTsNCj4+ICAgIAlpLT5sYXN0CQkJID0gYmlvX2VuZF9zZWN0b3IoYmlvKTsN
-Cj4+ICAgIAlpLT5qaWZmaWVzCQkgPSBqaWZmaWVzICsgbXNlY3NfdG9famlmZmllcyg1MDAwKTsN
-Cj4+ICAgIAl0YXNrLT5zZXF1ZW50aWFsX2lvCSA9IGktPnNlcXVlbnRpYWw7DQoNCg==
+One long-running 5.11.8 system (yes, I know, an upgrade is overdue)
+using bcache for almost all its fses just WARN_ONed on me:
+
+Aug 29 04:11:47 loom warning: [6083976.304807] WARNING: CPU: 3 PID: 407 at drivers/md/bcache/alloc.c:81 __bch_invalidate_one_bucket+0xcb/0xd1
+Aug 29 04:11:47 loom warning: [6083976.313994] Modules linked in: vfat fat
+Aug 29 04:11:47 loom warning: [6083976.322954] CPU: 3 PID: 407 Comm: bcache_allocato Tainted: G        W         5.11.8-00023-g95756d87a72e-dirt
+y #3
+Aug 29 04:11:47 loom warning: [6083976.332178] Hardware name: Intel Corporation S2600CWR/S2600CWR, BIOS SE5C610.86B.01.01.0024.021320181901 02/1
+3/2018
+Aug 29 04:11:47 loom warning: [6083976.341401] RIP: 0010:__bch_invalidate_one_bucket+0xcb/0xd1
+Aug 29 04:11:47 loom warning: [6083976.350445] Code: 7b 44 04 01 0f 83 7b ff ff ff 48 8b 05 3e b0 03 01 48 85 c0 74 0f 48 8b 78 08 4c 89 ea 4c 8
+9 e6 e8 3a bd 01 00 e9 5b ff ff ff <0f> 0b eb 87 0f 0b 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 0f
+Aug 29 04:11:47 loom warning: [6083976.369285] RSP: 0018:ffffa2a080aabe30 EFLAGS: 00010202
+Aug 29 04:11:47 loom warning: [6083976.378441] RAX: ffff9cc0875a0000 RBX: ffffa2a080a8a4dc RCX: 0000000000000061
+Aug 29 04:11:47 loom warning: [6083976.387617] RDX: ffff9cc0875a0000 RSI: ffffa2a080a8a4dc RDI: ffff9cc080ff4000
+Aug 29 04:11:47 loom warning: [6083976.396696] RBP: ffffa2a080aabe48 R08: 0000000000000a63 R09: 00000000000000ff
+Aug 29 04:11:47 loom warning: [6083976.405776] R10: 00000000000003ff R11: ffffa2a080a88f04 R12: ffff9cc080ff4000
+Aug 29 04:11:47 loom warning: [6083976.414893] R13: ffff9cc080ff0000 R14: ffffa2a080a892ac R15: ffff9cc080ff4000
+Aug 29 04:11:47 loom warning: [6083976.423978] FS:  0000000000000000(0000) GS:ffff9cdf7f8c0000(0000) knlGS:0000000000000000
+Aug 29 04:11:47 loom warning: [6083976.433268] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Aug 29 04:11:47 loom warning: [6083976.442310] CR2: 00007fc4cc1f7500 CR3: 0000000c0560a001 CR4: 00000000003726e0
+Aug 29 04:11:47 loom warning: [6083976.451396] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+Aug 29 04:11:47 loom warning: [6083976.460407] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Aug 29 04:11:47 loom warning: [6083976.469429] Call Trace:
+Aug 29 04:11:47 loom warning: [6083976.478340]  bch_invalidate_one_bucket+0x17/0x7a
+Aug 29 04:11:47 loom warning: [6083976.487254]  bch_allocator_thread+0xbfb/0xd43
+Aug 29 04:11:47 loom warning: [6083976.496274]  kthread+0x12c/0x145
+Aug 29 04:11:47 loom warning: [6083976.505118]  ? bch_invalidate_one_bucket+0x80/0x7a
+Aug 29 04:11:47 loom warning: [6083976.514080]  ? __kthread_bind_mask+0x70/0x66
+Aug 29 04:11:47 loom warning: [6083976.523060]  ret_from_fork+0x1f/0x2a
+Aug 29 04:11:47 loom warning: [6083976.532051] ---[ end trace 0d64a5c236f9bdf8 ]---
+
+I don't know what the implications of this warning are, though the
+system still seems to be running happily. BUCKET_GC_GEN_MAX is only 96,
+which seems quite low and quite likely to be hit... ubt I don't know
+what that constant means so I could be totally wrong.
+
+It is notable that the unused % of this cache volume has fallen to only
+3%: it's quite likely that this warning was emitted when it finally
+(after three years or so!) ran out of free space and did its first
+forced GC. I'm not sure how to tell.
