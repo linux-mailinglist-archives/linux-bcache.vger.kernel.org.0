@@ -2,73 +2,107 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77AAD3FDD49
-	for <lists+linux-bcache@lfdr.de>; Wed,  1 Sep 2021 15:50:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEF2940128A
+	for <lists+linux-bcache@lfdr.de>; Mon,  6 Sep 2021 03:20:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243062AbhIAN0A (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 1 Sep 2021 09:26:00 -0400
-Received: from icebox.esperi.org.uk ([81.187.191.129]:43502 "EHLO
-        mail.esperi.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234295AbhIAN0A (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 1 Sep 2021 09:26:00 -0400
-X-Greylist: delayed 551 seconds by postgrey-1.27 at vger.kernel.org; Wed, 01 Sep 2021 09:26:00 EDT
-Received: from loom (nix@sidle.srvr.nix [192.168.14.8])
-        by mail.esperi.org.uk (8.16.1/8.16.1) with ESMTPS id 181DFo2h018476
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
-        for <linux-bcache@vger.kernel.org>; Wed, 1 Sep 2021 14:15:50 +0100
-From:   Nix <nix@esperi.org.uk>
-To:     linux-bcache@vger.kernel.org
-Subject: 5.11: WARN on long-running system
-Emacs:  Our Lady of Perpetual Garbage Collection
-Date:   Wed, 01 Sep 2021 14:15:50 +0100
-Message-ID: <87o89c4et5.fsf@esperi.org.uk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2.50 (gnu/linux)
+        id S238750AbhIFBVb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 5 Sep 2021 21:21:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238749AbhIFBVQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 5 Sep 2021 21:21:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A61BD61054;
+        Mon,  6 Sep 2021 01:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630891212;
+        bh=Q78iZj1z+aPDomDiRWa/HraSx72nx4Z0Tki2Fi8AuMo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UoJbZe0gS+88W2kdoI0heKnqvHCyRbRA7pHGE420/cX/eNyRS2eV6+19y8yByALNA
+         Q1K7r7itIk2T+Ap+gK6f2surMD8csAbbmZU3KwKXcM98RBsXeFGz/1dKZIZdDukGEa
+         rU4aXHUikzahRgap+9hxkJmNDBduLiVSR0SrrldfoU9D3jay4XWH195vssjChALCF9
+         EY6trQqsVipBYwc0RtZz042EfzH8IhRdiTOcwgxY0uN8cuv+o4wjSR7/Mgp14RyC4y
+         v/KMEv6BAtt/rdBsOPu3xaysx5+jQEHsvPlfcinv7c4v46ar59NIWFWf0RXQdUvHJq
+         H7v6FzQKYBk3w==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>, Coly Li <colyli@suse.de>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-bcache@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.14 17/47] bcache: add proper error unwinding in bcache_device_init
+Date:   Sun,  5 Sep 2021 21:19:21 -0400
+Message-Id: <20210906011951.928679-17-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210906011951.928679-1-sashal@kernel.org>
+References: <20210906011951.928679-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-DCC--Metrics: loom 1481; Body=1 Fuz1=1 Fuz2=1
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-One long-running 5.11.8 system (yes, I know, an upgrade is overdue)
-using bcache for almost all its fses just WARN_ONed on me:
+From: Christoph Hellwig <hch@lst.de>
 
-Aug 29 04:11:47 loom warning: [6083976.304807] WARNING: CPU: 3 PID: 407 at drivers/md/bcache/alloc.c:81 __bch_invalidate_one_bucket+0xcb/0xd1
-Aug 29 04:11:47 loom warning: [6083976.313994] Modules linked in: vfat fat
-Aug 29 04:11:47 loom warning: [6083976.322954] CPU: 3 PID: 407 Comm: bcache_allocato Tainted: G        W         5.11.8-00023-g95756d87a72e-dirt
-y #3
-Aug 29 04:11:47 loom warning: [6083976.332178] Hardware name: Intel Corporation S2600CWR/S2600CWR, BIOS SE5C610.86B.01.01.0024.021320181901 02/1
-3/2018
-Aug 29 04:11:47 loom warning: [6083976.341401] RIP: 0010:__bch_invalidate_one_bucket+0xcb/0xd1
-Aug 29 04:11:47 loom warning: [6083976.350445] Code: 7b 44 04 01 0f 83 7b ff ff ff 48 8b 05 3e b0 03 01 48 85 c0 74 0f 48 8b 78 08 4c 89 ea 4c 8
-9 e6 e8 3a bd 01 00 e9 5b ff ff ff <0f> 0b eb 87 0f 0b 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 0f
-Aug 29 04:11:47 loom warning: [6083976.369285] RSP: 0018:ffffa2a080aabe30 EFLAGS: 00010202
-Aug 29 04:11:47 loom warning: [6083976.378441] RAX: ffff9cc0875a0000 RBX: ffffa2a080a8a4dc RCX: 0000000000000061
-Aug 29 04:11:47 loom warning: [6083976.387617] RDX: ffff9cc0875a0000 RSI: ffffa2a080a8a4dc RDI: ffff9cc080ff4000
-Aug 29 04:11:47 loom warning: [6083976.396696] RBP: ffffa2a080aabe48 R08: 0000000000000a63 R09: 00000000000000ff
-Aug 29 04:11:47 loom warning: [6083976.405776] R10: 00000000000003ff R11: ffffa2a080a88f04 R12: ffff9cc080ff4000
-Aug 29 04:11:47 loom warning: [6083976.414893] R13: ffff9cc080ff0000 R14: ffffa2a080a892ac R15: ffff9cc080ff4000
-Aug 29 04:11:47 loom warning: [6083976.423978] FS:  0000000000000000(0000) GS:ffff9cdf7f8c0000(0000) knlGS:0000000000000000
-Aug 29 04:11:47 loom warning: [6083976.433268] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Aug 29 04:11:47 loom warning: [6083976.442310] CR2: 00007fc4cc1f7500 CR3: 0000000c0560a001 CR4: 00000000003726e0
-Aug 29 04:11:47 loom warning: [6083976.451396] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-Aug 29 04:11:47 loom warning: [6083976.460407] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Aug 29 04:11:47 loom warning: [6083976.469429] Call Trace:
-Aug 29 04:11:47 loom warning: [6083976.478340]  bch_invalidate_one_bucket+0x17/0x7a
-Aug 29 04:11:47 loom warning: [6083976.487254]  bch_allocator_thread+0xbfb/0xd43
-Aug 29 04:11:47 loom warning: [6083976.496274]  kthread+0x12c/0x145
-Aug 29 04:11:47 loom warning: [6083976.505118]  ? bch_invalidate_one_bucket+0x80/0x7a
-Aug 29 04:11:47 loom warning: [6083976.514080]  ? __kthread_bind_mask+0x70/0x66
-Aug 29 04:11:47 loom warning: [6083976.523060]  ret_from_fork+0x1f/0x2a
-Aug 29 04:11:47 loom warning: [6083976.532051] ---[ end trace 0d64a5c236f9bdf8 ]---
+[ Upstream commit 224b0683228c5f332f9cee615d85e75e9a347170 ]
 
-I don't know what the implications of this warning are, though the
-system still seems to be running happily. BUCKET_GC_GEN_MAX is only 96,
-which seems quite low and quite likely to be hit... ubt I don't know
-what that constant means so I could be totally wrong.
+Except for the IDA none of the allocations in bcache_device_init is
+unwound on error, fix that.
 
-It is notable that the unused % of this cache volume has fallen to only
-3%: it's quite likely that this warning was emitted when it finally
-(after three years or so!) ran out of free space and did its first
-forced GC. I'm not sure how to tell.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Coly Li <colyli@suse.de>
+Link: https://lore.kernel.org/r/20210809064028.1198327-7-hch@lst.de
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/md/bcache/super.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 185246a0d855..d0f08e946453 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -931,20 +931,20 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+ 	n = BITS_TO_LONGS(d->nr_stripes) * sizeof(unsigned long);
+ 	d->full_dirty_stripes = kvzalloc(n, GFP_KERNEL);
+ 	if (!d->full_dirty_stripes)
+-		return -ENOMEM;
++		goto out_free_stripe_sectors_dirty;
+ 
+ 	idx = ida_simple_get(&bcache_device_idx, 0,
+ 				BCACHE_DEVICE_IDX_MAX, GFP_KERNEL);
+ 	if (idx < 0)
+-		return idx;
++		goto out_free_full_dirty_stripes;
+ 
+ 	if (bioset_init(&d->bio_split, 4, offsetof(struct bbio, bio),
+ 			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER))
+-		goto err;
++		goto out_ida_remove;
+ 
+ 	d->disk = blk_alloc_disk(NUMA_NO_NODE);
+ 	if (!d->disk)
+-		goto err;
++		goto out_bioset_exit;
+ 
+ 	set_capacity(d->disk, sectors);
+ 	snprintf(d->disk->disk_name, DISK_NAME_LEN, "bcache%i", idx);
+@@ -987,8 +987,14 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+ 
+ 	return 0;
+ 
+-err:
++out_bioset_exit:
++	bioset_exit(&d->bio_split);
++out_ida_remove:
+ 	ida_simple_remove(&bcache_device_idx, idx);
++out_free_full_dirty_stripes:
++	kvfree(d->full_dirty_stripes);
++out_free_stripe_sectors_dirty:
++	kvfree(d->stripe_sectors_dirty);
+ 	return -ENOMEM;
+ 
+ }
+-- 
+2.30.2
+
