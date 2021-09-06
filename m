@@ -2,38 +2,38 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EEF2940128A
-	for <lists+linux-bcache@lfdr.de>; Mon,  6 Sep 2021 03:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 265CF4012FF
+	for <lists+linux-bcache@lfdr.de>; Mon,  6 Sep 2021 03:22:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238750AbhIFBVb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 5 Sep 2021 21:21:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37604 "EHLO mail.kernel.org"
+        id S239719AbhIFBX1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 5 Sep 2021 21:23:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238749AbhIFBVQ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 5 Sep 2021 21:21:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A61BD61054;
-        Mon,  6 Sep 2021 01:20:11 +0000 (UTC)
+        id S239025AbhIFBW3 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Sun, 5 Sep 2021 21:22:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 849E361106;
+        Mon,  6 Sep 2021 01:21:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630891212;
-        bh=Q78iZj1z+aPDomDiRWa/HraSx72nx4Z0Tki2Fi8AuMo=;
+        s=k20201202; t=1630891273;
+        bh=P3byreIPuZnbPrwJUZckS3L+rpi9RwiluUft/czke64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UoJbZe0gS+88W2kdoI0heKnqvHCyRbRA7pHGE420/cX/eNyRS2eV6+19y8yByALNA
-         Q1K7r7itIk2T+Ap+gK6f2surMD8csAbbmZU3KwKXcM98RBsXeFGz/1dKZIZdDukGEa
-         rU4aXHUikzahRgap+9hxkJmNDBduLiVSR0SrrldfoU9D3jay4XWH195vssjChALCF9
-         EY6trQqsVipBYwc0RtZz042EfzH8IhRdiTOcwgxY0uN8cuv+o4wjSR7/Mgp14RyC4y
-         v/KMEv6BAtt/rdBsOPu3xaysx5+jQEHsvPlfcinv7c4v46ar59NIWFWf0RXQdUvHJq
-         H7v6FzQKYBk3w==
+        b=rpkcQjvOJ869xKBgCHCamVAe08EA9LwAxzQRlUfK9G2vQotAaAfQ6GNoWVX7sn4lF
+         6wL99/IyGCY+rVpVr9x01mYJPNxZ30Qy0G5t2Ko0oa/hj+Fjh2+275HRtffUDwm6mV
+         VdB85MZgI6mK/nbkv7lWEwzbrNjU/qFKBM5Q2TP5VCcdmpI6cBi3KJVAyXWON+58LD
+         4obpVifxlr1lYJS2Sk2Bvx+989evkBiBI0P1wQL+Z0TH2tM3oVKjIqy5zLko/jx8vX
+         9ERavH533IvZudzL7OKIG3TeXubI9/UKtbccmPNKKZIeWdX3p4PnrRQa+AvnOQ3xf7
+         PMEv+gmOla6aw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Christoph Hellwig <hch@lst.de>, Coly Li <colyli@suse.de>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.14 17/47] bcache: add proper error unwinding in bcache_device_init
-Date:   Sun,  5 Sep 2021 21:19:21 -0400
-Message-Id: <20210906011951.928679-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.13 17/46] bcache: add proper error unwinding in bcache_device_init
+Date:   Sun,  5 Sep 2021 21:20:22 -0400
+Message-Id: <20210906012052.929174-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210906011951.928679-1-sashal@kernel.org>
-References: <20210906011951.928679-1-sashal@kernel.org>
+In-Reply-To: <20210906012052.929174-1-sashal@kernel.org>
+References: <20210906012052.929174-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -59,10 +59,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 185246a0d855..d0f08e946453 100644
+index bea8c4429ae8..a407e3be0f17 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -931,20 +931,20 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+@@ -935,20 +935,20 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
  	n = BITS_TO_LONGS(d->nr_stripes) * sizeof(unsigned long);
  	d->full_dirty_stripes = kvzalloc(n, GFP_KERNEL);
  	if (!d->full_dirty_stripes)
@@ -80,14 +80,14 @@ index 185246a0d855..d0f08e946453 100644
 -		goto err;
 +		goto out_ida_remove;
  
- 	d->disk = blk_alloc_disk(NUMA_NO_NODE);
+ 	d->disk = alloc_disk(BCACHE_MINORS);
  	if (!d->disk)
 -		goto err;
 +		goto out_bioset_exit;
  
  	set_capacity(d->disk, sectors);
  	snprintf(d->disk->disk_name, DISK_NAME_LEN, "bcache%i", idx);
-@@ -987,8 +987,14 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+@@ -994,8 +994,14 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
  
  	return 0;
  
