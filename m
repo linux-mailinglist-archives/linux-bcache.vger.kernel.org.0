@@ -2,107 +2,117 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A621D401442
-	for <lists+linux-bcache@lfdr.de>; Mon,  6 Sep 2021 03:38:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9583140229D
+	for <lists+linux-bcache@lfdr.de>; Tue,  7 Sep 2021 06:12:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241287AbhIFBcp (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 5 Sep 2021 21:32:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1351376AbhIFBaY (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 5 Sep 2021 21:30:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 092B26120A;
-        Mon,  6 Sep 2021 01:23:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630891417;
-        bh=+V+55lPU0e89x11WekxDbsZ4MadTMrFS1/1T2QQ+KgM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sQrREGKmCnN7t0b2+JD9TJ7krPQwd3mSie8MQuY4U/pSXZX43VMpl0XYPaIprf70T
-         l5KhY1BuufhcA0jYOOpcy9+dVZGBomiDK57Iyz1eUFPeDh0CsBn7dDujPEbHkhgGzM
-         qV9mL9/K6bNTP0O1HjXmqPxiGmVUDJlbYlLTtlqKsbuP7zSCDF7j7tjEmryEjrlSGH
-         EQwbku9HqqEds2G0zFZCOHq4f3Ec/TbW+6Y2qPNsfaRRVagXRjqq5yFDyjnyn+htvv
-         KK2ptDKi+gb+roLz8yUBd0Z+dK1DTZ0SF25izRFVeIi4YFlm9w3rf0VunQr8t/OoAm
-         VYTaV+8Ty0Psw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Coly Li <colyli@suse.de>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 12/23] bcache: add proper error unwinding in bcache_device_init
-Date:   Sun,  5 Sep 2021 21:23:11 -0400
-Message-Id: <20210906012322.930668-12-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210906012322.930668-1-sashal@kernel.org>
-References: <20210906012322.930668-1-sashal@kernel.org>
+        id S229491AbhIGEN5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 7 Sep 2021 00:13:57 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:47500 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229456AbhIGENz (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 7 Sep 2021 00:13:55 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D06D11FF56;
+        Tue,  7 Sep 2021 04:12:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1630987965; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dXHDeE6Y5bjC3Wl5ZROa/tSQLU8STQxKbdI9qcA8Omc=;
+        b=eG7M2QJd8H2+NMElnt/rHKbdK7NRhVQs3XZQzGRQLAdyYN+xXbtfkthQ5P4YDylSqo5IbP
+        9LtiTpvzYE9wFKntz3IhtRWvMWATqsUYNhAAWLIeXb25KuWpV/8VQD+UNmiDBkK2KstD4J
+        M4WFy4cjNe1F4rWZiGGWb1JDpg2UtTw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1630987965;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dXHDeE6Y5bjC3Wl5ZROa/tSQLU8STQxKbdI9qcA8Omc=;
+        b=AcarLtQpX1gnvXz47LF198k+tn4VWujeHCyD1jThLM/7kISTAUGWs9vggFpD4k9fS87Fwo
+        6j++DJLKFxBcBICA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 569F813AC5;
+        Tue,  7 Sep 2021 04:12:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id sIr0AL3mNmE6GgAAMHmgww
+        (envelope-from <colyli@suse.de>); Tue, 07 Sep 2021 04:12:45 +0000
+Subject: Re: 5.11: WARN on long-running system
+To:     Nix <nix@esperi.org.uk>
+References: <87o89c4et5.fsf@esperi.org.uk>
+From:   Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org
+Message-ID: <52ea2e1a-041d-b182-f345-c8c531dd4613@suse.de>
+Date:   Tue, 7 Sep 2021 12:12:43 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <87o89c4et5.fsf@esperi.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+On 9/1/21 9:15 PM, Nix wrote:
+> One long-running 5.11.8 system (yes, I know, an upgrade is overdue)
+> using bcache for almost all its fses just WARN_ONed on me:
+>
+> Aug 29 04:11:47 loom warning: [6083976.304807] WARNING: CPU: 3 PID: 407 at drivers/md/bcache/alloc.c:81 __bch_invalidate_one_bucket+0xcb/0xd1
+> Aug 29 04:11:47 loom warning: [6083976.313994] Modules linked in: vfat fat
+> Aug 29 04:11:47 loom warning: [6083976.322954] CPU: 3 PID: 407 Comm: bcache_allocato Tainted: G        W         5.11.8-00023-g95756d87a72e-dirt
+> y #3
+> Aug 29 04:11:47 loom warning: [6083976.332178] Hardware name: Intel Corporation S2600CWR/S2600CWR, BIOS SE5C610.86B.01.01.0024.021320181901 02/1
+> 3/2018
+> Aug 29 04:11:47 loom warning: [6083976.341401] RIP: 0010:__bch_invalidate_one_bucket+0xcb/0xd1
+> Aug 29 04:11:47 loom warning: [6083976.350445] Code: 7b 44 04 01 0f 83 7b ff ff ff 48 8b 05 3e b0 03 01 48 85 c0 74 0f 48 8b 78 08 4c 89 ea 4c 8
+> 9 e6 e8 3a bd 01 00 e9 5b ff ff ff <0f> 0b eb 87 0f 0b 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 0f
+> Aug 29 04:11:47 loom warning: [6083976.369285] RSP: 0018:ffffa2a080aabe30 EFLAGS: 00010202
+> Aug 29 04:11:47 loom warning: [6083976.378441] RAX: ffff9cc0875a0000 RBX: ffffa2a080a8a4dc RCX: 0000000000000061
+> Aug 29 04:11:47 loom warning: [6083976.387617] RDX: ffff9cc0875a0000 RSI: ffffa2a080a8a4dc RDI: ffff9cc080ff4000
+> Aug 29 04:11:47 loom warning: [6083976.396696] RBP: ffffa2a080aabe48 R08: 0000000000000a63 R09: 00000000000000ff
+> Aug 29 04:11:47 loom warning: [6083976.405776] R10: 00000000000003ff R11: ffffa2a080a88f04 R12: ffff9cc080ff4000
+> Aug 29 04:11:47 loom warning: [6083976.414893] R13: ffff9cc080ff0000 R14: ffffa2a080a892ac R15: ffff9cc080ff4000
+> Aug 29 04:11:47 loom warning: [6083976.423978] FS:  0000000000000000(0000) GS:ffff9cdf7f8c0000(0000) knlGS:0000000000000000
+> Aug 29 04:11:47 loom warning: [6083976.433268] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> Aug 29 04:11:47 loom warning: [6083976.442310] CR2: 00007fc4cc1f7500 CR3: 0000000c0560a001 CR4: 00000000003726e0
+> Aug 29 04:11:47 loom warning: [6083976.451396] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> Aug 29 04:11:47 loom warning: [6083976.460407] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Aug 29 04:11:47 loom warning: [6083976.469429] Call Trace:
+> Aug 29 04:11:47 loom warning: [6083976.478340]  bch_invalidate_one_bucket+0x17/0x7a
+> Aug 29 04:11:47 loom warning: [6083976.487254]  bch_allocator_thread+0xbfb/0xd43
+> Aug 29 04:11:47 loom warning: [6083976.496274]  kthread+0x12c/0x145
+> Aug 29 04:11:47 loom warning: [6083976.505118]  ? bch_invalidate_one_bucket+0x80/0x7a
+> Aug 29 04:11:47 loom warning: [6083976.514080]  ? __kthread_bind_mask+0x70/0x66
+> Aug 29 04:11:47 loom warning: [6083976.523060]  ret_from_fork+0x1f/0x2a
+> Aug 29 04:11:47 loom warning: [6083976.532051] ---[ end trace 0d64a5c236f9bdf8 ]---
+>
+> I don't know what the implications of this warning are, though the
+> system still seems to be running happily. BUCKET_GC_GEN_MAX is only 96,
+> which seems quite low and quite likely to be hit... ubt I don't know
+> what that constant means so I could be totally wrong.
+>
+> It is notable that the unused % of this cache volume has fallen to only
+> 3%: it's quite likely that this warning was emitted when it finally
+> (after three years or so!) ran out of free space and did its first
+> forced GC. I'm not sure how to tell.
+Hi Nix,
 
-[ Upstream commit 224b0683228c5f332f9cee615d85e75e9a347170 ]
+I have the similar feeling as yours, that it has been a long time after 
+previous gc running. I have no idea why the gc didn't run for such long 
+time (this bucket was reused for 96 times). Let me try to find if there 
+is any clue why the gc does not work for such long time.
 
-Except for the IDA none of the allocations in bcache_device_init is
-unwound on error, fix that.
+Thanks for the information.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Coly Li <colyli@suse.de>
-Link: https://lore.kernel.org/r/20210809064028.1198327-7-hch@lst.de
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/md/bcache/super.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 7787ec42f81e..2df75db52e91 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -824,20 +824,20 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
- 	n = BITS_TO_LONGS(d->nr_stripes) * sizeof(unsigned long);
- 	d->full_dirty_stripes = kvzalloc(n, GFP_KERNEL);
- 	if (!d->full_dirty_stripes)
--		return -ENOMEM;
-+		goto out_free_stripe_sectors_dirty;
- 
- 	idx = ida_simple_get(&bcache_device_idx, 0,
- 				BCACHE_DEVICE_IDX_MAX, GFP_KERNEL);
- 	if (idx < 0)
--		return idx;
-+		goto out_free_full_dirty_stripes;
- 
- 	if (bioset_init(&d->bio_split, 4, offsetof(struct bbio, bio),
- 			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER))
--		goto err;
-+		goto out_ida_remove;
- 
- 	d->disk = alloc_disk(BCACHE_MINORS);
- 	if (!d->disk)
--		goto err;
-+		goto out_bioset_exit;
- 
- 	set_capacity(d->disk, sectors);
- 	snprintf(d->disk->disk_name, DISK_NAME_LEN, "bcache%i", idx);
-@@ -872,8 +872,14 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
- 
- 	return 0;
- 
--err:
-+out_bioset_exit:
-+	bioset_exit(&d->bio_split);
-+out_ida_remove:
- 	ida_simple_remove(&bcache_device_idx, idx);
-+out_free_full_dirty_stripes:
-+	kvfree(d->full_dirty_stripes);
-+out_free_stripe_sectors_dirty:
-+	kvfree(d->stripe_sectors_dirty);
- 	return -ENOMEM;
- 
- }
--- 
-2.30.2
-
+Coly Li
