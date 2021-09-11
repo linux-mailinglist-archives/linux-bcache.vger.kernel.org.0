@@ -2,55 +2,98 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62DA8402839
-	for <lists+linux-bcache@lfdr.de>; Tue,  7 Sep 2021 14:07:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD29407573
+	for <lists+linux-bcache@lfdr.de>; Sat, 11 Sep 2021 09:39:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229604AbhIGMIJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 7 Sep 2021 08:08:09 -0400
-Received: from icebox.esperi.org.uk ([81.187.191.129]:43092 "EHLO
-        mail.esperi.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343885AbhIGMII (ORCPT
+        id S235309AbhIKHlC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 11 Sep 2021 03:41:02 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:9417 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233040AbhIKHlC (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 7 Sep 2021 08:08:08 -0400
-Received: from loom (nix@sidle.srvr.nix [192.168.14.8])
-        by mail.esperi.org.uk (8.16.1/8.16.1) with ESMTPS id 187C70P2019659
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 7 Sep 2021 13:07:00 +0100
-From:   Nix <nix@esperi.org.uk>
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org
-Subject: Re: 5.11: WARN on long-running system
-References: <87o89c4et5.fsf@esperi.org.uk>
-        <52ea2e1a-041d-b182-f345-c8c531dd4613@suse.de>
-Emacs:  The Awakening
-Date:   Tue, 07 Sep 2021 13:07:00 +0100
-In-Reply-To: <52ea2e1a-041d-b182-f345-c8c531dd4613@suse.de> (Coly Li's message
-        of "Tue, 7 Sep 2021 12:12:43 +0800")
-Message-ID: <87h7ewy4gr.fsf@esperi.org.uk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2.50 (gnu/linux)
+        Sat, 11 Sep 2021 03:41:02 -0400
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4H64K90RnGz8xZP;
+        Sat, 11 Sep 2021 15:35:25 +0800 (CST)
+Received: from dggpeml500019.china.huawei.com (7.185.36.137) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.8; Sat, 11 Sep 2021 15:39:48 +0800
+Received: from huawei.com (10.175.124.27) by dggpeml500019.china.huawei.com
+ (7.185.36.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.8; Sat, 11 Sep
+ 2021 15:39:47 +0800
+From:   Wu Bo <wubo40@huawei.com>
+To:     <colyli@suse.de>, <kent.overstreet@gmail.com>
+CC:     <linux-bcache@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linfeilong@huawei.com>, <wubo40@huawei.com>
+Subject: [PATCH] bcache: Fix memory leak when cache_alloc() return failed
+Date:   Sat, 11 Sep 2021 16:08:54 +0800
+Message-ID: <1631347734-9950-1-git-send-email-wubo40@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-DCC-wuwien-Metrics: loom 1290; Body=2 Fuz1=2 Fuz2=2
+X-Originating-IP: [10.175.124.27]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500019.china.huawei.com (7.185.36.137)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 7 Sep 2021, Coly Li verbalised:
-> On 9/1/21 9:15 PM, Nix wrote:
->> It is notable that the unused % of this cache volume has fallen to only
->> 3%: it's quite likely that this warning was emitted when it finally
->> (after three years or so!) ran out of free space and did its first
->> forced GC. I'm not sure how to tell.
-> Hi Nix,
->
-> I have the similar feeling as yours, that it has been a long time after previous gc running. I have no idea why the gc didn't run
-> for such long time (this bucket was reused for 96 times). Let me try to find if there 
-> is any clue why the gc does not work for such long time.
+From: Wu Bo <wubo40@huawei.com>
 
-It's probably just that my cache is 350GiB and it takes a long, long
-time to fill that up. (As in, the unused % has been falling slowly for
-three years and it's only just got close to zero in the last few
-months.)
+If cache_alloc() get error when register a cache device,
+the ca->kobj is not initialized, the bch_cache_release() no chance 
+to be called. So "ca" object will not be released.
 
-(Some GCs have run, but I have no idea why, given that when they ran the
-unused % was about 40%.)
+In addition, if register_cache_set() return failed 
+when register a cache device, kobject_put(&ca->kobj) will be called 
+and "ca" objects will be released in bch_cache_release() function. 
+But pr_notice() called after kobject_put(&ca->kobj),
+the "ca->cache_dev_name" access memory that has been freed.
+
+Signed-off-by: Wu Bo <wubo40@huawei.com>
+---
+ drivers/md/bcache/super.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index f2874c7..30569f4 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2366,13 +2366,17 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+ 		 * explicitly call blkdev_put() here.
+ 		 */
+ 		blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
++		if (ca->sb_disk)
++			put_page(virt_to_page(ca->sb_disk));
+ 		if (ret == -ENOMEM)
+ 			err = "cache_alloc(): -ENOMEM";
+ 		else if (ret == -EPERM)
+ 			err = "cache_alloc(): cache device is too small";
+ 		else
+ 			err = "cache_alloc(): unknown error";
+-		goto err;
++		pr_notice("error %s: %s\n", ca->cache_dev_name, err);
++		kfree(ca);
++		return ret;
+ 	}
+ 
+ 	if (kobject_add(&ca->kobj, bdev_kobj(bdev), "bcache")) {
+@@ -2393,11 +2397,9 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+ 	pr_info("registered cache device %s\n", ca->cache_dev_name);
+ 
+ out:
+-	kobject_put(&ca->kobj);
+-
+-err:
+ 	if (err)
+ 		pr_notice("error %s: %s\n", ca->cache_dev_name, err);
++	kobject_put(&ca->kobj);
+ 
+ 	return ret;
+ }
+-- 
+1.8.3.1
+
