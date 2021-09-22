@@ -2,98 +2,72 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CD29407573
-	for <lists+linux-bcache@lfdr.de>; Sat, 11 Sep 2021 09:39:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 941F84151C2
+	for <lists+linux-bcache@lfdr.de>; Wed, 22 Sep 2021 22:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235309AbhIKHlC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 11 Sep 2021 03:41:02 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:9417 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233040AbhIKHlC (ORCPT
+        id S237777AbhIVU42 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 22 Sep 2021 16:56:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33888 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237800AbhIVU41 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 11 Sep 2021 03:41:02 -0400
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4H64K90RnGz8xZP;
-        Sat, 11 Sep 2021 15:35:25 +0800 (CST)
-Received: from dggpeml500019.china.huawei.com (7.185.36.137) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Sat, 11 Sep 2021 15:39:48 +0800
-Received: from huawei.com (10.175.124.27) by dggpeml500019.china.huawei.com
- (7.185.36.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.8; Sat, 11 Sep
- 2021 15:39:47 +0800
-From:   Wu Bo <wubo40@huawei.com>
-To:     <colyli@suse.de>, <kent.overstreet@gmail.com>
-CC:     <linux-bcache@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linfeilong@huawei.com>, <wubo40@huawei.com>
-Subject: [PATCH] bcache: Fix memory leak when cache_alloc() return failed
-Date:   Sat, 11 Sep 2021 16:08:54 +0800
-Message-ID: <1631347734-9950-1-git-send-email-wubo40@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 22 Sep 2021 16:56:27 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD4DC061766
+        for <linux-bcache@vger.kernel.org>; Wed, 22 Sep 2021 13:54:56 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id u18so16606943lfd.12
+        for <linux-bcache@vger.kernel.org>; Wed, 22 Sep 2021 13:54:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=ijKrByR1/KtEp2Ut8Wj0vMi00kBZm/A/r1gPwOEYZIg=;
+        b=fr8lNb1tzuroNDnbJJtYWeXOCGZbssrkZvaRy8HVdYCeSSxS96vSwd3R2+r1vg3M6/
+         ex66FoD7Oi9BZ+eroN2ctcLno3UxJhL89X1t6yEsFayGc2q4Pz0zZQBaUGqcHr3s/S1+
+         lgIwwHuJ4O8SDnA5oR3zC/CFwa9fWO84703n6I2aQyNKP1VzeqgyNRTdZaVTG81gy6Vx
+         t6u58+esbUQxWBZY5IFD1w784RDrV2U7d72/V+RQAoF8LyHU+KHsqwJTuZK+RI9xoYHQ
+         hU/k+XKo5P60J+yjbN5r0LQMnBzU5qvJitpMdoh7dt6f9DChJ/lZbweVN/xESakomSrI
+         Tc/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=ijKrByR1/KtEp2Ut8Wj0vMi00kBZm/A/r1gPwOEYZIg=;
+        b=5AyMdIYR7ywJxTSfA4wbrGN27q3CsUhv5nRvRCqsBGGF70W/hSIHmLfme+cYPP6J1H
+         nQM+f7vIe+b4EAQMeorARQYbwx9bBSI4Bz8V35E1WNsmOwVurLFLF16eKJJ5dbYvRbXI
+         3G+gDcARmGTrsVXUVcilo2ZpQxjVpf/LjKoN+p4jTRZXKzQtLEZ64Sqq1znuwuUNrB2F
+         Hz1hnBo5rWuf61iBQM8exVaR6pv1th7fW1n2+vOxO2dOYN1HX6rQ/5E4rZ/CeYGNmu4R
+         xarx4gA11/T8suXKa1XHwxc9Dqp98qWdNHxVZkuSweZDMe9ZrR0xth+9CEjmMB74YZsZ
+         P3YA==
+X-Gm-Message-State: AOAM532UeOMRkA9r7Ejk+Bvuqy/0cpeHPTgeGc4PvfcDDm0R2kQ38q3G
+        Sv+1f+ONCTWZZWRnWzg0uwHTfcTlcT+ZGLsLzJU=
+X-Google-Smtp-Source: ABdhPJwYYn7ZwazUxB30/XTxKCOf4dlZaC6TfP1ljKsU4ZNb40cpLRsdAvw7sAb51nYQkeG7S6W5vU7Cgq+lC3FYxgE=
+X-Received: by 2002:a05:651c:1546:: with SMTP id y6mr1383813ljp.53.1632344095088;
+ Wed, 22 Sep 2021 13:54:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.27]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500019.china.huawei.com (7.185.36.137)
-X-CFilter-Loop: Reflected
+Sender: ratcliffijames58@gmail.com
+Received: by 2002:a05:6504:5067:0:0:0:0 with HTTP; Wed, 22 Sep 2021 13:54:54
+ -0700 (PDT)
+From:   Aisha Al-Qaddafi <aisha.gdaffi24@gmail.com>
+Date:   Wed, 22 Sep 2021 21:54:54 +0100
+X-Google-Sender-Auth: B3PIuwFz7UcaHNCffYC8akvbLEk
+Message-ID: <CAKVTYWSPSMf085dB7FkhkLr9XtoZHkjbvunoMard5qsSPn4ZOg@mail.gmail.com>
+Subject: My Dear Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Wu Bo <wubo40@huawei.com>
-
-If cache_alloc() get error when register a cache device,
-the ca->kobj is not initialized, the bch_cache_release() no chance 
-to be called. So "ca" object will not be released.
-
-In addition, if register_cache_set() return failed 
-when register a cache device, kobject_put(&ca->kobj) will be called 
-and "ca" objects will be released in bch_cache_release() function. 
-But pr_notice() called after kobject_put(&ca->kobj),
-the "ca->cache_dev_name" access memory that has been freed.
-
-Signed-off-by: Wu Bo <wubo40@huawei.com>
----
- drivers/md/bcache/super.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index f2874c7..30569f4 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -2366,13 +2366,17 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
- 		 * explicitly call blkdev_put() here.
- 		 */
- 		blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
-+		if (ca->sb_disk)
-+			put_page(virt_to_page(ca->sb_disk));
- 		if (ret == -ENOMEM)
- 			err = "cache_alloc(): -ENOMEM";
- 		else if (ret == -EPERM)
- 			err = "cache_alloc(): cache device is too small";
- 		else
- 			err = "cache_alloc(): unknown error";
--		goto err;
-+		pr_notice("error %s: %s\n", ca->cache_dev_name, err);
-+		kfree(ca);
-+		return ret;
- 	}
- 
- 	if (kobject_add(&ca->kobj, bdev_kobj(bdev), "bcache")) {
-@@ -2393,11 +2397,9 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
- 	pr_info("registered cache device %s\n", ca->cache_dev_name);
- 
- out:
--	kobject_put(&ca->kobj);
--
--err:
- 	if (err)
- 		pr_notice("error %s: %s\n", ca->cache_dev_name, err);
-+	kobject_put(&ca->kobj);
- 
- 	return ret;
- }
--- 
-1.8.3.1
-
+Assalamu alaikum,
+I came across your e-mail contact prior to a private search while in
+need of your assistance. I am Aisha Al-Qaddafi, the only biological,
+Daughter of Former President of Libya Col. Muammar Al-Qaddafi. Am a
+single Mother and a Widow with three Children. I have investment funds
+worth Twenty Seven Million Five Hundred Thousand United State Dollar
+($27.500.000.00 ) and i need a trusted  investment Manager/Partner
+because of my current refugee status, however, I am interested in you
+for investment project assistance in your country. If you are willing
+to handle this project on my behalf kindly reply urgently to enable me
+to provide you more information about the investment
+funds.
+Best Regards
