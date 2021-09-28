@@ -2,88 +2,136 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF7B041A31E
-	for <lists+linux-bcache@lfdr.de>; Tue, 28 Sep 2021 00:33:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B5541A733
+	for <lists+linux-bcache@lfdr.de>; Tue, 28 Sep 2021 07:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237999AbhI0WfS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 27 Sep 2021 18:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237643AbhI0WfR (ORCPT
+        id S234177AbhI1Flf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 28 Sep 2021 01:41:35 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:42402 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234243AbhI1Flf (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 27 Sep 2021 18:35:17 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 512D7C061604
-        for <linux-bcache@vger.kernel.org>; Mon, 27 Sep 2021 15:33:39 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id b15so21038570ils.10
-        for <linux-bcache@vger.kernel.org>; Mon, 27 Sep 2021 15:33:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LOsuwHDiPC+PPoCEQN/qtQeyMVFZbR3g1AzPIbWGz1s=;
-        b=YTqmdXk5vu2O6Z09DphFzhzdWxPQ8jmaJFHrIsMI+6Jhr8dovpFIgf0hfWsFZmWJGq
-         EVBCGkS1YFFNZ8M01WgONYjDBxGTGP/DCZWSKVCmRzFam2Hh4IgqxVmjePf268PGtV81
-         f5vMDXMmwBYUfauwYcel2Rv7+Z/vgk39qzYsRkTAosBsqgB4GwDsvm6cOxLKEb7WhBzu
-         TSGL2cQt0huoDrGurVnZof3FIGpxyaHR8+jLKBQHjcW0vLlSgpEdy3xv/8pfNM0RjCzL
-         S68pit92xtiJTYJshqe0ROVs/67npCPOQRoa5DA5iXWksCwd+SjdXeI2A9yZ8hXhKis6
-         coXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LOsuwHDiPC+PPoCEQN/qtQeyMVFZbR3g1AzPIbWGz1s=;
-        b=IWXMDO39h+TQBnep51IW03p9B0V9vbaqQgN3Har6D00m+Sddp+o4K9IvE+WbWxdPWB
-         q583nlUgZiPtE23mTiQzAgzN/Y+uDhzfoVKfDp3v0/Le6rtqAQQE/D0xAR/SSwOU8O/y
-         PgG7lV4RwpDrEx+EeOKeNntJ3qurAH5Ce4YXB9b9RxZN4O55G4mRhtBX4tt6vhPMulmz
-         5XvsiDGiHhBmr4HNhn0zAPFIYAy6C7VASjzYDREoKSvH2adeTm8/EKkwBFNBBuhfsao5
-         ACm4pE8RkgP5AzbANi0MyTkXEsFsjQoSo2cxa+HOxgTOPagPIgvd0+BndRjj/KSZA20u
-         3Rnw==
-X-Gm-Message-State: AOAM5339r127PyBUkIMlAj1XH2GXWGDq3ZVek2sjgWvDCRE/S6AjRJj2
-        3CS2/rWfKsq/DDFm2y+423mOXA==
-X-Google-Smtp-Source: ABdhPJwueWxtKqjP8KyNWWEV43ZHbAJgLgbtzL1ErWyEowm3/77Murhw193eceS6jFlQ9sjaEQjTVg==
-X-Received: by 2002:a92:da85:: with SMTP id u5mr1851944iln.213.1632782018707;
-        Mon, 27 Sep 2021 15:33:38 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id y2sm6427866iot.45.2021.09.27.15.33.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Sep 2021 15:33:38 -0700 (PDT)
-Subject: Re: [PATCH v2 00/10] block: second batch of add_disk() error handling
- conversions
-To:     Luis Chamberlain <mcgrof@kernel.org>, colyli@suse.de,
-        kent.overstreet@gmail.com, kbusch@kernel.org, sagi@grimberg.me,
-        vishal.l.verma@intel.com, dan.j.williams@intel.com,
-        dave.jiang@intel.com, ira.weiny@intel.com, konrad.wilk@oracle.com,
-        roger.pau@citrix.com, boris.ostrovsky@oracle.com, jgross@suse.com,
+        Tue, 28 Sep 2021 01:41:35 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0C7BD201BB;
+        Tue, 28 Sep 2021 05:39:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1632807595; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=13TnURwhS8h4t01lwoZLD/d/5oPL9agrfycanDfeTRQ=;
+        b=PT9kgFrx9DkgIx21N+ey4rvrG+p5lgzclkflex7M8ulg7b/MPe/8YBUPSSqsTo2GTahbjJ
+        Gey5RuOSF1hNpbYAFgKbf2oL0K4d67fdRAt+eRdY+iU4RsWpBKefK/X7oBdujgebC7iQbz
+        cH9ujOHUnez6nwSvlDTdjkQYCRSdxBg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1632807595;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=13TnURwhS8h4t01lwoZLD/d/5oPL9agrfycanDfeTRQ=;
+        b=VnyBApxFuoR87JCq7TgLnoYycKzbt1M/1osAF+bIrqg5sP1C+l/tWJFxYA8+084TxkpCY5
+        Hr8IhCD3XymifdAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AB01913A98;
+        Tue, 28 Sep 2021 05:39:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id JO5JKKqqUmHUNQAAMHmgww
+        (envelope-from <hare@suse.de>); Tue, 28 Sep 2021 05:39:54 +0000
+Subject: Re: [PATCH v2 03/10] nvme-multipath: add error handling support for
+ add_disk()
+To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
+        colyli@suse.de, kent.overstreet@gmail.com, kbusch@kernel.org,
+        sagi@grimberg.me, vishal.l.verma@intel.com,
+        dan.j.williams@intel.com, dave.jiang@intel.com,
+        ira.weiny@intel.com, konrad.wilk@oracle.com, roger.pau@citrix.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
         sstabellini@kernel.org, minchan@kernel.org, ngupta@vflare.org,
         senozhatsky@chromium.org
 Cc:     xen-devel@lists.xenproject.org, nvdimm@lists.linux.dev,
         linux-nvme@lists.infradead.org, linux-bcache@vger.kernel.org,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20210927220039.1064193-1-mcgrof@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <c17004ed-884f-5a97-c333-602e3f9903e7@kernel.dk>
-Date:   Mon, 27 Sep 2021 16:33:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <20210927220039.1064193-4-mcgrof@kernel.org>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <85d33b80-1d54-67ba-47f9-0298093b6d80@suse.de>
+Date:   Tue, 28 Sep 2021 07:39:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <20210927220039.1064193-1-mcgrof@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20210927220039.1064193-4-mcgrof@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 9/27/21 4:00 PM, Luis Chamberlain wrote:
-> This is the second series of driver conversions for add_disk()
-> error handling. You can find this set and the rest of the 7th set of
-> driver conversions on my 20210927-for-axboe-add-disk-error-handling
-> branch [0].
+On 9/28/21 12:00 AM, Luis Chamberlain wrote:
+> We never checked for errors on add_disk() as this function
+> returned void. Now that this is fixed, use the shiny new
+> error handling.
+> 
+> Since we now can tell for sure when a disk was added, move
+> setting the bit NVME_NSHEAD_DISK_LIVE only when we did
+> add the disk successfully.
+> 
+> Nothing to do here as the cleanup is done elsewhere. We take
+> care and use test_and_set_bit() because it is protects against
+> two nvme paths simultaneously calling device_add_disk() on the
+> same namespace head.
+> 
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+>   drivers/nvme/host/multipath.c | 13 +++++++++++--
+>   1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+> index e8ccdd398f78..35cace4f3f5f 100644
+> --- a/drivers/nvme/host/multipath.c
+> +++ b/drivers/nvme/host/multipath.c
+> @@ -496,13 +496,22 @@ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl, struct nvme_ns_head *head)
+>   static void nvme_mpath_set_live(struct nvme_ns *ns)
+>   {
+>   	struct nvme_ns_head *head = ns->head;
+> +	int rc;
+>   
+>   	if (!head->disk)
+>   		return;
+>   
+> +	/*
+> +	 * test_and_set_bit() is used because it is protecting against two nvme
+> +	 * paths simultaneously calling device_add_disk() on the same namespace
+> +	 * head.
+> +	 */
+>   	if (!test_and_set_bit(NVME_NSHEAD_DISK_LIVE, &head->flags)) {
+> -		device_add_disk(&head->subsys->dev, head->disk,
+> -				nvme_ns_id_attr_groups);
+> +		rc = device_add_disk(&head->subsys->dev, head->disk,
+> +				     nvme_ns_id_attr_groups);
+> +		if (rc)
+> +			return;
+> +		set_bit(NVME_NSHEAD_DISK_LIVE, &head->flags);
+>   		nvme_add_ns_head_cdev(head);
+>   	}
+>   
+> Errm.
+Setting the same bit twice?
+And shouldn't you unset the bit if 'device_add_disk()' fails?
 
-Applied 1, thanks.
+Cheers,
 
+Hannes
 -- 
-Jens Axboe
-
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
