@@ -2,99 +2,81 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DAB254281EA
-	for <lists+linux-bcache@lfdr.de>; Sun, 10 Oct 2021 16:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC19B428B5D
+	for <lists+linux-bcache@lfdr.de>; Mon, 11 Oct 2021 12:56:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232252AbhJJObb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 10 Oct 2021 10:31:31 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:56543 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232036AbhJJOba (ORCPT
+        id S236094AbhJKK6G (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 11 Oct 2021 06:58:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51488 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236047AbhJKK6C (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 10 Oct 2021 10:31:30 -0400
-Received: from pop-os.home ([90.126.248.220])
-        by mwinf5d78 with ME
-        id 4EVW260074m3Hzu03EVWPz; Sun, 10 Oct 2021 16:29:31 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 10 Oct 2021 16:29:31 +0200
-X-ME-IP: 90.126.248.220
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     colyli@suse.de, kent.overstreet@gmail.com, agk@redhat.com,
-        snitzer@redhat.com, dm-devel@redhat.com
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] dm: Remove redundant 'flush_workqueue()' calls
-Date:   Sun, 10 Oct 2021 16:29:28 +0200
-Message-Id: <65c7c385af7b3f825ace8803b1bc6b6403269813.1633876058.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Mon, 11 Oct 2021 06:58:02 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD56C061772
+        for <linux-bcache@vger.kernel.org>; Mon, 11 Oct 2021 03:56:02 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id r18so54887905wrg.6
+        for <linux-bcache@vger.kernel.org>; Mon, 11 Oct 2021 03:56:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=DOxN63QWnl4dBNWQl+LufsBrewR+8VuPJnGph7ijSeE=;
+        b=km/+rwE10MGCG3K0BNjxD+A2l394aMlSCDFqBEiDyrs45mObKwVEkOccUp5BPFftJU
+         5cB06txNzUPVxcrxQnkqMq9zaxAqQeR9eoa3+7DqnAg3rX7wMze/dloERdrhczopiGET
+         PvxtLks7kWCMKTs5Q8Mmq12LwUKUT5cPH1x1mszpEwl0kuXWAYNTl0kX4+cL3oWAj8+a
+         6an2wLimFEmscCT9jtQf7FGYav0q/UTa6GRCeFihab7mYp8KZTVzyAi9ONxHllw1wfay
+         OSS3CoE7RnQ2PFKTnc/5Yya8gHnSshWvMzermo1msudbBS7MTk09iY8fA6ci8A/KmFSk
+         +E4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=DOxN63QWnl4dBNWQl+LufsBrewR+8VuPJnGph7ijSeE=;
+        b=i22uwT+NvQaVQQ2R9LxeB82ZK6pN2qgEgbfKIMSBkDxAtHVkNwR1WUB4MQtAoPpU2z
+         Yn+hJVd+7jKyzYLSbxetBYkgtHUrbl2dlzBEEG+C9jvZRy/VH33SVN8WYmdsokMOScTZ
+         m3s46aduZ0FIIFfH0m0JTCki3lam3DmKyUBHs6o+6Y/ViuKC2+DePO86FWFmn0OvC8st
+         +1cM97aECViKXIGQFAk1abS3iYylPp0v44E99OyZzqnTqtxTxzFvaDeX9FHfo4rhWTyi
+         PL0YeNBsBW2y4ZskyAc+R4XPNRpQ8nbICelUmE1ab2bZphbLsqhWGMXm+d1TEHnGZ1E1
+         2A6A==
+X-Gm-Message-State: AOAM533bJJ0fQrbdEZGey0y7rLWrppWVjQFFnRhyKdWwhBpfp0pu3YEL
+        lECurJNWiBsOC3/jQpcVFzBTMK8tpwLTAHVh43w=
+X-Google-Smtp-Source: ABdhPJxWYMUVxuj7Tly9azrkWxEMXzTPZAklmoVIH4V2ykknMMiBN9imOFz2zTqxux/zk/7pzvFSRlX+C6mfjc7ADy4=
+X-Received: by 2002:adf:8b9a:: with SMTP id o26mr24377548wra.109.1633949760323;
+ Mon, 11 Oct 2021 03:56:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:adf:dd8c:0:0:0:0:0 with HTTP; Mon, 11 Oct 2021 03:55:59
+ -0700 (PDT)
+Reply-To: ramcharan9910@outlook.com
+From:   "Cr.David Ramcharan" <convy0101@gmail.com>
+Date:   Mon, 11 Oct 2021 03:55:59 -0700
+Message-ID: <CADDRs95718H=K3tUjphEHH_C96xYhoJw7jeCMpt_FfZZjhEXrA@mail.gmail.com>
+Subject: Thank You
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-'destroy_workqueue()' already drains the queue before destroying it, so
-there is no need to flush it explicitly.
+Please I am writing to notify you again on my intention to list your
+name as a beneficiary to the total sum of GBP6.350 million (Six
+million, Three hundred and fifty thousand British Pounds Sterlings) in
+the intent of the deceased (name now withheld since this is my second
+letter to you).
 
-Remove the redundant 'flush_workqueue()' calls.
+I contacted you because you bear the surname identity and therefore
+can present you as the beneficiary to inherit the account proceeds of
+the deceased since there is no written "WILL" or trace to the deceased
+family relatives. My aim is to present you to my Bank Authorities as
+the Next of Kin to our deceased client. I will guide you all through
+the Claim procedure by providing all relevant Information and guiding
+you in your decisions and response to the Bank Management. All the
+papers will be processed after your acceptance.
 
-This was generated with coccinelle:
+In your acceptance of this deal, I request that you kindly forward to
+me your letter of acceptance; your current telephone and fax numbers
+,age, occupational status and a forwarding address to enable me submit
+to the Bank Management the details as the Next of Kin to their
+deceased customer. Reply strictly through: ramcharancrdavid@gmail.com
 
-@@
-expression E;
-@@
-- 	flush_workqueue(E);
-	destroy_workqueue(E);
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/md/bcache/writeback.c | 4 +---
- drivers/md/dm-bufio.c         | 1 -
- drivers/md/dm-zoned-target.c  | 1 -
- 3 files changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 8120da278161..dbb6cb8069d9 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -790,10 +790,8 @@ static int bch_writeback_thread(void *arg)
- 		}
- 	}
- 
--	if (dc->writeback_write_wq) {
--		flush_workqueue(dc->writeback_write_wq);
-+	if (dc->writeback_write_wq)
- 		destroy_workqueue(dc->writeback_write_wq);
--	}
- 	cached_dev_put(dc);
- 	wait_for_kthread_stop();
- 
-diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
-index 50f3e673729c..fc8f8e9f9e39 100644
---- a/drivers/md/dm-bufio.c
-+++ b/drivers/md/dm-bufio.c
-@@ -2082,7 +2082,6 @@ static void __exit dm_bufio_exit(void)
- 	int bug = 0;
- 
- 	cancel_delayed_work_sync(&dm_bufio_cleanup_old_work);
--	flush_workqueue(dm_bufio_wq);
- 	destroy_workqueue(dm_bufio_wq);
- 
- 	if (dm_bufio_client_count) {
-diff --git a/drivers/md/dm-zoned-target.c b/drivers/md/dm-zoned-target.c
-index ae1bc48c0043..dfc822295c25 100644
---- a/drivers/md/dm-zoned-target.c
-+++ b/drivers/md/dm-zoned-target.c
-@@ -967,7 +967,6 @@ static void dmz_dtr(struct dm_target *ti)
- 	struct dmz_target *dmz = ti->private;
- 	int i;
- 
--	flush_workqueue(dmz->chunk_wq);
- 	destroy_workqueue(dmz->chunk_wq);
- 
- 	for (i = 0; i < dmz->nr_ddevs; i++)
--- 
-2.30.2
-
+Yours faithfully,
+Cr.David Ramcharan
