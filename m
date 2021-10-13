@@ -2,99 +2,120 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ABABC42B995
-	for <lists+linux-bcache@lfdr.de>; Wed, 13 Oct 2021 09:51:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E51542BB98
+	for <lists+linux-bcache@lfdr.de>; Wed, 13 Oct 2021 11:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238734AbhJMHxe (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 13 Oct 2021 03:53:34 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:54554 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238709AbhJMHxc (ORCPT
+        id S237656AbhJMJdU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 13 Oct 2021 05:33:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36856 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237572AbhJMJdS (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 13 Oct 2021 03:53:32 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id AEE15222C1;
-        Wed, 13 Oct 2021 07:51:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1634111488; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nvhvYT08OaBqekgPrVrQj1DDQAtPcS5s6MXS0Pvx68I=;
-        b=s3y1wFhKX4teW+dk2EZJGMb99n8sq0H9hd8aKuV07ZXB74HtatOMBISZgvSw6Kz+WdT45r
-        fS7FVLumcSZ6oJv5qKAQ2xg9j5PqW1+z59SUJAslCHwMlXrky6Wx2PKoJmGPHFU8gVhpl1
-        AWpa22y+e9pNkampxM6cnmH5qycab9g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1634111488;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nvhvYT08OaBqekgPrVrQj1DDQAtPcS5s6MXS0Pvx68I=;
-        b=nVLHOft2uQ23MngH/fBxeTWsZAWOHgcA9AJT3M5JWlDBcM1qPglvc1OZNQcBR9suFDzwy7
-        1l+BZ1Ozbe7BcZAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 34E0A13CBE;
-        Wed, 13 Oct 2021 07:51:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id mSmINP6PZmG8fgAAMHmgww
-        (envelope-from <colyli@suse.de>); Wed, 13 Oct 2021 07:51:26 +0000
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW1BBVENIXSBiY2FjaGU6IHJlcGxhY2Ugc25wcmlu?=
- =?UTF-8?Q?tf_in_show_functions_with_sysfs=5femit?=
-To:     =?UTF-8?B?546L5pOO?= <wangqing@vivo.com>
-Cc:     "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1634095639-4227-1-git-send-email-wangqing@vivo.com>
- <AI*ALgD1Em5Q2PfGyVlLhqrx.9.1634108359294.Hmail.wangqing@vivo.com>
- <SL2PR06MB3082B818199080975B93D0B6BDB79@SL2PR06MB3082.apcprd06.prod.outlook.com>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <fff14784-aadf-d7b0-3aed-e2428b1a7b54@suse.de>
-Date:   Wed, 13 Oct 2021 15:51:24 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        Wed, 13 Oct 2021 05:33:18 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55885C061570;
+        Wed, 13 Oct 2021 02:31:15 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id p13so7741041edw.0;
+        Wed, 13 Oct 2021 02:31:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jSDv3nCwYvRWF60PFzYmVFtCqi6n+8kG/qLGRQcEwXY=;
+        b=XDrKXspyEQaSQYdqJnWhS/O0wblIXJrWl9pE6svv7KjgrDGVXul7dxFR95SMikNbI8
+         dPBwNGXnMZrq9ECfkN9qd8qudIplcKbKQ02+dvBybldEqKgGTDn4o+Q+1yZvLDbQTpxH
+         j0F3JAFmKpiVLRpHTHEBPzaDyzHphlM3B0d+/j7Ro7xiITFiea8XjX1E/h70+j8E07xJ
+         iueofrb4NiJyC6FBpvAD+REiiIZXBpKUegBHgRICkLNGzc50RGa+mMfC0qBppipcUZ0O
+         0MOGnuc/w5sEpIO1qpW0KnLTEIw6dv//T71InSxwu/1xkmLMW6ESgvB/ttIEAHR+9lRU
+         du6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jSDv3nCwYvRWF60PFzYmVFtCqi6n+8kG/qLGRQcEwXY=;
+        b=a/9NWlYe1KD6qiKYTb7tewBmaSvmZudaDcgwZSgkzw86ol10izBu8ANoKwcfmRfK90
+         IimS2YoiRx5C58Zq5B/kSYlmNXuY12eOGOlGdUNdqOdoginCi5kPJ1EdvW0pee+3G1ru
+         HCVSRE5gCuvpt7IJQIRlh4jTotisb1yRrwIzfvUNr2HDa3aRzKBEcSdu5CSTygL5C7qN
+         OxdllwjRcgKH6do7qHj9Dc4f8hT3LLP9H3E5RJwmPHoDlCLSCpN+j3nfy7HzsiO0vAKX
+         CMYCbIP5vSG6oWbdJmdDMsPnhZ6ZIc+xqn4tbShPmjFBIOyZW/hoa7Ak+CJAC8r2B41J
+         ptDw==
+X-Gm-Message-State: AOAM532Crg6in8UMZOaVR9jB3qT11uoF8SZ3tV/5Mcc/aG9r8pPVm4rI
+        0dpoo3ykX5f06s+1QxuMXYZa9lQYh5JzCA==
+X-Google-Smtp-Source: ABdhPJzWnNPujm70ssX25zhSqx1K1lXHECTOGOjBrmNCExix4poiHSM5QToDrvQz8D7ttpAXJOx3mg==
+X-Received: by 2002:a05:6402:51d0:: with SMTP id r16mr7954872edd.353.1634117473882;
+        Wed, 13 Oct 2021 02:31:13 -0700 (PDT)
+Received: from [192.168.178.40] (ipbcc061e7.dynamic.kabel-deutschland.de. [188.192.97.231])
+        by smtp.gmail.com with ESMTPSA id p7sm7639013edr.6.2021.10.13.02.31.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Oct 2021 02:31:13 -0700 (PDT)
+Subject: Re: [PATCH 07/29] target/iblock: use bdev_nr_sectors instead of open
+ coding it
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Song Liu <song@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Kees Cook <keescook@chromium.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, drbd-dev@lists.linbit.com,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
+        linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
+        reiserfs-devel@vger.kernel.org
+References: <20211013051042.1065752-1-hch@lst.de>
+ <20211013051042.1065752-8-hch@lst.de>
+From:   Bodo Stroesser <bostroesser@gmail.com>
+Message-ID: <3babe7ca-cf08-fd19-6793-39f6d78bca12@gmail.com>
+Date:   Wed, 13 Oct 2021 11:31:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <SL2PR06MB3082B818199080975B93D0B6BDB79@SL2PR06MB3082.apcprd06.prod.outlook.com>
+In-Reply-To: <20211013051042.1065752-8-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 10/13/21 3:39 PM, 王擎 wrote:
->>> diff --git a/drivers/md/bcache/sysfs.h b/drivers/md/bcache/sysfs.h
->>> index 215df32..8bec32d 100644
->>> --- a/drivers/md/bcache/sysfs.h
->>> +++ b/drivers/md/bcache/sysfs.h
->>> @@ -51,7 +51,7 @@ STORE(fn)                                                           \
->>>     #define sysfs_printf(file, fmt, ...)                                        \
->>>     do {                                                                        \
->>>          if (attr == &sysfs_ ## file)                                    \
->>> -             return snprintf(buf, PAGE_SIZE, fmt "\n", __VA_ARGS__); \
->>> +             return sysfs_emit(buf, fmt "\n", __VA_ARGS__);  \
->>>     } while (0)
->>>     
->>>     #define sysfs_print(file, var)                                              \
->> IMHO I like this change :-) BTW, for snprint() from util.h, it seems
->> only to be used by sysfs_print() in syfs.h, would you like to change it
->> to use sysfs_emit too ?
->>
->> Thanks for the patch.
->>
->> Coly Li
->>
-> sysfs_print() should also be modified if size is a fixed value PAGE_SIZE,
-> but here is param, it would be appreciate if you have better method.
+On 13.10.21 07:10, Christoph Hellwig wrote:
+> Use the proper helper to read the block device size.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/target/target_core_iblock.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
+> index 31df20abe141f..ab7f5678ebc44 100644
+> --- a/drivers/target/target_core_iblock.c
+> +++ b/drivers/target/target_core_iblock.c
+> @@ -232,8 +232,9 @@ static unsigned long long iblock_emulate_read_cap_with_block_size(
+>   	struct block_device *bd,
+>   	struct request_queue *q)
+>   {
+> -	unsigned long long blocks_long = (div_u64(i_size_read(bd->bd_inode),
+> -					bdev_logical_block_size(bd)) - 1);
+> +	loff_t size = bdev_nr_sectors(bd) << SECTOR_SHIFT;
+> +	unsigned long long blocks_long =
+> +		div_u64(size, bdev_logical_block_size(bd)) - 1;
+>   	u32 block_size = bdev_logical_block_size(bd);
 
-Yes, I meant you may implement sysfs_print() by sysfs_emit() directly in 
-the way as snprint() does. Then you may remove snprint() since no one 
-uses it any more.
+To enhance readability, would it make sense to shift the new lines
+behind "u32 block_size = ...", so block_size can be used in div_u64
+instead of using bdev_logical_block_size twice?
 
-Coly Li
+>   
+>   	if (block_size == dev->dev_attrib.block_size)
+> 
