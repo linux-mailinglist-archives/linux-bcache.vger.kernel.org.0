@@ -2,81 +2,146 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC19B428B5D
-	for <lists+linux-bcache@lfdr.de>; Mon, 11 Oct 2021 12:56:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0820F42B37C
+	for <lists+linux-bcache@lfdr.de>; Wed, 13 Oct 2021 05:27:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236094AbhJKK6G (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 11 Oct 2021 06:58:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51488 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236047AbhJKK6C (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 11 Oct 2021 06:58:02 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD56C061772
-        for <linux-bcache@vger.kernel.org>; Mon, 11 Oct 2021 03:56:02 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id r18so54887905wrg.6
-        for <linux-bcache@vger.kernel.org>; Mon, 11 Oct 2021 03:56:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=DOxN63QWnl4dBNWQl+LufsBrewR+8VuPJnGph7ijSeE=;
-        b=km/+rwE10MGCG3K0BNjxD+A2l394aMlSCDFqBEiDyrs45mObKwVEkOccUp5BPFftJU
-         5cB06txNzUPVxcrxQnkqMq9zaxAqQeR9eoa3+7DqnAg3rX7wMze/dloERdrhczopiGET
-         PvxtLks7kWCMKTs5Q8Mmq12LwUKUT5cPH1x1mszpEwl0kuXWAYNTl0kX4+cL3oWAj8+a
-         6an2wLimFEmscCT9jtQf7FGYav0q/UTa6GRCeFihab7mYp8KZTVzyAi9ONxHllw1wfay
-         OSS3CoE7RnQ2PFKTnc/5Yya8gHnSshWvMzermo1msudbBS7MTk09iY8fA6ci8A/KmFSk
-         +E4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=DOxN63QWnl4dBNWQl+LufsBrewR+8VuPJnGph7ijSeE=;
-        b=i22uwT+NvQaVQQ2R9LxeB82ZK6pN2qgEgbfKIMSBkDxAtHVkNwR1WUB4MQtAoPpU2z
-         Yn+hJVd+7jKyzYLSbxetBYkgtHUrbl2dlzBEEG+C9jvZRy/VH33SVN8WYmdsokMOScTZ
-         m3s46aduZ0FIIFfH0m0JTCki3lam3DmKyUBHs6o+6Y/ViuKC2+DePO86FWFmn0OvC8st
-         +1cM97aECViKXIGQFAk1abS3iYylPp0v44E99OyZzqnTqtxTxzFvaDeX9FHfo4rhWTyi
-         PL0YeNBsBW2y4ZskyAc+R4XPNRpQ8nbICelUmE1ab2bZphbLsqhWGMXm+d1TEHnGZ1E1
-         2A6A==
-X-Gm-Message-State: AOAM533bJJ0fQrbdEZGey0y7rLWrppWVjQFFnRhyKdWwhBpfp0pu3YEL
-        lECurJNWiBsOC3/jQpcVFzBTMK8tpwLTAHVh43w=
-X-Google-Smtp-Source: ABdhPJxWYMUVxuj7Tly9azrkWxEMXzTPZAklmoVIH4V2ykknMMiBN9imOFz2zTqxux/zk/7pzvFSRlX+C6mfjc7ADy4=
-X-Received: by 2002:adf:8b9a:: with SMTP id o26mr24377548wra.109.1633949760323;
- Mon, 11 Oct 2021 03:56:00 -0700 (PDT)
+        id S237518AbhJMD3b (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 12 Oct 2021 23:29:31 -0400
+Received: from mail-eopbgr1300128.outbound.protection.outlook.com ([40.107.130.128]:18451
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S237301AbhJMD3a (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Tue, 12 Oct 2021 23:29:30 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JCSB3D33QArNrdZz6DXMTKkgDL/J0mNH9QHL4atoiFD4c5XWOEVOZKp3qjKk7+GiJjCOiNbXwiz71rVvdKZIKf6eSFe5LE0DpH+jSsHO4h1pBKoqtACyNMOUwywfM9CDoiKbB0UJDD5trnTnVXE0HeKorw0FSGi7ki8VR6D/L1VcvOMiFlaFacPX3+s5bwIDVu6ztw4UA+8TVCatkiihWDdRYym8PPL4X6F01kIeKmjODux1xs7WCGxCp0Z42BtWVduwahLkCXCyQbPVE6BTGWGMno73ot+Z2JL73cY+0s8wSqTrktvwmRAksF8xxec5EU7xWeXwJpn/Y+VN+EnkWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tANR3mq4OymWUa35uZlCCXjub4rWwtto9Gq2XTlSGco=;
+ b=MicbWyPErPsit7gifB85W9k9xFIoiJ9fdr2Y4m0SzMdyIH/NF3ql7MCUVxA5xNnJ1v8r+MaP7Cck64kC4L628qNlIE1wwSc2vjDTa5oRvBbvnI04UAo8+dPOh5vankraKYS3297b/2lzOy6etyYZ67cWFQejVh+YAHRnscBZ30/+7629+iEhNCxBLf28Ac/ikt7ZESyQhi6HQSd2AsQ4nqeJILZg4x9okgNQ0kGAWs6XXS0oh721OQQTposQRrXZgDj4DRzXDVZiiO6Ku+fvJ8Dd7yoWAYUhVsfDDHhfVflr4eWkWZwg/Odlbix5cEdFHhvGLJY8E8yD6/PkONQaeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo0.onmicrosoft.com;
+ s=selector2-vivo0-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tANR3mq4OymWUa35uZlCCXjub4rWwtto9Gq2XTlSGco=;
+ b=hC20LdqGjN6xTBY7QWOKYb/mLWqgPvEl9abYwuge/oVltau75BuGY7LqbHFIjHewmoV9NRfGLUN+eV4P8iTAH/LssJfPJmLwAQbEqNkrxCr9KLghrVIcVH2fLZJeMTCngzKp/qfZs9KZfX69RI1Ib/dWWbe8iwxXOy03MDjjmpk=
+Authentication-Results: suse.de; dkim=none (message not signed)
+ header.d=none;suse.de; dmarc=none action=none header.from=vivo.com;
+Received: from SL2PR06MB3082.apcprd06.prod.outlook.com (2603:1096:100:37::17)
+ by SL2PR06MB3243.apcprd06.prod.outlook.com (2603:1096:100:35::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4587.18; Wed, 13 Oct
+ 2021 03:27:25 +0000
+Received: from SL2PR06MB3082.apcprd06.prod.outlook.com
+ ([fe80::4c9b:b71f:fb67:6414]) by SL2PR06MB3082.apcprd06.prod.outlook.com
+ ([fe80::4c9b:b71f:fb67:6414%6]) with mapi id 15.20.4587.024; Wed, 13 Oct 2021
+ 03:27:25 +0000
+From:   Qing Wang <wangqing@vivo.com>
+To:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Qing Wang <wangqing@vivo.com>
+Subject: [PATCH] bcache: replace snprintf in show functions with sysfs_emit
+Date:   Tue, 12 Oct 2021 20:27:18 -0700
+Message-Id: <1634095639-4227-1-git-send-email-wangqing@vivo.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: HK2PR02CA0156.apcprd02.prod.outlook.com
+ (2603:1096:201:1f::16) To SL2PR06MB3082.apcprd06.prod.outlook.com
+ (2603:1096:100:37::17)
 MIME-Version: 1.0
-Received: by 2002:adf:dd8c:0:0:0:0:0 with HTTP; Mon, 11 Oct 2021 03:55:59
- -0700 (PDT)
-Reply-To: ramcharan9910@outlook.com
-From:   "Cr.David Ramcharan" <convy0101@gmail.com>
-Date:   Mon, 11 Oct 2021 03:55:59 -0700
-Message-ID: <CADDRs95718H=K3tUjphEHH_C96xYhoJw7jeCMpt_FfZZjhEXrA@mail.gmail.com>
-Subject: Thank You
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Received: from ubuntu.localdomain (218.213.202.189) by HK2PR02CA0156.apcprd02.prod.outlook.com (2603:1096:201:1f::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.4587.21 via Frontend Transport; Wed, 13 Oct 2021 03:27:24 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 12d93037-5f45-42b4-3dc5-08d98df9606c
+X-MS-TrafficTypeDiagnostic: SL2PR06MB3243:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <SL2PR06MB3243BB9F39B4794E02211B2FBDB79@SL2PR06MB3243.apcprd06.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3968;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LNFyOKPDOOf5nByOh5Vc0A/8fGvdqzeFHYHE1hunj89FAPRIn2pLvSLXbYIbZQf3dFK1zvI4zDvwlk1D4i4RkHMl9KPQWboXJk6ZNM6L7nOAs8JyTBJoKwn4KsrdeEW80/3XPC21QNAepuCcL4akTp0oWrE9Ol7wnwEAr4OQl0VNf48P76pDt9udzT2ZwYR0QSdQXAyNkOIS5Sbz3tNWYWmu8d8v4PK3ngv6SVt90l1WcqPbLdPqTS8FKTq9f5Huz/BckpapOSlWh9O/JrM2PWpmQynk4E49iomGtasxBiyYhx1HHZXEwGJ/xtn+M8cRgfa8I8unhaGEANgbkPyo0kBAL3l7s52Pngi1X2zhwyWUFR0BiFpOS0AqNyqNON9dzpy8oXDm73FzbEWKtsRbGS/IatcROyXcsdtZzLs5FNZIg+simysEwr6CVQAFt0VX00xuDzXVGrwMFB1lrDMEKe/8C/TilGFtgARCHk7PfiRz8CQ3cdxitjPOM9ZIembqRS0Q1v6yQ6TShNI6hvbSGOEH9YyTo9C4542lX1NyclzDDV/R5hQYkLJzlUbg1Qr9ojlhWWcX36AEPG4vgH4oBWHAjC5WU+05hVHQXr+HAT+nQwYhcGs2VoPNSK8ImAhCm4c/lEaOywiByLWYitcojVtRQHQGpEpoH4CYfE/3AyTEt+/QoIYnuMpT1rjfjNZ5yZkUepS6RDLQkgPbDb10qw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2PR06MB3082.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(508600001)(2906002)(26005)(6512007)(4326008)(66946007)(8676002)(36756003)(66476007)(83380400001)(38100700002)(6666004)(66556008)(38350700002)(107886003)(316002)(52116002)(186003)(8936002)(6486002)(5660300002)(6506007)(110136005)(956004)(2616005)(86362001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ZPJ2pWjsL0AB1ogjlGSPwTDLiYq1JbcctARI20K3Bb37Mt3uXSQE7IHOpHMy?=
+ =?us-ascii?Q?lxPpSipLdwyvMDYFZlipq2LpoW+iy1dszSFX/L9OmGnp3Kut9XgvXMFRe0v+?=
+ =?us-ascii?Q?AtBfjkVVd7/lNpqqaR3m2DUWn6KQqD1IqKfeOM3nMK3Qb8EBp8gGXr9FPph9?=
+ =?us-ascii?Q?NixawS04/ij0TDmuOBlOWplqKRQ/JevDvQi7Avt9MhDDLmQpEne4knQ+i1Zt?=
+ =?us-ascii?Q?s6zy9tA97dkO0ZvGr6ga+881HoHkzhI9CugYs4hemSnf5wg4I2n9Z8Qu01gl?=
+ =?us-ascii?Q?XiSm5V4Uc76clOpGf83OblaKkRKMiEolCnD1pEFj4I28JMdyym9pLE5akbgq?=
+ =?us-ascii?Q?wRhykG1Tgd1YKkMTbBAlmkqr811h6+IQcr7wK9igdf7rZZ7VM8ZPP6tk6b8E?=
+ =?us-ascii?Q?NxN1okrGegc1yzpIpc4ylLaTvA0+YcRem/MDdpPSor7OieZQuwJ59IucqB5T?=
+ =?us-ascii?Q?GscTnEjbIJcc4JKKJfMYX+bsZRbzx0lBlIpbhrNbyuTolFQfKCvI2H5IwgmY?=
+ =?us-ascii?Q?4mdrLp1vNG5DpxQDlR4rIRW/SuvzaZur0wMfGy9+C6c4IsmpqNWFLk84DKk1?=
+ =?us-ascii?Q?skr2dJCYk2X2T4doOuIV76N9AKG51LZl6D2eDMkV529D4mdoZsPTT7LbDfkz?=
+ =?us-ascii?Q?GFM4BD3zJWTovTbkpu94ghkFDEv2NyulL5s9TJXX3mUFQ3S0VE/z7LEayi7l?=
+ =?us-ascii?Q?lI1LPjGWxUp1BuO2Wo7s3+6sFjiMyWu1cKNHbKIU1s1k29Ip6Nh2+k5DTejX?=
+ =?us-ascii?Q?b6OotOIKcP+3NOR8kZmT/uGUg+EimJ6qbtMOXcHlGfCdLcK0h4QarKFQ9UD8?=
+ =?us-ascii?Q?8oZ1pDmEgrKOD1iOavuOVe0Bf7JVatjhSSiNut28tMzBtSBIn0toC/j3e+Ij?=
+ =?us-ascii?Q?47JQnimc6QpO+LO7BHI062dy/zQWADPZw72eHfVP5/W7QnjbBba6YaEcp4zT?=
+ =?us-ascii?Q?1o4I56RON4upB4vZaGPXJ1pZjs93gkP103UYfz0nT5/EQ2XKQXHurSkl/7dQ?=
+ =?us-ascii?Q?LolhngYthmLgKaPLF9nJ+WUJlVNi6O1KS0Y8YDqVUiODHlk75ilvofL22lJu?=
+ =?us-ascii?Q?nGsLWSCN/Mdm8MOVvmNXQwDvC26+DkWzpvgmL0XSK+7X0lkTt/NO2YLToyWk?=
+ =?us-ascii?Q?e93mQemf0wZq9gCbTGZCig/0kxDMouHkjJS0jcLXBqWRQDEnPCGOsthYhf3g?=
+ =?us-ascii?Q?erEIymVkmc9IYqdG4Scrd9LiJc90f3oJQXqYetvzfGaEH2SmlAvEBjSJaXIo?=
+ =?us-ascii?Q?jsIN21tp0MO5JNJkuNglLTUO5ShGthf80uxvfKZEalBu01T7flwKX0udoaEs?=
+ =?us-ascii?Q?4+2a4HZbl2VZAMgZgWJw53Oy40WPyIeoN9bP+D3p4SlwxA=3D=3D?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12d93037-5f45-42b4-3dc5-08d98df9606c
+X-MS-Exchange-CrossTenant-AuthSource: SL2PR06MB3082.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2021 03:27:25.5704
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MzqyHdqGD2HP2SnFQyB64GRjIRUEVlba0RjH5+mDJ6aqGWeMvHLbDJ3hcss8GD1HpmhoCa8HsqPTdh7k6VQZHw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SL2PR06MB3243
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Please I am writing to notify you again on my intention to list your
-name as a beneficiary to the total sum of GBP6.350 million (Six
-million, Three hundred and fifty thousand British Pounds Sterlings) in
-the intent of the deceased (name now withheld since this is my second
-letter to you).
+coccicheck complains about the use of snprintf() in sysfs show functions.
 
-I contacted you because you bear the surname identity and therefore
-can present you as the beneficiary to inherit the account proceeds of
-the deceased since there is no written "WILL" or trace to the deceased
-family relatives. My aim is to present you to my Bank Authorities as
-the Next of Kin to our deceased client. I will guide you all through
-the Claim procedure by providing all relevant Information and guiding
-you in your decisions and response to the Bank Management. All the
-papers will be processed after your acceptance.
+Fix the coccicheck warning:
+WARNING: use scnprintf or sprintf.
 
-In your acceptance of this deal, I request that you kindly forward to
-me your letter of acceptance; your current telephone and fax numbers
-,age, occupational status and a forwarding address to enable me submit
-to the Bank Management the details as the Next of Kin to their
-deceased customer. Reply strictly through: ramcharancrdavid@gmail.com
+Use sysfs_emit instead of scnprintf or sprintf makes more sense.
 
-Yours faithfully,
-Cr.David Ramcharan
+Signed-off-by: Qing Wang <wangqing@vivo.com>
+---
+ drivers/md/bcache/sysfs.c | 2 +-
+ drivers/md/bcache/sysfs.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 05ac1d6..e146c9e 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -639,7 +639,7 @@ static int bch_bset_print_stats(struct cache_set *c, char *buf)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return snprintf(buf, PAGE_SIZE,
++	return sysfs_emit(buf,
+ 			"btree nodes:		%zu\n"
+ 			"written sets:		%zu\n"
+ 			"unwritten sets:		%zu\n"
+diff --git a/drivers/md/bcache/sysfs.h b/drivers/md/bcache/sysfs.h
+index 215df32..8bec32d 100644
+--- a/drivers/md/bcache/sysfs.h
++++ b/drivers/md/bcache/sysfs.h
+@@ -51,7 +51,7 @@ STORE(fn)								\
+ #define sysfs_printf(file, fmt, ...)					\
+ do {									\
+ 	if (attr == &sysfs_ ## file)					\
+-		return snprintf(buf, PAGE_SIZE, fmt "\n", __VA_ARGS__);	\
++		return sysfs_emit(buf, fmt "\n", __VA_ARGS__);	\
+ } while (0)
+ 
+ #define sysfs_print(file, var)						\
+-- 
+2.7.4
+
