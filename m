@@ -2,174 +2,119 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05FE942B7A4
-	for <lists+linux-bcache@lfdr.de>; Wed, 13 Oct 2021 08:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FF1442B824
+	for <lists+linux-bcache@lfdr.de>; Wed, 13 Oct 2021 08:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238022AbhJMGld (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 13 Oct 2021 02:41:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53460 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238122AbhJMGla (ORCPT
+        id S232006AbhJMHBS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 13 Oct 2021 03:01:18 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:48026 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238124AbhJMHBS (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 13 Oct 2021 02:41:30 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 621C6C061766
-        for <linux-bcache@vger.kernel.org>; Tue, 12 Oct 2021 23:39:27 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id oa4so1428109pjb.2
-        for <linux-bcache@vger.kernel.org>; Tue, 12 Oct 2021 23:39:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DD/2eDntZRvmYFLabpX6hx1U0eeFdg0nt6CnyRZUcUo=;
-        b=BK3/LJ89flw5mVlU3UcEyxJ6LbnnmcNslFQOP5bfSd/QHd96C82eb1OGM/6y9E9tVZ
-         +RxJ42PRvcA8OnuNTe7jWQrLB4kIfwLscnkVOAeCEBYDFaLLczsrzmikDhrnLSmHevHI
-         DJYQS0KGPHFoIgmlnCi12Zqd0uHHCS6ptE1xE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DD/2eDntZRvmYFLabpX6hx1U0eeFdg0nt6CnyRZUcUo=;
-        b=RekNqHUkd0rmqGqRCZqa2kIWPwNxC1rOWLuJd7spHs0FyhZgf5tEe3qQOoZktA7olx
-         tWxCn/O+tVjR0JhEL5Tv/9x774ebItl9EkFqZs032tNqxUmIUu9PqkBS12JCE3cZayCb
-         TbJN30htOfI9cfnVeiqqOfZ5IrQMF56N9zDE/Y85djfTgjhIXis26JDjQWX4YxDxn1hd
-         r6NtqOi1hSR+u/j/MdrB05Dr7F5l1vMQw7sI2XKbb95hvtoTV1xpzWw1qNLRLjB81E8F
-         /wlgfOVDPXsbPinjCJw6iDPVcXKVdzzYvkMrD9THTiH2c167JMVXjimA2LHCGa0VzraS
-         fMjA==
-X-Gm-Message-State: AOAM532O8ZigxNzem5latORuJzk2Pyn1egWNrX34f0qy4OSRyAb6nzVl
-        QEsZSmyV7nJYVFpMAoTZ3HgDIA==
-X-Google-Smtp-Source: ABdhPJz6dN+fakHkI4mmw5FMrWYwE5jr866artFMUIcBHqytxUEdEx+T1ampoWpSo+mgvVckvfVoUQ==
-X-Received: by 2002:a17:90b:4b4f:: with SMTP id mi15mr808506pjb.97.1634107166729;
-        Tue, 12 Oct 2021 23:39:26 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y17sm9562796pfn.96.2021.10.12.23.39.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 23:39:26 -0700 (PDT)
-Date:   Tue, 12 Oct 2021 23:39:25 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, drbd-dev@lists.linbit.com,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
-        linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
-        reiserfs-devel@vger.kernel.org
-Subject: Re: don't use ->bd_inode to access the block device size
-Message-ID: <202110122335.19348E8E8@keescook>
-References: <20211013051042.1065752-1-hch@lst.de>
+        Wed, 13 Oct 2021 03:01:18 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 6D38C1FF92;
+        Wed, 13 Oct 2021 06:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1634108354; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3tUCEcZuFRYSLnVBLkohynaSi9b0pGLfms8DExFxQvo=;
+        b=JBfNbLIbKybmCNz2skVR0VOpzMx/cV1xw0uOp3DwVBzJi4QnL5a8iPTPL0+qobkDZ1lAWn
+        LTn6yOYoppnrd08w87+V5hbfyI18pzISszvZoMHIlouXIhNHgri+zMyNRQf7M4lrP1saLY
+        AJ3uIDjUZ4zN0GbXTcFNlLGaDYw7KrY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1634108354;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3tUCEcZuFRYSLnVBLkohynaSi9b0pGLfms8DExFxQvo=;
+        b=A94QhBhulaK5+Mdl2P/MVhd5UxFzSuHLQ4G9PCSDgjyABGC3ozfpMac7OZsXNUa02IioI2
+        qqJI/VLW+aY7Z6Bg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 61F8A13CD1;
+        Wed, 13 Oct 2021 06:59:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id aAKaC8GDZmH4ZgAAMHmgww
+        (envelope-from <colyli@suse.de>); Wed, 13 Oct 2021 06:59:13 +0000
+Subject: Re: [PATCH] bcache: replace snprintf in show functions with
+ sysfs_emit
+To:     Qing Wang <wangqing@vivo.com>
+References: <1634095639-4227-1-git-send-email-wangqing@vivo.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Coly Li <colyli@suse.de>
+Message-ID: <2df27e53-c77f-b938-abf4-4e22271ee3d7@suse.de>
+Date:   Wed, 13 Oct 2021 14:59:09 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211013051042.1065752-1-hch@lst.de>
+In-Reply-To: <1634095639-4227-1-git-send-email-wangqing@vivo.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, Oct 13, 2021 at 07:10:13AM +0200, Christoph Hellwig wrote:
-> I wondered about adding a helper for looking at the size in byte units
-> to avoid the SECTOR_SHIFT shifts in various places.  But given that
-> I could not come up with a good name and block devices fundamentally
-> work in sector size granularity I decided against that.
-
-Without something like bdev_nr_bytes(), this series has 13 of 29 patches
-actually _adding_ an open-coded calculation:
-
-[PATCH 05/29] mtd/block2mtd: use bdev_nr_sectors instead of open coding it
-[PATCH 06/29] nvmet: use bdev_nr_sectors instead of open coding it
-[PATCH 07/29] target/iblock: use bdev_nr_sectors instead of open coding it
-[PATCH 08/29] fs: use bdev_nr_sectors instead of open coding it in blkdev_max_block
-[PATCH 11/29] btrfs: use bdev_nr_sectors instead of open coding it
-[PATCH 16/29] jfs: use bdev_nr_sectors instead of open coding it
-[PATCH 17/29] nfs/blocklayout: use bdev_nr_sectors instead of open coding it
-[PATCH 18/29] nilfs2: use bdev_nr_sectors instead of open coding it
-[PATCH 19/29] ntfs3: use bdev_nr_sectors instead of open coding it
-[PATCH 20/29] pstore/blk: use bdev_nr_sectors instead of open coding it
-[PATCH 21/29] reiserfs: use bdev_nr_sectors instead of open coding it
-[PATCH 22/29] squashfs: use bdev_nr_sectors instead of open coding it
-[PATCH 23/29] block: use bdev_nr_sectors instead of open coding it in blkdev_fallocate
-
-I think it's well worth having that helper (or at least leaving these
-alone). Otherwise, this is a lot of churn without a clear net benefit,
-IMO.
-
-The others look good to me, though!
-
--Kees
-
+On 10/13/21 11:27 AM, Qing Wang wrote:
+> coccicheck complains about the use of snprintf() in sysfs show functions.
 >
-> Diffstat:
->  block/fops.c                        |    2 +-
->  drivers/block/drbd/drbd_int.h       |    3 +--
->  drivers/md/bcache/super.c           |    2 +-
->  drivers/md/bcache/util.h            |    4 ----
->  drivers/md/bcache/writeback.c       |    2 +-
->  drivers/md/dm-bufio.c               |    2 +-
->  drivers/md/dm-cache-metadata.c      |    2 +-
->  drivers/md/dm-cache-target.c        |    2 +-
->  drivers/md/dm-clone-target.c        |    2 +-
->  drivers/md/dm-dust.c                |    5 ++---
->  drivers/md/dm-ebs-target.c          |    2 +-
->  drivers/md/dm-era-target.c          |    2 +-
->  drivers/md/dm-exception-store.h     |    2 +-
->  drivers/md/dm-flakey.c              |    3 +--
->  drivers/md/dm-integrity.c           |    6 +++---
->  drivers/md/dm-linear.c              |    3 +--
->  drivers/md/dm-log-writes.c          |    4 ++--
->  drivers/md/dm-log.c                 |    2 +-
->  drivers/md/dm-mpath.c               |    2 +-
->  drivers/md/dm-raid.c                |    6 +++---
->  drivers/md/dm-switch.c              |    2 +-
->  drivers/md/dm-table.c               |    3 +--
->  drivers/md/dm-thin-metadata.c       |    2 +-
->  drivers/md/dm-thin.c                |    2 +-
->  drivers/md/dm-verity-target.c       |    3 +--
->  drivers/md/dm-writecache.c          |    2 +-
->  drivers/md/dm-zoned-target.c        |    2 +-
->  drivers/md/md.c                     |   26 +++++++++++---------------
->  drivers/mtd/devices/block2mtd.c     |    5 +++--
->  drivers/nvme/target/io-cmd-bdev.c   |    4 ++--
->  drivers/target/target_core_iblock.c |    5 +++--
->  fs/affs/super.c                     |    2 +-
->  fs/btrfs/dev-replace.c              |    2 +-
->  fs/btrfs/disk-io.c                  |    3 ++-
->  fs/btrfs/ioctl.c                    |    4 ++--
->  fs/btrfs/volumes.c                  |    7 ++++---
->  fs/buffer.c                         |    4 ++--
->  fs/cramfs/inode.c                   |    2 +-
->  fs/ext4/super.c                     |    2 +-
->  fs/fat/inode.c                      |    5 +----
->  fs/hfs/mdb.c                        |    2 +-
->  fs/hfsplus/wrapper.c                |    2 +-
->  fs/jfs/resize.c                     |    5 ++---
->  fs/jfs/super.c                      |    5 ++---
->  fs/nfs/blocklayout/dev.c            |    4 ++--
->  fs/nilfs2/ioctl.c                   |    2 +-
->  fs/nilfs2/super.c                   |    2 +-
->  fs/nilfs2/the_nilfs.c               |    3 ++-
->  fs/ntfs/super.c                     |    8 +++-----
->  fs/ntfs3/super.c                    |    3 +--
->  fs/pstore/blk.c                     |    4 ++--
->  fs/reiserfs/super.c                 |    7 ++-----
->  fs/squashfs/super.c                 |    5 +++--
->  fs/udf/lowlevel.c                   |    5 ++---
->  fs/udf/super.c                      |    9 +++------
->  include/linux/genhd.h               |    6 ++++++
->  56 files changed, 100 insertions(+), 117 deletions(-)
+> Fix the coccicheck warning:
+> WARNING: use scnprintf or sprintf.
+>
+> Use sysfs_emit instead of scnprintf or sprintf makes more sense.
+>
+> Signed-off-by: Qing Wang <wangqing@vivo.com>
+> ---
+>   drivers/md/bcache/sysfs.c | 2 +-
+>   drivers/md/bcache/sysfs.h | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+> index 05ac1d6..e146c9e 100644
+> --- a/drivers/md/bcache/sysfs.c
+> +++ b/drivers/md/bcache/sysfs.c
+> @@ -639,7 +639,7 @@ static int bch_bset_print_stats(struct cache_set *c, char *buf)
+>   	if (ret < 0)
+>   		return ret;
+>   
+> -	return snprintf(buf, PAGE_SIZE,
+> +	return sysfs_emit(buf,
+>   			"btree nodes:		%zu\n"
+>   			"written sets:		%zu\n"
+>   			"unwritten sets:		%zu\n"
 
---
-Kees Cook
+Let's keep this location as snprintf(), to make code style be consistent.
+
+
+> diff --git a/drivers/md/bcache/sysfs.h b/drivers/md/bcache/sysfs.h
+> index 215df32..8bec32d 100644
+> --- a/drivers/md/bcache/sysfs.h
+> +++ b/drivers/md/bcache/sysfs.h
+> @@ -51,7 +51,7 @@ STORE(fn)								\
+>   #define sysfs_printf(file, fmt, ...)					\
+>   do {									\
+>   	if (attr == &sysfs_ ## file)					\
+> -		return snprintf(buf, PAGE_SIZE, fmt "\n", __VA_ARGS__);	\
+> +		return sysfs_emit(buf, fmt "\n", __VA_ARGS__);	\
+>   } while (0)
+>   
+>   #define sysfs_print(file, var)						\
+
+IMHO I like this change :-) BTW, for snprint() from util.h, it seems 
+only to be used by sysfs_print() in syfs.h, would you like to change it 
+to use sysfs_emit too ?
+
+Thanks for the patch.
+
+Coly Li
