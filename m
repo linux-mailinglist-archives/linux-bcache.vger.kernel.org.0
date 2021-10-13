@@ -2,58 +2,46 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E51542BB98
-	for <lists+linux-bcache@lfdr.de>; Wed, 13 Oct 2021 11:31:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF39F42BD4A
+	for <lists+linux-bcache@lfdr.de>; Wed, 13 Oct 2021 12:42:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237656AbhJMJdU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 13 Oct 2021 05:33:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36856 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237572AbhJMJdS (ORCPT
+        id S229516AbhJMKoP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 13 Oct 2021 06:44:15 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:33604 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229461AbhJMKoO (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 13 Oct 2021 05:33:18 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55885C061570;
-        Wed, 13 Oct 2021 02:31:15 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id p13so7741041edw.0;
-        Wed, 13 Oct 2021 02:31:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jSDv3nCwYvRWF60PFzYmVFtCqi6n+8kG/qLGRQcEwXY=;
-        b=XDrKXspyEQaSQYdqJnWhS/O0wblIXJrWl9pE6svv7KjgrDGVXul7dxFR95SMikNbI8
-         dPBwNGXnMZrq9ECfkN9qd8qudIplcKbKQ02+dvBybldEqKgGTDn4o+Q+1yZvLDbQTpxH
-         j0F3JAFmKpiVLRpHTHEBPzaDyzHphlM3B0d+/j7Ro7xiITFiea8XjX1E/h70+j8E07xJ
-         iueofrb4NiJyC6FBpvAD+REiiIZXBpKUegBHgRICkLNGzc50RGa+mMfC0qBppipcUZ0O
-         0MOGnuc/w5sEpIO1qpW0KnLTEIw6dv//T71InSxwu/1xkmLMW6ESgvB/ttIEAHR+9lRU
-         du6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jSDv3nCwYvRWF60PFzYmVFtCqi6n+8kG/qLGRQcEwXY=;
-        b=a/9NWlYe1KD6qiKYTb7tewBmaSvmZudaDcgwZSgkzw86ol10izBu8ANoKwcfmRfK90
-         IimS2YoiRx5C58Zq5B/kSYlmNXuY12eOGOlGdUNdqOdoginCi5kPJ1EdvW0pee+3G1ru
-         HCVSRE5gCuvpt7IJQIRlh4jTotisb1yRrwIzfvUNr2HDa3aRzKBEcSdu5CSTygL5C7qN
-         OxdllwjRcgKH6do7qHj9Dc4f8hT3LLP9H3E5RJwmPHoDlCLSCpN+j3nfy7HzsiO0vAKX
-         CMYCbIP5vSG6oWbdJmdDMsPnhZ6ZIc+xqn4tbShPmjFBIOyZW/hoa7Ak+CJAC8r2B41J
-         ptDw==
-X-Gm-Message-State: AOAM532Crg6in8UMZOaVR9jB3qT11uoF8SZ3tV/5Mcc/aG9r8pPVm4rI
-        0dpoo3ykX5f06s+1QxuMXYZa9lQYh5JzCA==
-X-Google-Smtp-Source: ABdhPJzWnNPujm70ssX25zhSqx1K1lXHECTOGOjBrmNCExix4poiHSM5QToDrvQz8D7ttpAXJOx3mg==
-X-Received: by 2002:a05:6402:51d0:: with SMTP id r16mr7954872edd.353.1634117473882;
-        Wed, 13 Oct 2021 02:31:13 -0700 (PDT)
-Received: from [192.168.178.40] (ipbcc061e7.dynamic.kabel-deutschland.de. [188.192.97.231])
-        by smtp.gmail.com with ESMTPSA id p7sm7639013edr.6.2021.10.13.02.31.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Oct 2021 02:31:13 -0700 (PDT)
-Subject: Re: [PATCH 07/29] target/iblock: use bdev_nr_sectors instead of open
- coding it
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        Song Liu <song@kernel.org>, David Sterba <dsterba@suse.com>,
+        Wed, 13 Oct 2021 06:44:14 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id F3C7D201DC;
+        Wed, 13 Oct 2021 10:42:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634121729; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z4HqZyTEwS9Rcr4e8FrndT8Yotl846xcwxeeXUm/Rbw=;
+        b=hfTvKDs9tMBALqogMul26UufXr/UDrQs6fQ2xFqJlV4HsPz2oyF/rJyg+bH01us42OgEr/
+        gQBKJJBLlltruRPrBFfyACC1OK0Ft4NyUMSfl4pAJ3vBBVqgnncaUQShaZ1/INd0ZXBrCL
+        clnKG5sWnOV98zZG/GDtQEKojpj+iI4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634121729;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z4HqZyTEwS9Rcr4e8FrndT8Yotl846xcwxeeXUm/Rbw=;
+        b=viBbxLVUsu9I5SCs9Ro+b7QEHFxldjR3jplEXmW7M5M5jUxvO7kpggYe/iz58HOLGzWfYy
+        3YAfJdO+WIda7fAA==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 1EA1AA3B85;
+        Wed, 13 Oct 2021 10:42:08 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id EAB6D1E11B6; Wed, 13 Oct 2021 12:42:07 +0200 (CEST)
+Date:   Wed, 13 Oct 2021 12:42:07 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Coly Li <colyli@suse.de>,
+        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+        David Sterba <dsterba@suse.com>,
         Josef Bacik <josef@toxicpanda.com>,
         Theodore Ts'o <tytso@mit.edu>,
         OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
@@ -73,49 +61,29 @@ Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
         linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
         reiserfs-devel@vger.kernel.org
+Subject: Re: [PATCH 09/29] fs: simplify init_page_buffers
+Message-ID: <20211013104207.GD19200@quack2.suse.cz>
 References: <20211013051042.1065752-1-hch@lst.de>
- <20211013051042.1065752-8-hch@lst.de>
-From:   Bodo Stroesser <bostroesser@gmail.com>
-Message-ID: <3babe7ca-cf08-fd19-6793-39f6d78bca12@gmail.com>
-Date:   Wed, 13 Oct 2021 11:31:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ <20211013051042.1065752-10-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20211013051042.1065752-8-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211013051042.1065752-10-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 13.10.21 07:10, Christoph Hellwig wrote:
-> Use the proper helper to read the block device size.
+On Wed 13-10-21 07:10:22, Christoph Hellwig wrote:
+> No need to convert from bdev to inode and back.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   drivers/target/target_core_iblock.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
-> index 31df20abe141f..ab7f5678ebc44 100644
-> --- a/drivers/target/target_core_iblock.c
-> +++ b/drivers/target/target_core_iblock.c
-> @@ -232,8 +232,9 @@ static unsigned long long iblock_emulate_read_cap_with_block_size(
->   	struct block_device *bd,
->   	struct request_queue *q)
->   {
-> -	unsigned long long blocks_long = (div_u64(i_size_read(bd->bd_inode),
-> -					bdev_logical_block_size(bd)) - 1);
-> +	loff_t size = bdev_nr_sectors(bd) << SECTOR_SHIFT;
-> +	unsigned long long blocks_long =
-> +		div_u64(size, bdev_logical_block_size(bd)) - 1;
->   	u32 block_size = bdev_logical_block_size(bd);
 
-To enhance readability, would it make sense to shift the new lines
-behind "u32 block_size = ...", so block_size can be used in div_u64
-instead of using bdev_logical_block_size twice?
+Looks good. Feel free to add:
 
->   
->   	if (block_size == dev->dev_attrib.block_size)
-> 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
