@@ -2,50 +2,50 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3457042B725
-	for <lists+linux-bcache@lfdr.de>; Wed, 13 Oct 2021 08:29:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 720D642B734
+	for <lists+linux-bcache@lfdr.de>; Wed, 13 Oct 2021 08:30:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237999AbhJMGbo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 13 Oct 2021 02:31:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51098 "EHLO
+        id S237955AbhJMGcr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 13 Oct 2021 02:32:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237867AbhJMGbn (ORCPT
+        with ESMTP id S229777AbhJMGcr (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 13 Oct 2021 02:31:43 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF8F1C061746
-        for <linux-bcache@vger.kernel.org>; Tue, 12 Oct 2021 23:29:40 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id y4so1149016plb.0
-        for <linux-bcache@vger.kernel.org>; Tue, 12 Oct 2021 23:29:40 -0700 (PDT)
+        Wed, 13 Oct 2021 02:32:47 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1ED5C061714
+        for <linux-bcache@vger.kernel.org>; Tue, 12 Oct 2021 23:30:44 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id m21so1316711pgu.13
+        for <linux-bcache@vger.kernel.org>; Tue, 12 Oct 2021 23:30:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=W+Po2ncML0dagir1ZXD2ovXOKvk/W+c/3o5vm+NA9cQ=;
-        b=QomLyJ/uwXmEgOIdGiIKpgwe7fIN3sqRRqysUR703Xs3YgTlXaMfe2P+HII9dJHv27
-         pe85K+wWKdH0PewpBtncrX+pK9/vv2ewnDdpNrXhC91Xk/Ncvs9CyiBnb8qEmm15S3FV
-         6BEJ5rXVDozZ1lv8jDs3uSJtiPb9Dk/ZAAcM0=
+        bh=VuQ9K07zKhFVmW27yAURvZgXNg5Kde2VB7A9n6/jcRM=;
+        b=UofdAPLwzqN9irjKYpz7rqdpJba6YSanghzltJ7hygDQHnFxjoYnCn4YD0xclCWyyn
+         1QGVCjAoCfMyHBxT5bED+JODP9R8TqKO5BZ3Ypckfrxuser3a0TwMhxL4/T0VMAtKJpU
+         VKx0vRkqgm8Bnukgx8yTpvFmvLGoFoDP/yYAY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=W+Po2ncML0dagir1ZXD2ovXOKvk/W+c/3o5vm+NA9cQ=;
-        b=RRIa/9mW6hjFLVOpWeWvW38CerPEEaocRuAQvrYUpBocuxRIigzHfqN8NEdBoG5SGP
-         xtfX+WRq/TOeRRRVDp4p2VqW8g88zI2gzsooxsnMaNox6uMW6Th9NHE0R0/AwMFfgZaf
-         I93L3xX+H+QtVDaX/Lz5QYIgYfrCnKBMdSlwgZbL4/Ja8alOj0ojpxq1MTAja/kB1wiU
-         8PuvPmeQbbuiMUVYVqGwQ8eL0zXH3UTwtBCbmvD9GFQtGXFZ3uDK5Dnx5A8A93G//JSu
-         eyNPteFOlz+H3Y5AsGH310ZK6zBMgOhtiL0Qf0Lnz1Q8InizkegUHi6ynxhwEMI+4e9t
-         hecg==
-X-Gm-Message-State: AOAM5324DQbdkKa0p7WKj0UsHjSx69WMm7QGBbotdRBev4kMRygxdnLP
-        65B5YRZ1omBJBd+vimCY8+euVg==
-X-Google-Smtp-Source: ABdhPJwwvDzOMlBdl8uBpL682Y/M/U5HFlms6OXsU9pvWhVrOJHosSbnvoIECvMOshQ6rTYdsLz56g==
-X-Received: by 2002:a17:90b:4b4c:: with SMTP id mi12mr11492173pjb.57.1634106580411;
-        Tue, 12 Oct 2021 23:29:40 -0700 (PDT)
+        bh=VuQ9K07zKhFVmW27yAURvZgXNg5Kde2VB7A9n6/jcRM=;
+        b=JHjOeWhVXe+r9ofLUTSOIW9SXRo13gweg+uqORsEhTFI1gB7QD5hND2KgHKZSzv0Et
+         N4Pcs84TttCQD57eXzGKl34kb6yp4dD3trd+Rod3AepBhmYhzNsJf2vfdnoOp4Gzxaxj
+         WFasR96klwJ5e3n5tUP1bYMGCqgx0HN91ocOdVmo4YkjIkU+0TtGE8NJsez1fefio1Hs
+         PYw/RNj6nWwD7QCWXZo7THH+7CZJbxVQK8puNzQbGXTp8x3mWDStUqWOsxFBr78fk7xM
+         F21wwHbr450nlc3dx2EYmF5MAfUHaH6CLdk/ENZEZr0UVtRkHdqOSFcf/QnTR5Z4pPWF
+         jB+Q==
+X-Gm-Message-State: AOAM533+ZSBIAy11sYD0numzfMb5IQUQAltcRl8nRBhzFUg6fZAJZW0e
+        k+6tfsM8aQiGtIFvRLgTQEKLpCLHWcRzQQ==
+X-Google-Smtp-Source: ABdhPJxi3MilTVqoy9Kf7ydXOCYXbOlyCyon1KO3ew5UZssKOax53PkSESvwHqWMi+XXw8wleT4Yrw==
+X-Received: by 2002:a05:6a00:ccb:b0:44c:eb4b:f24e with SMTP id b11-20020a056a000ccb00b0044ceb4bf24emr25691167pfv.16.1634106644424;
+        Tue, 12 Oct 2021 23:30:44 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x7sm12999948pfj.28.2021.10.12.23.29.39
+        by smtp.gmail.com with ESMTPSA id z10sm12678073pfn.70.2021.10.12.23.30.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 23:29:39 -0700 (PDT)
-Date:   Tue, 12 Oct 2021 23:29:39 -0700
+        Tue, 12 Oct 2021 23:30:44 -0700 (PDT)
+Date:   Tue, 12 Oct 2021 23:30:43 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Coly Li <colyli@suse.de>,
@@ -70,7 +70,7 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Coly Li <colyli@suse.de>,
         linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
         reiserfs-devel@vger.kernel.org
 Subject: Re: [PATCH 25/29] ext4: use sb_bdev_nr_blocks
-Message-ID: <202110122328.92B4FC41F4@keescook>
+Message-ID: <202110122330.6E549D2@keescook>
 References: <20211013051042.1065752-1-hch@lst.de>
  <20211013051042.1065752-26-hch@lst.de>
 MIME-Version: 1.0
@@ -100,9 +100,10 @@ On Wed, Oct 13, 2021 at 07:10:38AM +0200, Christoph Hellwig wrote:
 > -	blocks_count = sb->s_bdev->bd_inode->i_size >> sb->s_blocksize_bits;
 > +	blocks_count = sb_bdev_nr_blocks(sb);
 
-Is s_blocksize_bits always 9 here? If not, this isn't equivalent.
+Wait, my bad. Yes, this is fine. It's going through two helpers. :)
 
--Kees
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
 
 >  	if (blocks_count && ext4_blocks_count(es) > blocks_count) {
 >  		ext4_msg(sb, KERN_WARNING, "bad geometry: block count %llu "
