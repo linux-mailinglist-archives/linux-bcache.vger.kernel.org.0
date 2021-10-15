@@ -2,31 +2,31 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A37B42FECE
-	for <lists+linux-bcache@lfdr.de>; Sat, 16 Oct 2021 01:31:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA16C42FEC1
+	for <lists+linux-bcache@lfdr.de>; Sat, 16 Oct 2021 01:31:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243549AbhJOXdE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 15 Oct 2021 19:33:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38852 "EHLO
+        id S243580AbhJOXdH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 15 Oct 2021 19:33:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243520AbhJOXdC (ORCPT
+        with ESMTP id S243543AbhJOXdD (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 15 Oct 2021 19:33:02 -0400
+        Fri, 15 Oct 2021 19:33:03 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5142CC061570;
-        Fri, 15 Oct 2021 16:30:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF2CDC061764;
+        Fri, 15 Oct 2021 16:30:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=9ZsOqn3b5/QR03MhD1Dx1DTw82KOKjoplYOfmtrSAjo=; b=GZiKyVUl5h20WldEdrGbqyto8+
-        F1vc70D//lVIeo9F6TBNDnV9e55gE+P7li975g7REzacZFJKwEAeidozUGuR+k5GME36IWRQgNuj5
-        urOtJ8gdj+Bf/OPhiy9VBUYENb8BuHmtpnjNJWLDK0eSdpNiooD7FGQjHbhMc5UAm9cOA6udp1s+p
-        NSkiIce6DCoLM7V11sN9tyvsjfnUlUwaqyRyrhv0W5dk9rLWQZy0h7Zy1oAtjzbbYqpj4LhPjkl3a
-        v8c4n9oLWSkDy6E0r4PTZRTOQWB17HvTEyzFhn/Iz8DTM/4WrajYQEVYOkt5laZZ3N+xB/yVPdxzK
-        Gf2nTOxA==;
+        bh=rG9IqTjAKDoxlaB9WcX4+FIDpVpRocTi/WMidAyqb5E=; b=zZoTqdfJ9Fxpi6GVhbzlxeBy5Z
+        TSHUOtdRa3bmpLqWSLW0djXO8cm89eWDPeRyuLhvJmh9r4yCfAdeswev1Akm1dngsVKrFxxVL/vwK
+        /o0NcsEQRPnpKqBDS1R1QPBK6jlB+L2FrQUNxMjpJa0MZyI7LNFOdAQQxAqGzBZuu+NpaCLnK3MOq
+        nsEWwUrmMKWD9Ul/gId96Lp5lFjisiK/c0hgYHvTulpiaTXtvHI9nZC5vP4MLTaqoMmCcfqzH0mzI
+        6UZRd/twOEufTonfDKYrunADAuSDWqwpR01BKU3v0w7aRz+6+suErEvLj7p0zymwJC/+eLN8Tnv2x
+        9guF9rCQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mbWej-0095v5-Ct; Fri, 15 Oct 2021 23:30:29 +0000
+        id 1mbWej-0095v7-E9; Fri, 15 Oct 2021 23:30:29 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     axboe@kernel.dk, jejb@linux.ibm.com, martin.petersen@oracle.com,
         agk@redhat.com, snitzer@redhat.com, colyli@suse.de,
@@ -44,9 +44,9 @@ Cc:     linux-scsi@vger.kernel.org, dm-devel@redhat.com,
         linux-m68k@lists.linux-m68k.org, linux-um@lists.infradead.org,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 7/9] um/drivers/ubd_kern: add error handling support for add_disk()
-Date:   Fri, 15 Oct 2021 16:30:26 -0700
-Message-Id: <20211015233028.2167651-8-mcgrof@kernel.org>
+Subject: [PATCH 8/9] rnbd: add error handling support for add_disk()
+Date:   Fri, 15 Oct 2021 16:30:27 -0700
+Message-Id: <20211015233028.2167651-9-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211015233028.2167651-1-mcgrof@kernel.org>
 References: <20211015233028.2167651-1-mcgrof@kernel.org>
@@ -61,56 +61,51 @@ We never checked for errors on add_disk() as this function
 returned void. Now that this is fixed, use the shiny new
 error handling.
 
-ubd_disk_register() never returned an error, so just fix
-that now and let the caller handle the error condition.
-
-Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Acked-by: Jack Wang <jinpu.wang@ionos.com>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- arch/um/drivers/ubd_kern.c | 13 +++++++++----
+ drivers/block/rnbd/rnbd-clt.c | 13 +++++++++----
  1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
-index fefd343412c7..69d2d0049a61 100644
---- a/arch/um/drivers/ubd_kern.c
-+++ b/arch/um/drivers/ubd_kern.c
-@@ -855,8 +855,8 @@ static const struct attribute_group *ubd_attr_groups[] = {
- 	NULL,
- };
- 
--static void ubd_disk_register(int major, u64 size, int unit,
--			      struct gendisk *disk)
-+static int ubd_disk_register(int major, u64 size, int unit,
-+			     struct gendisk *disk)
- {
- 	disk->major = major;
- 	disk->first_minor = unit << UBD_SHIFT;
-@@ -873,7 +873,7 @@ static void ubd_disk_register(int major, u64 size, int unit,
- 
- 	disk->private_data = &ubd_devs[unit];
- 	disk->queue = ubd_devs[unit].queue;
--	device_add_disk(&ubd_devs[unit].pdev.dev, disk, ubd_attr_groups);
-+	return device_add_disk(&ubd_devs[unit].pdev.dev, disk, ubd_attr_groups);
+diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.c
+index 5864c9b46cb9..3b78dc55a9a2 100644
+--- a/drivers/block/rnbd/rnbd-clt.c
++++ b/drivers/block/rnbd/rnbd-clt.c
+@@ -1384,8 +1384,10 @@ static void setup_request_queue(struct rnbd_clt_dev *dev)
+ 	blk_queue_write_cache(dev->queue, dev->wc, dev->fua);
  }
  
- #define ROUND_BLOCK(n) ((n + (SECTOR_SIZE - 1)) & (-SECTOR_SIZE))
-@@ -920,10 +920,15 @@ static int ubd_add(int n, char **error_out)
- 	blk_queue_write_cache(ubd_dev->queue, true, false);
- 	blk_queue_max_segments(ubd_dev->queue, MAX_SG);
- 	blk_queue_segment_boundary(ubd_dev->queue, PAGE_SIZE - 1);
--	ubd_disk_register(UBD_MAJOR, ubd_dev->size, n, disk);
-+	err = ubd_disk_register(UBD_MAJOR, ubd_dev->size, n, disk);
-+	if (err)
-+		goto out_cleanup_disk;
+-static void rnbd_clt_setup_gen_disk(struct rnbd_clt_dev *dev, int idx)
++static int rnbd_clt_setup_gen_disk(struct rnbd_clt_dev *dev, int idx)
+ {
++	int err;
 +
- 	ubd_gendisk[n] = disk;
- 	return 0;
+ 	dev->gd->major		= rnbd_client_major;
+ 	dev->gd->first_minor	= idx << RNBD_PART_BITS;
+ 	dev->gd->minors		= 1 << RNBD_PART_BITS;
+@@ -1410,7 +1412,11 @@ static void rnbd_clt_setup_gen_disk(struct rnbd_clt_dev *dev, int idx)
  
-+out_cleanup_disk:
-+	blk_cleanup_disk(disk);
- out_cleanup_tags:
- 	blk_mq_free_tag_set(&ubd_dev->tag_set);
- out:
+ 	if (!dev->rotational)
+ 		blk_queue_flag_set(QUEUE_FLAG_NONROT, dev->queue);
+-	add_disk(dev->gd);
++	err = add_disk(dev->gd);
++	if (err)
++		blk_cleanup_disk(dev->gd);
++
++	return err;
+ }
+ 
+ static int rnbd_client_setup_device(struct rnbd_clt_dev *dev)
+@@ -1426,8 +1432,7 @@ static int rnbd_client_setup_device(struct rnbd_clt_dev *dev)
+ 	rnbd_init_mq_hw_queues(dev);
+ 
+ 	setup_request_queue(dev);
+-	rnbd_clt_setup_gen_disk(dev, idx);
+-	return 0;
++	return rnbd_clt_setup_gen_disk(dev, idx);
+ }
+ 
+ static struct rnbd_clt_dev *init_dev(struct rnbd_clt_session *sess,
 -- 
 2.30.2
 
