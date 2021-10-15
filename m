@@ -2,69 +2,78 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B51FE42DFD7
-	for <lists+linux-bcache@lfdr.de>; Thu, 14 Oct 2021 19:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38CB242EEB5
+	for <lists+linux-bcache@lfdr.de>; Fri, 15 Oct 2021 12:21:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233089AbhJNRGv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 14 Oct 2021 13:06:51 -0400
-Received: from smtp.hosts.co.uk ([85.233.160.19]:54728 "EHLO smtp.hosts.co.uk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233025AbhJNRGv (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 14 Oct 2021 13:06:51 -0400
-X-Greylist: delayed 5331 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Oct 2021 13:06:49 EDT
-Received: from host86-155-223-151.range86-155.btcentralplus.com ([86.155.223.151] helo=[192.168.1.65])
-        by smtp.hosts.co.uk with esmtpa (Exim)
-        (envelope-from <antlists@youngman.org.uk>)
-        id 1mb2lr-0006Lw-DM; Thu, 14 Oct 2021 16:35:51 +0100
-Subject: Re: don't use ->bd_inode to access the block device size
-To:     Kees Cook <keescook@chromium.org>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "jfs-discussion@lists.sourceforge.net" 
-        <jfs-discussion@lists.sourceforge.net>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-nilfs@vger.kernel.org" <linux-nilfs@vger.kernel.org>,
-        "linux-ntfs-dev@lists.sourceforge.net" 
-        <linux-ntfs-dev@lists.sourceforge.net>,
-        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
-        "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>
-References: <20211013051042.1065752-1-hch@lst.de>
- <20211014062844.GA25448@lst.de>
- <3AB8052D-DD45-478B-85F2-BFBEC1C7E9DF@tuxera.com>
- <a5eb3c18-deb2-6539-cc24-57e6d5d3500c@oracle.com>
- <202110140813.44C95229@keescook>
-From:   Wol <antlists@youngman.org.uk>
-Message-ID: <e3d2f358-be1a-3413-fdb8-2e86718cde3e@youngman.org.uk>
-Date:   Thu, 14 Oct 2021 16:35:49 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S235132AbhJOKXx (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 15 Oct 2021 06:23:53 -0400
+Received: from zg8tmtm5lju5ljm3lje2naaa.icoremail.net ([139.59.37.164]:40068
+        "HELO zg8tmtm5lju5ljm3lje2naaa.icoremail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S230061AbhJOKXw (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 15 Oct 2021 06:23:52 -0400
+X-Greylist: delayed 333 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Oct 2021 06:23:51 EDT
+Received: from fedora33.wangsu.com (unknown [59.61.78.138])
+        by app2 (Coremail) with SMTP id 4zNnewCHjbHiVGlhJekCAA--.638S2;
+        Fri, 15 Oct 2021 18:16:09 +0800 (CST)
+From:   Lin Feng <linf@wangsu.com>
+To:     colyli@suse.de, kent.overstreet@gmail.com
+Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linf@wangsu.com
+Subject: [PATCH] bcache: move calc_cached_dev_sectors to proper place on backing device detach
+Date:   Fri, 15 Oct 2021 18:16:00 +0800
+Message-Id: <20211015101600.91109-1-linf@wangsu.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <202110140813.44C95229@keescook>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: 4zNnewCHjbHiVGlhJekCAA--.638S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw1DAFyrAryfKr4xAFWrKrg_yoW8Gr4kpF
+        Z7WFyxArW0qa10qws8Zr47uryFy34DtFZ7Zw17Aa1DuryxW343tr45Xay5uFWrXFWxWFWS
+        yw45Wr4UZ3WDGaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_UUUUUUUUU==
+X-CM-SenderInfo: holqwq5zdqw23xof0z/
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 14/10/2021 16:14, Kees Cook wrote:
->> I don't really mind bdev_size since it's analogous to i_size, but
->> bdev_nr_bytes seems good to me.
+Calculation of cache_set's cached sectors is done by travelling
+cached_devs list as shown below:
 
-> I much prefer bdev_nr_bytes(), as "size" has no units.
+static void calc_cached_dev_sectors(struct cache_set *c)
+{
+...
+        list_for_each_entry(dc, &c->cached_devs, list)
+                sectors += bdev_sectors(dc->bdev);
 
-Does it mean size IN bytes, or size OF A byte? :-)
+        c->cached_dev_sectors = sectors;
+}
 
-Cheers,
-Wol
+But cached_dev won't be unlinked from c->cached_devs list until we call
+following list_move(&dc->list, &uncached_devices),
+so previous fix in 'commit 46010141da6677b81cc77f9b47f8ac62bd1cbfd3
+("bcache: recal cached_dev_sectors on detach")' is wrong, now we move 
+it to its right palce.
+
+Signed-off-by: Lin Feng <linf@wangsu.com>
+---
+ drivers/md/bcache/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index f2874c77ff79..8543e6997770 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1154,9 +1154,9 @@ static void cached_dev_detach_finish(struct work_struct *w)
+ 
+ 	mutex_lock(&bch_register_lock);
+ 
+-	calc_cached_dev_sectors(dc->disk.c);
+ 	bcache_device_detach(&dc->disk);
+ 	list_move(&dc->list, &uncached_devices);
++	calc_cached_dev_sectors(dc->disk.c);
+ 
+ 	clear_bit(BCACHE_DEV_DETACHING, &dc->disk.flags);
+ 	clear_bit(BCACHE_DEV_UNLINK_DONE, &dc->disk.flags);
+-- 
+2.31.1
+
