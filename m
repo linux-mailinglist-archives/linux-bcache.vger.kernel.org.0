@@ -2,135 +2,161 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11D0843158B
-	for <lists+linux-bcache@lfdr.de>; Mon, 18 Oct 2021 12:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77C42431F7A
+	for <lists+linux-bcache@lfdr.de>; Mon, 18 Oct 2021 16:26:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231890AbhJRKQ0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 18 Oct 2021 06:16:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44940 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231637AbhJRKPQ (ORCPT
+        id S231857AbhJRO2f (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 18 Oct 2021 10:28:35 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:41292 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231893AbhJRO2e (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 18 Oct 2021 06:15:16 -0400
-Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72887C061765;
-        Mon, 18 Oct 2021 03:13:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=sSdphJbx9SQw+wN4za3/OjMw3p4iKMeSjeY0No/E5ck=; b=bo+nrVZXl6TTYRQlQ0bto+MepF
-        SigFpnQpZERr9BHx9SPKM5M3oF1djjIgorehkbOAGiSEoKAClU9hAJOhLvQopHL+7ngHbjCp0GYh5
-        HxtbySe0C4GiywWjnxtAHb3ZnvMCNabnqmvTxDGUWVlieN6Rb0q+S5b77qYYfN1Bx6ax5iCz6AGrH
-        9ON2Uwy2yvzZ25ow0GUORw9zUlxRz69RVpLcvbrHTrQMiaF4iHAu1HNZdwtKFs1xQfJ1CQGhdbHTu
-        v3N4NlM4aG9KmvpSER+/Mp3Yql6EAXAHbXbfbCK+GXf7UFAgNzR4TOZtkJ5cVyxvD1MufFJzB6JqD
-        6aD8LsrA==;
-Received: from [2001:4bb8:199:73c5:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mcPdV-00Ev58-I3; Mon, 18 Oct 2021 10:12:53 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        Song Liu <song@kernel.org>, David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Kees Cook <keescook@chromium.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, drbd-dev@lists.linbit.com,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 30/30] udf: use sb_bdev_nr_blocks
-Date:   Mon, 18 Oct 2021 12:11:30 +0200
-Message-Id: <20211018101130.1838532-31-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211018101130.1838532-1-hch@lst.de>
-References: <20211018101130.1838532-1-hch@lst.de>
+        Mon, 18 Oct 2021 10:28:34 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id BB82D1FDA2;
+        Mon, 18 Oct 2021 14:26:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1634567182; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PoKPkPCnADE9JuZGiYSzaCXP6TkruPVNeNQ6+zEG45U=;
+        b=MS1kRcuNiS+fLkjSnAGNL6044lxWbfUZb7HTwiupSOzxwx/fBsNSZvhGF3dWz3iZ7Fpp8Q
+        1bV/2xHngLbfnNOek2U5bDGyay8L/NFDvjlsyGZHqKRNXGa7ai2jGZVAKm17BCw5PGTnK0
+        UsFJMjEEkY662nuWU0E1nhSkjFLsEv0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1634567182;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PoKPkPCnADE9JuZGiYSzaCXP6TkruPVNeNQ6+zEG45U=;
+        b=oRFci9l0uE+SdehgR7sB8fvyBhtXk9chiIqcESUkJcpjDHspUw9CZ9vkXKyPnHRqeqU2xH
+        z3F9z+Dtr5rkE5Cw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CAAF613AFB;
+        Mon, 18 Oct 2021 14:26:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id sQovIg2EbWE1fQAAMHmgww
+        (envelope-from <colyli@suse.de>); Mon, 18 Oct 2021 14:26:21 +0000
+Subject: Re: [PATCH 1/4] bcache: remove the cache_dev_name field from struct
+ cache
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-bcache@vger.kernel.org
+References: <20211018060934.1816088-1-hch@lst.de>
+ <20211018060934.1816088-2-hch@lst.de>
+From:   Coly Li <colyli@suse.de>
+Message-ID: <dc8601a6-21a5-3680-7489-1430d14788db@suse.de>
+Date:   Mon, 18 Oct 2021 22:26:18 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
+In-Reply-To: <20211018060934.1816088-2-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Use the sb_bdev_nr_blocks helper instead of open coding it.
+On 10/18/21 2:09 PM, Christoph Hellwig wrote:
+> Just use the %pg format specifier to print the name directly.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- fs/udf/lowlevel.c | 5 ++---
- fs/udf/super.c    | 9 +++------
- 2 files changed, 5 insertions(+), 9 deletions(-)
+Hi  Christoph,
 
-diff --git a/fs/udf/lowlevel.c b/fs/udf/lowlevel.c
-index f1094cdcd6cde..46d6971721975 100644
---- a/fs/udf/lowlevel.c
-+++ b/fs/udf/lowlevel.c
-@@ -47,8 +47,7 @@ unsigned int udf_get_last_session(struct super_block *sb)
- 
- unsigned long udf_get_last_block(struct super_block *sb)
- {
--	struct block_device *bdev = sb->s_bdev;
--	struct cdrom_device_info *cdi = disk_to_cdi(bdev->bd_disk);
-+	struct cdrom_device_info *cdi = disk_to_cdi(sb->s_bdev->bd_disk);
- 	unsigned long lblock = 0;
- 
- 	/*
-@@ -56,7 +55,7 @@ unsigned long udf_get_last_block(struct super_block *sb)
- 	 * Try using the device size...
- 	 */
- 	if (!cdi || cdrom_get_last_written(cdi, &lblock) || lblock == 0)
--		lblock = i_size_read(bdev->bd_inode) >> sb->s_blocksize_bits;
-+		lblock = sb_bdev_nr_blocks(sb);
- 
- 	if (lblock)
- 		return lblock - 1;
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index b2d7c57d06881..34247fba6df91 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -1175,8 +1175,7 @@ static int udf_load_vat(struct super_block *sb, int p_index, int type1_index)
- 	struct udf_inode_info *vati;
- 	uint32_t pos;
- 	struct virtualAllocationTable20 *vat20;
--	sector_t blocks = i_size_read(sb->s_bdev->bd_inode) >>
--			  sb->s_blocksize_bits;
-+	sector_t blocks = sb_bdev_nr_blocks(sb);
- 
- 	udf_find_vat_block(sb, p_index, type1_index, sbi->s_last_block);
- 	if (!sbi->s_vat_inode &&
-@@ -1838,8 +1837,7 @@ static int udf_check_anchor_block(struct super_block *sb, sector_t block,
- 	int ret;
- 
- 	if (UDF_QUERY_FLAG(sb, UDF_FLAG_VARCONV) &&
--	    udf_fixed_to_variable(block) >=
--	    i_size_read(sb->s_bdev->bd_inode) >> sb->s_blocksize_bits)
-+	    udf_fixed_to_variable(block) >= sb_bdev_nr_blocks(sb))
- 		return -EAGAIN;
- 
- 	bh = udf_read_tagged(sb, block, block, &ident);
-@@ -1901,8 +1899,7 @@ static int udf_scan_anchors(struct super_block *sb, sector_t *lastblock,
- 		last[last_count++] = *lastblock - 152;
- 
- 	for (i = 0; i < last_count; i++) {
--		if (last[i] >= i_size_read(sb->s_bdev->bd_inode) >>
--				sb->s_blocksize_bits)
-+		if (last[i] >= sb_bdev_nr_blocks(sb))
- 			continue;
- 		ret = udf_check_anchor_block(sb, last[i], fileset);
- 		if (ret != -EAGAIN) {
--- 
-2.30.2
+NACK for this patch.  The buffer cache_dev_name is added on purpose, in 
+case ca->bdev cannot be referenced correctly for some special condition 
+when underlying device fails.
+
+Thanks.
+
+Coly Li
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/md/bcache/bcache.h | 2 --
+>   drivers/md/bcache/io.c     | 8 ++++----
+>   drivers/md/bcache/super.c  | 7 +++----
+>   3 files changed, 7 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+> index 5fc989a6d4528..47ff9ecea2e29 100644
+> --- a/drivers/md/bcache/bcache.h
+> +++ b/drivers/md/bcache/bcache.h
+> @@ -470,8 +470,6 @@ struct cache {
+>   	atomic_long_t		meta_sectors_written;
+>   	atomic_long_t		btree_sectors_written;
+>   	atomic_long_t		sectors_written;
+> -
+> -	char			cache_dev_name[BDEVNAME_SIZE];
+>   };
+>   
+>   struct gc_stat {
+> diff --git a/drivers/md/bcache/io.c b/drivers/md/bcache/io.c
+> index e4388fe3ab7ef..564357de76404 100644
+> --- a/drivers/md/bcache/io.c
+> +++ b/drivers/md/bcache/io.c
+> @@ -123,13 +123,13 @@ void bch_count_io_errors(struct cache *ca,
+>   		errors >>= IO_ERROR_SHIFT;
+>   
+>   		if (errors < ca->set->error_limit)
+> -			pr_err("%s: IO error on %s%s\n",
+> -			       ca->cache_dev_name, m,
+> +			pr_err("%pg: IO error on %s%s\n",
+> +			       ca->bdev, m,
+>   			       is_read ? ", recovering." : ".");
+>   		else
+>   			bch_cache_set_error(ca->set,
+> -					    "%s: too many IO errors %s\n",
+> -					    ca->cache_dev_name, m);
+> +					    "%pg: too many IO errors %s\n",
+> +					    ca->bdev, m);
+>   	}
+>   }
+>   
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index f2874c77ff797..d0d0257252adc 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -2338,7 +2338,7 @@ static int cache_alloc(struct cache *ca)
+>   err_free:
+>   	module_put(THIS_MODULE);
+>   	if (err)
+> -		pr_notice("error %s: %s\n", ca->cache_dev_name, err);
+> +		pr_notice("error %pg: %s\n", ca->bdev, err);
+>   	return ret;
+>   }
+>   
+> @@ -2348,7 +2348,6 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+>   	const char *err = NULL; /* must be set for any error case */
+>   	int ret = 0;
+>   
+> -	bdevname(bdev, ca->cache_dev_name);
+>   	memcpy(&ca->sb, sb, sizeof(struct cache_sb));
+>   	ca->bdev = bdev;
+>   	ca->bdev->bd_holder = ca;
+> @@ -2390,14 +2389,14 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+>   		goto out;
+>   	}
+>   
+> -	pr_info("registered cache device %s\n", ca->cache_dev_name);
+> +	pr_info("registered cache device %pg\n", ca->bdev);
+>   
+>   out:
+>   	kobject_put(&ca->kobj);
+>   
+>   err:
+>   	if (err)
+> -		pr_notice("error %s: %s\n", ca->cache_dev_name, err);
+> +		pr_notice("error %pg: %s\n", ca->bdev, err);
+>   
+>   	return ret;
+>   }
 
