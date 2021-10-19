@@ -2,77 +2,123 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3640B432877
-	for <lists+linux-bcache@lfdr.de>; Mon, 18 Oct 2021 22:32:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B233432B4D
+	for <lists+linux-bcache@lfdr.de>; Tue, 19 Oct 2021 03:04:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229941AbhJRUeb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 18 Oct 2021 16:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47936 "EHLO
+        id S229588AbhJSBGd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 18 Oct 2021 21:06:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbhJRUeb (ORCPT
+        with ESMTP id S229529AbhJSBGd (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 18 Oct 2021 16:34:31 -0400
-Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D981DC06161C;
-        Mon, 18 Oct 2021 13:32:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=OBMvbiCZ3mmK4xvpOD56mvuToBpo4s4ONuPdaMpMXso=; b=TIkzxO1O7vQd0T1PMQ31eP873s
-        pPHNaKNwfjx7mTwD9RmpK0u2Dr52r7UfxNzSSDXj8Ur4f/57iSBP9syn65/BRLw+Qf0YqEROqC1+F
-        /VG4vFcKrZ4lPNCkYzTKj7o2L7DwvWpMe/Cj9lb6MSKQzaI23JMePqdIEZskz+65OByIz865kTj2M
-        S7C7JWy6K7A2w9h6miRNVROzQSV0cHn3nsz/ISMK8rBY/sbh7syYv+06of00RqsVQ7L8TnPZCsvnm
-        bLR1p6dai2RCCksWMX0lknKUYeC/2U9k2JV7oYNMmdKjgqpOgr1yAHVsYweFfh4DDrfwCTLAV00Ez
-        KwZhXR7g==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mcZIX-00HDlV-C4; Mon, 18 Oct 2021 20:31:53 +0000
-Date:   Mon, 18 Oct 2021 13:31:53 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>, axboe@kernel.dk
-Cc:     jejb@linux.ibm.com, agk@redhat.com, snitzer@redhat.com,
-        colyli@suse.de, kent.overstreet@gmail.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        sstabellini@kernel.org, roger.pau@citrix.com, geert@linux-m68k.org,
-        ulf.hansson@linaro.org, tj@kernel.org, hare@suse.de,
-        jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
-        johannes.berg@intel.com, krisman@collabora.com,
-        chris.obbard@collabora.com, thehajime@gmail.com,
-        zhuyifei1999@gmail.com, haris.iqbal@ionos.com,
-        jinpu.wang@ionos.com, miquel.raynal@bootlin.com, vigneshr@ti.com,
-        linux-mtd@lists.infradead.org, linux-scsi@vger.kernel.org,
-        dm-devel@redhat.com, linux-bcache@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-m68k@lists.linux-m68k.org,
-        linux-um@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 1/9] scsi/sd: add error handling support for add_disk()
-Message-ID: <YW3ZuQv1qpIXkd5b@bombadil.infradead.org>
-References: <20211015233028.2167651-1-mcgrof@kernel.org>
- <20211015233028.2167651-2-mcgrof@kernel.org>
- <yq1bl3ofjo5.fsf@ca-mkp.ca.oracle.com>
+        Mon, 18 Oct 2021 21:06:33 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28A58C06161C;
+        Mon, 18 Oct 2021 18:04:21 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id x27so3607526lfa.9;
+        Mon, 18 Oct 2021 18:04:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=HZB3VynRj4BSJ+DoffwFLiPJvzPYXkayF1wJVNoXqZo=;
+        b=qa7Rg2/+uz+UIDCny84Tw5bep3SlaUI84n/FAaUaxIzAubmeoa1ydJFT64PdI4Dc2i
+         AgPnjhE+kBzSH4MdsJeGrFG4f0xqH2HBhd6pbyQr8O8l98NNiVXw+7LLIlFbcV+xxCqf
+         RA02zj7IDRlPmKt2XOaxe9T0CtUPo6hRSub6+1M9syuYXVu4HWpZ0mdRM4b+vfFK8OI9
+         lTRtKN80UFv+SDfLWbeeA+TcDubhn33n9WeCF3bZ9pFOuoi5rOJVIPb1Sykzu+pmiRnV
+         qHPYjU4GPUjtfi/yhGpy4ABO9h9df+GLOdeLNWFNTfyVWJ/R/s+xiv91lAtBOCzSytMJ
+         pKbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HZB3VynRj4BSJ+DoffwFLiPJvzPYXkayF1wJVNoXqZo=;
+        b=f/rmWlpawhtZOPU9HDTdtyCwrb1+SPRjg0R/Vpb39hAE7SEp2KSwaAI/pecP3intm5
+         HjyxBLMa/+usWFBt8nmfh8/6KaMl+mS67ElvXXqmEav4suiRI+Ykv4IVkpY+Gt0gP1yP
+         eP/5Wh0lmTstCKs3W0JFu+JK4Ld0i3BIPrrxCBic/WQWfOaNDH/73evsWY6aPckqgDop
+         ikGhB20xqi6i5tAk1ZwRqfz7aROkrb1D5zQwZ32ZkfI1TLa8/AiPoD++EMahx5jVYrq6
+         Jsh1l25PclxpWLexHVwoQMlq++ISs30LmLYvhGwJjV3w2f1X1nee4VuF0WSt3Ca5Rb+y
+         hDhw==
+X-Gm-Message-State: AOAM531Znok5UQDii88R/iFyx6NDHNcgH7f2fDY4ZiCiSQq1YJ7Gl39T
+        9R8rMztxXNRyX2qVRG7Enh5SH/9wDN23KQ==
+X-Google-Smtp-Source: ABdhPJzDOI1VPK7ec+9Wvn2TGhELLqlWyRvZ5Uhqz00hPtHEbJZTBFS39lW+J2SjR0uuodKRx0F6pg==
+X-Received: by 2002:a05:6512:1284:: with SMTP id u4mr3097377lfs.614.1634605459500;
+        Mon, 18 Oct 2021 18:04:19 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id f10sm1533239lfs.56.2021.10.18.18.04.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Oct 2021 18:04:18 -0700 (PDT)
+Date:   Tue, 19 Oct 2021 04:04:16 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@lst.de>, Coly Li <colyli@suse.de>,
+        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+        David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Kees Cook <keescook@chromium.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, drbd-dev@lists.linbit.com,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org
+Subject: Re: don't use ->bd_inode to access the block device size v3
+Message-ID: <20211019010416.vgecxu6wnvwi7fii@kari-VirtualBox>
+References: <20211018101130.1838532-1-hch@lst.de>
+ <4a8c3a39-9cd3-5b2f-6d0f-a16e689755e6@kernel.dk>
+ <20211018171843.GA3338@lst.de>
+ <2f5dcf79-8419-45ff-c27c-68d43242ccfe@kernel.dk>
+ <20211018174901.GA3990@lst.de>
+ <e0784f3e-46c8-c90c-870b-60cc2ed7a2da@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <yq1bl3ofjo5.fsf@ca-mkp.ca.oracle.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <e0784f3e-46c8-c90c-870b-60cc2ed7a2da@kernel.dk>
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Sat, Oct 16, 2021 at 10:51:48PM -0400, Martin K. Petersen wrote:
-> 
-> Luis,
-> 
-> > We never checked for errors on add_disk() as this function returned
-> > void. Now that this is fixed, use the shiny new error handling.
-> >
-> > As with the error handling for device_add() we follow the same logic
-> > and just put the device so that cleanup is done via the
-> > scsi_disk_release().
-> 
-> Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+On Mon, Oct 18, 2021 at 11:53:08AM -0600, Jens Axboe wrote:
 
-Thanks, would you like Jens to pick this up and the other scsi/sr patch
-or are you taking it through your tree?
+snip..
 
-  Luis
+> diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+> index 7b0326661a1e..a967b3fb3c71 100644
+> --- a/include/linux/genhd.h
+> +++ b/include/linux/genhd.h
+> @@ -236,14 +236,14 @@ static inline sector_t get_start_sect(struct block_device *bdev)
+>  	return bdev->bd_start_sect;
+>  }
+>  
+> -static inline loff_t bdev_nr_bytes(struct block_device *bdev)
+> +static inline sector_t bdev_nr_sectors(struct block_device *bdev)
+>  {
+> -	return i_size_read(bdev->bd_inode);
+> +	return bdev->bd_nr_sectors;
+>  }
+>  
+> -static inline sector_t bdev_nr_sectors(struct block_device *bdev)
+> +static inline loff_t bdev_nr_bytes(struct block_device *bdev)
+>  {
+> -	return bdev_nr_bytes(bdev) >> SECTOR_SHIFT;
+> +	return bdev_nr_setors(bdev) << SECTOR_SHIFT;
+
+setors -> sectors
+
+>  }
+>  
+>  static inline sector_t get_capacity(struct gendisk *disk)
+> 
+> -- 
+> Jens Axboe
+> 
