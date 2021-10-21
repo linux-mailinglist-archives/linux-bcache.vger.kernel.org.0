@@ -2,94 +2,66 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94625435935
-	for <lists+linux-bcache@lfdr.de>; Thu, 21 Oct 2021 05:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E934743616A
+	for <lists+linux-bcache@lfdr.de>; Thu, 21 Oct 2021 14:19:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230526AbhJUDqs (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 20 Oct 2021 23:46:48 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:30404 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231530AbhJUDqK (ORCPT
+        id S231800AbhJUMVz (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 21 Oct 2021 08:21:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36802 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231550AbhJUMVs (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 20 Oct 2021 23:46:10 -0400
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19L345vU029738;
-        Thu, 21 Oct 2021 03:43:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2021-07-09;
- bh=BSjTWby1MMCLQUchrOSGc4QoXnzcMZ91l35lRX12C+A=;
- b=s10GXTgGaX78Zmg+DOSDrfc0P0mwy8l94S/NZcyOPTkKyIMY2Y0KlCwxCAx31besDrcr
- gXfw3fEKtGCdejoVtEWUD00kuevcL/euKQ1b4LL0nm4E8CV6SIOFqCYP0rxj7RC74EVk
- e1PqokwRndi0pkrqAVruOVLwEN5l5viuqDFrINzci/HP18Znfe79FD5iVhadUThPY2uw
- odRGpVz8brO185YsW3tTaXuLihuEjMaflid8MLFI6u/8vn+luvxy/mDr7zofRsdPscVh
- mNLR9sg3Koj94WqKMhqpn6d0kreDZqZeu97CD8yHp5SK3EUYUYKj0bD7U5PsVZFWhw4s kA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3btkwj3wvw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Oct 2021 03:43:10 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 19L3etve078225;
-        Thu, 21 Oct 2021 03:43:08 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 3bqmshem6t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Oct 2021 03:43:08 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 19L3gu8A082116;
-        Thu, 21 Oct 2021 03:43:07 GMT
-Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
-        by aserp3030.oracle.com with ESMTP id 3bqmshekyd-13;
-        Thu, 21 Oct 2021 03:43:07 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     zhuyifei1999@gmail.com, thehajime@gmail.com, hare@suse.de,
-        jinpu.wang@ionos.com, jgross@suse.com, johannes.berg@intel.com,
-        geert@linux-m68k.org, linux-mtd@lists.infradead.org,
-        miquel.raynal@bootlin.com, axboe@kernel.dk,
-        Luis Chamberlain <mcgrof@kernel.org>, jdike@addtoit.com,
-        kent.overstreet@gmail.com, richard@nod.at, colyli@suse.de,
-        agk@redhat.com, haris.iqbal@ionos.com, krisman@collabora.com,
-        roger.pau@citrix.com, anton.ivanov@cambridgegreys.com,
-        sstabellini@kernel.org, ulf.hansson@linaro.org, vigneshr@ti.com,
-        chris.obbard@collabora.com, jejb@linux.ibm.com,
-        boris.ostrovsky@oracle.com, tj@kernel.org, snitzer@redhat.com
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-um@lists.infradead.org, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        dm-devel@redhat.com, linux-bcache@vger.kernel.org
-Subject: Re: [PATCH 0/9] block: reviewed add_disk() error handling set
-Date:   Wed, 20 Oct 2021 23:42:44 -0400
-Message-Id: <163478764105.7011.9400354892813636458.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211015233028.2167651-1-mcgrof@kernel.org>
-References: <20211015233028.2167651-1-mcgrof@kernel.org>
+        Thu, 21 Oct 2021 08:21:48 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38667C061771
+        for <linux-bcache@vger.kernel.org>; Thu, 21 Oct 2021 05:18:58 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id o184so621363iof.6
+        for <linux-bcache@vger.kernel.org>; Thu, 21 Oct 2021 05:18:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=G2Jq8ABcZaKAiy06d3oRm5z7XXaT0OFvg3EWPt/6AmM=;
+        b=ffKmYx2fMIYl+OvJQQopnpiCeJRTG9P9KFv8M/82NWd2iRdr6FH2GSUfX4dihVwp/4
+         j3BBt8gtfGRwriH7QaI70cXqaYxp9ZB8IdW+AAJ3XWxbhn/W/4z89PrBZ3/2rnhl+5p4
+         slIUeI/d0se+fbKVCqySusiscs7YTggdFIx/lIQo0jD9OBm3/E6HIs73TdR5+EDc4Ahn
+         Mx3oX/4Jht8hJFRtk5Rk/ZtBUnWHcvUlGjzuHFD2c3qgVHCXo5sQXMFhDt//I4s8bxor
+         0lHgZbVQWxyw1uqR2LKA3z5mNeOQjztcOBRK2nMHBotT/Ptq5yh5oJc65RUVpYj9vAKX
+         E+1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=G2Jq8ABcZaKAiy06d3oRm5z7XXaT0OFvg3EWPt/6AmM=;
+        b=kJXx3utXE88u8WNFhmJ9alnb2Xybn/fjjIM926yTIQNCV9vSGLN0s4Fk2jDHbkiW5J
+         vaQQUFxC51+dWBMs1nekl/GCrYRuwRLFhKaP1pRxKpiuYb9Q7WKNalPovNiaEKn3YJad
+         jdxjGTylVuN1S9R7co/OZ/tUU4dw2PdhE7lF2JavwL6JQE3QIpPijuJIDOtfcDRXgL0C
+         vyc+wd0w83QS1f4nIgP6qdqW3+MEWz2gJSbQI6TuNFo7R3gNF02l5LfNxrdw5pVToZDI
+         9T7KOyKA55yZSTQpLQ8smCedfamchpKvc3fRZ+MDjrymDOk4yByR/0MoSXNCdKuQAcuQ
+         7U+g==
+X-Gm-Message-State: AOAM5303QIOOqGAZsr2wnrGDGeJ5ZQqzpJIKJ4HjYWZ5qvUr4+i26HYa
+        481xn9BTKYUPDSuW0YfvCx0EMXr9+M20xukN8JDSmRZeMpr1wGf6
+X-Google-Smtp-Source: ABdhPJy/O5GAp34/8OGCgwxgN16t4zAtUhD1QqHkZqC4kznm6N81zl7Wcf3jBmF+fUfqmk/Z+gQhgoaiTdlocMxWQvk=
+X-Received: by 2002:a05:6602:2e81:: with SMTP id m1mr3773434iow.23.1634818737372;
+ Thu, 21 Oct 2021 05:18:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: BAR8nzodBeKYX4DEPTjC7SU079lshTb2
-X-Proofpoint-GUID: BAR8nzodBeKYX4DEPTjC7SU079lshTb2
+Received: by 2002:a05:6638:1924:0:0:0:0 with HTTP; Thu, 21 Oct 2021 05:18:57
+ -0700 (PDT)
+Reply-To: ooisangkuang63@gmail.com
+From:   Mr Ooi Sang Kuang <mrsshirleyperezfosgate7@gmail.com>
+Date:   Thu, 21 Oct 2021 05:18:57 -0700
+Message-ID: <CA+ynneC82om4XGpeSLLyaZ9uiZCuHkofPAtHcga0--5BW77aFA@mail.gmail.com>
+Subject: Hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Fri, 15 Oct 2021 16:30:19 -0700, Luis Chamberlain wrote:
-
-> Jens,
-> 
-> I had last split up patches into 7 groups, but at this point now
-> most changes are merged except a few more drivers. Instead of creating
-> a new patch set for each of the 7 groups I'm creating 3 new groups of
-> patches now:
-> 
-> [...]
-
-Applied to 5.16/scsi-queue, thanks!
-
-[1/9] scsi/sd: add error handling support for add_disk()
-      https://git.kernel.org/mkp/scsi/c/2a7a891f4c40
-[2/9] scsi/sr: add error handling support for add_disk()
-      https://git.kernel.org/mkp/scsi/c/e9d658c2175b
-
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Hello,
+
+I want to discuss an important project issue with you.
+Please, let me know if this email is valid. Reply me at ooisangkuang63@gmail.com
+
+Thank you,
+Mr Ooi Sang Kuang
