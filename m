@@ -2,230 +2,121 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 30BD143759C
-	for <lists+linux-bcache@lfdr.de>; Fri, 22 Oct 2021 12:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91500437C9E
+	for <lists+linux-bcache@lfdr.de>; Fri, 22 Oct 2021 20:34:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232573AbhJVKm6 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 22 Oct 2021 06:42:58 -0400
-Received: from mout.gmx.net ([212.227.17.21]:59837 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232560AbhJVKm5 (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 22 Oct 2021 06:42:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1634899209;
-        bh=P3pL0z5U1lr82ILvj/7RspKnruMijC05DS94G9TQaDc=;
-        h=X-UI-Sender-Class:Date:To:References:From:Subject:In-Reply-To;
-        b=DhxXAmbhxw5I6uIQhKKOcHxXKVyVQ804xYm8hIGroBVVQTSMYL2FQmZ7T3/8KM+Q+
-         4tGRd/8ZPHgpQ/GRV1ylmZ5qHP/k8UAPq9L0s+kykMBfsF/6BUtt1LeR7wU1rkeC1U
-         ECREQXjXbq4Rj4o6Eq9+RRa6DmqwodYHrrIMdhF4=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MFsYx-1mTiZK0V7H-00HMcZ; Fri, 22
- Oct 2021 12:40:09 +0200
-Message-ID: <93e4eccb-d839-0e8e-4b87-1964232a0458@gmx.com>
-Date:   Fri, 22 Oct 2021 18:40:02 +0800
+        id S233898AbhJVSgc (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 22 Oct 2021 14:36:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53412 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233006AbhJVSgb (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 22 Oct 2021 14:36:31 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A97C061764
+        for <linux-bcache@vger.kernel.org>; Fri, 22 Oct 2021 11:34:13 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id u21so5229270lff.8
+        for <linux-bcache@vger.kernel.org>; Fri, 22 Oct 2021 11:34:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=VbzvQG3IQbBllas6Nr1faFq7K6/RuDJHqHdnS1NlKCM=;
+        b=C6vqI559dxP61ni1WM19IFYlcdGgExKNarFHqqWJeYwI73HK518L7A9EzwZEapeLr/
+         CNCCBX1I+kh8BKnI1s5f2FC/pMzLLLsF0msOXByid+JU82/3hQf8gJL4ywFWMrAjUALK
+         c4njRzx4L9znzfcW971F4XFbcSJfOABW3lUeBJ8sfkOeiRAqNPSR0yUxvkH0WYnQKOJi
+         PCgLMuUS1r8J2+HuRhpTt9ZCXdjR4ridQ5a0F55tVUfP2zix5JD4jqlSZhC9VjKMbTEl
+         EPEqHfpCO/2tMLDzty4SeM/4uhqpD+X6AiTm4KecCnruRkZN6O3C16UKvPFZ05ymL1vS
+         6OJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=VbzvQG3IQbBllas6Nr1faFq7K6/RuDJHqHdnS1NlKCM=;
+        b=fOB6/G1o/fdNZZuiXSs2a5f+a71xmvLrbqXDvRl0NBNOkJiT2PogqbAg5o7AJDNNVo
+         S+UDi0TYKzFoHmS8U62fuWMcTxT/RlrcYAG9VdGxO0CpuPv+AUZPYFU5VcPk9X3PrjPt
+         hMzsB5ZHoPOLby7t73t8WIz5C0+JRYHPSgmUlFS95bXriTnfDKCkd8DHa42k63928hQL
+         oMXwkNSP0tGDATtr12Pl8PH2Ot1cWKUYCdsPyU7/O9pi06wMgkGEaH61qZTrbOqy7ueb
+         5t3Xbn5hLVfgxNbEM2DJ6sakSq5kNHhyt612mrWcJUaq19XjWze8M3c8ex6CgijYZMoa
+         wk5A==
+X-Gm-Message-State: AOAM530GNWcQaVlWn26X2PWcTHD6GPaNT6VszeoHrZh41ScJP1W2+3B9
+        mzvdW2Qz2lgTECZSvI65pCPJmo2V4/nkSNZhMHQ=
+X-Google-Smtp-Source: ABdhPJwDS96WLyJEDf1Rf1r2Vbh0utsaIYolLMWTTnvv1UxKVK1Mg12ezb1fIGBE6kYjA3Q0bpUMQHlrbumSFha4QIc=
+X-Received: by 2002:a05:6512:301:: with SMTP id t1mr1244627lfp.347.1634927651902;
+ Fri, 22 Oct 2021 11:34:11 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Content-Language: en-US
-To:     Jan Kara <jack@suse.cz>, Phillip Susi <phill@thesusis.net>,
-        linux-ntfs-dev@lists.sourceforge.net,
-        Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-bcache@vger.kernel.org, Hsin-Yi Wang <hsinyi@chromium.org>,
-        linux-fsdevel@vger.kernel.org,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        ntfs3@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-        linux-btrfs@vger.kernel.org
-References: <YXHK5HrQpJu9oy8w@casper.infradead.org>
- <87tuh9n9w2.fsf@vps.thesusis.net> <20211022084127.GA1026@quack2.suse.cz>
- <YXKARs0QpAZWl6Hi@B-P7TQMD6M-0146.local>
- <62f5f68d-7e3f-9238-5417-c64d8dcf2214@gmx.com>
- <YXKG0V99Ph9KhDyg@B-P7TQMD6M-0146.local>
- <YXKKOx6OX1LzLShe@B-P7TQMD6M-0146.local>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Subject: Re: Readahead for compressed data
-In-Reply-To: <YXKKOx6OX1LzLShe@B-P7TQMD6M-0146.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XaNW1n6QiLwbDcJuGYG2KuaxcGS/lNhVqz994mJdjFhdak8XHNx
- P3uHq1BxPePF5ZPfY0V9Oold01NUP2jZWnLdXeW+LI1ea267R3os6v1Z4HwnrzGq5dFbDoG
- 4FlctrJUAemI8gI2DiXrq9CWZ5Zf9Fg2IZv2SetOd+Ra+P7ecZN4tfG2+gsQlvsbZVIzoA4
- bBghD2DLCCzez9t2IiRgg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Oq6mfoU8d9w=:I5ti4YfEhwgoBn0lqMXVxk
- WVT10J57+uUdZyn3btezxd2lgD7qoOPHkoOIvtVq0HTHpW9z5pqZZyIr6jGe8UOy+OduVzVYf
- 8dH3YlfHPuBAvnd3+5CIToFOVZ41PCiP10u67Ms5LdLQkztpQ3qXGlR8Dz1bRTzCoX86UgRN+
- xAEsZK3xObBinyluHwGJQSD07+tlXVjRFzZ3fMCJS+hhrzL+JN9sVGIx+GVhoi5aGIVnTjLil
- PQOeFUTCpoYPKvzaDYhRjhECeNk3jnBJ0eoRywrfpre7C1lLC3YU9Mywd+8vyH240kelUGSrq
- RX9MLZPw82Q0/mxc/ZfQ4UNmWCoA0HT9ia2SlE7Fh47A66PwrvbNXc/XupSvLUgmbP2zFXc6D
- J0ReYjpi4bmutPK5pLgL9EjjTWKBq0CVoxc0c/fS3IU7e+H2K1IZvLRm6buDeFuhAyo34Jf2Q
- MhTYURJqFvhOeHgGcqwnVhLR8RyhtJVJ0UByLjLBGmPKW9sLkdL7iW51Y4bQcBpkxAp8nTC9o
- CzTdXj6HouOsU/CaKpRRgVu91pVSStNObxxI9T3x77fSsWKvsTL9i0wsfqOwnAFjvUl8OlqHh
- ASt9zOE3iQfE/shJxDu/9YCfq94ZadnU1wpSr5OogQPG+zkBIdAHo7UbNUWlNLdBsbVhSTPcv
- D+FedBvtyP5TmsANQ5Ad8JjsF9Tacvi8rRxN3KLVDmQimNkYOJHvJD5h6Bf35DKws/M/jlHoh
- C73rU/Srjc70GSvIv1+OZ0OobhD4BI7GqaOzXdegV4JkReTQTchqyguBxWoyZLQcqEpqYdeFt
- 7eZ0ReNjgCzUv/pDcYE1mN+GzphB8Hvhl48+phxG0p8LfvYs47HTq8EbFkDi8RAayr9rgwb4e
- 0SOmKI2qgEoTz14MTcRa4MXqR/Egr/2WIGdccyBcnI2Cv6huoXmLZ6uAIHgA/ncAlRYYhiCS/
- GydBgauPDM9YetxNKMITQuAJbV/tuXAv/RR3fTYF+2zA5RKHnVIN9Iu6mjlpsA+dGqhHsSixp
- AzpE4OJjRnxLS3nsVIEiKMpigCWEHQHy6byuWFFpPYBpse3Cg+xD7PY8NUK2vAonvEsu3N7Xm
- bXUfXsGXjsQ/PY=
+Sender: nadiaemaan50@gmail.com
+Received: by 2002:a05:6520:2f24:b0:14a:bce6:1fce with HTTP; Fri, 22 Oct 2021
+ 11:34:11 -0700 (PDT)
+From:   Mrs Nadia Emaan <mrsnadiaemaan52@gmail.com>
+Date:   Fri, 22 Oct 2021 18:34:11 +0000
+X-Google-Sender-Auth: K9kUx_3Reaixm-6z6zolawmUcW4
+Message-ID: <CAO1QzD2UR20hQf-EcLzJqfGg=3YwjjN_wx=9fxsYwQ08LXa9ug@mail.gmail.com>
+Subject: HELLO
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+Greetings My Dear Friend,
+
+I am contacting you through this means because I need your urgent
+assistance and also help me to carry a charity project in your
+country. I found your email address as a true child of God for past
+few days now that I have been praying to know if you are really the
+chosen one for this great charity project, according to God's
+direction, after all prayers I am convinced, and I have decided to
+contact you. Please, i want you use the funds for the Lord's work,
+with confidence, read and respond now.
 
 
-On 2021/10/22 17:54, Gao Xiang wrote:
-> On Fri, Oct 22, 2021 at 05:39:29PM +0800, Gao Xiang wrote:
->> Hi Qu,
->>
->> On Fri, Oct 22, 2021 at 05:22:28PM +0800, Qu Wenruo wrote:
->>>
->>>
->>> On 2021/10/22 17:11, Gao Xiang wrote:
->>>> On Fri, Oct 22, 2021 at 10:41:27AM +0200, Jan Kara wrote:
->>>>> On Thu 21-10-21 21:04:45, Phillip Susi wrote:
->>>>>>
->>>>>> Matthew Wilcox <willy@infradead.org> writes:
->>>>>>
->>>>>>> As far as I can tell, the following filesystems support compressed=
- data:
->>>>>>>
->>>>>>> bcachefs, btrfs, erofs, ntfs, squashfs, zisofs
->>>>>>>
->>>>>>> I'd like to make it easier and more efficient for filesystems to
->>>>>>> implement compressed data.  There are a lot of approaches in use t=
-oday,
->>>>>>> but none of them seem quite right to me.  I'm going to lay out a f=
-ew
->>>>>>> design considerations next and then propose a solution.  Feel free=
- to
->>>>>>> tell me I've got the constraints wrong, or suggest alternative sol=
-utions.
->>>>>>>
->>>>>>> When we call ->readahead from the VFS, the VFS has decided which p=
-ages
->>>>>>> are going to be the most useful to bring in, but it doesn't know h=
-ow
->>>>>>> pages are bundled together into blocks.  As I've learned from talk=
-ing to
->>>>>>> Gao Xiang, sometimes the filesystem doesn't know either, so this i=
-sn't
->>>>>>> something we can teach the VFS.
->>>>>>>
->>>>>>> We (David) added readahead_expand() recently to let the filesystem
->>>>>>> opportunistically add pages to the page cache "around" the area re=
-quested
->>>>>>> by the VFS.  That reduces the number of times the filesystem has t=
-o
->>>>>>> decompress the same block.  But it can fail (due to memory allocat=
-ion
->>>>>>> failures or pages already being present in the cache).  So filesys=
-tems
->>>>>>> still have to implement some kind of fallback.
->>>>>>
->>>>>> Wouldn't it be better to keep the *compressed* data in the cache an=
-d
->>>>>> decompress it multiple times if needed rather than decompress it on=
-ce
->>>>>> and cache the decompressed data?  You would use more CPU time
->>>>>> decompressing multiple times, but be able to cache more data and av=
-oid
->>>>>> more disk IO, which is generally far slower than the CPU can decomp=
-ress
->>>>>> the data.
->>>>>
->>>>> Well, one of the problems with keeping compressed data is that for m=
-map(2)
->>>>> you have to have pages decompressed so that CPU can access them. So =
-keeping
->>>>> compressed data in the page cache would add a bunch of complexity. T=
-hat
->>>>> being said keeping compressed data cached somewhere else than in the=
- page
->>>>> cache may certainly me worth it and then just filling page cache on =
-demand
->>>>> from this data...
->>>>
->>>> It can be cached with a special internal inode, so no need to take
->>>> care of the memory reclaim or migration by yourself.
->>>
->>> There is another problem for btrfs (and maybe other fses).
->>>
->>> Btrfs can refer to part of the uncompressed data extent.
->>>
->>> Thus we could have the following cases:
->>>
->>> 	0	4K	8K	12K
->>> 	|	|	|	|
->>> 		    |	    \- 4K of an 128K compressed extent,
->>> 		    |		compressed size is 16K
->>> 		    \- 4K of an 64K compressed extent,
->>> 			compressed size is 8K
->>
->> Thanks for this, but the diagram is broken on my side.
->> Could you help fix this?
->
-> Ok, I understand it. I think here is really a strategy problem
-> out of CoW, since only 2*4K is needed, you could
->   1) cache the whole compressed extent and hope they can be accessed
->      later, so no I/O later at all;
->   2) don't cache such incomplete compressed extents;
->   3) add some trace record and do some finer strategy.
+My name is  Mrs. Nadia Emman, a widow, but currently based in West
+Africa since my life with my late husband, who was a businessman in
+this country before dying some years ago. We were married to many
+years without a child. He died after a brief illness that lasted only
+six days and I myself have been suffering from an ovarian cancer
+disease. At this moment I am about to finish the race in this way
+because the disease has reached a very bad stage, without any family
+member and without children. I hope you do not expose or betray this
+trust and I am sure that I am about to trust you for the mutual
+benefit of orphans and the less privileged. I have some funds that I
+inherited from my late husband, the total sum of ($ 12,500,000.00)
+deposited at a bank here in Burkina Faso. After knowing my current
+state of health, I decided to trust you with this fund, believing that
+you will use it in the way I will instruct here.
 
-Yeah, this should be determined by each fs, like whether they want to
-cache compressed extent at all, and at which condition to cache
-compressed extent.
 
-(e.g. for btrfs, if we find the range we want is even smaller than the
-compressed size, we can skip such cache)
+you will use this $12.5 Million for public benefit as follows;
 
-Thus I don't think there would be a silver bullet for such case.
+1. Establish An Orphanage Home To Help The Orphanages Children.
+2. Build A Hospital To Help The Poor.
+3. Build A Nursing Home For Elderly People Need Care & Meal.
 
->
->>
->>>
->>> In above case, we really only need 8K for page cache, but if we're
->>> caching the compressed extent, it will take extra 24K.
->>
->> Apart from that, with my wild guess, could we cache whatever the
->> real I/O is rather than the whole compressed extent unconditionally?
->> If the whole compressed extent is needed then, we could check if
->> it's all available in cache, or read the rest instead?
->>
->> Also, I think no need to cache uncompressed COW data...
+You will named them after my late husband.Therefore, I need you to
+help me and claim this money and use it for charities, for orphanages
+and provide justice and help to the poor, needy and to promote the
+words of God and the effort to maintain the house of God, according to
+the bible in the book of. Jeremiah 22: 15-16, without minding our
+different religions.
 
-Yeah, that's definitely the case, as page cache is already doing the
-work for us.
+It will be a pleasure to compensate with 40% percent of the total
+money for your effort in handling the transaction, while 60% of the
+money will go to charity project.
 
-Thanks,
-Qu
+All I need from you is sincerity and ability to complete the task of
+God without any failure. It will be my pleasure to see that the bank
+has finally released and transferred the fund to your bank account in
+the country, even before I die here in the hospital, due to my current
+state of health, everything must be processed as soon as possible.
 
->>
->> Thanks,
->> Gao Xiang
->>
->>>
->>> It's definitely not really worthy for this particular corner case.
->>>
->>> But it would be pretty common for btrfs, as CoW on compressed data can
->>> easily lead to above cases.
->>>
->>> Thanks,
->>> Qu
->>>
->>>>
->>>> Otherwise, these all need to be take care of. For fixed-sized input
->>>> compression, since they are reclaimed in page unit, so it won't be
->>>> quite friendly since such data is all coupling. But for fixed-sized
->>>> output compression, it's quite natural.
->>>>
->>>> Thanks,
->>>> Gao Xiang
->>>>
->>>>>
->>>>> 								Honza
->>>>> --
->>>>> Jan Kara <jack@suse.com>
->>>>> SUSE Labs, CR
+I am waiting for your immediate response, if you are only interested
+in obtaining more details about the transaction and execution of this
+humanitarian project for the glory and honor of God.
+
+Sorry if you received this letter in your spam, is due to recent
+connection/network error here in the country.
+
+Please I am waiting for your urgent reply now.
+
+May God Bless you,
+Mrs. Nadia Emman.
