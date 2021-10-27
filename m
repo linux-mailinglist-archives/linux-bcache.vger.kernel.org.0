@@ -2,108 +2,43 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E8EE43FCD5
-	for <lists+linux-bcache@lfdr.de>; Fri, 29 Oct 2021 15:00:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11E7C4408A1
+	for <lists+linux-bcache@lfdr.de>; Sat, 30 Oct 2021 13:51:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231527AbhJ2NCq (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 29 Oct 2021 09:02:46 -0400
-Received: from zg8tmty1ljiyny4xntqumjca.icoremail.net ([165.227.154.27]:45069
-        "HELO zg8tmty1ljiyny4xntqumjca.icoremail.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S231523AbhJ2NCp (ORCPT
+        id S231815AbhJ3LyA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-bcache@lfdr.de>); Sat, 30 Oct 2021 07:54:00 -0400
+Received: from 219-87-183-172.static.tfn.net.tw ([219.87.183.172]:56819 "EHLO
+        ms4.kntech.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230327AbhJ3LyA (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 29 Oct 2021 09:02:45 -0400
-Received: from fedora33.wangsu.com (unknown [59.61.78.138])
-        by app2 (Coremail) with SMTP id 4zNnewA3Pi5R8Hth1QsDAA--.3404S2;
-        Fri, 29 Oct 2021 21:00:06 +0800 (CST)
-From:   Lin Feng <linf@wangsu.com>
-To:     colyli@suse.de, kent.overstreet@gmail.com
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linf@wangsu.com
-Subject: [PATCH] bcache: kill macro MAX_CACHES_PER_SET
-Date:   Fri, 29 Oct 2021 20:59:58 +0800
-Message-Id: <20211029125958.95298-1-linf@wangsu.com>
-X-Mailer: git-send-email 2.31.1
+        Sat, 30 Oct 2021 07:54:00 -0400
+Received: from [103.27.239.15] ([103.27.239.15])
+        (authenticated bits=0)
+        by ms4.kntech.com.tw (8.13.8/8.13.8) with ESMTP id 19RF3keF020382
+        for <linux-bcache@vger.kernel.org>; Wed, 27 Oct 2021 23:03:50 +0800
+Message-Id: <202110271503.19RF3keF020382@ms4.kntech.com.tw>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: 4zNnewA3Pi5R8Hth1QsDAA--.3404S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCw1UCFyktFW3tF17Jw4DCFg_yoW5Gr4fpF
-        ZrZrySyr48XF4UZ34kAr1ruFyrt34YkFW5Ja93Z34Fva42ya48ZFWUKa45Ar1rWryfJF47
-        tr4UtryDWa4UJFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_UUUUUUUUU==
-X-CM-SenderInfo: holqwq5zdqw23xof0z/
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Dear Friend,
+To:     linux-bcache@vger.kernel.org
+From:   "Wahid Majrooh" <wnf@sendayan.com.my>
+Date:   Wed, 27 Oct 2021 22:04:07 +0700
+Reply-To: wfnngaf@gmail.com
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Commit 697e23495c94f0380c1ed8b11f830b92b64c99ea
-("bcache: explicitly make cache_set only have single cache")
-explicitly makes a cache_set only have single cache and based on the
-fact that historily only one cache is ever used in the cache set, so
-macro defination for MAX_CACHES_PER_SET as 8 is misleading now.
+Dear Friend,
 
-In fact it should be redefined to 1 and valid number fo sb.nr_in_set
-should be 1 and sb.nr_this_dev should always be 0.
+I am writing to you to make a proposal regarding Investing in your
+country. I am proposing to you a business development Investment in
+housing and health sector or any other sector you can recommend. My name
+is Wahid Majrooh. Former  acting Minister of Public Health of
+Afghanistan.
 
-But jset's disk layout replies on MAX_CACHES_PER_SET(8), so replace it
-with a hardcoded number 8.
 
-Signed-off-by: Lin Feng <linf@wangsu.com>
----
- drivers/md/bcache/bcache.h  | 2 +-
- drivers/md/bcache/super.c   | 4 +---
- include/uapi/linux/bcache.h | 4 ++--
- 3 files changed, 4 insertions(+), 6 deletions(-)
+Sincerely
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 5fc989a6d452..a4a410a178c0 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -833,7 +833,7 @@ static inline uint8_t ptr_stale(struct cache_set *c, const struct bkey *k,
- static inline bool ptr_available(struct cache_set *c, const struct bkey *k,
- 				 unsigned int i)
- {
--	return (PTR_DEV(k, i) < MAX_CACHES_PER_SET) && c->cache;
-+	return (PTR_DEV(k, i) == 0) && c->cache;
- }
- 
- /* Btree key macros */
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index f2874c77ff79..2253044c9289 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -140,9 +140,7 @@ static const char *read_super_common(struct cache_sb *sb,  struct block_device *
- 		goto err;
- 
- 	err = "Bad cache device number in set";
--	if (!sb->nr_in_set ||
--	    sb->nr_in_set <= sb->nr_this_dev ||
--	    sb->nr_in_set > MAX_CACHES_PER_SET)
-+	if (sb->nr_in_set != 1 || sb->nr_this_dev != 0)
- 		goto err;
- 
- 	err = "Journal buckets not sequential";
-diff --git a/include/uapi/linux/bcache.h b/include/uapi/linux/bcache.h
-index cf7399f03b71..4beb3e7826ca 100644
---- a/include/uapi/linux/bcache.h
-+++ b/include/uapi/linux/bcache.h
-@@ -155,7 +155,6 @@ static inline struct bkey *bkey_idx(const struct bkey *k, unsigned int nr_keys)
- #define SB_LABEL_SIZE			32
- #define SB_JOURNAL_BUCKETS		256U
- /* SB_JOURNAL_BUCKETS must be divisible by BITS_PER_LONG */
--#define MAX_CACHES_PER_SET		8
- 
- #define BDEV_DATA_START_DEFAULT		16	/* sectors */
- 
-@@ -356,7 +355,8 @@ struct jset {
- 	__u16			btree_level;
- 	__u16			pad[3];
- 
--	__u64			prio_bucket[MAX_CACHES_PER_SET];
-+	/* only a single cache is available */
-+	__u64			prio_bucket[8];
- 
- 	union {
- 		struct bkey	start[0];
--- 
-2.31.1
-
+Wahid
