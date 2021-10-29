@@ -2,61 +2,89 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1757743FC01
-	for <lists+linux-bcache@lfdr.de>; Fri, 29 Oct 2021 14:06:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F36743FC76
+	for <lists+linux-bcache@lfdr.de>; Fri, 29 Oct 2021 14:43:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229692AbhJ2MJK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 29 Oct 2021 08:09:10 -0400
-Received: from mail.wangsu.com ([123.103.51.227]:36553 "EHLO wangsu.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230273AbhJ2MJJ (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 29 Oct 2021 08:09:09 -0400
-X-Greylist: delayed 399 seconds by postgrey-1.27 at vger.kernel.org; Fri, 29 Oct 2021 08:09:08 EDT
-Received: from fedora33.wangsu.com (unknown [59.61.78.138])
-        by app2 (Coremail) with SMTP id 4zNnewDX3i434nthxgcDAA--.1504S2;
-        Fri, 29 Oct 2021 19:59:56 +0800 (CST)
-From:   Lin Feng <linf@wangsu.com>
-To:     colyli@suse.de, ent.overstreet@gmail.com
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linf@wangsu.com
-Subject: [PATCH] bcache: remove unused struct member in cache_stats
-Date:   Fri, 29 Oct 2021 19:59:39 +0800
-Message-Id: <20211029115939.92309-1-linf@wangsu.com>
-X-Mailer: git-send-email 2.31.1
+        id S231623AbhJ2MqJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 29 Oct 2021 08:46:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49178 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231560AbhJ2MqJ (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Fri, 29 Oct 2021 08:46:09 -0400
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA24C061714
+        for <linux-bcache@vger.kernel.org>; Fri, 29 Oct 2021 05:43:41 -0700 (PDT)
+Received: by mail-il1-x12c.google.com with SMTP id b10so1077669ilj.10
+        for <linux-bcache@vger.kernel.org>; Fri, 29 Oct 2021 05:43:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=KzNPsRfMKqoJP956zJMiQfTvmLR1jEeJQFEcOxRbL84=;
+        b=wFzZUdp3ATwd3Rars+0pExsV2ODHdhY1M/Po9DvpSKvOa10PTnEzHmdg3TO7JpB/HZ
+         EECr3ALaXqKazsL9cjRPCL5wZLmjareJxAAbRZVbPFBkhCkuGt5NZ6gNyZ7Lf4UsdYNP
+         HTi5JlAmSPgEIV/mOc4lNGAf8kRQ5pNBjnqZ2MjD5Y6ddJwImt/EztwioOQ7r/7+0eEd
+         sahJUWk2CDgH2pXHFn7qmQG/MEnDuYjzd1Uqs9UZ6nNdYyOM55F1ENNeycl6HfU3LUb8
+         JL7sHmFye6uPdDVw6bvMjGy79USU/NJ7vqkfEeCpje1j/Hpdp/sQrox6JyyFhPZNMbwf
+         3xTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=KzNPsRfMKqoJP956zJMiQfTvmLR1jEeJQFEcOxRbL84=;
+        b=SDnovnnLPmsxV4E3lhteneGz9KY8mkQJD/0CxBSbFIJJJ6SxXVoPu1JvVSTrrvGDIG
+         1dgJGY/fkh3prTh5Kk/cnmB/+iFF3rm2qZF503OJiz9hP7BNvfZXkveZ+PitrghK2S/5
+         Lwww0OPtPHnDd2NsWV2A4txqO2EczkSxiDvPXPXW+l7QunwKTr5gap+kdxuvq87N0g4b
+         VT3AQtLYbSmjzDm4ZrFzcbbfKYJQvFZbKLdTYLBQSDKDrQAovvUkqQIg4VwJAdJ+p9qT
+         vCEvT4pSlgMy+9VVRLzejPO3ei5q5+1ZF7tuNfTItFOvY9BE1CRoSNDgR49eGuc1TN8P
+         VT6g==
+X-Gm-Message-State: AOAM532rrRe6IP9LZlYikVB/eAc06vge2omZI0SuPMPJaeSNQ/uCKgxQ
+        noO2z/UcjzFzEHGmnIiGQJRkdHqo3TtPNQ==
+X-Google-Smtp-Source: ABdhPJxLRGMhbaPzvgUI3F11qdqZYCutKeT2sxM9DSk1aML83byWNJMqc5P2UkRIHU06aBEJVUG9bg==
+X-Received: by 2002:a92:d752:: with SMTP id e18mr7589066ilq.31.1635511420289;
+        Fri, 29 Oct 2021 05:43:40 -0700 (PDT)
+Received: from [127.0.1.1] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id a20sm3126976ila.22.2021.10.29.05.43.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Oct 2021 05:43:39 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
+In-Reply-To: <20211029060930.119923-1-colyli@suse.de>
+References: <20211029060930.119923-1-colyli@suse.de>
+Subject: Re: [PATCH 0/2] bcache paches for Linux v5.16 (2nd wave)
+Message-Id: <163551141854.81306.9109988808769746352.b4-ty@kernel.dk>
+Date:   Fri, 29 Oct 2021 06:43:38 -0600
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: 4zNnewDX3i434nthxgcDAA--.1504S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFy3GF47WFW8GFWkWrWrGrg_yoW3Zwc_Z3
-        W0qF1xWr4YqrsIg3W3Xry3X3y0qa4DZFyv93Z2qr1SvryfZryxWF1Fgw17Ary5Zr4Yk3W2
-        vryfX34rCw10kjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUUUUUUU
-X-CM-SenderInfo: holqwq5zdqw23xof0z/
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Commit 1616a4c2ab1a80893b6890ae93da40a2b1d0c691
-("bcache: remove bcache device self-defined readahead")
-remove stuffs for bcache self-defined readahead, but
-cache_readaheads field in cache_stats is leftout, remove it.
+On Fri, 29 Oct 2021 14:09:28 +0800, Coly Li wrote:
+> This is the second wave of bcache patches for Linux v5.16.
+> 
+> The first patch is suggested by Arnd Bergmann and Christoph
+> Hellwig that the bcache.h should not belong to include/uapi/
+> directory, and I compose the change.
+> 
+> The second patch is code cleanup to remove coccicheck warning
+> which suggests to use scnprintf to replace snprintf(), Qing
+> Wang posts the change to remove the warning by using sysfs_emit().
+> 
+> [...]
 
-Signed-off-by: Lin Feng <linf@wangsu.com>
----
- drivers/md/bcache/stats.h | 1 -
- 1 file changed, 1 deletion(-)
+Applied, thanks!
 
-diff --git a/drivers/md/bcache/stats.h b/drivers/md/bcache/stats.h
-index ca4f435f7216..b6bfea66c01f 100644
---- a/drivers/md/bcache/stats.h
-+++ b/drivers/md/bcache/stats.h
-@@ -18,7 +18,6 @@ struct cache_stats {
- 	unsigned long cache_misses;
- 	unsigned long cache_bypass_hits;
- 	unsigned long cache_bypass_misses;
--	unsigned long cache_readaheads;
- 	unsigned long cache_miss_collisions;
- 	unsigned long sectors_bypassed;
- 
+[1/2] bcache: move uapi header bcache.h to bcache code directory
+      commit: cf2197ca4b8c199d188593ca6800ea1827c42171
+[2/2] bcache: replace snprintf in show functions with sysfs_emit
+      commit: 1b86db5f4e025840e0bf7cef2b10e84531954386
+
+Best regards,
 -- 
-2.31.1
+Jens Axboe
+
 
