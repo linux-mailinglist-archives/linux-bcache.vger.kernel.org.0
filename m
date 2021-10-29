@@ -2,136 +2,137 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7571543F6F9
-	for <lists+linux-bcache@lfdr.de>; Fri, 29 Oct 2021 08:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83F8243F709
+	for <lists+linux-bcache@lfdr.de>; Fri, 29 Oct 2021 08:15:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231937AbhJ2GMJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 29 Oct 2021 02:12:09 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:59074 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231946AbhJ2GMH (ORCPT
+        id S231961AbhJ2GRl (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 29 Oct 2021 02:17:41 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:39004 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231774AbhJ2GRl (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 29 Oct 2021 02:12:07 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 701EE1FD5C;
-        Fri, 29 Oct 2021 06:09:38 +0000 (UTC)
+        Fri, 29 Oct 2021 02:17:41 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2CA2721968;
+        Fri, 29 Oct 2021 06:15:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1635487778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
+        t=1635488112; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=KsekPWGPMtLKHLzG1Kx8mIWf6J0hdkHJdlbakHjIGJk=;
-        b=JrLt7ne4sKdf3gem8fFNRvF5LGd9kKl4r2kubuXgSHlHvy38qtQxcQKpB3RzYf3jp5mtp6
-        caNoHasvPqc7d22JqDaXIf1DtSlQFm2wUa4k9MVYdVlOBe5zA3K0ZOE5xVmXVq9SMWNeNm
-        MJhevVS8vkMv4Q4sTETQyabsiK2/Zbs=
+        bh=E919aeXK8dC3N34MDRziiU6STn2FmtpVBAk+ecOLJjo=;
+        b=rHi5YhKLU0rlCRHyPeKnauDRrrKyNolq7E6F6dDcjkjrYygp8K9iGOEHJj1sMmsNmnFoqm
+        JXUgJyq68i9P1XXycPxZOj9RRmHZ61CddjBbgHSqzeBEgXTEn3O/eT1/pGQOrrjanxFKqN
+        Ws1Xa0M9ZepgclsMvVLPpSC9aP/pzDs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1635487778;
+        s=susede2_ed25519; t=1635488112;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=KsekPWGPMtLKHLzG1Kx8mIWf6J0hdkHJdlbakHjIGJk=;
-        b=s2XoPqzk0RGg7g4sC7tJEShoT7W2EdzNePwsXFYOOGo+5n7f6Lur+HasU6PFzT1dcvwOHG
-        OtPVn9b1y3hG/9BQ==
-Received: from suse.localdomain (unknown [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id CD7A1A3B84;
-        Fri, 29 Oct 2021 06:09:36 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     axboe@kernel.dk
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Qing Wang <wangqing@vivo.com>, Coly Li <colyli@suse.de>
-Subject: [PATCH 2/2] bcache: replace snprintf in show functions with sysfs_emit
-Date:   Fri, 29 Oct 2021 14:09:30 +0800
-Message-Id: <20211029060930.119923-3-colyli@suse.de>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211029060930.119923-1-colyli@suse.de>
-References: <20211029060930.119923-1-colyli@suse.de>
+        bh=E919aeXK8dC3N34MDRziiU6STn2FmtpVBAk+ecOLJjo=;
+        b=S6CjmYqZCZ0yYeJGy3BiUS6TxG8jiMGcenKddoe10AYo6bdOAQvrpluZxu5uvYpr7RJ4EU
+        3KaNhyzDb7UqKtAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 55C5313AF5;
+        Fri, 29 Oct 2021 06:15:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Ah71CW2Re2HXXAAAMHmgww
+        (envelope-from <colyli@suse.de>); Fri, 29 Oct 2021 06:15:09 +0000
+Message-ID: <b11bb34b-8fdf-b6ed-b305-e7145f2a7ab2@suse.de>
+Date:   Fri, 29 Oct 2021 14:15:07 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.2.1
+Subject: Re: Readahead for compressed data
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
+        linux-bcache@vger.kernel.org, Hsin-Yi Wang <hsinyi@chromium.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     linux-bcachefs@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>
+References: <YXHK5HrQpJu9oy8w@casper.infradead.org>
+From:   Coly Li <colyli@suse.de>
+In-Reply-To: <YXHK5HrQpJu9oy8w@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Qing Wang <wangqing@vivo.com>
+On 10/22/21 4:17 AM, Matthew Wilcox wrote:
+> As far as I can tell, the following filesystems support compressed data:
+>
+> bcachefs, btrfs, erofs, ntfs, squashfs, zisofs
 
-coccicheck complains about the use of snprintf() in sysfs show functions.
+Hi Matthew,
 
-Fix the following coccicheck warning:
-drivers/md/bcache/sysfs.h:54:12-20: WARNING: use scnprintf or sprintf.
+There is a new bcachefs mailing list linux-bcachefs@vger.kernel.org for 
+bcachefs. I add it in Cc in this reply email.
 
-Implement sysfs_print() by sysfs_emit() and remove snprint() since no one
-uses it any more.
+Just FYI for you and other receivers.
 
-Suggested-by: Coly Li <colyli@suse.de>
-Signed-off-by: Qing Wang <wangqing@vivo.com>
-Signed-off-by: Coly Li <colyli@suse.de>
----
- drivers/md/bcache/sysfs.h | 18 ++++++++++++++++--
- drivers/md/bcache/util.h  | 17 -----------------
- 2 files changed, 16 insertions(+), 19 deletions(-)
+Thanks.
 
-diff --git a/drivers/md/bcache/sysfs.h b/drivers/md/bcache/sysfs.h
-index 215df32f567b..c1752ba2e05b 100644
---- a/drivers/md/bcache/sysfs.h
-+++ b/drivers/md/bcache/sysfs.h
-@@ -51,13 +51,27 @@ STORE(fn)								\
- #define sysfs_printf(file, fmt, ...)					\
- do {									\
- 	if (attr == &sysfs_ ## file)					\
--		return snprintf(buf, PAGE_SIZE, fmt "\n", __VA_ARGS__);	\
-+		return sysfs_emit(buf, fmt "\n", __VA_ARGS__);	\
- } while (0)
- 
- #define sysfs_print(file, var)						\
- do {									\
- 	if (attr == &sysfs_ ## file)					\
--		return snprint(buf, PAGE_SIZE, var);			\
-+		return sysfs_emit(buf,						\
-+				__builtin_types_compatible_p(typeof(var), int)		\
-+					 ? "%i\n" :				\
-+				__builtin_types_compatible_p(typeof(var), unsigned int)	\
-+					 ? "%u\n" :				\
-+				__builtin_types_compatible_p(typeof(var), long)		\
-+					 ? "%li\n" :			\
-+				__builtin_types_compatible_p(typeof(var), unsigned long)\
-+					 ? "%lu\n" :			\
-+				__builtin_types_compatible_p(typeof(var), int64_t)	\
-+					 ? "%lli\n" :			\
-+				__builtin_types_compatible_p(typeof(var), uint64_t)	\
-+					 ? "%llu\n" :			\
-+				__builtin_types_compatible_p(typeof(var), const char *)	\
-+					 ? "%s\n" : "%i\n", var);	\
- } while (0)
- 
- #define sysfs_hprint(file, val)						\
-diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
-index 6274d6a17e5e..cdb165517d0b 100644
---- a/drivers/md/bcache/util.h
-+++ b/drivers/md/bcache/util.h
-@@ -340,23 +340,6 @@ static inline int bch_strtoul_h(const char *cp, long *res)
- 	_r;								\
- })
- 
--#define snprint(buf, size, var)						\
--	snprintf(buf, size,						\
--		__builtin_types_compatible_p(typeof(var), int)		\
--		     ? "%i\n" :						\
--		__builtin_types_compatible_p(typeof(var), unsigned int)	\
--		     ? "%u\n" :						\
--		__builtin_types_compatible_p(typeof(var), long)		\
--		     ? "%li\n" :					\
--		__builtin_types_compatible_p(typeof(var), unsigned long)\
--		     ? "%lu\n" :					\
--		__builtin_types_compatible_p(typeof(var), int64_t)	\
--		     ? "%lli\n" :					\
--		__builtin_types_compatible_p(typeof(var), uint64_t)	\
--		     ? "%llu\n" :					\
--		__builtin_types_compatible_p(typeof(var), const char *)	\
--		     ? "%s\n" : "%i\n", var)
--
- ssize_t bch_hprint(char *buf, int64_t v);
- 
- bool bch_is_zero(const char *p, size_t n);
--- 
-2.31.1
+Coly Li
+
+
+>
+> I'd like to make it easier and more efficient for filesystems to
+> implement compressed data.  There are a lot of approaches in use today,
+> but none of them seem quite right to me.  I'm going to lay out a few
+> design considerations next and then propose a solution.  Feel free to
+> tell me I've got the constraints wrong, or suggest alternative solutions.
+>
+> When we call ->readahead from the VFS, the VFS has decided which pages
+> are going to be the most useful to bring in, but it doesn't know how
+> pages are bundled together into blocks.  As I've learned from talking to
+> Gao Xiang, sometimes the filesystem doesn't know either, so this isn't
+> something we can teach the VFS.
+>
+> We (David) added readahead_expand() recently to let the filesystem
+> opportunistically add pages to the page cache "around" the area requested
+> by the VFS.  That reduces the number of times the filesystem has to
+> decompress the same block.  But it can fail (due to memory allocation
+> failures or pages already being present in the cache).  So filesystems
+> still have to implement some kind of fallback.
+>
+> For many (all?) compression algorithms (all?) the data must be mapped at
+> all times.  Calling kmap() and kunmap() would be an intolerable overhead.
+> At the same time, we cannot write to a page in the page cache which is
+> marked Uptodate.  It might be mapped into userspace, or a read() be in
+> progress against it.  For writable filesystems, it might even be dirty!
+> As far as I know, no compression algorithm supports "holes", implying
+> that we must allocate memory which is then discarded.
+>
+> To me, this calls for a vmap() based approach.  So I'm thinking
+> something like ...
+>
+> void *readahead_get_block(struct readahead_control *ractl, loff_t start,
+> 			size_t len);
+> void readahead_put_block(struct readahead_control *ractl, void *addr,
+> 			bool success);
+>
+> Once you've figured out which bytes this encrypted block expands to, you
+> call readahead_get_block(), specifying the offset in the file and length
+> and get back a pointer.  When you're done decompressing that block of
+> the file, you get rid of it again.
+>
+> It's the job of readahead_get_block() to allocate additional pages
+> into the page cache or temporary pages.  readahead_put_block() will
+> mark page cache pages as Uptodate if 'success' is true, and unlock
+> them.  It'll free any temporary pages.
+>
+> Thoughts?  Anyone want to be the guinea pig?  ;-)
 
