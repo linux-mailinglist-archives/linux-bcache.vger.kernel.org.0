@@ -2,122 +2,84 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB82844133D
-	for <lists+linux-bcache@lfdr.de>; Mon,  1 Nov 2021 06:29:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08816443D6C
+	for <lists+linux-bcache@lfdr.de>; Wed,  3 Nov 2021 07:49:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229528AbhKAFbu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 1 Nov 2021 01:31:50 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:37374 "EHLO
+        id S231911AbhKCGwR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 3 Nov 2021 02:52:17 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:59842 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbhKAFbt (ORCPT
+        with ESMTP id S231558AbhKCGwR (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 1 Nov 2021 01:31:49 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id DD6E62192D;
-        Mon,  1 Nov 2021 05:29:15 +0000 (UTC)
+        Wed, 3 Nov 2021 02:52:17 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 05557218DF;
+        Wed,  3 Nov 2021 06:49:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1635744555; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2f9OAzzfJHvRfINaxNeskzvutF1GbL7BKDUPsw3Xn2Y=;
-        b=o7kFO+o8eHSOSi9a//Yb4bLikBrGF0kWOfCJCtQbCGOq6mAMyBbwwP4UjlsEBuHX8BLd+m
-        pusXpho4Y/Zr+jLpjDBMvhpsdNf6EBSFmn+mZhD7qIZtIlgIiv8yr3FZ4dkLWPCN7/wEiO
-        U0L+q+i7rv2GkwZ9Nu1j+TeMW06pgII=
+        t=1635922180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=BeqVs7y0PI+aBH3DeB1M2f+3yZUqahLHqE7Hzgy+EJo=;
+        b=R5L4WQK+wXV3nHvLJ4hHEsR9nLyxOTg9Z3Q/+zV6LZa6hhohX0GYVU9vmVhaRVopX4tkXp
+        V6keVBoNWjK6RDrW7bDbfltv/lrOw6077qdg3ikuehx/AuYCKesh/eGo9oGLiwdUPc4Rto
+        zcOmzkGcTcKTdhyLZWINlJLd6JRh6nM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1635744555;
+        s=susede2_ed25519; t=1635922180;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2f9OAzzfJHvRfINaxNeskzvutF1GbL7BKDUPsw3Xn2Y=;
-        b=8phHEmcuCpPQjjmAmmGWk3bwwN2oMirunEJpjSzlV7lo840AYI8qmO+QuEeP7Zlqysrkk6
-        j+N3rq/QYyzFPmDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C9A6C1323E;
-        Mon,  1 Nov 2021 05:29:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id odijJCp7f2G1cgAAMHmgww
-        (envelope-from <colyli@suse.de>); Mon, 01 Nov 2021 05:29:14 +0000
-Message-ID: <2c190f49-ffde-c6eb-e632-3f53832a3d83@suse.de>
-Date:   Mon, 1 Nov 2021 13:29:12 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.2.1
-Subject: Re: [PATCH] bcache: make checkings for sb.nr_in_set and
- sb.nr_this_dev to be more precise
-Content-Language: en-US
-To:     Lin Feng <linf@wangsu.com>
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kent.overstreet@gmail.com
-References: <20211101030751.8645-1-linf@wangsu.com>
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=BeqVs7y0PI+aBH3DeB1M2f+3yZUqahLHqE7Hzgy+EJo=;
+        b=VtGgvg151s/10ETivKGWnzhWyHA0G7328V47y5IgzURZugzaOk1/HoWlaPK3ufg6fKcp1D
+        8reQg+in1gmopJBA==
+Received: from suse.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
+        by relay2.suse.de (Postfix) with ESMTP id D7C2C2C150;
+        Wed,  3 Nov 2021 06:49:37 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20211101030751.8645-1-linf@wangsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     linux-bcache@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>, stable@vger.kernel.org
+Subject: [PATCH] bcache: fix use-after-free problem in bcache_device_free()
+Date:   Wed,  3 Nov 2021 14:49:17 +0800
+Message-Id: <20211103064917.67383-1-colyli@suse.de>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 11/1/21 11:07 AM, Lin Feng wrote:
-> Commit 697e23495c94f0380c1ed8b11f830b92b64c99ea
-> ("bcache: explicitly make cache_set only have single cache")
-> explicitly makes a cache_set only have single cache and based on the
-> fact that historily only one cache is ever used in the cache set, so
-> valid number fo sb.nr_in_set should be 1 and sb.nr_this_dev should
-> always be 0.
->
-> Based on above truth, codes validations for sb.nr_in_set and sb.nr_this_dev
-> can make to be more accurate, that means tolerance for error checking
-> are reduced comparing before.
->
-> Signed-off-by: Lin Feng <linf@wangsu.com>
+In bcache_device_free(), pointer disk is referenced still in
+ida_simple_remove() after blk_cleanup_disk() gets called on this
+pointer. This may cause a potential panic by use-after-free on the
+disk pointer.
 
-Hi Lin,
+This patch fixes the problem by calling blk_cleanup_disk() after
+ida_simple_remove().
 
-Thanks for the patch up. I add this change to my for-test directory.
+Fixes: bc70852fd104 ("bcache: convert to blk_alloc_disk/blk_cleanup_disk")
+Signed-off-by: Coly Li <colyli@suse.de>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: stable@vger.kernel.org # v5.14+
+---
+ drivers/md/bcache/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Coly Li
-
-
-> ---
->   drivers/md/bcache/bcache.h | 2 +-
->   drivers/md/bcache/super.c  | 4 +---
->   2 files changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 5fc989a6d452..a4a410a178c0 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -833,7 +833,7 @@ static inline uint8_t ptr_stale(struct cache_set *c, const struct bkey *k,
->   static inline bool ptr_available(struct cache_set *c, const struct bkey *k,
->   				 unsigned int i)
->   {
-> -	return (PTR_DEV(k, i) < MAX_CACHES_PER_SET) && c->cache;
-> +	return (PTR_DEV(k, i) == 0) && c->cache;
->   }
->   
->   /* Btree key macros */
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index f2874c77ff79..2253044c9289 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -140,9 +140,7 @@ static const char *read_super_common(struct cache_sb *sb,  struct block_device *
->   		goto err;
->   
->   	err = "Bad cache device number in set";
-> -	if (!sb->nr_in_set ||
-> -	    sb->nr_in_set <= sb->nr_this_dev ||
-> -	    sb->nr_in_set > MAX_CACHES_PER_SET)
-> +	if (sb->nr_in_set != 1 || sb->nr_this_dev != 0)
->   		goto err;
->   
->   	err = "Journal buckets not sequential";
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 4a9a65dff95e..86b9e355c583 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -885,9 +885,9 @@ static void bcache_device_free(struct bcache_device *d)
+ 		bcache_device_detach(d);
+ 
+ 	if (disk) {
+-		blk_cleanup_disk(disk);
+ 		ida_simple_remove(&bcache_device_idx,
+ 				  first_minor_to_idx(disk->first_minor));
++		blk_cleanup_disk(disk);
+ 	}
+ 
+ 	bioset_exit(&d->bio_split);
+-- 
+2.31.1
 
