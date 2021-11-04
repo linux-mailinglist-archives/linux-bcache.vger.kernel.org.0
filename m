@@ -2,155 +2,300 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97093444DEA
-	for <lists+linux-bcache@lfdr.de>; Thu,  4 Nov 2021 05:25:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAABC445B0C
+	for <lists+linux-bcache@lfdr.de>; Thu,  4 Nov 2021 21:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230301AbhKDE2J (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 4 Nov 2021 00:28:09 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:59350 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229866AbhKDE2H (ORCPT
-        <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 4 Nov 2021 00:28:07 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7BA521F782;
-        Thu,  4 Nov 2021 04:25:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1635999928; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yntzhDNIJrkZKWGzY5nRMMPO6e41UbyPYEXGXhOKLqY=;
-        b=URZCXGAqp/tkaOz9zrdP0Jh2crQFHTBqi0DRxG0ePuDRt3IkDhjnflJanRtmavZrL7Yic3
-        4c/3AMqY82ASkjxUkDiRI1bnXp7lnkSvW58kJtspWAbR0NeksUbnypPD2X9PbeUH85EJnb
-        p9WF3ApdgryUm22L4j5IXkytqFqWpfc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1635999928;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yntzhDNIJrkZKWGzY5nRMMPO6e41UbyPYEXGXhOKLqY=;
-        b=CD4hIV85y16wNABlLj4KuB3EpZ+qWavoRNGnKdahVA3hRqnHZ7qVzkD/j59pCim2fPh7LK
-        x0TwkbVgBdaLDwAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1941513DA3;
-        Thu,  4 Nov 2021 04:25:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 7JdINbZgg2FrUQAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 04 Nov 2021 04:25:26 +0000
-Message-ID: <9e23e103-40ff-963f-739f-730da4d5fe3f@suse.de>
-Date:   Thu, 4 Nov 2021 12:25:25 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.2.1
+        id S232179AbhKDU0j (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 4 Nov 2021 16:26:39 -0400
+Received: from verein.lst.de ([213.95.11.211]:36591 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229694AbhKDU0j (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 4 Nov 2021 16:26:39 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 9CD1A6732D; Thu,  4 Nov 2021 21:23:58 +0100 (CET)
+Date:   Thu, 4 Nov 2021 21:23:58 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Coly Li <colyli@suse.de>
+Cc:     Christoph Hellwig <hch@lst.de>, axboe@kernel.dk,
+        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        stable@vger.kernel.org
 Subject: Re: [PATCH] bcache: Revert "bcache: use bvec_virt"
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     axboe@kernel.dk, linux-bcache@vger.kernel.org,
-        linux-block@vger.kernel.org, stable@vger.kernel.org
-References: <20211103151041.70516-1-colyli@suse.de>
- <20211103154644.GA30686@lst.de>
- <1d1180e0-32bc-e571-3252-ce496508d2b5@suse.de> <20211103161955.GA394@lst.de>
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20211103161955.GA394@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <20211104202358.GA4264@lst.de>
+References: <20211103151041.70516-1-colyli@suse.de> <20211103154644.GA30686@lst.de> <1d1180e0-32bc-e571-3252-ce496508d2b5@suse.de> <20211103161955.GA394@lst.de> <9e23e103-40ff-963f-739f-730da4d5fe3f@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e23e103-40ff-963f-739f-730da4d5fe3f@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 11/4/21 12:19 AM, Christoph Hellwig wrote:
-> On Thu, Nov 04, 2021 at 12:11:45AM +0800, Coly Li wrote:
->>> fresh page for each vec, and bio_for_each_segment_all iterates page
->>> by page.  IFF there is an offset there is proble in the surrounding
->>> code as bch_bio_alloc_pages assumes that it is called on a freshly
->>> allocate and initialized bio.
->> Yes, the offset is modified in bch_bio_alloc_pages().
-> Where?   In my upstream copy of bch_bio_alloc_pages there is no bv_offset
-> manipulation, and I could not see how such a manipulation would make
-> sense.
+Ok, because it takes the offset away we're not aligned any more.
+I think the right fix is to fix this properly and stop poking into
+the bio internals.  The patch below has surived and xfstests quick
+run on two bcache devices:
 
-Forgive my typo. It was bch_bio_map() before bch_bio_alloc_pages(), both 
-in do_btree_node_write() and in util.c, bv->bv_offset is set by,
-     bv->bv_offset = base ? offset_in_page(base) : 0;
+---
+From 3bf1068e2dc6a75442513e8f9f64055740c0b507 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Thu, 4 Nov 2021 10:40:37 +0100
+Subject: bcache: lift bvec mapping into bch_bio_alloc_pages
 
-Here base is bset *i which is initialized in do_btree_node_write() as,
-     struct bset *i = btree_bset_last(b);
+Use the proper block APIs to add pages to the bio and remove the need
+for the extra call to bch_bio_map and the open coded data copy for the
+write case.
 
-The unit size of bset is 1 bcache-defined-block size, minimized value is 
-512.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/md/bcache/btree.c     | 31 ++++++++------------------
+ drivers/md/bcache/debug.c     |  4 +---
+ drivers/md/bcache/movinggc.c  |  7 +++---
+ drivers/md/bcache/request.c   |  5 ++---
+ drivers/md/bcache/util.c      | 41 +++++++++++++++++++++++------------
+ drivers/md/bcache/util.h      |  2 +-
+ drivers/md/bcache/writeback.c |  7 +++---
+ 7 files changed, 48 insertions(+), 49 deletions(-)
 
->> Normally the bcache
->> defined block size is 4KB so the issue was not triggered frequently. I
->> found it during testing my nvdimm enabling code for bcache, where I happen
->> to make the bcache defined block size to non-4KB. The offset is from the
->> previous written bkey set, which the minimized unit size is 1
->> bcache-defined-block-size.
-> So you have some out of tree changes here?  Copying a PAGE_SIZE into
-> a 'segment' bvec just does not make any sense if there is an offset,
-> as segments are defined as bvecs that do not span page boundaries.
->
-> I suspect the best thing to do in do_btree_node_write would be something
-> like the patch below instead of poking into the internals here, but I'd
-> also really like to understand the root cause as it does point to a bug
-> somewhere else.
->
->
-> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-> index 93b67b8d31c3d..f69914848f32f 100644
-> --- a/drivers/md/bcache/btree.c
-> +++ b/drivers/md/bcache/btree.c
-> @@ -378,8 +378,8 @@ static void do_btree_node_write(struct btree *b)
->   		struct bvec_iter_all iter_all;
->   
->   		bio_for_each_segment_all(bv, b->bio, iter_all) {
-> -			memcpy(bvec_virt(bv), addr, PAGE_SIZE);
-> -			addr += PAGE_SIZE;
-> +			memcpy_to_bvec(bvec_virt(bv), addr);
-> +			addr += bv->bv_len;
->   		}
->   
->   		bch_submit_bbio(b->bio, b->c, &k.key, 0);
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 93b67b8d31c3d..c435b8f2bca04 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -339,6 +339,7 @@ static void do_btree_node_write(struct btree *b)
+ {
+ 	struct closure *cl = &b->io;
+ 	struct bset *i = btree_bset_last(b);
++	size_t size;
+ 	BKEY_PADDED(key) k;
+ 
+ 	i->version	= BCACHE_BSET_VERSION;
+@@ -349,9 +350,7 @@ static void do_btree_node_write(struct btree *b)
+ 
+ 	b->bio->bi_end_io	= btree_node_write_endio;
+ 	b->bio->bi_private	= cl;
+-	b->bio->bi_iter.bi_size	= roundup(set_bytes(i), block_bytes(b->c->cache));
+ 	b->bio->bi_opf		= REQ_OP_WRITE | REQ_META | REQ_FUA;
+-	bch_bio_map(b->bio, i);
+ 
+ 	/*
+ 	 * If we're appending to a leaf node, we don't technically need FUA -
+@@ -372,32 +371,20 @@ static void do_btree_node_write(struct btree *b)
+ 	SET_PTR_OFFSET(&k.key, 0, PTR_OFFSET(&k.key, 0) +
+ 		       bset_sector_offset(&b->keys, i));
+ 
+-	if (!bch_bio_alloc_pages(b->bio, __GFP_NOWARN|GFP_NOWAIT)) {
+-		struct bio_vec *bv;
+-		void *addr = (void *) ((unsigned long) i & ~(PAGE_SIZE - 1));
+-		struct bvec_iter_all iter_all;
+-
+-		bio_for_each_segment_all(bv, b->bio, iter_all) {
+-			memcpy(bvec_virt(bv), addr, PAGE_SIZE);
+-			addr += PAGE_SIZE;
+-		}
+-
+-		bch_submit_bbio(b->bio, b->c, &k.key, 0);
+-
+-		continue_at(cl, btree_node_write_done, NULL);
+-	} else {
+-		/*
+-		 * No problem for multipage bvec since the bio is
+-		 * just allocated
+-		 */
+-		b->bio->bi_vcnt = 0;
++	size = roundup(set_bytes(i), block_bytes(b->c->cache));
++	if (bch_bio_alloc_pages(b->bio, i, size,
++			__GFP_NOWARN | GFP_NOWAIT) < 0) {
++		b->bio->bi_iter.bi_size	= size;
+ 		bch_bio_map(b->bio, i);
+-
+ 		bch_submit_bbio(b->bio, b->c, &k.key, 0);
+ 
+ 		closure_sync(cl);
+ 		continue_at_nobarrier(cl, __btree_node_write_done, NULL);
++		return;
+ 	}
++
++	bch_submit_bbio(b->bio, b->c, &k.key, 0);
++	continue_at(cl, btree_node_write_done, NULL);
+ }
+ 
+ void __bch_btree_node_write(struct btree *b, struct closure *parent)
+diff --git a/drivers/md/bcache/debug.c b/drivers/md/bcache/debug.c
+index 6230dfdd9286e..ef8ec8090d579 100644
+--- a/drivers/md/bcache/debug.c
++++ b/drivers/md/bcache/debug.c
+@@ -117,10 +117,8 @@ void bch_data_verify(struct cached_dev *dc, struct bio *bio)
+ 	bio_set_dev(check, bio->bi_bdev);
+ 	check->bi_opf = REQ_OP_READ;
+ 	check->bi_iter.bi_sector = bio->bi_iter.bi_sector;
+-	check->bi_iter.bi_size = bio->bi_iter.bi_size;
+ 
+-	bch_bio_map(check, NULL);
+-	if (bch_bio_alloc_pages(check, GFP_NOIO))
++	if (bch_bio_alloc_pages(check, NULL, bio->bi_iter.bi_size, GFP_NOIO))
+ 		goto out_put;
+ 
+ 	submit_bio_wait(check);
+diff --git a/drivers/md/bcache/movinggc.c b/drivers/md/bcache/movinggc.c
+index b9c3d27ec093a..7d94e2ec562a4 100644
+--- a/drivers/md/bcache/movinggc.c
++++ b/drivers/md/bcache/movinggc.c
+@@ -84,9 +84,7 @@ static void moving_init(struct moving_io *io)
+ 	bio_get(bio);
+ 	bio_set_prio(bio, IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 0));
+ 
+-	bio->bi_iter.bi_size	= KEY_SIZE(&io->w->key) << 9;
+ 	bio->bi_private		= &io->cl;
+-	bch_bio_map(bio, NULL);
+ }
+ 
+ static void write_moving(struct closure *cl)
+@@ -97,6 +95,8 @@ static void write_moving(struct closure *cl)
+ 	if (!op->status) {
+ 		moving_init(io);
+ 
++		io->bio.bio.bi_iter.bi_size = KEY_SIZE(&io->w->key) << 9;
++		bch_bio_map(&io->bio.bio, NULL);
+ 		io->bio.bio.bi_iter.bi_sector = KEY_START(&io->w->key);
+ 		op->write_prio		= 1;
+ 		op->bio			= &io->bio.bio;
+@@ -163,7 +163,8 @@ static void read_moving(struct cache_set *c)
+ 		bio_set_op_attrs(bio, REQ_OP_READ, 0);
+ 		bio->bi_end_io	= read_moving_endio;
+ 
+-		if (bch_bio_alloc_pages(bio, GFP_KERNEL))
++		if (bch_bio_alloc_pages(bio, NULL, KEY_SIZE(&io->w->key) << 9,
++				GFP_KERNEL))
+ 			goto err;
+ 
+ 		trace_bcache_gc_copy(&w->key);
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index d15aae6c51c13..faa89410c7470 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -921,13 +921,12 @@ static int cached_dev_cache_miss(struct btree *b, struct search *s,
+ 
+ 	cache_bio->bi_iter.bi_sector	= miss->bi_iter.bi_sector;
+ 	bio_copy_dev(cache_bio, miss);
+-	cache_bio->bi_iter.bi_size	= s->insert_bio_sectors << 9;
+ 
+ 	cache_bio->bi_end_io	= backing_request_endio;
+ 	cache_bio->bi_private	= &s->cl;
+ 
+-	bch_bio_map(cache_bio, NULL);
+-	if (bch_bio_alloc_pages(cache_bio, __GFP_NOWARN|GFP_NOIO))
++	if (bch_bio_alloc_pages(cache_bio, NULL, s->insert_bio_sectors << 9,
++			__GFP_NOWARN | GFP_NOIO))
+ 		goto out_put;
+ 
+ 	s->cache_miss	= miss;
+diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+index ae380bc3992e3..cf627e7eadc10 100644
+--- a/drivers/md/bcache/util.c
++++ b/drivers/md/bcache/util.c
+@@ -258,6 +258,8 @@ start:		bv->bv_len	= min_t(size_t, PAGE_SIZE - bv->bv_offset,
+ /**
+  * bch_bio_alloc_pages - allocates a single page for each bvec in a bio
+  * @bio: bio to allocate pages for
++ * @data: if non-NULL copy data from here into the newly allocate pages
++ * @size: size to allocate
+  * @gfp_mask: flags for allocation
+  *
+  * Allocates pages up to @bio->bi_vcnt.
+@@ -265,23 +267,34 @@ start:		bv->bv_len	= min_t(size_t, PAGE_SIZE - bv->bv_offset,
+  * Returns 0 on success, -ENOMEM on failure. On failure, any allocated pages are
+  * freed.
+  */
+-int bch_bio_alloc_pages(struct bio *bio, gfp_t gfp_mask)
++int bch_bio_alloc_pages(struct bio *bio, void *data, size_t size, gfp_t gfp)
+ {
+-	int i;
+-	struct bio_vec *bv;
++	struct bvec_iter iter;
++	struct bio_vec bv;
+ 
+-	/*
+-	 * This is called on freshly new bio, so it is safe to access the
+-	 * bvec table directly.
+-	 */
+-	for (i = 0, bv = bio->bi_io_vec; i < bio->bi_vcnt; bv++, i++) {
+-		bv->bv_page = alloc_page(gfp_mask);
+-		if (!bv->bv_page) {
+-			while (--bv >= bio->bi_io_vec)
+-				__free_page(bv->bv_page);
+-			return -ENOMEM;
+-		}
++	BUG_ON(bio->bi_vcnt);
++
++	while (size) {
++		struct page *page = alloc_page(gfp);
++		unsigned int offset = offset_in_page(page);
++		size_t len = min(size, PAGE_SIZE - offset);
++
++		if (!page)
++			goto unwind;
++		if (data)
++			memcpy_to_page(page, offset, data, len);
++		if (bio_add_page(bio, page, offset, len) != len)
++			goto unwind;
++
++		size -= len;
++		data += len;
+ 	}
+ 
+ 	return 0;
++
++unwind:
++	bio_for_each_segment(bv, bio, iter)
++		__free_page(bv.bv_page);
++	bio->bi_vcnt = 0;
++	return -ENOMEM;
+ }
+diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
+index 6f3cb7c921303..131d5e874231f 100644
+--- a/drivers/md/bcache/util.h
++++ b/drivers/md/bcache/util.h
+@@ -557,6 +557,6 @@ static inline unsigned int fract_exp_two(unsigned int x,
+ }
+ 
+ void bch_bio_map(struct bio *bio, void *base);
+-int bch_bio_alloc_pages(struct bio *bio, gfp_t gfp_mask);
++int bch_bio_alloc_pages(struct bio *bio, void *data, size_t size, gfp_t gfp);
+ 
+ #endif /* _BCACHE_UTIL_H */
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index c7560f66dca88..a153e3a1b3b87 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -297,9 +297,7 @@ static void dirty_init(struct keybuf_key *w)
+ 	if (!io->dc->writeback_percent)
+ 		bio_set_prio(bio, IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 0));
+ 
+-	bio->bi_iter.bi_size	= KEY_SIZE(&w->key) << 9;
+ 	bio->bi_private		= w;
+-	bch_bio_map(bio, NULL);
+ }
+ 
+ static void dirty_io_destructor(struct closure *cl)
+@@ -395,6 +393,8 @@ static void write_dirty(struct closure *cl)
+ 	 */
+ 	if (KEY_DIRTY(&w->key)) {
+ 		dirty_init(w);
++		io->bio.bi_iter.bi_size	= KEY_SIZE(&w->key) << 9;
++		bch_bio_map(&io->bio, NULL);
+ 		bio_set_op_attrs(&io->bio, REQ_OP_WRITE, 0);
+ 		io->bio.bi_iter.bi_sector = KEY_START(&w->key);
+ 		bio_set_dev(&io->bio, io->dc->bdev);
+@@ -513,7 +513,8 @@ static void read_dirty(struct cached_dev *dc)
+ 			bio_set_dev(&io->bio, dc->disk.c->cache->bdev);
+ 			io->bio.bi_end_io	= read_dirty_endio;
+ 
+-			if (bch_bio_alloc_pages(&io->bio, GFP_KERNEL))
++			if (bch_bio_alloc_pages(&io->bio, NULL,
++					KEY_SIZE(&w->key) << 9, GFP_KERNEL))
+ 				goto err_free;
+ 
+ 			trace_bcache_writeback(&w->key);
+-- 
+2.30.2
 
-The above change doesn't work, still observe panic[1].
-
-Before calling bio_for_each_segment_all(), void *addr is calculated by,
-     void *addr = (void *) ((unsigned long) i & ~(PAGE_SIZE - 1));
-which is a page size aligned address.  When writing down a dirty btree 
-node, it requires whole page to be written. Your original patch works 
-fine when there is not previously unwirtten keys in the page as previous 
-bkey set (and corrupts memory when bv->bv_offset is non-zero). The above 
-change seems missing the part in offset [0, bv->bv_offset] inside the 
-dirty page, I am not sure how the bellowed panic happens by the above 
-change, it seems like wild pointer from the missing part of btree node 
-when iterating the btree.
-
-If you don't want to directly access members inside struct bio_vec, is 
-there something like page_base(vb) which returns bv->bv_page ?
-
-Thanks.
-
-Coly Li
-
-
-
-[1] the panic message starts like,
-
-[ 1926.350362] ------------[ cut here ]------------
-[ 1926.405603] kernel BUG at ./include/linux/highmem.h:316!
-[ 1926.469172] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC NOPTI
-[ 1926.540006] CPU: 10 PID: 477 Comm: kworker/10:2 Kdump: loaded 
-Tainted: G            E     5.15.0-59.27-default+ #57
-[ 1926.350362 1926.540009] Hardware name: Lenovo ThinkSystem SR650 
--[7X05CTO1WW]-/-[7X05CTO1WW]-, BIOS -[IVE164L-2.80]- 10/23/2020
-[ 1926.540010] Workqueue: bcache bch_data_insert_keys [bcache]
-[ 1926.806482] RIP: 0010:__bch_btree_node_write+0x662/0x690 [bcache]
-<snipped>
