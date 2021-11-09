@@ -2,87 +2,90 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44623448039
-	for <lists+linux-bcache@lfdr.de>; Mon,  8 Nov 2021 14:23:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A45044A5AF
+	for <lists+linux-bcache@lfdr.de>; Tue,  9 Nov 2021 05:13:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239915AbhKHN0R (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 8 Nov 2021 08:26:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54078 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239917AbhKHN0Q (ORCPT
+        id S238761AbhKIEQF (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 8 Nov 2021 23:16:05 -0500
+Received: from zg8tmtm5lju5ljm3lje2naaa.icoremail.net ([139.59.37.164]:37683
+        "HELO zg8tmtm5lju5ljm3lje2naaa.icoremail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S236991AbhKIEQF (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 8 Nov 2021 08:26:16 -0500
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 561AAC061570
-        for <linux-bcache@vger.kernel.org>; Mon,  8 Nov 2021 05:23:32 -0800 (PST)
-Received: by mail-io1-xd2d.google.com with SMTP id x10so4745166ioj.9
-        for <linux-bcache@vger.kernel.org>; Mon, 08 Nov 2021 05:23:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=zx65JLNOcPnDI4dtvkfbte1frN4DHKsfW28wO+xNDk8=;
-        b=N3p7mfBsF/b9XqjFOHzoQvKO+snYbEhyySBtvG0xgYU1ZjzuKhBlmLTNLyy6bqL741
-         EY/2FkRQ4ytvnA8pTw2ae46JWzb5yJVZgaKn2rk5osCACt9kmM1rFMFnfZN1wAFFcj8c
-         Hw2Uj9jBBYHOUmuRxKQSkx9cT6xRPkdHkNLgmN73XEJUPQYTHjQmJXHuvt9OcxbnvRCx
-         3JfH/EBj9jHUPMiT+pf6IFxAab4ZXt5kphAa4yZYMXBnuWkgkqlIT1zwoTeV2jYjfK7t
-         bU21n16ZnV7IpSzPXnxqxKI/rq4NvBjERACJi0H1nxHfA2RsBs7RDoDGtopw3nECtuCj
-         pDyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=zx65JLNOcPnDI4dtvkfbte1frN4DHKsfW28wO+xNDk8=;
-        b=z0OhA1WRyGS5i+Xog+KdxVIfcDJdaaJOml1BngZ3Q9eiwFSdAY4xaStL5vkKbZQiOJ
-         uRP7Op6kggryJDomOFdjj/cqZr/qLBeUx6qJEmJilKQ5xG4UCUTMRKE6RpCy36quhhtc
-         ZzI/EGceasYcpq5NUAkyQn64298SyIesgmrxhHv83XsHLfQB9zDmSa6okYVQJgyjfZtO
-         Wc7OXQ7W/NlBewFreHMw1z6Bhm/+/1HD8OFKIVX7zmU1xNb9dEXTlN+9V0EkPudbTPbd
-         KuTzRnNkWRfL2riyJYDUi+kx3zIK6xXxS/+CrWDsPKhnkdE5MNB1TcUojIIZjPbsDUOR
-         KjXw==
-X-Gm-Message-State: AOAM533a2uz8sjXd4VkItlaDpuPgI2JNX8ikp/MNfvdeK33jy8rkHkWw
-        6pquBKpei4aFIACgpBTLCyh6AQ==
-X-Google-Smtp-Source: ABdhPJw5WAMhm8dqmbV0nJCeP1M4lOIsqvKRPj/3pqL9uPEGRkLn5aG9pzKCY3t0f1xHb1Orja2+EA==
-X-Received: by 2002:a5e:d602:: with SMTP id w2mr4824918iom.121.1636377811696;
-        Mon, 08 Nov 2021 05:23:31 -0800 (PST)
-Received: from [127.0.1.1] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id c7sm1192920iob.28.2021.11.08.05.23.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Nov 2021 05:23:31 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Coly Li <colyli@suse.de>
-Cc:     stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org
-In-Reply-To: <20211103151041.70516-1-colyli@suse.de>
-References: <20211103151041.70516-1-colyli@suse.de>
-Subject: Re: [PATCH] bcache: Revert "bcache: use bvec_virt"
-Message-Id: <163637780949.313555.17062223275836707712.b4-ty@kernel.dk>
-Date:   Mon, 08 Nov 2021 06:23:29 -0700
+        Mon, 8 Nov 2021 23:16:05 -0500
+Received: from fedora33.wangsu.com (unknown [59.61.78.138])
+        by app2 (Coremail) with SMTP id 4zNnewAXH0NT9YlhzlsAAA--.417S2;
+        Tue, 09 Nov 2021 12:13:11 +0800 (CST)
+From:   Lin Feng <linf@wangsu.com>
+To:     colyli@suse.de, kent.overstreet@gmail.com
+Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linf@wangsu.com
+Subject: [PATCH] bcache: fix NULL pointer reference in cached_dev_detach_finish
+Date:   Tue,  9 Nov 2021 12:13:04 +0800
+Message-Id: <20211109041304.87225-1-linf@wangsu.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: 4zNnewAXH0NT9YlhzlsAAA--.417S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw1kKrW7try3tFyrKFWkCrg_yoW8tFWUpr
+        Z7XFyUJFWvqw48Ww42yr47uryrta4DAFyfuw1Fya1Y9ryfW347trW5Xas8A3yUJrW7Wa1I
+        yw45Kr4UZFykWaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_UUUUUUUUU==
+X-CM-SenderInfo: holqwq5zdqw23xof0z/
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, 3 Nov 2021 23:10:41 +0800, Coly Li wrote:
-> This reverts commit 2fd3e5efe791946be0957c8e1eed9560b541fe46.
-> 
-> The above commit replaces page_address(bv->bv_page) by bvec_virt(bv) to
-> avoid directly access to bv->bv_page, but in situation bv->bv_offset is
-> not zero and page_address(bv->bv_page) is not equal to bvec_virt(bv). In
-> such case a memory corruption may happen because memory in next page is
-> tainted by following line in do_btree_node_write(),
-> 	memcpy(bvec_virt(bv), addr, PAGE_SIZE);
-> 
-> [...]
+Commit 0259d4498ba484("bcache: move calc_cached_dev_sectors to proper
+place on backing device detach") tries to fix calc_cached_dev_sectors
+when bcache device detaches, but now we have:
 
-Applied, thanks!
+cached_dev_detach_finish
+    ...
+    bcache_device_detach(&dc->disk);
+        ...
+        closure_put(&d->c->caching);
+        d->c = NULL; [*explicitly set dc->disk.c to NULL*]
+    list_move(&dc->list, &uncached_devices);
+    calc_cached_dev_sectors(dc->disk.c); [*passing a NULL pointer*]
+    ...
 
-[1/1] bcache: Revert "bcache: use bvec_virt"
-      commit: 2878feaed543c35f9dbbe6d8ce36fb67ac803eef
+Upper codeflows shows how bug happens, this patch fix the problem by
+caching dc->disk.c beforehand, and cache_set won't be freed under us
+because c->caching closure at least holds a reference count and closure
+callback __cache_set_unregister only being called by bch_cache_set_stop
+which using closure_queue(&c->caching), that means c->caching closure
+callback for destroying cache_set won't be trigger by previous
+closure_put(&d->c->caching).
+So at this stage(while cached_dev_detach_finish is calling) it's safe to
+access cache_set dc->disk.c.
 
-Best regards,
+Fixes: 0259d4498ba484("bcache: move calc_cached_dev_sectors to proper place on backing device detach")
+Signed-off-by: Lin Feng <linf@wangsu.com>
+---
+ drivers/md/bcache/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 4a9a65dff95e..3d9bc7cd27f8 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1139,6 +1139,7 @@ static void cancel_writeback_rate_update_dwork(struct cached_dev *dc)
+ static void cached_dev_detach_finish(struct work_struct *w)
+ {
+ 	struct cached_dev *dc = container_of(w, struct cached_dev, detach);
++	struct cache_set *c = dc->disk.c;
+ 
+ 	BUG_ON(!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags));
+ 	BUG_ON(refcount_read(&dc->count));
+@@ -1156,7 +1157,7 @@ static void cached_dev_detach_finish(struct work_struct *w)
+ 
+ 	bcache_device_detach(&dc->disk);
+ 	list_move(&dc->list, &uncached_devices);
+-	calc_cached_dev_sectors(dc->disk.c);
++	calc_cached_dev_sectors(c);
+ 
+ 	clear_bit(BCACHE_DEV_DETACHING, &dc->disk.flags);
+ 	clear_bit(BCACHE_DEV_UNLINK_DONE, &dc->disk.flags);
 -- 
-Jens Axboe
-
+2.31.1
 
