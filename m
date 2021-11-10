@@ -2,105 +2,110 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4823744BB91
-	for <lists+linux-bcache@lfdr.de>; Wed, 10 Nov 2021 07:15:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E07C44C30F
+	for <lists+linux-bcache@lfdr.de>; Wed, 10 Nov 2021 15:35:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbhKJGSR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 10 Nov 2021 01:18:17 -0500
-Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net ([209.97.182.222]:53208
-        "HELO zg8tmja5ljk3lje4mi4ymjia.icoremail.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S229572AbhKJGSQ (ORCPT
+        id S232057AbhKJOiX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 10 Nov 2021 09:38:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43654 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231969AbhKJOiW (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 10 Nov 2021 01:18:16 -0500
-X-Greylist: delayed 93737 seconds by postgrey-1.27 at vger.kernel.org; Wed, 10 Nov 2021 01:18:15 EST
-Received: from [10.8.148.37] (unknown [59.61.78.138])
-        by app2 (Coremail) with SMTP id 4zNnewCnr0N+Y4th6_kAAA--.117S2;
-        Wed, 10 Nov 2021 14:15:26 +0800 (CST)
-Message-ID: <5f6cc0b9-50d0-de90-3a52-09abb959b991@wangsu.com>
-Date:   Wed, 10 Nov 2021 14:15:26 +0800
+        Wed, 10 Nov 2021 09:38:22 -0500
+Received: from forward501p.mail.yandex.net (forward501p.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85689C061764
+        for <linux-bcache@vger.kernel.org>; Wed, 10 Nov 2021 06:35:34 -0800 (PST)
+Received: from myt5-ec37e7b64129.qloud-c.yandex.net (myt5-ec37e7b64129.qloud-c.yandex.net [IPv6:2a02:6b8:c05:ab:0:640:ec37:e7b6])
+        by forward501p.mail.yandex.net (Yandex) with ESMTP id ADD816213726;
+        Wed, 10 Nov 2021 17:35:30 +0300 (MSK)
+Received: from 2a02:6b8:c12:2c9b:0:640:2b82:e4d1 (2a02:6b8:c12:2c9b:0:640:2b82:e4d1 [2a02:6b8:c12:2c9b:0:640:2b82:e4d1])
+        by myt5-ec37e7b64129.qloud-c.yandex.net (mxback/Yandex) with HTTP id TZWbM63Du4Y1-ZUD0sYF7;
+        Wed, 10 Nov 2021 17:35:30 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1636554930;
+        bh=yVz5daM7PMciOtP9C5UmvMrsTdUTHVbFD07P49fSHS4=;
+        h=Message-Id:Cc:Subject:In-Reply-To:Date:References:To:From;
+        b=fySSc/LQf2xP8MLtLrj7kTfJlujN274++7QhO24shLOxRxikcTv5O+aBtIhVxYOL3
+         x/ldhT749SloomGzMINVm5X3tngyB+ucbELCX2LMRuUcLmmz6WgoaCTNiLw4yiClQv
+         2MIlUAFFtPNv6aI82yEaSEUi03Ilygl/SLi21M9A=
+Authentication-Results: myt5-ec37e7b64129.qloud-c.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by myt6-2b82e4d1fc0a.qloud-c.yandex.net with HTTP;
+        Wed, 10 Nov 2021 17:35:30 +0300
+From:   Aleksei Zakharov <zakharov.a.g@yandex.ru>
+Envelope-From: zakharov-a-g@yandex.ru
+To:     Dongdong Tao <dongdong.tao@canonical.com>
+Cc:     linux-bcache@vger.kernel.org
+In-Reply-To: <CAJS8hV+KdLA6c8c5OV=z_KmJN2TSWROR6k9Y6_qut4EavJ0=tA@mail.gmail.com>
+References: <10612571636111279@vla5-f98fea902492.qloud-c.yandex.net> <CAJS8hV+KdLA6c8c5OV=z_KmJN2TSWROR6k9Y6_qut4EavJ0=tA@mail.gmail.com>
+Subject: Re: A lot of flush requests to the backing device
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.0
-Subject: Re: [PATCH] bcache: fix NULL pointer reference in
- cached_dev_detach_finish
-Content-Language: en-US
-To:     colyli@suse.de, kent.overstreet@gmail.com
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211109041304.87225-1-linf@wangsu.com>
-From:   Lin Feng <linf@wangsu.com>
-In-Reply-To: <20211109041304.87225-1-linf@wangsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Wed, 10 Nov 2021 17:35:30 +0300
+Message-Id: <5218651636554930@myt6-2b82e4d1fc0a.qloud-c.yandex.net>
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: 4zNnewCnr0N+Y4th6_kAAA--.117S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWF47JF4kKw4xCrWDZrWkWFg_yoW5Jw4fpr
-        Z3XFyjyFWvqw48Ww43Zr43Wryrt34DAFyfWr1Fya1Y9ryfW347trW5Was8C3yUJrW7uF42
-        yr45Kr4kZF4kGaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_UUUUUUUUU==
-X-CM-SenderInfo: holqwq5zdqw23xof0z/
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Coly,
 
-Since previous patch(faulted) has been merged into upstream, this issue
-has to be fix ASAP, else kernel will crash once detach runs, I'm so sorry
-for my mistake!
 
-Thanks,
-LinFeng
+> [Sorry for the Spam detection ... ]
+> 
+> Hi Aleksei,
+> 
+> This is a very interesting finding, I understand that ceph blustore
+> will issue fdatasync requests when it tries to flush data or metadata
+> (via bluefs) to the OSD device. But I'm surprised to see so much
+> pressure it can bring to the backing device.
+> May I know how do you measure the number of flush requests to the
+> backing device per second that is sent from the bcache with the
+> REQ_PREFLUSH flag? (ftrace to some bcache tracepoint ?)
+That was easy: the writeback rate was minimal and there were a lot
+of write requests to the backing device in iostat -xtd 1 output and
+bytes/s was too small for that number of writes. It was relatively old kernel,
+so flushes were not separated in the block layer stats yet.
 
-On 11/9/21 12:13, Lin Feng wrote:
-> Commit 0259d4498ba484("bcache: move calc_cached_dev_sectors to proper
-> place on backing device detach") tries to fix calc_cached_dev_sectors
-> when bcache device detaches, but now we have:
 > 
-> cached_dev_detach_finish
->      ...
->      bcache_device_detach(&dc->disk);
->          ...
->          closure_put(&d->c->caching);
->          d->c = NULL; [*explicitly set dc->disk.c to NULL*]
->      list_move(&dc->list, &uncached_devices);
->      calc_cached_dev_sectors(dc->disk.c); [*passing a NULL pointer*]
->      ...
-> 
-> Upper codeflows shows how bug happens, this patch fix the problem by
-> caching dc->disk.c beforehand, and cache_set won't be freed under us
-> because c->caching closure at least holds a reference count and closure
-> callback __cache_set_unregister only being called by bch_cache_set_stop
-> which using closure_queue(&c->caching), that means c->caching closure
-> callback for destroying cache_set won't be trigger by previous
-> closure_put(&d->c->caching).
-> So at this stage(while cached_dev_detach_finish is calling) it's safe to
-> access cache_set dc->disk.c.
-> 
-> Fixes: 0259d4498ba484("bcache: move calc_cached_dev_sectors to proper place on backing device detach")
-> Signed-off-by: Lin Feng <linf@wangsu.com>
-> ---
->   drivers/md/bcache/super.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 4a9a65dff95e..3d9bc7cd27f8 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1139,6 +1139,7 @@ static void cancel_writeback_rate_update_dwork(struct cached_dev *dc)
->   static void cached_dev_detach_finish(struct work_struct *w)
->   {
->   	struct cached_dev *dc = container_of(w, struct cached_dev, detach);
-> +	struct cache_set *c = dc->disk.c;
->   
->   	BUG_ON(!test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags));
->   	BUG_ON(refcount_read(&dc->count));
-> @@ -1156,7 +1157,7 @@ static void cached_dev_detach_finish(struct work_struct *w)
->   
->   	bcache_device_detach(&dc->disk);
->   	list_move(&dc->list, &uncached_devices);
-> -	calc_cached_dev_sectors(dc->disk.c);
-> +	calc_cached_dev_sectors(c);
->   
->   	clear_bit(BCACHE_DEV_DETACHING, &dc->disk.flags);
->   	clear_bit(BCACHE_DEV_UNLINK_DONE, &dc->disk.flags);
-> 
+> My understanding is that the bcache doesn't need to wait for the flush
+> requests to be completed from the backing device in order to finish
+> the write request, since it used a new bio "flush" for the backing
+> device.
+> So I don't think this will increase the fdatasync latency as long as
+> the write can be performed in a writeback mode. It does increase the
+> read latency if the read io missed the cache.
+Hm, that might be truth for the reads, i'll do some experiments.
+But, I don't see any reason to send flush request to the backing
+device if there's nothing to flush.
 
+> Or maybe I am missing something, let me know how did you observe the
+> latency increasing from bcache layer , I would want to do some
+> experiments as well?
+I'll do some experiments and come back with more details on the
+issue in a week! Already quit that job and don't work with ceph anymore,
+but still thinking about this interesting issue.
+
+> 
+> Regards,
+> Dongdong
+> 
+> On Fri, Nov 5, 2021 at 7:21 PM Aleksei Zakharov <zakharov.a.g@yandex.ru> wrote:
+> 
+>> Hi all,
+>>
+>> I've used bcache a lot for the last three years, mostly in writeback mode with ceph, and I faced a strange behavior. When there's a heavy write load on the bcache device with a lot of fsync()/fdatasync() requests, the bcache device issues a lot of flush requests to the backing device. If the writeback rate is low, then there might be hundreds of flush requests per second issued to the backing device.
+>>
+>> If the writeback rate growths, then latency of the flush requests increases. And latency of the bcache device increases as a result and the application experiences higher disk latency. So, this behavior of bcache slows the application in it's I/O requests when writeback rate becomes high.
+>>
+>> This workload pattern with a lot of fsync()/fdatasync() requests is a common for a latency-sensitive applications. And it seems that this bcache behavior slows down this type of workloads.
+>>
+>> As I understand, if a write request with REQ_PREFLUSH is issued to bcache device, then bcache issues new empty write request with REQ_PREFLUSH to the backing device. What is the purpose of this behavior? It looks like it might be eliminated for the better performance.
+>>
+>> --
+>> Regards,
+>> Aleksei Zakharov
+>> alexzzz.ru
+--
+Regards,
+Aleksei Zakharov
+alexzzz.ru
