@@ -2,55 +2,93 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 384FF452D78
-	for <lists+linux-bcache@lfdr.de>; Tue, 16 Nov 2021 10:01:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CC37452EBA
+	for <lists+linux-bcache@lfdr.de>; Tue, 16 Nov 2021 11:11:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232716AbhKPJEg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 16 Nov 2021 04:04:36 -0500
-Received: from mail.bizjoindeal.pl ([80.211.97.164]:57710 "EHLO
-        mail.bizjoindeal.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232744AbhKPJEd (ORCPT
+        id S233836AbhKPKNw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 16 Nov 2021 05:13:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36770 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233807AbhKPKNt (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 16 Nov 2021 04:04:33 -0500
-X-Greylist: delayed 580 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Nov 2021 04:04:33 EST
-Received: by mail.bizjoindeal.pl (Postfix, from userid 1001)
-        id 160C4A2A1C; Tue, 16 Nov 2021 08:51:32 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=bizjoindeal.pl;
-        s=mail; t=1637052714;
-        bh=JZuQ1fK7zFtz2oeUB7Xfid9vb7kUywdmDd2OluR8ywA=;
-        h=Date:From:To:Subject:From;
-        b=kgR9rJ8caJK8f46I98+fRP8UluJNVA+LaNVxfWX4Fuk/liw3EWZx+md8JlVGrxMAA
-         iudE47ppa+ycqAMrgixKPS9bTEMI+to3wgLKchcWaMlW8tOuh4I2aF/MvmMgT6946s
-         1O/IXluOdc86HPJfXZ0yW30h/wLoUXBejVhe/lMchUlme526c4I2r43VlhqjeylZHi
-         1UrlbTOsSsXDnNqx5fMV7TjNZ9JFMRrFXBj3153oL+pA43ASZ4Mr9+UI2DtMcS6nZZ
-         tmJ7ZXRkrnCkNu+How+QqUuxTuxDj4qEr2Vc8eLgldTB2dAOI1KGXHdgwITkQWCgSQ
-         hWq22fIyQYJ8Q==
-Received: by mail.bizjoindeal.pl for <linux-bcache@vger.kernel.org>; Tue, 16 Nov 2021 08:51:12 GMT
-Message-ID: <20211116074500-0.1.60.f13h.0.gd5pijfi2o@bizjoindeal.pl>
-Date:   Tue, 16 Nov 2021 08:51:12 GMT
-From:   "Dorian Kwiatkowski" <dorian.kwiatkowski@bizjoindeal.pl>
-To:     <linux-bcache@vger.kernel.org>
-Subject: Fotowoltaika dla firm
-X-Mailer: mail.bizjoindeal.pl
+        Tue, 16 Nov 2021 05:13:49 -0500
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A86C061570
+        for <linux-bcache@vger.kernel.org>; Tue, 16 Nov 2021 02:10:53 -0800 (PST)
+Received: by mail-yb1-xb2a.google.com with SMTP id q74so55877447ybq.11
+        for <linux-bcache@vger.kernel.org>; Tue, 16 Nov 2021 02:10:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kaishome.de; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=uWMFQgYnSJL6nVRP/65AJvYO7Fbf+NOdHFy0RZX0bWc=;
+        b=imi4zDUHr09iBAREcbFSshO7HE3eI9WoO2ZnXsS//qE7gUbBL2d15P3GnNjkVD+ASi
+         1An5NoLQiQB9ygRMBpWEjOCh+xqgJxNc6bNyl5QGt8qj30QrnukL2docPHKaMqPN8ZdQ
+         Z0nO6Eedg52fyfZhukK3pvHxqw/d5dfiiNdRQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=uWMFQgYnSJL6nVRP/65AJvYO7Fbf+NOdHFy0RZX0bWc=;
+        b=eTv4qEStHDLaV9s3AwLO0ueX5UAyyv/m1adLUVR/9y+rNC7d2oEXcgu7k4msu6ZMj6
+         Bg37N/AexsvNrOvho9meRwBI8HwvTLjGRbYZUDive1/tycUawd6zZelzLdW2fME4e9Nm
+         suGg+OUbEIKZ9PJ7iyAi9HCUVuc3AbYfZkA4VYBErxyPlTlOnd6/SYWtrVLFRMayq9V2
+         KHEg/fKRrRWIlB/iDQtlF4ji57SBKkDgWFi1/thLhFz+kiNefvu9eTy8KQqI0MiZA/jA
+         bzDXXWKSeJ4hMZpuE3Bbli2ku2umV86QJjag8nDhsru39yF+nYJwAyMplj4BBE/UPckj
+         FiMg==
+X-Gm-Message-State: AOAM533pnjI86Pwi1mtirbXYXbnwxL/wZeOrQTLiC37Y4bNbdB5RIVJ9
+        0DjhLUyXL8ho1OuCTB76Hfo3R6Du8EMhdrTRYpCjWhlb2IUBKA==
+X-Google-Smtp-Source: ABdhPJz4jK4d1y5haDhdM2cpeUueouIBC3ck8FQNt6dH53BRaregXbBAC8Svo3ZrsxpM/pa2NCw1NVn8Dl4pdk2BU4g=
+X-Received: by 2002:a25:800f:: with SMTP id m15mr6799337ybk.525.1637057452374;
+ Tue, 16 Nov 2021 02:10:52 -0800 (PST)
 MIME-Version: 1.0
+From:   Kai Krakow <kai@kaishome.de>
+Date:   Tue, 16 Nov 2021 11:10:41 +0100
+Message-ID: <CAC2ZOYtu65fxz6yez4H2iX=_mCs6QDonzKy7_O70jTEED7kqRQ@mail.gmail.com>
+Subject: Consistent failure of bcache upgrading from 5.10 to 5.15.2
+To:     linux-bcache@vger.kernel.org, Coly Li <colyli@suse.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Hello Coly!
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC dostrzegam mo=C5=BC=
-liwo=C5=9B=C4=87 redukcji op=C5=82at za pr=C4=85d.
+I think I can consistently reproduce a failure mode of bcache when
+going from 5.10 LTS to 5.15.2 - on one single system (my other systems
+do just fine).
 
-Odpowiednio dobrana instalacja fotowoltaiczna to rozwi=C4=85zanie, kt=C3=B3=
-re pozwala wygenerowa=C4=87 spore oszcz=C4=99dno=C5=9Bci w skali roku.
+In 5.10, bcache is stable, no problems at all. After booting to
+5.15.2, btrfs would complain about broken btree generation numbers,
+then freeze completely. Going back to 5.10, bcache complains about
+being broken and cannot start the cache set.
 
-Chcia=C5=82bym porozmawia=C4=87 z Pa=C5=84stwem o tego typu rozwi=C4=85za=
-niu, a tak=C5=BCe przedstawi=C4=87 wst=C4=99pne kalkulacje.
+I was able to reproduce the following behavior after the problem
+struck me twice in a row:
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani?
+1. Boot into SysRescueCD
+2. modprobe bcache
+3. Manually detach the btrfs disks from bcache, set cache mode to
+none, force running
+4. Reboot into 5.15.2 (now works)
+5. See this error in dmesg:
 
-Pozdrawiam,
-Dorian Kwiatkowski
+[   27.334306] bcache: bch_cache_set_error() error on
+04af889c-4ccb-401b-b525-fb9613a81b69: empty set at bucket 1213, block
+1, 0 keys, disabling caching
+[   27.334453] bcache: cache_set_free() Cache set
+04af889c-4ccb-401b-b525-fb9613a81b69 unregistered
+[   27.334510] bcache: register_cache() error sda3: failed to run cache set
+[   27.334512] bcache: register_bcache() error : failed to register device
+
+6. wipefs the failed bcache cache
+7. bcache make -C -w 512 /dev/sda3 -l bcache-cdev0 --force
+8. re-attach the btrfs disks in writearound mode
+9. btrfs immediately fails, freezing the system (with transactions IDs way off)
+10. reboot loops to 5, unable to mount
+11. escape the situation by starting at 1, and not make a new bcache
+
+Is this a known error? Why does it only hit this machine?
+
+SSD Model: Samsung SSD 850 EVO 250GB
+
+Thanks,
+Kai
