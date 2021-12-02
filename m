@@ -2,78 +2,81 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35625464CF1
-	for <lists+linux-bcache@lfdr.de>; Wed,  1 Dec 2021 12:34:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72FA246663C
+	for <lists+linux-bcache@lfdr.de>; Thu,  2 Dec 2021 16:13:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349006AbhLALhs (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 1 Dec 2021 06:37:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33588 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349014AbhLALhi (ORCPT
+        id S1347525AbhLBPQh (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 2 Dec 2021 10:16:37 -0500
+Received: from mailbackend.panix.com ([166.84.1.89]:50000 "EHLO
+        mailbackend.panix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236157AbhLBPQh (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 1 Dec 2021 06:37:38 -0500
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F4A5C061396
-        for <linux-bcache@vger.kernel.org>; Wed,  1 Dec 2021 03:34:11 -0800 (PST)
-Received: by mail-qv1-xf29.google.com with SMTP id g9so19337797qvd.2
-        for <linux-bcache@vger.kernel.org>; Wed, 01 Dec 2021 03:34:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=l4J9Z+m4hmgZbWtQHlC70w1zjUmiI7wjClCwm6dHAnY=;
-        b=nKE9e+4jEQRb21OhoYPSbxPLfJ2IuSmNXU0U6wmcP4ykCacrWpdbtE0jjuz/hSLLGi
-         3CHjeG+lFmWzoULwCsmlhVFgDEk5dLFaYb51pw7bXGjZ9H8t0j91dP9aL17MRQYkMPZK
-         Snvty/Yp8/ZrWZr2EuFXHqBxUdbU8X39ik45viERJ1Dn7qW8BPCFp2vlafV2okU0kn5j
-         QPTIDY8QJSy8zAVbK10d6+AY0lky+mrQRAAg0uS1DacQStzD/dQtt/uBz/RlGIdZCai/
-         BHep24kmiLdl1nvBvHYMFonu8NoJvJlErv7lbZlg2+2c277BpkzmDA4WwPZoxzlIf0Mh
-         Af5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=l4J9Z+m4hmgZbWtQHlC70w1zjUmiI7wjClCwm6dHAnY=;
-        b=jPi1P/rM8NnnnrAbOI/t4VnAwRT6wE7PldizSEnUvAHfs4LERd7klRDdS3cLsVWkTa
-         agr1z/uJ14hieRpqjFMbW9iyAYDbqQuVkOJOKtms1Dq3cncUl4079uO70j3UsfqkFB1o
-         Lp2W8Fy0OCKJXHX980PchxOpxSxD8cYNmy4vnJtoG/tfhGLmu/H/5lcjn8OpW6rPkGMJ
-         W7jXrStT5a87GghkROim1+64nxn70KlnCwl3HWbLU2jr7Mc93AoTTVAeFxTvBVAJ6N4A
-         UVQVxxrvbviycKl4WBQTZF3dYiP85wTDDhDgoN71289zQav1mj21+JAzIyi76ilRqbPB
-         4d/Q==
-X-Gm-Message-State: AOAM530Lx4gRnbZaS8MX0R/at1IhNIDscDPeNEV+Zgt8rCLWb9wYCt7L
-        q0DEOnHWmoaxrQuFwTWTuwzHNanfQcxbMTvaSG2ULXBeF9g=
-X-Google-Smtp-Source: ABdhPJwK+H50pzFgfv5CJPfAwBzUdMqIKHh+Ckkuju2lG2knVlJrzqINPiiwPjc/Uz6xuSJez7Fkn5YZPcfa5CPpvro=
-X-Received: by 2002:a67:ef4d:: with SMTP id k13mr6266305vsr.4.1638358439020;
- Wed, 01 Dec 2021 03:33:59 -0800 (PST)
+        Thu, 2 Dec 2021 10:16:37 -0500
+Received: from xps-7390.lan (50-233-66-25-static.hfc.comcastbusiness.net [50.233.66.25])
+        by mailbackend.panix.com (Postfix) with ESMTPSA id 4J4fbX4wgSzRyK;
+        Thu,  2 Dec 2021 10:13:12 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
+        t=1638457993; bh=toNejAxkj+yP8ltzlp9a3STqZnD7jU0oVwaijQEJlZU=;
+        h=Date:From:Reply-To:To:cc:Subject:In-Reply-To:References;
+        b=iQWI9zs4cbEE27OPkZUNGunlqbBji7LPHblAro+/jkZcNX24HasiX5UC30tsS+Ese
+         pPZ502MW72NrVzRpV70RpLot5KWFaFQS5/mSzJ3Rv12dJPF/NtSLrrtAyySPvjJTJU
+         HL0nQA00QggMvQiD4jwuQqwy6YAByTPWSR92+T7c=
+Date:   Thu, 2 Dec 2021 07:13:11 -0800 (PST)
+From:   "Kenneth R. Crudup" <kenny@panix.com>
+Reply-To: "Kenneth R. Crudup" <kenny@panix.com>
+To:     Jens Axboe <axboe@kernel.dk>
+cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nvme@lists.infradead.org,
+        "Kenneth R. Crudup" <kenny@panix.com>, shinichiro.kawasaki@wdc.com
+Subject: Re: Write I/O queue hangup at random on recent Linus' kernels
+In-Reply-To: <be6a783-97db-c3bf-b16f-e8c62b14755d@panix.com>
+Message-ID: <4429eed8-b9b9-6943-f76-6ea38d695248@panix.com>
+References: <b3ba57a7-d363-9c17-c4be-9dbe86875@panix.com> <b9c2681f-e63a-4d3b-913d-d8a75e2c2ea0@kernel.dk> <be6a783-97db-c3bf-b16f-e8c62b14755d@panix.com>
 MIME-Version: 1.0
-Sender: unitednationawardwinner@gmail.com
-Received: by 2002:ab0:6c55:0:0:0:0:0 with HTTP; Wed, 1 Dec 2021 03:33:58 -0800 (PST)
-From:   "Mrs. Orgil Baatar" <mrs.orgilbaatar21@gmail.com>
-Date:   Wed, 1 Dec 2021 03:33:58 -0800
-X-Google-Sender-Auth: uTQ_nfkzXaWGWaTWp1BSFqK3Ucs
-Message-ID: <CAJ4dHaSrD-X=xpfKNZV-hXSiMV6mNYrgy5vWCNkKm6iu5RQStg@mail.gmail.com>
-Subject: Your long awaited part payment of $2.5.000.00Usd
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Attention: Beneficiary, Your long awaited part payment of
-$2.5.000.00Usd (TWO MILLION FIVE Hundred Thousand United State
-Dollars) is ready for immediate release to you, and it was
-electronically credited into an ATM Visa Card for easy delivery.
 
-Your new Payment Reference No.- 6363836,
-Pin Code No: 1787
-Your Certificate of Merit Payment No: 05872,
+On Thu, 25 Nov 2021, Kenneth R. Crudup wrote:
 
-Your Names: |
-Address: |
+> > echo 0 > /sys/block/nvme0n1/queue/wbt_lat_usec
+> > and that will disable writeback throttling on that device.
 
-Person to Contact:MR KELLY HALL the Director of the International
-Audit unit ATM Payment Center,
+> It's been about 48 hours and haven't seen the issue since doing this.
 
-Email: uba-bf@e-ubabf.com
-TELEPHONE: +226 64865611 You can whatsApp the bank
+I'm now back to running Linus' master (which includes your fix for this, and
+I'm not disabling WBT any longer).
 
-Regards.
-Mrs ORGIL BAATAR
+We may still have issues, it appears. Everything was going OK until yesterday,
+when I had an SD-Card with an image of an SSD with a dm volume group on it,
+that I'd had mounted as a loopback image and activated (... was that clear)?
+
+While I'm not seeing any kernel messages related to my NVMe (root) device, I'm
+also seeing the same UI issues as before- the KDE toolbar is unresponsive, and
+I don't have full interaction with my desktop UI (i.e., can't click on the
+bottom button bar to switch to the active window). I'm pretty sure this is a
+symptom of another I/O problem, however.
+
+I tried to unfreeze it by:
+
+  $ echo 0 | sudo tee -a /sys/block/mmcblk0/queue/wbt_lat_usec /sys/block/loop?/queue/wbt_lat_usec
+
+... and a couple of seconds after that, it looked as if some queued-up toolbar
+actions spit out (but was then unresponsive), so I'd tried this to see if it
+would tell me if I had any throttled/stalled IOs:
+
+  $ egrep -r . $(sudo find /sys/block/*/ -name inflight )
+
+... but they were all zeros.
+
+Does this make sense? Your patch seemed to be block-device-agnostic, but is there
+a chance there's a similar path in the "dm" that also needs to be fixed?
+
+Thanks,
+
+	-Kenny
+
+-- 
+Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange County CA
