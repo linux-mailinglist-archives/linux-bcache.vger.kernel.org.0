@@ -2,52 +2,52 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E72A1471BB7
-	for <lists+linux-bcache@lfdr.de>; Sun, 12 Dec 2021 18:06:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3830D471BBA
+	for <lists+linux-bcache@lfdr.de>; Sun, 12 Dec 2021 18:06:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231735AbhLLRGN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 12 Dec 2021 12:06:13 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:39744 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229618AbhLLRGN (ORCPT
+        id S231740AbhLLRGR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 12 Dec 2021 12:06:17 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:54904 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231738AbhLLRGR (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 12 Dec 2021 12:06:13 -0500
+        Sun, 12 Dec 2021 12:06:17 -0500
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 130A51F3B3;
-        Sun, 12 Dec 2021 17:06:12 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTP id 9CED1212B5;
+        Sun, 12 Dec 2021 17:06:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1639328772; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1639328775; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=JUY6gbxnHrHp5+VlzLf1V8UzoAZSqOqRm9EfiM7F2os=;
-        b=OEXQ+fVonf1dPpuFx4J/Geoq/SZrQD3qiiJ0/cDrIYovq+uZ2D5HFzTX+joAKrFUHMIuGd
-        uTJAZFbfouUTEUA3YySOUO8Hh/pIDy6fff0Jg9Zc1beNGXXmdSEcG6KTWfSdZUwP0wLTZ6
-        cQ6MbwpnFTw0aUhg/QmuQCtbzcz4nFQ=
+        bh=h7PATU2+1T8MxJULpFLGSDwYRqljjBBWx8HiMrzCCWs=;
+        b=HmkUhtjkEi1PGdfqc1rmmz+MtYq4cGzazMrDeArAOOPpefS3EfwbyYadMozBssqJmQbto9
+        FzFW9y27F1A4Mt99Zv7KWUmPuB9fhu/9naFNOGANg4seljPBXGn/L6TAgDwLcKqimpua78
+        cZfJFFPu7mpd+lgHfAIjNtuCTjNJQsg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1639328772;
+        s=susede2_ed25519; t=1639328775;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=JUY6gbxnHrHp5+VlzLf1V8UzoAZSqOqRm9EfiM7F2os=;
-        b=crfYbXmdrFAv9/hpejV8ej6iYU9+O2O1lf+beRBPhNnWM0vRlx6/SScbFM71ik8obBdLen
-        D93ZsGSCPynYtiBg==
+        bh=h7PATU2+1T8MxJULpFLGSDwYRqljjBBWx8HiMrzCCWs=;
+        b=U5KCrVV7GNGS/up0LtWOUHwVwQQIFIdCqinBbHW9HHdVOMmJmKhLnPgpBasHL5borbRx6y
+        1DrwEt6/uMiFq1CQ==
 Received: from suse.localdomain (unknown [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id ED13DA3B81;
-        Sun, 12 Dec 2021 17:06:08 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTP id D03DBA3B81;
+        Sun, 12 Dec 2021 17:06:12 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Hannes Reinecke <hare@suse.de>,
         Jianpeng Ma <jianpeng.ma@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
         Qiaowei Ren <qiaowei.ren@intel.com>,
-        Ying Huang <ying.huang@intel.com>
-Subject: [PATCH v13 01/12] bcache: add initial data structures for nvm pages
-Date:   Mon, 13 Dec 2021 01:05:41 +0800
-Message-Id: <20211212170552.2812-2-colyli@suse.de>
+        Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Hannes Reinecke <hare@suse.de>
+Subject: [PATCH v13 02/12] bcache: initialize the nvm pages allocator
+Date:   Mon, 13 Dec 2021 01:05:42 +0800
+Message-Id: <20211212170552.2812-3-colyli@suse.de>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211212170552.2812-1-colyli@suse.de>
 References: <20211212170552.2812-1-colyli@suse.de>
@@ -57,341 +57,542 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch initializes the prototype data structures for nvm pages
-allocator,
+From: Jianpeng Ma <jianpeng.ma@intel.com>
 
-- struct bch_nvmpg_sb
-  This is the super block allocated on each nvdimm namespace for the nvm
-pages allocator. A nvdimm pages allocator set may have multiple name-
-spaces, bch_nvmpg_sb->set_uuid is used to mark which nvdimm set this
-namespace belongs to.
+This patch define the prototype data structures in memory and
+initializes the nvm pages allocator.
 
-- struct bch_nvmpg_header
-  This is a table for all heads of all allocation record lists. An allo-
-cation record list traces all page(s) allocated from nvdimm namespace(s)
-to a specific requester (identified by uuid). After system reboot, a
-requester can retrieve all previously allocated nvdimm pages from its
-record list by a pre-defined uuid.
+The nvm address space which is managed by this allocator can consist of
+many nvm namespaces, and some namespaces can compose into one nvm set,
+like cache set. For this initial implementation, only one set can be
+supported.
 
-- struct bch_nvmpg_head
-  This is a head of an allocation record list. Each nvdimm pages
-requester (typically it's a driver) has and only has one allocation
-record list, and an allocated nvdimm page only belongs to a specific
-allocation record list. Member uuid[] will be set as the requester's
-uuid, e.g. for bcache it is the cache set uuid. Member label is not
-mandatory, it is a human-readable string for debug purpose. The nvm
-offset format pointers recs_offset[] point to the location of actual
-allocator record lists on each namespace of the nvdimm pages allocator
-set. Each per namespace record list is represented by the following
-struct bch_nvmpg_recs.
+The users of this nvm pages allocator need to call register_namespace()
+to register the nvdimm device (like /dev/pmemX) into this allocator as
+the instance of struct nvm_namespace.
 
-- struct bch_nvmpg_recs
-  This structure represents a requester's allocation record list. Member
-uuid is same value as the uuid of its corresponding struct
-bch_nvmpg_head. Member recs[] is a table of struct bch_pgalloc_rec
-objects to trace all allocated nvmdimm pages. If the table recs[] is
-full, the nvmpg format offset is a pointer points to the next struct
-bch_nvmpg_recs object, nvm pages allocator will look for available free
-allocation record there. All the linked struct bch_nvmpg_recs objects
-compose a requester's allocation record list which is headed by the
-above struct bch_nvmpg_head.
-
-- struct bch_nvmpg_rec
-  This structure records a range of allocated nvdimm pages. Member pgoff
-is offset in unit of page size of this allocation range. Member order
-indicates size of the allocation range by (1 << order) in unit of page
-size. Because the nvdimm pages allocator set may have multiple nvdimm
-namespaces, member ns_id is used to identify which namespace the pgoff
-belongs to.
-  - Bits  0 - 51: pgoff - is pages offset of the allocated pages.
-  - Bits 52 - 57: order - allocated size in page_size * order-of-2
-  - Bits 58 - 60: ns_id - identify which namespace the pages stays on
-  - Bits 61 - 63: reserved.
-Since each of the allocated nvm pages are power of 2, using 6 bits to
-represent allocated size can have (1<<(1<<64) - 1) * PAGE_SIZE maximum
-value. It can be a 76 bits width range size in byte for 4KB page size,
-which is large enough currently.
-
-All the structure members having _offset suffix are in a special format.
-E.g. bch_nvmpg_sb.{sb_offset, pages_offset, set_header_offset},
-bch_nvmpg_head.recs_offset, bch_nvmpg_recs.{head_offset, next_offset},
-the offset value is 64bit, the most significant 3 bits are used to
-identify which namespace this offset belongs to, and the rested 61 bits
-are actual offset inside the namespace. Following patches will have
-helper routines to do the conversion between memory pointer and offset.
-
-Signed-off-by: Coly Li <colyli@suse.de>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Jianpeng Ma <jianpeng.ma@intel.com>
+Co-developed-by: Qiaowei Ren <qiaowei.ren@intel.com>
+Signed-off-by: Qiaowei Ren <qiaowei.ren@intel.com>
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Hannes Reinecke <hare@suse.de>
 Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Jianpeng Ma <jianpeng.ma@intel.com>
-Cc: Qiaowei Ren <qiaowei.ren@intel.com>
-Cc: Ying Huang <ying.huang@intel.com>
 ---
- drivers/md/bcache/nvmpg_format.h | 253 +++++++++++++++++++++++++++++++
- 1 file changed, 253 insertions(+)
- create mode 100644 drivers/md/bcache/nvmpg_format.h
+ drivers/md/bcache/Kconfig  |  10 ++
+ drivers/md/bcache/Makefile |   1 +
+ drivers/md/bcache/nvmpg.c  | 340 +++++++++++++++++++++++++++++++++++++
+ drivers/md/bcache/nvmpg.h  |  97 +++++++++++
+ drivers/md/bcache/super.c  |   3 +
+ 5 files changed, 451 insertions(+)
+ create mode 100644 drivers/md/bcache/nvmpg.c
+ create mode 100644 drivers/md/bcache/nvmpg.h
 
-diff --git a/drivers/md/bcache/nvmpg_format.h b/drivers/md/bcache/nvmpg_format.h
+diff --git a/drivers/md/bcache/Kconfig b/drivers/md/bcache/Kconfig
+index cf3e8096942a..4a7c13e882bb 100644
+--- a/drivers/md/bcache/Kconfig
++++ b/drivers/md/bcache/Kconfig
+@@ -36,3 +36,13 @@ config BCACHE_ASYNC_REGISTRATION
+ 	device path into this file will returns immediately and the real
+ 	registration work is handled in kernel work queue in asynchronous
+ 	way.
++
++config BCACHE_NVM_PAGES
++	bool "NVDIMM support for bcache (EXPERIMENTAL)"
++	depends on BCACHE
++	depends on 64BIT
++	depends on LIBNVDIMM
++	depends on DAX
++	help
++	  Allocate/release NV-memory pages for bcache and provide allocated pages
++	  for each requestor after system reboot.
+diff --git a/drivers/md/bcache/Makefile b/drivers/md/bcache/Makefile
+index 5b87e59676b8..276b33be5ad5 100644
+--- a/drivers/md/bcache/Makefile
++++ b/drivers/md/bcache/Makefile
+@@ -5,3 +5,4 @@ obj-$(CONFIG_BCACHE)	+= bcache.o
+ bcache-y		:= alloc.o bset.o btree.o closure.o debug.o extents.o\
+ 	io.o journal.o movinggc.o request.o stats.o super.o sysfs.o trace.o\
+ 	util.o writeback.o features.o
++bcache-$(CONFIG_BCACHE_NVM_PAGES) += nvmpg.o
+diff --git a/drivers/md/bcache/nvmpg.c b/drivers/md/bcache/nvmpg.c
 new file mode 100644
-index 000000000000..414bcafa31ee
+index 000000000000..b654bbbda03e
 --- /dev/null
-+++ b/drivers/md/bcache/nvmpg_format.h
-@@ -0,0 +1,253 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++++ b/drivers/md/bcache/nvmpg.c
+@@ -0,0 +1,340 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Nvdimm page-buddy allocator
++ *
++ * Copyright (c) 2021, Intel Corporation.
++ * Copyright (c) 2021, Qiaowei Ren <qiaowei.ren@intel.com>.
++ * Copyright (c) 2021, Jianpeng Ma <jianpeng.ma@intel.com>.
++ */
 +
-+#ifndef _NVMPG_FORMAT_H
-+#define _NVMPG_FORMAT_H
++#include "bcache.h"
++#include "nvmpg.h"
++
++#include <linux/slab.h>
++#include <linux/list.h>
++#include <linux/mutex.h>
++#include <linux/dax.h>
++#include <linux/pfn_t.h>
++#include <linux/libnvdimm.h>
++#include <linux/mm_types.h>
++#include <linux/err.h>
++#include <linux/pagemap.h>
++#include <linux/bitmap.h>
++#include <linux/blkdev.h>
++
++struct bch_nvmpg_set *global_nvmpg_set;
++
++void *bch_nvmpg_offset_to_ptr(unsigned long offset)
++{
++	int ns_id = BCH_NVMPG_GET_NS_ID(offset);
++	struct bch_nvmpg_ns *ns = global_nvmpg_set->ns_tbl[ns_id];
++
++	if (offset == 0)
++		return NULL;
++
++	ns_id = BCH_NVMPG_GET_NS_ID(offset);
++	ns = global_nvmpg_set->ns_tbl[ns_id];
++
++	if (ns)
++		return (void *)(ns->base_addr + BCH_NVMPG_GET_OFFSET(offset));
++
++	pr_err("Invalid ns_id %u\n", ns_id);
++	return NULL;
++}
++
++unsigned long bch_nvmpg_ptr_to_offset(struct bch_nvmpg_ns *ns, void *ptr)
++{
++	int ns_id = ns->ns_id;
++	unsigned long offset = (unsigned long)(ptr - ns->base_addr);
++
++	return BCH_NVMPG_OFFSET(ns_id, offset);
++}
++
++static void release_ns_tbl(struct bch_nvmpg_set *set)
++{
++	int i;
++	struct bch_nvmpg_ns *ns;
++
++	for (i = 0; i < BCH_NVMPG_NS_MAX; i++) {
++		ns = set->ns_tbl[i];
++		if (ns) {
++			fs_put_dax(ns->dax_dev);
++			blkdev_put(ns->bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
++			set->ns_tbl[i] = NULL;
++			set->attached_ns--;
++			kfree(ns);
++		}
++	}
++
++	if (set->attached_ns)
++		pr_err("unexpected attached_ns: %u\n", set->attached_ns);
++}
++
++static void release_nvmpg_set(struct bch_nvmpg_set *set)
++{
++	release_ns_tbl(set);
++	kfree(set);
++}
++
++/* Namespace 0 contains all meta data of the nvmpg allocation set */
++static int init_nvmpg_set_header(struct bch_nvmpg_ns *ns)
++{
++	struct bch_nvmpg_set_header *set_header;
++
++	if (ns->ns_id != 0) {
++		pr_err("unexpected ns_id %u for first nvmpg namespace.\n",
++		       ns->ns_id);
++		return -EINVAL;
++	}
++
++	set_header = bch_nvmpg_offset_to_ptr(ns->sb->set_header_offset);
++
++	mutex_lock(&global_nvmpg_set->lock);
++	global_nvmpg_set->set_header = set_header;
++	global_nvmpg_set->heads_size = set_header->size;
++	global_nvmpg_set->heads_used = set_header->used;
++	mutex_unlock(&global_nvmpg_set->lock);
++
++	return 0;
++}
++
++static int attach_nvmpg_set(struct bch_nvmpg_ns *ns)
++{
++	struct bch_nvmpg_sb *sb = ns->sb;
++	int rc = 0;
++
++	mutex_lock(&global_nvmpg_set->lock);
++
++	if (global_nvmpg_set->ns_tbl[sb->this_ns]) {
++		pr_err("ns_id %u already attached.\n", ns->ns_id);
++		rc = -EEXIST;
++		goto unlock;
++	}
++
++	if (ns->ns_id != 0) {
++		pr_err("unexpected ns_id %u for first namespace.\n", ns->ns_id);
++		rc = -EINVAL;
++		goto unlock;
++	}
++
++	if (global_nvmpg_set->attached_ns > 0) {
++		pr_err("multiple namespace attaching not supported yet\n");
++		rc = -EOPNOTSUPP;
++		goto unlock;
++	}
++
++	if ((global_nvmpg_set->attached_ns + 1) > sb->total_ns) {
++		pr_err("namespace counters error: attached %u > total %u\n",
++		       global_nvmpg_set->attached_ns,
++		       global_nvmpg_set->total_ns);
++		rc = -EINVAL;
++		goto unlock;
++	}
++
++	memcpy(global_nvmpg_set->set_uuid, sb->set_uuid, 16);
++	global_nvmpg_set->ns_tbl[sb->this_ns] = ns;
++	global_nvmpg_set->attached_ns++;
++	global_nvmpg_set->total_ns = sb->total_ns;
++
++unlock:
++	mutex_unlock(&global_nvmpg_set->lock);
++	return rc;
++}
++
++static int read_nvdimm_meta_super(struct block_device *bdev,
++				  struct bch_nvmpg_ns *ns)
++{
++	struct page *page;
++	struct bch_nvmpg_sb *sb;
++	uint64_t expected_csum = 0;
++	int r;
++
++	page = read_cache_page_gfp(bdev->bd_inode->i_mapping,
++				BCH_NVMPG_SB_OFFSET >> PAGE_SHIFT, GFP_KERNEL);
++
++	if (IS_ERR(page))
++		return -EIO;
++
++	sb = (struct bch_nvmpg_sb *)
++	     (page_address(page) + offset_in_page(BCH_NVMPG_SB_OFFSET));
++
++	r = -EINVAL;
++	expected_csum = csum_set(sb);
++	if (expected_csum != sb->csum) {
++		pr_info("csum is not match with expected one\n");
++		goto put_page;
++	}
++
++	if (memcmp(sb->magic, bch_nvmpg_magic, 16)) {
++		pr_info("invalid bch_nvmpg_magic\n");
++		goto put_page;
++	}
++
++	if (sb->sb_offset !=
++	    BCH_NVMPG_OFFSET(sb->this_ns, BCH_NVMPG_SB_OFFSET)) {
++		pr_info("invalid superblock offset 0x%llx\n", sb->sb_offset);
++		goto put_page;
++	}
++
++	r = -EOPNOTSUPP;
++	if (sb->total_ns != 1) {
++		pr_info("multiple name space not supported yet.\n");
++		goto put_page;
++	}
++
++
++	r = 0;
++	/* Necessary for DAX mapping */
++	ns->page_size = sb->page_size;
++	ns->pages_total = sb->pages_total;
++
++put_page:
++	put_page(page);
++	return r;
++}
++
++struct bch_nvmpg_ns *bch_register_namespace(const char *dev_path)
++{
++	struct bch_nvmpg_ns *ns = NULL;
++	struct bch_nvmpg_sb *sb = NULL;
++	char buf[BDEVNAME_SIZE];
++	struct block_device *bdev;
++	pgoff_t pgoff;
++	int id, err;
++	char *path;
++	long dax_ret = 0;
++
++	path = kstrndup(dev_path, 512, GFP_KERNEL);
++	if (!path) {
++		pr_err("kstrndup failed\n");
++		return ERR_PTR(-ENOMEM);
++	}
++
++	bdev = blkdev_get_by_path(strim(path),
++				  FMODE_READ|FMODE_WRITE|FMODE_EXCL,
++				  global_nvmpg_set);
++	if (IS_ERR(bdev)) {
++		pr_err("get %s error: %ld\n", dev_path, PTR_ERR(bdev));
++		kfree(path);
++		return ERR_PTR(PTR_ERR(bdev));
++	}
++
++	err = -ENOMEM;
++	ns = kzalloc(sizeof(struct bch_nvmpg_ns), GFP_KERNEL);
++	if (!ns)
++		goto bdput;
++
++	err = -EIO;
++	if (read_nvdimm_meta_super(bdev, ns)) {
++		pr_err("%s read nvdimm meta super block failed.\n",
++		       bdevname(bdev, buf));
++		goto free_ns;
++	}
++
++	err = -EOPNOTSUPP;
++	ns->dax_dev = fs_dax_get_by_bdev(bdev);
++	if (!ns->dax_dev) {
++		pr_err("can't get dax device by %s\n", bdevname(bdev, buf));
++		goto free_ns;
++	}
++
++	if (!dax_supported(ns->dax_dev, bdev, ns->page_size, 0,
++			   bdev_nr_sectors(bdev))) {
++		pr_err("%s don't support DAX\n", bdevname(bdev, buf));
++		goto free_ns;
++	}
++
++	err = -EINVAL;
++	if (bdev_dax_pgoff(bdev, 0, ns->page_size, &pgoff)) {
++		pr_err("invalid offset of %s\n", bdevname(bdev, buf));
++		goto free_ns;
++	}
++
++	err = -EINVAL;
++	id = dax_read_lock();
++	dax_ret = dax_direct_access(ns->dax_dev, pgoff, ns->pages_total,
++				    &ns->base_addr, &ns->start_pfn);
++	if (dax_ret <= 0) {
++		pr_err("dax_direct_access error\n");
++		dax_read_unlock(id);
++		goto free_ns;
++	}
++
++	if (dax_ret < ns->pages_total) {
++		pr_warn("currently first %ld pages (from %lu in total) are used\n",
++			dax_ret, ns->pages_total);
++	}
++	dax_read_unlock(id);
++
++	sb = (struct bch_nvmpg_sb *)(ns->base_addr + BCH_NVMPG_SB_OFFSET);
++
++	err = -EINVAL;
++	/* Check magic again to make sure DAX mapping is correct */
++	if (memcmp(sb->magic, bch_nvmpg_magic, 16)) {
++		pr_err("invalid bch_nvmpg_magic after DAX mapping\n");
++		goto free_ns;
++	}
++
++	if ((global_nvmpg_set->attached_ns > 0) &&
++	     memcmp(sb->set_uuid, global_nvmpg_set->set_uuid, 16)) {
++		pr_err("set uuid does not match with ns_id %u\n", ns->ns_id);
++		goto free_ns;
++	}
++
++	if (sb->set_header_offset !=
++	    BCH_NVMPG_OFFSET(sb->this_ns, BCH_NVMPG_RECLIST_HEAD_OFFSET)) {
++		pr_err("Invalid header offset: this_ns %u, ns_id %llu, offset 0x%llx\n",
++		       sb->this_ns,
++		       BCH_NVMPG_GET_NS_ID(sb->set_header_offset),
++		       BCH_NVMPG_GET_OFFSET(sb->set_header_offset));
++		goto free_ns;
++	}
++
++	ns->page_size = sb->page_size;
++	ns->pages_offset = sb->pages_offset;
++	ns->pages_total = sb->pages_total;
++	ns->sb = sb;
++	ns->free = 0;
++	ns->bdev = bdev;
++	ns->set = global_nvmpg_set;
++
++	err = attach_nvmpg_set(ns);
++	if (err < 0)
++		goto free_ns;
++
++	mutex_init(&ns->lock);
++
++	err = init_nvmpg_set_header(ns);
++	if (err < 0)
++		goto free_ns;
++
++	kfree(path);
++	return ns;
++
++free_ns:
++	fs_put_dax(ns->dax_dev);
++	kfree(ns);
++bdput:
++	blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
++	kfree(path);
++	return ERR_PTR(err);
++}
++
++int __init bch_nvmpg_init(void)
++{
++	global_nvmpg_set = kzalloc(sizeof(*global_nvmpg_set), GFP_KERNEL);
++	if (!global_nvmpg_set)
++		return -ENOMEM;
++
++	global_nvmpg_set->total_ns = 0;
++	mutex_init(&global_nvmpg_set->lock);
++
++	pr_info("bcache nvm init\n");
++	return 0;
++}
++
++void bch_nvmpg_exit(void)
++{
++	release_nvmpg_set(global_nvmpg_set);
++	pr_info("bcache nvm exit\n");
++}
+diff --git a/drivers/md/bcache/nvmpg.h b/drivers/md/bcache/nvmpg.h
+new file mode 100644
+index 000000000000..698c890b2d15
+--- /dev/null
++++ b/drivers/md/bcache/nvmpg.h
+@@ -0,0 +1,97 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef _BCACHE_NVM_PAGES_H
++#define _BCACHE_NVM_PAGES_H
++
++#include <linux/libnvdimm.h>
++
++#include "nvmpg_format.h"
 +
 +/*
-+ * Bcache on NVDIMM data structures
++ * Bcache NVDIMM in memory data structures
 + */
 +
 +/*
-+ * - struct bch_nvmpg_sb
-+ *   This is the super block allocated on each nvdimm namespace for the nvm
-+ * pages allocator. A nvdimm pages allocator set may have multiple namespaces,
-+ * bch_nvmpg_sb->set_uuid is used to mark which nvdimm set this name space
-+ * belongs to.
-+ *
-+ * - struct bch_nvmpg_header
-+ *   This is a table for all heads of all allocation record lists. An allo-
-+ * cation record list traces all page(s) allocated from nvdimm namespace(s) to
-+ * a specific requester (identified by uuid). After system reboot, a requester
-+ * can retrieve all previously allocated nvdimm pages from its record list by a
-+ * pre-defined uuid.
-+ *
-+ * - struct bch_nvmpg_head
-+ *   This is a head of an allocation record list. Each nvdimm pages requester
-+ * (typically it's a driver) has and only has one allocation record list, and
-+ * an allocated nvdimm page only bedlones to a specific allocation record list.
-+ * Member uuid[] will be set as the requester's uuid, e.g. for bcache it is the
-+ * cache set uuid. Member label is not mandatory, it is a human-readable string
-+ * for debug purpose. The nvm offset format pointers recs_offset[] point to the
-+ * location of actual allocator record lists on each name space of the nvdimm
-+ * pages allocator set. Each per name space record list is represented by the
-+ * following struct bch_nvmpg_recs.
-+ *
-+ * - struct bch_nvmpg_recs
-+ *   This structure represents a requester's allocation record list. Member uuid
-+ * is same value as the uuid of its corresponding struct bch_nvmpg_head. Member
-+ * recs[] is a table of struct bch_pgalloc_rec objects to trace all allocated
-+ * nvmdimm pages. If the table recs[] is full, the nvmpg format offset is a
-+ * pointer points to the next struct bch_nvmpg_recs object, nvm pages allocator
-+ * will look for available free allocation record there. All the linked
-+ * struct bch_nvmpg_recs objects compose a requester's allocation record list
-+ * which is headed by the above struct bch_nvmpg_head.
-+ *
-+ * - struct bch_nvmpg_rec
-+ *   This structure records a range of allocated nvdimm pages. Member pgoff is
-+ * offset in unit of page size of this allocation range. Member order indicates
-+ * size of the allocation range by (1 << order) in unit of page size. Because
-+ * the nvdimm pages allocator set may have multiple nvdimm name spaces, member
-+ * ns_id is used to identify which name space the pgoff belongs to.
-+ *
-+ * All allocation record lists are stored on the first initialized nvdimm name-
-+ * space (ns_id 0). The meta data default layout of nvm pages allocator on
-+ * namespace 0 is,
-+ *
-+ *    0 +---------------------------------+
-+ *      |                                 |
-+ *  4KB +---------------------------------+ <-- BCH_NVMPG_SB_OFFSET
-+ *      |          bch_nvmpg_sb           |
-+ *  8KB +---------------------------------+ <-- BCH_NVMPG_RECLIST_HEAD_OFFSET
-+ *      |        bch_nvmpg_header         |
-+ *      |                                 |
-+ * 16KB +---------------------------------+ <-- BCH_NVMPG_SYSRECS_OFFSET
-+ *      |         bch_nvmpg_recs          |
-+ *      |  (nvm pages internal usage)     |
-+ * 24KB +---------------------------------+
-+ *      |                                 |
-+ *      |                                 |
-+ * 16MB +---------------------------------+ <-- BCH_NVMPG_START
-+ *      |      allocable nvm pages        |
-+ *      |      for buddy allocator        |
-+ * end  +---------------------------------+
-+ *
-+ *
-+ *
-+ * Meta data default layout on rested nvdimm namespaces,
-+ *
-+ *    0 +---------------------------------+
-+ *      |                                 |
-+ *  4KB +---------------------------------+ <-- BCH_NVMPG_SB_OFFSET
-+ *      |          bch_nvmpg_sb           |
-+ *  8KB +---------------------------------+
-+ *      |                                 |
-+ *      |                                 |
-+ *      |                                 |
-+ *      |                                 |
-+ *      |                                 |
-+ *      |                                 |
-+ * 16MB +---------------------------------+ <-- BCH_NVMPG_START
-+ *      |      allocable nvm pages        |
-+ *      |      for buddy allocator        |
-+ * end  +---------------------------------+
-+ *
-+ *
-+ * - The nvmpg offset format pointer
-+ *   All member names ending with _offset in this header are nvmpg offset
-+ * format pointer. The offset format is,
-+ *       [highest 3 bits: ns_id]
-+ *       [rested 61 bits: offset in No. ns_id namespace]
-+ *
-+ * The above offset is byte unit, the procedure to reference a nvmpg offset
-+ * format pointer is,
-+ * 1) Identify the namespace related in-memory structure by ns_id from the
-+ *    highest 3 bits of offset value.
-+ * 2) Get the DAX mapping base address from the in-memory structure.
-+ * 3) Calculate the actual memory address on nvdimm by plusing the DAX base
-+ *    address with offset value in rested low 61 bits.
-+ * All related in-memory structure and conversion routines don't belong to
-+ * user space api, they are defined by nvm-pages allocator code in
-+ * drivers/md/bcache/nvm-pages.{c,h}
-+ *
++ * The following three structures in memory records which page(s) allocated
++ * to which owner. After reboot from power failure, they will be initialized
++ * based on nvm pages superblock in NVDIMM device.
 + */
++struct bch_nvmpg_ns {
++	struct bch_nvmpg_sb *sb;
++	void *base_addr;
 +
-+#include <linux/types.h>
++	unsigned char uuid[16];
++	int ns_id;
++	unsigned int page_size;
++	unsigned long free;
++	unsigned long pages_offset;
++	unsigned long pages_total;
++	pfn_t start_pfn;
 +
-+/* In sectors */
-+#define BCH_NVMPG_SB_OFFSET		4096
-+#define BCH_NVMPG_START			(16 << 20)
++	struct dax_device *dax_dev;
++	struct block_device *bdev;
++	struct bch_nvmpg_set *set;
 +
-+#define BCH_NVMPG_LBL_SIZE		32
-+#define BCH_NVMPG_NS_MAX		8
-+
-+#define BCH_NVMPG_RECLIST_HEAD_OFFSET	(8<<10)
-+#define BCH_NVMPG_SYSRECS_OFFSET	(16<<10)
-+
-+#define BCH_NVMPG_SB_VERSION		0
-+#define BCH_NVMPG_SB_VERSION_MAX	0
-+
-+static const __u8 bch_nvmpg_magic[] = {
-+	0x17, 0xbd, 0x53, 0x7f, 0x1b, 0x23, 0xd6, 0x83,
-+	0x46, 0xa4, 0xf8, 0x28, 0x17, 0xda, 0xec, 0xa9 };
-+static const __u8 bch_nvmpg_recs_magic[] = {
-+	0x39, 0x25, 0x3f, 0xf7, 0x27, 0x17, 0xd0, 0xb9,
-+	0x10, 0xe6, 0xd2, 0xda, 0x38, 0x68, 0x26, 0xae };
-+
-+/* takes 64bit width */
-+struct bch_nvmpg_rec {
-+	union {
-+		struct {
-+			__u64	pgoff:52;
-+			__u64	order:6;
-+			__u64	ns_id:3;
-+			__u64	reserved:3;
-+		};
-+		__u64	_v;
-+	};
++	struct mutex lock;
 +};
 +
-+struct bch_nvmpg_recs {
-+	union {
-+		struct {
-+			/*
-+			 * A nvmpg offset format pointer to
-+			 * struct bch_nvmpg_head
-+			 */
-+			__u64			head_offset;
-+			/*
-+			 * A nvmpg offset format pointer to
-+			 * struct bch_nvm_pgalloc_recs which contains
-+			 * the next recs[] array.
-+			 */
-+			__u64			next_offset;
-+			__u8			magic[16];
-+			__u8			uuid[16];
-+			__u32			size;
-+			__u32			used;
-+			__u64			_pad[4];
-+			struct bch_nvmpg_rec	recs[];
-+		};
-+		__u8				pad[8192];
-+	};
++/*
++ * A set of namespaces. Currently only one set can be supported.
++ */
++struct bch_nvmpg_set {
++	unsigned char set_uuid[16];
++
++	int heads_size;
++	int heads_used;
++	struct bch_nvmpg_set_header *set_header;
++
++	struct bch_nvmpg_ns *ns_tbl[BCH_NVMPG_NS_MAX];
++	int total_ns;
++	int attached_ns;
++
++	struct mutex lock;
 +};
 +
-+#define BCH_NVMPG_MAX_RECS				\
-+	((sizeof(struct bch_nvmpg_recs) -		\
-+	  offsetof(struct bch_nvmpg_recs, recs)) /	\
-+	 sizeof(struct bch_nvmpg_rec))
++#define BCH_NVMPG_NS_ID_BITS	3
++#define BCH_NVMPG_OFFSET_BITS	61
++#define BCH_NVMPG_NS_ID_MASK	((1UL<<BCH_NVMPG_NS_ID_BITS) - 1)
++#define BCH_NVMPG_OFFSET_MASK	((1UL<<BCH_NVMPG_OFFSET_BITS) - 1)
 +
-+#define BCH_NVMPG_HD_STAT_FREE		0x0
-+#define BCH_NVMPG_HD_STAT_ALLOC		0x1
-+struct bch_nvmpg_head {
-+	__u8		uuid[16];
-+	__u8		label[BCH_NVMPG_LBL_SIZE];
-+	__u32		state;
-+	__u32		flags;
-+	/*
-+	 * Array of offset values from the nvmpg offset format
-+	 * pointers, each of the pointer points to a per-namespace
-+	 * struct bch_nvmpg_recs.
-+	 */
-+	__u64		recs_offset[BCH_NVMPG_NS_MAX];
-+};
++#define BCH_NVMPG_GET_NS_ID(offset)					\
++	(((offset) >> BCH_NVMPG_OFFSET_BITS) & BCH_NVMPG_NS_ID_MASK)
 +
-+/* heads[0] is always for nvm_pages internal usage */
-+struct bch_nvmpg_set_header {
-+	union {
-+		struct {
-+			__u32			size;
-+			__u32			used;
-+			__u64			_pad[4];
-+			struct bch_nvmpg_head	heads[];
-+		};
-+		__u8				pad[8192];
-+	};
-+};
++#define BCH_NVMPG_GET_OFFSET(offset)	((offset) & BCH_NVMPG_OFFSET_MASK)
 +
-+#define BCH_NVMPG_MAX_HEADS					\
-+	((sizeof(struct bch_nvmpg_set_header) -			\
-+	  offsetof(struct bch_nvmpg_set_header, heads)) /	\
-+	 sizeof(struct bch_nvmpg_head))
++#define BCH_NVMPG_OFFSET(ns_id, offset)					\
++	((((ns_id) & BCH_NVMPG_NS_ID_MASK) << BCH_NVMPG_OFFSET_BITS) |	\
++	 ((offset) & BCH_NVMPG_OFFSET_MASK))
 +
-+/* The on-media bit order is local CPU order */
-+struct bch_nvmpg_sb {
-+	__u64			csum;
-+	__u64			sb_offset;
-+	__u64			ns_start;
-+	__u64			version;
-+	__u8			magic[16];
-+	__u8			uuid[16];
-+	__u32			page_size;
-+	__u32			total_ns;
-+	__u32			this_ns;
-+	union {
-+		__u8		set_uuid[16];
-+		__u64		set_magic;
-+	};
++/* Indicate which field in bch_nvmpg_sb to be updated */
++#define BCH_NVMPG_TOTAL_NS	0	/* total_ns */
 +
-+	__u64			flags;
-+	__u64			seq;
++void *bch_nvmpg_offset_to_ptr(unsigned long offset);
++unsigned long bch_nvmpg_ptr_to_offset(struct bch_nvmpg_ns *ns, void *ptr);
 +
-+	__u64			feature_compat;
-+	__u64			feature_incompat;
-+	__u64			feature_ro_compat;
++#if defined(CONFIG_BCACHE_NVM_PAGES)
 +
-+	/* For allocable nvm pages from buddy systems */
-+	__u64			pages_offset;
-+	__u64			pages_total;
++struct bch_nvmpg_ns *bch_register_namespace(const char *dev_path);
++int bch_nvmpg_init(void);
++void bch_nvmpg_exit(void);
 +
-+	__u64			pad[8];
++#else
 +
-+	/*
-+	 * A nvmpg offset format pointer, it points
-+	 * to struct bch_nvmpg_set_header which is
-+	 * stored only on the first name space.
-+	 */
-+	__u64			set_header_offset;
++static inline struct bch_nvmpg_ns *bch_register_namespace(const char *dev_path)
++{
++	return NULL;
++}
 +
-+	/* Just for csum_set() */
-+	__u32			keys;
-+	__u64			d[0];
-+};
++static inline int bch_nvmpg_init(void)
++{
++	return 0;
++}
 +
-+#endif /* _NVMPG_FORMAT_H */
++static inline void bch_nvmpg_exit(void) { }
++
++#endif /* CONFIG_BCACHE_NVM_PAGES */
++
++#endif /* _BCACHE_NVM_PAGES_H */
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 86b9e355c583..74d51a0b806f 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -14,6 +14,7 @@
+ #include "request.h"
+ #include "writeback.h"
+ #include "features.h"
++#include "nvmpg.h"
+ 
+ #include <linux/blkdev.h>
+ #include <linux/pagemap.h>
+@@ -2818,6 +2819,7 @@ static void bcache_exit(void)
+ {
+ 	bch_debug_exit();
+ 	bch_request_exit();
++	bch_nvmpg_exit();
+ 	if (bcache_kobj)
+ 		kobject_put(bcache_kobj);
+ 	if (bcache_wq)
+@@ -2916,6 +2918,7 @@ static int __init bcache_init(void)
+ 
+ 	bch_debug_init();
+ 	closure_debug_init();
++	bch_nvmpg_init();
+ 
+ 	bcache_is_reboot = false;
+ 
 -- 
 2.31.1
 
