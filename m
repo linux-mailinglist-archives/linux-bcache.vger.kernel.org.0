@@ -2,51 +2,53 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87613471BCA
-	for <lists+linux-bcache@lfdr.de>; Sun, 12 Dec 2021 18:06:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1186C471BCC
+	for <lists+linux-bcache@lfdr.de>; Sun, 12 Dec 2021 18:06:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231754AbhLLRGq (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 12 Dec 2021 12:06:46 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:54972 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231751AbhLLRGq (ORCPT
+        id S231761AbhLLRGt (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 12 Dec 2021 12:06:49 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:39822 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231751AbhLLRGt (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 12 Dec 2021 12:06:46 -0500
+        Sun, 12 Dec 2021 12:06:49 -0500
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 4791A21124;
-        Sun, 12 Dec 2021 17:06:45 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 811461F3B8;
+        Sun, 12 Dec 2021 17:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1639328805; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1639328808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zM37KlpjSEGE9ygl2WSxh+Gc5gmb1YS25hvOLa+W+eU=;
-        b=xqqT9Y3jc+u2Yf1EE94o/7zhO2i0tDUXlIAQcjzqyI6pEAZJiKtI/GMJZVV9XFs5uHjmMN
-        fsIZVsJP9k2uRrBHuK6rwre5HXrS1kihYRkULO4qenHME5xLIf1+ivLbXh/ghpnHjl1tuY
-        K38yznPD8pKuAhxv6OEliipQEoV7p20=
+        bh=EW1zqLubM+KcJjZzT90EuZMBY75jeWf2XI+GKdWS6lY=;
+        b=sTuOjXY7THPx4r6RmnA5POeyvM7DzzFz3A73UFDEcgYQqYgqBwJ/s+Oh+aoLL1FldDlas5
+        JcPbt/QKG8mxkW3Bb+1kS4XV8PxExu4bATuZCXUETrDAk2706KZ/C7vRu1fXdgUvo4k6V0
+        nF9NaTm5sbV0J838xo+0p3gHJp+o5XY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1639328805;
+        s=susede2_ed25519; t=1639328808;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zM37KlpjSEGE9ygl2WSxh+Gc5gmb1YS25hvOLa+W+eU=;
-        b=UZEokryjKua2ZhLKCwomomBOX970vvd9RW61ftINQHhc/5GeFD3OyOOeWgOwnFt8ZkRhM2
-        TO93PKBqLUdX1fBg==
+        bh=EW1zqLubM+KcJjZzT90EuZMBY75jeWf2XI+GKdWS6lY=;
+        b=4hk3B1iHIV1uRppjdD4EHT8qWKtW4TpKspoT8rZy1DI2q9zDsWCn47saR2286Wy+6iObQW
+        IFfYtSgb0Wc0qWCQ==
 Received: from suse.localdomain (unknown [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id D0AF8A3B81;
-        Sun, 12 Dec 2021 17:06:42 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTP id AA523A3B8B;
+        Sun, 12 Dec 2021 17:06:45 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>, Hannes Reinecke <hare@suse.de>,
+        Coly Li <colyli@suse.de>, kernel test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
         Christoph Hellwig <hch@lst.de>,
         Dan Williams <dan.j.williams@intel.com>,
+        Hannes Reinecke <hare@suse.de>,
         Jianpeng Ma <jianpeng.ma@intel.com>,
         Qiaowei Ren <qiaowei.ren@intel.com>
-Subject: [PATCH v13 10/12] bcache: support storing bcache journal into NVDIMM meta device
-Date:   Mon, 13 Dec 2021 01:05:50 +0800
-Message-Id: <20211212170552.2812-11-colyli@suse.de>
+Subject: [PATCH v13 11/12] bcache: read jset from NVDIMM pages for journal replay
+Date:   Mon, 13 Dec 2021 01:05:51 +0800
+Message-Id: <20211212170552.2812-12-colyli@suse.de>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211212170552.2812-1-colyli@suse.de>
 References: <20211212170552.2812-1-colyli@suse.de>
@@ -56,228 +58,179 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This patch implements two methods to store bcache journal to,
-1) __journal_write_unlocked() for block interface device
-   The latency method to compose bio and issue the jset bio to cache
-   device (e.g. SSD). c->journal.key.ptr[0] indicates the LBA on cache
-   device to store the journal jset.
-2) __journal_nvdimm_write_unlocked() for memory interface NVDIMM
-   Use memory interface to access NVDIMM pages and store the jset by
-   memcpy_flushcache(). c->journal.key.ptr[0] indicates the linear
-   address from the NVDIMM pages to store the journal jset.
+This patch implements two methods to read jset from media for journal
+replay,
+- __jnl_rd_bkt() for block device
+  This is the legacy method to read jset via block device interface.
+- __jnl_rd_nvm_bkt() for NVDIMM
+  This is the method to read jset from NVDIMM memory interface, a.k.a
+  memcopy() from NVDIMM pages to DRAM pages.
 
-For legacy configuration without NVDIMM meta device, journal I/O is
-handled by __journal_write_unlocked() with existing code logic. If the
-NVDIMM meta device is used (by bcache-tools), the journal I/O will
-be handled by __journal_nvdimm_write_unlocked() and go into the NVDIMM
-pages.
+If BCH_FEATURE_INCOMPAT_NVDIMM_META is set in incompat feature set,
+during running cache set, journal_read_bucket() will read the journal
+content from NVDIMM by __jnl_rd_nvm_bkt(). The linear addresses of
+NVDIMM pages to read jset are stored in sb.d[SB_JOURNAL_BUCKETS], which
+were initialized and maintained in previous runs of the cache set.
 
-And when NVDIMM meta device is used, sb.d[] stores the linear addresses
-from NVDIMM pages (no more bucket index), in journal_reclaim() the
-journaling location in c->journal.key.ptr[0] should also be updated by
-linear address from NVDIMM pages (no more LBA combined by sectors offset
-and bucket index).
+A thing should be noticed is, when bch_journal_read() is called, the
+linear address of NVDIMM pages is not loaded and initialized yet, it
+is necessary to call __bch_journal_nvdimm_init() before reading the jset
+from NVDIMM pages.
+
+The code comments added in journal_read_bucket() is noticed by kernel
+test robot and Dan Carpenter, it explains why it is safe to only check
+!bch_has_feature_nvdimm_meta() condition in the if() statement when
+CONFIG_BCACHE_NVM_PAGES is not configured. To avoid confusion from the
+bogus warning message from static checking tool.
 
 Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Hannes Reinecke <hare@suse.de>
 Cc: Jens Axboe <axboe@kernel.dk>
 Cc: Jianpeng Ma <jianpeng.ma@intel.com>
 Cc: Qiaowei Ren <qiaowei.ren@intel.com>
 ---
- drivers/md/bcache/journal.c | 120 +++++++++++++++++++++++++-----------
- drivers/md/bcache/super.c   |   3 +-
- 2 files changed, 85 insertions(+), 38 deletions(-)
+ drivers/md/bcache/journal.c | 88 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 71 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index d887557c718e..7d5c5ed18890 100644
+index 7d5c5ed18890..902992be9191 100644
 --- a/drivers/md/bcache/journal.c
 +++ b/drivers/md/bcache/journal.c
-@@ -596,6 +596,8 @@ static void do_journal_discard(struct cache *ca)
- 		return;
- 	}
- 
-+	BUG_ON(bch_has_feature_nvdimm_meta(&ca->sb));
-+
- 	switch (atomic_read(&ja->discard_in_flight)) {
- 	case DISCARD_IN_FLIGHT:
- 		return;
-@@ -661,9 +663,16 @@ static void journal_reclaim(struct cache_set *c)
- 		goto out;
- 
- 	ja->cur_idx = next;
--	k->ptr[0] = MAKE_PTR(0,
--			     bucket_to_sector(c, ca->sb.d[ja->cur_idx]),
--			     ca->sb.nr_this_dev);
-+	if (!bch_has_feature_nvdimm_meta(&ca->sb))
-+		k->ptr[0] = MAKE_PTR(0,
-+			bucket_to_sector(c, ca->sb.d[ja->cur_idx]),
-+			ca->sb.nr_this_dev);
-+#if defined(CONFIG_BCACHE_NVM_PAGES)
-+	else
-+		k->ptr[0] = (unsigned long)bch_nvmpg_offset_to_ptr(
-+						ca->sb.d[ja->cur_idx]);
-+#endif
-+
- 	atomic_long_inc(&c->reclaimed_journal_buckets);
- 
- 	bkey_init(k);
-@@ -729,46 +738,21 @@ static void journal_write_unlock(struct closure *cl)
- 	spin_unlock(&c->journal.lock);
+@@ -34,18 +34,60 @@ static void journal_read_endio(struct bio *bio)
+ 	closure_put(cl);
  }
  
--static void journal_write_unlocked(struct closure *cl)
++static struct jset *__jnl_rd_bkt(struct cache *ca, unsigned int bkt_idx,
++				    unsigned int len, unsigned int offset,
++				    struct closure *cl)
++{
++	sector_t bucket = bucket_to_sector(ca->set, ca->sb.d[bkt_idx]);
++	struct bio *bio = &ca->journal.bio;
++	struct jset *data = ca->set->journal.w[0].data;
 +
-+static void __journal_write_unlocked(struct cache_set *c)
- 	__releases(c->journal.lock)
- {
--	struct cache_set *c = container_of(cl, struct cache_set, journal.io);
--	struct cache *ca = c->cache;
--	struct journal_write *w = c->journal.cur;
- 	struct bkey *k = &c->journal.key;
--	unsigned int i, sectors = set_blocks(w->data, block_bytes(ca)) *
--		ca->sb.block_size;
--
-+	struct journal_write *w = c->journal.cur;
-+	struct closure *cl = &c->journal.io;
-+	struct cache *ca = c->cache;
- 	struct bio *bio;
- 	struct bio_list list;
-+	unsigned int i, sectors = set_blocks(w->data, block_bytes(ca)) *
-+		ca->sb.block_size;
- 
- 	bio_list_init(&list);
- 
--	if (!w->need_write) {
--		closure_return_with_destructor(cl, journal_write_unlock);
--		return;
--	} else if (journal_full(&c->journal)) {
--		journal_reclaim(c);
--		spin_unlock(&c->journal.lock);
--
--		btree_flush_write(c);
--		continue_at(cl, journal_write, bch_journal_wq);
--		return;
--	}
--
--	c->journal.blocks_free -= set_blocks(w->data, block_bytes(ca));
--
--	w->data->btree_level = c->root->level;
--
--	bkey_copy(&w->data->btree_root, &c->root->key);
--	bkey_copy(&w->data->uuid_bucket, &c->uuid_bucket);
--
--	w->data->prio_bucket[ca->sb.nr_this_dev] = ca->prio_buckets[0];
--	w->data->magic		= jset_magic(&ca->sb);
--	w->data->version	= BCACHE_JSET_VERSION;
--	w->data->last_seq	= last_seq(&c->journal);
--	w->data->csum		= csum_set(w->data);
--
- 	for (i = 0; i < KEY_PTRS(k); i++) {
- 		ca = c->cache;
- 		bio = &ca->journal.bio;
-@@ -793,7 +777,6 @@ static void journal_write_unlocked(struct closure *cl)
- 
- 		ca->journal.seq[ca->journal.cur_idx] = w->data->seq;
- 	}
--
- 	/* If KEY_PTRS(k) == 0, this jset gets lost in air */
- 	BUG_ON(i == 0);
- 
-@@ -805,6 +788,71 @@ static void journal_write_unlocked(struct closure *cl)
- 
- 	while ((bio = bio_list_pop(&list)))
- 		closure_bio_submit(c, bio, cl);
++	bio_reset(bio);
++	bio->bi_iter.bi_sector	= bucket + offset;
++	bio_set_dev(bio, ca->bdev);
++	bio->bi_iter.bi_size	= len << 9;
++
++	bio->bi_end_io	= journal_read_endio;
++	bio->bi_private = cl;
++	bio_set_op_attrs(bio, REQ_OP_READ, 0);
++	bch_bio_map(bio, data);
++
++	closure_bio_submit(ca->set, bio, cl);
++	closure_sync(cl);
++
++	/* Indeed journal.w[0].data */
++	return data;
 +}
 +
 +#if defined(CONFIG_BCACHE_NVM_PAGES)
 +
-+static void __journal_nvdimm_write_unlocked(struct cache_set *c)
-+	__releases(c->journal.lock)
++static struct jset *__jnl_rd_nvm_bkt(struct cache *ca, unsigned int bkt_idx,
++				     unsigned int len, unsigned int offset)
 +{
-+	struct journal_write *w = c->journal.cur;
-+	struct cache *ca = c->cache;
-+	unsigned int sectors;
++	void *jset_addr;
++	struct jset *data;
 +
-+	sectors = set_blocks(w->data, block_bytes(ca)) * ca->sb.block_size;
-+	atomic_long_add(sectors, &ca->meta_sectors_written);
++	jset_addr = bch_nvmpg_offset_to_ptr(ca->sb.d[bkt_idx]) + (offset << 9);
++	data = ca->set->journal.w[0].data;
 +
-+	memcpy_flushcache((void *)c->journal.key.ptr[0], w->data, sectors << 9);
++	memcpy(data, jset_addr, len << 9);
 +
-+	c->journal.key.ptr[0] += sectors << 9;
-+	ca->journal.seq[ca->journal.cur_idx] = w->data->seq;
-+
-+	atomic_dec_bug(&fifo_back(&c->journal.pin));
-+	bch_journal_next(&c->journal);
-+	journal_reclaim(c);
-+
-+	spin_unlock(&c->journal.lock);
++	/* Indeed journal.w[0].data */
++	return data;
 +}
 +
 +#endif /* CONFIG_BCACHE_NVM_PAGES */
 +
-+static void journal_write_unlocked(struct closure *cl)
-+{
-+	struct cache_set *c = container_of(cl, struct cache_set, journal.io);
-+	struct cache *ca = c->cache;
-+	struct journal_write *w = c->journal.cur;
-+
-+	if (!w->need_write) {
-+		closure_return_with_destructor(cl, journal_write_unlock);
-+		return;
-+	} else if (journal_full(&c->journal)) {
-+		journal_reclaim(c);
-+		spin_unlock(&c->journal.lock);
-+
-+		btree_flush_write(c);
-+		continue_at(cl, journal_write, bch_journal_wq);
-+		return;
-+	}
-+
-+	c->journal.blocks_free -= set_blocks(w->data, block_bytes(ca));
-+
-+	w->data->btree_level = c->root->level;
-+
-+	bkey_copy(&w->data->btree_root, &c->root->key);
-+	bkey_copy(&w->data->uuid_bucket, &c->uuid_bucket);
-+
-+	w->data->prio_bucket[ca->sb.nr_this_dev] = ca->prio_buckets[0];
-+	w->data->magic		= jset_magic(&ca->sb);
-+	w->data->version	= BCACHE_JSET_VERSION;
-+	w->data->last_seq	= last_seq(&c->journal);
-+	w->data->csum		= csum_set(w->data);
-+
-+	if (!bch_has_feature_nvdimm_meta(&ca->sb))
-+		__journal_write_unlocked(c);
+ static int journal_read_bucket(struct cache *ca, struct list_head *list,
+ 			       unsigned int bucket_index)
+ {
+ 	struct journal_device *ja = &ca->journal;
+-	struct bio *bio = &ja->bio;
+ 
+ 	struct journal_replay *i;
+-	struct jset *j, *data = ca->set->journal.w[0].data;
++	struct jset *j;
+ 	struct closure cl;
+ 	unsigned int len, left, offset = 0;
+ 	int ret = 0;
+-	sector_t bucket = bucket_to_sector(ca->set, ca->sb.d[bucket_index]);
+ 
+ 	closure_init_stack(&cl);
+ 
+@@ -55,26 +97,27 @@ static int journal_read_bucket(struct cache *ca, struct list_head *list,
+ reread:		left = ca->sb.bucket_size - offset;
+ 		len = min_t(unsigned int, left, PAGE_SECTORS << JSET_BITS);
+ 
+-		bio_reset(bio);
+-		bio->bi_iter.bi_sector	= bucket + offset;
+-		bio_set_dev(bio, ca->bdev);
+-		bio->bi_iter.bi_size	= len << 9;
+-
+-		bio->bi_end_io	= journal_read_endio;
+-		bio->bi_private = &cl;
+-		bio_set_op_attrs(bio, REQ_OP_READ, 0);
+-		bch_bio_map(bio, data);
+-
+-		closure_bio_submit(ca->set, bio, &cl);
+-		closure_sync(&cl);
++		if (!bch_has_feature_nvdimm_meta(&ca->sb))
++			j = __jnl_rd_bkt(ca, bucket_index, len, offset, &cl);
++		/*
++		 * If CONFIG_BCACHE_NVM_PAGES is not defined, the feature bit
++		 * BCH_FEATURE_INCOMPAT_NVDIMM_META won't in incompatible
++		 * support feature set, a cache device format with feature bit
++		 * BCH_FEATURE_INCOMPAT_NVDIMM_META will fail much earlier in
++		 * read_super() by bch_has_unknown_incompat_features().
++		 * Therefore when CONFIG_BCACHE_NVM_PAGES is not define, it is
++		 * safe to ignore the bch_has_feature_nvdimm_meta() condition.
++		 */
 +#if defined(CONFIG_BCACHE_NVM_PAGES)
-+	else
-+		__journal_nvdimm_write_unlocked(c);
++		else
++			j = __jnl_rd_nvm_bkt(ca, bucket_index, len, offset);
 +#endif
  
- 	continue_at(cl, journal_write_done, NULL);
+ 		/* This function could be simpler now since we no longer write
+ 		 * journal entries that overlap bucket boundaries; this means
+ 		 * the start of a bucket will always have a valid journal entry
+ 		 * if it has any journal entries at all.
+ 		 */
+-
+-		j = data;
+ 		while (len) {
+ 			struct list_head *where;
+ 			size_t blocks, bytes = set_bytes(j);
+@@ -170,6 +213,8 @@ reread:		left = ca->sb.bucket_size - offset;
+ 	return ret;
  }
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index a27fa65d8832..45b69ddc9cfa 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1679,7 +1679,7 @@ void bch_cache_set_release(struct kobject *kobj)
- static void cache_set_free(struct closure *cl)
+ 
++static int __bch_journal_nvdimm_init(struct cache *ca);
++
+ int bch_journal_read(struct cache_set *c, struct list_head *list)
  {
- 	struct cache_set *c = container_of(cl, struct cache_set, cl);
--	struct cache *ca;
-+	struct cache *ca = c->cache;
+ #define read_bucket(b)							\
+@@ -188,6 +233,15 @@ int bch_journal_read(struct cache_set *c, struct list_head *list)
+ 	unsigned int i, l, r, m;
+ 	uint64_t seq;
  
- 	debugfs_remove(c->debug);
++	/*
++	 * Linear addresses of NVDIMM pages for journaling is not
++	 * initialized yet, do it before read jset from NVDIMM pages.
++	 */
++	if (bch_has_feature_nvdimm_meta(&ca->sb)) {
++		if (__bch_journal_nvdimm_init(ca) < 0)
++			return -ENXIO;
++	}
++
+ 	bitmap_zero(bitmap, SB_JOURNAL_BUCKETS);
+ 	pr_debug("%u journal buckets\n", ca->sb.njournal_buckets);
  
-@@ -1691,7 +1691,6 @@ static void cache_set_free(struct closure *cl)
- 	bch_bset_sort_state_free(&c->sort);
- 	free_pages((unsigned long) c->uuids, ilog2(meta_bucket_pages(&c->cache->sb)));
- 
--	ca = c->cache;
- 	if (ca) {
- 		ca->set = NULL;
- 		c->cache = NULL;
 -- 
 2.31.1
 
