@@ -2,133 +2,145 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 705874866BC
-	for <lists+linux-bcache@lfdr.de>; Thu,  6 Jan 2022 16:30:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00B2D4866C0
+	for <lists+linux-bcache@lfdr.de>; Thu,  6 Jan 2022 16:32:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240483AbiAFPaj (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 6 Jan 2022 10:30:39 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:48984 "EHLO
+        id S240486AbiAFPcn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 6 Jan 2022 10:32:43 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:49500 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240432AbiAFPah (ORCPT
+        with ESMTP id S240432AbiAFPcm (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 6 Jan 2022 10:30:37 -0500
+        Thu, 6 Jan 2022 10:32:42 -0500
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id CFA6D21126;
-        Thu,  6 Jan 2022 15:30:36 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B219A21126;
+        Thu,  6 Jan 2022 15:32:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1641483036; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1641483161; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=JaaMhioQEW8FXdZxgIMxMV7lrLWYprO/TA0tOwQColc=;
-        b=WxZhzF/YNfXA4NJ2ftlrpl233Vo0lLMOpKR+Ry9thQOR5LvaaNLDUduki2A6YKXjYaTudR
-        YilKBA12LT0P+KSDzWf8cCOcyEisWRfnqKVk4xhKVVE+hyVuZ4lacT1ARjH6M/utXTF6US
-        TrwfYn54rlyr4lEZNRqR7FERZfSyrac=
+        bh=igR8pahVeImKuOJY3uL9wxjzDzCsDJFknPmkz3LGsqg=;
+        b=HzDvBZCX/mvBdeI9ZoOP776ZHXesOX04y62SLby8HaslQ0hxTAmf+NxsbhHTO93PRIDo4p
+        rw6oNSHlcwCMNA5m/OUmW1XN72AdUfDSkAyRZWZMz/wC4ngQ4pC35c5+OLsLU4TQOL2zlJ
+        TRC+qjbZaG8bJcJ9KgWPhP49jNugzlc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1641483036;
+        s=susede2_ed25519; t=1641483161;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=JaaMhioQEW8FXdZxgIMxMV7lrLWYprO/TA0tOwQColc=;
-        b=mP9V3fCqXrfZtsB08gR7ezxllMAGipMgoe99C0CXRCprhRLTLixb5DyKrrjsleDC0lrNfh
-        DbDQqT06FUZP3wAA==
+        bh=igR8pahVeImKuOJY3uL9wxjzDzCsDJFknPmkz3LGsqg=;
+        b=NkXPCV/zu1ZqaxDa+2hEVyzHPjSI3kzyNa1FYiZ7ENATc9fC9t+BBfU+bugJju6CcCZzdN
+        lKyDlu7OTwlrl9BQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D067913C5A;
-        Thu,  6 Jan 2022 15:30:35 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3144013C5A;
+        Thu,  6 Jan 2022 15:32:39 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id u49RJxsL12GNdwAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 06 Jan 2022 15:30:35 +0000
-Message-ID: <567fffe9-e7cd-b3b4-b462-21c84b7fda9e@suse.de>
-Date:   Thu, 6 Jan 2022 23:30:33 +0800
+        id UE4XO5cL12FxeAAAMHmgww
+        (envelope-from <colyli@suse.de>); Thu, 06 Jan 2022 15:32:39 +0000
+Message-ID: <35228856-c691-da1e-d89f-06c1fd7958e0@suse.de>
+Date:   Thu, 6 Jan 2022 23:32:37 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.4.1
-Subject: Re: [PATCH] bcache: fixup bcache_dev_sectors_dirty_add()
- multithreaded CPU false sharing
+Subject: Re: Consistent failure of bcache upgrading from 5.10 to 5.15.2
 Content-Language: en-US
-To:     mingzhe.zou@easystack.cn
-Cc:     linux-bcache@vger.kernel.org, axboe@kernel.dk
-References: <20220106120811.24044-1-mingzhe.zou@easystack.cn>
+To:     Kai Krakow <kai@kaishome.de>
+Cc:     Eric Wheeler <bcache@lists.ewheeler.net>,
+        linux-bcache@vger.kernel.org,
+        =?UTF-8?Q?Fr=c3=a9d=c3=a9ric_Dumas?= <f.dumas@ellis.siteparc.fr>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+References: <CAC2ZOYtu65fxz6yez4H2iX=_mCs6QDonzKy7_O70jTEED7kqRQ@mail.gmail.com>
+ <7485d9b0-80f4-4fff-5a0c-6dd0c35ff91b@suse.de>
+ <CAC2ZOYsoZJ2_73ZBfN13txs0=zqMVcjqDMMjmiWCq=kE8sprcw@mail.gmail.com>
+ <688136f0-78a9-cf1f-cc68-928c4316c81b@bcache.ewheeler.net>
+ <8e25f190-c712-0244-3bfd-65f1d7c7df33@suse.de>
+ <CAC2ZOYuTP4ErWELz93JWCTbDK_1pNABdktW3ejWMWhzE942j1w@mail.gmail.com>
 From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20220106120811.24044-1-mingzhe.zou@easystack.cn>
+In-Reply-To: <CAC2ZOYuTP4ErWELz93JWCTbDK_1pNABdktW3ejWMWhzE942j1w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 1/6/22 8:08 PM, mingzhe.zou@easystack.cn wrote:
-> From: Zou Mingzhe <mingzhe.zou@easystack.cn>
+On 11/23/21 5:30 PM, Kai Krakow wrote:
+> Am Di., 23. Nov. 2021 um 09:54 Uhr schrieb Coly Li <colyli@suse.de>:
+>> On 11/20/21 8:06 AM, Eric Wheeler wrote:
+>>> (Fixed mail header and resent, ignore possible duplicate message and
+>>> reply to this one instead because the From header was broken.)
+>>>
+>>>
+>>> Hi Coly, Kai, and Kent, I hope you are well!
+>>>
+>>> On Thu, 18 Nov 2021, Kai Krakow wrote:
+>>>
+>>>> Hi Coly!
+>>>>
+>>>> Reading the commit logs, it seems to come from using a non-default
+>>>> block size, 512 in my case (although I'm pretty sure that *is* the
+>>>> default on the affected system). I've checked:
+>>>> ```
+>>>> dev.sectors_per_block   1
+>>>> dev.sectors_per_bucket  1024
+>>>> ```
+>>>>
+>>>> The non-affected machines use 4k blocks (sectors per block = 8).
+>>> If it is the cache device with 4k blocks, then this could be a known issue
+>>> (perhaps) not directly related to the 5.15 release. We've hit a before:
+>>>     https://www.spinics.net/lists/linux-bcache/msg05983.html
+>>>
+>>> and I just talked to Frédéric Dumas this week who hit it too (cc'ed).
+>>> His solution was to use manufacturer disk tools to change the cachedev's
+>>> logical block size from 4k to 512-bytes and reformat (see below).
+>>>
+>>> We've not seen issues with the backing device using 4k blocks, but bcache
+>>> doesn't always seem to make 4k-aligned IOs to the cachedev.  It would be
+>>> nice to find a long-term fix; more and more SSDs support 4k blocks, which
+>>> is a nice x86 page-alignment and may provide for less CPU overhead.
+>>>
+>>> I think this was the last message on the subject from Kent and Coly:
+>>>
+>>>        > On 2018/5/9 3:59 PM, Kent Overstreet wrote:
+>>>        > > Have you checked extent merging?
+>>>        >
+>>>        > Hi Kent,
+>>>        >
+>>>        > Not yet. Let me look into it.
+>>>        >
+>>>        > Thanks for the hint.
+>>>        >
+>>>        > Coly Li
+>> I tried and I still remember this, the headache is, I don't have a 4Kn
+>> SSD to debug and trace, just looking at the code is hard...
+>>
+>> If anybody can send me (in China to Beijing) a 4Kn SSD to debug and
+>> testing, maybe I can make some progress. Or can I configure the kernel
+>> to force a specific non-4Kn SSD to only accept 4K aligned I/O ?
+> I think you can switch at least SOME models to native 4k?
 >
-> When attaching a cached device (a.k.a backing device) to a cache
-> device, bch_sectors_dirty_init() is called to count dirty sectors
-> and stripes (see what bcache_dev_sectors_dirty_add() does) on the
-> cache device.
+> https://unix.stackexchange.com/questions/606072/change-logical-sector-size-to-4k
 >
-> When bch_sectors_dirty_init() is called, set_bit(stripe,
-> d->full_dirty_stripes) or clear_bit(stripe, d->full_dirty_stripes)
-> operation will always be performed. In full_dirty_stripes, each 1bit
-> represents stripe_size (8192) sectors (512B), so 1bit=4MB (8192*512),
-> and each CPU cache line=64B=512bit=2048MB. When 20 threads process
-> a cached disk with 100G dirty data, a single thread processes about
-> 23M at a time, and 20 threads total 460M. The full_dirty_stripes bit
-> of these data is likely to fall in the same CPU cache line. This will
-> cause CPU false sharing problem and reduce performance.
+>> Changing a HDD to native 4k sectors works at least with WD Red Plus 14 TB drives but LOSES ALL DATA. The data is not actually wiped but partition tables and filesystems cannot be found after the change because of their now incorrect LBA locations.
+>>
+>> hdparm --set-sector-size 4096 --please-destroy-my-drive /dev/sdX
 
-I am fine with the patch, but why "this will cause CPU false sharing" if 
-"the full_dirty_stripes bit of these day is likely to fall in the same 
-CPU cache line" ?
+I didn't reply this email because I don't test the above example on 
+latest mainline kernel.
 
+I tested the command on 5.10 kernel with NVMe and SATA SSD, both of them 
+didn't work. I wanted to verify whether this is new on latest mainline 
+kernel but not find a chance to do this yet.
 
->
-> This patch tries to test_bit before set_bit or clear_bit operation.
-> There are 8192 sectors per 1bit, and the number of sectors processed
-> by a single bch_sectors_dirty_init() call is only 8, 16, 32, etc.
-> So the set_bit or clear_bit operations will be greatly reduced.
-
-Indeed, force setting value before testing is something to be avoided. 
-Thanks for caching this. If you may simplify the commit log to explain 
-your change is to avoid force setting before testing, it should be fine 
-enough for me.
-
-Thanks.
+Thanks for the hint.
 
 Coly Li
-
->
-> Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
-> ---
->   drivers/md/bcache/writeback.c | 11 +++++++----
->   1 file changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-> index 68e75c692dd4..4afe22875d4f 100644
-> --- a/drivers/md/bcache/writeback.c
-> +++ b/drivers/md/bcache/writeback.c
-> @@ -596,10 +596,13 @@ void bcache_dev_sectors_dirty_add(struct cache_set *c, unsigned int inode,
->   
->   		sectors_dirty = atomic_add_return(s,
->   					d->stripe_sectors_dirty + stripe);
-> -		if (sectors_dirty == d->stripe_size)
-> -			set_bit(stripe, d->full_dirty_stripes);
-> -		else
-> -			clear_bit(stripe, d->full_dirty_stripes);
-> +		if (sectors_dirty == d->stripe_size) {
-> +			if (!test_bit(stripe, d->full_dirty_stripes))
-> +				set_bit(stripe, d->full_dirty_stripes);
-> +		} else {
-> +			if (test_bit(stripe, d->full_dirty_stripes))
-> +				clear_bit(stripe, d->full_dirty_stripes);
-> +		}
->   
->   		nr_sectors -= s;
->   		stripe_offset = 0;
 
