@@ -2,150 +2,107 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3B51485F36
-	for <lists+linux-bcache@lfdr.de>; Thu,  6 Jan 2022 04:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E167848623A
+	for <lists+linux-bcache@lfdr.de>; Thu,  6 Jan 2022 10:41:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230101AbiAFD3O (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 5 Jan 2022 22:29:14 -0500
-Received: from mx.ewheeler.net ([173.205.220.69]:33228 "EHLO mx.ewheeler.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229694AbiAFD3N (ORCPT <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 5 Jan 2022 22:29:13 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id 1D16141;
-        Wed,  5 Jan 2022 19:29:13 -0800 (PST)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id EF3nXm4EoBAl; Wed,  5 Jan 2022 19:29:08 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 32F2439;
-        Wed,  5 Jan 2022 19:29:08 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 32F2439
-Date:   Wed, 5 Jan 2022 19:29:05 -0800 (PST)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-To:     Coly Li <colyli@suse.de>
-cc:     linux-block@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:BCACHE (BLOCK LAYER CACHE)" <linux-bcache@vger.kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH] bcache: make stripe_size configurable and persistent
- for hardware raid5/6
-In-Reply-To: <8a9131dc-9bf7-a24a-f7b8-35e0c019e905@suse.de>
-Message-ID: <fdb85dc1-eee6-e55e-8e9c-fa1f36b4a37@ewheeler.net>
-References: <d3f7fd44-9287-c7fa-ee95-c3b8a4d56c93@suse.de> <1561245371-10235-1-git-send-email-bcache@lists.ewheeler.net> <200638b0-7cba-38b4-20c4-b325f3cfe862@suse.de> <alpine.LRH.2.11.1906241800350.1114@mx.ewheeler.net>
- <8a9131dc-9bf7-a24a-f7b8-35e0c019e905@suse.de>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1944457719-1641439748=:4450"
+        id S237471AbiAFJk7 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 6 Jan 2022 04:40:59 -0500
+Received: from mail3.siteparc.fr ([158.255.101.105]:56762 "EHLO
+        mail3.siteparc.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237477AbiAFJk6 (ORCPT
+        <rfc822;linux-bcache@vger.kernel.org>);
+        Thu, 6 Jan 2022 04:40:58 -0500
+X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Jan 2022 04:40:58 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ellis.siteparc.fr; s=8d899c83d57de82;
+        h=x-mailer:to:references:message-id:content-transfer-encoding:cc
+          :date:in-reply-to:from:subject:mime-version:content-type;
+        bh=fmChc7M6YZ39FFYvkcIWf8R6MxM12dh9LtfouFfJgH8=;
+        b=EtwKwrVCrNz7aCy+1vvIFRUVm+lCbIt/LA3mCE/ZC/AzVLmwDqXBraQyqyxLYd4Aw
+          6JwCcttrJcW/ehrguDwi8DKh5jeTtiMgzoQTd/dmcz3YbjJu3B86g9anceHOv5200
+          QHmZI/BOr7yHoLTp0lbGCeVPzbQ12OFG32zTp47etcl1kOnYVpD0dnMnqF7Pe35gC
+          UxSj8QXQKyDsOlPIuQLH3eY3v7ZjD2OIEOCBm5285y4IIH8MtVgBmb+x5iitMek4R
+          JSRlZ0GEgKiI0muGvmqJMdqzISaXhFwKJvsRvsPlIUJP4g9lMSeE+uUFKT87JtbQr
+          Hy0fuYcdy9SJpmUVw==
+Received: from [172.24.1.32] (UnknownHost [31.179.160.58]) by mail3.siteparc.fr with SMTP
+        (version=Tls12
+        cipher=Aes256 bits=256);
+   Thu, 6 Jan 2022 10:25:38 +0100
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.21\))
+Subject: Re: Consistent failure of bcache upgrading from 5.10 to 5.15.2
+From:   =?utf-8?Q?Fr=C3=A9d=C3=A9ric_Dumas?= <f.dumas@ellis.siteparc.fr>
+In-Reply-To: <431f7be3-3b72-110-692c-ca8a11265d3@ewheeler.net>
+Date:   Thu, 6 Jan 2022 11:25:33 +0200
+Cc:     Coly Li <colyli@suse.de>, Eric Wheeler <bcache@lists.ewheeler.net>,
+        Kai Krakow <kai@kaishome.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7212111D-5181-458B-B774-006D3B08A9AE@ellis.siteparc.fr>
+References: <CAC2ZOYtu65fxz6yez4H2iX=_mCs6QDonzKy7_O70jTEED7kqRQ@mail.gmail.com>
+ <7485d9b0-80f4-4fff-5a0c-6dd0c35ff91b@suse.de>
+ <CAC2ZOYsoZJ2_73ZBfN13txs0=zqMVcjqDMMjmiWCq=kE8sprcw@mail.gmail.com>
+ <688136f0-78a9-cf1f-cc68-928c4316c81b@bcache.ewheeler.net>
+ <8e25f190-c712-0244-3bfd-65f1d7c7df33@suse.de>
+ <431f7be3-3b72-110-692c-ca8a11265d3@ewheeler.net>
+To:     linux-bcache@vger.kernel.org
+X-Mailer: Apple Mail (2.3445.104.21)
+X-Exim-Id: 7212111D-5181-458B-B774-006D3B08A9AE
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-1944457719-1641439748=:4450
-Content-Type: text/plain; charset=iso-2022-jp
+Hello!
 
-On Tue, 25 Jun 2019, Coly Li wrote:
-> On 2019/6/25 2:14 上午, Eric Wheeler wrote:
-> > On Mon, 24 Jun 2019, Coly Li wrote:
-> > 
-> >> On 2019/6/23 7:16 上午, Eric Wheeler wrote:
-> >>> From: Eric Wheeler <git@linux.ewheeler.net>
-> >>>
-> >>> While some drivers set queue_limits.io_opt (e.g., md raid5), there are
-> >>> currently no SCSI/RAID controller drivers that do.  Previously stripe_size
-> >>> and partial_stripes_expensive were read-only values and could not be
-> >>> tuned by users (eg, for hardware RAID5/6).
-> >>>
-> >>> This patch enables users to save the optimal IO size via sysfs through
-> >>> the backing device attributes stripe_size and partial_stripes_expensive
-> >>> into the bcache superblock.
-> >>>
-> >>> Superblock changes are backwards-compatable:
-> >>>
-> >>> *  partial_stripes_expensive: One bit was used in the superblock flags field
-> >>>
-> >>> *  stripe_size: There are eight 64-bit "pad" fields for future use in
-> >>>    the superblock which default to 0; from those, 32-bits are now used
-> >>>    to save the stripe_size and load at device registration time.
-> >>>
-> >>> Signed-off-by: Eric Wheeler <bcache@linux.ewheeler.net>
-> >>
-> >> Hi Eric,
-> >>
-> >> In general I am OK with this patch. Since Peter comments lots of SCSI
-> >> RAID devices reports a stripe width, could you please list the hardware
-> >> raid devices which don't list stripe size ? Then we can make decision
-> >> whether it is necessary to have such option enabled.
-> > 
-> > Perhaps they do not set stripe_width using io_opt? I did a grep to see if 
-> > any of them did, but I didn't see them. How is stripe_width indicated by 
-> > RAID controllers? 
-> > 
-> > If they do set io_opt, then at least my Areca 1883 does not set io_opt as 
-> > of 4.19.x. I also have a LSI MegaRAID 3108 which does not report io_opt as 
-> > of 4.1.x, but that is an older kernel so maybe support has been added 
-> > since then.
-> > 
-> > Martin,
-> > 
-> > Where would stripe_width be configured in the SCSI drivers? Is it visible 
-> > through sysfs or debugfs so I can check my hardware support without 
-> > hacking debugging the kernel?
-> > 
-> >>
-> >> Another point is, this patch changes struct cache_sb, it is no problem
-> >> to change on-disk format. I plan to update the super block version soon,
-> >> to store more configuration persistently into super block. stripe_size
-> >> can be added to cache_sb with other on-disk changes.
-> > 
-> 
-> Hi Eric,
-> 
-> > Maybe bumping version makes sense, but even if you do not, this is safe to 
-> > use on systems without bumping the version because the values are unused 
-> > and default to 0.
-> 
-> Yes, I understand you, it works as you suggested. I need to think how to
-> organize all options in struct cache_sb, stripe_size will be arranged
-> then. And I will ask help to you for reviewing the changes of on-disk
-> format.
+Many thanks to Eric for describing here and in his previous email the =
+bug I experienced using bcache on SSDs formatted as 4k sectors. Thanks =
+also to him for explaining to me that all I had to do was reformat the =
+SSDs into 512-byte sectors to easily get around the bug.
 
-Hi Coli,
 
-Just checking in, its been a while and I didn't see any more discussion on 
-the topic:
+> I'm not sure how to format it 4k, but this is how Fr=C3=A9d=C3=A9ric =
+set it to 512=20
+> bytes and fixed his issue:
+>=20
+> # intelmas start -intelssd 0 -nvmeformat LBAFormat=3D0
 
-This would benefit users with older RAID controllers using RAID-5/6 that 
-don't set io_opt.
 
-Even new new RAID controlers that _do_ provide `io_opt` still do _not_ 
-indicate partial_stripes_expensive (which is an mdraid feature, but Martin 
-please correct me if I'm wrong here).  Thus, all hardware RAID-5/6 users 
-could benefit by manually flagging partial_stripes_expensive to get burst 
-writes out of bcache that fit their stride width.
+Right.
+To format an Intel NVMe P3700 back to 4k sectors, the command is as =
+follows:
 
-This patch probably needs rebased and documentation updated about io_opt, 
-but here is the original patch with documentation for your reference:
-	https://lkml.org/lkml/2019/6/22/298
+# intelmas start -intelssd 0 -nvmeformat LBAFormat=3D3
 
-What do you think?
 
--Eric
+> The parameter LBAformat specifies the sector size to set. Valid =
+options are in the range from index 0 to the number of supported LBA =
+formats of the NVMe drive, however the only sector sizes supported in =
+Intel=C2=AE NVMe drives are 512B and 4096B which corresponds to indexes =
+0 and 3 respectively.
 
-> 
-> Thanks.
-> 
-> [snipped]
-> 
-> -- 
-> 
-> Coly Li
-> 
---8323328-1944457719-1641439748=:4450--
+
+Source: =
+https://www.intel.com/content/www/us/en/support/articles/000057964/memory-=
+and-storage.html
+
+Oddly enough the user manual for the intelmass application [1] (formerly =
+isdct) forgets to specify the possible values to be given to the =
+LBAformat argument, which makes it much less useful. :-)
+
+
+Regards,
+
+Fr=C3=A9d=C3=A9ric.
+
+
+[1] =
+https://www.intel.com/content/www/us/en/download/19520/intel-memory-and-st=
+orage-tool-cli-command-line-interface.html
+--
+Fr=C3=A9d=C3=A9ric Dumas
+f.dumas@ellis.siteparc.fr
+
+
+
