@@ -2,94 +2,140 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 351104895FB
-	for <lists+linux-bcache@lfdr.de>; Mon, 10 Jan 2022 11:08:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBB9C489958
+	for <lists+linux-bcache@lfdr.de>; Mon, 10 Jan 2022 14:11:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243619AbiAJKIz (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 10 Jan 2022 05:08:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58524 "EHLO
+        id S229751AbiAJNLi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 10 Jan 2022 08:11:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243618AbiAJKIz (ORCPT
+        with ESMTP id S230222AbiAJNLh (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 10 Jan 2022 05:08:55 -0500
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CD90C06173F
-        for <linux-bcache@vger.kernel.org>; Mon, 10 Jan 2022 02:08:55 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id p37so10209309pfh.4
-        for <linux-bcache@vger.kernel.org>; Mon, 10 Jan 2022 02:08:55 -0800 (PST)
+        Mon, 10 Jan 2022 08:11:37 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625A7C034000
+        for <linux-bcache@vger.kernel.org>; Mon, 10 Jan 2022 05:11:36 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id u13so44023527lff.12
+        for <linux-bcache@vger.kernel.org>; Mon, 10 Jan 2022 05:11:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=qH7DEHGX/pvouiOmaf+DP+DQ4PWFk+GMEcmnDIJfLZM=;
-        b=E95zX/yi36AFskAZJtL9VS+tyhHXc9yGM/o/30pSlejl/HW/Aq4MPnS7Eodws8CNeL
-         jt5xvZ2AY6IpjLvmdSSMqTm4Xs2mikGufam+t3rQ44TsLAJJ1GECXU+qHfjInWuk++Hs
-         CpDCIwFOljxAMCQBGs9AnJkDlYmOi3+Uj2gC0/kAewUnObmHWd7mzpdFq+ZtExUQlaog
-         WpGom6pJHZMoc4/9fWV8nf1wLosnzKPz7JpjoDMThC4Ie4zho3u5XedNooo79mwdjdpy
-         wt2rJ/eC1CYGc3jvUr3Dk+4v3K7ZFnxRlDDHmvjgWFMo4dT3MO6rnvjBSU/6KWlbiu1W
-         lcyA==
+        bh=STst/NZz7XpLuhkw/fjT1YooCLQUEgoChj9j28RAYfs=;
+        b=Bgie3w5lZXcUpEJsNUNnYT9D80sz6831OKMgWSWMpAMR4c04HQM1hwHkoZ1AqHgJ5M
+         pQJfhFBsNTGc+jfMsWTuSDXhNBe5XPwJ8/UQZKbYcWTDQ68Eu4MBBVsHf0V3Baa+27Pp
+         IUJW/950IUGNsTto2NnsTW49/Cy4Vf+KfgzDT0+KZ2gcb/QkEKg3LEIj8qPJpiII0Qbk
+         buE3CbPl0T8T6omQLXT3KYJBxN98pPIrfxDam1Qs0diPFN43pWVugWbd8LU8WaIGviK3
+         O/t/NLMKhR03EdE8rMi5c8T5epCw09Yzc4YmAU5QrO9ZaREbayNwAtpm1SWYSR1IiBuY
+         5w9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:reply-to:from:date:message-id
          :subject:to;
-        bh=qH7DEHGX/pvouiOmaf+DP+DQ4PWFk+GMEcmnDIJfLZM=;
-        b=fyfXZE2Mjfc/EcQENxQAFs5+73URuwIOxiUuiP7wF7Pv7Zp68X1GsAbdtS3cp3Ueiw
-         f5/LWjL12VZrmOwh67Jruf0JcRlDlBAr5CwzVKOgQ8kpwbZZ2tJk1kKEy/KfmAxjcKgW
-         PVT/x4jDU5bkDGkQHhxCqVkL1IR6qUi+llbpMF+8dv04j0jW0xU0VkLyCDFk+ZROy0T5
-         LIhOgxftY+/frPAqBjAei7D7an7soTo2Obf0sjdEt4S1WrGN7a26gMrb9UdKBHiPd0X6
-         ATGmoQsu1bxPuuEwLWBP92EGOdjI1CO1Y+Ctqbws1Eau2lK3S2oJLHvrVSppzQKvGiec
-         LIPQ==
-X-Gm-Message-State: AOAM532feLY9U94quSsMFCU4nQvhBo38lDvNhJlvwq+7D6L4ZD68QYJv
-        NRkP8JVpKqf+nyGmmDKlzndeRk79M4NEoOZcL9I=
-X-Google-Smtp-Source: ABdhPJyUpCHIVJ+HBh898GGejkpyGub2E/pO9GOv6DEn4sMnWGQ0pVUrDSf8bxiytwvxt5UF9PdEWiIk/A4DUIMP2CI=
-X-Received: by 2002:a63:6fc9:: with SMTP id k192mr60176602pgc.94.1641809334431;
- Mon, 10 Jan 2022 02:08:54 -0800 (PST)
+        bh=STst/NZz7XpLuhkw/fjT1YooCLQUEgoChj9j28RAYfs=;
+        b=tl1u7HrnGV6nBoHWERCPvp6SrpiKUD4B14RUcv15+LXTmHcTWcAfDeoHbkiRm9M29T
+         GNFg/Lgatv0AAh7ZsYeE5mb8IXrT1S+IPBdEp5j/SEtOPJXmpW99GbQY4V2HhLU2fcrm
+         33uxwxKp0yNf4QvMXB3I9N8JtxCBe4oZQkrNRWb/2IcZirP/H9CPumBUmuqhvp5uNMPW
+         G9jxMBGWm/DfhrkhDWSjd/MlUZWSmfvlMRwKd3qsgg/XraoXqD/VNZ46OsWZTMqMekEJ
+         W2E1nHPLq6yYALp9RsQPLB0YZxBSErwr7DK62+ruCQz13qwE/Snt/wHkiAHWiD4acEcC
+         K5CQ==
+X-Gm-Message-State: AOAM532JR/JrcypWu3HbI3r6YrIG8BSfsowdSDy6HMO83WOEToPLlSj2
+        AQ0JoBkUD5RmsxUmm4SJnpobTDl8eUAIr7pdoZc=
+X-Google-Smtp-Source: ABdhPJyUuzfRq9+VAp3YIslVsNF7E8r6u+SDvjtiaFw6sfTA9uOxrmlrl9JDay/jDh10uqplhgk07a+YHTpM3Ge0znw=
+X-Received: by 2002:ac2:4c51:: with SMTP id o17mr60639917lfk.558.1641820293776;
+ Mon, 10 Jan 2022 05:11:33 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a05:6a10:e90a:0:0:0:0 with HTTP; Mon, 10 Jan 2022 02:08:53
+Received: by 2002:a05:6504:15d1:0:0:0:0 with HTTP; Mon, 10 Jan 2022 05:11:32
  -0800 (PST)
-Reply-To: mgramtransfer110@gmail.com
-From:   deborah mgbogi <komadancasmir@gmail.com>
-Date:   Mon, 10 Jan 2022 02:08:53 -0800
-Message-ID: <CAKfpZ+45PX4CR4ZiYP=GNrYHgWr30T=d2Ad_LRT38ca-cS_puQ@mail.gmail.com>
-Subject: GOOD DAYBENEFICIARY
+Reply-To: gtbank107@yahoo.com
+From:   Barr Robert Richter <westernunion.benin982@gmail.com>
+Date:   Mon, 10 Jan 2022 14:11:32 +0100
+Message-ID: <CAP=nHBK9zHzp_=-EVswWQiLxEoc+HV4oqddgtnEqf-9qYab_4Q@mail.gmail.com>
+Subject: Contact GT Bank-Benin to receive your transfer amount of $18.5m US Dollars.
 To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-ATTENTION
+Attn,Dear
+I need you to know that the fear of the LORD is
+the beginning of wisdom, and knowledge of the Holy One is
+understanding. As power of God Most High. And This is the confidence
+we have in approaching God, that if we ask anything according to his
+will, he hears us. I will make you know that Slow and steady wins the race.
+It is your turn to receive your overdue compensation funds total
+amount $18.5Milion  USD.
+I actualized that you will receive your transfer today without any more delay
+No More fee OK, Believe me , I am your Attorney standing here on your favor.
+I just concluded conversation with the Gt Bank Director, Mrs Mary Gate
+And She told me that your transfer is ready today
 
-we have concluded to Send your payment through Money Gram money
-transfer $4,000.00 daily until the total fund of ($10.5MILLION ) is
-completely transferred. Meanwhile, Mr Hector Giroud has Send you
-$4,000.00 in your name today. So contact Mr Hector Giroud, through
-Money
-Gram money transfer payment Agent to SEND you the MTCN to pick up this
-$4000 now:
+So the Bank Asked you to contact them immediately by re-confirming
+your Bank details asap.
+Because this is the Only thing holding this transfer
+If you did not trust me and Mrs Mary Gate,Who Else will you Trust?
+For we are the ones trying to protect your funds here
+and make sure that your funds is secure.
+So Promisingly, I am here to assure you, that Grate Miracle is coming on
+your way, and this funds total amount of $18.500,000 is your
+compensation, entitlement inheritance overdue funds on your name.
+Which you cannot let anything delay you from receiving your funds now,
 
-CONTACT PERSON: Mr Hector Giroud
-Whatsaap Number: (+229) 60738541
-Email Address:(mgramtransfer110@gmail.com)
+Finally i advised you to try your possible best and contact Gt Bank Benin
+once you get this message to receive your transfer $18.5 USD today.
+I know that a journey of thousand miles begins with a single step.
+Always put your best foot forward
+Try as hard as you can, God give you best.
+take my advice and follow the due process of your payment, the
+transfer will be released to
+you smoothly without any hitches or hindrance.
 
-Please remember to Call and ask him to give you the Reference Number,
-sender name, question and answer to pick up the $4000.00. Also you
-should send to him your information to cross check it to avoid
-mistake.
-Receiver's Name________________
-Address: ______________________
-Country: ______________________
-Phone Number: _________________
-Your Occupation _______________
-I.D Card:______________________
+Contact DR.MRS MARY GATE, Director Gt bank-Benin to receive your
+transfer amount of $18.5m US Dollars
+It was deposited and registered to your name this morning.
+Contact the Bank now to know when they will transfer to your
+country today
 
-Though, Mr Hector Giroud has sent $4000 in your name today so contact
-Mr Hector Girouad or you call him as soon as you
-receive
-this email and tell him to give you the Reference Number, sender name
-and question/answer to pick the $4000 Please let us know as soon as
-you
-received all your fund
+Email id: gtbank107@yahoo.com
+Tel/mobile, +229 99069872
+Contact person, Mrs Mary Gate,Director Gt bank-Benin.
+Among the blind the one-eyed man is king
 
-Best Regards.
-mrs deborah mgbogi
-...
+As you sow, so you shall reap, i want you to receive your funds
+Best things in life are free
+Send to her your Bank Details as i listed here.
+
+Your account name-------------
+Your Bank Name----------------
+Account Number----------
+your Bank address----------
+Country-----------
+Your private phone number---------
+Routing Numbers-------------
+Swift Code-----------
+
+Note, Your funds is %100 Percent ready for
+transfer.
+Everything you do remember that Good things come to those who wait.
+I have done this work for you with my personally effort, Honesty is
+the best policy.
+now your transfer is currently deposited with paying bank this morning.
+It is by the grace of God that I received Christ, having known the truth.
+I had no choice than to do what is lawful and justice in the
+sight of God for eternal life and in the sight of man for witness of
+God & His Mercies and glory upon my life.
+
+send this needed bank details to the bank today, so that you receive
+your transfer today as
+it is available for your confirmation today.
+Please do your best as a serious person and send the fee urgent, Note
+that this transfer of $18.500.000 M USD is a Gift from God to Bless
+you.
+
+If you did not contact the bank urgent, finally the Bank will release
+your transfer of $18.500.000M USD to  Mr. David Bollen as your
+representative.
+So not allow another to claim your Money.
+Thanks For your Understanding.
+
+Barr Robert Richter, UN Attorney At Law Court-Benin
