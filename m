@@ -2,140 +2,96 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBB9C489958
-	for <lists+linux-bcache@lfdr.de>; Mon, 10 Jan 2022 14:11:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07EDC489CD0
+	for <lists+linux-bcache@lfdr.de>; Mon, 10 Jan 2022 16:53:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229751AbiAJNLi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 10 Jan 2022 08:11:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44252 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230222AbiAJNLh (ORCPT
+        id S236729AbiAJPxR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 10 Jan 2022 10:53:17 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:50124 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236509AbiAJPxQ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 10 Jan 2022 08:11:37 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625A7C034000
-        for <linux-bcache@vger.kernel.org>; Mon, 10 Jan 2022 05:11:36 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id u13so44023527lff.12
-        for <linux-bcache@vger.kernel.org>; Mon, 10 Jan 2022 05:11:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=STst/NZz7XpLuhkw/fjT1YooCLQUEgoChj9j28RAYfs=;
-        b=Bgie3w5lZXcUpEJsNUNnYT9D80sz6831OKMgWSWMpAMR4c04HQM1hwHkoZ1AqHgJ5M
-         pQJfhFBsNTGc+jfMsWTuSDXhNBe5XPwJ8/UQZKbYcWTDQ68Eu4MBBVsHf0V3Baa+27Pp
-         IUJW/950IUGNsTto2NnsTW49/Cy4Vf+KfgzDT0+KZ2gcb/QkEKg3LEIj8qPJpiII0Qbk
-         buE3CbPl0T8T6omQLXT3KYJBxN98pPIrfxDam1Qs0diPFN43pWVugWbd8LU8WaIGviK3
-         O/t/NLMKhR03EdE8rMi5c8T5epCw09Yzc4YmAU5QrO9ZaREbayNwAtpm1SWYSR1IiBuY
-         5w9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=STst/NZz7XpLuhkw/fjT1YooCLQUEgoChj9j28RAYfs=;
-        b=tl1u7HrnGV6nBoHWERCPvp6SrpiKUD4B14RUcv15+LXTmHcTWcAfDeoHbkiRm9M29T
-         GNFg/Lgatv0AAh7ZsYeE5mb8IXrT1S+IPBdEp5j/SEtOPJXmpW99GbQY4V2HhLU2fcrm
-         33uxwxKp0yNf4QvMXB3I9N8JtxCBe4oZQkrNRWb/2IcZirP/H9CPumBUmuqhvp5uNMPW
-         G9jxMBGWm/DfhrkhDWSjd/MlUZWSmfvlMRwKd3qsgg/XraoXqD/VNZ46OsWZTMqMekEJ
-         W2E1nHPLq6yYALp9RsQPLB0YZxBSErwr7DK62+ruCQz13qwE/Snt/wHkiAHWiD4acEcC
-         K5CQ==
-X-Gm-Message-State: AOAM532JR/JrcypWu3HbI3r6YrIG8BSfsowdSDy6HMO83WOEToPLlSj2
-        AQ0JoBkUD5RmsxUmm4SJnpobTDl8eUAIr7pdoZc=
-X-Google-Smtp-Source: ABdhPJyUuzfRq9+VAp3YIslVsNF7E8r6u+SDvjtiaFw6sfTA9uOxrmlrl9JDay/jDh10uqplhgk07a+YHTpM3Ge0znw=
-X-Received: by 2002:ac2:4c51:: with SMTP id o17mr60639917lfk.558.1641820293776;
- Mon, 10 Jan 2022 05:11:33 -0800 (PST)
+        Mon, 10 Jan 2022 10:53:16 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D76FD1F393;
+        Mon, 10 Jan 2022 15:53:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1641829994; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FRM4BcmD9hfO5nbXPqn+DFkr64sSUqkyCYTzumTkKhk=;
+        b=HxSwhujHM56DgA0t1Mwoxptc4JAuP4ieSwDdElwSgSCdMLHrANAYh+Xq2Mz89veNpEywRh
+        xLKRVnKxWvT/r2wGY67JhgHwgZj5V/Ln80UK8nl4ZCmswxU5dczof6z6yjZB1q9FK5ouje
+        SH9vAhHd6H5gSmaX0MJBAV+TPWYj6Fc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1641829994;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FRM4BcmD9hfO5nbXPqn+DFkr64sSUqkyCYTzumTkKhk=;
+        b=C8T0d+w3VB+duw4c77N2MUtc/ZZeUErPQL5VoR4JCQ+vDD7zefO7e7wtelRDxU1+MjVEoK
+        mipfN5KN4heFkVDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5629513D88;
+        Mon, 10 Jan 2022 15:53:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Y+eyAmlW3GEWDgAAMHmgww
+        (envelope-from <colyli@suse.de>); Mon, 10 Jan 2022 15:53:13 +0000
+Message-ID: <97e5c59a-ac8e-ffee-b5d5-55883932b8df@suse.de>
+Date:   Mon, 10 Jan 2022 23:53:10 +0800
 MIME-Version: 1.0
-Received: by 2002:a05:6504:15d1:0:0:0:0 with HTTP; Mon, 10 Jan 2022 05:11:32
- -0800 (PST)
-Reply-To: gtbank107@yahoo.com
-From:   Barr Robert Richter <westernunion.benin982@gmail.com>
-Date:   Mon, 10 Jan 2022 14:11:32 +0100
-Message-ID: <CAP=nHBK9zHzp_=-EVswWQiLxEoc+HV4oqddgtnEqf-9qYab_4Q@mail.gmail.com>
-Subject: Contact GT Bank-Benin to receive your transfer amount of $18.5m US Dollars.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.4.1
+Subject: Re: [PATCH] bcache: use default_groups in kobj_type
+Content-Language: en-US
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220106100004.3277439-1-gregkh@linuxfoundation.org>
+ <7cbca83d-bcac-464e-d2e4-c54b2d53eead@suse.de> <YdlL4YAScYp9XxkI@kroah.com>
+From:   Coly Li <colyli@suse.de>
+In-Reply-To: <YdlL4YAScYp9XxkI@kroah.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Attn,Dear
-I need you to know that the fear of the LORD is
-the beginning of wisdom, and knowledge of the Holy One is
-understanding. As power of God Most High. And This is the confidence
-we have in approaching God, that if we ask anything according to his
-will, he hears us. I will make you know that Slow and steady wins the race.
-It is your turn to receive your overdue compensation funds total
-amount $18.5Milion  USD.
-I actualized that you will receive your transfer today without any more delay
-No More fee OK, Believe me , I am your Attorney standing here on your favor.
-I just concluded conversation with the Gt Bank Director, Mrs Mary Gate
-And She told me that your transfer is ready today
+On 1/8/22 4:31 PM, Greg Kroah-Hartman wrote:
+> On Sat, Jan 08, 2022 at 02:16:28PM +0800, Coly Li wrote:
+>> On 1/6/22 6:00 PM, Greg Kroah-Hartman wrote:
+>>> There are currently 2 ways to create a set of sysfs files for a
+>>> kobj_type, through the default_attrs field, and the default_groups
+>>> field.  Move the bcache sysfs code to use default_groups field which has
+>>> been the preferred way since aa30f47cf666 ("kobject: Add support for
+>>> default attribute groups to kobj_type") so that we can soon get rid of
+>>> the obsolete default_attrs field.
+>>>
+>>> Cc: Coly Li <colyli@suse.de>
+>>> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+>>> Cc: linux-bcache@vger.kernel.org
+>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> It looks good to me.
+>>
+>> Acked-by: Coly Li <colyli@suse.de>
+>>
+>> I assume you may take this patch directly in your maintenance path, but if
+>> you want me to take this, just let me know. Thanks.
+> I can take it myself, or you can, which ever is easiest for you, just
+> let me know which you prefer.  Thanks for the review!
 
-So the Bank Asked you to contact them immediately by re-confirming
-your Bank details asap.
-Because this is the Only thing holding this transfer
-If you did not trust me and Mrs Mary Gate,Who Else will you Trust?
-For we are the ones trying to protect your funds here
-and make sure that your funds is secure.
-So Promisingly, I am here to assure you, that Grate Miracle is coming on
-your way, and this funds total amount of $18.500,000 is your
-compensation, entitlement inheritance overdue funds on your name.
-Which you cannot let anything delay you from receiving your funds now,
+It will be faster for this patch goes into mainline in your path, I am 
+on vacation now and will have a latency...
 
-Finally i advised you to try your possible best and contact Gt Bank Benin
-once you get this message to receive your transfer $18.5 USD today.
-I know that a journey of thousand miles begins with a single step.
-Always put your best foot forward
-Try as hard as you can, God give you best.
-take my advice and follow the due process of your payment, the
-transfer will be released to
-you smoothly without any hitches or hindrance.
+Thank you.
 
-Contact DR.MRS MARY GATE, Director Gt bank-Benin to receive your
-transfer amount of $18.5m US Dollars
-It was deposited and registered to your name this morning.
-Contact the Bank now to know when they will transfer to your
-country today
-
-Email id: gtbank107@yahoo.com
-Tel/mobile, +229 99069872
-Contact person, Mrs Mary Gate,Director Gt bank-Benin.
-Among the blind the one-eyed man is king
-
-As you sow, so you shall reap, i want you to receive your funds
-Best things in life are free
-Send to her your Bank Details as i listed here.
-
-Your account name-------------
-Your Bank Name----------------
-Account Number----------
-your Bank address----------
-Country-----------
-Your private phone number---------
-Routing Numbers-------------
-Swift Code-----------
-
-Note, Your funds is %100 Percent ready for
-transfer.
-Everything you do remember that Good things come to those who wait.
-I have done this work for you with my personally effort, Honesty is
-the best policy.
-now your transfer is currently deposited with paying bank this morning.
-It is by the grace of God that I received Christ, having known the truth.
-I had no choice than to do what is lawful and justice in the
-sight of God for eternal life and in the sight of man for witness of
-God & His Mercies and glory upon my life.
-
-send this needed bank details to the bank today, so that you receive
-your transfer today as
-it is available for your confirmation today.
-Please do your best as a serious person and send the fee urgent, Note
-that this transfer of $18.500.000 M USD is a Gift from God to Bless
-you.
-
-If you did not contact the bank urgent, finally the Bank will release
-your transfer of $18.500.000M USD to  Mr. David Bollen as your
-representative.
-So not allow another to claim your Money.
-Thanks For your Understanding.
-
-Barr Robert Richter, UN Attorney At Law Court-Benin
+Coly Li
