@@ -2,121 +2,185 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F3249AB02
-	for <lists+linux-bcache@lfdr.de>; Tue, 25 Jan 2022 05:44:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45DE249AC1E
+	for <lists+linux-bcache@lfdr.de>; Tue, 25 Jan 2022 07:01:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S247782AbiAYDyU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 24 Jan 2022 22:54:20 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:47120 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S3415321AbiAYBmj (ORCPT
+        id S241777AbiAYGBd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 25 Jan 2022 01:01:33 -0500
+Received: from mail-m2836.qiye.163.com ([103.74.28.36]:34114 "EHLO
+        mail-m2836.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235276AbiAYF7E (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 24 Jan 2022 20:42:39 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 2AC34219A2;
-        Tue, 25 Jan 2022 01:26:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1643073984; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ukdL4uSY7ajaeLLyOy2K7g+OJNEsLFNzoe0K6HxbbBg=;
-        b=BwXWmNKUWNf/QWwndBHhxlD2Xpth4f7ipnaSxOD2XBfHipf1jgH6D0R2Spb2M3qCWIYW6m
-        x8HgPaGGvhDhmCSwpUrMVDzLVO3WKJuln+opQ2oqurTLT2CirjYFmmlkxIvnmpobc9OcMr
-        /XVRrjkS2Bwcj0UP8GK7CtnWdspz7kU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1643073984;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ukdL4uSY7ajaeLLyOy2K7g+OJNEsLFNzoe0K6HxbbBg=;
-        b=l73U2zJamff6zF7815X4J+N8Rh0uBqiHROilqBddtxvC5Hb7ncpUxcTc2cZAgSaKaR9EEQ
-        EVSFagbOQhELLeDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EA36B13B08;
-        Tue, 25 Jan 2022 01:26:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id aIQzLb5R72HYGQAAMHmgww
-        (envelope-from <colyli@suse.de>); Tue, 25 Jan 2022 01:26:22 +0000
-Message-ID: <e3771b5d-87dc-d38e-a957-5ef044a0d5cc@suse.de>
-Date:   Tue, 25 Jan 2022 09:26:21 +0800
+        Tue, 25 Jan 2022 00:59:04 -0500
+X-Greylist: delayed 568 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Jan 2022 00:59:03 EST
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m2836.qiye.163.com (Hmail) with ESMTPA id 601BEC006E;
+        Tue, 25 Jan 2022 13:49:23 +0800 (CST)
+From:   Rui Xu <rui.xu@easystack.cn>
+To:     linux-bcache@vger.kernel.org
+Cc:     dongsheng.yang@easystack.cn, Rui Xu <rui.xu@easystack.cn>
+Subject: [PATCH] bcache: shrink the scope of bch_register_lock
+Date:   Tue, 25 Jan 2022 13:49:22 +0800
+Message-Id: <20220125054922.1859923-1-rui.xu@easystack.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.5.0
-Subject: Re: [PATCH] bcache: Fix a NULL or wild pointer dereference in
- btree_gc_rewrite_node()
-Content-Language: en-US
-To:     Zhou Qingyang <zhou1615@umn.edu>
-Cc:     kjlu@umn.edu, Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220124164701.53525-1-zhou1615@umn.edu>
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20220124164701.53525-1-zhou1615@umn.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
+        kWDxoPAgseWUFZKDYvK1lXWShZQUlCN1dZLVlBSVdZDwkaFQgSH1lBWRlJQxhWSx8YGEhJSkxKHR
+        pCVRkRExYaEhckFA4PWVdZFhoPEhUdFFlBWVVLWQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OhA6MQw*FzIwESoWFVYPNR80
+        ODwwFCNVSlVKTU9IS0NCTE1ITEpCVTMWGhIXVQkOElUDDjseGggCCA8aGBBVGBVFWVdZEgtZQVlJ
+        SkNVQk9VSkpDVUJLWVdZCAFZQU5OQ0o3Bg++
+X-HM-Tid: 0a7e8fc81cbd841ekuqw601bec006e
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 1/25/22 12:47 AM, Zhou Qingyang wrote:
-> In btree_gc_rewrite_node(), btree_node_alloc_replacement() is assigned to
-> n and return error code or NULL on failure. n is passed to
-> bch_btree_node_write_sync() and there is a dereference of it in
-> bch_btree_node_write_sync() without checks, which may lead to wild
-> pointer dereference or NULL pointer dereference depending on n.
->
-> Fix this bug by adding IS_ERR_OR_NULL check of n.
->
-> This bug was found by a static analyzer.
->
-> Builds with 'make allyesconfig' show no new warnings,
-> and our static analyzer no longer warns about this code.
->
-> Fixes: ("bcache: Rework btree cache reserve handling")
-> Signed-off-by: Zhou Qingyang <zhou1615@umn.edu>
-> ---
-> The analysis employs differential checking to identify inconsistent
-> security operations (e.g., checks or kfrees) between two code paths
-> and confirms that the inconsistent operations are not recovered in the
-> current function or the callers, so they constitute bugs.
->
-> Note that, as a bug found by static analysis, it can be a false
-> positive or hard to trigger. Multiple researchers have cross-reviewed
-> the bug.
->
->   drivers/md/bcache/btree.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-> index 88c573eeb598..06d42292e86c 100644
-> --- a/drivers/md/bcache/btree.c
-> +++ b/drivers/md/bcache/btree.c
-> @@ -1504,6 +1504,8 @@ static int btree_gc_rewrite_node(struct btree *b, struct btree_op *op,
->   		return 0;
->   
->   	n = btree_node_alloc_replacement(replace, NULL);
-> +	if (IS_ERR_OR_NULL(n))
-> +		return 0;
->   
+When we register a cache device, register_cache_set is called, but
+it would be locked with bch_register_lock which is a global lock.
 
-Hi Qingyang,
+Consider a scenriao which multiple cache devices are registered
+concurrently, it will block in register_cache because of
+bch_register_lock, in fact, we don't need to lock run_cache_set
+in register_cache_set, but only the operation of bch_cache_sets
+list.
 
-This is a valid fix with my first glance. I add this patch into my 
-testing queue.
+The patch shrink the scope of bch_register_lock in register_cache_set
+so that run_cache_set of different cache devices can be performed
+concurrently, it also add a cache_set_lock to ensure that
+bch_cached_dev_attach and run_cache_set will not processed at the
+same time.
 
-Thanks.
+Signed-off-by: Rui Xu <rui.xu@easystack.cn>
+---
+ drivers/md/bcache/bcache.h |  2 ++
+ drivers/md/bcache/super.c  | 40 ++++++++++++++++++++++++++++----------
+ 2 files changed, 32 insertions(+), 10 deletions(-)
 
-Coly Li
-
-
->   	/* recheck reserve after allocating replacement node */
->   	if (btree_check_reserve(b, NULL)) {
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index ab3c552871df..4e37785eaa2a 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -551,6 +551,8 @@ struct cache_set {
+ 	/* For the btree cache and anything allocation related */
+ 	struct mutex		bucket_lock;
+ 
++	struct mutex		cache_set_lock;
++
+ 	/* log2(bucket_size), in sectors */
+ 	unsigned short		bucket_bits;
+ 
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 8e8297ef98e3..bf392638a969 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1390,8 +1390,11 @@ static int register_bdev(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+ 
+ 	list_add(&dc->list, &uncached_devices);
+ 	/* attach to a matched cache set if it exists */
+-	list_for_each_entry(c, &bch_cache_sets, list)
++	list_for_each_entry(c, &bch_cache_sets, list) {
++		mutex_lock(&c->cache_set_lock);
+ 		bch_cached_dev_attach(dc, c, NULL);
++		mutex_unlock(&c->cache_set_lock);
++    }
+ 
+ 	if (BDEV_STATE(&dc->sb) == BDEV_STATE_NONE ||
+ 	    BDEV_STATE(&dc->sb) == BDEV_STATE_STALE) {
+@@ -1828,6 +1831,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+ 
+ 	sema_init(&c->sb_write_mutex, 1);
+ 	mutex_init(&c->bucket_lock);
++       mutex_init(&c->cache_set_lock);
+ 	init_waitqueue_head(&c->btree_cache_wait);
+ 	spin_lock_init(&c->btree_cannibalize_lock);
+ 	init_waitqueue_head(&c->bucket_wait);
+@@ -2076,13 +2080,18 @@ static const char *register_cache_set(struct cache *ca)
+ 	const char *err = "cannot allocate memory";
+ 	struct cache_set *c;
+ 
++	mutex_lock(&bch_register_lock);
+ 	list_for_each_entry(c, &bch_cache_sets, list)
+ 		if (!memcmp(c->sb.set_uuid, ca->sb.set_uuid, 16)) {
+-			if (c->cache[ca->sb.nr_this_dev])
++			if (c->cache[ca->sb.nr_this_dev]) {
++			        mutex_unlock(&bch_register_lock);
+ 				return "duplicate cache set member";
++			}
+ 
+-			if (!can_attach_cache(ca, c))
++			if (!can_attach_cache(ca, c)) {
++			        mutex_unlock(&bch_register_lock);
+ 				return "cache sb does not match set";
++			}
+ 
+ 			if (!CACHE_SYNC(&ca->sb))
+ 				SET_CACHE_SYNC(&c->sb, false);
+@@ -2091,25 +2100,35 @@ static const char *register_cache_set(struct cache *ca)
+ 		}
+ 
+ 	c = bch_cache_set_alloc(&ca->sb);
+-	if (!c)
++	if (!c) {
++	        mutex_unlock(&bch_register_lock);
+ 		return err;
++	}
+ 
+ 	err = "error creating kobject";
+ 	if (kobject_add(&c->kobj, bcache_kobj, "%pU", c->sb.set_uuid) ||
+-	    kobject_add(&c->internal, &c->kobj, "internal"))
++	    kobject_add(&c->internal, &c->kobj, "internal")) {
++	        mutex_unlock(&bch_register_lock);
+ 		goto err;
++	}
+ 
+-	if (bch_cache_accounting_add_kobjs(&c->accounting, &c->kobj))
++	if (bch_cache_accounting_add_kobjs(&c->accounting, &c->kobj)) {
++	        mutex_unlock(&bch_register_lock);
+ 		goto err;
++	}
+ 
+ 	bch_debug_init_cache_set(c);
+ 
+ 	list_add(&c->list, &bch_cache_sets);
+ found:
++	mutex_lock(&c->cache_set_lock);
++	mutex_unlock(&bch_register_lock);
+ 	sprintf(buf, "cache%i", ca->sb.nr_this_dev);
+ 	if (sysfs_create_link(&ca->kobj, &c->kobj, "set") ||
+-	    sysfs_create_link(&c->kobj, &ca->kobj, buf))
++	    sysfs_create_link(&c->kobj, &ca->kobj, buf)) {
++		mutex_unlock(&c->cache_set_lock);
+ 		goto err;
++	}
+ 
+ 	if (ca->sb.seq > c->sb.seq) {
+ 		c->sb.version		= ca->sb.version;
+@@ -2126,10 +2145,13 @@ static const char *register_cache_set(struct cache *ca)
+ 
+ 	if (c->caches_loaded == c->sb.nr_in_set) {
+ 		err = "failed to run cache set";
+-		if (run_cache_set(c) < 0)
++		if (run_cache_set(c) < 0) {
++			mutex_unlock(&c->cache_set_lock);
+ 			goto err;
++		}
+ 	}
+ 
++	mutex_unlock(&c->cache_set_lock);
+ 	return NULL;
+ err:
+ 	bch_cache_set_unregister(c);
+@@ -2338,9 +2360,7 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+ 		goto out;
+ 	}
+ 
+-	mutex_lock(&bch_register_lock);
+ 	err = register_cache_set(ca);
+-	mutex_unlock(&bch_register_lock);
+ 
+ 	if (err) {
+ 		ret = -ENODEV;
+-- 
+2.25.1
 
