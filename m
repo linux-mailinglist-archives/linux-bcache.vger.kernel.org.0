@@ -2,112 +2,91 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5935B4A4B0D
-	for <lists+linux-bcache@lfdr.de>; Mon, 31 Jan 2022 16:55:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72D0D4A5188
+	for <lists+linux-bcache@lfdr.de>; Mon, 31 Jan 2022 22:37:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379854AbiAaPzW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 31 Jan 2022 10:55:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56546 "EHLO
+        id S1380569AbiAaVg7 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 31 Jan 2022 16:36:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378672AbiAaPzV (ORCPT
+        with ESMTP id S1380823AbiAaVg5 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 31 Jan 2022 10:55:21 -0500
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 588EDC061714
-        for <linux-bcache@vger.kernel.org>; Mon, 31 Jan 2022 07:55:21 -0800 (PST)
-Received: by mail-yb1-xb2a.google.com with SMTP id w81so19508373ybg.12
-        for <linux-bcache@vger.kernel.org>; Mon, 31 Jan 2022 07:55:21 -0800 (PST)
+        Mon, 31 Jan 2022 16:36:57 -0500
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DCB3C06174E
+        for <linux-bcache@vger.kernel.org>; Mon, 31 Jan 2022 13:36:57 -0800 (PST)
+Received: by mail-oi1-x241.google.com with SMTP id s185so29412900oie.3
+        for <linux-bcache@vger.kernel.org>; Mon, 31 Jan 2022 13:36:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=YYfcYdAX+q1LbRXPRPVJDnXR/+ihiJUXJiE8B74MZ3A=;
-        b=b7w6cNGD7NLIcHbz8XsvZfiLSFh2NUJE1aDrf0/RxNNgMXyqhv4X90Xy1tyCJJBN6t
-         P2crtN9OX1zVZFjP00ipbHlghBwmlEm8+yjpwan0HKzu6iz5JM6P6beYackGrB8kG2TW
-         Snl0BF2LrSBBlJO0HNGbrcc48JKcZMUKIQvcfl+DuVHYUbyO30DQkPURGDIqdlBCyEmi
-         xGDZCK812BGA7KTuMDHJX+zBsVt+oFZE4G84iZAajVqmQ8adAxOKFkUMs3SqP5geODKQ
-         zz9KHXLYhTMxME8VMeyq0U4ngkCcTAGlYnWKIlPvkCFBTPbuwl9H9kTu/M+3SXiqHAD7
-         zBmg==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=RcCyF58LaRxi/j1nHAT0ApLeXmQ9s66f3iMVqhPacvY=;
+        b=h0/ZbeSbhpQI9P1vadFWIIwaFx6Wg7DqXMk6y/6+HmqNlUgv3SlNpJw4qpKTo06mte
+         9c8XYB94UqfO8qOJWjzFkjv5zc9WvJZZl3Js9F72ABObxzvVfflP7X59ytjFJOxjOG2l
+         LO3Y+aza5Rf6VWZX6T/nuKCfE48EtABITU6cGLgH5Lgy6DZ7btNOQ2K6FCDw4SVAmVb+
+         bozVeCVEuRNzl4R/3iiKyQWEN4FwtOoBFNE1mvxGgM+MeOAXwYWRhKwNuVBkTmZ3ljfc
+         /CIpJAIw2H+Xim8Oyn6ivr2wbXYsB8V9T2ZN0w8wKdgaTu/QkrQmZRS8vp1zfQE1kyl/
+         bECA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=YYfcYdAX+q1LbRXPRPVJDnXR/+ihiJUXJiE8B74MZ3A=;
-        b=viplTEE5ucBnWLNl//t/0KsHXk61cy9Pi3yF0kkPQjB3W1ouCuiRIx6Pm3sfB63gON
-         7Bn4uHGIWHtBGm3aFzy2xiWqkgcVOomr0jrZmFgFdb0Ka8cf9DSodf5uv+ZEVbjs8Cfd
-         A/f8ufO/lPivgkrCLd2EGcnIJQEdanoOq9kx/bIGHWQoAPqIA75EKizoWCO2jO6+yoa2
-         UId8q7r3x5SG/thjTIUubBrNeUB8grHiYyrYplGHEQVeaQQQaYf4cLscZCSFD2ELUMpR
-         BmoJ0cayXBR6o0suF31c7SI+6CWu6jHTPvrADPaITfKYu7t/wSx20htmo/NXTVXUlhwC
-         zGQw==
-X-Gm-Message-State: AOAM533sRLvCdYOnzfKIaEPZOjas5NchSDXu8sVW4E1HJWcHzI8ODiyi
-        nVOTsJPIZt0g3l2DvPF+7lkF/Ao4ti2epUsVNtU=
-X-Google-Smtp-Source: ABdhPJysLLGopxQOdpXmUgRVC5PlBKRhF0CfOltrF5J64/0hugtu7HHYZBrQRo1nbGTiQ6A/LLe28vobnoPaJvwT09o=
-X-Received: by 2002:a05:6902:1003:: with SMTP id w3mr29316280ybt.329.1643644520505;
- Mon, 31 Jan 2022 07:55:20 -0800 (PST)
+         :subject:to;
+        bh=RcCyF58LaRxi/j1nHAT0ApLeXmQ9s66f3iMVqhPacvY=;
+        b=Xj2ONJKi56tugLcOWIy/ZO3B3ABos9jZif5bmubY9oJua96kMDA9wnryLUuPtH3V3a
+         s+s1RFIwPX3QSSmz1xJsKizmjRfg5gZfeRcefkFrSdbNHjisGfSejBpyxGRICYCweGVr
+         zJhig9dpteA+3MFvZw2rV1Fc3NEXnPOi+Y3qygDf1wYM+7W9JB3tyILLVMqu6v2CydLW
+         HFJ+oqDS9O73xGKfooCM6n54D0AwOxiM7sXp+dx9HX2DfkHJNGXa5uFHQ3hAH+x0bOYp
+         hzQBQ6XZnd5y078eMomzo9hxvTrLtu8p9XGjVD1Enfj4qR81gvbfMHHSrKpDXVeCU95S
+         mVlg==
+X-Gm-Message-State: AOAM532e9YDiw4tdWs5apXvVsaavdx887a/PW6Ty5y3siEokaF9Gt/Dd
+        YmxXEvXNeTQ25m+wGu7jY9xanws0VQgjX2CxmHY=
+X-Google-Smtp-Source: ABdhPJwOKKiu9r5CLPBfR9xT27fzBbARJMbuDEn6UccpYrL5eWNExCgl2kvk+baqoa5SwK6UrZG3WcDm232+Riit43k=
+X-Received: by 2002:a54:4490:: with SMTP id v16mr14816050oiv.157.1643665016077;
+ Mon, 31 Jan 2022 13:36:56 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a05:7110:480e:b0:129:8d21:af4e with HTTP; Mon, 31 Jan 2022
- 07:55:20 -0800 (PST)
-Reply-To: abraaahammorrison1980@gmail.com
-From:   Abraham Morrison <sambchambers06@gmail.com>
-Date:   Mon, 31 Jan 2022 07:55:20 -0800
-Message-ID: <CA+RS1P0EaT36d1AuMV=sa1R1gN6b=OyZ6nzF1G+1LtuEFyiJQg@mail.gmail.com>
-Subject: Good day!
+Received: by 2002:a4a:c30d:0:0:0:0:0 with HTTP; Mon, 31 Jan 2022 13:36:55
+ -0800 (PST)
+Reply-To: westerunion909@gmail.com
+From:   "Antonia Lloyd." <anthonylloydatmxxx04@gmail.com>
+Date:   Mon, 31 Jan 2022 13:36:55 -0800
+Message-ID: <CAExPwBBtJH3GcqF-weqUuAur7b38Y2T1d6e9FzvuN_q1Nhi-zw@mail.gmail.com>
+Subject: Dear Email ID Owner.(USD$4000 IMF COMPENSATION FUND TO PICK UP TODAY).
 To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Prosz=C4=99 o uwag=C4=99,
+Dear Email ID Owner.
 
-Jestem Pan Abraham Morrison, Jak si=C4=99 masz, mam nadziej=C4=99, =C5=BCe =
-jeste=C5=9B
-zdrowy i zdrowy? Informuj=C4=99, =C5=BCe uda=C5=82o mi si=C4=99 zako=C5=84c=
-zy=C4=87 transakcj=C4=99 z
-pomoc=C4=85 nowego partnera z Indii i teraz =C5=9Brodki zosta=C5=82y przela=
-ne do
-Indii na konto bankowe nowego partnera.
+The IMF is compensating all the email address that was funds as one of
+the ward win Victims and your email address and your name is among the
+listed one of approved to pay the sum of $3.6 million U.S Dollars. We
+have concluded to effect your own payment through Western Union Money
+Transfer for easy pick-up of those funds in good condition,$4000 twice
+daily,till the $3.6 million is completely transferred to you.We now
+need your information where we will be sending the funds,such
+as;Receiver name(Your full Name)address and phone number.Contact
+Western Union agent with this Email: ( westerunion995@gmail.com  ) for
+your payment fund.
 
-W mi=C4=99dzyczasie zdecydowa=C5=82em si=C4=99 zrekompensowa=C4=87 ci sum=
-=C4=99 500 000 $
-(tylko pi=C4=99=C4=87set tysi=C4=99cy dolar=C3=B3w ameryka=C5=84skich) z po=
-wodu twoich
-wcze=C5=9Bniejszych wysi=C5=82k=C3=B3w, chocia=C5=BC mnie rozczarowa=C5=82e=
-=C5=9B. Niemniej jednak
-bardzo si=C4=99 ciesz=C4=99 z pomy=C5=9Blnego zako=C5=84czenia transakcji b=
-ez =C5=BCadnego
-problemu i dlatego postanowi=C5=82em zrekompensowa=C4=87 Ci kwot=C4=99 500 =
-000 $,
-aby=C5=9B podzieli=C5=82 si=C4=99 ze mn=C4=85 rado=C5=9Bci=C4=85.
+Ms.Maria Zatto
+E-mail:westerunion995@gmail.com
+Telephone: +229 682 97 169
 
-Radz=C4=99 skontaktowa=C4=87 si=C4=99 z moj=C4=85 sekretark=C4=85 w sprawie=
- karty bankomatowej
-o warto=C5=9Bci 500 000 $, kt=C3=B3r=C4=85 zachowa=C5=82em dla Ciebie. Skon=
-taktuj si=C4=99 z
-ni=C4=85 teraz bez zw=C5=82oki.
+Contact Ms.Maria,immediately you get this mail through western union
+email address above to enable her speed-up.your payment and release
+the $4000 dollars MTCN today for you to pick up the payment OK.
 
-Imi=C4=99: Linda Koffi
-E-mail: koffilinda785@gmail.com
+You are expected to provide us with the details as prescribed below to
+enable safe and easy release of your funds today.
 
+(1)Your Full name:
+(2)Your Phone number:
+(3)Your Country:
+(4)Your Age:
 
-Uprzejmie potwierd=C5=BA jej nast=C4=99puj=C4=85ce informacje:
-
-Twoje pe=C5=82ne imi=C4=99:........
-Tw=C3=B3j adres:..........
-Tw=C3=B3j kraj:..........
-Tw=C3=B3j wiek:.........
-Tw=C3=B3j zaw=C3=B3d:..........
-Tw=C3=B3j numer telefonu kom=C3=B3rkowego:..........
-Tw=C3=B3j paszport lub prawo jazdy:........
-
-Pami=C4=99taj, =C5=BCe je=C5=9Bli nie prze=C5=9Blesz jej powy=C5=BCszych in=
-formacji
-kompletnych, nie wyda ci karty bankomatowej, poniewa=C5=BC musi si=C4=99
-upewni=C4=87, =C5=BCe to ty. Popro=C5=9B j=C4=85, aby przes=C5=82a=C5=82a C=
-i ca=C5=82kowit=C4=85 sum=C4=99 (500 000
-USD) karty bankomatowej, kt=C3=B3r=C4=85 dla Ciebie zachowa=C5=82em.
-
-Z wyrazami szacunku,
-
-Pan Abraham Morrison
+Thank you,
+Dr.Antonia Lloyd.
+Contact Dir.Western Union Money Transfer,
+Cotonou-Benin Republic.
