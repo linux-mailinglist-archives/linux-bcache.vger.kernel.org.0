@@ -2,72 +2,50 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E1DF4A90B8
-	for <lists+linux-bcache@lfdr.de>; Thu,  3 Feb 2022 23:36:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C12A4AACED
+	for <lists+linux-bcache@lfdr.de>; Sat,  5 Feb 2022 23:57:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240416AbiBCWg3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 3 Feb 2022 17:36:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58992 "EHLO
+        id S233065AbiBEW5x (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 5 Feb 2022 17:57:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233162AbiBCWg3 (ORCPT
+        with ESMTP id S232852AbiBEW5x (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 3 Feb 2022 17:36:29 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42AB2C061714
-        for <linux-bcache@vger.kernel.org>; Thu,  3 Feb 2022 14:36:29 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id a13so7789548wrh.9
-        for <linux-bcache@vger.kernel.org>; Thu, 03 Feb 2022 14:36:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:mime-version:content-transfer-encoding
-         :content-description:subject:to:from:date:reply-to;
-        bh=hLKKlTamHmOeS5867qC1N70RfK9okumqJMQVjg6BpqI=;
-        b=iJ+HjTFj1GDZ4K/TeRVSx4jGrFXaK9USdG9RITRkI2YZInVd9fhLKDmV5FnqyCDUgE
-         5zGMsUbk9wQ3Zu9iMbwLiUZ9Cxrhe8l5nheLwA8+IONQjRvY2kM016yrlboQ64Nano3P
-         C688giDn7LZWg+9K3mQq/kA7zgamgv1spHi6asfI4CL4xu3DzweoBnVuZp4BFz6rpiJ2
-         F/uBMD2h3J+C1lhKTgxMIevho+vCggiHFbkcsGQgZHDWO7WO/SiUHGzoKkAxjfFrKNaF
-         xGaUTsEbqqtBNpt7a2tDE5gzxVpmKBJknQ/RbXZaSDfSdBi8tcPMFHxnLiaz1CndcZGd
-         lJEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:content-description:subject:to:from:date
-         :reply-to;
-        bh=hLKKlTamHmOeS5867qC1N70RfK9okumqJMQVjg6BpqI=;
-        b=1x61vZt1BU1kEBtwmAk43KcU9UvUMGHvJWI7SdXgfar4jq7yS+sfDXzn5Kzk6VGnsW
-         ZypXqYg+j8C/ZyPLrSj1Kqnw5YjxroIddZEreOne6ZHqq9I9+r2uJ/j/1bxQfz5bPgjz
-         Bfweew2dqj6rFCXCmr68J0bZUx6gfBLUX76PJDWovNu6iKkAJPa/9PpjOXjb2LBmCs3q
-         w6WdMs4QMnFyjtLMjf55yp823P/sJB5F3yxKrJXWSyLMJnoQpO2k4sd2h3lEsW2JfnxK
-         XnVufl9v/xDq7uPJUoN9FoGArJ18bWG3T5aeFzKINIzpaffVLQbEbfv7QZgz2LHupjpy
-         4u0Q==
-X-Gm-Message-State: AOAM531w6R40AbIlEAfVJcuL5UCAN60MRSMVEvWb7cXrrpffHQ+OJYZc
-        NoDjhBTT/HemifNS0mTxnzc=
-X-Google-Smtp-Source: ABdhPJyi6F33Nl2x2yCiWVQUwmjo4SETaoexmUp73v2BwjLBaZsB+XSXzAaI7MydPZ3eye+G9IbejA==
-X-Received: by 2002:adf:db0a:: with SMTP id s10mr60256wri.267.1643927787859;
-        Thu, 03 Feb 2022 14:36:27 -0800 (PST)
-Received: from [192.168.43.45] ([197.210.71.123])
-        by smtp.gmail.com with ESMTPSA id x7sm76601wrt.77.2022.02.03.14.36.23
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Thu, 03 Feb 2022 14:36:27 -0800 (PST)
-Message-ID: <61fc58eb.1c69fb81.99d17.05f5@mx.google.com>
-Content-Type: text/plain; charset="iso-8859-1"
+        Sat, 5 Feb 2022 17:57:53 -0500
+X-Greylist: delayed 339 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 05 Feb 2022 14:57:51 PST
+Received: from users020.phy.heteml.jp (users020.phy.heteml.jp [157.7.189.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC97DC061348
+        for <linux-bcache@vger.kernel.org>; Sat,  5 Feb 2022 14:57:51 -0800 (PST)
+Received: by users020.phy.heteml.jp (Postfix, from userid 444)
+        id 37F651CC10A6; Sun,  6 Feb 2022 07:52:10 +0900 (JST)
+To:     linux-bcache@vger.kernel.org
+Subject: kamiawase-lab.com "i9scwq0t"
+X-PHP-Originating-Script: 31231:class-phpmailer.php
+Date:   Sat, 5 Feb 2022 22:52:10 +0000
+From:   "kamiawase-lab.com" <wordpress@kamiawase-lab.com>
+Reply-To: youoffice@ace.ocn.ne.jp
+Message-ID: <47e27c1717cdedf9ba821a6073f6380e@kamiawase-lab.com>
+X-Mailer: PHPMailer 5.2.27 (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Mein Zeugnis
-To:     Recipients <ecobank674@gmail.com>
-From:   ecobank674@gmail.com
-Date:   Thu, 03 Feb 2022 23:36:29 +0100
-Reply-To: maureenhinckley24@aol.com
+Content-Type: text/plain; charset=ISO-2022-JP
+X-Spam-Status: No, score=4.3 required=5.0 tests=BAYES_50,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_VALIDITY_RPBL,SHORT_SHORTNER,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: ****
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+        lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Mein Zeugnis
+?? Nancy is interested in your profile! Click Here: https://clck.ru/atD49?uv9 ??様
 
-Ich bin heute froh, dass ich nach vielen Jahren finanzieller Not ein Darleh=
-en von diesem seri=F6sen Unternehmen erhalten habe und dabei auch betrogen =
-wurde, bis ich diese gro=DFartige Frau traf, die mir mit einem Darlehen von=
- 53.000 Euro geholfen hat und zu der ich allen Kreditsuchenden raten werde =
-Kontaktieren Sie dieses Unternehmen unter: F=FCr dringende Antworten sehr g=
-erne verf=FCgbare E-Mail: maureenhinckley24@aol.com
+お問い合わせいただき有難うございます。
+
+担当から数日以内にご連絡いたしますので、 
+少々おまちください。
+
+-- 
+このメールはかみあわせラボ (https://kamiawase-lab.com) のお問い合わせフォームから送信されました
+
