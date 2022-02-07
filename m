@@ -2,76 +2,83 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 88B5C4AB608
-	for <lists+linux-bcache@lfdr.de>; Mon,  7 Feb 2022 08:49:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D48A24AB637
+	for <lists+linux-bcache@lfdr.de>; Mon,  7 Feb 2022 09:12:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233759AbiBGHnp (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 7 Feb 2022 02:43:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36148 "EHLO
+        id S235265AbiBGIFY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 7 Feb 2022 03:05:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244509AbiBGHh2 (ORCPT
+        with ESMTP id S244852AbiBGH4F (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 7 Feb 2022 02:37:28 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC00EC043181
-        for <linux-bcache@vger.kernel.org>; Sun,  6 Feb 2022 23:37:26 -0800 (PST)
+        Mon, 7 Feb 2022 02:56:05 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 315FDC0401C5
+        for <linux-bcache@vger.kernel.org>; Sun,  6 Feb 2022 23:56:05 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C44C61F37E;
-        Mon,  7 Feb 2022 07:37:24 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id DD8E7210EA;
+        Mon,  7 Feb 2022 07:56:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1644219444; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1644220563; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Oaz+h8graEMxBMh1+3Xq/y1xpVQDN0MahiUQPsZWURQ=;
-        b=nslSSl8graSqkSaIdPJVBA0xt9hSd3hHozqq0JqmY4C0r6qHZhU/iSSsM3ykCN9Hehzeh2
-        bKl4SJRL54GGrvyjpfz9laHew2g1Y1ujoDC4ySmkpxs1hJzFeDn3/coum5V8UXM7W15FeD
-        qs/+ntdZKlFcwkChC4J4u0UzIvDss4U=
+        bh=k8pKhFwq5Y4fIb6IMNB+2KRHmXCv7E0WFXTwS8LXMKs=;
+        b=vSsymPfJBJOxhCqaW0BHsspnFwYomjo6+bHEyscM8aYUFi+UH4DHKPE6UovqUQaWDl3eRl
+        4QbV3FY73H7e9AZ+H1kFDe+yjBcsk3/m5z6xjkMFOV+sbREKHePgC4unpqZrSFXIdwrZyH
+        armwSNVBatbwt42cziphiBzGZo0TC/c=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1644219444;
+        s=susede2_ed25519; t=1644220563;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Oaz+h8graEMxBMh1+3Xq/y1xpVQDN0MahiUQPsZWURQ=;
-        b=d7WYSrbvWtKEShwFCAQ7JfGekzn0kYo3At1VaJOI42O3HgJLxcmAiTdDVrjHZAseTF9+O3
-        j2soXQ7YzIaWnWDQ==
+        bh=k8pKhFwq5Y4fIb6IMNB+2KRHmXCv7E0WFXTwS8LXMKs=;
+        b=GpNtpO8x9jj83czTQsIMwDDBb08K8CxUMNlYzOwETap/81k4Pcz4B8/SDDaLc8UG14Z+IG
+        UT7icER1Wocp9eCg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8FE1413519;
-        Mon,  7 Feb 2022 07:37:23 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 263B013ABC;
+        Mon,  7 Feb 2022 07:56:02 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id sJTdFjPMAGLRYwAAMHmgww
-        (envelope-from <colyli@suse.de>); Mon, 07 Feb 2022 07:37:23 +0000
-Message-ID: <9f31c511-3898-8ab2-d695-3ae000c7fe99@suse.de>
-Date:   Mon, 7 Feb 2022 15:37:21 +0800
+        id 0enpMZLQAGJUawAAMHmgww
+        (envelope-from <colyli@suse.de>); Mon, 07 Feb 2022 07:56:02 +0000
+Message-ID: <aeee8f71-0a0d-a78c-eb5c-a32b7b7444f2@suse.de>
+Date:   Mon, 7 Feb 2022 15:56:00 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.5.0
-Subject: Re: Consistent failure of bcache upgrading from 5.10 to 5.15.2
+Subject: Re: Bad/Unaligned block number requested
 Content-Language: en-US
 From:   Coly Li <colyli@suse.de>
 To:     Eric Wheeler <bcache@lists.ewheeler.net>
-Cc:     Kai Krakow <kai@kaishome.de>, linux-bcache@vger.kernel.org,
-        =?UTF-8?Q?Fr=c3=a9d=c3=a9ric_Dumas?= <f.dumas@ellis.siteparc.fr>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-References: <CAC2ZOYtu65fxz6yez4H2iX=_mCs6QDonzKy7_O70jTEED7kqRQ@mail.gmail.com>
- <7485d9b0-80f4-4fff-5a0c-6dd0c35ff91b@suse.de>
- <CAC2ZOYsoZJ2_73ZBfN13txs0=zqMVcjqDMMjmiWCq=kE8sprcw@mail.gmail.com>
- <688136f0-78a9-cf1f-cc68-928c4316c81b@bcache.ewheeler.net>
- <8e25f190-c712-0244-3bfd-65f1d7c7df33@suse.de>
- <431f7be3-3b72-110-692c-ca8a11265d3@ewheeler.net>
- <8799ba1c-5c12-d69b-948f-4df9667a801a@suse.de>
- <c9ebe2b9-d896-4f6e-ecf9-504bd98abe76@suse.de>
-In-Reply-To: <c9ebe2b9-d896-4f6e-ecf9-504bd98abe76@suse.de>
+Cc:     linux-bcache@vger.kernel.org
+References: <alpine.LRH.2.11.1804132229570.9848@mail.ewheeler.net>
+ <3d9f59c0-663c-6523-add5-5374ee1f20af@suse.de>
+ <alpine.LRH.2.11.1804162231170.12553@mail.ewheeler.net>
+ <0a52f7b7-336d-2eb8-f068-7956065369da@suse.de>
+ <alpine.LRH.2.11.1804190010390.11343@mail.ewheeler.net>
+ <f9a3f6db-2d24-4cee-9f47-2a5dc13c5a50@suse.de>
+ <alpine.LRH.2.11.1804191629090.25046@mail.ewheeler.net>
+ <2cd3be1c-9095-701e-d4e7-dbb67d1d128f@suse.de>
+ <alpine.LRH.2.11.1804262010420.12327@mail.ewheeler.net>
+ <alpine.LRH.2.11.1804262029550.12327@mail.ewheeler.net>
+ <09e2074f-defd-7eb7-f8fc-23c2aabe1562@suse.de>
+ <alpine.LRH.2.11.1805051927520.28587@mail.ewheeler.net>
+ <9e567cb0-38b1-8a93-7065-d7d394a60f98@suse.de>
+ <alpine.LRH.2.11.1805072237260.9131@mail.ewheeler.net>
+ <7aa118bf-f0bc-f6a8-f300-d7429c2ae430@suse.de>
+ <alpine.LRH.2.11.1805081646200.20954@mail.ewheeler.net>
+ <9bea1638-2d47-bd3d-86e5-8b52efee452b@suse.de>
+In-Reply-To: <9bea1638-2d47-bd3d-86e5-8b52efee452b@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -82,48 +89,91 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2/7/22 2:11 PM, Coly Li wrote:
-> On 1/6/22 11:49 PM, Coly Li wrote:
->> On 1/6/22 10:51 AM, Eric Wheeler wrote:
->>
->>>
->>> I'm not sure how to format it 4k, but this is how Frédéric set it to 
->>> 512
->>> bytes and fixed his issue:
->>>
->>> # intelmas start -intelssd 0 -nvmeformat LBAFormat=0
->>> # intelmas start -intelssd 1 -nvmeformat LBAFormat=0
->>
->> Copied. Let me try to find Intel P3700 firstly.
+On 5/9/18 3:36 PM, Coly Li wrote:
+> On 2018/5/9 12:57 AM, Eric Wheeler wrote:
+>> On Tue, 8 May 2018, Coly Li wrote:
 >
-> Thanks to Lenovo, they lent me P3700 PCIe SSD for bcache testing and 
-> debug. Now I format the card to 4K sector size and see the new 4k 
-> sector size from fdisk output.
+>> Hi Coly,
+>>
+>> We did get traces over night, so hopefully these are useful. In summary,
+>> these are the ones that hit:
+>>
+>>   check_4k_alignment() KEY_OFFSET(&w->key) is not 4KB aligned
+>>   check_4k_alignment() KEY_OFFSET(l) + KEY_SIZE(r) is not 4KB aligned
+>>   check_4k_alignment() KEY_START(k) is not 4KB aligned
+>>
+>> The whole dmesg output that we have is here: https://pastebin.com/nuYFi66K
+>>
+>> And some of the traces separated by error message are shown below. The
+>> ones below have a unique backtrace, but they may not cover all unique
+>> backtraces.
+>>
+>> ====================================================================
+>>
+>> Of those that hit, These are the ones that were accompanied by SCSI errors:
+>>
+>> [54947.892574] bcache: check_4k_alignment() KEY_OFFSET(&w->key) is not 4KB aligned: 15724561783
+>> [54947.893173] CPU: 5 PID: 1166 Comm: bcache_writebac Tainted: G           O    4.1.49-5.el7.x86_64 #1
+>> [54947.893757] Hardware name: Supermicro X9SCL/X9SCM/X9SCL/X9SCM, BIOS 2.10 01/09/2014
+>> [54947.894323]  0000000000000286 8c136ca15cff4205 ffff8807ebea3d58 ffffffff816ff534
+>> [54947.894907]  ffff88080a7b6aa0 ffff88080a7b0000 ffff8807ebea3d68 ffffffffa05beb63
+>> [54947.895515]  ffff8807ebea3e08 ffffffffa05be174 00000003a93e4e90 ffff8807ef36c4c0
+>> [54947.896132] Call Trace:
+>> [54947.896705]  [<ffffffff816ff534>] dump_stack+0x63/0x81
+>> [54947.897285]  [<ffffffffa05beb63>] check_4k_alignment.part.9+0x24/0x26 [bcache]
+>> [54947.897853]  [<ffffffffa05be174>] read_dirty+0x444/0x4a0 [bcache]
+>> [54947.898418]  [<ffffffffa05be1d0>] ? read_dirty+0x4a0/0x4a0 [bcache]
+>> [54947.898980]  [<ffffffffa05be5cc>] bch_writeback_thread+0x3fc/0x4e0 [bcache]
+>> [54947.899544]  [<ffffffffa05be1d0>] ? read_dirty+0x4a0/0x4a0 [bcache]
+>> [54947.900121]  [<ffffffff810c10d8>] kthread+0xd8/0xf0
+>> [54947.900673]  [<ffffffff810c1000>] ? kthread_create_on_node+0x1b0/0x1b0
+>> [54947.901226]  [<ffffffff817074d2>] ret_from_fork+0x42/0x70
+>> [54947.901783]  [<ffffffff810c1000>] ? kthread_create_on_node+0x1b0/0x1b0
+>> [54947.902401] sd 0:0:0:2: [sdc] Unaligned block number requested: sector_size=4096, block=353041024, blk_rq=23
+>> [54947.903054] bcache: bch_count_io_errors() dm-6: IO error on reading dirty data from cache, recovering
+>> [54947.903874] sd 0:0:0:1: [sdb] Unaligned block number requested: sector_size=4096, block=15724561760, blk_rq=23
+>>
+>>
+>> [54958.301274] bcache: check_4k_alignment() KEY_OFFSET(&w->key) is not 4KB aligned: 15725385535
+>> [54958.301889] CPU: 2 PID: 1166 Comm: bcache_writebac Tainted: G           O    4.1.49-5.el7.x86_64 #1
+>> [54958.302532] Hardware name: Supermicro X9SCL/X9SCM/X9SCL/X9SCM, BIOS 2.10 01/09/2014
+>> [54958.303144]  0000000000000286 8c136ca15cff4205 ffff8807ebea3d58 ffffffff816ff534
+>> [54958.303805]  ffff88080a7b7dc0 ffff88080a7b0000 ffff8807ebea3d68 ffffffffa05beb63
+>> [54958.304423]  ffff8807ebea3e08 ffffffffa05be174 00000003a949ec10 ffff8807ef36c4c0
+>> [54958.305080] Call Trace:
+>> [54958.305728]  [<ffffffff816ff534>] dump_stack+0x63/0x81
+>> [54958.306371]  [<ffffffffa05beb63>] check_4k_alignment.part.9+0x24/0x26 [bcache]
+>> [54958.307049]  [<ffffffffa05be174>] read_dirty+0x444/0x4a0 [bcache]
+>> [54958.307694]  [<ffffffffa05be1d0>] ? read_dirty+0x4a0/0x4a0 [bcache]
+>> [54958.308338]  [<ffffffffa05be5cc>] bch_writeback_thread+0x3fc/0x4e0 [bcache]
+>> [54958.308986]  [<ffffffffa05be1d0>] ? read_dirty+0x4a0/0x4a0 [bcache]
+>> [54958.309631]  [<ffffffff810c10d8>] kthread+0xd8/0xf0
+>> [54958.310267]  [<ffffffff810c1000>] ? kthread_create_on_node+0x1b0/0x1b0
+>> [54958.310914]  [<ffffffff817074d2>] ret_from_fork+0x42/0x70
+>> [54958.311533]  [<ffffffff810c1000>] ? kthread_create_on_node+0x1b0/0x1b0
+>> [54958.312265] sd 0:0:0:2: [sdc] Unaligned block number requested: sector_size=4096, block=387084760, blk_rq=31
+>> [54958.313064] bcache: bch_count_io_errors() dm-6: IO error on reading dirty data from cache, recovering
+>> [54958.314154] sd 0:0:0:1: [sdb] Unaligned block number requested: sector_size=4096, block=15725385504, blk_rq=31
+>>
+> Hi Eric,
 >
-> I start to run fio with 8 io jobs and 256 io depth, 4K random write. 
-> Let me see what may happen. If any one has advice to reproduce the 
-> non-aligned I/O error more easily, please hint me.
+> Wow, the above lines are very informative, thanks!
+> I will start to look into what happens here. And at the meantime I will
+> compose another patch which does extra LBA 4k alignment check in
+> make_request() entries, to make sure I don't miss anything.
 
-BTW, just for extra clarifying,
+Hi Eric,
 
-The original issue reported by Kai in this thread, is not related to 4Kn 
-issue. It is very probably a kernel regression as I replied to his first 
-email.
+Now I have two 4Kn SSD (format by intelmas with your hint), I use the 
+800G SSD as cache device and another 2TB SSD as backing device. They are 
+all formatted as 4K sector size by intelmas.
 
-What I am working on, is the problem originally reported by Eric which 
-happened on 4Kn devices. I will update the situation on that thread later.
+Currently I run fio with random 4K size write on Linux v5.16 kernel, and 
+try to run it overnight. Do you have any suggestion to run some workload 
+similar to your condition?
 
-For the problem reported by Kai in this thread, the dmesg
-
-[   27.334306] bcache: bch_cache_set_error() error on
-04af889c-4ccb-401b-b525-fb9613a81b69: empty set at bucket 1213, block
-1, 0 keys, disabling caching
-[   27.334453] bcache: cache_set_free() Cache set
-04af889c-4ccb-401b-b525-fb9613a81b69 unregistered
-[   27.334510] bcache: register_cache() error sda3: failed to run cache set
-[   27.334512] bcache: register_bcache() error : failed to register device
-
-tells that the mate data is corrupted which probably by uncompleted meta data write, which some other people and I countered too (some specific bcache block size on specific device). Update to latest stable kernel may solve the issue, but I don't verify whether the regression is fixed or not.
+Thanks.
 
 Coly Li
+
 
