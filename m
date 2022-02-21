@@ -2,161 +2,152 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 15C2F4B6613
-	for <lists+linux-bcache@lfdr.de>; Tue, 15 Feb 2022 09:30:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C6664BE45A
+	for <lists+linux-bcache@lfdr.de>; Mon, 21 Feb 2022 18:59:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233298AbiBOIaU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 15 Feb 2022 03:30:20 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60736 "EHLO
+        id S1352841AbiBUKK1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 21 Feb 2022 05:10:27 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233293AbiBOIaS (ORCPT
+        with ESMTP id S1353270AbiBUKJ7 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 15 Feb 2022 03:30:18 -0500
-X-Greylist: delayed 63 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Feb 2022 00:30:08 PST
-Received: from qq.com (smtpbg456.qq.com [59.36.132.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AFE3DAAF9
-        for <linux-bcache@vger.kernel.org>; Tue, 15 Feb 2022 00:30:08 -0800 (PST)
-X-QQ-mid: bizesmtp53t1644913682t9bgqp25
-Received: from localhost.localdomain (unknown [116.24.152.144])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Tue, 15 Feb 2022 16:28:01 +0800 (CST)
-X-QQ-SSF: 01400000002000B0E000B00A0000000
-X-QQ-FEAT: XcJ1Se6Wjem+e6IqeEI5ANR6k6m87OsB4wTZZnCvhTr2roSFDrxbcy1jUjRRU
-        MT3mYYhem+rj86pY0ft5TWiTZH2VkUuZcjIQkH2r/XjSw8k7ZoHMpDVteIFPVnLmJfx9TzY
-        zNrvtCcVm9o+mNiFIwI1Xbw5xflDTxbHkcy3XANupWil2jC058bihhIIF7hK4egI8LDG7ca
-        Nmvgx3Jiy2FoD9mdbzegnZhlGV+fBuKu+Ylo20gDdId+Xt4kf4+l7xYhv7n3+lZmL363IZU
-        lcOcviBqOWcX8HGUf8Vw7sofeGSeeS5eH+NyN2NYVM3m8CWKyjJD+/ox8mryhtU0meru9Yf
-        THTIDaYKClSRVaUl/yQNxXBjQcafg==
-X-QQ-GoodBg: 2
-From:   Minlan Wang <wangminlan@szsandstone.com>
-To:     colyli@suse.de, linux-bcache@vger.kernel.org
-Cc:     wangminlan@szsandstone.com
-Subject: [PATCH] bcache: fix insane -ESRCH error in bch_journal_replay
-Date:   Tue, 15 Feb 2022 03:28:01 -0500
-Message-Id: <20220215082801.266620-1-wangminlan@szsandstone.com>
-X-Mailer: git-send-email 2.18.4
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:szsandstone.com:qybgforeign:qybgforeign7
-X-QQ-Bgrelay: 1
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Mon, 21 Feb 2022 05:09:59 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55BCB56C0A
+        for <linux-bcache@vger.kernel.org>; Mon, 21 Feb 2022 01:33:37 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id q1so3859421plx.4
+        for <linux-bcache@vger.kernel.org>; Mon, 21 Feb 2022 01:33:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:to:cc:from:subject
+         :content-transfer-encoding;
+        bh=Wby8Xqh+ppDkwGCT7VOiHRwHGKjoLi+CFgoxH0aK3jw=;
+        b=DPQhi+6bggdj55eOuz+Byk4te5HZsS1Lu/KkmjbkeUsZlDyk2K+rSede61ECWgVkji
+         F098YIOZa87IyXFXxBjuelxYlLlifE6CpoLbiFeyxRgoc7aXsBiDEoP66+M80F4tsglT
+         5pLQ1dQ86htcLBAEDtfr2LiIpZBIgunQ613qTrRuDOzFTLqDuzgK/IO+vycPdecHX6aE
+         wQgPc80AflnyZ1J+CfWnF+agjbvInJXEGgpK3MTaZ3ccSzGEp+3rdZdsXCteYHNLTqw5
+         AqZgDtyyXCzmdxtMmKTMpwjwmXkHPY0NayYGqXsx8Cu2eHUcclQk6xUAh9Rw3fZ5CVlk
+         eMPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:to:cc
+         :from:subject:content-transfer-encoding;
+        bh=Wby8Xqh+ppDkwGCT7VOiHRwHGKjoLi+CFgoxH0aK3jw=;
+        b=u9Ij3w8HBImMYTWtX3p21+Cu76z8hV9F6uM4MF2d5q33ZE2TFS6mLI5iadNF3khsJP
+         Jrhey6dQFwb2WqRy0sUb/mnx4Ib7uTLViT1U2lXNth9OcIbQZ8xmrk8dHNV2QtCuLtbi
+         Qd8AgSnu0PD4b8PiCCw8rLGGI7ycxpNtFeAMJzVB9XdHyj6ahDFZPqSL8cAl5aEth0r2
+         9nEd6hdlnMforS6WLGJh9k8KgEJ6Quc7Qt70TV1+DHFkvecO6g/D7mwx5BqW/RE+ppwq
+         TdbFLo98ZKGrMFW4stSbqNH1nCR4bKaPVa6v1FSkE7f3QNB6q0AUHlcaQsWNet6O8+/y
+         rMZQ==
+X-Gm-Message-State: AOAM531Xvf8HgsNBhVr7oQgpjU5L9AuJW6VQdPhHFWfrv8CeRcHxre8s
+        1MfQkqs7JJSgTKMQZT0Hq76Ax6waOABt+sPmGTE=
+X-Google-Smtp-Source: ABdhPJwd7ZtWLjiIEiaIcZsowfcKodkeESgwabS5o70bETZ+6Hn4dboXF9R1sJBN7SKVdXOwP5Wixw==
+X-Received: by 2002:a17:902:d4cf:b0:14d:70a9:6a2f with SMTP id o15-20020a170902d4cf00b0014d70a96a2fmr18370937plg.19.1645436016642;
+        Mon, 21 Feb 2022 01:33:36 -0800 (PST)
+Received: from [172.20.104.20] ([61.16.102.70])
+        by smtp.gmail.com with ESMTPSA id b8sm12432489pfv.74.2022.02.21.01.33.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Feb 2022 01:33:36 -0800 (PST)
+Message-ID: <e6c45b07-769c-575b-0d9c-929aba6ab21a@gmail.com>
+Date:   Mon, 21 Feb 2022 17:33:32 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.6.1
+To:     colyli@suse.de
+Cc:     linux-bcache@vger.kernel.org, jianchao.wan9@gmail.com
+From:   Zhang Zhen <zhangzhen.email@gmail.com>
+Subject: bcache detach lead to xfs force shutdown
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-bch_keylist_empty is checked to make sure key insert is successful
+Hi coly，
 
-Signed-off-by: Minlan Wang <wangminlan@szsandstone.com>
----
-We've been using a pretty old version of bcache (from
-linux-4.18-rc8) and experiencing occasional data corruption
-after a new register session of bcache.  It turns out the
-data corruption is caused by this code in our old version of
-bcache:
+We encounted a bcache detach problem, during the io process，the cache 
+device become missing.
 
-in bch_journal_replay:
-		 ...
-                 for (k = i->j.start;
-                      k < bset_bkey_last(&i->j);
-                      k = bkey_next(k)) {
-                         trace_bcache_journal_replay_key(k);
+The io error status returned to xfs， and in some case， the xfs do force 
+shutdown.
 
-                         bch_keylist_init_single(&keylist, k);
-
-                         ret = bch_btree_insert(s, &keylist, i->pin, NULL);
-                         if (ret)
-                                 goto err;
-		 ...
-bch_journal_replay returns -ESRCH, then in run_cache_set:
-		 ...
-                 if (j->version < BCACHE_JSET_VERSION_UUID)
-                         __uuid_write(c);
-
-                 bch_journal_replay(c, &journal);
-		 ...
-There's no message warning about this key insert error in
-journal replay, nor does run_cache_set check for return
-value of bch_journal_replay either, so later keys in jset
-got lost silently and cause data corruption.
-
-We checked the key which caused this failure in
-bch_journal_replay, it is a key mapped to 2 btree node, and
-the first btree node is full.
-The code path causing this problem is:
-1. k1 mapped to btree node n1, n2
-2. When mapping into n1, bch_btree_insert_node goes into
-   split case, top half of k1, say k1.1, is inserted into
-   splitted n1: say n1.1, n1.2. Since the bottom half of k1,
-   say k1.2, is left in insert_keys, so bch_btree_insert_node
-   returns -EINTR.
-   This happens in this code:
-   in bch_btree_insert_node:
-        ...
-        } else {
-                /* Invalidated all iterators */
-                int ret = btree_split(b, op, insert_keys, replace_key);
-
-                if (bch_keylist_empty(insert_keys))
-                        return 0;
-                else if (!ret)
-                        return -EINTR;
-                return ret;
-        }
-        ...
-3. For return value -EINTR, another
-   bch_btree_map_nodes_recurse in bcache_btree_root is
-   triggered, with the wrong "from" key: which is
-   START_KEY(&k1), instead of START_KEY(&k1.2)
-4. n1.2 is revisted, since it has no overlapping range for
-   k1.2, bch_btree_insert_keys sets
-   op->insert_collision = true
-   in the following code path:
-   btree_insert_fn
-   --> bch_btree_insert_node
-     --> bch_btree_insert_keys
-5. n2 is visisted and k1.2 is inserted here
-6. bch_btree_insert detects op.op.insert_collision, and
-   returns -ESRCH
-
-In this case, the key is successfully inserted, though
-bch_btree_insert returns -ESRCH.
-
-We tried the latest version of bcache in linux mainline,
-which has commit ce3e4cfb59cb (bcache: add failure check to
-run_cache_set() for journal replay), the cache disk register
-failed with this message:
-bcache: replay journal failed, disabling caching
-
-This is not what is expected, since the data in disk in
-intact, journal replay should success.
-I'm wondering if the checking of bch_btree_insert's return
-value is really neccessary in bch_journal_replay, could we
-just check bch_keylist_empty(&keylist) and make the replay
-continue if that is empty?
-
-We are using this patch for a work around for this issue now.
-
- drivers/md/bcache/journal.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index 61bd79babf7a..35b8cbcd73c5 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -380,6 +380,8 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
- 			bch_keylist_init_single(&keylist, k);
- 
- 			ret = bch_btree_insert(s, &keylist, i->pin, NULL);
-+			if ((ret == -ESRCH) && (bch_keylist_empty(&keylist)))
-+				ret = 0;
- 			if (ret)
- 				goto err;
- 
--- 
-2.18.4
+The dmesg as follows:
+Feb  2 20:59:23  kernel: bcache: bch_count_io_errors() nvme0n1p56: IO 
+error on writing btree.
+Feb  2 20:59:23  kernel: bcache: bch_count_io_errors() nvme0n1p44: IO 
+error on writing btree.
+Feb  2 20:59:23  kernel: bcache: bch_count_io_errors() nvme0n1p44: IO 
+error on writing btree.
+Feb  2 20:59:23  kernel: bcache: bch_count_io_errors() nvme0n1p57: IO 
+error on writing btree.
+Feb  2 20:59:23  kernel: bcache: bch_count_io_errors() nvme0n1p56: IO 
+error on writing btree.
+Feb  2 20:59:23  kernel: bcache: bch_count_io_errors() nvme0n1p57: IO 
+error on writing btree.
+Feb  2 20:59:23  kernel: bcache: bch_count_io_errors() nvme0n1p56: IO 
+error on writing btree.
+Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
+Feb  2 20:59:23  kernel: XFS (bcache43): metadata I/O error in 
+"xfs_buf_iodone_callback_error" at daddr 0x80034658 len 32 error 12
+Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
+Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
+Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
+Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
+Feb  2 20:59:23  kernel: bcache: bch_cache_set_error() bcache: error on 
+004f8aa7-561a-4ba7-bf7b-292e461d3f18:
+Feb  2 20:59:23  kernel: journal io error
+Feb  2 20:59:23  kernel: bcache: bch_cache_set_error() , disabling caching
+Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
+Feb  2 20:59:23  kernel: bcache: conditional_stop_bcache_device() 
+stop_when_cache_set_failed of bcache43 is "auto" and cache is clean, 
+keep it alive.
+Feb  2 20:59:23  kernel: XFS (bcache43): metadata I/O error in 
+"xlog_iodone" at daddr 0x400123e60 len 64 error 12
+Feb  2 20:59:23  kernel: XFS (bcache43): xfs_do_force_shutdown(0x2) 
+called from line 1298 of file fs/xfs/xfs_log.c. Return address = 
+00000000c1c8077f
+Feb  2 20:59:23  kernel: XFS (bcache43): Log I/O Error Detected. 
+Shutting down filesystem
+Feb  2 20:59:23  kernel: XFS (bcache43): Please unmount the filesystem 
+and rectify the problem(s)
 
 
+We checked the code, the error status is returned in 
+cached_dev_make_request and closure_bio_submit function.
 
+1180 static blk_qc_t cached_dev_make_request(struct request_queue *q,
+1181                     struct bio *bio)
+1182 {
+1183     struct search *s;
+1184     struct bcache_device *d = bio->bi_disk->private_data;
+1185     struct cached_dev *dc = container_of(d, struct cached_dev, disk);
+1186     int rw = bio_data_dir(bio);
+1187
+1188     if (unlikely((d->c && test_bit(CACHE_SET_IO_DISABLE, 
+&d->c->flags)) ||
+1189              dc->io_disable)) {
+1190         bio->bi_status = BLK_STS_IOERR;
+1191         bio_endio(bio);
+1192         return BLK_QC_T_NONE;
+1193     }
+
+  901 static inline void closure_bio_submit(struct cache_set *c,
+  902                       struct bio *bio,
+  903                       struct closure *cl)
+  904 {
+  905     closure_get(cl);
+  906     if (unlikely(test_bit(CACHE_SET_IO_DISABLE, &c->flags))) {
+  907         bio->bi_status = BLK_STS_IOERR;
+  908         bio_endio(bio);
+  909         return;
+  910     }
+  911     generic_make_request(bio);
+  912 }
+
+Can the cache set detached and don't return error status to fs?
