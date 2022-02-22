@@ -2,32 +2,32 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 496D34BFDA6
-	for <lists+linux-bcache@lfdr.de>; Tue, 22 Feb 2022 16:53:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADDD64BFDB5
+	for <lists+linux-bcache@lfdr.de>; Tue, 22 Feb 2022 16:53:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233830AbiBVPxR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 22 Feb 2022 10:53:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45656 "EHLO
+        id S233821AbiBVPxS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 22 Feb 2022 10:53:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233877AbiBVPwz (ORCPT
+        with ESMTP id S233899AbiBVPw6 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 22 Feb 2022 10:52:55 -0500
+        Tue, 22 Feb 2022 10:52:58 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B182056215;
-        Tue, 22 Feb 2022 07:52:29 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70EEB54BCF;
+        Tue, 22 Feb 2022 07:52:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=jLxc+k9U5m5jDVU3xzQ+WAktMvinKjuEy4i/XGAkyLM=; b=A3Nl2wgEGlsRzwlTl/VpujN/tS
-        EbTkiQvce3848TeyGssLHoSl6du0jTmKRzuOK7V1k6DryhmpgEOfrqSuxrOzEb/092+t7DhvL/O7C
-        ZzpUNf2qez1X2poRJll7YtOrP5v6odc4tOMtRQh2b75EGzN8MUtXmZEqJLWJ04FNLpHRrI8UaalZM
-        +7/u/LUkkpUXxMFQkOv7Vp1QFnAuDewiozc8m9WaFeYl75Ex75dgkyfG5Pq4GfrGd1yI8fvrjM0YZ
-        +UrhkhnI2MbeVrKzbebszxpzSwxqUlmDvzv9z12Cpl8kCP/a7NfUCee8EIRXkgSMGFZAhGrSCXJr3
-        0YQswS0g==;
+        bh=PMHViAJhEEv7jlvdbpFwU2YaZRdIC4g9mzG7ynUcv90=; b=wxABwN0ujck+tDQz82qITDMWOE
+        6vVGG/pJNlX68EPkavkRShaHap7ajnipbIeG8oEgmOp1SZVHxB22EWHfYotsB0yPpaBK2ahW5GW+S
+        8kzRGNNrOY11nvQqgiLNriwVitBtd8uzT0JMvcE41H5PSjci6aphpvknzw35Cx+hlhNDN1ZUx6DDU
+        xSR8xlHPN9Fga+jfQTBEObFGdOtokX4iZgsSBa3+/oXytAveNQIir8hIJjYF5VsYUA06b1BxysoPk
+        pX+cgXqME+0qSMx+zXD6Ohjhqpk2PuhzcbhrNQrhQui/bqnruaKtwABNcY2noAg2JjOqigijr4wgx
+        +LtsvjUw==;
 Received: from [2001:4bb8:198:f8fc:c22a:ebfc:be8d:63c2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nMXSf-00APzl-H6; Tue, 22 Feb 2022 15:52:22 +0000
+        id 1nMXSi-00AQ1t-CM; Tue, 22 Feb 2022 15:52:24 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
@@ -42,9 +42,9 @@ Cc:     Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
         linux-xtensa@linux-xtensa.org, linux-block@vger.kernel.org,
         drbd-dev@lists.linbit.com, linux-bcache@vger.kernel.org,
         nvdimm@lists.linux.dev
-Subject: [PATCH 08/10] drbd: use bvec_kmap_local in drbd_csum_bio
-Date:   Tue, 22 Feb 2022 16:51:54 +0100
-Message-Id: <20220222155156.597597-9-hch@lst.de>
+Subject: [PATCH 09/10] drbd: use bvec_kmap_local in recv_dless_read
+Date:   Tue, 22 Feb 2022 16:51:55 +0100
+Message-Id: <20220222155156.597597-10-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220222155156.597597-1-hch@lst.de>
 References: <20220222155156.597597-1-hch@lst.de>
@@ -66,26 +66,26 @@ the bvec interface cleans up the code a little bit.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/block/drbd/drbd_worker.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/block/drbd/drbd_receiver.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_worker.c b/drivers/block/drbd/drbd_worker.c
-index a5e04b38006b6..1b48c8172a077 100644
---- a/drivers/block/drbd/drbd_worker.c
-+++ b/drivers/block/drbd/drbd_worker.c
-@@ -326,9 +326,9 @@ void drbd_csum_bio(struct crypto_shash *tfm, struct bio *bio, void *digest)
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 04e3ec12d8b49..fa00cf2ea9529 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -2017,10 +2017,10 @@ static int recv_dless_read(struct drbd_peer_device *peer_device, struct drbd_req
+ 	D_ASSERT(peer_device->device, sector == bio->bi_iter.bi_sector);
+ 
  	bio_for_each_segment(bvec, bio, iter) {
- 		u8 *src;
- 
--		src = kmap_atomic(bvec.bv_page);
--		crypto_shash_update(desc, src + bvec.bv_offset, bvec.bv_len);
--		kunmap_atomic(src);
-+		src = bvec_kmap_local(&bvec);
-+		crypto_shash_update(desc, src, bvec.bv_len);
-+		kunmap_local(src);
- 
- 		/* REQ_OP_WRITE_SAME has only one segment,
- 		 * checksum the payload only once. */
+-		void *mapped = kmap(bvec.bv_page) + bvec.bv_offset;
++		void *mapped = bvec_kmap_local(&bvec);
+ 		expect = min_t(int, data_size, bvec.bv_len);
+ 		err = drbd_recv_all_warn(peer_device->connection, mapped, expect);
+-		kunmap(bvec.bv_page);
++		kunmap_local(mapped);
+ 		if (err)
+ 			return err;
+ 		data_size -= expect;
 -- 
 2.30.2
 
