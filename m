@@ -2,518 +2,151 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 812B94D1B15
-	for <lists+linux-bcache@lfdr.de>; Tue,  8 Mar 2022 15:57:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F4F04D23E1
+	for <lists+linux-bcache@lfdr.de>; Tue,  8 Mar 2022 23:07:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345631AbiCHO6V (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 8 Mar 2022 09:58:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51740 "EHLO
+        id S240561AbiCHWIk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 8 Mar 2022 17:08:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239658AbiCHO6U (ORCPT
+        with ESMTP id S1344879AbiCHWIk (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 8 Mar 2022 09:58:20 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4504C4D60A
-        for <linux-bcache@vger.kernel.org>; Tue,  8 Mar 2022 06:57:23 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id o18-20020a05600c4fd200b003826701f847so1544290wmq.4
-        for <linux-bcache@vger.kernel.org>; Tue, 08 Mar 2022 06:57:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=devo.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=99SojzQJ0HyvgFEqg+AGnLEKbdCY/pn7kBIijxjbmdo=;
-        b=RGAijQrZp2O2iD0FnbS5Jhpi3mJAx2+7Uy80PXfmhotcT8qVfbrM9WQBU08fwm36MG
-         mIaZH6YMceZrAlC2UwAZPsSHJxVwvccXc3jq3kjRqsZ0ry01PSH6Ug4GCWK34urp82u1
-         sQjC7aji0kyAEkZFZRMJixqdFNLsSc9Uk3QJXB+K8GiwLrUqOhgQPsdxVlHv5bzLZTR9
-         grzhxQxxup6mMkKfkDqSluu03Fr5FxscLTbpgjIuU7GKMqNByph+HGopWcubTdi+KBhX
-         Mu4pI0kXcoR4SVWgW6MoRuATXTE96xwP9+IsYenpJRtbAqXHYhgCx6UuLSFCY4mzYJ8r
-         zRJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=99SojzQJ0HyvgFEqg+AGnLEKbdCY/pn7kBIijxjbmdo=;
-        b=GkbULcFDGE3v13aPz6+UyiKaySU5K2M8Du3NDCTgwo6cPxk+1Og47qsDMdBO2xOFVd
-         SOSGOB4jkJkhtfHD/b1fWo108NrO/WX/qOjlkriFT6UpGa94r2pyAXqh+WrSEhkBM4QB
-         8Csc6AsBivFQzXqSTdDOlYl1DE0XHtPmfk9iXN+S2bGE7iuj5IFP5JdrGTJJH2RIKKs8
-         cm2tk/24O9+4weDrZ2MGJKeszqOtUprBSoJVhshVNp7tqIYpQL9aI1/ADDtGgu3JqWKz
-         3CL4p2MDi+qe4T741P9HwaUdV72jd62AkJTm8qFd1ZGMguz6QnAARAr5XrdeLo7sY4vy
-         nIkA==
-X-Gm-Message-State: AOAM532VfB89xPFrYbEuUjKr+7SjropkEjM13zLch4CbyFMjlTFwSJ35
-        tzjUcTYdUe+GDqpT5755IF6pBLo18LFsg9e3P5tJfz6k+6pBU2cQDZiu9OWiL0zVFj6n0J2EVDV
-        IzEjNiGJShlXi4eG90CAFumff
-X-Google-Smtp-Source: ABdhPJxDMhYRyGMR39ZkqIxGygd9ClnGyzRstygfkBKW7EngQ7U6nKQ6x/IW5eUlZ3YGSVG1NMOS4g==
-X-Received: by 2002:a7b:c5d0:0:b0:355:482a:6f44 with SMTP id n16-20020a7bc5d0000000b00355482a6f44mr3873995wmk.58.1646751441366;
-        Tue, 08 Mar 2022 06:57:21 -0800 (PST)
-Received: from 2021-EMEA-0269.home (251.69.14.37.dynamic.jazztel.es. [37.14.69.251])
-        by smtp.googlemail.com with ESMTPSA id r12-20020a05600c2c4c00b003816932de9csm2407480wmg.24.2022.03.08.06.57.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Mar 2022 06:57:21 -0800 (PST)
-From:   Andrea Tomassetti <andrea.tomassetti@devo.com>
-To:     linux-bcache@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Andrea Tomassetti <andrea.tomassetti@devo.com>
-Subject: [PATCH] bcache: Use bcache without formatting existing device
-Date:   Tue,  8 Mar 2022 15:56:23 +0100
-Message-Id: <20220308145623.209625-1-andrea.tomassetti@devo.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 8 Mar 2022 17:08:40 -0500
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2085.outbound.protection.outlook.com [40.107.237.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A10632DF9;
+        Tue,  8 Mar 2022 14:07:41 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AmVTytU22Vw847gTrwCwUYGx8roS5EJ+39GIsdVOAwayml9Emh21WHhtvTQeAiJzmHZkPQ23nJ1y6/dAVJ5/hF1kMcQ0giwNUh5DR+dUEGDOh+XdE8Ud2CbKpj3LTn2NWfkxSSBbUO5GGWZrCV1QQo1vJXsClRSbDiDizQJXbZjB+tCu/7WRk5pMplLWU/IvHrmK0UBQgbMhXuh/5y4YQlLXX+EdCT6rp/r8N4MxJa6owCZbktaZVhIfifSigpYmGP8bGzZffBpz0SMqK6z9mBo38E/Wv3jyils4ULQRJY7vy10hqn4RFQd/YYNRqQY/3+JKbrLDxGikr2W4S5pDqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3+FWP+LlmeUdtCRg3MbmNBaNeOjjxNrjKfavVj02F5c=;
+ b=HuqSSGW6uuXnzG9R0fxM/Y19/L0BlswWlzLHP3FWPbmlRdoY+lDI4ouBkTJQ0pqR+vpnOO9q1Ze7cwhtc/+SEH3Lr30Z4WNE/1qrUd1WRlmORfNrkPyfaDKaBM6xO7yho4aj2x0la8wgwEKM4KD3Dm8K72AP2S8QKxuzmOwA6S0IPD6ahIXA8ThzBB27gv5fc+xV7fHpbKwmLWyXuX9lW+aiLrgIDL8Pq0T+rn2BmN3CyruSw6U96huudQeZq+uadTvKOHm7uRGrCbPFRp2gaSnnnUByarjNQfILS0F7UIpLrOPb7dIaER6k3XFOYNACvULoj2v0yg+OMLXs98lwVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3+FWP+LlmeUdtCRg3MbmNBaNeOjjxNrjKfavVj02F5c=;
+ b=M8hDptac4WtTrkkkzcKiQE8/YiP+0b9X3vqQnCVy7TcIRzojs93+xAHvJGpvcSctYyjiunSzscd4qn/olgdBjSUtKq+6DGEOB9VCkSR7wwQDBsyFtZGVkBTdRYXvEvuxHNMPCRez3IbV0ZBOZZgrXj+VvnAKwWdvJZxmD/yKtucXIaS7FpIlrxYYWL8xVHAk1FXrMbPFA1cplS4MQyBq8E5NRbTKSQyHnSn7wOSjLz8Evhygy1JkF9H6DqpZYb8x1bcwhXq6nv8I0FSQkgrUlYkAV8h3sxnI6tPJYoioDsFGUUYKnL7bruIkKYf/1WOQ9ABY13Ufh49fG0J/R+S7eg==
+Received: from MW2PR12MB4667.namprd12.prod.outlook.com (2603:10b6:302:12::28)
+ by CY4PR12MB1446.namprd12.prod.outlook.com (2603:10b6:910:10::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.19; Tue, 8 Mar
+ 2022 22:07:38 +0000
+Received: from MW2PR12MB4667.namprd12.prod.outlook.com
+ ([fe80::204b:bbcb:d388:64a2]) by MW2PR12MB4667.namprd12.prod.outlook.com
+ ([fe80::204b:bbcb:d388:64a2%4]) with mapi id 15.20.5038.027; Tue, 8 Mar 2022
+ 22:07:38 +0000
+From:   Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+CC:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Song Liu <song@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH 1/5] btrfs: simplify ->flush_bio handling
+Thread-Topic: [PATCH 1/5] btrfs: simplify ->flush_bio handling
+Thread-Index: AQHYMrQJiBMQoCadmk6WQuobhVgjTay2DG6A
+Date:   Tue, 8 Mar 2022 22:07:38 +0000
+Message-ID: <9a62e88b-89dd-2420-2551-6f587afd5db2@nvidia.com>
+References: <20220308061551.737853-1-hch@lst.de>
+ <20220308061551.737853-2-hch@lst.de>
+In-Reply-To: <20220308061551.737853-2-hch@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0a364bdd-af96-4363-cd32-08da01500ec7
+x-ms-traffictypediagnostic: CY4PR12MB1446:EE_
+x-microsoft-antispam-prvs: <CY4PR12MB1446E6354A2539FF367E1ADFA3099@CY4PR12MB1446.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 2lKyoMo36d9UhgqgpuVXXX/jUxoDVDAjyAsUq6dxBCgFyU/CrASs90weMJSi8mTkLxEUEStzIjOvY5OR/unUtMNSMUMtE2RM8BuhDyy1QXqlCSv4JBwbdzeL6k7okaHzljj8ZVGrfU70oBh8L0D8IMGUqHsB9vrCQZ9Qu62gcJHQBmvWJ0f7l8WAP7/7QNe3BKysjuc0n6JcT3+mX3mBINzRVkB5IQzXoJGNEp/FPGwhjds9ctUQtqAgwS8bcEIOs0SbuZxGzns8L5ODfvWFXz88Rst771SWrAQIh6Tx64t0Hra9UvVyXn5shfEn0mbjC9fEP1x2sfxyrqMnrmiLkq/CpOjM6e9cHMp1N84AmIrxYwgbZ9bHFyZwkHJRj6rwK+5mgLZ7M+/6RsvmQy2nNRZf6j0v4x5BIR4eIVY94kTkVowWFqAOGHs6TR3zSfFpeoUsVAydMxMx3rAGFX3OytLxYGyHRP5v3CsQpf/4dHG5GlqDWxDueKuHzc5ADQRtAd4r0BEoO7XfKVK64RHsJaRbGW/gCQIGX8MJYV9/OpKAjgSQBnIYgkUmR2V+JfR0mkctr8HDkl0Iq3Di7xYJVPW1qNncT2euNMh7O6ozArBsfjlFaeVYHLOw1tFZv4UirM4ROI8Wk6mW4Q4PLTalvYRRNo15SKi6Yj0/BHcz6c94X3+zz9Q7VMMfSVdIl8qOOmhO9KWaXD8yjbyd4qNNO1Ty77akBd5kCmv5fSKUSyAxnV7pKIk36+AWIn/gqvt7uv1+TKZrSh2zakQ6fTo8jQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW2PR12MB4667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(186003)(5660300002)(91956017)(8676002)(66446008)(66476007)(66556008)(66946007)(64756008)(76116006)(4326008)(558084003)(316002)(36756003)(2906002)(8936002)(7416002)(110136005)(54906003)(38100700002)(31686004)(122000001)(508600001)(38070700005)(6486002)(86362001)(31696002)(71200400001)(6512007)(53546011)(6506007)(2616005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YmdoK0RkVUJWMDk2QnFpSGRHNHJQY29wWDFFakVMZlZiem5WZ0doNStrWmND?=
+ =?utf-8?B?RHFMbENxRTlpV1FxRzV3QTR0R2UvVncwcWtoQ2VucmdxZExoUGdlajNtRkJ0?=
+ =?utf-8?B?bThaaDNWdi92MXNwNVBmaVFIWEtPMDN2K3Y2Z0RESnRkaWIrdHowSjVpdEVy?=
+ =?utf-8?B?YlZTajZrL0U2d1lGNlNOQ2dROUl4c0kzNzJWRythOEpoQ1ErUGF6bjlCRHdr?=
+ =?utf-8?B?K0o3OE1HWlBybUwzKzJHWGZxOXBUelVCVTB6ZmVZbHpSbHJyamZPVFlZNDdq?=
+ =?utf-8?B?VDkxbnRySUpLTUE4K0g0TEI0RzdHTUlpeHlPOUhQQWJVMnlTSnhidzZYMDBH?=
+ =?utf-8?B?Snc5TTk1ZFFSN3dxK1dyWjRNeVBaQ0NFWmpndHU3bVcrV21nM0lPWVByakhW?=
+ =?utf-8?B?T3F5S2tLRUI1ZmZiSWZhdE9OU3NMNHp2STBKeE1UNmpOaUY1QytpNXFUUEVa?=
+ =?utf-8?B?NFk5czlBUE03bXlVMk5OUmxYaXBLZm8zRUp2eWQxZDRmc1RQY0QzLzFWN1hH?=
+ =?utf-8?B?NFFDT2c5eWV5VlV0cGppYTl3c0N6L3BmQWZjOVdvY2ZWRFZlNXorUHhZcXdO?=
+ =?utf-8?B?ZUh5L2lLdWhodm9lTDhFU1lWT2tVL0lDMS9ZRW9ycmJHMW92MmFvNlVMNTVm?=
+ =?utf-8?B?VTYwZlVBY3hXcTdjTnNTd3lMTmhKU2E5aDU0OENub0MyUmFSOXVmSTZJbFdl?=
+ =?utf-8?B?ZGQwQ3VVR2dycGg1Y2pSMkd6NndLMk10c3FIczBxRFpUZ1V4ZG9GYkZHZkoy?=
+ =?utf-8?B?WGhIOXdCSW9DSUIwSVlpVWZNYUN2NE9nckxSWUg4TGgzcDdidTkyV1Bjc1ZI?=
+ =?utf-8?B?TTdzYU04SHR5eVlDdTBhVTlpd3VGbkNUNnJLTkl2aFMydno1UWtWRzIxMFlj?=
+ =?utf-8?B?aXk1MWNiZ0NQSXVZdHk5T1RlZGFiMmNYVnlOZU5xTThIck5MbHVXbXJmOEEz?=
+ =?utf-8?B?MlFndzRSa1hPUTFiY0xYQS8waWZrNVVUL1pFbmh5cXVkV3NCYzIwaUsvb284?=
+ =?utf-8?B?aEJOU3lzY1NNc1NmWmh3dlhoTGk2VnZwcW9PbklDdTZUKzk2ek1adVNaRTg1?=
+ =?utf-8?B?WEZFSUdWU3U5c3JzYVd0YXlvQnZuVTBZYTNQY0dPYnBHQVhtK2N1ZjRoa3pW?=
+ =?utf-8?B?M0FDWENrdWZjV01kSjA4MUpJUVhYZGprcmtPYVorV3FQUnZqb0FiZW8xelFZ?=
+ =?utf-8?B?MW4xODJiZUpkNjZyWk11UTNMMjNITERVdFlKWTc1bmVyOXZha1Zwa1NONGdR?=
+ =?utf-8?B?VnZsWE5INDFyb0NGTmtabWpBNloyaTJmUWM0YUpmZ25scXNwUG9CU0FiZVI0?=
+ =?utf-8?B?ckt5QmNzRy9oMVRHcE93ajhPMmE1VHZwbEVKQWlocGJ5ejg2V1ZyU3h4Skxq?=
+ =?utf-8?B?d0RTSURTVko0Vkgvc1dlV2R6dGxsbEdNQTltSFZSOUpDK2MxMUVERGpKUkdj?=
+ =?utf-8?B?Sm9mK0JmYytjMW0xQS8wYVA5TDJOeHFnVCtTTmo0OXFyQkdld2JuZHVTczdj?=
+ =?utf-8?B?ZEViY0JBVEViZXVucklhQUVFVW56Zjk5TVZmdmRhQjkvbFhpaGIyZW9hSHlU?=
+ =?utf-8?B?UGcrY0RKK1NWa2RVS2hpK3RXK1pEQ0xVQ08vMmlnTUtLaGdSRmg1YllnSTNH?=
+ =?utf-8?B?a0VEV0NaK21wYW4xS0c0Z0ZzNWlkQU5vSUU1YWhjeW81OUhmRWhCalJiWkxi?=
+ =?utf-8?B?OS9LV01EOVZWQWdOQ3BBZnVIakw3cXhkL3hzY1Zka1dOdCtjTi82M3Y0b2M4?=
+ =?utf-8?B?Qk1DTGxKV0lIejdRejArVHBwcDF2VnN3T0ozZlN0RWZKNnU5UytRaGc1QnJL?=
+ =?utf-8?B?OXpyeXROd0IrRXp3WWpTN1kyUmNrU2tvMHRXOGdZbktNY3N1SEZmRy9PbjVh?=
+ =?utf-8?B?blhWWkc5V01PU05Heis2RGd2U2dSVVVKWi81WGMzWnN6N21YY3E5bmxqL2ph?=
+ =?utf-8?B?S2VpWm5OeVJNbUpXdUFST0VxaUpQUzdqWk9WSWpwMmc1cUFSV2Vvd1d6SHMv?=
+ =?utf-8?B?U05LZkxDSHVJS1NJeFQxQU5TbzQ0TGFsNXBBQ0t4SHZxNEkxVHQ0ckw4QjYy?=
+ =?utf-8?B?Q2dRcVRTUVRFZ3F4Z1h3NXZFRG1TQk94NGdiOEZpZEhMei9rM2hrVTBRT2Y3?=
+ =?utf-8?B?MzlWS3JPSndna01SZUNIVDBBUlgybnRYaWFnd3FoS2FKcG0wc25JNmJXR0lM?=
+ =?utf-8?B?NFNuOVRFS1JGeEV5dW9QSlhnRlZWQ1dFbWN5NUNsY1dwNHYyd2Y1L0xBVEhk?=
+ =?utf-8?B?UDdTd0tyWlJWYkpPQ0pUandwOEJBPT0=?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A1D4ED73BE2BD1418E9C638FB9C1AB95@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MW2PR12MB4667.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a364bdd-af96-4363-cd32-08da01500ec7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2022 22:07:38.2395
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: HUM0prCgr7LXXJ5ffJ+YbwKYq3VQH+1X7BNC5Sl2UQvZRoVVe8ZuGiXfTl/uGw1tEVrfPGD0gmwjdUGDN19FFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1446
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Introducing a bcache control device (/dev/bcache_ctrl)
-that allows communicating to the driver from user space
-via IOCTL. The only IOCTL commands currently implemented,
-receives a struct cache_sb and uses it to register the
-backing device.
-
-Signed-off-by: Andrea Tomassetti <andrea.tomassetti@devo.com>
----
-Hi all,
-At Devo we started to think of using bcache in our production systems
-to boost performance. But, at the very beginning, we were faced with
-one annoying issue, at least for our use-case: bcache needs the backing
-devices to be formatted before being able to use them. What's really
-needed is just to wipe any FS signature out of them. This is definitely
-not an option we will consider in our production systems because we would
-need to move hundreds of terabytes of data.
-
-To circumvent the "formatting" problem, in the past weeks I worked on some
-modifications to the actual bcache module. In particular, I added a bcache
-control device (exported to /dev/bcache_ctrl) that allows communicating to
-the driver from userspace via IOCTL. One of the IOCTL commands that I
-implemented receives a struct cache_sb and uses it to register the backing
-device. The modifications are really small and retro compatible. To then
-re-create the same configuration after every boot (because the backing
-devices now do not present the bcache super block anymore) I created an
-udev rule that invokes a python script that will re-create the same
-scenario based on a yaml configuration file.
-
- drivers/md/bcache/Makefile      |   2 +-
- drivers/md/bcache/control.c     | 117 ++++++++++++++++++++++++++++++++
- drivers/md/bcache/control.h     |  12 ++++
- drivers/md/bcache/ioctl_codes.h |  19 ++++++
- drivers/md/bcache/super.c       |  62 ++++++++++++-----
- drivers/md/bcache/sysfs.c       |   4 ++
- drivers/md/bcache/writeback.h   |   2 +-
- 7 files changed, 200 insertions(+), 18 deletions(-)
- create mode 100644 drivers/md/bcache/control.c
- create mode 100644 drivers/md/bcache/control.h
- create mode 100644 drivers/md/bcache/ioctl_codes.h
-
-diff --git a/drivers/md/bcache/Makefile b/drivers/md/bcache/Makefile
-index 5b87e59676b8..46ed41baed7a 100644
---- a/drivers/md/bcache/Makefile
-+++ b/drivers/md/bcache/Makefile
-@@ -4,4 +4,4 @@ obj-$(CONFIG_BCACHE)	+=3D bcache.o
-
- bcache-y		:=3D alloc.o bset.o btree.o closure.o debug.o extents.o\
- 	io.o journal.o movinggc.o request.o stats.o super.o sysfs.o trace.o\
--	util.o writeback.o features.o
-+	util.o writeback.o features.o control.o
-diff --git a/drivers/md/bcache/control.c b/drivers/md/bcache/control.c
-new file mode 100644
-index 000000000000..3d04d2218171
---- /dev/null
-+++ b/drivers/md/bcache/control.c
-@@ -0,0 +1,117 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/cdev.h>
-+#include <linux/fs.h>
-+#include <linux/vmalloc.h>
-+
-+#include "control.h"
-+
-+struct bch_ctrl_device {
-+	struct cdev cdev;
-+	struct class *class;
-+	dev_t dev;
-+};
-+
-+static struct bch_ctrl_device _control_device;
-+
-+/* this handles IOCTL for /dev/bcache_ctrl */
-+/*********************************************/
-+long bch_service_ioctl_ctrl(struct file *filp, unsigned int cmd,
-+		unsigned long arg)
-+{
-+	int retval =3D 0;
-+
-+	if (_IOC_TYPE(cmd) !=3D BCH_IOCTL_MAGIC)
-+		return -EINVAL;
-+
-+	if (!capable(CAP_SYS_ADMIN)) {
-+		/* Must be root to issue ioctls */
-+		return -EPERM;
-+	}
-+
-+	switch (cmd) {
-+	case BCH_IOCTL_REGISTER_DEVICE: {
-+		struct bch_register_device *cmd_info;
-+
-+		cmd_info =3D vmalloc(sizeof(struct bch_register_device));
-+		if (!cmd_info)
-+			return -ENOMEM;
-+
-+		if (copy_from_user(cmd_info, (void __user *)arg,
-+				sizeof(struct bch_register_device))) {
-+			pr_err("Cannot copy cmd info from user space\n");
-+			vfree(cmd_info);
-+			return -EINVAL;
-+		}
-+
-+		retval =3D register_bcache_ioctl(cmd_info);
-+
-+		vfree(cmd_info);
-+		return result;
-+	}
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct file_operations _ctrl_dev_fops =3D {
-+	.owner =3D THIS_MODULE,
-+	.unlocked_ioctl =3D bch_service_ioctl_ctrl
-+};
-+
-+int __init bch_ctrl_device_init(void)
-+{
-+	struct bch_ctrl_device *ctrl =3D &_control_device;
-+	struct device *device;
-+	int result =3D 0;
-+
-+	result =3D alloc_chrdev_region(&ctrl->dev, 0, 1, "bcache");
-+	if (result) {
-+		pr_err("Cannot allocate control chrdev number.\n");
-+		goto error_alloc_chrdev_region;
-+	}
-+
-+	cdev_init(&ctrl->cdev, &_ctrl_dev_fops);
-+
-+	result =3D cdev_add(&ctrl->cdev, ctrl->dev, 1);
-+	if (result) {
-+		pr_err("Cannot add control chrdev.\n");
-+		goto error_cdev_add;
-+	}
-+
-+	ctrl->class =3D class_create(THIS_MODULE, "bcache");
-+	if (IS_ERR(ctrl->class)) {
-+		pr_err("Cannot create control chrdev class.\n");
-+		result =3D PTR_ERR(ctrl->class);
-+		goto error_class_create;
-+	}
-+
-+	device =3D device_create(ctrl->class, NULL, ctrl->dev, NULL,
-+			"bcache_ctrl");
-+	if (IS_ERR(device)) {
-+		pr_err("Cannot create control chrdev.\n");
-+		result =3D PTR_ERR(device);
-+		goto error_device_create;
-+	}
-+
-+	return result;
-+
-+error_device_create:
-+	class_destroy(ctrl->class);
-+error_class_create:
-+	cdev_del(&ctrl->cdev);
-+error_cdev_add:
-+	unregister_chrdev_region(ctrl->dev, 1);
-+error_alloc_chrdev_region:
-+	return result;
-+}
-+
-+void bch_ctrl_device_deinit(void)
-+{
-+	struct bch_ctrl_device *ctrl =3D &_control_device;
-+
-+	device_destroy(ctrl->class, ctrl->dev);
-+	class_destroy(ctrl->class);
-+	cdev_del(&ctrl->cdev);
-+	unregister_chrdev_region(ctrl->dev, 1);
-+}
-diff --git a/drivers/md/bcache/control.h b/drivers/md/bcache/control.h
-new file mode 100644
-index 000000000000..3e4273db02a3
---- /dev/null
-+++ b/drivers/md/bcache/control.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __BCACHE_CONTROL_H__
-+#define __BCACHE_CONTROL_H__
-+
-+#include "ioctl_codes.h"
-+
-+int __init bch_ctrl_device_init(void);
-+void bch_ctrl_device_deinit(void);
-+
-+ssize_t register_bcache_ioctl(struct bch_register_device *brd);
-+
-+#endif
-diff --git a/drivers/md/bcache/ioctl_codes.h b/drivers/md/bcache/ioctl_code=
-s.h
-new file mode 100644
-index 000000000000..f25e038bee30
---- /dev/null
-+++ b/drivers/md/bcache/ioctl_codes.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __BCACHE_IOCTL_CODES_H__
-+#define __BCACHE_IOCTL_CODES_H__
-+
-+#include <linux/ioctl.h>
-+#include <linux/types.h>
-+
-+struct bch_register_device {
-+	const char *dev_name;
-+	size_t size;
-+	struct cache_sb *sb;
-+};
-+
-+#define BCH_IOCTL_MAGIC (0xBC)
-+
-+/** Start new cache instance, load cache or recover cache */
-+#define BCH_IOCTL_REGISTER_DEVICE	_IOWR(BCH_IOCTL_MAGIC, 1, struct bch_reg=
-ister_device)
-+
-+#endif
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 140f35dc0c45..95db3785a6e0 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -14,6 +14,7 @@
- #include "request.h"
- #include "writeback.h"
- #include "features.h"
-+#include "control.h"
-
- #include <linux/blkdev.h>
- #include <linux/pagemap.h>
-@@ -1069,7 +1070,7 @@ int bch_cached_dev_run(struct cached_dev *dc)
- 		goto out;
- 	}
-
--	if (!d->c &&
-+	if (!d->c && dc->sb_disk &&
- 	    BDEV_STATE(&dc->sb) !=3D BDEV_STATE_NONE) {
- 		struct closure cl;
-
-@@ -1259,9 +1260,6 @@ int bch_cached_dev_attach(struct cached_dev *dc, stru=
-ct cache_set *c,
- 	 */
-
- 	if (bch_is_zero(u->uuid, 16)) {
--		struct closure cl;
--
--		closure_init_stack(&cl);
-
- 		memcpy(u->uuid, dc->sb.uuid, 16);
- 		memcpy(u->label, dc->sb.label, SB_LABEL_SIZE);
-@@ -1271,8 +1269,14 @@ int bch_cached_dev_attach(struct cached_dev *dc, str=
-uct cache_set *c,
- 		memcpy(dc->sb.set_uuid, c->set_uuid, 16);
- 		SET_BDEV_STATE(&dc->sb, BDEV_STATE_CLEAN);
-
--		bch_write_bdev_super(dc, &cl);
--		closure_sync(&cl);
-+		if (dc->sb_disk) {
-+			struct closure cl;
-+
-+			closure_init_stack(&cl);
-+			bch_write_bdev_super(dc, &cl);
-+			closure_sync(&cl);
-+		}
-+
- 	} else {
- 		u->last_reg =3D rtime;
- 		bch_uuid_write(c);
-@@ -2403,14 +2407,14 @@ static int register_cache(struct cache_sb *sb, stru=
-ct cache_sb_disk *sb_disk,
-
- /* Global interfaces/init */
-
--static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *a=
-ttr,
-+static ssize_t register_bcache_sysfs(struct kobject *k, struct kobj_attrib=
-ute *attr,
- 			       const char *buffer, size_t size);
- static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
- 					 struct kobj_attribute *attr,
- 					 const char *buffer, size_t size);
-
--kobj_attribute_write(register,		register_bcache);
--kobj_attribute_write(register_quiet,	register_bcache);
-+kobj_attribute_write(register,		register_bcache_sysfs);
-+kobj_attribute_write(register_quiet,	register_bcache_sysfs);
- kobj_attribute_write(pendings_cleanup,	bch_pending_bdevs_cleanup);
-
- static bool bch_is_open_backing(dev_t dev)
-@@ -2465,7 +2469,8 @@ static void register_bdev_worker(struct work_struct *=
-work)
- 	dc =3D kzalloc(sizeof(*dc), GFP_KERNEL);
- 	if (!dc) {
- 		fail =3D true;
--		put_page(virt_to_page(args->sb_disk));
-+		if (args->sb_disk)
-+			put_page(virt_to_page(args->sb_disk));
- 		blkdev_put(args->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
- 		goto out;
- 	}
-@@ -2495,7 +2500,8 @@ static void register_cache_worker(struct work_struct =
-*work)
- 	ca =3D kzalloc(sizeof(*ca), GFP_KERNEL);
- 	if (!ca) {
- 		fail =3D true;
--		put_page(virt_to_page(args->sb_disk));
-+		if (args->sb_disk)
-+			put_page(virt_to_page(args->sb_disk));
- 		blkdev_put(args->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
- 		goto out;
- 	}
-@@ -2525,7 +2531,7 @@ static void register_device_async(struct async_reg_ar=
-gs *args)
- 	queue_delayed_work(system_wq, &args->reg_work, 10);
- }
-
--static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *a=
-ttr,
-+static ssize_t register_bcache_common(void *k, struct kobj_attribute *attr=
-,
- 			       const char *buffer, size_t size)
- {
- 	const char *err;
-@@ -2587,9 +2593,14 @@ static ssize_t register_bcache(struct kobject *k, st=
-ruct kobj_attribute *attr,
- 	if (set_blocksize(bdev, 4096))
- 		goto out_blkdev_put;
-
--	err =3D read_super(sb, bdev, &sb_disk);
--	if (err)
--		goto out_blkdev_put;
-+	if (!k) {
-+		err =3D read_super(sb, bdev, &sb_disk);
-+		if (err)
-+			goto out_blkdev_put;
-+	} else {
-+		sb_disk =3D  NULL;
-+		memcpy(sb, (struct cache_sb *)k, sizeof(struct cache_sb));
-+	}
-
- 	err =3D "failed to register device";
-
-@@ -2651,7 +2662,8 @@ static ssize_t register_bcache(struct kobject *k, str=
-uct kobj_attribute *attr,
- 	return size;
-
- out_put_sb_page:
--	put_page(virt_to_page(sb_disk));
-+	if (!k)
-+		put_page(virt_to_page(sb_disk));
- out_blkdev_put:
- 	blkdev_put(bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
- out_free_sb:
-@@ -2666,6 +2678,18 @@ static ssize_t register_bcache(struct kobject *k, st=
-ruct kobj_attribute *attr,
- 	return ret;
- }
-
-+static ssize_t register_bcache_sysfs(struct kobject *k, struct kobj_attrib=
-ute *attr,
-+			       const char *buffer, size_t size)
-+{
-+	return register_bcache_common(NULL, attr, buffer, size);
-+}
-+
-+ssize_t register_bcache_ioctl(struct bch_register_device *brd)
-+{
-+	return register_bcache_common((void *)brd->sb, NULL, brd->dev_name, brd->=
-size);
-+}
-+
-+
-
- struct pdev {
- 	struct list_head list;
-@@ -2819,6 +2843,7 @@ static void bcache_exit(void)
- {
- 	bch_debug_exit();
- 	bch_request_exit();
-+	bch_ctrl_device_deinit();
- 	if (bcache_kobj)
- 		kobject_put(bcache_kobj);
- 	if (bcache_wq)
-@@ -2918,6 +2943,11 @@ static int __init bcache_init(void)
- 	bch_debug_init();
- 	closure_debug_init();
-
-+	if (bch_ctrl_device_init()) {
-+		pr_err("Cannot initialize control device\n");
-+		goto err;
-+	}
-+
- 	bcache_is_reboot =3D false;
-
- 	return 0;
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index 1f0dce30fa75..984cc97a1d55 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -379,6 +379,10 @@ STORE(__cached_dev)
- 		if (v < 0)
- 			return v;
-
-+		// XXX(atom): Devices created by IOCTL don't support changing cache mode
-+		if (!dc->sb_disk)
-+			return -EINVAL;
-+
- 		if ((unsigned int) v !=3D BDEV_CACHE_MODE(&dc->sb)) {
- 			SET_BDEV_CACHE_MODE(&dc->sb, v);
- 			bch_write_bdev_super(dc, NULL);
-diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
-index 02b2f9df73f6..bd7b95bd2da7 100644
---- a/drivers/md/bcache/writeback.h
-+++ b/drivers/md/bcache/writeback.h
-@@ -135,7 +135,7 @@ static inline void bch_writeback_add(struct cached_dev =
-*dc)
- {
- 	if (!atomic_read(&dc->has_dirty) &&
- 	    !atomic_xchg(&dc->has_dirty, 1)) {
--		if (BDEV_STATE(&dc->sb) !=3D BDEV_STATE_DIRTY) {
-+		if (dc->sb_disk && BDEV_STATE(&dc->sb) !=3D BDEV_STATE_DIRTY) {
- 			SET_BDEV_STATE(&dc->sb, BDEV_STATE_DIRTY);
- 			/* XXX: should do this synchronously */
- 			bch_write_bdev_super(dc, NULL);
---
-2.25.1
-
-
---=20
-
-
-
-
-
-
-
-The contents of this email are confidential. If the reader of this=20
-message is not the intended recipient, you are hereby notified that any=20
-dissemination, distribution or copying of this communication is strictly=20
-prohibited. If you have received this communication in error, please notify=
-=20
-us immediately by replying to this message and deleting it from your=20
-computer. Thank you.=A0Devo, Inc; arco@devo.com <mailto:arco@devo.com>;=A0=
-=A0
-Calle Est=E9banez Calder=F3n 3-5, 5th Floor. Madrid, Spain 28020
-
+T24gMy83LzIyIDIyOjE1LCBDaHJpc3RvcGggSGVsbHdpZyB3cm90ZToNCj4gVXNlIGFuZCBlbWJl
+ZGRlZCBiaW9zIHRoYXQgaXMgaW5pdGlhbGl6ZWQgd2hlbiB1c2VkIGluc3RlYWQgb2YNCj4gYmlv
+X2ttYWxsb2MgcGx1cyBiaW9fcmVzZXQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGgg
+SGVsbHdpZyA8aGNoQGxzdC5kZT4NCj4gUmV2aWV3ZWQtYnk6IERhdmlkIFN0ZXJiYSA8ZHN0ZXJi
+YUBzdXNlLmNvbT4NCj4gLS0tDQoNCg0KDQpMb29rcyBnb29kLg0KDQpSZXZpZXdlZC1ieTogQ2hh
+aXRhbnlhIEt1bGthcm5pIDxrY2hAbnZpZGlhLmNvbT4NCg0KDQoNCg==
