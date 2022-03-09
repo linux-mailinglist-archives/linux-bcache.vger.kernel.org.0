@@ -2,499 +2,174 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39E0A4D26E6
-	for <lists+linux-bcache@lfdr.de>; Wed,  9 Mar 2022 05:06:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C12F4D2770
+	for <lists+linux-bcache@lfdr.de>; Wed,  9 Mar 2022 05:07:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230456AbiCIBmv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 8 Mar 2022 20:42:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59496 "EHLO
+        id S231651AbiCIDIO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 8 Mar 2022 22:08:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230423AbiCIBmv (ORCPT
+        with ESMTP id S231633AbiCIDIN (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 8 Mar 2022 20:42:51 -0500
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF379A94C2
-        for <linux-bcache@vger.kernel.org>; Tue,  8 Mar 2022 17:41:26 -0800 (PST)
-Received: by mail-pg1-x52e.google.com with SMTP id w37so672286pga.7
-        for <linux-bcache@vger.kernel.org>; Tue, 08 Mar 2022 17:41:26 -0800 (PST)
+        Tue, 8 Mar 2022 22:08:13 -0500
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0180214CC84;
+        Tue,  8 Mar 2022 19:07:14 -0800 (PST)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 228M8wUv028053;
+        Wed, 9 Mar 2022 03:06:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : content-type :
+ mime-version; s=corp-2021-07-09;
+ bh=JIRzif8ElQ11YkMCVQYex0i5TpPFXhokbAn+PgJE8CQ=;
+ b=chnFz2xDbGArfA2ox7fXcYIdbBtS/zW5gAYanJrKSeRllPCxWQb0h/wZnfEeUZ31MEMF
+ RuritKg1MAYxykUeN+GyE+yA8ePtRWf5dXkk+fxWS2WBSKvW1ALiWD9Q0+uopdkgkMdh
+ 1/gxnZW/2leqZ7BujWmg/x13uCH6bKpJ2Sf5CS58qW+zpSGaqrJpd3glqIHbnQ0Sj3VT
+ /I3f1n3kMjrWMmXn6z6RkgKRgSPFFUvckeruZ2KJXi36Fw7S2ueuoqKfNGhnN1GjXAhe
+ 1Um5z2VDJccLcuqSiL2WDkwZvP98RffAtRrmRxaR2vte6sl2gJMKLRUcQ9VpZx82Ogan NQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ekxn2gtfy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 09 Mar 2022 03:06:58 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 22935K3k167216;
+        Wed, 9 Mar 2022 03:06:57 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam07lp2046.outbound.protection.outlook.com [104.47.56.46])
+        by userp3020.oracle.com with ESMTP id 3envvm467u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 09 Mar 2022 03:06:57 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=T3oYL3S8HtIACTiwk34rkz5hFOrDXpFI7dXfQXFwNyocfuFvXstpKBEHUoxnJ8qc+t4BhG3Qw80F7EX3PyDul7S3w3hgK7rk1EAq0a+gX2Sais0/ZS7ZhJfrYr/a/ZkR/Yo3FOK60jZB6mil/VAzFWcf7KAE8eLVVFnSJHujohlw2RG9PzJJ2ZJJV0xfX5v1RnGNpr7zq9VrtmgkwZdJ+9WIH7lDApBnoAXIyNaEMbmhu/ALVOecE0mWKFvn7YEbrwzx8kn+C0rr7hFqORO1/LKryHXoLOT/FsJurPypTaMTleLbmhoP8nVMEVo0muBBA+N56iNoSMqVpTQlkq3K9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JIRzif8ElQ11YkMCVQYex0i5TpPFXhokbAn+PgJE8CQ=;
+ b=I7kTael1+w8I82BxrhqQwmPmNalnO3Q/RgL/9sX4iXlwiI3dOGrKZoEJKz8wXRfkTnLz5brakqLVGfI6NylQh99m8BjjYqTkxIrvVpWcRmmpMg3PglSUjNF5wETUDUHucCHZE6f/VRCUFVO6TRzM0r41jFHNgJoBrYc16UJVbvBMBR4aP0yjNsPUCMfrp41/5FTcs8AzfHEZv+zOFSTR43OSiG60GV9NaJ5EEtDOvmPnw6C2vdlJIdVmuH5HQ51x3IVj0tQ8UdTe02KWPLbxU/mwsz9aLPAiIDOzSxys9hwQkuBo0vzGxlSX/kWe8LslSUDvNzWfkU2wSVOvOL2/gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ZTl2y2GGoaRvzKMgjSxzmO1qrJqYJXGDFosGveNbnTY=;
-        b=FewZAPUFTm9sXEGTvr8Vd4IZAEhwzpyku3S9XoPsv+5CvYTNCMoO089c1BLvedxbX+
-         oR3qmB5uKtw3x8yQA+4qQEPSIE6T5qpHLdot1zFXhrQ1Dw5bsw+usNOQbTSHzaTnjZMt
-         Cdkq2yrFQxD8ZHn2rsbk0uFIPdT5Abvup8rL7fKga3HLs9/TSGnmPabnBJzODkzpDXmY
-         KErU/Y2N2dGJ9s4qPDWJKnCaBGUHaBoEhCvrBkWik3VuebeO1h+PCcOfhxqh2yKs7oCn
-         Q/Eqo8HsYciW1DtTLCoNmkIlO6iQ+o3FwcqJnMlT2VGkQi6hQDqSpay87MXBV6rWHSUM
-         xrbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=ZTl2y2GGoaRvzKMgjSxzmO1qrJqYJXGDFosGveNbnTY=;
-        b=3pPNlzpdgBSfYK8lT8hQqhUXY5iEokJuiClOfexaUvVw3kvUpjtUFKqPL7t2OfgcpD
-         RgOXukCRg3oL77F2c0kuXi5WE3Q817TOWPlMR45q9vFD/TE40YQeQQIEW7rIr7ABw/yf
-         NirCJlTFq1wjj9yXjWsYekry2XLZaKJQxxmE/1LpBv+FxueXB+9saWtwvIFsreVTq5Yu
-         0jj/7WHavoUtcVWSHlUOzZuoi0LpeN3ngtAAztdBAOnpjJxnGRzv8B0pIJ+at9gOIwK1
-         fDyTVy0sPErJXojtzNNT9bLMQ6pk4ibZaNtbswZ5XWK2rPT1p9fnGgWKAmaK7R2sKt7P
-         NK9Q==
-X-Gm-Message-State: AOAM5334FvDHBUp6HyADYaWNHzdkJmktMoybJ9vv3wz9SEU5iOW1g8Ve
-        rknCC0Q/F7CKYgA4KGOMf2lcs7kJSysmQ8MJy7I=
-X-Google-Smtp-Source: ABdhPJycke/ySTprUqB6XHVG6RA605/3etX2nFegrZ4QY7sBNgh3eMpn5EmgZBwTb2waEWsukHUkRQ==
-X-Received: by 2002:a65:48c8:0:b0:375:9c2b:ad33 with SMTP id o8-20020a6548c8000000b003759c2bad33mr17109165pgs.232.1646790083952;
-        Tue, 08 Mar 2022 17:41:23 -0800 (PST)
-Received: from [172.20.104.60] ([61.16.102.69])
-        by smtp.gmail.com with ESMTPSA id u8-20020a056a00098800b004f702473553sm364867pfg.6.2022.03.08.17.41.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 17:41:23 -0800 (PST)
-Message-ID: <24376746-9a12-fd0f-e1d5-c5c964381503@gmail.com>
-Date:   Wed, 9 Mar 2022 09:41:19 +0800
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JIRzif8ElQ11YkMCVQYex0i5TpPFXhokbAn+PgJE8CQ=;
+ b=yOuB2qDB4rmbBPgmMnQYwUtQLbeoUsTHKuYsGGGTrIFvOKh17XeSeKQYN6ivGuwSlIWR+EVQQ0dwHh/MeAXVulmo50XQhK/NhBBqEx2b/7DOqKTS4Q+Qx39PR2YI1WqfjYVvvCvohc2h+P1iPuZ6QT49p/aLmyNbyUBN2Il83Xk=
+Received: from SA2PR10MB4763.namprd10.prod.outlook.com (2603:10b6:806:117::19)
+ by MWHPR10MB1854.namprd10.prod.outlook.com (2603:10b6:300:10b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.15; Wed, 9 Mar
+ 2022 03:06:55 +0000
+Received: from SA2PR10MB4763.namprd10.prod.outlook.com
+ ([fe80::a045:e293:518:7604]) by SA2PR10MB4763.namprd10.prod.outlook.com
+ ([fe80::a045:e293:518:7604%3]) with mapi id 15.20.5038.026; Wed, 9 Mar 2022
+ 03:06:54 +0000
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Coly Li <colyli@suse.de>,
+        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 4/5] block: turn bio_kmalloc into a simple kmalloc wrapper
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <yq1pmmvltea.fsf@ca-mkp.ca.oracle.com>
+References: <20220308061551.737853-1-hch@lst.de>
+        <20220308061551.737853-5-hch@lst.de>
+Date:   Tue, 08 Mar 2022 22:06:52 -0500
+In-Reply-To: <20220308061551.737853-5-hch@lst.de> (Christoph Hellwig's message
+        of "Tue, 8 Mar 2022 07:15:50 +0100")
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0026.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c0::31) To SA2PR10MB4763.namprd10.prod.outlook.com
+ (2603:10b6:806:117::19)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.6.1
-Subject: Re: [PATCH] bcache: Use bcache without formatting existing device
-Content-Language: en-US
-To:     Andrea Tomassetti <andrea.tomassetti@devo.com>,
-        linux-bcache@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-References: <20220308145623.209625-1-andrea.tomassetti@devo.com>
-From:   Zhang Zhen <zhangzhen.email@gmail.com>
-In-Reply-To: <20220308145623.209625-1-andrea.tomassetti@devo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: cd6429d1-51cd-4084-7e42-08da0179dda2
+X-MS-TrafficTypeDiagnostic: MWHPR10MB1854:EE_
+X-Microsoft-Antispam-PRVS: <MWHPR10MB1854A9FFE5272217F0EF61FC8E0A9@MWHPR10MB1854.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YyzsduugOE9lwovdee4nORz3NBkQN9+Fl/TnfzdZ8YooaoiYR2ashxDuzief7mTABmsMarRWi+EQC5YJYZ8Ia/KlI+V+aqRc3F6V01QSRI/3TXTUndpcCGkSOiQAsrtfcvcfPWz4Oqyr1EJFF+oSsOzmYhYI6o8BdEpiJlJkHLDp1gstb/3roC5lraFDGrWu7MRwZE/QacG0dhdq3+/YalBgjtj0ZCj3dkS57P9zmwlAnS/CzaYgpr1ExDWQwcmedOKHP25S5eXMLUod+QqGkKhoWvLm9GndQfJw5BcS5wDxPHR/utoefBXhVGc2McUpXaOI4ZTwQKMCciSFjDK/3swTJQ+gNeSzp29lr9S/gkstCjPs+/uk6Rx0la44ffxbAqMsga0Edo3jiDXKUoTufnaXdWxPwnEpJs3YXhI13wqLzQn3GCRoapyRhVWn4qtfBoEYOpBVUx7zo3A3PvMDaSeTmIDO6aWFqAxq52q2vTLwxD5jAzlgN5tz7yB8KJ/iih4VueJzRF7Y7zumbyD9VIRHr6WFiZta8Ted90uwXkL6AdJWCh5egQi4QQaBdhfVVBdib6nzq2N4kqoiyjODFom/sdToorz1NLD56jq1EBrIfN6LLdXiZfENi2L0jO/MoyUnGtRPqdDdQdTckG6QcvAFQCarbT6rVs2RHrXi5YjEm4d/BDkiiYahiYO2M6XkTXsETj5cgrH6rr1MJqSFTQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA2PR10MB4763.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(6512007)(52116002)(6486002)(508600001)(6506007)(26005)(36916002)(186003)(38350700002)(86362001)(66476007)(8936002)(7416002)(5660300002)(4326008)(8676002)(66946007)(66556008)(2906002)(4744005)(6916009)(54906003)(316002)(38100700002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cMh16E3nrKy496uc53H5fPmMCMq/eMFf/IFriDyvW90rKJ+3TJaVkrUkfKXl?=
+ =?us-ascii?Q?kMA1WynXvSYyQMGB22UibieaKx/uzBzbmwQQ5qTSJknUXrySl12NgU+EHpJh?=
+ =?us-ascii?Q?KGD7b6xd6L/tdSyVdZxMys5hLgeQI3JjmvZwi5ZvBQLjzzurNE0tQXKkGflK?=
+ =?us-ascii?Q?VqpU2wNJ3wMWucMqvV6UIwjQ9R6Hn2pFi7jbWnLVWPH761cMbHk5eSsQ5Oqt?=
+ =?us-ascii?Q?QsjZOKtvNd8MY42/i0WFbXDhjrjw+X8o0gC80nHfiB2oco7fnaO28psjkQf/?=
+ =?us-ascii?Q?qMu9WVckRfdo5WYjG47askq6BuOTQIES9pyQPyv9e+7/qSqhHoJWinV6ukD3?=
+ =?us-ascii?Q?AtAX2QiGgtb5iUFkbH1L5NBSI9+8H0vOfekiNzb+wrW7cGCyiehXc1RWK8WB?=
+ =?us-ascii?Q?4vG0R/03TwJyQpqpuMoZHwjrL3Vvk2KQ7ZBLH1r7IPK7KN/Mrp3lO8ljrnOi?=
+ =?us-ascii?Q?S54HPaL9ZTNzdzqq44CMy49ioxzy0ymDPqYCs+sHBq1KWEmaRwSNK2nqtrRh?=
+ =?us-ascii?Q?sbgGR0e5Dp9THdeKkFjv68UEp6PE6yJ9Nwjl1q8xaSh8NanO9+5+y7/F7yeI?=
+ =?us-ascii?Q?V0cScPCVLTmjrtHgTslBrF3V7c69nWDXTh8aYA84TBTBzVIOJlJ0u61500FH?=
+ =?us-ascii?Q?a3+GJkpBkOx13ZR4RRya68+x81HlGjFWVdHGhN9Qy3csbP2w3iw7ikt0EucG?=
+ =?us-ascii?Q?4QibLfriygrUj1QDT1zAc3S6tNJ/WrNxUefFPk57tRAdF7MjhaOecJU63ke/?=
+ =?us-ascii?Q?vCCQwUfbDNzdRZA2vFbw7Cak6HlHdEWPLItS+ATcUJG/seT+8Ps4ifkLirIj?=
+ =?us-ascii?Q?a10yR4H+MUi1qrdcJjHhzMTu2dMZ9FJNDLqdywihW8RNQEn/KxAA8URytJDf?=
+ =?us-ascii?Q?Lfg/nJcg56R/zSidN4C/pjO5kKcu5nL65bCjC9kN1a/+E1YtXYGMmxnJSXTi?=
+ =?us-ascii?Q?EZlyf7OmjpSdQFsRBxeii4fTPFyk1PgYlpCDZsJ5pThriquQe2MZ3W8Z1lf7?=
+ =?us-ascii?Q?UWJaYiiZ8E9m7pCG8UUMLcI4ObXa2yNsa/IJ/nhTTbNz7dgLBjRSsBwaS4Li?=
+ =?us-ascii?Q?X1TcfLkvFs9NMWWfGJmugW8r/DjmBmG3P44RJgwlxLsfaLLynxMySFld4/vL?=
+ =?us-ascii?Q?qAklbt61DJSU4l2y+2F6xv6FOzQ/kMZGodboHrptaKzIsZ15S6oA/PH3aoo6?=
+ =?us-ascii?Q?JdRGfIzLwulciSVi9bJW77ognB5aobpE9heaQuJRYczrNtMb+EL5hFA4YN/a?=
+ =?us-ascii?Q?u1wCBlXyRLSKebU79y+avJgr/Dr6UzBKHx0pVto5KNYuw1XIXOLpyxwhypng?=
+ =?us-ascii?Q?AwHOZ8cQxAeLiLy7q1wUGHC+D5ybJjr/eMiW0/w1EbEYDlT7xisYQQFLuXXS?=
+ =?us-ascii?Q?Yv/CQxCRToOt9LH7c0MA1B3p53QkLvlXESJxnBPaZkT3vN4/EKvAJAvolgBe?=
+ =?us-ascii?Q?ci4yKbBYUkIl4V2BgrblmT7/iwOiagg0Y/JXR+tM82WyDr7ui0SI/josxmKz?=
+ =?us-ascii?Q?alhQqjD3UtPn/sVEjNNX9jYEt6xw+jGoSbPvsRLfsGwqWJSGR0wu4FA//Enj?=
+ =?us-ascii?Q?Ko6Xm7vIwEcjrRWoWE3WbUaqRV8PpqQS26JXrNYI8mGKolwcbN4xKgvk0Pvu?=
+ =?us-ascii?Q?d12devFrlma1L4r6SUETsJAWSS+sYe4zXyE8Emg1GNhcsds+3sDbUb5+QnzW?=
+ =?us-ascii?Q?zORkSHPwqy2LsiSWOQANdEmJ4Fk=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd6429d1-51cd-4084-7e42-08da0179dda2
+X-MS-Exchange-CrossTenant-AuthSource: SA2PR10MB4763.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2022 03:06:54.9149
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oJlGskmXSJKLaAty6IjqkKDMSXkCeyTjOpF7feTVmked8r+Fq6LIDHOcSUAzr1UWW0FbEFW55Y3rvsXdLtNqRrPvFF+6+vNuOTyydoqorrU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1854
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10280 signatures=690848
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ phishscore=0 malwarescore=0 suspectscore=0 mlxscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
+ definitions=main-2203090015
+X-Proofpoint-ORIG-GUID: VgWSyWj7774d-F8-GaJuGkifFUXVdhlv
+X-Proofpoint-GUID: VgWSyWj7774d-F8-GaJuGkifFUXVdhlv
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Andrea，
 
-Good job.
-We just right need this feature.
-This feature store super block in yaml configuration file.
-Do I understand correctly?
+Christoph,
 
-Would you send out the udev rule and python script？
-I want to try it.
+> Remove the magic autofree semantics and require the callers to explicitly
+> call bio_init to initialize the bio.
+>
+> This allows bio_free to catch accidental bio_put calls on bio_init()ed
+> bios as well.
 
-Thanks.
+> -struct bio *bio_kmalloc(gfp_t gfp_mask, unsigned short nr_iovecs);
+> +struct bio *bio_kmalloc(unsigned short nr_vecs, gfp_t gfp_mask);
 
-On 3/8/22 10:56 PM, Andrea Tomassetti wrote:
-> Introducing a bcache control device (/dev/bcache_ctrl)
-> that allows communicating to the driver from user space
-> via IOCTL. The only IOCTL commands currently implemented,
-> receives a struct cache_sb and uses it to register the
-> backing device.
-> 
-> Signed-off-by: Andrea Tomassetti <andrea.tomassetti@devo.com>
-> ---
-> Hi all,
-> At Devo we started to think of using bcache in our production systems
-> to boost performance. But, at the very beginning, we were faced with
-> one annoying issue, at least for our use-case: bcache needs the backing
-> devices to be formatted before being able to use them. What's really
-> needed is just to wipe any FS signature out of them. This is definitely
-> not an option we will consider in our production systems because we would
-> need to move hundreds of terabytes of data.
-> 
-> To circumvent the "formatting" problem, in the past weeks I worked on some
-> modifications to the actual bcache module. In particular, I added a bcache
-> control device (exported to /dev/bcache_ctrl) that allows communicating to
-> the driver from userspace via IOCTL. One of the IOCTL commands that I
-> implemented receives a struct cache_sb and uses it to register the backing
-> device. The modifications are really small and retro compatible. To then
-> re-create the same configuration after every boot (because the backing
-> devices now do not present the bcache super block anymore) I created an
-> udev rule that invokes a python script that will re-create the same
-> scenario based on a yaml configuration file.
-> 
->   drivers/md/bcache/Makefile      |   2 +-
->   drivers/md/bcache/control.c     | 117 ++++++++++++++++++++++++++++++++
->   drivers/md/bcache/control.h     |  12 ++++
->   drivers/md/bcache/ioctl_codes.h |  19 ++++++
->   drivers/md/bcache/super.c       |  62 ++++++++++++-----
->   drivers/md/bcache/sysfs.c       |   4 ++
->   drivers/md/bcache/writeback.h   |   2 +-
->   7 files changed, 200 insertions(+), 18 deletions(-)
->   create mode 100644 drivers/md/bcache/control.c
->   create mode 100644 drivers/md/bcache/control.h
->   create mode 100644 drivers/md/bcache/ioctl_codes.h
-> 
-> diff --git a/drivers/md/bcache/Makefile b/drivers/md/bcache/Makefile
-> index 5b87e59676b8..46ed41baed7a 100644
-> --- a/drivers/md/bcache/Makefile
-> +++ b/drivers/md/bcache/Makefile
-> @@ -4,4 +4,4 @@ obj-$(CONFIG_BCACHE)	+= bcache.o
-> 
->   bcache-y		:= alloc.o bset.o btree.o closure.o debug.o extents.o\
->   	io.o journal.o movinggc.o request.o stats.o super.o sysfs.o trace.o\
-> -	util.o writeback.o features.o
-> +	util.o writeback.o features.o control.o
-> diff --git a/drivers/md/bcache/control.c b/drivers/md/bcache/control.c
-> new file mode 100644
-> index 000000000000..3d04d2218171
-> --- /dev/null
-> +++ b/drivers/md/bcache/control.c
-> @@ -0,0 +1,117 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/cdev.h>
-> +#include <linux/fs.h>
-> +#include <linux/vmalloc.h>
-> +
-> +#include "control.h"
-> +
-> +struct bch_ctrl_device {
-> +	struct cdev cdev;
-> +	struct class *class;
-> +	dev_t dev;
-> +};
-> +
-> +static struct bch_ctrl_device _control_device;
-> +
-> +/* this handles IOCTL for /dev/bcache_ctrl */
-> +/*********************************************/
-> +long bch_service_ioctl_ctrl(struct file *filp, unsigned int cmd,
-> +		unsigned long arg)
-> +{
-> +	int retval = 0;
-> +
-> +	if (_IOC_TYPE(cmd) != BCH_IOCTL_MAGIC)
-> +		return -EINVAL;
-> +
-> +	if (!capable(CAP_SYS_ADMIN)) {
-> +		/* Must be root to issue ioctls */
-> +		return -EPERM;
-> +	}
-> +
-> +	switch (cmd) {
-> +	case BCH_IOCTL_REGISTER_DEVICE: {
-> +		struct bch_register_device *cmd_info;
-> +
-> +		cmd_info = vmalloc(sizeof(struct bch_register_device));
-> +		if (!cmd_info)
-> +			return -ENOMEM;
-> +
-> +		if (copy_from_user(cmd_info, (void __user *)arg,
-> +				sizeof(struct bch_register_device))) {
-> +			pr_err("Cannot copy cmd info from user space\n");
-> +			vfree(cmd_info);
-> +			return -EINVAL;
-> +		}
-> +
-> +		retval = register_bcache_ioctl(cmd_info);
-> +
-> +		vfree(cmd_info);
-> +		return result;
-> +	}
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static const struct file_operations _ctrl_dev_fops = {
-> +	.owner = THIS_MODULE,
-> +	.unlocked_ioctl = bch_service_ioctl_ctrl
-> +};
-> +
-> +int __init bch_ctrl_device_init(void)
-> +{
-> +	struct bch_ctrl_device *ctrl = &_control_device;
-> +	struct device *device;
-> +	int result = 0;
-> +
-> +	result = alloc_chrdev_region(&ctrl->dev, 0, 1, "bcache");
-> +	if (result) {
-> +		pr_err("Cannot allocate control chrdev number.\n");
-> +		goto error_alloc_chrdev_region;
-> +	}
-> +
-> +	cdev_init(&ctrl->cdev, &_ctrl_dev_fops);
-> +
-> +	result = cdev_add(&ctrl->cdev, ctrl->dev, 1);
-> +	if (result) {
-> +		pr_err("Cannot add control chrdev.\n");
-> +		goto error_cdev_add;
-> +	}
-> +
-> +	ctrl->class = class_create(THIS_MODULE, "bcache");
-> +	if (IS_ERR(ctrl->class)) {
-> +		pr_err("Cannot create control chrdev class.\n");
-> +		result = PTR_ERR(ctrl->class);
-> +		goto error_class_create;
-> +	}
-> +
-> +	device = device_create(ctrl->class, NULL, ctrl->dev, NULL,
-> +			"bcache_ctrl");
-> +	if (IS_ERR(device)) {
-> +		pr_err("Cannot create control chrdev.\n");
-> +		result = PTR_ERR(device);
-> +		goto error_device_create;
-> +	}
-> +
-> +	return result;
-> +
-> +error_device_create:
-> +	class_destroy(ctrl->class);
-> +error_class_create:
-> +	cdev_del(&ctrl->cdev);
-> +error_cdev_add:
-> +	unregister_chrdev_region(ctrl->dev, 1);
-> +error_alloc_chrdev_region:
-> +	return result;
-> +}
-> +
-> +void bch_ctrl_device_deinit(void)
-> +{
-> +	struct bch_ctrl_device *ctrl = &_control_device;
-> +
-> +	device_destroy(ctrl->class, ctrl->dev);
-> +	class_destroy(ctrl->class);
-> +	cdev_del(&ctrl->cdev);
-> +	unregister_chrdev_region(ctrl->dev, 1);
-> +}
-> diff --git a/drivers/md/bcache/control.h b/drivers/md/bcache/control.h
-> new file mode 100644
-> index 000000000000..3e4273db02a3
-> --- /dev/null
-> +++ b/drivers/md/bcache/control.h
-> @@ -0,0 +1,12 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __BCACHE_CONTROL_H__
-> +#define __BCACHE_CONTROL_H__
-> +
-> +#include "ioctl_codes.h"
-> +
-> +int __init bch_ctrl_device_init(void);
-> +void bch_ctrl_device_deinit(void);
-> +
-> +ssize_t register_bcache_ioctl(struct bch_register_device *brd);
-> +
-> +#endif
-> diff --git a/drivers/md/bcache/ioctl_codes.h b/drivers/md/bcache/ioctl_codes.h
-> new file mode 100644
-> index 000000000000..f25e038bee30
-> --- /dev/null
-> +++ b/drivers/md/bcache/ioctl_codes.h
-> @@ -0,0 +1,19 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __BCACHE_IOCTL_CODES_H__
-> +#define __BCACHE_IOCTL_CODES_H__
-> +
-> +#include <linux/ioctl.h>
-> +#include <linux/types.h>
-> +
-> +struct bch_register_device {
-> +	const char *dev_name;
-> +	size_t size;
-> +	struct cache_sb *sb;
-> +};
-> +
-> +#define BCH_IOCTL_MAGIC (0xBC)
-> +
-> +/** Start new cache instance, load cache or recover cache */
-> +#define BCH_IOCTL_REGISTER_DEVICE	_IOWR(BCH_IOCTL_MAGIC, 1, struct bch_register_device)
-> +
-> +#endif
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 140f35dc0c45..95db3785a6e0 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -14,6 +14,7 @@
->   #include "request.h"
->   #include "writeback.h"
->   #include "features.h"
-> +#include "control.h"
-> 
->   #include <linux/blkdev.h>
->   #include <linux/pagemap.h>
-> @@ -1069,7 +1070,7 @@ int bch_cached_dev_run(struct cached_dev *dc)
->   		goto out;
->   	}
-> 
-> -	if (!d->c &&
-> +	if (!d->c && dc->sb_disk &&
->   	    BDEV_STATE(&dc->sb) != BDEV_STATE_NONE) {
->   		struct closure cl;
-> 
-> @@ -1259,9 +1260,6 @@ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
->   	 */
-> 
->   	if (bch_is_zero(u->uuid, 16)) {
-> -		struct closure cl;
-> -
-> -		closure_init_stack(&cl);
-> 
->   		memcpy(u->uuid, dc->sb.uuid, 16);
->   		memcpy(u->label, dc->sb.label, SB_LABEL_SIZE);
-> @@ -1271,8 +1269,14 @@ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
->   		memcpy(dc->sb.set_uuid, c->set_uuid, 16);
->   		SET_BDEV_STATE(&dc->sb, BDEV_STATE_CLEAN);
-> 
-> -		bch_write_bdev_super(dc, &cl);
-> -		closure_sync(&cl);
-> +		if (dc->sb_disk) {
-> +			struct closure cl;
-> +
-> +			closure_init_stack(&cl);
-> +			bch_write_bdev_super(dc, &cl);
-> +			closure_sync(&cl);
-> +		}
-> +
->   	} else {
->   		u->last_reg = rtime;
->   		bch_uuid_write(c);
-> @@ -2403,14 +2407,14 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
-> 
->   /* Global interfaces/init */
-> 
-> -static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
-> +static ssize_t register_bcache_sysfs(struct kobject *k, struct kobj_attribute *attr,
->   			       const char *buffer, size_t size);
->   static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
->   					 struct kobj_attribute *attr,
->   					 const char *buffer, size_t size);
-> 
-> -kobj_attribute_write(register,		register_bcache);
-> -kobj_attribute_write(register_quiet,	register_bcache);
-> +kobj_attribute_write(register,		register_bcache_sysfs);
-> +kobj_attribute_write(register_quiet,	register_bcache_sysfs);
->   kobj_attribute_write(pendings_cleanup,	bch_pending_bdevs_cleanup);
-> 
->   static bool bch_is_open_backing(dev_t dev)
-> @@ -2465,7 +2469,8 @@ static void register_bdev_worker(struct work_struct *work)
->   	dc = kzalloc(sizeof(*dc), GFP_KERNEL);
->   	if (!dc) {
->   		fail = true;
-> -		put_page(virt_to_page(args->sb_disk));
-> +		if (args->sb_disk)
-> +			put_page(virt_to_page(args->sb_disk));
->   		blkdev_put(args->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
->   		goto out;
->   	}
-> @@ -2495,7 +2500,8 @@ static void register_cache_worker(struct work_struct *work)
->   	ca = kzalloc(sizeof(*ca), GFP_KERNEL);
->   	if (!ca) {
->   		fail = true;
-> -		put_page(virt_to_page(args->sb_disk));
-> +		if (args->sb_disk)
-> +			put_page(virt_to_page(args->sb_disk));
->   		blkdev_put(args->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
->   		goto out;
->   	}
-> @@ -2525,7 +2531,7 @@ static void register_device_async(struct async_reg_args *args)
->   	queue_delayed_work(system_wq, &args->reg_work, 10);
->   }
-> 
-> -static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
-> +static ssize_t register_bcache_common(void *k, struct kobj_attribute *attr,
->   			       const char *buffer, size_t size)
->   {
->   	const char *err;
-> @@ -2587,9 +2593,14 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->   	if (set_blocksize(bdev, 4096))
->   		goto out_blkdev_put;
-> 
-> -	err = read_super(sb, bdev, &sb_disk);
-> -	if (err)
-> -		goto out_blkdev_put;
-> +	if (!k) {
-> +		err = read_super(sb, bdev, &sb_disk);
-> +		if (err)
-> +			goto out_blkdev_put;
-> +	} else {
-> +		sb_disk =  NULL;
-> +		memcpy(sb, (struct cache_sb *)k, sizeof(struct cache_sb));
-> +	}
-> 
->   	err = "failed to register device";
-> 
-> @@ -2651,7 +2662,8 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->   	return size;
-> 
->   out_put_sb_page:
-> -	put_page(virt_to_page(sb_disk));
-> +	if (!k)
-> +		put_page(virt_to_page(sb_disk));
->   out_blkdev_put:
->   	blkdev_put(bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
->   out_free_sb:
-> @@ -2666,6 +2678,18 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->   	return ret;
->   }
-> 
-> +static ssize_t register_bcache_sysfs(struct kobject *k, struct kobj_attribute *attr,
-> +			       const char *buffer, size_t size)
-> +{
-> +	return register_bcache_common(NULL, attr, buffer, size);
-> +}
-> +
-> +ssize_t register_bcache_ioctl(struct bch_register_device *brd)
-> +{
-> +	return register_bcache_common((void *)brd->sb, NULL, brd->dev_name, brd->size);
-> +}
-> +
-> +
-> 
->   struct pdev {
->   	struct list_head list;
-> @@ -2819,6 +2843,7 @@ static void bcache_exit(void)
->   {
->   	bch_debug_exit();
->   	bch_request_exit();
-> +	bch_ctrl_device_deinit();
->   	if (bcache_kobj)
->   		kobject_put(bcache_kobj);
->   	if (bcache_wq)
-> @@ -2918,6 +2943,11 @@ static int __init bcache_init(void)
->   	bch_debug_init();
->   	closure_debug_init();
-> 
-> +	if (bch_ctrl_device_init()) {
-> +		pr_err("Cannot initialize control device\n");
-> +		goto err;
-> +	}
-> +
->   	bcache_is_reboot = false;
-> 
->   	return 0;
-> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> index 1f0dce30fa75..984cc97a1d55 100644
-> --- a/drivers/md/bcache/sysfs.c
-> +++ b/drivers/md/bcache/sysfs.c
-> @@ -379,6 +379,10 @@ STORE(__cached_dev)
->   		if (v < 0)
->   			return v;
-> 
-> +		// XXX(atom): Devices created by IOCTL don't support changing cache mode
-> +		if (!dc->sb_disk)
-> +			return -EINVAL;
-> +
->   		if ((unsigned int) v != BDEV_CACHE_MODE(&dc->sb)) {
->   			SET_BDEV_CACHE_MODE(&dc->sb, v);
->   			bch_write_bdev_super(dc, NULL);
-> diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
-> index 02b2f9df73f6..bd7b95bd2da7 100644
-> --- a/drivers/md/bcache/writeback.h
-> +++ b/drivers/md/bcache/writeback.h
-> @@ -135,7 +135,7 @@ static inline void bch_writeback_add(struct cached_dev *dc)
->   {
->   	if (!atomic_read(&dc->has_dirty) &&
->   	    !atomic_xchg(&dc->has_dirty, 1)) {
-> -		if (BDEV_STATE(&dc->sb) != BDEV_STATE_DIRTY) {
-> +		if (dc->sb_disk && BDEV_STATE(&dc->sb) != BDEV_STATE_DIRTY) {
->   			SET_BDEV_STATE(&dc->sb, BDEV_STATE_DIRTY);
->   			/* XXX: should do this synchronously */
->   			bch_write_bdev_super(dc, NULL);
-> --
-> 2.25.1
-> 
-> 
+I understand why you did it but this parameter reversal is a bit
+scary. Hopefully gfp_t will cause any mistakes to be flagged.
+
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
