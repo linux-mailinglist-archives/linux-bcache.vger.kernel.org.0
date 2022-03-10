@@ -2,149 +2,519 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A5A64D458B
-	for <lists+linux-bcache@lfdr.de>; Thu, 10 Mar 2022 12:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3C624D461C
+	for <lists+linux-bcache@lfdr.de>; Thu, 10 Mar 2022 12:44:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240826AbiCJLT6 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 10 Mar 2022 06:19:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39138 "EHLO
+        id S233471AbiCJLpK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 10 Mar 2022 06:45:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239091AbiCJLT5 (ORCPT
+        with ESMTP id S236354AbiCJLpJ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 10 Mar 2022 06:19:57 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 267309ADBF
-        for <linux-bcache@vger.kernel.org>; Thu, 10 Mar 2022 03:18:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646911137; x=1678447137;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8P1VHMUDhNY3aMi1ZjGFkRLuU3vkNLTK5DtJST3KEAY=;
-  b=Yu/QITaOafPnvITV4ZsDz1gmGYiAUWgEhXUdPrsqZaIV8DcGJaJV95s8
-   FO8Q5c2DhAPcnsOzE5VWIzjFyjlfijrwmj/KVfo23FGYG0XsBokQi7u/o
-   /8W4NqeBpptyzpZgng8Uc9R5QdvjN0RzXvzsfxY82kVvNGiCfRGOOfFe0
-   Ryk3IyivNKQURyLa8suEL8yQnwiv/APUN8/WLbsG+XAHVeqQH00VPK2G+
-   /EqE5NOMKWowQfD8BgNgV5igjfj6ohcwxZF9MwMcKgmN4tycej/1QHLfb
-   opuboKb4CCySXiur618x2ni/di3YEgwnOIlQ+74hSK7LJXyH8I7iH8m1M
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10281"; a="254962699"
-X-IronPort-AV: E=Sophos;i="5.90,170,1643702400"; 
-   d="scan'208";a="254962699"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2022 03:18:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,170,1643702400"; 
-   d="scan'208";a="712325492"
-Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
-  by orsmga005.jf.intel.com with ESMTP; 10 Mar 2022 03:18:54 -0800
-Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nSGoo-0004py-4d; Thu, 10 Mar 2022 11:18:54 +0000
-Date:   Thu, 10 Mar 2022 19:18:32 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrea Tomassetti <andrea.tomassetti@devo.com>,
-        linux-bcache@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, Coly Li <colyli@suse.de>,
-        Kent Overstreet <kmo@daterainc.com>,
+        Thu, 10 Mar 2022 06:45:09 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D002AC54
+        for <linux-bcache@vger.kernel.org>; Thu, 10 Mar 2022 03:44:07 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id i9-20020a1c3b09000000b00389d0a5c511so871593wma.5
+        for <linux-bcache@vger.kernel.org>; Thu, 10 Mar 2022 03:44:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=devo.com; s=google;
+        h=from:to:cc:subject:date:message-id:reply-to:mime-version
+         :content-transfer-encoding;
+        bh=2qdTw7WtpbtkIqElm8Vqe41J2/Ch8U9eTRLt6qvKFSI=;
+        b=cCaUkFWOHvPm+5R749Z41y5SMaO9GFBEdW21wg1eqopw9q0cvI8+F4dpwasCbMJSme
+         wVUCKWqwUR4jSU5XvIwlOLxDofH4HCEP3kFLSk0oi1yTzqtjz41i45n1X6jev5vW32dZ
+         68NAysASW6cPGVLXnbS4lNnlVKUh/+Vs4IWKdU0WNJChwd8nzkwAHi9sSKMLetAxH8Zo
+         WshotLggqpIIYjisCCpgQWaKk/ZvDBNd+tTPmH7Ujl191NTe9DRtLSEDxpmK+D7BHiqz
+         nDh0QKJiBB4ycgVSecRqm991MbfaoRcmnQ+pa6qUts+grV24nk1MZhTR4/pFBAdZkZHK
+         EQlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :mime-version:content-transfer-encoding;
+        bh=2qdTw7WtpbtkIqElm8Vqe41J2/Ch8U9eTRLt6qvKFSI=;
+        b=13ETlNi/MTcc4ugDcT+T5y9WDHbz5c8pBOiXrBD85mfZnsFfKX7OoeS3JArOBfSurO
+         2X6nNqDsS5j/HorhnAiMHXjuw18YBYm5FkANzt4WTwyySGpA1uirxCHvVhAkNk8DUoXg
+         yZ/gG8o5einR1eQRqRJP6ftkFmelj2JEKgdgyD6bW7wXaHCvYyOWfr2RPhs3adW4/mza
+         7uKFq7xpcYEEKikVVF3EFO7mgZR8G526t2W1c3bJGnRQLlWSSsbeiNP9mL77ltgemTSU
+         ocsZXfwQXs0jJHU4AZawDd0EvG8Iupiqq6k06f4Led8VZrpOY+hsz4Pv1Drvs3gVNUKw
+         1GaA==
+X-Gm-Message-State: AOAM531cEI8By1PSDA/1dah1zEstoOzo3V0Zo+lZgofcIabfMbyMyVrK
+        92LRWj6f8TzK6TPNcREgFtQwG+dlKNv0MoAVrgUPLHvAp+sw3cbbNSkVrdWdSEUmEeqor8GDWpu
+        XYP2XR01gCxr9BFyCrCPYqP1O
+X-Google-Smtp-Source: ABdhPJy2Gqr/pe4DJbCO0m+57sGCTnYSql8DvkZcpnhmzrPu9L4nK3FPXMOSbt9aEiAyjXOo0jmA6g==
+X-Received: by 2002:a7b:c38f:0:b0:385:e56c:8624 with SMTP id s15-20020a7bc38f000000b00385e56c8624mr11600658wmj.19.1646912645663;
+        Thu, 10 Mar 2022 03:44:05 -0800 (PST)
+Received: from 2021-EMEA-0269.home (251.69.14.37.dynamic.jazztel.es. [37.14.69.251])
+        by smtp.googlemail.com with ESMTPSA id n5-20020a5d5985000000b001f0122f63e1sm4422505wri.85.2022.03.10.03.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Mar 2022 03:44:05 -0800 (PST)
+From:   Andrea Tomassetti <andrea.tomassetti@devo.com>
+To:     linux-bcache@vger.kernel.org, kernel test robot <lkp@intel.com>
+Cc:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
         Zhang Zhen <zhangzhen.email@gmail.com>,
+        kbuild-all@lists.01.org,
         Andrea Tomassetti <andrea.tomassetti@devo.com>
-Subject: Re: [PATCH] bcache: Use bcache without formatting existing device
-Message-ID: <202203101939.OFoiVCSH-lkp@intel.com>
-References: <20220310085240.334068-1-andrea.tomassetti@devo.com>
+Subject: [PATCH v3] bcache: Use bcache without formatting existing device
+Date:   Thu, 10 Mar 2022 12:38:20 +0100
+Message-Id: <20220310113817.353422-1-andrea.tomassetti@devo.com>
+X-Mailer: git-send-email 2.25.1
+Reply-To: 202203101939.OFoiVCSH-lkp@intel.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220310085240.334068-1-andrea.tomassetti@devo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Andrea,
+v3: fix build warning reported by kernel test robot
 
-Thank you for the patch! Perhaps something to improve:
+>> drivers/md/bcache/control.c:18:6: warning: no
+   previous prototype for function 'bch_service_ioctl_ctrl'
+   [-Wmissing-prototypes]
+   long bch_service_ioctl_ctrl(struct file *filp, unsigned int cmd,
+        ^
+   drivers/md/bcache/control.c:18:1: note: declare 'static' if the
+   function is not intended to be used outside of this translation unit
+   long bch_service_ioctl_ctrl(struct file *filp, unsigned int cmd,
+   ^
+   static
+   1 warning generated.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.17-rc7 next-20220309]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/0day-ci/linux/commits/Andrea-Tomassetti/bcache-Use-bcache-without-formatting-existing-device/20220310-165353
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 3bf7edc84a9eb4007dd9a0cb8878a7e1d5ec6a3b
-config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20220310/202203101939.OFoiVCSH-lkp@intel.com/config)
-compiler: gcc-9 (Ubuntu 9.4.0-1ubuntu1~20.04) 9.4.0
-reproduce (this is a W=1 build):
-        # https://github.com/0day-ci/linux/commit/b5073e4ece2a86f002ca66fb1d864034c12be3e2
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Andrea-Tomassetti/bcache-Use-bcache-without-formatting-existing-device/20220310-165353
-        git checkout b5073e4ece2a86f002ca66fb1d864034c12be3e2
-        # save the config file to linux build tree
-        mkdir build_dir
-        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash drivers/md/bcache/
-
-If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
 
-All warnings (new ones prefixed by >>):
+v2: Fixed small typos
 
->> drivers/md/bcache/control.c:18:6: warning: no previous prototype for 'bch_service_ioctl_ctrl' [-Wmissing-prototypes]
-      18 | long bch_service_ioctl_ctrl(struct file *filp, unsigned int cmd,
-         |      ^~~~~~~~~~~~~~~~~~~~~~
+Introducing a bcache control device (/dev/bcache_ctrl)
+that allows communicating to the driver from user space
+via IOCTL. The only IOCTL commands currently implemented,
+receives a struct cache_sb and uses it to register the
+backing device.
 
-
-vim +/bch_service_ioctl_ctrl +18 drivers/md/bcache/control.c
-
-    15	
-    16	/* this handles IOCTL for /dev/bcache_ctrl */
-    17	/*********************************************/
-  > 18	long bch_service_ioctl_ctrl(struct file *filp, unsigned int cmd,
-    19			unsigned long arg)
-    20	{
-    21		int retval = 0;
-    22	
-    23		if (_IOC_TYPE(cmd) != BCH_IOCTL_MAGIC)
-    24			return -EINVAL;
-    25	
-    26		if (!capable(CAP_SYS_ADMIN)) {
-    27			/* Must be root to issue ioctls */
-    28			return -EPERM;
-    29		}
-    30	
-    31		switch (cmd) {
-    32		case BCH_IOCTL_REGISTER_DEVICE: {
-    33			struct bch_register_device *cmd_info;
-    34	
-    35			cmd_info = vmalloc(sizeof(struct bch_register_device));
-    36			if (!cmd_info)
-    37				return -ENOMEM;
-    38	
-    39			if (copy_from_user(cmd_info, (void __user *)arg,
-    40					sizeof(struct bch_register_device))) {
-    41				pr_err("Cannot copy cmd info from user space\n");
-    42				vfree(cmd_info);
-    43				return -EINVAL;
-    44			}
-    45	
-    46			retval = register_bcache_ioctl(cmd_info);
-    47	
-    48			vfree(cmd_info);
-    49			return retval;
-    50		}
-    51	
-    52		default:
-    53			return -EINVAL;
-    54		}
-    55	}
-    56	
-
+Signed-off-by: Andrea Tomassetti <andrea.tomassetti@devo.com>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ drivers/md/bcache/Makefile      |   2 +-
+ drivers/md/bcache/control.c     | 117 ++++++++++++++++++++++++++++++++
+ drivers/md/bcache/control.h     |  12 ++++
+ drivers/md/bcache/ioctl_codes.h |  19 ++++++
+ drivers/md/bcache/super.c       |  62 ++++++++++++-----
+ drivers/md/bcache/sysfs.c       |   4 ++
+ drivers/md/bcache/writeback.h   |   2 +-
+ 7 files changed, 200 insertions(+), 18 deletions(-)
+ create mode 100644 drivers/md/bcache/control.c
+ create mode 100644 drivers/md/bcache/control.h
+ create mode 100644 drivers/md/bcache/ioctl_codes.h
+
+diff --git a/drivers/md/bcache/Makefile b/drivers/md/bcache/Makefile
+index 5b87e59676b8..46ed41baed7a 100644
+--- a/drivers/md/bcache/Makefile
++++ b/drivers/md/bcache/Makefile
+@@ -4,4 +4,4 @@ obj-$(CONFIG_BCACHE)	+=3D bcache.o
+=20
+ bcache-y		:=3D alloc.o bset.o btree.o closure.o debug.o extents.o\
+ 	io.o journal.o movinggc.o request.o stats.o super.o sysfs.o trace.o\
+-	util.o writeback.o features.o
++	util.o writeback.o features.o control.o
+diff --git a/drivers/md/bcache/control.c b/drivers/md/bcache/control.c
+new file mode 100644
+index 000000000000..69b5e554d093
+--- /dev/null
++++ b/drivers/md/bcache/control.c
+@@ -0,0 +1,117 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/cdev.h>
++#include <linux/fs.h>
++#include <linux/vmalloc.h>
++
++#include "control.h"
++
++struct bch_ctrl_device {
++	struct cdev cdev;
++	struct class *class;
++	dev_t dev;
++};
++
++static struct bch_ctrl_device _control_device;
++
++/* this handles IOCTL for /dev/bcache_ctrl */
++/*********************************************/
++static long bch_service_ioctl_ctrl(struct file *filp, unsigned int cmd,
++		unsigned long arg)
++{
++	int retval =3D 0;
++
++	if (_IOC_TYPE(cmd) !=3D BCH_IOCTL_MAGIC)
++		return -EINVAL;
++
++	if (!capable(CAP_SYS_ADMIN)) {
++		/* Must be root to issue ioctls */
++		return -EPERM;
++	}
++
++	switch (cmd) {
++	case BCH_IOCTL_REGISTER_DEVICE: {
++		struct bch_register_device *cmd_info;
++
++		cmd_info =3D vmalloc(sizeof(struct bch_register_device));
++		if (!cmd_info)
++			return -ENOMEM;
++
++		if (copy_from_user(cmd_info, (void __user *)arg,
++				sizeof(struct bch_register_device))) {
++			pr_err("Cannot copy cmd info from user space\n");
++			vfree(cmd_info);
++			return -EINVAL;
++		}
++
++		retval =3D register_bcache_ioctl(cmd_info);
++
++		vfree(cmd_info);
++		return retval;
++	}
++
++	default:
++		return -EINVAL;
++	}
++}
++
++static const struct file_operations _ctrl_dev_fops =3D {
++	.owner =3D THIS_MODULE,
++	.unlocked_ioctl =3D bch_service_ioctl_ctrl
++};
++
++int __init bch_ctrl_device_init(void)
++{
++	struct bch_ctrl_device *ctrl =3D &_control_device;
++	struct device *device;
++	int result =3D 0;
++
++	result =3D alloc_chrdev_region(&ctrl->dev, 0, 1, "bcache");
++	if (result) {
++		pr_err("Cannot allocate control chrdev number.\n");
++		goto error_alloc_chrdev_region;
++	}
++
++	cdev_init(&ctrl->cdev, &_ctrl_dev_fops);
++
++	result =3D cdev_add(&ctrl->cdev, ctrl->dev, 1);
++	if (result) {
++		pr_err("Cannot add control chrdev.\n");
++		goto error_cdev_add;
++	}
++
++	ctrl->class =3D class_create(THIS_MODULE, "bcache");
++	if (IS_ERR(ctrl->class)) {
++		pr_err("Cannot create control chrdev class.\n");
++		result =3D PTR_ERR(ctrl->class);
++		goto error_class_create;
++	}
++
++	device =3D device_create(ctrl->class, NULL, ctrl->dev, NULL,
++			"bcache_ctrl");
++	if (IS_ERR(device)) {
++		pr_err("Cannot create control chrdev.\n");
++		result =3D PTR_ERR(device);
++		goto error_device_create;
++	}
++
++	return result;
++
++error_device_create:
++	class_destroy(ctrl->class);
++error_class_create:
++	cdev_del(&ctrl->cdev);
++error_cdev_add:
++	unregister_chrdev_region(ctrl->dev, 1);
++error_alloc_chrdev_region:
++	return result;
++}
++
++void bch_ctrl_device_deinit(void)
++{
++	struct bch_ctrl_device *ctrl =3D &_control_device;
++
++	device_destroy(ctrl->class, ctrl->dev);
++	class_destroy(ctrl->class);
++	cdev_del(&ctrl->cdev);
++	unregister_chrdev_region(ctrl->dev, 1);
++}
+diff --git a/drivers/md/bcache/control.h b/drivers/md/bcache/control.h
+new file mode 100644
+index 000000000000..3e4273db02a3
+--- /dev/null
++++ b/drivers/md/bcache/control.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __BCACHE_CONTROL_H__
++#define __BCACHE_CONTROL_H__
++
++#include "ioctl_codes.h"
++
++int __init bch_ctrl_device_init(void);
++void bch_ctrl_device_deinit(void);
++
++ssize_t register_bcache_ioctl(struct bch_register_device *brd);
++
++#endif
+diff --git a/drivers/md/bcache/ioctl_codes.h b/drivers/md/bcache/ioctl_code=
+s.h
+new file mode 100644
+index 000000000000..b004d60c29ff
+--- /dev/null
++++ b/drivers/md/bcache/ioctl_codes.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __BCACHE_IOCTL_CODES_H__
++#define __BCACHE_IOCTL_CODES_H__
++
++#include <linux/ioctl.h>
++#include <linux/types.h>
++
++struct bch_register_device {
++	const char *dev_name;
++	size_t size;
++	struct cache_sb *sb;
++};
++
++#define BCH_IOCTL_MAGIC (0xBC)
++
++/* Register a new backing device */
++#define BCH_IOCTL_REGISTER_DEVICE	_IOWR(BCH_IOCTL_MAGIC, 1, struct bch_reg=
+ister_device)
++
++#endif
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 140f35dc0c45..95db3785a6e0 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -14,6 +14,7 @@
+ #include "request.h"
+ #include "writeback.h"
+ #include "features.h"
++#include "control.h"
+=20
+ #include <linux/blkdev.h>
+ #include <linux/pagemap.h>
+@@ -1069,7 +1070,7 @@ int bch_cached_dev_run(struct cached_dev *dc)
+ 		goto out;
+ 	}
+=20
+-	if (!d->c &&
++	if (!d->c && dc->sb_disk &&
+ 	    BDEV_STATE(&dc->sb) !=3D BDEV_STATE_NONE) {
+ 		struct closure cl;
+=20
+@@ -1259,9 +1260,6 @@ int bch_cached_dev_attach(struct cached_dev *dc, stru=
+ct cache_set *c,
+ 	 */
+=20
+ 	if (bch_is_zero(u->uuid, 16)) {
+-		struct closure cl;
+-
+-		closure_init_stack(&cl);
+=20
+ 		memcpy(u->uuid, dc->sb.uuid, 16);
+ 		memcpy(u->label, dc->sb.label, SB_LABEL_SIZE);
+@@ -1271,8 +1269,14 @@ int bch_cached_dev_attach(struct cached_dev *dc, str=
+uct cache_set *c,
+ 		memcpy(dc->sb.set_uuid, c->set_uuid, 16);
+ 		SET_BDEV_STATE(&dc->sb, BDEV_STATE_CLEAN);
+=20
+-		bch_write_bdev_super(dc, &cl);
+-		closure_sync(&cl);
++		if (dc->sb_disk) {
++			struct closure cl;
++
++			closure_init_stack(&cl);
++			bch_write_bdev_super(dc, &cl);
++			closure_sync(&cl);
++		}
++
+ 	} else {
+ 		u->last_reg =3D rtime;
+ 		bch_uuid_write(c);
+@@ -2403,14 +2407,14 @@ static int register_cache(struct cache_sb *sb, stru=
+ct cache_sb_disk *sb_disk,
+=20
+ /* Global interfaces/init */
+=20
+-static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *a=
+ttr,
++static ssize_t register_bcache_sysfs(struct kobject *k, struct kobj_attrib=
+ute *attr,
+ 			       const char *buffer, size_t size);
+ static ssize_t bch_pending_bdevs_cleanup(struct kobject *k,
+ 					 struct kobj_attribute *attr,
+ 					 const char *buffer, size_t size);
+=20
+-kobj_attribute_write(register,		register_bcache);
+-kobj_attribute_write(register_quiet,	register_bcache);
++kobj_attribute_write(register,		register_bcache_sysfs);
++kobj_attribute_write(register_quiet,	register_bcache_sysfs);
+ kobj_attribute_write(pendings_cleanup,	bch_pending_bdevs_cleanup);
+=20
+ static bool bch_is_open_backing(dev_t dev)
+@@ -2465,7 +2469,8 @@ static void register_bdev_worker(struct work_struct *=
+work)
+ 	dc =3D kzalloc(sizeof(*dc), GFP_KERNEL);
+ 	if (!dc) {
+ 		fail =3D true;
+-		put_page(virt_to_page(args->sb_disk));
++		if (args->sb_disk)
++			put_page(virt_to_page(args->sb_disk));
+ 		blkdev_put(args->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
+ 		goto out;
+ 	}
+@@ -2495,7 +2500,8 @@ static void register_cache_worker(struct work_struct =
+*work)
+ 	ca =3D kzalloc(sizeof(*ca), GFP_KERNEL);
+ 	if (!ca) {
+ 		fail =3D true;
+-		put_page(virt_to_page(args->sb_disk));
++		if (args->sb_disk)
++			put_page(virt_to_page(args->sb_disk));
+ 		blkdev_put(args->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
+ 		goto out;
+ 	}
+@@ -2525,7 +2531,7 @@ static void register_device_async(struct async_reg_ar=
+gs *args)
+ 	queue_delayed_work(system_wq, &args->reg_work, 10);
+ }
+=20
+-static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *a=
+ttr,
++static ssize_t register_bcache_common(void *k, struct kobj_attribute *attr=
+,
+ 			       const char *buffer, size_t size)
+ {
+ 	const char *err;
+@@ -2587,9 +2593,14 @@ static ssize_t register_bcache(struct kobject *k, st=
+ruct kobj_attribute *attr,
+ 	if (set_blocksize(bdev, 4096))
+ 		goto out_blkdev_put;
+=20
+-	err =3D read_super(sb, bdev, &sb_disk);
+-	if (err)
+-		goto out_blkdev_put;
++	if (!k) {
++		err =3D read_super(sb, bdev, &sb_disk);
++		if (err)
++			goto out_blkdev_put;
++	} else {
++		sb_disk =3D  NULL;
++		memcpy(sb, (struct cache_sb *)k, sizeof(struct cache_sb));
++	}
+=20
+ 	err =3D "failed to register device";
+=20
+@@ -2651,7 +2662,8 @@ static ssize_t register_bcache(struct kobject *k, str=
+uct kobj_attribute *attr,
+ 	return size;
+=20
+ out_put_sb_page:
+-	put_page(virt_to_page(sb_disk));
++	if (!k)
++		put_page(virt_to_page(sb_disk));
+ out_blkdev_put:
+ 	blkdev_put(bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
+ out_free_sb:
+@@ -2666,6 +2678,18 @@ static ssize_t register_bcache(struct kobject *k, st=
+ruct kobj_attribute *attr,
+ 	return ret;
+ }
+=20
++static ssize_t register_bcache_sysfs(struct kobject *k, struct kobj_attrib=
+ute *attr,
++			       const char *buffer, size_t size)
++{
++	return register_bcache_common(NULL, attr, buffer, size);
++}
++
++ssize_t register_bcache_ioctl(struct bch_register_device *brd)
++{
++	return register_bcache_common((void *)brd->sb, NULL, brd->dev_name, brd->=
+size);
++}
++
++
+=20
+ struct pdev {
+ 	struct list_head list;
+@@ -2819,6 +2843,7 @@ static void bcache_exit(void)
+ {
+ 	bch_debug_exit();
+ 	bch_request_exit();
++	bch_ctrl_device_deinit();
+ 	if (bcache_kobj)
+ 		kobject_put(bcache_kobj);
+ 	if (bcache_wq)
+@@ -2918,6 +2943,11 @@ static int __init bcache_init(void)
+ 	bch_debug_init();
+ 	closure_debug_init();
+=20
++	if (bch_ctrl_device_init()) {
++		pr_err("Cannot initialize control device\n");
++		goto err;
++	}
++
+ 	bcache_is_reboot =3D false;
+=20
+ 	return 0;
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 1f0dce30fa75..2df5b114e821 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -379,6 +379,10 @@ STORE(__cached_dev)
+ 		if (v < 0)
+ 			return v;
+=20
++		// Devices created via IOCTL don't support changing cache mode
++		if (!dc->sb_disk)
++			return -EINVAL;
++
+ 		if ((unsigned int) v !=3D BDEV_CACHE_MODE(&dc->sb)) {
+ 			SET_BDEV_CACHE_MODE(&dc->sb, v);
+ 			bch_write_bdev_super(dc, NULL);
+diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
+index 02b2f9df73f6..bd7b95bd2da7 100644
+--- a/drivers/md/bcache/writeback.h
++++ b/drivers/md/bcache/writeback.h
+@@ -135,7 +135,7 @@ static inline void bch_writeback_add(struct cached_dev =
+*dc)
+ {
+ 	if (!atomic_read(&dc->has_dirty) &&
+ 	    !atomic_xchg(&dc->has_dirty, 1)) {
+-		if (BDEV_STATE(&dc->sb) !=3D BDEV_STATE_DIRTY) {
++		if (dc->sb_disk && BDEV_STATE(&dc->sb) !=3D BDEV_STATE_DIRTY) {
+ 			SET_BDEV_STATE(&dc->sb, BDEV_STATE_DIRTY);
+ 			/* XXX: should do this synchronously */
+ 			bch_write_bdev_super(dc, NULL);
+--=20
+2.25.1
+
+
+--=20
+
+
+
+
+
+
+
+The contents of this email are confidential. If the reader of this=20
+message is not the intended recipient, you are hereby notified that any=20
+dissemination, distribution or copying of this communication is strictly=20
+prohibited. If you have received this communication in error, please notify=
+=20
+us immediately by replying to this message and deleting it from your=20
+computer. Thank you.=A0Devo, Inc; arco@devo.com <mailto:arco@devo.com>;=A0=
+=A0
+Calle Est=E9banez Calder=F3n 3-5, 5th Floor. Madrid, Spain 28020
+
