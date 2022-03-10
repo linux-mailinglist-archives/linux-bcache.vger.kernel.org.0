@@ -2,71 +2,64 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA5614D432E
-	for <lists+linux-bcache@lfdr.de>; Thu, 10 Mar 2022 10:10:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 242FB4D4533
+	for <lists+linux-bcache@lfdr.de>; Thu, 10 Mar 2022 11:58:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232890AbiCJJLu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 10 Mar 2022 04:11:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51278 "EHLO
+        id S234070AbiCJK74 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 10 Mar 2022 05:59:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232756AbiCJJLu (ORCPT
+        with ESMTP id S232769AbiCJK7z (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 10 Mar 2022 04:11:50 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75D6913776D
-        for <linux-bcache@vger.kernel.org>; Thu, 10 Mar 2022 01:10:49 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 2DB7A1F441;
-        Thu, 10 Mar 2022 09:10:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1646903448; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vs+DpsxxwSiGIdpUb/UeAPeOjRWxTweHviRjPycZrh8=;
-        b=uQytoi1gCnWzv5XuBl47vJ49LI5/huuQH+OTgcMrnHtwYePfmiIBagMTxqKUgecsPRs4ch
-        kbAuWHmv7lyqhU3RNY1IRmmuvrYxRDSIr70h6p5yUSHuFQcqzp9YiM+oKorRcOXHCSxdEN
-        6JJfB2NktJj4fnMy9bFGz7LmAf6Fhnk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1646903448;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vs+DpsxxwSiGIdpUb/UeAPeOjRWxTweHviRjPycZrh8=;
-        b=Q2oPSiP9xB/7XM1jPK566TuIqUTzufZiNoPKE8c2dyuGsDTi12Hh7GD2NAz5XzkWIX+yyg
-        D7xXasOsfYDHQmBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 47E9F13FA3;
-        Thu, 10 Mar 2022 09:10:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id P+2iLpbAKWIKSgAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 10 Mar 2022 09:10:46 +0000
-Message-ID: <8146b053-deec-ae29-ea49-d8df8f1c0b6e@suse.de>
-Date:   Thu, 10 Mar 2022 17:10:44 +0800
+        Thu, 10 Mar 2022 05:59:55 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA58613AA11
+        for <linux-bcache@vger.kernel.org>; Thu, 10 Mar 2022 02:58:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1646909934; x=1678445934;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=M5q+tzMs3gOSchhRYjEnJEfpVP9MK4AAfGfOf27NKUM=;
+  b=S9YNYc+RigedWXIzgMOBdBkyjXTqTT/PpWGLApQZzAJLrWYaEbFlF4nK
+   IegcO2pbyagJ2s3u1hFyRi58rdoAmfCeRvtvBjkmkdNRYu68Yq8BCaLSD
+   4t2o2Hck9Kc56KP0UKh8M7T/7cfwC6fvLeGd4stgxB9LdNoOT1ucJhs3G
+   xJ6F++Yp/F3sMR+nc/2/V+OXeJT5wJR99cZ1hFrJ+VmSM7Xh8ZwJ+10VV
+   tnJPno0iudIAJgEtbyR1yijiDIQBDNaEDtFOgNu7glMqRsjaaIAdRHbXv
+   w/NL809FSBfUBSbCdeORIBJ4/HMOf/WMNJ4npyBmqdxF9gtIuIz5dEINt
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10281"; a="235827828"
+X-IronPort-AV: E=Sophos;i="5.90,170,1643702400"; 
+   d="scan'208";a="235827828"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2022 02:58:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,170,1643702400"; 
+   d="scan'208";a="547978293"
+Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
+  by fmsmga007.fm.intel.com with ESMTP; 10 Mar 2022 02:58:52 -0800
+Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nSGVP-0004p8-MG; Thu, 10 Mar 2022 10:58:51 +0000
+Date:   Thu, 10 Mar 2022 18:58:01 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrea Tomassetti <andrea.tomassetti@devo.com>,
+        linux-bcache@vger.kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        Coly Li <colyli@suse.de>, Kent Overstreet <kmo@daterainc.com>,
+        Zhang Zhen <zhangzhen.email@gmail.com>,
+        Andrea Tomassetti <andrea.tomassetti@devo.com>
+Subject: Re: [PATCH] bcache: Use bcache without formatting existing device
+Message-ID: <202203101836.DQDgIjIF-lkp@intel.com>
+References: <20220310085240.334068-1-andrea.tomassetti@devo.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.6.2
-Subject: Re: [PATCH] Bcache: don't return BLK_STS_IOERR during cache detach
-Content-Language: en-US
-To:     Zhang Zhen <zhangzhen.email@gmail.com>
-References: <20220307091409.3273-1-zhangzhen.email@gmail.com>
- <7e4035fa-a7cb-6be5-a143-011e035d8f33@gmail.com>
-From:   Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org
-In-Reply-To: <7e4035fa-a7cb-6be5-a143-011e035d8f33@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220310085240.334068-1-andrea.tomassetti@devo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,148 +67,93 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 3/10/22 10:50 AM, Zhang Zhen wrote:
-> Before this patch, if cache device missing, cached_dev_submit_bio 
-> return io err
-> to fs during cache detach, randomly lead to xfs do force shutdown.
->
-> This patch delay the cache io submit in cached_dev_submit_bio
-> and wait for cache set detach finish.
-> So if the cache device become missing, bcache detach cache set 
-> automatically,
-> and the io will sumbit normally.
->
-> Feb  2 20:59:23  kernel: bcache: bch_count_io_errors() nvme0n1p56: IO 
-> error on writing btree.
-> Feb  2 20:59:23  kernel: bcache: bch_count_io_errors() nvme0n1p57: IO 
-> error on writing btree.
-> Feb  2 20:59:23  kernel: bcache: bch_count_io_errors() nvme0n1p56: IO 
-> error on writing btree.
-> Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
-> Feb  2 20:59:23  kernel: XFS (bcache43): metadata I/O error in 
-> "xfs_buf_iodone_callback_error" at daddr 0x80034658 len 32 error 12
-> Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
-> Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
-> Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
-> Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
-> Feb  2 20:59:23  kernel: bcache: bch_cache_set_error() bcache: error 
-> on 004f8aa7-561a-4ba7-bf7b-292e461d3f18:
-> Feb  2 20:59:23  kernel: journal io error
-> Feb  2 20:59:23  kernel: bcache: bch_cache_set_error() , disabling 
-> caching
-> Feb  2 20:59:23  kernel: bcache: bch_btree_insert() error -5
-> Feb  2 20:59:23  kernel: bcache: conditional_stop_bcache_device() 
-> stop_when_cache_set_failed of bcache43 is "auto" and cache is clean, 
-> keep it alive.
-> Feb  2 20:59:23  kernel: XFS (bcache43): metadata I/O error in 
-> "xlog_iodone" at daddr 0x400123e60 len 64 error 12
-> Feb  2 20:59:23  kernel: XFS (bcache43): xfs_do_force_shutdown(0x2) 
-> called from line 1298 of file fs/xfs/xfs_log.c. Return address = 
-> 00000000c1c8077f
-> Feb  2 20:59:23  kernel: XFS (bcache43): Log I/O Error Detected. 
-> Shutting down filesystem
-> Feb  2 20:59:23  kernel: XFS (bcache43): Please unmount the filesystem 
-> and rectify the problem(s)
->
-> Signed-off-by: Zhen Zhang <zhangzhen.email@gmail.com>
-> ---
->  drivers/md/bcache/bcache.h  | 5 -----
->  drivers/md/bcache/request.c | 8 ++++----
->  drivers/md/bcache/super.c   | 3 ++-
->  3 files changed, 6 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 9ed9c955add7..e5227dd08e3a 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -928,11 +928,6 @@ static inline void closure_bio_submit(struct 
-> cache_set *c,
->                        struct closure *cl)
->  {
->      closure_get(cl);
-> -    if (unlikely(test_bit(CACHE_SET_IO_DISABLE, &c->flags))) {
-> -        bio->bi_status = BLK_STS_IOERR;
-> -        bio_endio(bio);
-> -        return;
-> -    }
->      submit_bio_noacct(bio);
->  }
+Hi Andrea,
+
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on linus/master]
+[also build test WARNING on v5.17-rc7 next-20220309]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Andrea-Tomassetti/bcache-Use-bcache-without-formatting-existing-device/20220310-165353
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 3bf7edc84a9eb4007dd9a0cb8878a7e1d5ec6a3b
+config: riscv-buildonly-randconfig-r002-20220310 (https://download.01.org/0day-ci/archive/20220310/202203101836.DQDgIjIF-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 276ca87382b8f16a65bddac700202924228982f6)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install riscv cross compiling tool for clang build
+        # apt-get install binutils-riscv64-linux-gnu
+        # https://github.com/0day-ci/linux/commit/b5073e4ece2a86f002ca66fb1d864034c12be3e2
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Andrea-Tomassetti/bcache-Use-bcache-without-formatting-existing-device/20220310-165353
+        git checkout b5073e4ece2a86f002ca66fb1d864034c12be3e2
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash drivers/md/bcache/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/md/bcache/control.c:18:6: warning: no previous prototype for function 'bch_service_ioctl_ctrl' [-Wmissing-prototypes]
+   long bch_service_ioctl_ctrl(struct file *filp, unsigned int cmd,
+        ^
+   drivers/md/bcache/control.c:18:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   long bch_service_ioctl_ctrl(struct file *filp, unsigned int cmd,
+   ^
+   static 
+   1 warning generated.
 
 
-Comparing to make bcache device living as it looks like, avoiding data 
-corruption or stale is much more critical. Therefore once there is 
-critical device failure detected, the following I/O requests must be 
-stopped (especially write request) to avoid further data corruption. 
-Without the above checking for CACHE_SET_IO_DISABLE, the cache has to be 
-attached until there is no I/O. For a busy system it should be quite 
-long time. Then users may encounter silent data corruption or 
-inconsistency after a long time since hardware failed.
+vim +/bch_service_ioctl_ctrl +18 drivers/md/bcache/control.c
 
+    15	
+    16	/* this handles IOCTL for /dev/bcache_ctrl */
+    17	/*********************************************/
+  > 18	long bch_service_ioctl_ctrl(struct file *filp, unsigned int cmd,
+    19			unsigned long arg)
+    20	{
+    21		int retval = 0;
+    22	
+    23		if (_IOC_TYPE(cmd) != BCH_IOCTL_MAGIC)
+    24			return -EINVAL;
+    25	
+    26		if (!capable(CAP_SYS_ADMIN)) {
+    27			/* Must be root to issue ioctls */
+    28			return -EPERM;
+    29		}
+    30	
+    31		switch (cmd) {
+    32		case BCH_IOCTL_REGISTER_DEVICE: {
+    33			struct bch_register_device *cmd_info;
+    34	
+    35			cmd_info = vmalloc(sizeof(struct bch_register_device));
+    36			if (!cmd_info)
+    37				return -ENOMEM;
+    38	
+    39			if (copy_from_user(cmd_info, (void __user *)arg,
+    40					sizeof(struct bch_register_device))) {
+    41				pr_err("Cannot copy cmd info from user space\n");
+    42				vfree(cmd_info);
+    43				return -EINVAL;
+    44			}
+    45	
+    46			retval = register_bcache_ioctl(cmd_info);
+    47	
+    48			vfree(cmd_info);
+    49			return retval;
+    50		}
+    51	
+    52		default:
+    53			return -EINVAL;
+    54		}
+    55	}
+    56	
 
-Again, with the above change, you may introduce other issue which more 
-hard to detect.
-
-
->  diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index d15aae6c51c1..36f0ee95b51f 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -13,6 +13,7 @@
->  #include "request.h"
->  #include "writeback.h"
->  +#include <linux/delay.h>
->  #include <linux/module.h>
->  #include <linux/hash.h>
->  #include <linux/random.h>
-> @@ -1172,11 +1173,10 @@ void cached_dev_submit_bio(struct bio *bio)
->      unsigned long start_time;
->      int rw = bio_data_dir(bio);
->  -    if (unlikely((d->c && test_bit(CACHE_SET_IO_DISABLE, 
-> &d->c->flags)) ||
-> +    while (unlikely((d->c && test_bit(CACHE_SET_IO_DISABLE, 
-> &d->c->flags)) ||
->               dc->io_disable)) {
-> -        bio->bi_status = BLK_STS_IOERR;
-> -        bio_endio(bio);
-> -        return;
-> +        /* wait for detach finish and d->c == NULL. */
-> +        msleep(2);
->      }
-
-This is unacceptible, neither the infinite loop nor the msleep. You 
-cannot solve the target issue by an infinite retry, such method will 
-introduce more issue from other place.
-
-
->       if (likely(d->c)) {
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 140f35dc0c45..8d9a5e937bc8 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -661,7 +661,8 @@ int bch_prio_write(struct cache *ca, bool wait)
->          p->csum        = bch_crc64(&p->magic, 
-> meta_bucket_bytes(&ca->sb) - 8);
->           bucket = bch_bucket_alloc(ca, RESERVE_PRIO, wait);
-> -        BUG_ON(bucket == -1);
-> +        if (bucket == -1)
-> +            return -1;
-
-This change is wrong. bucket == -1 indicates the bucket allocator 
-doesn't work properly, if it happens something really critical 
-happening. This is why BUG_ON is used here.
-
-With the above change, you will encounter other strange issue sooner or 
-later and hard to tell the root cause.
-
-
-> mutex_unlock(&ca->set->bucket_lock);
->          prio_io(ca, bucket, REQ_OP_WRITE, 0);
-
-
-Currently I don't have clear idea on how to avoid the IO error return 
-value during cache set detaching for a failed cache device. But it 
-cannot be such simple change by the this patch.
-
-
-Coly Li
-
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
