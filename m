@@ -2,118 +2,154 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 305D04EE775
-	for <lists+linux-bcache@lfdr.de>; Fri,  1 Apr 2022 06:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A90C4EED1B
+	for <lists+linux-bcache@lfdr.de>; Fri,  1 Apr 2022 14:27:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244915AbiDAE7I (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 1 Apr 2022 00:59:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46488 "EHLO
+        id S1345878AbiDAM3V (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 1 Apr 2022 08:29:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244906AbiDAE7H (ORCPT
+        with ESMTP id S1345876AbiDAM3V (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 1 Apr 2022 00:59:07 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A63AF1E5;
-        Thu, 31 Mar 2022 21:57:18 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id D5FF268AFE; Fri,  1 Apr 2022 06:57:13 +0200 (CEST)
-Date:   Fri, 1 Apr 2022 06:57:13 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        Song Liu <song@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 4/5] block: turn bio_kmalloc into a simple kmalloc
- wrapper
-Message-ID: <20220401045713.GA9057@lst.de>
-References: <20220308061551.737853-1-hch@lst.de> <20220308061551.737853-5-hch@lst.de> <CGME20220331211804eucas1p28da21f2dfd57aa490abffb8f87417f42@eucas1p2.samsung.com> <6696cc6a-3e3f-035e-5b8c-05ea361383f3@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6696cc6a-3e3f-035e-5b8c-05ea361383f3@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Fri, 1 Apr 2022 08:29:21 -0400
+Received: from mail-m2835.qiye.163.com (mail-m2835.qiye.163.com [103.74.28.35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CFFB278565
+        for <linux-bcache@vger.kernel.org>; Fri,  1 Apr 2022 05:27:31 -0700 (PDT)
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m2835.qiye.163.com (Hmail) with ESMTPA id 1FCC38A07D6;
+        Fri,  1 Apr 2022 20:27:28 +0800 (CST)
+From:   mingzhe.zou@easystack.cn
+To:     colyli@suse.de, linux-bcache@vger.kernel.org
+Cc:     zoumingzhe@qq.com, ZouMingzhe <mingzhe.zou@easystack.cn>
+Subject: [PATCH 1/2] bcache: fixup btree_cache_wait list damage
+Date:   Fri,  1 Apr 2022 20:27:24 +0800
+Message-Id: <20220401122725.17725-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
+        kWDxoPAgseWUFZKDYvK1lXWShZQUlCN1dZLVlBSVdZDwkaFQgSH1lBWRpKSUhWHRpMTU4fTBodSk
+        1LVRkRExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ODY6Tjo*ATIoFExDGDYvDhM2
+        KzwwFFFVSlVKTU9DQ0pNS09DT0xDVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBT0JKSzcG
+X-HM-Tid: 0a7fe518488e841dkuqw1fcc38a07d6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Thu, Mar 31, 2022 at 11:18:03PM +0200, Marek Szyprowski wrote:
-> Hi Christoph,
-> 
-> On 08.03.2022 07:15, Christoph Hellwig wrote:
-> > Remove the magic autofree semantics and require the callers to explicitly
-> > call bio_init to initialize the bio.
-> >
-> > This allows bio_free to catch accidental bio_put calls on bio_init()ed
-> > bios as well.
-> >
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> 
-> This patch, which landed in today's next-20220331 as commit 57c47b42f454 
-> ("block: turn bio_kmalloc into a simple kmalloc wrapper"), breaks badly 
-> all my test systems, which use squashfs initrd:
+From: ZouMingzhe <mingzhe.zou@easystack.cn>
 
-In addition to the revert, this is the patch I had already queued up:
+We get a kernel crash about "list_add corruption. next->prev should be
+prev (ffff9c801bc01210), but was ffff9c77b688237c. (next=ffffae586d8afe68)."
 
-diff --git a/fs/squashfs/block.c b/fs/squashfs/block.c
-index 930eb530fa622..fed99bb3df3be 100644
---- a/fs/squashfs/block.c
-+++ b/fs/squashfs/block.c
-@@ -72,6 +72,13 @@ static int copy_bio_to_actor(struct bio *bio,
- 	return copied_bytes;
- }
- 
-+static void squashfs_bio_free(struct bio *bio)
-+{
-+	bio_free_pages(bio);
-+	bio_uninit(bio);
-+	kfree(bio);
-+}
-+
- static int squashfs_bio_read(struct super_block *sb, u64 index, int length,
- 			     struct bio **biop, int *block_offset)
+crash> struct list_head 0xffff9c801bc01210
+struct list_head {
+  next = 0xffffae586d8afe68,
+  prev = 0xffffae586d8afe68
+}
+crash> struct list_head 0xffff9c77b688237c
+struct list_head {
+  next = 0x0,
+  prev = 0x0
+}
+crash> struct list_head 0xffffae586d8afe68
+struct list_head struct: invalid kernel virtual address: ffffae586d8afe68  type: "gdb_readmem_callback"
+Cannot access memory at address 0xffffae586d8afe68
+
+[230469.019492] Call Trace:
+[230469.032041]  prepare_to_wait+0x8a/0xb0
+[230469.044363]  ? bch_btree_keys_free+0x6c/0xc0 [escache]
+[230469.056533]  mca_cannibalize_lock+0x72/0x90 [escache]
+[230469.068788]  mca_alloc+0x2ae/0x450 [escache]
+[230469.080790]  bch_btree_node_get+0x136/0x2d0 [escache]
+[230469.092681]  bch_btree_check_thread+0x1e1/0x260 [escache]
+[230469.104382]  ? finish_wait+0x80/0x80
+[230469.115884]  ? bch_btree_check_recurse+0x1a0/0x1a0 [escache]
+[230469.127259]  kthread+0x112/0x130
+[230469.138448]  ? kthread_flush_work_fn+0x10/0x10
+[230469.149477]  ret_from_fork+0x35/0x40
+
+bch_btree_check_thread() and bch_dirty_init_thread() maybe call
+mca_cannibalize() to cannibalize other cached btree nodes. Only
+one thread can do it at a time, so the op of other threads will
+be added to the btree_cache_wait list.
+
+We must call finish_wait() to remove op from btree_cache_wait
+before free it's memory address. Otherwise, the list will be
+damaged. Also should call bch_cannibalize_unlock() to release
+the btree_cache_alloc_lock and wake_up other waiters.
+
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/btree.c     | 10 +++++++++-
+ drivers/md/bcache/btree.h     |  2 ++
+ drivers/md/bcache/writeback.c |  8 ++++++++
+ 3 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index ad9f16689419..f8e6f5c7c736 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -885,7 +885,7 @@ static struct btree *mca_cannibalize(struct cache_set *c, struct btree_op *op,
+  * cannibalize_bucket() will take. This means every time we unlock the root of
+  * the btree, we need to release this lock if we have it held.
+  */
+-static void bch_cannibalize_unlock(struct cache_set *c)
++void bch_cannibalize_unlock(struct cache_set *c)
  {
-@@ -118,9 +125,7 @@ static int squashfs_bio_read(struct super_block *sb, u64 index, int length,
- 	return 0;
+ 	spin_lock(&c->btree_cannibalize_lock);
+ 	if (c->btree_cache_alloc_lock == current) {
+@@ -1968,6 +1968,14 @@ static int bch_btree_check_thread(void *arg)
+ 			c->gc_stats.nodes++;
+ 			bch_btree_op_init(&op, 0);
+ 			ret = bcache_btree(check_recurse, p, c->root, &op);
++			/* The op may be added to cache_set's btree_cache_wait
++			* in mca_cannibalize(), must ensure it is removed from
++			* the list and release btree_cache_alloc_lock before
++			* free op memory.
++			* Otherwise, the btree_cache_wait will be damaged.
++			*/
++			bch_cannibalize_unlock(c);
++			finish_wait(&c->btree_cache_wait, &(&op)->wait);
+ 			if (ret)
+ 				goto out;
+ 		}
+diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
+index 50482107134f..435e82574ac3 100644
+--- a/drivers/md/bcache/btree.h
++++ b/drivers/md/bcache/btree.h
+@@ -365,6 +365,8 @@ static inline void force_wake_up_gc(struct cache_set *c)
+ 	_r;                                                             \
+ })
  
- out_free_bio:
--	bio_free_pages(bio);
--	bio_uninit(bio);
--	kfree(bio);
-+	squashfs_bio_free(bio);
- 	return error;
++void bch_cannibalize_unlock(struct cache_set *c);
++
+ #define MAP_DONE	0
+ #define MAP_CONTINUE	1
+ 
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index 9ee0005874cd..5b828555bca8 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -865,6 +865,14 @@ static int bch_root_node_dirty_init(struct cache_set *c,
+ 		}
+ 	} while (ret == -EAGAIN);
+ 
++	/* The op may be added to cache_set's btree_cache_wait
++	 * in mca_cannibalize(), must ensure it is removed from
++	 * the list and release btree_cache_alloc_lock before
++	 * free op memory.
++	 * Otherwise, the btree_cache_wait will be damaged.
++	 */
++	bch_cannibalize_unlock(c);
++	finish_wait(&c->btree_cache_wait, &(&op.op)->wait);
+ 	return ret;
  }
  
-@@ -183,8 +188,7 @@ int squashfs_read_data(struct super_block *sb, u64 index, int length,
- 			data = bvec_virt(bvec);
- 			length |= data[0] << 8;
- 		}
--		bio_free_pages(bio);
--		bio_put(bio);
-+		squashfs_bio_free(bio);
- 
- 		compressed = SQUASHFS_COMPRESSED(length);
- 		length = SQUASHFS_COMPRESSED_SIZE(length);
-@@ -217,8 +221,7 @@ int squashfs_read_data(struct super_block *sb, u64 index, int length,
- 	}
- 
- out_free_bio:
--	bio_free_pages(bio);
--	bio_put(bio);
-+	squashfs_bio_free(bio);
- out:
- 	if (res < 0) {
- 		ERROR("Failed to read block 0x%llx: %d\n", index, res);
+-- 
+2.17.1
 
