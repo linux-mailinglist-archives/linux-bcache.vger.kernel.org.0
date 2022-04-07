@@ -2,151 +2,102 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A5DC4F7955
-	for <lists+linux-bcache@lfdr.de>; Thu,  7 Apr 2022 10:17:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CEA54F82D6
+	for <lists+linux-bcache@lfdr.de>; Thu,  7 Apr 2022 17:25:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242817AbiDGISh (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 7 Apr 2022 04:18:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55692 "EHLO
+        id S1344643AbiDGP04 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 7 Apr 2022 11:26:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242795AbiDGISg (ORCPT
+        with ESMTP id S1344634AbiDGP0y (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 7 Apr 2022 04:18:36 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2097D208C03;
-        Thu,  7 Apr 2022 01:16:37 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C45241F85B;
-        Thu,  7 Apr 2022 08:16:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649319395; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Thu, 7 Apr 2022 11:26:54 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 965F821B425;
+        Thu,  7 Apr 2022 08:24:54 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id D66A6212CA;
+        Thu,  7 Apr 2022 15:24:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1649345092;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=lDpImFu5Uivn4DfGJlYiz9vYuz2Nv72UWNvkXkuJYGg=;
-        b=oLP9PRfRRD7mxq5x7xCJN137uit6q+YNNoudexrZzYyD6+eW+cdU3RXM5iX/XE0sf4Egxi
-        fMTd+UAD0c6NXGlbpqt0l8d8ZlhW/0nICmkqzbw3SdkLBy09hjEqOXcvdPjbEm5J9EwiVs
-        fZ5hgwB5240MWjviQqGlg33RLCDgVnE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649319395;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        bh=RtA+SPF4j8BVXsqmszO7xH0OxCICEh+Est/knHN20Pw=;
+        b=JdwcskixEmG8Id6CFcHmK2HMPcVcB071Gxs55mSKq7gYvR2Ikd8MNoO/fLtEbVpgdj1eqK
+        9zmwivWn67QHHcgD9Kfm5GQ7CXBQeMe5lW9iJ9AGGV3Pl0ul2ocJyd3loaCvdRBmNQxip+
+        WgCnpcThcFxRJmTkxC30BSU3q0i1qd4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1649345092;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=lDpImFu5Uivn4DfGJlYiz9vYuz2Nv72UWNvkXkuJYGg=;
-        b=piEcFzuoq1oygxpi1MEykg2vUI/TY9iYqgx83RkZZRzcJNEIcqCe2t0JkJ25EeU//hq+l+
-        qEoICyqK/U13eXDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 08D6613485;
-        Thu,  7 Apr 2022 08:16:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id wRyrM+CdTmLMCAAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 07 Apr 2022 08:16:32 +0000
-Message-ID: <24bb310e-6ce2-88c9-ebdc-59d49c609d77@suse.de>
-Date:   Thu, 7 Apr 2022 16:16:31 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.7.0
-Subject: Re: [PATCH 4/5] block: turn bio_kmalloc into a simple kmalloc wrapper
-Content-Language: en-US
+        bh=RtA+SPF4j8BVXsqmszO7xH0OxCICEh+Est/knHN20Pw=;
+        b=pkLC9VLc/9JNFZ5DsOV/UM/28hXligCH1VLYaRzzl6m3sxWEGPlvl1H8p8FVldpalCYBR6
+        DsLUEWMcp0v/ApCw==
+Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
+        by relay2.suse.de (Postfix) with ESMTP id ADAE4A3B82;
+        Thu,  7 Apr 2022 15:24:52 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 25B6BDA80E; Thu,  7 Apr 2022 17:20:50 +0200 (CEST)
+Date:   Thu, 7 Apr 2022 17:20:49 +0200
+From:   David Sterba <dsterba@suse.cz>
 To:     Christoph Hellwig <hch@lst.de>
-Cc:     Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Jens Axboe <axboe@kernel.dk>, David Sterba <dsterba@suse.com>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-References: <20220406061228.410163-1-hch@lst.de>
- <20220406061228.410163-5-hch@lst.de>
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20220406061228.410163-5-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Cc:     Jens Axboe <axboe@kernel.dk>, dm-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-block@vger.kernel.org,
+        drbd-dev@lists.linbit.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org
+Subject: Re: [PATCH 07/27] btrfs: use bdev_max_active_zones instead of open
+ coding it
+Message-ID: <20220407152049.GH15609@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, dm-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-block@vger.kernel.org,
+        drbd-dev@lists.linbit.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org
+References: <20220406060516.409838-1-hch@lst.de>
+ <20220406060516.409838-8-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220406060516.409838-8-hch@lst.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 4/6/22 2:12 PM, Christoph Hellwig wrote:
-> Remove the magic autofree semantics and require the callers to explicitly
-> call bio_init to initialize the bio.
->
-> This allows bio_free to catch accidental bio_put calls on bio_init()ed
-> bios as well.
->
+On Wed, Apr 06, 2022 at 08:04:56AM +0200, Christoph Hellwig wrote:
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   block/bio.c                        | 47 ++++++++++++------------------
->   block/blk-crypto-fallback.c        | 14 +++++----
->   block/blk-map.c                    | 42 ++++++++++++++++----------
->   drivers/block/pktcdvd.c            | 25 ++++++++--------
->   drivers/md/bcache/debug.c          | 10 ++++---
->   drivers/md/dm-bufio.c              |  9 +++---
->   drivers/md/raid1.c                 | 12 +++++---
->   drivers/md/raid10.c                | 21 ++++++++-----
->   drivers/target/target_core_pscsi.c | 10 +++----
->   fs/squashfs/block.c                | 15 +++++-----
->   include/linux/bio.h                |  2 +-
->   11 files changed, 112 insertions(+), 95 deletions(-)
-[snipped]
-> diff --git a/drivers/md/bcache/debug.c b/drivers/md/bcache/debug.c
-> index 6230dfdd9286e..7510d1c983a5e 100644
-> --- a/drivers/md/bcache/debug.c
-> +++ b/drivers/md/bcache/debug.c
-> @@ -107,15 +107,16 @@ void bch_btree_verify(struct btree *b)
->   
->   void bch_data_verify(struct cached_dev *dc, struct bio *bio)
->   {
-> +	unsigned int nr_segs = bio_segments(bio);
->   	struct bio *check;
->   	struct bio_vec bv, cbv;
->   	struct bvec_iter iter, citer = { 0 };
->   
-> -	check = bio_kmalloc(GFP_NOIO, bio_segments(bio));
-> +	check = bio_kmalloc(nr_segs, GFP_NOIO);
->   	if (!check)
->   		return;
-> -	bio_set_dev(check, bio->bi_bdev);
-> -	check->bi_opf = REQ_OP_READ;
-> +	bio_init(check, bio->bi_bdev, check->bi_inline_vecs, nr_segs,
-> +		 REQ_OP_READ);
->   	check->bi_iter.bi_sector = bio->bi_iter.bi_sector;
->   	check->bi_iter.bi_size = bio->bi_iter.bi_size;
->   
-> @@ -146,7 +147,8 @@ void bch_data_verify(struct cached_dev *dc, struct bio *bio)
->   
->   	bio_free_pages(check);
->   out_put:
-> -	bio_put(check);
-> +	bio_uninit(check);
-> +	kfree(check);
->   }
->   
->   #endif
 
-[snipped]
-
-For bcache part,
-
-Acked-by: Coly Li <colyli@suse.de>
-
-
-Coly Li
-
-
-
+As it's a standalone patch I can take it (possibly with other similar
+prep btrfs patches) in current development cycle to relieve the
+inter-tree dependencies.
