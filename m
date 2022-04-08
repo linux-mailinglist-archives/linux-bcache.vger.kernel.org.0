@@ -2,117 +2,286 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5CC84F85B7
-	for <lists+linux-bcache@lfdr.de>; Thu,  7 Apr 2022 19:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 606E64F8F74
+	for <lists+linux-bcache@lfdr.de>; Fri,  8 Apr 2022 09:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346043AbiDGRU2 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 7 Apr 2022 13:20:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36446 "EHLO
+        id S229863AbiDHHYh (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 8 Apr 2022 03:24:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229838AbiDGRU0 (ORCPT
+        with ESMTP id S229864AbiDHHYb (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 7 Apr 2022 13:20:26 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15EF26FA0A;
-        Thu,  7 Apr 2022 10:18:25 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id AA302212CA;
-        Thu,  7 Apr 2022 17:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649351903; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IImX9u7hyHMtT/465kPC3r5ZAKcGOJ6gEaqJKDZXu+4=;
-        b=u/kLU55iYahiedriKEFkcAQ8KFcb4vhyT05qsST6PrHv8vtLgwKrg6EFn9frww2zlDJd5V
-        W6MsikanQWB9VYdWMTeOy8DQtiWgMGziiQs88kPhkNNpe6+wAXc/kOd3dhUYKakDQMll9I
-        4WDDYSr85bnBgYT1w/DNjrIJErGrJ6Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649351903;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IImX9u7hyHMtT/465kPC3r5ZAKcGOJ6gEaqJKDZXu+4=;
-        b=Q+80xPDcUy3Afcej8bwNXUBIzcuuqTLgnS0kSiHH6ZFmwQCAkTh+vrPzAYyNDY0oTggTd+
-        +Etqhrux+iN7qzBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C07A013485;
-        Thu,  7 Apr 2022 17:18:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id HZOKJN4cT2J8IwAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 07 Apr 2022 17:18:22 +0000
-Message-ID: <7b796b3e-2fd9-00bc-5410-1097512162be@suse.de>
-Date:   Fri, 8 Apr 2022 01:18:20 +0800
+        Fri, 8 Apr 2022 03:24:31 -0400
+Received: from mail-m2835.qiye.163.com (mail-m2835.qiye.163.com [103.74.28.35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 494972E5C5D
+        for <linux-bcache@vger.kernel.org>; Fri,  8 Apr 2022 00:22:26 -0700 (PDT)
+Received: from [192.168.0.234] (unknown [218.94.118.90])
+        by mail-m2835.qiye.163.com (Hmail) with ESMTPA id 1FC2C8A0276;
+        Fri,  8 Apr 2022 15:22:24 +0800 (CST)
+Message-ID: <d1ac0a9c-1e6b-0399-8cd3-2e1e2d41e419@easystack.cn>
+Date:   Fri, 8 Apr 2022 15:22:23 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.7.0
-Subject: Re: [PATCH v2] md: bcache: check the return value of kzalloc() in
- detached_dev_do_request()
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 1/2] bcache: fixup btree_cache_wait list damage
 Content-Language: en-US
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     linux-bcache@vger.kernel.org, kent.overstreet@gmail.com,
-        linux-kernel@vger.kernel.org
-References: <20220303015544.32186-1-baijiaju1990@gmail.com>
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20220303015544.32186-1-baijiaju1990@gmail.com>
+To:     Coly Li <colyli@suse.de>
+Cc:     zoumingzhe@qq.com, linux-bcache@vger.kernel.org
+References: <20220401122725.17725-1-mingzhe.zou@easystack.cn>
+ <5bb2307b-829f-f772-5539-d36a2d3e2403@suse.de>
+From:   Zou Mingzhe <mingzhe.zou@easystack.cn>
+In-Reply-To: <5bb2307b-829f-f772-5539-d36a2d3e2403@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
+        kWDxoPAgseWUFZKDYvK1lXWShZQUlCN1dZLVlBSVdZDwkaFQgSH1lBWRkdTR1WGEhIHkgZTUsaSU
+        pJVRkRExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PVE6Hzo6QjIoTCorFFFLMzw*
+        SEoKCRNVSlVKTU9CT0tJTk9PT0JIVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSktJSEg3Bg++
+X-HM-Tid: 0a80080d8061841dkuqw1fc2c8a0276
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 3/3/22 9:55 AM, Jia-Ju Bai wrote:
-> The function kzalloc() in detached_dev_do_request() can fail, so its
-> return value should be checked.
+
+在 2022/4/7 23:53, Coly Li 写道:
+> On 4/1/22 8:27 PM, mingzhe.zou@easystack.cn wrote:
+>> From: ZouMingzhe <mingzhe.zou@easystack.cn>
+>>
+>> We get a kernel crash about "list_add corruption. next->prev should be
+>> prev (ffff9c801bc01210), but was ffff9c77b688237c. 
+>> (next=ffffae586d8afe68)."
+>>
+>> crash> struct list_head 0xffff9c801bc01210
+>> struct list_head {
+>>    next = 0xffffae586d8afe68,
+>>    prev = 0xffffae586d8afe68
+>> }
+>> crash> struct list_head 0xffff9c77b688237c
+>> struct list_head {
+>>    next = 0x0,
+>>    prev = 0x0
+>> }
+>> crash> struct list_head 0xffffae586d8afe68
+>> struct list_head struct: invalid kernel virtual address: 
+>> ffffae586d8afe68  type: "gdb_readmem_callback"
+>> Cannot access memory at address 0xffffae586d8afe68
+>>
+>> [230469.019492] Call Trace:
+>> [230469.032041]  prepare_to_wait+0x8a/0xb0
+>> [230469.044363]  ? bch_btree_keys_free+0x6c/0xc0 [escache]
+>> [230469.056533]  mca_cannibalize_lock+0x72/0x90 [escache]
+>> [230469.068788]  mca_alloc+0x2ae/0x450 [escache]
+>> [230469.080790]  bch_btree_node_get+0x136/0x2d0 [escache]
+>> [230469.092681]  bch_btree_check_thread+0x1e1/0x260 [escache]
+>> [230469.104382]  ? finish_wait+0x80/0x80
+>> [230469.115884]  ? bch_btree_check_recurse+0x1a0/0x1a0 [escache]
+>> [230469.127259]  kthread+0x112/0x130
+>> [230469.138448]  ? kthread_flush_work_fn+0x10/0x10
+>> [230469.149477]  ret_from_fork+0x35/0x40
+>>
+>> bch_btree_check_thread() and bch_dirty_init_thread() maybe call
+>> mca_cannibalize() to cannibalize other cached btree nodes. Only
+>> one thread can do it at a time, so the op of other threads will
+>> be added to the btree_cache_wait list.
+>>
+>> We must call finish_wait() to remove op from btree_cache_wait
+>> before free it's memory address. Otherwise, the list will be
+>> damaged. Also should call bch_cannibalize_unlock() to release
+>> the btree_cache_alloc_lock and wake_up other waiters.
+>>
+>> Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
 >
-> Fixes: bc082a55d25c ("bcache: fix inaccurate io state for detached bcache devices")
-> Reported-by: TOTE Robot <oslab@tsinghua.edu.cn>
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
-> v2:
-> * Fix the error handling code when ddip is NULL.
->    Thank Coly for good advice.
 >
-> ---
->   drivers/md/bcache/request.c | 6 ++++++
->   1 file changed, 6 insertions(+)
+> Thank you for this fix, it is really cool to find such defect on 
+> cannibalize lock/unlock. It spent me a little time to understand how 
+> it happens, and reply you late.
 >
-> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index d15aae6c51c1..673a680240a9 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -1107,6 +1107,12 @@ static void detached_dev_do_request(struct bcache_device *d, struct bio *bio,
->   	 * which would call closure_get(&dc->disk.cl)
->   	 */
->   	ddip = kzalloc(sizeof(struct detached_dev_io_private), GFP_NOIO);
-> +	if (!ddip) {
-> +		bio->bi_status = BLK_STS_RESOURCE;
-> +		bio->bi_end_io(bio);
-> +		return;
-> +	}
-> +
->   	ddip->d = d;
->   	/* Count on the bcache device */
->   	ddip->orig_bdev = orig_bdev;
+> I feel the root cause is not from where you patched in 
+> bch_btree_check() and bch_root_node_dirty_init(), something really 
+> fishing when using mca_cannibalize_lock(),
+>
+> 843 static int mca_cannibalize_lock(struct cache_set *c, struct 
+> btree_op *op)
+>  844 {
+>  845         spin_lock(&c->btree_cannibalize_lock);
+>  846         if (likely(c->btree_cache_alloc_lock == NULL)) {
+>  847                 c->btree_cache_alloc_lock = current;
+>  848         } else if (c->btree_cache_alloc_lock != current) {
+>  849                 if (op)
+>  850 prepare_to_wait(&c->btree_cache_wait, &op->wait,
+>  851 TASK_UNINTERRUPTIBLE);
+>  852 spin_unlock(&c->btree_cannibalize_lock);
+>  853                 return -EINTR;
+>  854         }
+>  855         spin_unlock(&c->btree_cannibalize_lock);
+>  856
+>  857         return 0;
+>  858 }
+>
+> In line 849-851, if the cannibalized locking failed, insert current 
+> op->wait into c->btree_cache_wait. Then at line 852, return -EINTR to 
+> indicate the caller should retry. But it seems no caller checks 
+> whether the return value is -EINTR and handles it properly.
+>
+> Your patch should work, but I feel the issue of bch_cannibalize_lock() 
+> is not solved yet. Maybe we should work on handling -EINTR returned 
+> from mca_cannibalize_lock() IMHO.
+>
+The patch 2 handle the return value.
+>
+> BTW, when you observe the panic, how are the hardware configurations 
+> about,
+>
+> - CPU cores
+0-39, total 40 cpus
+>
+> - Memory size
+memory status:
+crash> kmem -i
+                  PAGES        TOTAL      PERCENTAGE
+     TOTAL MEM  32919429     125.6 GB         ----
+          FREE   638133       2.4 GB    1% of TOTAL MEM
+          USED  32281296     123.1 GB   98% of TOTAL MEM
+        SHARED  1353791       5.2 GB    4% of TOTAL MEM
+       BUFFERS   131366     513.1 MB    0% of TOTAL MEM
+        CACHED  2022521       7.7 GB    6% of TOTAL MEM
+          SLAB   590919       2.3 GB    1% of TOTAL MEM
 
-Added into my testing queue.
+    TOTAL HUGE        0            0         ----
+     HUGE FREE        0            0    0% of TOTAL HUGE
 
-Thanks.
+    TOTAL SWAP        0            0         ----
+     SWAP USED        0            0    0% of TOTAL SWAP
+     SWAP FREE        0            0    0% of TOTAL SWAP
+
+  COMMIT LIMIT  16459714      62.8 GB         ----
+     COMMITTED  67485109     257.4 GB  410% of TOTAL LIMIT
+>
+> - Cache size
+
+cache disk 460G
+
+>
+> -  Number of keys on the btree root node
+
+c->root->keys->set->data info:
+
+crash> btree 0xffff9c6bd873cc00|grep data
+         data = 0xffff9c6bda6c0000
+         data = 0xffff9c6bda6cd000
+         data = 0x0
+         data = 0x0
+         data = {
+       data = {
+crash> bset 0xffff9c6bda6c0000
+struct bset {
+   csum = 4228267359687445853,
+   magic = 15660900678624291974,
+   seq = 15025931623832980119,
+   version = 1,
+   keys = 6621,
+   {
+     start = 0xffff9c6bda6c0020,
+     d = 0xffff9c6bda6c0020
+   }
+}
+crash> bset 0xffff9c6bda6cd000
+struct bset {
+   csum = 38040912,
+   magic = 15660900678624291974,
+   seq = 15025931623832980119,
+   version = 0,
+   keys = 0,
+   {
+     start = 0xffff9c6bda6cd020,
+     d = 0xffff9c6bda6cd020
+   }
+}
 
 
-Coly Li
-
+>
+> Thanks.
+>
+>
+> Coly Li
+>
+>
+>
+>> ---
+>>   drivers/md/bcache/btree.c     | 10 +++++++++-
+>>   drivers/md/bcache/btree.h     |  2 ++
+>>   drivers/md/bcache/writeback.c |  8 ++++++++
+>>   3 files changed, 19 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+>> index ad9f16689419..f8e6f5c7c736 100644
+>> --- a/drivers/md/bcache/btree.c
+>> +++ b/drivers/md/bcache/btree.c
+>> @@ -885,7 +885,7 @@ static struct btree *mca_cannibalize(struct 
+>> cache_set *c, struct btree_op *op,
+>>    * cannibalize_bucket() will take. This means every time we unlock 
+>> the root of
+>>    * the btree, we need to release this lock if we have it held.
+>>    */
+>> -static void bch_cannibalize_unlock(struct cache_set *c)
+>> +void bch_cannibalize_unlock(struct cache_set *c)
+>>   {
+>>       spin_lock(&c->btree_cannibalize_lock);
+>>       if (c->btree_cache_alloc_lock == current) {
+>> @@ -1968,6 +1968,14 @@ static int bch_btree_check_thread(void *arg)
+>>               c->gc_stats.nodes++;
+>>               bch_btree_op_init(&op, 0);
+>>               ret = bcache_btree(check_recurse, p, c->root, &op);
+>> +            /* The op may be added to cache_set's btree_cache_wait
+>> +            * in mca_cannibalize(), must ensure it is removed from
+>> +            * the list and release btree_cache_alloc_lock before
+>> +            * free op memory.
+>> +            * Otherwise, the btree_cache_wait will be damaged.
+>> +            */
+>> +            bch_cannibalize_unlock(c);
+>> +            finish_wait(&c->btree_cache_wait, &(&op)->wait);
+>>               if (ret)
+>>                   goto out;
+>>           }
+>> diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
+>> index 50482107134f..435e82574ac3 100644
+>> --- a/drivers/md/bcache/btree.h
+>> +++ b/drivers/md/bcache/btree.h
+>> @@ -365,6 +365,8 @@ static inline void force_wake_up_gc(struct 
+>> cache_set *c)
+>> _r; \
+>>   })
+>>   +void bch_cannibalize_unlock(struct cache_set *c);
+>> +
+>>   #define MAP_DONE    0
+>>   #define MAP_CONTINUE    1
+>>   diff --git a/drivers/md/bcache/writeback.c 
+>> b/drivers/md/bcache/writeback.c
+>> index 9ee0005874cd..5b828555bca8 100644
+>> --- a/drivers/md/bcache/writeback.c
+>> +++ b/drivers/md/bcache/writeback.c
+>> @@ -865,6 +865,14 @@ static int bch_root_node_dirty_init(struct 
+>> cache_set *c,
+>>           }
+>>       } while (ret == -EAGAIN);
+>>   +    /* The op may be added to cache_set's btree_cache_wait
+>> +     * in mca_cannibalize(), must ensure it is removed from
+>> +     * the list and release btree_cache_alloc_lock before
+>> +     * free op memory.
+>> +     * Otherwise, the btree_cache_wait will be damaged.
+>> +     */
+>> +    bch_cannibalize_unlock(c);
+>> +    finish_wait(&c->btree_cache_wait, &(&op.op)->wait);
+>>       return ret;
+>>   }
+>
+>
+>
