@@ -2,60 +2,63 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 34A744FA3F8
-	for <lists+linux-bcache@lfdr.de>; Sat,  9 Apr 2022 06:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2AD14FA581
+	for <lists+linux-bcache@lfdr.de>; Sat,  9 Apr 2022 08:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237938AbiDIE4U (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 9 Apr 2022 00:56:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48800 "EHLO
+        id S232894AbiDIHAW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 9 Apr 2022 03:00:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241289AbiDIEzm (ORCPT
+        with ESMTP id S235231AbiDIHAV (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 9 Apr 2022 00:55:42 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 220B5BAB9C;
-        Fri,  8 Apr 2022 21:52:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=eypoqjBCbHteIGJMjEE77faduCfiNIsAQ0ydQeu7OQ0=; b=nqH1nBV8lOr2r5wyOjol3g7s8X
-        NGopilIp147x4XNnQqzR5o2YWkY6IO58VVUojmV/ASvSDXVzRQHv+BqUNN8ISkIuVH5Huq+5W/+g6
-        Fx9NKN7nsNjG6IaaR01B6x8gfqb84JVGaMt2Mch/XsNqmw38mh/kWIOczl1+aSfojYjwvPWnkVT0z
-        zeBYxWSj02o09fDuqh1c1ftABUKI9QxyXU2GCBR2V2aNbgjbyvKcSUL75+QEIgn+hIxNaN3b6eMN+
-        HQ75AhIB7YFYQ9KIFGF2dUiaHQ4ZLNQzEzLlTd1WzYc4Lz5oFphMfcUxRdKyObtKnqHpozib+pvzE
-        Et/uKlCg==;
-Received: from 213-147-167-116.nat.highway.webapn.at ([213.147.167.116] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nd35G-0021rI-Lh; Sat, 09 Apr 2022 04:52:27 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org
-Subject: [PATCH 27/27] direct-io: remove random prefetches
-Date:   Sat,  9 Apr 2022 06:50:43 +0200
-Message-Id: <20220409045043.23593-28-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220409045043.23593-1-hch@lst.de>
-References: <20220409045043.23593-1-hch@lst.de>
+        Sat, 9 Apr 2022 03:00:21 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24BF94A3F5
+        for <linux-bcache@vger.kernel.org>; Fri,  8 Apr 2022 23:58:15 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id r13so15868914wrr.9
+        for <linux-bcache@vger.kernel.org>; Fri, 08 Apr 2022 23:58:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=qIg8V8eUlKkANOKwRaIOQ4QqDSdNDl6HvyVqymueIUU=;
+        b=JzFVVgFQW5sHbcTp86VfeCDLa+Bpp/XeTDjWcLyFWAB6ABtmQaIJJ9/GorIqi8ozW3
+         wRYJC/nV0NoKM6jQ+fD3icwncPiBHQySVREyR1kHCzoYrmfadbqQPcuXAm6J+1WtOpCQ
+         DITpjYzNlHcdT2yHla7F/m4A87vfIt4+PIz6g/xd5ekd6+OUTdH3YXiHapo4vrP7K4rL
+         /i1NP3GqIINXyLNwb9srhCMIIEyx/Gv9p+2BIXhIWJ+fYon7coReVCkGCmXBAhFVUdbq
+         9rN1kP8sTMzxLMpGIsU1MthDT5tPwvH/VuRPMrEaInN+p8KYDI+bewySNiWaWH11PjZK
+         GKWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qIg8V8eUlKkANOKwRaIOQ4QqDSdNDl6HvyVqymueIUU=;
+        b=cWaGMGA1Php8E9kG13ecGCg8FpDPo9TC1VSTR5WaTZVLCnEGg9QGkTfg0yYioGZSkB
+         Ykcycv21y7F9kxTXl156Tht3oLuuWKtEo0/6aJF1ts/6VdPFWj33J87cPdY/C+tehL+R
+         51QZWBNiRoTGY2/hC4I89J0Sv85Tp6Waeoz74A9g2S3090lf1VWu/N0Qv/mqeBDCKNcc
+         WZ3lyCCuCBVtz5QfqAho4g8htgrFKEFP19+F7dP4XI6lb5GGiioueWW+JyWTe8oxgJXZ
+         gkcp3pA4lOFT5KeTRN2L7DxIQ6sYsyHavVvHM8MuYDMvghGy2nNiT6DdhdsKgSMtrlBh
+         /jpw==
+X-Gm-Message-State: AOAM533WORqEQnlhtGuDXpB44F7a23IX7/Iu263bWx9vLx3VqPyLn8hJ
+        0338pnyAUGbpCP3FQS2oMQtKZYiFjLmymVIcaIkBoCs+oP8=
+X-Google-Smtp-Source: ABdhPJyOygDwLyis/ZiTBYWyMEbrVeKxWRqyTz71ZLPmWo3d0HDimdrLkWXyhENyg+cDCpbZkQW/svJwItmRS/PbH84=
+X-Received: by 2002:adf:f841:0:b0:207:a09b:d3cf with SMTP id
+ d1-20020adff841000000b00207a09bd3cfmr517437wrq.161.1649487493651; Fri, 08 Apr
+ 2022 23:58:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+References: <20220407171643.65177-1-colyli@suse.de>
+In-Reply-To: <20220407171643.65177-1-colyli@suse.de>
+From:   =?UTF-8?B?5p2O56OK?= <noctis.akm@gmail.com>
+Date:   Sat, 9 Apr 2022 14:58:00 +0800
+Message-ID: <CAMhKsXkfr6btADZbTcFEJ3y8Qi=A0cQk32pqwa7htbSGHrU_uA@mail.gmail.com>
+Subject: Re: [PATCH] bcache: avoid unnecessary soft lockup in kworker update_writeback_rate()
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,66 +66,21 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Randomly poking into block device internals for manual prefetches isn't
-exactly a very maintainable thing to do.  And none of the performance
-criticil direct I/O implementations still use this library function
-anyway, so just drop it.
+>
+> The kworker routine update_writeback_rate() is schedued to update the
+> writeback rate in every 5 seconds by default. Before calling
+> __update_writeback_rate() to do real job, semaphore dc->writeback_lock
+> should be held by the kworker routine.
+>
+> At the same time, bcache writeback thread routine bch_writeback_thread()
+> also needs to hold dc->writeback_lock before flushing dirty data back
+> into the backing device. If the dirty data set is large, it might be
+> very long time for bch_writeback_thread() to scan all dirty buckets and
+> releases dc->writeback_lock.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/direct-io.c | 32 ++++----------------------------
- 1 file changed, 4 insertions(+), 28 deletions(-)
-
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index aef06e607b405..840752006f601 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1115,11 +1115,10 @@ static inline int drop_refcount(struct dio *dio)
-  * individual fields and will generate much worse code. This is important
-  * for the whole file.
-  */
--static inline ssize_t
--do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
--		      struct block_device *bdev, struct iov_iter *iter,
--		      get_block_t get_block, dio_iodone_t end_io,
--		      dio_submit_t submit_io, int flags)
-+ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
-+		struct block_device *bdev, struct iov_iter *iter,
-+		get_block_t get_block, dio_iodone_t end_io,
-+		dio_submit_t submit_io, int flags)
- {
- 	unsigned i_blkbits = READ_ONCE(inode->i_blkbits);
- 	unsigned blkbits = i_blkbits;
-@@ -1334,29 +1333,6 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	kmem_cache_free(dio_cache, dio);
- 	return retval;
- }
--
--ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
--			     struct block_device *bdev, struct iov_iter *iter,
--			     get_block_t get_block,
--			     dio_iodone_t end_io, dio_submit_t submit_io,
--			     int flags)
--{
--	/*
--	 * The block device state is needed in the end to finally
--	 * submit everything.  Since it's likely to be cache cold
--	 * prefetch it here as first thing to hide some of the
--	 * latency.
--	 *
--	 * Attempt to prefetch the pieces we likely need later.
--	 */
--	prefetch(&bdev->bd_disk->part_tbl);
--	prefetch(bdev->bd_disk->queue);
--	prefetch((char *)bdev->bd_disk->queue + SMP_CACHE_BYTES);
--
--	return do_blockdev_direct_IO(iocb, inode, bdev, iter, get_block,
--				     end_io, submit_io, flags);
--}
--
- EXPORT_SYMBOL(__blockdev_direct_IO);
- 
- static __init int dio_init(void)
--- 
-2.30.2
-
+Hi Coly,
+cached_dev_write() needs dc->writeback_lock, if  the writeback thread
+ holds writeback_lock too long, high write IO latency may happen. I wonder
+if it is a nicer way to limit the scale of the scanning in writeback.
+For example,
+just scan 512GB in stead of the whole cache disk=E3=80=82
