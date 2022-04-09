@@ -2,173 +2,116 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B907D4FA5EB
-	for <lists+linux-bcache@lfdr.de>; Sat,  9 Apr 2022 10:17:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E20E4FA8F3
+	for <lists+linux-bcache@lfdr.de>; Sat,  9 Apr 2022 16:30:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239103AbiDIITS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 9 Apr 2022 04:19:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53968 "EHLO
+        id S239527AbiDIOcr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 9 Apr 2022 10:32:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240855AbiDIITO (ORCPT
+        with ESMTP id S229887AbiDIOcq (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 9 Apr 2022 04:19:14 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515A82545B3
-        for <linux-bcache@vger.kernel.org>; Sat,  9 Apr 2022 01:17:03 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id b19so16010788wrh.11
-        for <linux-bcache@vger.kernel.org>; Sat, 09 Apr 2022 01:17:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Ga61vN/TMGQoWv5pdVva9yHEVEk7JvDu8SvkqTkiHOU=;
-        b=16VWXfTcecI6vKD89hlxEi4M1sM+lDWraPFKcdJek4zYvKgcUI+UTTfswq4WTG3pUA
-         DwGdvejVPHmGbB6WxyxpG5RxCDgxrI8ELqeSKx9xnWZSuDqFsfTR7C0q23UBJ4NTUUke
-         9rs/lGq9PScZMcSAS9SHkk+s8lIoFrVgzxTJ9NRLUES2XsBvbZXGJskPHSy0jdzHruaB
-         iGqoe9YksSt5XleGcAhaVmv2OHki/8AO1/zdgDuyMqAmL6dyveVZDyPGB/rY+7+4UaaK
-         b7o7nIN/SrEk1fy76OtZuySau99YX+Sryl6fYO8t+jUUvribl7KiF9nqytVWelfdH+Mk
-         O4fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Ga61vN/TMGQoWv5pdVva9yHEVEk7JvDu8SvkqTkiHOU=;
-        b=pnxBX4eF4nRKzJ71kNVp9tubnTg+kJHNWTXiKO7r3tKNm5fxcDCGXdRgnhIV0c4Ujy
-         nuTSTzSxw8RxsV4Y4raT7nYKTcG3fS4aq3/ni1yV8VOg1MmGoC3OUMJcT4rzqdr2REM4
-         2RaHI+UnsjSqs6oHY5xEN2G/2hT+Vfvn2Vq6yEdzKcB53FVWMeyzxTbXFQQM2PUacEfK
-         cPpcL2Z2ZIAXT13DLbD//iXaEPmUxoaUjPZjX/llijiqN0D7Ej0b74g+/PqW3XIcKMTv
-         oqydD02NSOfV0OrnXHtHxP+xuV3Q+Gg6qkSIWs0A6o0jV0Z9SUvaaHXvIgIsFcCh6nzx
-         cvzg==
-X-Gm-Message-State: AOAM531zYwz9OEkxIF8/v14C30h4hTs5eCN/IGgpkQdsrGyNpuyRgfmu
-        YfkdDMG1TNYf7o1qJi/LmVF+pA==
-X-Google-Smtp-Source: ABdhPJyMl7hUdRWB67QUv24ZWK8mJRwBaxhnGq09ejE28bU5zjvkHivlidIC/JIf/EdWqVvIZNI6nA==
-X-Received: by 2002:adf:9581:0:b0:1ed:c341:4ed1 with SMTP id p1-20020adf9581000000b001edc3414ed1mr16998132wrp.299.1649492221449;
-        Sat, 09 Apr 2022 01:17:01 -0700 (PDT)
-Received: from [192.168.169.127] (178.115.52.210.wireless.dyn.drei.com. [178.115.52.210])
-        by smtp.gmail.com with ESMTPSA id r14-20020a05600c35ce00b0038c9f469979sm12169802wmq.40.2022.04.09.01.16.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Apr 2022 01:17:01 -0700 (PDT)
-Message-ID: <5a26cdb1-b63b-8d35-640b-bc0e0f78a181@linbit.com>
-Date:   Sat, 9 Apr 2022 10:16:58 +0200
+        Sat, 9 Apr 2022 10:32:46 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D934FFD5
+        for <linux-bcache@vger.kernel.org>; Sat,  9 Apr 2022 07:30:38 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4013F210E4;
+        Sat,  9 Apr 2022 14:30:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1649514637; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kw2lRfjbFuzb6cXAIcS/k4RcsYfPL83thJfRsUjcbg8=;
+        b=tkt/9Da/K0evcKvJK2O7UgsmeA7V5KMAMukomOx5FffB4gOoJE2JND7vSEjC88Z4v4+3SE
+        fSPyQJn/ySLanoiQneTIQG1W+CR6127LMEOyJ6d1fI94/pn/ZGB+F0iHnvsTa2Dsl3J4Mm
+        sRahEIJCeOUaBw9NmJneNaGdz/5IOfE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1649514637;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kw2lRfjbFuzb6cXAIcS/k4RcsYfPL83thJfRsUjcbg8=;
+        b=Gn1y0b0Uo/1lVBiGBDiwVIlpQmrnC9nXH+EAqQcH5t+ZqwmufDZWHLtED9JT8uarRtgli1
+        vz1y229w/fRqewBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 470F913A77;
+        Sat,  9 Apr 2022 14:30:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id pgthN4uYUWJGIgAAMHmgww
+        (envelope-from <colyli@suse.de>); Sat, 09 Apr 2022 14:30:35 +0000
+Message-ID: <8865472d-6579-92fc-20c9-c4cef430253b@suse.de>
+Date:   Sat, 9 Apr 2022 22:30:33 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.2
-Subject: Re: [Drbd-dev] [PATCH 04/27] drbd: remove assign_p_sizes_qlim
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.7.0
+Subject: Re: [PATCH] bcache: avoid unnecessary soft lockup in kworker
+ update_writeback_rate()
 Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     jfs-discussion@lists.sourceforge.net,
-        linux-nvme@lists.infradead.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        dm-devel@redhat.com, target-devel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, drbd-dev@lists.linbit.com,
-        linux-s390@vger.kernel.org, linux-nilfs@vger.kernel.org,
-        linux-scsi@vger.kernel.org, cluster-devel@redhat.com,
-        xen-devel@lists.xenproject.org, linux-ext4@vger.kernel.org,
-        linux-um@lists.infradead.org, nbd@other.debian.org,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-xfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        linux-fsdevel@vger.kernel.org, ntfs3@lists.linux.dev,
-        linux-btrfs@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-References: <20220409045043.23593-1-hch@lst.de>
- <20220409045043.23593-5-hch@lst.de>
-From:   =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>
-In-Reply-To: <20220409045043.23593-5-hch@lst.de>
+To:     =?UTF-8?B?5p2O56OK?= <noctis.akm@gmail.com>
+Cc:     linux-bcache@vger.kernel.org
+References: <20220407171643.65177-1-colyli@suse.de>
+ <CAMhKsXkfr6btADZbTcFEJ3y8Qi=A0cQk32pqwa7htbSGHrU_uA@mail.gmail.com>
+From:   Coly Li <colyli@suse.de>
+In-Reply-To: <CAMhKsXkfr6btADZbTcFEJ3y8Qi=A0cQk32pqwa7htbSGHrU_uA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 09.04.22 06:50, Christoph Hellwig wrote:
-> Fold each branch into its only caller.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   drivers/block/drbd/drbd_main.c | 47 +++++++++++++++-------------------
->   1 file changed, 20 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-> index 9676a1d214bc5..1262fe1c33618 100644
-> --- a/drivers/block/drbd/drbd_main.c
-> +++ b/drivers/block/drbd/drbd_main.c
-> @@ -903,31 +903,6 @@ void drbd_gen_and_send_sync_uuid(struct drbd_peer_device *peer_device)
->   	}
->   }
->   
-> -/* communicated if (agreed_features & DRBD_FF_WSAME) */
-> -static void
-> -assign_p_sizes_qlim(struct drbd_device *device, struct p_sizes *p,
-> -					struct request_queue *q)
-> -{
-> -	if (q) {
-> -		p->qlim->physical_block_size = cpu_to_be32(queue_physical_block_size(q));
-> -		p->qlim->logical_block_size = cpu_to_be32(queue_logical_block_size(q));
-> -		p->qlim->alignment_offset = cpu_to_be32(queue_alignment_offset(q));
-> -		p->qlim->io_min = cpu_to_be32(queue_io_min(q));
-> -		p->qlim->io_opt = cpu_to_be32(queue_io_opt(q));
-> -		p->qlim->discard_enabled = blk_queue_discard(q);
-> -		p->qlim->write_same_capable = 0;
-> -	} else {
-> -		q = device->rq_queue;
-> -		p->qlim->physical_block_size = cpu_to_be32(queue_physical_block_size(q));
-> -		p->qlim->logical_block_size = cpu_to_be32(queue_logical_block_size(q));
-> -		p->qlim->alignment_offset = 0;
-> -		p->qlim->io_min = cpu_to_be32(queue_io_min(q));
-> -		p->qlim->io_opt = cpu_to_be32(queue_io_opt(q));
-> -		p->qlim->discard_enabled = 0;
-> -		p->qlim->write_same_capable = 0;
-> -	}
-> -}
-> -
->   int drbd_send_sizes(struct drbd_peer_device *peer_device, int trigger_reply, enum dds_flags flags)
->   {
->   	struct drbd_device *device = peer_device->device;
-> @@ -957,14 +932,32 @@ int drbd_send_sizes(struct drbd_peer_device *peer_device, int trigger_reply, enu
->   		q_order_type = drbd_queue_order_type(device);
->   		max_bio_size = queue_max_hw_sectors(q) << 9;
->   		max_bio_size = min(max_bio_size, DRBD_MAX_BIO_SIZE);
-> -		assign_p_sizes_qlim(device, p, q);
-> +		p->qlim->physical_block_size =
-> +			cpu_to_be32(queue_physical_block_size(q));
-> +		p->qlim->logical_block_size =
-> +			cpu_to_be32(queue_logical_block_size(q));
-> +		p->qlim->alignment_offset =
-> +			cpu_to_be32(queue_alignment_offset(q));
-> +		p->qlim->io_min = cpu_to_be32(queue_io_min(q));
-> +		p->qlim->io_opt = cpu_to_be32(queue_io_opt(q));
-> +		p->qlim->discard_enabled = blk_queue_discard(q);
->   		put_ldev(device);
->   	} else {
-> +		struct request_queue *q = device->rq_queue;
-> +
-> +		p->qlim->physical_block_size =
-> +			cpu_to_be32(queue_physical_block_size(q));
-> +		p->qlim->logical_block_size =
-> +			cpu_to_be32(queue_logical_block_size(q));
-> +		p->qlim->alignment_offset = 0;
-> +		p->qlim->io_min = cpu_to_be32(queue_io_min(q));
-> +		p->qlim->io_opt = cpu_to_be32(queue_io_opt(q));
-> +		p->qlim->discard_enabled = 0;
-> +
->   		d_size = 0;
->   		u_size = 0;
->   		q_order_type = QUEUE_ORDERED_NONE;
->   		max_bio_size = DRBD_MAX_BIO_SIZE; /* ... multiple BIOs per peer_request */
-> -		assign_p_sizes_qlim(device, p, NULL);
->   	}
->   
->   	if (peer_device->connection->agreed_pro_version <= 94)
+On 4/9/22 2:58 PM, 李磊 wrote:
+>> The kworker routine update_writeback_rate() is schedued to update the
+>> writeback rate in every 5 seconds by default. Before calling
+>> __update_writeback_rate() to do real job, semaphore dc->writeback_lock
+>> should be held by the kworker routine.
+>>
+>> At the same time, bcache writeback thread routine bch_writeback_thread()
+>> also needs to hold dc->writeback_lock before flushing dirty data back
+>> into the backing device. If the dirty data set is large, it might be
+>> very long time for bch_writeback_thread() to scan all dirty buckets and
+>> releases dc->writeback_lock.
+> Hi Coly,
+> cached_dev_write() needs dc->writeback_lock, if  the writeback thread
+>   holds writeback_lock too long, high write IO latency may happen. I wonder
 
-LGTM now, thanks.
+ From my observation, such situation happens in one of the last scan 
+before all dirty data gets flushed. If the cache device is very large, 
+and dirty keys are only a few, such scan will take quite long time.
 
-Acked-by: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
+It wasn't a problem years ago, but currently it is easy to have a 10TB+ 
+cache device, now the latency is observed.
+
+
+> if it is a nicer way to limit the scale of the scanning in writeback.
+> For example,
+> just scan 512GB in stead of the whole cache disk。
+
+Scan each 512GB space doesn't help too much. Because current btree 
+iteration code doesn't handle continue-from-where-stopped very well, 
+next time when continue form where stoppped, the previous key might be 
+invalided already.
+
+An ideal way, might be split the single large btree into multiple ones. 
+People suggested me to divide the single tree into e.g. 64 or 128 trees, 
+and only lock a single tree when doing writeback on gc on one of the 
+trees. Maybe now it is about time to think over it again...
+
+
+Coly Li
+
