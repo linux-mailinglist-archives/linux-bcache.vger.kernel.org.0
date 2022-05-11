@@ -2,105 +2,97 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9390C522B13
-	for <lists+linux-bcache@lfdr.de>; Wed, 11 May 2022 06:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12BC4522C4F
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 May 2022 08:30:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234972AbiEKEjO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 11 May 2022 00:39:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41822 "EHLO
+        id S233219AbiEKGao (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 May 2022 02:30:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232507AbiEKEjN (ORCPT
+        with ESMTP id S231847AbiEKGan (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 11 May 2022 00:39:13 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 173B914B64D
-        for <linux-bcache@vger.kernel.org>; Tue, 10 May 2022 21:39:12 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id cx11-20020a17090afd8b00b001d9fe5965b3so3807789pjb.3
-        for <linux-bcache@vger.kernel.org>; Tue, 10 May 2022 21:39:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=s3Cdswvtyrq8qHVwuRB9YRoTAIoD9G/2//h6WeFZHzo=;
-        b=nrkBIDyCffFbQz5WNhQU88q5l+bx8m1CoLNL/nRcxBFZRgp3B2RwRJzpJi69hjmFPQ
-         Eotn36CVTQor8sTwq84btYhQQ+OsypTpYdHIfGkC/Ekjg8a9U0HkQq0T/gbcQg5/if4Y
-         i1yzcJYhTRMm8ny1NIiOYUNRazrfloxlCC/1XVxW2+TG0ItQpx2/G3cXjgMuOALgO1Rc
-         auxKHXwS3ghK6vFFIfR8essc70JXfRi2oIpi3YT/VLqISCMTaVWCOI/Xf0rWfpfTmlnw
-         XgqCFC8jOuHD5AjsEtox3h0b9tzcHlVM0fA1RrJyDFubK9aS707t1BYf/K43qSc4slo4
-         wrQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=s3Cdswvtyrq8qHVwuRB9YRoTAIoD9G/2//h6WeFZHzo=;
-        b=cMfB2BBUi0bavtXHL/TO3lM0tWNj0+9PrkaU2GIwvVuTZ4tTfAZaxxUuzds8LFS73V
-         l6rVCJ9PH4rcC5Aphp58NdxgZ+LVZvnHidhay0xF6MrwkfbXLWWr1v1kw3XCFt+v1M5O
-         jMK6kDakpYpyMXMDS0dK2iEbouMBEOvo72ZHfdkK4avT/VkIgGR77Q0jaU+yI1WCEUVr
-         mbttN7vnnMUbLbjj6XSi5Iykem+lydOBg3Gb0yH0kbYCrOiiHhlsL7LaXl82ohKO+rSR
-         lOBxx/tjaKUb7smKxI5tomwSGcg8Q+6Kth6gukGmFnEF0L7v3Zq0pfepLzWmVQ7eRDCB
-         +K6Q==
-X-Gm-Message-State: AOAM532UE3t80Ll/V9KoPTkMmgoYb57sYnOKsp7yjNTiOLI5bZLa5u7w
-        LzpCCja0BbSVw3X5Rj7RJ0csk9+2AFd3IpjVE7E=
-X-Google-Smtp-Source: ABdhPJwbKHmbnZDflMHBZCcp2YbZAAZvFdPcM4owWeuPIkoxodmwIZJ+Xpgi08ylB1RFXLrw63SQRxJzumbwJKMTxhs=
-X-Received: by 2002:a17:90b:1007:b0:1dc:9862:68af with SMTP id
- gm7-20020a17090b100700b001dc986268afmr3261389pjb.205.1652243951499; Tue, 10
- May 2022 21:39:11 -0700 (PDT)
+        Wed, 11 May 2022 02:30:43 -0400
+X-Greylist: delayed 624 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 10 May 2022 23:30:41 PDT
+Received: from smtp.mfedv.net (smtp.mfedv.net [IPv6:2a04:6c0:2::19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A354D50
+        for <linux-bcache@vger.kernel.org>; Tue, 10 May 2022 23:30:40 -0700 (PDT)
+Received: from suse92host.mfedv.net (suse92host.mfedv.net [IPv6:2a04:6c0:2:3:0:0:0:ffff])
+        by smtp.mfedv.net (8.15.2/8.15.2/Debian-10) with ESMTP id 24B6KCD9003264;
+        Wed, 11 May 2022 08:20:13 +0200
+Received: from xoff (klappe2.mfedv.net [192.168.71.72])
+        by suse92host.mfedv.net (Postfix) with ESMTP id D02DBC801A;
+        Wed, 11 May 2022 08:20:11 +0200 (CEST)
+        (envelope-from bcache@mfedv.net)
+Date:   Wed, 11 May 2022 08:20:11 +0200
+From:   Matthias Ferdinand <bcache@mfedv.net>
+To:     Adriano Silva <adriano_da_silva@yahoo.com.br>
+Cc:     Bcache Linux <linux-bcache@vger.kernel.org>
+Subject: Re: Bcache in writes direct with fsync. Are IOPS limited?
+Message-ID: <YntVm0jy5NY8ealB@xoff>
+References: <958894243.922478.1652201375900.ref@mail.yahoo.com>
+ <958894243.922478.1652201375900@mail.yahoo.com>
 MIME-Version: 1.0
-Received: by 2002:a05:6a10:319:0:0:0:0 with HTTP; Tue, 10 May 2022 21:39:10
- -0700 (PDT)
-From:   Private Mail <privatemail1961@gmail.com>
-Date:   Tue, 10 May 2022 21:39:10 -0700
-Message-ID: <CANjAOAiiVcSrSv31FjThCVmeppS54UVvGVj3SRSvMfxOB+T8DA@mail.gmail.com>
-Subject: Have you had this? It is for your Benefit
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=4.3 required=5.0 tests=ADVANCE_FEE_4_NEW_MONEY,
-        BAYES_50,DEAR_BENEFICIARY,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,FREEMAIL_REPLY,
-        LOTS_OF_MONEY,MONEY_FRAUD_5,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNDISC_MONEY autolearn=no autolearn_force=no
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <958894243.922478.1652201375900@mail.yahoo.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
-X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Our Ref: BG/WA0151/2022
+On Tue, May 10, 2022 at 04:49:35PM +0000, Adriano Silva wrote:
+> As we can see, the same test done on the bcache0 device only got 1548 IOPS and that yielded only 6.3 KB/s.
+> 
+> This is much more than any spinning HDD could give me, but many times less than the result obtained by NVMe.
 
-Dear Beneficiary
 
-Subject: An Estate of US$15.8 Million
+Hi,
 
-Blount and Griffin Genealogical Investigators specializes in probate
-research to locate missing heirs and beneficiaries to estates in the
-United Kingdom and Europe.
+bcache needs to do a lot of metadata work, resulting in a noticeable
+write amplification. My testing with bcache (some years ago and only with
+SATA SSDs) showed that bcache latency increases a lot with high amounts
+of dirty data, so I used to tune down writeback_percent, usually to 1,
+and used to keep the cache device size low at around 40GB.
+I also found performance to increase slightly when a bcache device
+was created with 4k block size instead of default 512bytes.
 
-We can also help you find wills, obtain copies of certificates, help
-you to administer an estate, as well as calculating how an estate,
-intestacy or trust should be distributed.
+Still quite a decrease in iops. Maybe you could monitor with iostat,
+it gives those _await columns, there might be some hints.
 
-You may be entitled to a large pay out for an inheritance in Europe
-worth US$15.8 million. We have discovered an estate belonging to the
-late Depositor has remained unclaimed since he died in 2011 and we
-have strong reasons to believe you are the closest living relative to
-the deceased we can find.
+Matthias
 
-You may unknowingly be the heir of this person who died without
-leaving a will (intestate). We will conduct a probate research to
-prove your entitlement, and can submit a claim on your behalf all at
-no risk to yourselves.
-
-Our service fee of 10% will be paid to us after you have received the estate.
-
-The estate transfer process should take just a matter of days as we
-have the mechanism and expertise to get this done very quickly. This
-message may come to you as a shock, however we hope to work with you
-to transfer the estate to you as quickly as possible.
-
-Feel free to email our senior case worker Mr. Malcolm Casey on email:
-malcolmcasey68@yahoo.com for further discussions.
-
-With warm regards,
-
-Mr. Blount W. Gort, CEO.
-Blount and Griffin Associates Inc
+> I've noticed in several tests, varying the amount of jobs or increasing the size of the blocks, that the larger the size of the blocks, the more I approximate the performance of the physical device to the bcache device. But it always seems that the amount of IOPS is limited to somewhere around 1500-1800 IOPS (maximum). By increasing the amount of jobs, I get better results and more IOPS, but if you divide the total IOPS by the amount of jobs, you can see that the IOPS are always limited in the range 1500-1800 per job.
+> 
+> The commands used to configure bcache were:
+> 
+> # echo writeback > /sys/block/bcache0/bcache/cache_mode
+> # echo 0 > /sys/block/bcache0/bcache/sequential_cutoff
+> ##
+> ## Then I tried everything also with the commands below, but there was no improvement.
+> ##
+> # echo 0 > /sys/fs/bcache/<cache set>/congested_read_threshold_us
+> # echo 0 > /sys/fs/bcache/<cache set>/congested_write_threshold_us
+> 
+> 
+> Monitoring with dstat, it is possible to notice that when activating the fio command, the writing is all done in the cache device (a second partition of NVMe), until the end of the test. The spinning disk is only written after the time has passed and it is possible to see the read on the NVMe and the write on the spinning disk (which means the transfer of data in the background).
+> 
+> --dsk/sdb---dsk/nvme0n1-dsk/bcache0 ---io/sdb----io/nvme0n1--io/bcache0 -net/total- ---load-avg--- --total-cpu-usage-- ---system-- ----system---- async
+>  read  writ: read  writ: read  writ| read  writ: read  writ: read  writ| recv  send| 1m   5m  15m |usr sys idl wai stl| int   csw |     time     | #aio
+>    0     0 :   0     0 :   0     0 |   0     0 :   0     0 :   0     0 |8462B 8000B|0.03 0.15 0.31|  1   0  99   0   0| 250   383 |09-05 15:19:47|   0
+>    0     0 :4096B  454k:   0   336k|   0     0 :1.00   184 :   0   170 |4566B 4852B|0.03 0.15 0.31|  2   2  94   1   0|1277  3470 |09-05 15:19:48|   1B
+>    0  8192B:   0  8022k:   0  6512k|   0  2.00 :   0  3388 :   0  3254 |3261B 2827B|0.11 0.16 0.32|  0   2  93   5   0|4397    16k|09-05 15:19:49|   1B
+>    0     0 :   0  7310k:   0  6460k|   0     0 :   0  3240 :   0  3231 |6773B 6428B|0.11 0.16 0.32|  0   1  93   6   0|4190    16k|09-05 15:19:50|   1B
+>    0     0 :   0  7313k:   0  6504k|   0     0 :   0  3252 :   0  3251 |6719B 6201B|0.11 0.16 0.32|  0   2  92   6   0|4482    16k|09-05 15:19:51|   1B
+>    0     0 :   0  7313k:   0  6496k|   0     0 :   0  3251 :   0  3250 |4743B 4016B|0.11 0.16 0.32|  0   1  93   6   0|4243    16k|09-05 15:19:52|   1B
+>    0     0 :   0  7329k:   0  6496k|   0     0 :   0  3289 :   0  3245 |6107B 6062B|0.11 0.16 0.32|  1   1  90   8   0|4706    18k|09-05 15:19:53|   1B
+>    0     0 :   0  5373k:   0  4184k|   0     0 :   0  2946 :   0  2095 |6387B 6062B|0.26 0.19 0.33|  0   2  95   4   0|3774    12k|09-05 15:19:54|   1B
+>    0     0 :   0  6966k:   0  5668k|   0     0 :   0  3270 :   0  2834 |7264B 7546B|0.26 0.19 0.33|  0   1  93   5   0|4214    15k|09-05 15:19:55|   1B
+>    0     0 :   0  7271k:   0  6252k|   0     0 :   0  3258 :   0  3126 |5928B 4584B|0.26 0.19 0.33|  0   2  93   5   0|4156    16k|09-05 15:19:56|   1B
+>    0     0 :   0  7419k:   0  6504k|   0     0 :   0  3308 :   0  3251 |5226B 5650B|0.26 0.19 0.33|  2   1  91   6   0|4433    16k|09-05 15:19:57|   1B
+>    0     0 :   0  6444k:   0  5704k|   0     0 :   0  2873 :   0  2851 |6494B 8021B|0.26 0.19 0.33|  1   1  91   7   0|4352    16k|09-05 15:19:58|   0
+>    0     0 :   0     0 :   0     0 |   0     0 :   0     0 :   0     0 |6030B 7204B|0.24 0.19 0.32|  0   0 100   0   0| 209   279 |09-05 15:19:59|   0
