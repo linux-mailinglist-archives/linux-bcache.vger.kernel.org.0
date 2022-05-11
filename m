@@ -2,97 +2,338 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 12BC4522C4F
-	for <lists+linux-bcache@lfdr.de>; Wed, 11 May 2022 08:30:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7102F522D7D
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 May 2022 09:39:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233219AbiEKGao (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 11 May 2022 02:30:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46330 "EHLO
+        id S229792AbiEKHjL (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 May 2022 03:39:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231847AbiEKGan (ORCPT
+        with ESMTP id S229579AbiEKHjJ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 11 May 2022 02:30:43 -0400
-X-Greylist: delayed 624 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 10 May 2022 23:30:41 PDT
-Received: from smtp.mfedv.net (smtp.mfedv.net [IPv6:2a04:6c0:2::19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A354D50
-        for <linux-bcache@vger.kernel.org>; Tue, 10 May 2022 23:30:40 -0700 (PDT)
-Received: from suse92host.mfedv.net (suse92host.mfedv.net [IPv6:2a04:6c0:2:3:0:0:0:ffff])
-        by smtp.mfedv.net (8.15.2/8.15.2/Debian-10) with ESMTP id 24B6KCD9003264;
-        Wed, 11 May 2022 08:20:13 +0200
-Received: from xoff (klappe2.mfedv.net [192.168.71.72])
-        by suse92host.mfedv.net (Postfix) with ESMTP id D02DBC801A;
-        Wed, 11 May 2022 08:20:11 +0200 (CEST)
-        (envelope-from bcache@mfedv.net)
-Date:   Wed, 11 May 2022 08:20:11 +0200
-From:   Matthias Ferdinand <bcache@mfedv.net>
-To:     Adriano Silva <adriano_da_silva@yahoo.com.br>
-Cc:     Bcache Linux <linux-bcache@vger.kernel.org>
-Subject: Re: Bcache in writes direct with fsync. Are IOPS limited?
-Message-ID: <YntVm0jy5NY8ealB@xoff>
-References: <958894243.922478.1652201375900.ref@mail.yahoo.com>
- <958894243.922478.1652201375900@mail.yahoo.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <958894243.922478.1652201375900@mail.yahoo.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Wed, 11 May 2022 03:39:09 -0400
+Received: from mail-m2457.qiye.163.com (mail-m2457.qiye.163.com [220.194.24.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8326521E40A
+        for <linux-bcache@vger.kernel.org>; Wed, 11 May 2022 00:39:06 -0700 (PDT)
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m2457.qiye.163.com (Hmail) with ESMTPA id 084D9C40165;
+        Wed, 11 May 2022 15:39:03 +0800 (CST)
+From:   mingzhe.zou@easystack.cn
+To:     colyli@suse.de, linux-bcache@vger.kernel.org
+Cc:     dongsheng.yang@easystack.cn, zoumingzhe@qq.com
+Subject: [PATCH v3] bcache: dynamic incremental gc
+Date:   Wed, 11 May 2022 15:39:03 +0800
+Message-Id: <20220511073903.13568-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
+        kWDxoPAgseWUFZKDYvK1lXWShZQUlCN1dZLVlBSVdZDwkaFQgSH1lBWRpIGUlWQhpNTBhDHRkZSR
+        9LVRkRExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkNVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Kz46Nxw5EDIaSx1MOjwuET8y
+        HAMaCjBVSlVKTU5JSU5PTE9PTUpMVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSktITks3Bg++
+X-HM-Tid: 0a80b20e9e808c16kuqt084d9c40165
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, May 10, 2022 at 04:49:35PM +0000, Adriano Silva wrote:
-> As we can see, the same test done on the bcache0 device only got 1548 IOPS and that yielded only 6.3 KB/s.
-> 
-> This is much more than any spinning HDD could give me, but many times less than the result obtained by NVMe.
+From: ZouMingzhe <mingzhe.zou@easystack.cn>
 
+Currently, GC wants no more than 100 times, with at least
+100 nodes each time, the maximum number of nodes each time
+is not limited.
 
-Hi,
+```
+static size_t btree_gc_min_nodes(struct cache_set *c)
+{
+        ......
+        min_nodes = c->gc_stats.nodes / MAX_GC_TIMES;
+        if (min_nodes < MIN_GC_NODES)
+                min_nodes = MIN_GC_NODES;
 
-bcache needs to do a lot of metadata work, resulting in a noticeable
-write amplification. My testing with bcache (some years ago and only with
-SATA SSDs) showed that bcache latency increases a lot with high amounts
-of dirty data, so I used to tune down writeback_percent, usually to 1,
-and used to keep the cache device size low at around 40GB.
-I also found performance to increase slightly when a bcache device
-was created with 4k block size instead of default 512bytes.
+        return min_nodes;
+}
+```
 
-Still quite a decrease in iops. Maybe you could monitor with iostat,
-it gives those _await columns, there might be some hints.
+According to our test data, when nvme is used as the cache,
+it takes about 1ms for GC to handle each node (block 4k and
+bucket 512k). This means that the latency during GC is at
+least 100ms. During GC, IO performance would be reduced by
+half or more.
 
-Matthias
+I want to optimize the IOPS and latency under high pressure.
+This patch hold the inflight peak. When IO depth up to maximum,
+GC only process very few(10) nodes, then sleep immediately and
+handle these requests.
 
-> I've noticed in several tests, varying the amount of jobs or increasing the size of the blocks, that the larger the size of the blocks, the more I approximate the performance of the physical device to the bcache device. But it always seems that the amount of IOPS is limited to somewhere around 1500-1800 IOPS (maximum). By increasing the amount of jobs, I get better results and more IOPS, but if you divide the total IOPS by the amount of jobs, you can see that the IOPS are always limited in the range 1500-1800 per job.
-> 
-> The commands used to configure bcache were:
-> 
-> # echo writeback > /sys/block/bcache0/bcache/cache_mode
-> # echo 0 > /sys/block/bcache0/bcache/sequential_cutoff
-> ##
-> ## Then I tried everything also with the commands below, but there was no improvement.
-> ##
-> # echo 0 > /sys/fs/bcache/<cache set>/congested_read_threshold_us
-> # echo 0 > /sys/fs/bcache/<cache set>/congested_write_threshold_us
-> 
-> 
-> Monitoring with dstat, it is possible to notice that when activating the fio command, the writing is all done in the cache device (a second partition of NVMe), until the end of the test. The spinning disk is only written after the time has passed and it is possible to see the read on the NVMe and the write on the spinning disk (which means the transfer of data in the background).
-> 
-> --dsk/sdb---dsk/nvme0n1-dsk/bcache0 ---io/sdb----io/nvme0n1--io/bcache0 -net/total- ---load-avg--- --total-cpu-usage-- ---system-- ----system---- async
->  read  writ: read  writ: read  writ| read  writ: read  writ: read  writ| recv  send| 1m   5m  15m |usr sys idl wai stl| int   csw |     time     | #aio
->    0     0 :   0     0 :   0     0 |   0     0 :   0     0 :   0     0 |8462B 8000B|0.03 0.15 0.31|  1   0  99   0   0| 250   383 |09-05 15:19:47|   0
->    0     0 :4096B  454k:   0   336k|   0     0 :1.00   184 :   0   170 |4566B 4852B|0.03 0.15 0.31|  2   2  94   1   0|1277  3470 |09-05 15:19:48|   1B
->    0  8192B:   0  8022k:   0  6512k|   0  2.00 :   0  3388 :   0  3254 |3261B 2827B|0.11 0.16 0.32|  0   2  93   5   0|4397    16k|09-05 15:19:49|   1B
->    0     0 :   0  7310k:   0  6460k|   0     0 :   0  3240 :   0  3231 |6773B 6428B|0.11 0.16 0.32|  0   1  93   6   0|4190    16k|09-05 15:19:50|   1B
->    0     0 :   0  7313k:   0  6504k|   0     0 :   0  3252 :   0  3251 |6719B 6201B|0.11 0.16 0.32|  0   2  92   6   0|4482    16k|09-05 15:19:51|   1B
->    0     0 :   0  7313k:   0  6496k|   0     0 :   0  3251 :   0  3250 |4743B 4016B|0.11 0.16 0.32|  0   1  93   6   0|4243    16k|09-05 15:19:52|   1B
->    0     0 :   0  7329k:   0  6496k|   0     0 :   0  3289 :   0  3245 |6107B 6062B|0.11 0.16 0.32|  1   1  90   8   0|4706    18k|09-05 15:19:53|   1B
->    0     0 :   0  5373k:   0  4184k|   0     0 :   0  2946 :   0  2095 |6387B 6062B|0.26 0.19 0.33|  0   2  95   4   0|3774    12k|09-05 15:19:54|   1B
->    0     0 :   0  6966k:   0  5668k|   0     0 :   0  3270 :   0  2834 |7264B 7546B|0.26 0.19 0.33|  0   1  93   5   0|4214    15k|09-05 15:19:55|   1B
->    0     0 :   0  7271k:   0  6252k|   0     0 :   0  3258 :   0  3126 |5928B 4584B|0.26 0.19 0.33|  0   2  93   5   0|4156    16k|09-05 15:19:56|   1B
->    0     0 :   0  7419k:   0  6504k|   0     0 :   0  3308 :   0  3251 |5226B 5650B|0.26 0.19 0.33|  2   1  91   6   0|4433    16k|09-05 15:19:57|   1B
->    0     0 :   0  6444k:   0  5704k|   0     0 :   0  2873 :   0  2851 |6494B 8021B|0.26 0.19 0.33|  1   1  91   7   0|4352    16k|09-05 15:19:58|   0
->    0     0 :   0     0 :   0     0 |   0     0 :   0     0 :   0     0 |6030B 7204B|0.24 0.19 0.32|  0   0 100   0   0| 209   279 |09-05 15:19:59|   0
+bch_bucket_alloc() maybe wait for bch_allocator_thread() to
+wake up, and and bch_allocator_thread() needs to wait for gc
+to complete, in which case gc needs to end quickly. So, add
+bucket_alloc_inflight to cache_set in v3.
+
+```
+long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
+{
+        ......
+        do {
+                prepare_to_wait(&ca->set->bucket_wait, &w,
+                                TASK_UNINTERRUPTIBLE);
+
+                mutex_unlock(&ca->set->bucket_lock);
+                schedule();
+                mutex_lock(&ca->set->bucket_lock);
+        } while (!fifo_pop(&ca->free[RESERVE_NONE], r) &&
+                 !fifo_pop(&ca->free[reserve], r));
+        ......
+}
+
+static int bch_allocator_thread(void *arg)
+{
+	......
+	allocator_wait(ca, bch_allocator_push(ca, bucket));
+	wake_up(&ca->set->btree_cache_wait);
+	wake_up(&ca->set->bucket_wait);
+	......
+}
+
+static void bch_btree_gc(struct cache_set *c)
+{
+	......
+	bch_btree_gc_finish(c);
+	wake_up_allocators(c);
+	......
+}
+```
+
+Apply this patch, each GC maybe only process very few nodes,
+GC would last a long time if sleep 100ms each time. So, the
+sleep time should be calculated dynamically based on gc_cost.
+
+At the same time, I added some cost statistics in gc_stat,
+hoping to provide useful information for future work.
+
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/alloc.c  |   2 +
+ drivers/md/bcache/bcache.h |   9 ++++
+ drivers/md/bcache/btree.c  | 100 ++++++++++++++++++++++++++++++++-----
+ 3 files changed, 98 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index 097577ae3c47..bb8b16cc2189 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -415,7 +415,9 @@ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
+ 				TASK_UNINTERRUPTIBLE);
+ 
+ 		mutex_unlock(&ca->set->bucket_lock);
++		atomic_inc(&ca->set->bucket_alloc_inflight);
+ 		schedule();
++		atomic_dec(&ca->set->bucket_alloc_inflight);
+ 		mutex_lock(&ca->set->bucket_lock);
+ 	} while (!fifo_pop(&ca->free[RESERVE_NONE], r) &&
+ 		 !fifo_pop(&ca->free[reserve], r));
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 9ed9c955add7..a113a3bc7356 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -471,6 +471,14 @@ struct cache {
+ };
+ 
+ struct gc_stat {
++	uint64_t		gc_cost;
++	uint64_t		sleep_cost;
++	uint64_t		average_cost;
++	uint64_t		start_time;
++	uint64_t		finish_time;
++	size_t			max_inflight;
++
++	size_t			times;
+ 	size_t			nodes;
+ 	size_t			nodes_pre;
+ 	size_t			key_bytes;
+@@ -595,6 +603,7 @@ struct cache_set {
+ 	 * written.
+ 	 */
+ 	atomic_t		prio_blocked;
++	atomic_t		bucket_alloc_inflight;
+ 	wait_queue_head_t	bucket_wait;
+ 
+ 	/*
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index ad9f16689419..bc37fac0eac4 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -88,11 +88,14 @@
+  * Test module load/unload
+  */
+ 
+-#define MAX_NEED_GC		64
+-#define MAX_SAVE_PRIO		72
+ #define MAX_GC_TIMES		100
+ #define MIN_GC_NODES		100
+-#define GC_SLEEP_MS		100
++#define MAX_GC_NODES		1000
++#define MAX_GC_PERCENT		10
++#define MIN_GC_SLEEP_MS		10
++#define MAX_GC_SLEEP_MS		1000
++#define MAX_INFLIGHT_FACTOR	60
++#define MAX_INFLIGHT(b, d, p)	div_u64((b)*(100-(p)) + (d)*(p), 100)
+ 
+ #define PTR_DIRTY_BIT		(((uint64_t) 1 << 36))
+ 
+@@ -1542,12 +1545,65 @@ static unsigned int btree_gc_count_keys(struct btree *b)
+ 	return ret;
+ }
+ 
+-static size_t btree_gc_min_nodes(struct cache_set *c)
++static uint64_t btree_gc_sleep_ms(struct cache_set *c, struct gc_stat *gc)
++{
++	uint64_t now = local_clock();
++	uint64_t expect_time, sleep_time = 0;
++
++	/*
++	 * bch_bucket_alloc() waits for gc to finish
++	 */
++	if (atomic_read(&c->bucket_alloc_inflight) > 0)
++		return MIN_GC_SLEEP_MS;
++
++	/*
++	 * GC maybe process very few nodes when IO requests are very frequent.
++	 * If the sleep time is constant (100ms) each time, whole GC would last
++	 * a long time.
++	 * The IO performance also decline if a single GC takes a long time
++	 * (such as single GC 100ms and sleep 100ms, IOPS is only half).
++	 * So GC sleep time should be calculated dynamically based on gc_cost.
++	 */
++	gc->finish_time = time_after64(now, gc->start_time)
++				? now - gc->start_time : 0;
++	gc->gc_cost = gc->finish_time > gc->sleep_cost
++			? gc->finish_time - gc->sleep_cost : 0;
++	expect_time = div_u64(gc->gc_cost * (100 - MAX_GC_PERCENT), MAX_GC_PERCENT);
++	if (expect_time > gc->sleep_cost)
++		sleep_time = div_u64(expect_time - gc->sleep_cost, NSEC_PER_MSEC);
++
++	if (sleep_time < MIN_GC_SLEEP_MS)
++		sleep_time = MIN_GC_SLEEP_MS;
++	if (sleep_time > MAX_GC_SLEEP_MS)
++		sleep_time = MAX_GC_SLEEP_MS;
++
++	return sleep_time;
++}
++
++static size_t btree_gc_min_nodes(struct cache_set *c, struct gc_stat *gc)
+ {
+ 	size_t min_nodes;
++	size_t inflight;
+ 
+ 	/*
+-	 * Since incremental GC would stop 100ms when front
++	 * If there is no requests or bucket_wait is happened,
++	 * the GC is not stopped. Also, we hope to process the
++	 * increasing number of IO requests immediately and hold
++	 * the inflight peak. When IO depth up to maximum, this gc
++	 * only process very few(10) nodes, then sleep and handle
++	 * these requests.
++	 */
++	inflight = atomic_read(&c->search_inflight);
++	if (inflight <= 0 || atomic_read(&c->bucket_alloc_inflight) > 0)
++		return max(c->gc_stats.nodes, gc->nodes) + 1;
++	if (inflight > gc->max_inflight)
++		gc->max_inflight = inflight;
++	if (inflight >= gc->max_inflight ||
++	    inflight >= c->gc_stats.max_inflight)
++		return 10;
++
++	/*
++	 * Since incremental GC would dynamic sleep when front
+ 	 * side I/O comes, so when there are many btree nodes,
+ 	 * if GC only processes constant (100) nodes each time,
+ 	 * GC would last a long time, and the front side I/Os
+@@ -1558,11 +1614,14 @@ static size_t btree_gc_min_nodes(struct cache_set *c)
+ 	 * realized by dividing GC into constant(100) times,
+ 	 * so when there are many btree nodes, GC can process
+ 	 * more nodes each time, otherwise, GC will process less
+-	 * nodes each time (but no less than MIN_GC_NODES)
++	 * nodes each time (but no less than MIN_GC_NODES and
++	 * no more than MAX_GC_NODES)
+ 	 */
+ 	min_nodes = c->gc_stats.nodes / MAX_GC_TIMES;
+ 	if (min_nodes < MIN_GC_NODES)
+ 		min_nodes = MIN_GC_NODES;
++	if (min_nodes > MAX_GC_NODES)
++		min_nodes = MAX_GC_NODES;
+ 
+ 	return min_nodes;
+ }
+@@ -1633,8 +1692,7 @@ static int btree_gc_recurse(struct btree *b, struct btree_op *op,
+ 		memmove(r + 1, r, sizeof(r[0]) * (GC_MERGE_NODES - 1));
+ 		r->b = NULL;
+ 
+-		if (atomic_read(&b->c->search_inflight) &&
+-		    gc->nodes >= gc->nodes_pre + btree_gc_min_nodes(b->c)) {
++		if (gc->nodes >= gc->nodes_pre + btree_gc_min_nodes(b->c, gc)) {
+ 			gc->nodes_pre =  gc->nodes;
+ 			ret = -EAGAIN;
+ 			break;
+@@ -1789,7 +1847,7 @@ static void bch_btree_gc(struct cache_set *c)
+ 	struct gc_stat stats;
+ 	struct closure writes;
+ 	struct btree_op op;
+-	uint64_t start_time = local_clock();
++	uint64_t sleep_time;
+ 
+ 	trace_bcache_gc_start(c);
+ 
+@@ -1798,24 +1856,40 @@ static void bch_btree_gc(struct cache_set *c)
+ 	bch_btree_op_init(&op, SHRT_MAX);
+ 
+ 	btree_gc_start(c);
++	stats.start_time = local_clock();
+ 
+ 	/* if CACHE_SET_IO_DISABLE set, gc thread should stop too */
+ 	do {
++		stats.times++;
+ 		ret = bcache_btree_root(gc_root, c, &op, &writes, &stats);
+ 		closure_sync(&writes);
+ 		cond_resched();
+ 
+-		if (ret == -EAGAIN)
++		sleep_time = btree_gc_sleep_ms(c, &stats);
++		if (ret == -EAGAIN) {
++			stats.sleep_cost += sleep_time * NSEC_PER_MSEC;
+ 			schedule_timeout_interruptible(msecs_to_jiffies
+-						       (GC_SLEEP_MS));
+-		else if (ret)
++						       (sleep_time));
++		} else if (ret)
+ 			pr_warn("gc failed!\n");
+ 	} while (ret && !test_bit(CACHE_SET_IO_DISABLE, &c->flags));
+ 
+ 	bch_btree_gc_finish(c);
+ 	wake_up_allocators(c);
+ 
+-	bch_time_stats_update(&c->btree_gc_time, start_time);
++	bch_time_stats_update(&c->btree_gc_time, stats.start_time);
++	stats.average_cost = div_u64(stats.gc_cost, stats.nodes);
++	pr_info("gc %llu times with %llu nodes, sleep %llums, "
++		"average gc cost %lluus per node, max inflight %llu",
++		(uint64_t)stats.times, (uint64_t)stats.nodes,
++		div_u64(stats.sleep_cost, NSEC_PER_MSEC),
++		div_u64(stats.average_cost, NSEC_PER_USEC),
++		(uint64_t)stats.max_inflight);
++	stats.max_inflight = MAX_INFLIGHT(c->gc_stats.max_inflight,
++					  stats.max_inflight,
++					  MAX_INFLIGHT_FACTOR);
++	pr_info("max inflight updated to %llu",
++		(uint64_t)stats.max_inflight);
+ 
+ 	stats.key_bytes *= sizeof(uint64_t);
+ 	stats.data	<<= 9;
+-- 
+2.17.1
+
