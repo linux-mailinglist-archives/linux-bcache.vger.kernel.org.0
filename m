@@ -2,205 +2,144 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6AA352FE7F
-	for <lists+linux-bcache@lfdr.de>; Sat, 21 May 2022 19:05:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C52B652FEFD
+	for <lists+linux-bcache@lfdr.de>; Sat, 21 May 2022 21:42:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343916AbiEURFS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 21 May 2022 13:05:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48164 "EHLO
+        id S240657AbiEUTmz (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 21 May 2022 15:42:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343827AbiEURFS (ORCPT
+        with ESMTP id S230127AbiEUTmx (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 21 May 2022 13:05:18 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C6DD3BA6C;
-        Sat, 21 May 2022 10:05:17 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id DE8D721906;
-        Sat, 21 May 2022 17:05:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1653152715; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wmJpe9/Kua8zJtz04nyJuieA4qrmKJ7yZERYmqpEk9U=;
-        b=oHQiJSiJEVocFfhy2xcCHFcBG91Wk094UL5UNKocexe6T0GOGWtyHIaJXVTZiGBUcQmTF2
-        bmTf5p/SWgpnwMQYIXmPy+jUI7udZF2OQuz2P/J+QldQSW/8pjwdDhLixdS/srtw0/9QgI
-        52xNQnQGg3pLEIO7oL/a6Ysvx+dbyGw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1653152715;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wmJpe9/Kua8zJtz04nyJuieA4qrmKJ7yZERYmqpEk9U=;
-        b=4zlsZ/aLs6m3i2Wc9rHtYae5NRuMFcWp6eNN0mB3GDMVWPBrhDu+N2urABsgqG2isYTIm5
-        KpX8tWDFXmga9IBw==
-Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id 189B72C141;
-        Sat, 21 May 2022 17:05:13 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     linux-bcache@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Nikhil Kshirsagar <nkshirsagar@gmail.com>,
-        stable@vger.kernel.org
-Subject: [PATCH 4/4] bcache: avoid journal no-space deadlock by reserving 1 journal bucket
-Date:   Sun, 22 May 2022 01:05:02 +0800
-Message-Id: <20220521170502.20026-4-colyli@suse.de>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20220521170502.20026-1-colyli@suse.de>
-References: <20220521170502.20026-1-colyli@suse.de>
+        Sat, 21 May 2022 15:42:53 -0400
+X-Greylist: delayed 5810 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 21 May 2022 12:42:51 PDT
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02hn2236.outbound.protection.partner.outlook.cn [139.219.146.236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 664143E5D3;
+        Sat, 21 May 2022 12:42:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eDaP9z5z7i+uDngld6AQ7ubgC93F8hupvW6QVuAJUhFIFmnNzX/MVti7+xLs2AHj0zJamZDCatCGYtdi/PcGHBiwCkhc+QdT2PZKb61ucrV0eq6K2bOQt+TjLiv/liG6a3+NzEx5owoOjF4txSytTPWpunjnmK64ojziTdGArQIT9qZXpY5V37XFu1fLjzqH62hu3HwxVwFGIRpg6oGbv6iDTYF4On2IVtsRW4a3MkNIc6hJqhScCq8jGj5t71pqXkhQmPRdVaEOC8vFBDAhNMZj9O5yXwO43OMKwKXxVQpHmQyK7dxRI5oXuj2MgECBMhZ+h2tRDgvarbmpVuusCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3z5uhVUtqN5OyplYkKXQ17d4OAmlRJ8nVcEl3nfclrI=;
+ b=g/VWVAL8bj3lmkONHi3LK3qqZhjO3G6+4lsdumTotBG0cVOr2Y8BRT4jB5nD38s3y0ngOUdyECb8XMmSplDCVEcFLv3oT+uDxL5m+i31VO1mE9+XpZl9kXH2ykBstxyJwS/lFGITCz7kk9SdJ8/lmfzDdoEmdFZLrcRQlLyGXPZxNvc6+3ELqaXqAhHc0fJek2uw6Pu+sbCEa7mZ8OtqDljollYtKqbEHxE+OxAMXua1WkT85RXKPa/eCb9+TgldtDtOk8MgbMx6zsfCJfSf9HHKVm0/QlbvsBllyk4lOn2f7bnEjFa0Rnh2b1Kxl/q86YDha9GR4FikQDkabymX6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=gientech.com; dmarc=pass action=none header.from=gientech.com;
+ dkim=pass header.d=gientech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gientech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3z5uhVUtqN5OyplYkKXQ17d4OAmlRJ8nVcEl3nfclrI=;
+ b=tlXkEkdiRaFwuZhItkCokjk3vK6NgQ0pVKMSSuvKm4pMVsEzVyFvDKruB/IjVIgxLX1QoeD80pFf05ozDryx4dWSAKN0oiUlxoaO5yhKb8JrQEeCuAc4joKJ6JpXPorc1JtfNnyNBij/LVBAMqXU1mdqNgbTQ+4t3m7h65aqqW349dOK1LStzb+8PrhPDCkyY+lSz3iOSuWFbg4pDh/DiFzHWq0gJbnqcKADB7GRIVLgkSN21uFiisG6DNIe+PqiRJvpjJiSCpSYOK4iyPw1s/Ol4PMsZ5hNwV5f74TW0bTgFj0jnFITYDfk2HVdSwXkFDzpuzSDA6PehlwBtsL8cQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=gientech.com;
+Received: from SH0PR01MB0729.CHNPR01.prod.partner.outlook.cn (10.43.106.85) by
+ SH0PR01MB0506.CHNPR01.prod.partner.outlook.cn (10.43.108.151) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5273.14; Sat, 21 May 2022 18:05:48 +0000
+Received: from SH0PR01MB0729.CHNPR01.prod.partner.outlook.cn ([10.43.106.85])
+ by SH0PR01MB0729.CHNPR01.prod.partner.outlook.cn ([10.43.106.85]) with mapi
+ id 15.20.5273.019; Sat, 21 May 2022 18:05:48 +0000
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: RE..
+To:     Recipients <tianjiao.yang@gientech.com>
+From:   "J Wu" <tianjiao.yang@gientech.com>
+Date:   Sun, 15 May 2022 12:39:10 +0000
+Reply-To: contact@jimmywu.online
+X-ClientProxiedBy: SH2PR01CA001.CHNPR01.prod.partner.outlook.cn (10.41.247.11)
+ To SH0PR01MB0729.CHNPR01.prod.partner.outlook.cn (10.43.106.85)
+Message-ID: <SH0PR01MB0729F8F0A7328A964285972D8ACC9@SH0PR01MB0729.CHNPR01.prod.partner.outlook.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 11981dc9-c2ff-42b8-d15a-08da366ff626
+X-MS-TrafficTypeDiagnostic: SH0PR01MB0506:EE_
+X-Microsoft-Antispam-PRVS: <SH0PR01MB0506BBF60DC69F991D92B4468AD29@SH0PR01MB0506.CHNPR01.prod.partner.outlook.cn>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?VPKpA268NKQCGBbMcC/DsMNsEqYgXx/l5fU1NSIyAeTLfK2TnnRgSd4wAB?=
+ =?iso-8859-1?Q?tBe0I+8dmdPXHTGVhpjdiHYqUVJfC6nUndKgxoiyy/tFgKv9ciJXEueQm8?=
+ =?iso-8859-1?Q?wVx7IolCOjWs4zly/fAhPyxHz0+XyGo/MU0QvQPDiJd48iUHeWPd6JAzqq?=
+ =?iso-8859-1?Q?iDddsjSw9LiJiK9BouEyc1uf8GwEd5HdtpiUrKDVIprqTj2caJ8Y5t5Sxy?=
+ =?iso-8859-1?Q?gVNIDFG8N46Rwykg17Bwh2ay+KkruLmIXHO04TMRVlJ2TexgFBvRyCYokL?=
+ =?iso-8859-1?Q?NX6lUU5lzKTbY9xm1rUTj+TAffzrn9loLd9ZnXv4u8HKkMreyvBIVf21sM?=
+ =?iso-8859-1?Q?ciUWO+Sg/jXBpG3iH0W9VRyvh3/p9nsIR67UmRYnHR3kjLFTrBtZlvGMfS?=
+ =?iso-8859-1?Q?rjj9EIdPXEC+SYphaSaudVjV0JTmqXQyYrSe6TVYKSQbgd2fs+ZYwEfgie?=
+ =?iso-8859-1?Q?dvZsZ3x5DQOS5LUgMyik0s7E0ifvvotStL39DhC4ajgL7+D+lW8khvpw8z?=
+ =?iso-8859-1?Q?dWsVHl/SdVlsqVizSRHuOt4ZHAJh8ibEVuC53/C0FiFYBdM4cDt+KhXTnv?=
+ =?iso-8859-1?Q?jMcN0nueai0zCzqUQvf0v1rnGb89zEDZSoD/Lh/ooIRh982lrV+652+2pg?=
+ =?iso-8859-1?Q?MoVhpKuGhDq5JLa2mhQ7yhR+3Qv/tPpkwLsBul8XPJLY84qoSDCNnE38Ih?=
+ =?iso-8859-1?Q?O+apurDMyFWSYtGsGpCO80vNwG097DnPr62j9yK9/BtIIR8RBhX5Vpth/V?=
+ =?iso-8859-1?Q?hqmBM9OMuDE+doJ7QH0ZgFayFhvd9anLSCnYttlAGZlSNQf9SQgvew+HsD?=
+ =?iso-8859-1?Q?yF1kZWK+uwvl/ba0+HCVEOQ2oAn9jyPiCYu+ic4QS0jV+onfMuF61jgDSa?=
+ =?iso-8859-1?Q?7OASQwkexIPP2f1lYSibtB3aSexICp4vOzIGUuJ1liufe/hi8VgV9XU19Q?=
+ =?iso-8859-1?Q?2IibHUhdoHQB9dAqlxZzXLgEE2eYvN2gAfXhzDkDl7xth+4UqQv+7SzKgf?=
+ =?iso-8859-1?Q?hOS+8iu03FXNGPyRkjRJa0D9PNGY2gLSAgrLGsJJUrtoqYerVChHzchwaa?=
+ =?iso-8859-1?Q?7g=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:5;SRV:;IPV:NLI;SFV:SPM;H:SH0PR01MB0729.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:OSPM;SFS:(13230001)(366004)(3480700007)(52116002)(9686003)(6200100001)(508600001)(7696005)(6666004)(86362001)(38350700002)(55016003)(38100700002)(26005)(40180700001)(19618925003)(66556008)(66946007)(66476007)(6862004)(7116003)(33656002)(558084003)(2906002)(186003)(8676002)(7366002)(7406005)(7416002)(8936002)(4270600006)(40160700002)(62346012);DIR:OUT;SFP:1501;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?lcybKtZESJktHf+fbaQvEUjI0uMmR/JzSbcBo2TwCu2gDrVde3RtiZomSl?=
+ =?iso-8859-1?Q?gu/LIpez97uaP6fW/DDa99pJbhloSxR4V4Wv/rrmO+XTAYyVxz2cjEceLR?=
+ =?iso-8859-1?Q?gqrVvT+kGUcaNp6kyMZZzOxIwPqT1nOnHXfBTon3KiUXoDfugzjWMn2pXt?=
+ =?iso-8859-1?Q?Z44OXk77vEpFdCLbloEzR6G2BptaYjbtm29w3+YKtLqHUVMp3nZOTgUfAK?=
+ =?iso-8859-1?Q?qigJNC2pHddVfUNAkYamhOjtLuM73KboKVRv21t2oFUcLNV+Zgb5tsZvQJ?=
+ =?iso-8859-1?Q?arheSNUh9CHQVkgOhVtChbUJlUqN10izp/hVZlUi21Ytt6zu/+EG/4cCJk?=
+ =?iso-8859-1?Q?Dvtnerk2iiLfloc8TzZkKG6O8o6BcYcto/poZ6lndzHPut95r5jiWK6S0G?=
+ =?iso-8859-1?Q?ZDQHbfx9i4zWs4KCgCea6lVL8hfR8oiuqvsJ97LtcZr+pGN7JmmexWz1Lw?=
+ =?iso-8859-1?Q?aW+UN4aaoOSnHrQG20QV5Pm4moiU0Qw0zhZ9WXLIh/i8BAut+i1c3KLVRt?=
+ =?iso-8859-1?Q?y8qBGCxz+YDWw1vkk4dBh8Yrmko8EjEFB7z6/W3tx1EG2bp/fa20S0ldeF?=
+ =?iso-8859-1?Q?7cr2NF2TwgBgzO+BrNgLnE5J87lOnIor/1Ln6RtPMchmPpjotitzArU/2s?=
+ =?iso-8859-1?Q?0gIyXNBG2Tt5WW+CHX738G1VvzHpK+MVUPz71Pi8ywFIImf9L4YSEIAmfD?=
+ =?iso-8859-1?Q?sezVDZPmmmIX76/LD74Xdl0DQnBsrpxJQYire8tM/HTTWCtArD8fpEmmZS?=
+ =?iso-8859-1?Q?TI5W2d4taqqMQKS4WOewqFxaVJzmDUPdN+i5gz1ot8e9FmLFga3ppcPPuw?=
+ =?iso-8859-1?Q?kOA9mcqwkTjNgwBeYz0wNQVay2+zp4/54j0yuslr3KElwAQpoO7DqcZa66?=
+ =?iso-8859-1?Q?lX6s9yajJrXnicETAUNTEwIPHthTn4r34QyYmqvH1uNCe8NZj0SWGHdGJ+?=
+ =?iso-8859-1?Q?nf1rlh1ARtOB4vRkRDXQo+q4IZXRDTHrZKLimNs+IowmDyUvRU+a6sazr6?=
+ =?iso-8859-1?Q?FZ74FD3N+hauHAUMI6FysP9vrXyhMd8NBI+dsLo5nf38uhUoWq52KvLlO5?=
+ =?iso-8859-1?Q?2HWATWdh5L2dO5DnYzY7yPOd8ey+L/Cr0L10iFg38fAblrO+lzBd63BWd1?=
+ =?iso-8859-1?Q?+RcY7XMgpn1+VD1dVVEjtBRbPk4lUy0xZi7cJHn15Ay6Va5Zxr82UA7ege?=
+ =?iso-8859-1?Q?p+7i6yyKzBENxqGDRU8unt5XWkYv5yUgn2yiL969nZxWObildQHfKLwrnu?=
+ =?iso-8859-1?Q?YTyUJJdqOXvdSiX8GByRPhkHC/AN8TTi/HjhA1p7gOEPM9BhkAoYkibNiG?=
+ =?iso-8859-1?Q?J8G3mEibkBiU6jg/nYfEGQ50ftNoc9fEU4wWz8n4Mzaxn130lb034ZWcxO?=
+ =?iso-8859-1?Q?oaq5POQDeZNYYX9Vs+UQzodkrRTh/vRSlV6AUjJtB/qBtgnq2RfetIJSmH?=
+ =?iso-8859-1?Q?6lxf4i87sn1NhMsXtraCDINztmdVqI71G8dMlrmnaQRealJ1F1YE2Llbog?=
+ =?iso-8859-1?Q?dblEsAXT7PdbMBCBkGkpzL58Ze6WfleR8YTqOXcxmUnoBYGgF4LBqcYZs7?=
+ =?iso-8859-1?Q?aKLNkORwLmFQKtVJcZOH/oe2NnQvMh2RIVxIS4hGXNH77rJvMEBM2ojUDZ?=
+ =?iso-8859-1?Q?iHt5St58FRrtXaHC2VGCf6Ya4/NHnOD7x3VMvW6RvH4TFdBgH5aqItMr3j?=
+ =?iso-8859-1?Q?r+xtqv+XJwanFfl3q2AxE9l0PYb/7TfBEC/9l4PQLI578oO1ph5Ui3PGyq?=
+ =?iso-8859-1?Q?YjK259PhaMxCJWCzVJ8bfQSGQ=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11981dc9-c2ff-42b8-d15a-08da366ff626
+X-MS-Exchange-CrossTenant-AuthSource: SH0PR01MB0729.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2022 12:39:32.6761
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 89592e53-6f9d-4b93-82b1-9f8da689f1b4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: um7g0CyWNeDuUrRG3WZNZIrdFT2eLRxv8JnAzmDnnyqcKkVPnYGX5c/Qo8ecN5ylQ0X7yTAx7NFeY249GP39UeQG4Ecsx//InMoR5I2KJzM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SH0PR01MB0506
+X-OriginatorOrg: gientech.com
+X-Spam-Status: Yes, score=7.4 required=5.0 tests=BAYES_50,DATE_IN_PAST_96_XX,
+        DKIM_INVALID,DKIM_SIGNED,NIXSPAM_IXHASH,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4492]
+        *  3.0 NIXSPAM_IXHASH http://www.nixspam.org/
+        * -0.0 SPF_HELO_PASS SPF: HELO matches SPF record
+        *  3.4 DATE_IN_PAST_96_XX Date: is 96 hours or more before Received:
+        *      date
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        *  0.1 DKIM_INVALID DKIM or DK signature exists, but is not valid
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+X-Spam-Level: *******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The journal no-space deadlock was reported time to time. Such deadlock
-can happen in the following situation.
-
-When all journal buckets are fully filled by active jset with heavy
-write I/O load, the cache set registration (after a reboot) will load
-all active jsets and inserting them into the btree again (which is
-called journal replay). If a journaled bkey is inserted into a btree
-node and results btree node split, new journal request might be
-triggered. For example, the btree grows one more level after the node
-split, then the root node record in cache device super block will be
-upgrade by bch_journal_meta() from bch_btree_set_root(). But there is no
-space in journal buckets, the journal replay has to wait for new journal
-bucket to be reclaimed after at least one journal bucket replayed. This
-is one example that how the journal no-space deadlock happens.
-
-The solution to avoid the deadlock is to reserve 1 journal bucket in
-run time, and only permit the reserved journal bucket to be used during
-cache set registration procedure for things like journal replay. Then
-the journal space will never be fully filled, there is no chance for
-journal no-space deadlock to happen anymore.
-
-This patch adds a new member "bool do_reserve" in struct journal, it is
-inititalized to 0 (false) when struct journal is allocated, and set to
-1 (true) by bch_journal_space_reserve() when all initialization done in
-run_cache_set(). In the run time when journal_reclaim() tries to
-allocate a new journal bucket, free_journal_buckets() is called to check
-whether there are enough free journal buckets to use. If there is only
-1 free journal bucket and journal->do_reserve is 1 (true), the last
-bucket is reserved and free_journal_buckets() will return 0 to indicate
-no free journal bucket. Then journal_reclaim() will give up, and try
-next time to see whetheer there is free journal bucket to allocate. By
-this method, there is always 1 jouranl bucket reserved in run time.
-
-During the cache set registration, journal->do_reserve is 0 (false), so
-the reserved journal bucket can be used to avoid the no-space deadlock.
-
-Reported-by: Nikhil Kshirsagar <nkshirsagar@gmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: stable@vger.kernel.org
----
- drivers/md/bcache/journal.c | 31 ++++++++++++++++++++++++++-----
- drivers/md/bcache/journal.h |  2 ++
- drivers/md/bcache/super.c   |  1 +
- 3 files changed, 29 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index df5347ea450b..e5da469a4235 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -405,6 +405,11 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
- 	return ret;
- }
- 
-+void bch_journal_space_reserve(struct journal *j)
-+{
-+	j->do_reserve = true;
-+}
-+
- /* Journalling */
- 
- static void btree_flush_write(struct cache_set *c)
-@@ -621,12 +626,30 @@ static void do_journal_discard(struct cache *ca)
- 	}
- }
- 
-+static unsigned int free_journal_buckets(struct cache_set *c)
-+{
-+	struct journal *j = &c->journal;
-+	struct cache *ca = c->cache;
-+	struct journal_device *ja = &c->cache->journal;
-+	unsigned int n;
-+
-+	/* In case njournal_buckets is not power of 2 */
-+	if (ja->cur_idx >= ja->discard_idx)
-+		n = ca->sb.njournal_buckets +  ja->discard_idx - ja->cur_idx;
-+	else
-+		n = ja->discard_idx - ja->cur_idx;
-+
-+	if (n > (1 + j->do_reserve))
-+		return n - (1 + j->do_reserve);
-+
-+	return 0;
-+}
-+
- static void journal_reclaim(struct cache_set *c)
- {
- 	struct bkey *k = &c->journal.key;
- 	struct cache *ca = c->cache;
- 	uint64_t last_seq;
--	unsigned int next;
- 	struct journal_device *ja = &ca->journal;
- 	atomic_t p __maybe_unused;
- 
-@@ -649,12 +672,10 @@ static void journal_reclaim(struct cache_set *c)
- 	if (c->journal.blocks_free)
- 		goto out;
- 
--	next = (ja->cur_idx + 1) % ca->sb.njournal_buckets;
--	/* No space available on this device */
--	if (next == ja->discard_idx)
-+	if (!free_journal_buckets(c))
- 		goto out;
- 
--	ja->cur_idx = next;
-+	ja->cur_idx = (ja->cur_idx + 1) % ca->sb.njournal_buckets;
- 	k->ptr[0] = MAKE_PTR(0,
- 			     bucket_to_sector(c, ca->sb.d[ja->cur_idx]),
- 			     ca->sb.nr_this_dev);
-diff --git a/drivers/md/bcache/journal.h b/drivers/md/bcache/journal.h
-index f2ea34d5f431..cd316b4a1e95 100644
---- a/drivers/md/bcache/journal.h
-+++ b/drivers/md/bcache/journal.h
-@@ -105,6 +105,7 @@ struct journal {
- 	spinlock_t		lock;
- 	spinlock_t		flush_write_lock;
- 	bool			btree_flushing;
-+	bool			do_reserve;
- 	/* used when waiting because the journal was full */
- 	struct closure_waitlist	wait;
- 	struct closure		io;
-@@ -182,5 +183,6 @@ int bch_journal_replay(struct cache_set *c, struct list_head *list);
- 
- void bch_journal_free(struct cache_set *c);
- int bch_journal_alloc(struct cache_set *c);
-+void bch_journal_space_reserve(struct journal *j);
- 
- #endif /* _BCACHE_JOURNAL_H */
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index bf3de149d3c9..2bb55278d22d 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -2128,6 +2128,7 @@ static int run_cache_set(struct cache_set *c)
- 
- 	flash_devs_run(c);
- 
-+	bch_journal_space_reserve(&c->journal);
- 	set_bit(CACHE_SET_RUNNING, &c->flags);
- 	return 0;
- err:
--- 
-2.35.3
-
+Can we do this together
