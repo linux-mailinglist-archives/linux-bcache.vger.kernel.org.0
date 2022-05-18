@@ -2,118 +2,234 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CBA4B527B84
-	for <lists+linux-bcache@lfdr.de>; Mon, 16 May 2022 03:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11AC752AFDF
+	for <lists+linux-bcache@lfdr.de>; Wed, 18 May 2022 03:23:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233300AbiEPBud (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 15 May 2022 21:50:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43794 "EHLO
+        id S233535AbiERBXK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 17 May 2022 21:23:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239155AbiEPBub (ORCPT
+        with ESMTP id S232630AbiERBXJ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 15 May 2022 21:50:31 -0400
-Received: from zg8tmty1ljiyny4xntqumjca.icoremail.net (zg8tmty1ljiyny4xntqumjca.icoremail.net [165.227.154.27])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id DEDF238A1;
-        Sun, 15 May 2022 18:50:25 -0700 (PDT)
-Received: from [10.8.148.37] (unknown [59.61.78.232])
-        by app2 (Coremail) with SMTP id SyJltACXhcTfrYFiH34AAA--.113S2;
-        Mon, 16 May 2022 09:50:23 +0800 (CST)
-Message-ID: <0010ee74-0aac-e998-c74b-84bf7de23335@wangsu.com>
-Date:   Mon, 16 May 2022 09:50:22 +0800
+        Tue, 17 May 2022 21:23:09 -0400
+Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEA6054681
+        for <linux-bcache@vger.kernel.org>; Tue, 17 May 2022 18:23:08 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mx.ewheeler.net (Postfix) with ESMTP id 8D0644A;
+        Tue, 17 May 2022 18:23:08 -0700 (PDT)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id 7szOXptHDa-G; Tue, 17 May 2022 18:23:04 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id 1C25340;
+        Tue, 17 May 2022 18:23:04 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 1C25340
+Date:   Tue, 17 May 2022 18:22:59 -0700 (PDT)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
+To:     Adriano Silva <adriano_da_silva@yahoo.com.br>
+cc:     Bcache Linux <linux-bcache@vger.kernel.org>,
+        Coly Li <colyli@suse.de>, Matthias Ferdinand <bcache@mfedv.net>
+Subject: Re: Bcache in writes direct with fsync. Are IOPS limited?
+In-Reply-To: <958894243.922478.1652201375900@mail.yahoo.com>
+Message-ID: <9d59af25-d648-4777-a5c0-c38c246a9610@ewheeler.net>
+References: <958894243.922478.1652201375900.ref@mail.yahoo.com> <958894243.922478.1652201375900@mail.yahoo.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH] bcache: fix wrong BITMASK offset value for
- BDEV_CACHE_MODE
-Content-Language: en-US
-To:     Coly Li <colyli@suse.de>
-Cc:     axboe@kernel.dk, linux-kernel@vger.kernel.org,
-        linux-bcache@vger.kernel.org
-References: <20210720103246.112027-1-linf@wangsu.com>
- <f80cefa2-e238-9939-5f48-9d84bcc248f3@suse.de>
-From:   Lin Feng <linf@wangsu.com>
-In-Reply-To: <f80cefa2-e238-9939-5f48-9d84bcc248f3@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: SyJltACXhcTfrYFiH34AAA--.113S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7urW8Ww13Zr15Cw4rtrWUArb_yoW8CFyfpa
-        s5JF4rJF48Xa4I9w1xAF4agrsYv3yrJas3Z34UWF15ury3tw1Fqryruw4Yyr95C3yvkr4I
-        yF1DK345GFW8uFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkSb7Iv0xC_Kw4lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-        cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-        v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owA2z4x0Y4vE
-        x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzx
-        vE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VCjz48v1sIEY20_Gr4l
-        Yx0Ec7CjxVAajcxG14v26F4UJVW0owAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
-        1lc7I2V7IY0VAS07AlzVAYIcxG8wCY02Avz4vE14v_KwCF04k20xvY0x0EwIxGrwCF04k2
-        0xvE74AGY7Cv6cx26r48MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
-        0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0E
-        wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
-        W8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAI
-        cVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUTs2-UUUUU
-X-CM-SenderInfo: holqwq5zdqw23xof0z/
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,T_SCC_BODY_TEXT_LINE,T_SPF_TEMPERROR
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+On Tue, 10 May 2022, Adriano Silva wrote:
+> I'm trying to set up a flash disk NVMe as a disk cache for two or three 
+> isolated (I will use 2TB disks, but in these tests I used a 1TB one) 
+> spinning disks that I have on a Linux 5.4.174 (Proxmox node).
+
+Coly has been adding quite a few optimizations over the years.  You might 
+try a new kernel and see if that helps.  More below.
+
+> I'm using a NVMe (960GB datacenter devices with tantalum capacitors) as 
+> a cache.
+> [...]
+>
+> But when I do the same test on bcache writeback, the performance drops a 
+> lot. Of course, it's better than the performance of spinning disks, but 
+> much worse than when accessed directly from the NVMe device hardware.
+>
+> [...]
+> As we can see, the same test done on the bcache0 device only got 1548 
+> IOPS and that yielded only 6.3 KB/s.
+
+Well done on the benchmarking!  I always thought our new NVMes performed 
+slower than expected but hadn't gotten around to investigating. 
+
+> I've noticed in several tests, varying the amount of jobs or increasing 
+> the size of the blocks, that the larger the size of the blocks, the more 
+> I approximate the performance of the physical device to the bcache 
+> device.
+
+You said "blocks" but did you mean bucket size (make-bcache -b) or block 
+size (make-bcache -w) ?
+
+If larger buckets makes it slower than that actually surprises me: bigger 
+buckets means less metadata and better sequential writeback to the 
+spinning disks (though you hadn't yet hit writeback to spinning disks in 
+your stats).  Maybe you already tried, but varying the bucket size might 
+help.  Try graphing bucket size (powers of 2) against IOPS, maybe there is 
+a "sweet spot"?
+
+Be aware that 4k blocks (so-called "4Kn") is unsafe for the cache device, 
+unless Coly has patched that.  Make sure your `blockdev --getss` reports 
+512 for your NVMe!
+
+Hi Coly,
+
+Some time ago you ordered an an SSD to test the 4k cache issue, has that 
+been fixed?  I've kept an eye out for the patch but not sure if it was released.
+
+You have a really great test rig setup with NVMes for stress
+testing bcache. Can you replicate Adriano's `ioping` numbers below?
+
+> With ioping it is also possible to notice a limitation, as the latency 
+> of the bcache0 device is around 1.5ms, while in the case of the raw 
+> device (a partition of NVMe), the same test is only 82.1us.
+> 
+> root@pve-20:~# ioping -c10 /dev/bcache0 -D -Y -WWW -s4k
+> 4 KiB >>> /dev/bcache0 (block device 931.5 GiB): request=1 time=1.52 ms (warmup)
+> 4 KiB >>> /dev/bcache0 (block device 931.5 GiB): request=2 time=1.60 ms
+> 4 KiB >>> /dev/bcache0 (block device 931.5 GiB): request=3 time=1.55 ms
+>
+> root@pve-20:~# ioping -c10 /dev/nvme0n1p2 -D -Y -WWW -s4k
+> 4 KiB >>> /dev/nvme0n1p2 (block device 300 GiB): request=1 time=81.2 us (warmup)
+> 4 KiB >>> /dev/nvme0n1p2 (block device 300 GiB): request=2 time=82.7 us
+> 4 KiB >>> /dev/nvme0n1p2 (block device 300 GiB): request=3 time=82.4 us
+
+Wow, almost 20x higher latency, sounds convincing that something is wrong.
+
+A few things to try:
+
+1. Try ioping without -Y.  How does it compare?
+
+2. Maybe this is an inter-socket latency issue.  Is your server 
+   multi-socket?  If so, then as a first pass you could set the kernel 
+   cmdline `isolcpus` for testing to limit all processes to a single 
+   socket where the NVMe is connected (see `lscpu`).  Check `hwloc-ls`
+   or your motherboard manual to see how the NVMe port is wired to your
+   CPUs.
+
+   If that helps then fine tune with `numactl -cN ioping` and 
+   /proc/irq/<n>/smp_affinity_list (and `grep nvme /proc/interrupts`) to 
+   make sure your NVMe's are locked to IRQs on the same socket.
+
+3a. sysfs:
+
+> # echo 0 > /sys/block/bcache0/bcache/sequential_cutoff
+
+good.
+
+> # echo 0 > /sys/fs/bcache/<cache set>/congested_read_threshold_us
+> # echo 0 > /sys/fs/bcache/<cache set>/congested_write_threshold_us
+
+Also try these (I think bcache/cache is a symlink to /sys/fs/bcache/<cache set>)
+
+echo 10000000 > /sys/block/bcache0/bcache/cache/congested_read_threshold_us 
+echo 10000000 > /sys/block/bcache0/bcache/cache/congested_write_threshold_us
 
 
-On 5/13/22 23:20, Coly Li wrote:
-> On 7/20/21 6:32 PM, Lin Feng wrote:
->> Original codes:
->> BITMASK(CACHE_SYNC,			struct cache_sb, flags, 0, 1);
->> BITMASK(CACHE_DISCARD,			struct cache_sb, flags, 1, 1);
->> BITMASK(CACHE_REPLACEMENT,		struct cache_sb, flags, 2, 3);
->> ...
->> BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
->>
->> Should BDEV_CACHE_MODE bits start from bit-nr 5(2+3) else it overlaps
->> with previous defined bit chunks, since we have 4 types of cache modes,
->> BDEV_CACHE_MODE will overwrite CACHE_SYNC and CACHE_DISCARD bits.
-> 
-> The overlap won't happen, previous lines are for cache device, and what
-> you modified is for backing device.
-> 
-> And your patch changes the on-disk format, which is unacceptable anyway.
-> 
+Try tuning journal_delay_ms: 
+  /sys/fs/bcache/<cset-uuid>/journal_delay_ms
+    Journal writes will delay for up to this many milliseconds, unless a 
+    cache flush happens sooner. Defaults to 100.
 
-Yes, you are right, this patch happened as I started reading bcache codes,
-I did not get a whole picture of bcache at that time, I'm sorry for making
-noise.
+3b: Hacking bcache code:
 
-Thank you, Coly!
+I just noticed that journal_delay_ms says "unless a cache flush happens 
+sooner" but cache flushes can be re-ordered so flushing the journal when 
+REQ_OP_FLUSH comes through may not be useful, especially if there is a 
+high volume of flushes coming down the pipe because the flushes could kill 
+the NVMe's cache---and maybe the 1.5ms ping is actual flash latency.  It
+would flush data and journal.
 
-linfeng
+Maybe there should be a cachedev_noflush sysfs option for those with some 
+kind of power-loss protection of there SSD's.  It looks like this is 
+handled in request.c when these functions call bch_journal_meta():
+
+	1053: static void cached_dev_nodata(struct closure *cl)
+	1263: static void flash_dev_nodata(struct closure *cl)
+
+Coly can you comment about journal flush semantics with respect to 
+performance vs correctness and crash safety?
+
+Adriano, as a test, you could change this line in search_alloc() in 
+request.c:
+
+	- s->iop.flush_journal    = op_is_flush(bio->bi_opf);
+	+ s->iop.flush_journal    = 0;
+
+and see how performance changes.
+
+Someone correct me if I'm wrong, but I don't think flush_journal=0 will 
+affect correctness unless there is a crash.  If that /is/ the performance 
+problem then it would narrow the scope of this discussion.
+
+4. I wonder if your 1.5ms `ioping` stats scale with CPU clock speed: can 
+   you set your CPU governor to run at full clock speed and then slowest 
+   clock speed to see if it is a CPU limit somewhere as we expect?
+
+   You can do `grep MHz /proc/cpuinfo` to see the active rate to make sure 
+   the governor did its job.  
+
+   If it scales with CPU then something in bcache is working too hard.  
+   Maybe garbage collection?  Other devs would need to chime in here to 
+   steer the troubleshooting if that is the case.
+
+
+5. I'm not sure if garbage collection is the issue, but you might try 
+   Mingzhe's dynamic incremental gc patch:
+	https://www.spinics.net/lists/linux-bcache/msg11185.html
+
+6. Try dm-cache and see if its IO latency is similar to bcache: If it is 
+   about the same then that would indicate an issue in the block layer 
+   somewhere outside of bcache.  If dm-cache is better, then that confirms 
+   a bcache issue.
+
+
+> The cache was configured directly on one of the NVMe partitions (in this 
+> case, the first partition). I did several tests using fio and ioping, 
+> testing on a partition on the NVMe device, without partition and 
+> directly on the raw block, on a first partition, on the second, with or 
+> without configuring bcache. I did all this to remove any doubt as to the 
+> method. The results of tests performed directly on the hardware device, 
+> without going through bcache are always fast and similar.
 > 
-> Coly Li
+> But tests in bcache are always slower. If you use writethrough, of 
+> course, it gets much worse, because the performance is equal to the raw 
+> spinning disk.
 > 
->>
->> This bug stays there since first upstream version of bcache, don't know
->> why it lives so long, or am i missing something, please point me out
->> if I'm wrong, thanks!
->>
->> Signed-off-by: Lin Feng <linf@wangsu.com>
->> ---
->>    include/uapi/linux/bcache.h | 2 +-
->>    1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/include/uapi/linux/bcache.h b/include/uapi/linux/bcache.h
->> index cf7399f03b71..dccd89756451 100644
->> --- a/include/uapi/linux/bcache.h
->> +++ b/include/uapi/linux/bcache.h
->> @@ -288,7 +288,7 @@ BITMASK(CACHE_REPLACEMENT,		struct cache_sb, flags, 2, 3);
->>    #define CACHE_REPLACEMENT_FIFO		1U
->>    #define CACHE_REPLACEMENT_RANDOM	2U
->>    
->> -BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
->> +BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 5, 4);
->>    #define CACHE_MODE_WRITETHROUGH		0U
->>    #define CACHE_MODE_WRITEBACK		1U
->>    #define CACHE_MODE_WRITEAROUND		2U
-> 
+> Using writeback improves a lot, but still doesn't use the full speed of 
+> NVMe (honestly, much less than full speed).
+
+Indeed, I hope this can be fixed!  A 20x improvement in bcache would 
+be awesome.
+ 
+> But I've also noticed that there is a limit on writing sequential data, 
+> which is a little more than half of the maximum write rate shown in 
+> direct tests by the NVMe device.
+
+For sync, async, or both?
+
+> Processing doesn't seem to be going up like the tests.
+
+What do you mean "processing" ?
+
+-Eric
+
 
