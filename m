@@ -2,44 +2,52 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CB8452F28E
-	for <lists+linux-bcache@lfdr.de>; Fri, 20 May 2022 20:24:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D74A52FE75
+	for <lists+linux-bcache@lfdr.de>; Sat, 21 May 2022 19:05:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348563AbiETSYO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 20 May 2022 14:24:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59182 "EHLO
+        id S1343747AbiEURFN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 21 May 2022 13:05:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233230AbiETSYN (ORCPT
+        with ESMTP id S229896AbiEURFM (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 20 May 2022 14:24:13 -0400
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61ADD190D13
-        for <linux-bcache@vger.kernel.org>; Fri, 20 May 2022 11:24:12 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id 16BD545;
-        Fri, 20 May 2022 11:24:12 -0700 (PDT)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id Opn2oMDyoMfv; Fri, 20 May 2022 11:24:07 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id A500540;
-        Fri, 20 May 2022 11:24:07 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net A500540
-Date:   Fri, 20 May 2022 11:24:05 -0700 (PDT)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-To:     Zou Mingzhe <mingzhe.zou@easystack.cn>
-cc:     linux-bcache@vger.kernel.org, zoumingzhe@qq.com
-Subject: Re: [PATCH v3] bcache: dynamic incremental gc
-In-Reply-To: <112eaaf7-05fd-3b4f-0190-958d0c85fa1f@easystack.cn>
-Message-ID: <37d75ff-877c-5453-b6a0-81c8d737299@ewheeler.net>
-References: <20220511073903.13568-1-mingzhe.zou@easystack.cn> <ecce38e7-8ba0-5fbf-61a6-2dfc21c7793d@suse.de> <112eaaf7-05fd-3b4f-0190-958d0c85fa1f@easystack.cn>
+        Sat, 21 May 2022 13:05:12 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE033BA5C;
+        Sat, 21 May 2022 10:05:10 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 8E2A91F95F;
+        Sat, 21 May 2022 17:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1653152709; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=vzA3qWmeCqPx4k/yYTvG3mgQXpDOLLr4ex0hPbI2Bhc=;
+        b=wdTdquh4GVqWUsMJ7t6thpEqhXElvoJjiKOphB3MHppA4MoC1y5icFvZgPUYxbfg2HK2Q6
+        o5DQgBS0RUPCJBXggbDhfcYyIvFKrazUdHqg+/Hek8T84Vap8ATVuIkzcUc90Jp8Km85Ba
+        L9dJtfP2RNToyaUs/BBGzCvyiLEQ9uo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1653152709;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=vzA3qWmeCqPx4k/yYTvG3mgQXpDOLLr4ex0hPbI2Bhc=;
+        b=GfPBBwBkEXiprD7vA7i10fLPz0PBo784lIdXi2+R+kLGipuz35PSuEYKwQ59vRWy5LUK6d
+        SnYYoeIHeSOHeLBw==
+Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
+        by relay2.suse.de (Postfix) with ESMTP id C9E442C141;
+        Sat, 21 May 2022 17:05:07 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     linux-bcache@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, Coly Li <colyli@suse.de>,
+        stable@vger.kernel.org
+Subject: [PATCH 1/4] bcache: improve multithreaded bch_btree_check()
+Date:   Sun, 22 May 2022 01:04:59 +0800
+Message-Id: <20220521170502.20026-1-colyli@suse.de>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-442626393-1653071047=:2898"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -47,155 +55,138 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Commit 8e7102273f59 ("bcache: make bch_btree_check() to be
+multithreaded") makes bch_btree_check() to be much faster when checking
+all btree nodes during cache device registration. But it isn't in ideal
+shap yet, still can be improved.
 
---8323328-442626393-1653071047=:2898
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+This patch does the following thing to improve current parallel btree
+nodes check by multiple threads in bch_btree_check(),
+- Add read lock to root node while checking all the btree nodes with
+  multiple threads. Although currently it is not mandatory but it is
+  good to have a read lock in code logic.
+- Remove local variable 'char name[32]', and generate kernel thread name
+  string directly when calling kthread_run().
+- Allocate local variable "struct btree_check_state check_state" on the
+  stack and avoid unnecessary dynamic memory allocation for it.
+- Increase check_state->started to count created kernel thread after it
+  succeeds to create.
+- When wait for all checking kernel threads to finish, use wait_event()
+  to replace wait_event_interruptible().
 
-On Fri, 20 May 2022, Zou Mingzhe wrote:
-> 在 2022/5/12 21:41, Coly Li 写道:
-> > On 5/11/22 3:39 PM, mingzhe.zou@easystack.cn wrote:
-> >> From: ZouMingzhe <mingzhe.zou@easystack.cn>
-> >>
-> >> Currently, GC wants no more than 100 times, with at least
-> >> 100 nodes each time, the maximum number of nodes each time
-> >> is not limited.
-> >>
-> >> ```
-> >> static size_t btree_gc_min_nodes(struct cache_set *c)
-> >> {
-> >>          ......
-> >>          min_nodes = c->gc_stats.nodes / MAX_GC_TIMES;
-> >>          if (min_nodes < MIN_GC_NODES)
-> >>                  min_nodes = MIN_GC_NODES;
-> >>
-> >>          return min_nodes;
-> >> }
-> >> ```
-> >>
-> >> According to our test data, when nvme is used as the cache,
-> >> it takes about 1ms for GC to handle each node (block 4k and
-> >> bucket 512k). This means that the latency during GC is at
-> >> least 100ms. During GC, IO performance would be reduced by
-> >> half or more.
-> >>
-> >> I want to optimize the IOPS and latency under high pressure.
-> >> This patch hold the inflight peak. When IO depth up to maximum,
-> >> GC only process very few(10) nodes, then sleep immediately and
-> >> handle these requests.
-> >>
-> >> bch_bucket_alloc() maybe wait for bch_allocator_thread() to
-> >> wake up, and and bch_allocator_thread() needs to wait for gc
-> >> to complete, in which case gc needs to end quickly. So, add
-> >> bucket_alloc_inflight to cache_set in v3.
-> >>
-> >> ```
-> >> long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
-> >> {
-> >>          ......
-> >>          do {
-> >> prepare_to_wait(&ca->set->bucket_wait, &w,
-> >>                                  TASK_UNINTERRUPTIBLE);
-> >>
-> >>                  mutex_unlock(&ca->set->bucket_lock);
-> >>                  schedule();
-> >>                  mutex_lock(&ca->set->bucket_lock);
-> >>          } while (!fifo_pop(&ca->free[RESERVE_NONE], r) &&
-> >>                   !fifo_pop(&ca->free[reserve], r));
-> >>          ......
-> >> }
-> >>
-> >> static int bch_allocator_thread(void *arg)
-> >> {
-> >>     ......
-> >>     allocator_wait(ca, bch_allocator_push(ca, bucket));
-> >>     wake_up(&ca->set->btree_cache_wait);
-> >>     wake_up(&ca->set->bucket_wait);
-> >>     ......
-> >> }
-> >>
-> >> static void bch_btree_gc(struct cache_set *c)
-> >> {
-> >>     ......
-> >>     bch_btree_gc_finish(c);
-> >>     wake_up_allocators(c);
-> >>     ......
-> >> }
-> >> ```
-> >>
-> >> Apply this patch, each GC maybe only process very few nodes,
-> >> GC would last a long time if sleep 100ms each time. So, the
-> >> sleep time should be calculated dynamically based on gc_cost.
-> >>
-> >> At the same time, I added some cost statistics in gc_stat,
-> >> hoping to provide useful information for future work.
-> >
-> >
-> > Hi Mingzhe,
-> >
-> > From the first glance, I feel this change may delay the small GC period, and
-> > finally result a large GC period, which is not expected.
-> >
-> > But it is possible that my feeling is incorrect. Do you have detailed
-> > performance number about both I/O latency  and GC period, then I can have
-> > more understanding for this effort.
-> >
-> > BTW, I will add this patch to my testing set and experience myself.
-> >
-> >
-> > Thanks.
-> >
-> >
-> > Coly Li
-> >
-> >
-> Hi Coly,
-> 
-> First, your feeling is right. Then, I have some performance number abort
-> before and after this patch.
-> Since the mailing list does not accept attachments, I put them on the gist.
-> 
-> Please visit the page for details:
-> https://gist.github.com/zoumingzhe/69a353e7c6fffe43142c2f42b94a67b5
-> mingzhe
+With this change, the code is more clear, and some potential error
+conditions are avoided.
 
-The graphs certainly show that peak latency is much lower, that is 
-improvement, and dmesg shows the avail_nbuckets stays about the same so GC 
-is keeping up.
+Fixes: 8e7102273f59 ("bcache: make bch_btree_check() to be multithreaded")
+Signed-off-by: Coly Li <colyli@suse.de>
+Cc: stable@vger.kernel.org
+---
+ drivers/md/bcache/btree.c | 58 ++++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 32 deletions(-)
 
-Questions: 
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index ad9f16689419..2362bb8ef6d1 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -2006,8 +2006,7 @@ int bch_btree_check(struct cache_set *c)
+ 	int i;
+ 	struct bkey *k = NULL;
+ 	struct btree_iter iter;
+-	struct btree_check_state *check_state;
+-	char name[32];
++	struct btree_check_state check_state;
+ 
+ 	/* check and mark root node keys */
+ 	for_each_key_filter(&c->root->keys, k, &iter, bch_ptr_invalid)
+@@ -2018,63 +2017,58 @@ int bch_btree_check(struct cache_set *c)
+ 	if (c->root->level == 0)
+ 		return 0;
+ 
+-	check_state = kzalloc(sizeof(struct btree_check_state), GFP_KERNEL);
+-	if (!check_state)
+-		return -ENOMEM;
+-
+-	check_state->c = c;
+-	check_state->total_threads = bch_btree_chkthread_nr();
+-	check_state->key_idx = 0;
+-	spin_lock_init(&check_state->idx_lock);
+-	atomic_set(&check_state->started, 0);
+-	atomic_set(&check_state->enough, 0);
+-	init_waitqueue_head(&check_state->wait);
++	check_state.c = c;
++	check_state.total_threads = bch_btree_chkthread_nr();
++	check_state.key_idx = 0;
++	spin_lock_init(&check_state.idx_lock);
++	atomic_set(&check_state.started, 0);
++	atomic_set(&check_state.enough, 0);
++	init_waitqueue_head(&check_state.wait);
+ 
++	rw_lock(0, c->root, c->root->level);
+ 	/*
+ 	 * Run multiple threads to check btree nodes in parallel,
+-	 * if check_state->enough is non-zero, it means current
++	 * if check_state.enough is non-zero, it means current
+ 	 * running check threads are enough, unncessary to create
+ 	 * more.
+ 	 */
+-	for (i = 0; i < check_state->total_threads; i++) {
+-		/* fetch latest check_state->enough earlier */
++	for (i = 0; i < check_state.total_threads; i++) {
++		/* fetch latest check_state.enough earlier */
+ 		smp_mb__before_atomic();
+-		if (atomic_read(&check_state->enough))
++		if (atomic_read(&check_state.enough))
+ 			break;
+ 
+-		check_state->infos[i].result = 0;
+-		check_state->infos[i].state = check_state;
+-		snprintf(name, sizeof(name), "bch_btrchk[%u]", i);
+-		atomic_inc(&check_state->started);
++		check_state.infos[i].result = 0;
++		check_state.infos[i].state = &check_state;
+ 
+-		check_state->infos[i].thread =
++		check_state.infos[i].thread =
+ 			kthread_run(bch_btree_check_thread,
+-				    &check_state->infos[i],
+-				    name);
+-		if (IS_ERR(check_state->infos[i].thread)) {
++				    &check_state.infos[i],
++				    "bch_btrchk[%d]", i);
++		if (IS_ERR(check_state.infos[i].thread)) {
+ 			pr_err("fails to run thread bch_btrchk[%d]\n", i);
+ 			for (--i; i >= 0; i--)
+-				kthread_stop(check_state->infos[i].thread);
++				kthread_stop(check_state.infos[i].thread);
+ 			ret = -ENOMEM;
+ 			goto out;
+ 		}
++		atomic_inc(&check_state.started);
+ 	}
+ 
+ 	/*
+ 	 * Must wait for all threads to stop.
+ 	 */
+-	wait_event_interruptible(check_state->wait,
+-				 atomic_read(&check_state->started) == 0);
++	wait_event(check_state.wait, atomic_read(&check_state.started) == 0);
+ 
+-	for (i = 0; i < check_state->total_threads; i++) {
+-		if (check_state->infos[i].result) {
+-			ret = check_state->infos[i].result;
++	for (i = 0; i < check_state.total_threads; i++) {
++		if (check_state.infos[i].result) {
++			ret = check_state.infos[i].result;
+ 			goto out;
+ 		}
+ 	}
+ 
+ out:
+-	kfree(check_state);
++	rw_unlock(0, c->root);
+ 	return ret;
+ }
+ 
+-- 
+2.35.3
 
-1. Why is the after-"BW NO GC" graph so much flatter than the before-"BW 
-   NO GC" graph?  I would expect your control measurements to be about the 
-   same before vs after.  You might `blkdiscard` the cachedev and 
-   re-format between runs in case the FTL is getting in the way, or maybe 
-   something in the patch is affecting the "NO GC" graphs.
-
-2. I wonder how the latency looks if you zoom into to the latency graph: 
-   If you truncate the before-"LATENCY DO GC" graph at 3000 us then how 
-   does the average latency look between the two?
-
-3. This may be solved if you can fix the control graph issue in #1, but 
-   the before vs after of "BW DO GC" shows about a 30% decrease in 
-   bandwidth performance outside of the GC spikes.  "IOPS DO GC" is lower 
-   with the patch too.  Do you think that your dynamic incremental gc 
-   algorithm be tuned to deal with GC latency and still provide nearly the 
-   same IOPS and bandwidth as before?
-
-
---
-Eric Wheeler
-
-
-
-> >
-> >
-> > [snipped]
-> >
-> >
-> >
-> 
-> 
---8323328-442626393-1653071047=:2898--
