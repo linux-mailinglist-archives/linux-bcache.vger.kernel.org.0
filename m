@@ -2,37 +2,73 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 208545310F5
-	for <lists+linux-bcache@lfdr.de>; Mon, 23 May 2022 15:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B9DB5313A2
+	for <lists+linux-bcache@lfdr.de>; Mon, 23 May 2022 18:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235947AbiEWNTE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 23 May 2022 09:19:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57768 "EHLO
+        id S236763AbiEWOHg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 23 May 2022 10:07:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235944AbiEWNTD (ORCPT
+        with ESMTP id S236611AbiEWOHf (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 23 May 2022 09:19:03 -0400
-Received: from mail-m2839.qiye.163.com (mail-m2839.qiye.163.com [103.74.28.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECE9D3880
-        for <linux-bcache@vger.kernel.org>; Mon, 23 May 2022 06:18:59 -0700 (PDT)
-Received: from localhost.localdomain (unknown [218.94.118.90])
-        by mail-m2839.qiye.163.com (Hmail) with ESMTPA id 34F87C0857;
-        Mon, 23 May 2022 21:18:57 +0800 (CST)
-From:   mingzhe.zou@easystack.cn
-To:     colyli@suse.de, linux-bcache@vger.kernel.org
-Cc:     dongsheng.yang@easystack.cn, zoumingzhe@qq.com
-Subject: [PATCH v4] bcache: dynamic incremental gc
-Date:   Mon, 23 May 2022 21:18:56 +0800
-Message-Id: <20220523131856.9163-1-mingzhe.zou@easystack.cn>
-X-Mailer: git-send-email 2.17.1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
-        kWDxoPAgseWUFZKDYvK1lXWShZQUlCN1dZLVlBSVdZDwkaFQgSH1lBWUIaSB1WH00fGEoZTU4eTE
-        wYVRkRExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PzY6Hxw6LjIsFTkYTCI9Aior
-        CBZPCSJVSlVKTU5ISEpKQkhMTEtIVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSktPS043Bg++
-X-HM-Tid: 0a80f1121b438421kuqw34f87c0857
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        Mon, 23 May 2022 10:07:35 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78A8424941
+        for <linux-bcache@vger.kernel.org>; Mon, 23 May 2022 07:07:33 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 31B8021AEB;
+        Mon, 23 May 2022 14:07:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1653314852; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Cm3/ha9KV14//H+P1OJOHeuobf3ONr1SVBMzE468OM8=;
+        b=GyeZLI9Bjahtn+Qik6lHDUZVh6r/hGMugjimqxzufx1UoFxpumtmoL1dFgkMiqpC9iJUMy
+        2cM2d4MKLkLtK2wK9TB3KbQSFOsw9GpMNq8mI1L6GlnbL0PTsZRcwWsW7n7vRqA3lh49Yp
+        HMh2Xz0JUg9b5PJWaoMldkkPOWdfWMs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1653314852;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Cm3/ha9KV14//H+P1OJOHeuobf3ONr1SVBMzE468OM8=;
+        b=qZgJtENnB7iEVOKNSSjVxPI7jSk1UgcnKt4etzZv7aSONSVKRb3+rMXiqQBoEbhGvM6T8v
+        Mpo5U0EzGXEd0aAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 254C9139F5;
+        Mon, 23 May 2022 14:07:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 2ovoOCKVi2I1bgAAMHmgww
+        (envelope-from <colyli@suse.de>); Mon, 23 May 2022 14:07:30 +0000
+Message-ID: <a3830c54-5e88-658f-f0ef-7ac675090b24@suse.de>
+Date:   Mon, 23 May 2022 22:07:29 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.9.1
+From:   Coly Li <colyli@suse.de>
+Subject: Re: Bcache in writes direct with fsync. Are IOPS limited?
+To:     Eric Wheeler <bcache@lists.ewheeler.net>,
+        Adriano Silva <adriano_da_silva@yahoo.com.br>
+Cc:     Bcache Linux <linux-bcache@vger.kernel.org>,
+        Matthias Ferdinand <bcache@mfedv.net>
+References: <958894243.922478.1652201375900.ref@mail.yahoo.com>
+ <958894243.922478.1652201375900@mail.yahoo.com>
+ <9d59af25-d648-4777-a5c0-c38c246a9610@ewheeler.net>
+Content-Language: en-US
+In-Reply-To: <9d59af25-d648-4777-a5c0-c38c246a9610@ewheeler.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -41,306 +77,218 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: ZouMingzhe <mingzhe.zou@easystack.cn>
+On 5/18/22 9:22 AM, Eric Wheeler wrote:
+> On Tue, 10 May 2022, Adriano Silva wrote:
+>> I'm trying to set up a flash disk NVMe as a disk cache for two or three
+>> isolated (I will use 2TB disks, but in these tests I used a 1TB one)
+>> spinning disks that I have on a Linux 5.4.174 (Proxmox node).
+> Coly has been adding quite a few optimizations over the years.  You might
+> try a new kernel and see if that helps.  More below.
 
-Currently, GC wants no more than 100 times, with at least
-100 nodes each time, the maximum number of nodes each time
-is not limited.
 
-```
-static size_t btree_gc_min_nodes(struct cache_set *c)
-{
-	......
-	min_nodes = c->gc_stats.nodes / MAX_GC_TIMES;
-	if (min_nodes < MIN_GC_NODES)
-		min_nodes = MIN_GC_NODES;
+Yes, the latest stable kernel is preferred. Linux 5.4 based kernel is 
+stable enough for bcache, but it is still better to use latest stable 
+kernel.
 
-	return min_nodes;
-}
-```
 
-According to our test data, when nvme is used as the cache,
-it takes about 1ms for GC to handle each node (block 4k and
-bucket 512k). This means that the latency during GC is at
-least 100ms. During GC, IO performance would be reduced by
-half or more.
+>> I'm using a NVMe (960GB datacenter devices with tantalum capacitors) as
+>> a cache.
+>> [...]
+>>
+>> But when I do the same test on bcache writeback, the performance drops a
+>> lot. Of course, it's better than the performance of spinning disks, but
+>> much worse than when accessed directly from the NVMe device hardware.
+>>
+>> [...]
+>> As we can see, the same test done on the bcache0 device only got 1548
+>> IOPS and that yielded only 6.3 KB/s.
+> Well done on the benchmarking!  I always thought our new NVMes performed
+> slower than expected but hadn't gotten around to investigating.
+>
+>> I've noticed in several tests, varying the amount of jobs or increasing
+>> the size of the blocks, that the larger the size of the blocks, the more
+>> I approximate the performance of the physical device to the bcache
+>> device.
+> You said "blocks" but did you mean bucket size (make-bcache -b) or block
+> size (make-bcache -w) ?
+>
+> If larger buckets makes it slower than that actually surprises me: bigger
+> buckets means less metadata and better sequential writeback to the
+> spinning disks (though you hadn't yet hit writeback to spinning disks in
+> your stats).  Maybe you already tried, but varying the bucket size might
+> help.  Try graphing bucket size (powers of 2) against IOPS, maybe there is
+> a "sweet spot"?
+>
+> Be aware that 4k blocks (so-called "4Kn") is unsafe for the cache device,
+> unless Coly has patched that.  Make sure your `blockdev --getss` reports
+> 512 for your NVMe!
+>
+> Hi Coly,
+>
+> Some time ago you ordered an an SSD to test the 4k cache issue, has that
+> been fixed?  I've kept an eye out for the patch but not sure if it was released.
 
-I want to optimize the IOPS and latency under high pressure.
-This patch hold the inflight peak. When IO depth up to maximum,
-GC only process very few(10) nodes, then sleep immediately and
-handle these requests.
 
-bch_bucket_alloc() maybe wait for bch_allocator_thread() to
-wake up, and and bch_allocator_thread() needs to wait for gc
-to complete, in which case gc needs to end quickly. So, add
-bucket_alloc_inflight to cache_set in v3.
+Yes, I got the Intel P3700 PCIe SSD to fix the 4Kn unaligned I/O issue 
+(borrowed from a hardware vendor). The new situation is, current kernel 
+does the sector size alignment checking quite earlier in bio layer, if 
+the LBA is not sector size aligned, it is rejected in the bio code, and 
+the underlying driver doesn't have chance to see the bio anymore. So for 
+now, the unaligned LBA for 4Kn device cannot reach bcache code, that's 
+to say, the original reported condition won't happen now.
 
-```
-long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
-{
-	......
-	do {
-		prepare_to_wait(&ca->set->bucket_wait, &w,
-				TASK_UNINTERRUPTIBLE);
+And after this observation, I stopped my investigation on the unaligned 
+sector size I/O on 4Kn device, and returned the P3700 PCIe SSD to the 
+hardware vendor.
 
-		mutex_unlock(&ca->set->bucket_lock);
-		schedule();
-		mutex_lock(&ca->set->bucket_lock);
-	} while (!fifo_pop(&ca->free[RESERVE_NONE], r) &&
-		 !fifo_pop(&ca->free[reserve], r));
-	......
-}
 
-static int bch_allocator_thread(void *arg)
-{
-	......
-	allocator_wait(ca, bch_allocator_push(ca, bucket));
-	wake_up(&ca->set->btree_cache_wait);
-	wake_up(&ca->set->bucket_wait);
-	......
-}
+> You have a really great test rig setup with NVMes for stress
+> testing bcache. Can you replicate Adriano's `ioping` numbers below?
 
-static void bch_btree_gc(struct cache_set *c)
-{
-	......
-	bch_btree_gc_finish(c);
-	wake_up_allocators(c);
-	......
-}
-```
 
-Apply this patch, each GC maybe only process very few nodes,
-GC would last a long time if sleep 100ms each time. So, the
-sleep time should be calculated dynamically based on gc_cost.
+I tried the similar operation, yes it should be a bit slower than raw 
+device access, but should not be slow like that...
 
-At the same time, I added some cost statistics in gc_stat,
-hoping to provide useful information for future work.
+Here is my fio single thread fsync performance number,
 
-changelog:
-v2: fix auto build test ERROR
-v3: add bucket_alloc_inflight to cache_set
-    improve commit comment
-v4: improve dmesg print
+job0: (groupid=0, jobs=1): err= 0: pid=3370: Mon May 23 16:17:05 2022
+   write: IOPS=20.9k, BW=81.8MiB/s (85.8MB/s)(17.3GiB/216718msec); 0 
+zone resets
+    bw (  KiB/s): min=75904, max=86872, per=100.00%, avg=83814.21, 
+stdev=1321.04, samples=433
+    iops        : min=18976, max=21718, avg=20953.56, stdev=330.27, 
+samples=433
+   lat (usec)   : 2=0.01%, 10=0.01%, 20=97.34%, 50=1.71%, 100=0.47%
+   lat (usec)   : 250=0.42%, 500=0.01%, 750=0.01%, 1000=0.02%
+   lat (msec)   : 2=0.02%, 4=0.01%
 
-Link: https://gist.github.com/zoumingzhe/69a353e7c6fffe43142c2f42b94a67b5
-Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
----
- drivers/md/bcache/alloc.c  |   2 +
- drivers/md/bcache/bcache.h |   9 ++++
- drivers/md/bcache/btree.c  | 100 ++++++++++++++++++++++++++++++++-----
- 3 files changed, 98 insertions(+), 13 deletions(-)
+Most of the write I/Os finished in 20us, comparing to 100-250us, that is 
+too slow, which is out of my expectation. There should be something not 
+properly working.
 
-diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index 097577ae3c47..bb8b16cc2189 100644
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -415,7 +415,9 @@ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
- 				TASK_UNINTERRUPTIBLE);
- 
- 		mutex_unlock(&ca->set->bucket_lock);
-+		atomic_inc(&ca->set->bucket_alloc_inflight);
- 		schedule();
-+		atomic_dec(&ca->set->bucket_alloc_inflight);
- 		mutex_lock(&ca->set->bucket_lock);
- 	} while (!fifo_pop(&ca->free[RESERVE_NONE], r) &&
- 		 !fifo_pop(&ca->free[reserve], r));
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 9ed9c955add7..a113a3bc7356 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -471,6 +471,14 @@ struct cache {
- };
- 
- struct gc_stat {
-+	uint64_t		gc_cost;
-+	uint64_t		sleep_cost;
-+	uint64_t		average_cost;
-+	uint64_t		start_time;
-+	uint64_t		finish_time;
-+	size_t			max_inflight;
-+
-+	size_t			times;
- 	size_t			nodes;
- 	size_t			nodes_pre;
- 	size_t			key_bytes;
-@@ -595,6 +603,7 @@ struct cache_set {
- 	 * written.
- 	 */
- 	atomic_t		prio_blocked;
-+	atomic_t		bucket_alloc_inflight;
- 	wait_queue_head_t	bucket_wait;
- 
- 	/*
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index ad9f16689419..47ed3354aa9f 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -88,11 +88,14 @@
-  * Test module load/unload
-  */
- 
--#define MAX_NEED_GC		64
--#define MAX_SAVE_PRIO		72
- #define MAX_GC_TIMES		100
- #define MIN_GC_NODES		100
--#define GC_SLEEP_MS		100
-+#define MAX_GC_NODES		1000
-+#define MAX_GC_PERCENT		10
-+#define MIN_GC_SLEEP_MS		10
-+#define MAX_GC_SLEEP_MS		1000
-+#define MAX_INFLIGHT_FACTOR	60
-+#define MAX_INFLIGHT(b, d, p)	div_u64((b)*(100-(p)) + (d)*(p), 100)
- 
- #define PTR_DIRTY_BIT		(((uint64_t) 1 << 36))
- 
-@@ -1542,12 +1545,65 @@ static unsigned int btree_gc_count_keys(struct btree *b)
- 	return ret;
- }
- 
--static size_t btree_gc_min_nodes(struct cache_set *c)
-+static uint64_t btree_gc_sleep_ms(struct cache_set *c, struct gc_stat *gc)
-+{
-+	uint64_t now = local_clock();
-+	uint64_t expect_time, sleep_time = 0;
-+
-+	/*
-+	 * bch_bucket_alloc() waits for gc to finish
-+	 */
-+	if (atomic_read(&c->bucket_alloc_inflight) > 0)
-+		return MIN_GC_SLEEP_MS;
-+
-+	/*
-+	 * GC maybe process very few nodes when IO requests are very frequent.
-+	 * If the sleep time is constant (100ms) each time, whole GC would last
-+	 * a long time.
-+	 * The IO performance also decline if a single GC takes a long time
-+	 * (such as single GC 100ms and sleep 100ms, IOPS is only half).
-+	 * So GC sleep time should be calculated dynamically based on gc_cost.
-+	 */
-+	gc->finish_time = time_after64(now, gc->start_time)
-+				? now - gc->start_time : 0;
-+	gc->gc_cost = gc->finish_time > gc->sleep_cost
-+			? gc->finish_time - gc->sleep_cost : 0;
-+	expect_time = div_u64(gc->gc_cost * (100 - MAX_GC_PERCENT), MAX_GC_PERCENT);
-+	if (expect_time > gc->sleep_cost)
-+		sleep_time = div_u64(expect_time - gc->sleep_cost, NSEC_PER_MSEC);
-+
-+	if (sleep_time < MIN_GC_SLEEP_MS)
-+		sleep_time = MIN_GC_SLEEP_MS;
-+	if (sleep_time > MAX_GC_SLEEP_MS)
-+		sleep_time = MAX_GC_SLEEP_MS;
-+
-+	return sleep_time;
-+}
-+
-+static size_t btree_gc_min_nodes(struct cache_set *c, struct gc_stat *gc)
- {
- 	size_t min_nodes;
-+	size_t inflight;
- 
- 	/*
--	 * Since incremental GC would stop 100ms when front
-+	 * If there is no requests or bucket_wait is happened,
-+	 * the GC is not stopped. Also, we hope to process the
-+	 * increasing number of IO requests immediately and hold
-+	 * the inflight peak. When IO depth up to maximum, this gc
-+	 * only process very few(10) nodes, then sleep and handle
-+	 * these requests.
-+	 */
-+	inflight = atomic_read(&c->search_inflight);
-+	if (inflight <= 0 || atomic_read(&c->bucket_alloc_inflight) > 0)
-+		return max(c->gc_stats.nodes, gc->nodes) + 1;
-+	if (inflight > gc->max_inflight)
-+		gc->max_inflight = inflight;
-+	if (inflight >= gc->max_inflight ||
-+	    inflight >= c->gc_stats.max_inflight)
-+		return 10;
-+
-+	/*
-+	 * Since incremental GC would dynamic sleep when front
- 	 * side I/O comes, so when there are many btree nodes,
- 	 * if GC only processes constant (100) nodes each time,
- 	 * GC would last a long time, and the front side I/Os
-@@ -1558,11 +1614,14 @@ static size_t btree_gc_min_nodes(struct cache_set *c)
- 	 * realized by dividing GC into constant(100) times,
- 	 * so when there are many btree nodes, GC can process
- 	 * more nodes each time, otherwise, GC will process less
--	 * nodes each time (but no less than MIN_GC_NODES)
-+	 * nodes each time (but no less than MIN_GC_NODES and
-+	 * no more than MAX_GC_NODES)
- 	 */
- 	min_nodes = c->gc_stats.nodes / MAX_GC_TIMES;
- 	if (min_nodes < MIN_GC_NODES)
- 		min_nodes = MIN_GC_NODES;
-+	if (min_nodes > MAX_GC_NODES)
-+		min_nodes = MAX_GC_NODES;
- 
- 	return min_nodes;
- }
-@@ -1633,8 +1692,7 @@ static int btree_gc_recurse(struct btree *b, struct btree_op *op,
- 		memmove(r + 1, r, sizeof(r[0]) * (GC_MERGE_NODES - 1));
- 		r->b = NULL;
- 
--		if (atomic_read(&b->c->search_inflight) &&
--		    gc->nodes >= gc->nodes_pre + btree_gc_min_nodes(b->c)) {
-+		if (gc->nodes >= gc->nodes_pre + btree_gc_min_nodes(b->c, gc)) {
- 			gc->nodes_pre =  gc->nodes;
- 			ret = -EAGAIN;
- 			break;
-@@ -1789,7 +1847,7 @@ static void bch_btree_gc(struct cache_set *c)
- 	struct gc_stat stats;
- 	struct closure writes;
- 	struct btree_op op;
--	uint64_t start_time = local_clock();
-+	uint64_t sleep_time;
- 
- 	trace_bcache_gc_start(c);
- 
-@@ -1798,24 +1856,40 @@ static void bch_btree_gc(struct cache_set *c)
- 	bch_btree_op_init(&op, SHRT_MAX);
- 
- 	btree_gc_start(c);
-+	stats.start_time = local_clock();
- 
- 	/* if CACHE_SET_IO_DISABLE set, gc thread should stop too */
- 	do {
-+		stats.times++;
- 		ret = bcache_btree_root(gc_root, c, &op, &writes, &stats);
- 		closure_sync(&writes);
- 		cond_resched();
- 
--		if (ret == -EAGAIN)
-+		sleep_time = btree_gc_sleep_ms(c, &stats);
-+		if (ret == -EAGAIN) {
-+			stats.sleep_cost += sleep_time * NSEC_PER_MSEC;
- 			schedule_timeout_interruptible(msecs_to_jiffies
--						       (GC_SLEEP_MS));
--		else if (ret)
-+						       (sleep_time));
-+		} else if (ret)
- 			pr_warn("gc failed!\n");
- 	} while (ret && !test_bit(CACHE_SET_IO_DISABLE, &c->flags));
- 
- 	bch_btree_gc_finish(c);
- 	wake_up_allocators(c);
- 
--	bch_time_stats_update(&c->btree_gc_time, start_time);
-+	bch_time_stats_update(&c->btree_gc_time, stats.start_time);
-+	stats.average_cost = div_u64(stats.gc_cost, stats.nodes);
-+	pr_debug("gc %llu times with %llu nodes, sleep %llums, "
-+		 "average gc cost %lluus per node, max inflight %llu",
-+		 (uint64_t)stats.times, (uint64_t)stats.nodes,
-+		 div_u64(stats.sleep_cost, NSEC_PER_MSEC),
-+		 div_u64(stats.average_cost, NSEC_PER_USEC),
-+		 (uint64_t)stats.max_inflight);
-+	stats.max_inflight = MAX_INFLIGHT(c->gc_stats.max_inflight,
-+					  stats.max_inflight,
-+					  MAX_INFLIGHT_FACTOR);
-+	pr_debug("max inflight updated to %llu",
-+		 (uint64_t)stats.max_inflight);
- 
- 	stats.key_bytes *= sizeof(uint64_t);
- 	stats.data	<<= 9;
--- 
-2.17.1
+
+
+>> With ioping it is also possible to notice a limitation, as the latency
+>> of the bcache0 device is around 1.5ms, while in the case of the raw
+>> device (a partition of NVMe), the same test is only 82.1us.
+>>
+>> root@pve-20:~# ioping -c10 /dev/bcache0 -D -Y -WWW -s4k
+>> 4 KiB >>> /dev/bcache0 (block device 931.5 GiB): request=1 time=1.52 ms (warmup)
+>> 4 KiB >>> /dev/bcache0 (block device 931.5 GiB): request=2 time=1.60 ms
+>> 4 KiB >>> /dev/bcache0 (block device 931.5 GiB): request=3 time=1.55 ms
+>>
+>> root@pve-20:~# ioping -c10 /dev/nvme0n1p2 -D -Y -WWW -s4k
+>> 4 KiB >>> /dev/nvme0n1p2 (block device 300 GiB): request=1 time=81.2 us (warmup)
+>> 4 KiB >>> /dev/nvme0n1p2 (block device 300 GiB): request=2 time=82.7 us
+>> 4 KiB >>> /dev/nvme0n1p2 (block device 300 GiB): request=3 time=82.4 us
+> Wow, almost 20x higher latency, sounds convincing that something is wrong.
+>
+> A few things to try:
+>
+> 1. Try ioping without -Y.  How does it compare?
+>
+> 2. Maybe this is an inter-socket latency issue.  Is your server
+>     multi-socket?  If so, then as a first pass you could set the kernel
+>     cmdline `isolcpus` for testing to limit all processes to a single
+>     socket where the NVMe is connected (see `lscpu`).  Check `hwloc-ls`
+>     or your motherboard manual to see how the NVMe port is wired to your
+>     CPUs.
+>
+>     If that helps then fine tune with `numactl -cN ioping` and
+>     /proc/irq/<n>/smp_affinity_list (and `grep nvme /proc/interrupts`) to
+>     make sure your NVMe's are locked to IRQs on the same socket.
+
+Wow, this is too slow...
+
+
+Here is my performance number,
+
+  # ./ioping -c10 /dev/bcache0 -D -Y -WWW -s4k
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=1 time=144.3 us 
+(warmup)
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=2 time=84.1 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=3 time=71.8 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=4 time=68.9 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=5 time=69.8 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=6 time=68.7 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=7 time=68.8 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=8 time=70.3 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=9 time=68.8 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=10 time=68.5 us
+
+  # ./ioping -c10 /dev/bcache0 -D -WWW -s4k
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=1 time=127.8 us 
+(warmup)
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=2 time=67.8 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=3 time=60.3 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=4 time=46.9 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=5 time=52.6 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=6 time=43.8 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=7 time=52.7 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=8 time=44.3 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=9 time=52.0 us
+4 KiB >>> /dev/bcache0 (block device 3.49 TiB): request=10 time=44.6 us
+
+1.5ms is really far from my expectation, there must be something wrong....
+
+
+[snipped]
+
+> Someone correct me if I'm wrong, but I don't think flush_journal=0 will
+> affect correctness unless there is a crash.  If that /is/ the performance
+> problem then it would narrow the scope of this discussion.
+>
+> 4. I wonder if your 1.5ms `ioping` stats scale with CPU clock speed: can
+>     you set your CPU governor to run at full clock speed and then slowest
+>     clock speed to see if it is a CPU limit somewhere as we expect?
+>
+>     You can do `grep MHz /proc/cpuinfo` to see the active rate to make sure
+>     the governor did its job.
+>
+>     If it scales with CPU then something in bcache is working too hard.
+>     Maybe garbage collection?  Other devs would need to chime in here to
+>     steer the troubleshooting if that is the case.
+
+Maybe system memory is small?  1.5ms is too slow, I cannot imagine how 
+it can be such slow...
+
+
+>
+> 5. I'm not sure if garbage collection is the issue, but you might try
+>     Mingzhe's dynamic incremental gc patch:
+> 	https://www.spinics.net/lists/linux-bcache/msg11185.html
+>
+> 6. Try dm-cache and see if its IO latency is similar to bcache: If it is
+>     about the same then that would indicate an issue in the block layer
+>     somewhere outside of bcache.  If dm-cache is better, then that confirms
+>     a bcache issue.
+
+Great idea.
+
+
+>
+>> The cache was configured directly on one of the NVMe partitions (in this
+>> case, the first partition). I did several tests using fio and ioping,
+>> testing on a partition on the NVMe device, without partition and
+>> directly on the raw block, on a first partition, on the second, with or
+>> without configuring bcache. I did all this to remove any doubt as to the
+>> method. The results of tests performed directly on the hardware device,
+>> without going through bcache are always fast and similar.
+
+
+What is the performance number on the whole NVMe disk without 
+partition?  In case the partition start LBA is not perfectly aligned to 
+some size...
+
+Can I know the hardware configuration, and the NVMe SSD spec? Maybe I 
+can try to find a similar one around my location and have a try if I am 
+lucky.
+
+
+Thanks.
+
+
+Coly Li
+
+
 
