@@ -2,132 +2,117 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BA23531056
-	for <lists+linux-bcache@lfdr.de>; Mon, 23 May 2022 15:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96519530FFB
+	for <lists+linux-bcache@lfdr.de>; Mon, 23 May 2022 15:19:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235515AbiEWMgc (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 23 May 2022 08:36:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42954 "EHLO
+        id S235817AbiEWMyl (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 23 May 2022 08:54:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235642AbiEWMeL (ORCPT
+        with ESMTP id S235793AbiEWMya (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 23 May 2022 08:34:11 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C45CD42A39
-        for <linux-bcache@vger.kernel.org>; Mon, 23 May 2022 05:34:10 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id nr2-20020a17090b240200b001df2b1bfc40so17379014pjb.5
-        for <linux-bcache@vger.kernel.org>; Mon, 23 May 2022 05:34:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=GCE2nGwlSzDm4FRAKR9XWUKV2cYGLHBtnDJjqTUCz3g=;
-        b=AUD1k/5Il6KA9nnZTRKy51zxMg8hpIWppmF4I8Uq7kwfO4N0BNxkUkR8vSrWNW+0QT
-         JDNSeq3l/+4fQqS/qGn9CwHw7c1mcAx1l5O+MQeH0utxCCJVT6snY8oB2qwhwHTfDW3i
-         V1okNcXPCrDilUi5gWzX1lfwwy6xvmR9hKNw0aB66aPg+DCrTEAA1O0X2xPK4uVxXoUZ
-         pBEHpZbcgUavV5sNyrmE1478ivZoCgLLT+h7+1EmIi2HSH9VbyeSuM1IrWjnFM8BL9z3
-         isx02vSybd+XlNVJp4Nt3WtRmkh7FXPA8V+he7D6O2lbNQV/uEyl3H+WNFZbbRBwxRHU
-         Z3gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=GCE2nGwlSzDm4FRAKR9XWUKV2cYGLHBtnDJjqTUCz3g=;
-        b=bdozY5DcF1q4lW7yQm2Nfcz+FSzvIFP/HmjmqiTB+JxXz3WYK3Av97CrNBmhH0vCIp
-         yRBcOde09HBu5BszX/R+ZK/rXxE7T0DG0bM1ZxyrwO99+89lbk3xqljRBxOyEz4SY+7p
-         qtTx4uE049DbA2BIqRFMboELbaMHxBzwgGGUEldJ0OBSvl2gHTr73pVoRZ8JFMWlq41e
-         EvVJogOFOBRP+sHKLIXZwQk8y2cnH0JRek4Mzoy8/bdJ/PuTZltujF1/7/KdKovVVHTu
-         mfRLuysnHjWxAe18Kq51rMopVz/DMCOI9Qu+kT9AVz+CGz0lvOpB4CS9vE5EapQ3RcyQ
-         j1WA==
-X-Gm-Message-State: AOAM532U3gTdAcWmx2XdOrQpTihN+s6vk6mU0rCJ7uRVISFUsoMwaiA1
-        SaSOMH2M2aPDupgVhc8UfZIfLj/mVAMUmg==
-X-Google-Smtp-Source: ABdhPJzgoOyGNawu3EG5PhFUkCLxs26tbNXp/x3LWQH9HJyu0iQ7D/qLRRHPfLvKpd0iKudcqH3otw==
-X-Received: by 2002:a17:90b:3b81:b0:1e0:3ebf:c6ae with SMTP id pc1-20020a17090b3b8100b001e03ebfc6aemr7486040pjb.186.1653309250207;
-        Mon, 23 May 2022 05:34:10 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ms16-20020a17090b235000b001d5943e826asm7336604pjb.20.2022.05.23.05.34.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 05:34:09 -0700 (PDT)
-Message-ID: <e6f9a552-bf9a-ae80-d8be-55f23d6050eb@kernel.dk>
-Date:   Mon, 23 May 2022 06:34:08 -0600
+        Mon, 23 May 2022 08:54:30 -0400
+Received: from mail-m2839.qiye.163.com (mail-m2839.qiye.163.com [103.74.28.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 339635372C
+        for <linux-bcache@vger.kernel.org>; Mon, 23 May 2022 05:54:27 -0700 (PDT)
+Received: from [192.168.0.234] (unknown [218.94.118.90])
+        by mail-m2839.qiye.163.com (Hmail) with ESMTPA id 1DB9BC0633;
+        Mon, 23 May 2022 20:54:24 +0800 (CST)
+Message-ID: <28a044fd-e10e-ce25-6ce5-023ea9085139@easystack.cn>
+Date:   Mon, 23 May 2022 20:54:23 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 0/4] bcache patches for Linux v5.19 (1st wave)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v3] bcache: dynamic incremental gc
 Content-Language: en-US
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-References: <20220522170736.6582-1-colyli@suse.de>
- <ece7e00e-5d03-41c0-4013-75809958e9d7@kernel.dk>
- <9c3fddec-1741-872f-1cdb-b44316e2ff64@suse.de>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <9c3fddec-1741-872f-1cdb-b44316e2ff64@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+From:   Zou Mingzhe <mingzhe.zou@easystack.cn>
+To:     Eric Wheeler <bcache@lists.ewheeler.net>
+Cc:     linux-bcache@vger.kernel.org, zoumingzhe@qq.com
+References: <20220511073903.13568-1-mingzhe.zou@easystack.cn>
+ <ecce38e7-8ba0-5fbf-61a6-2dfc21c7793d@suse.de>
+ <112eaaf7-05fd-3b4f-0190-958d0c85fa1f@easystack.cn>
+ <37d75ff-877c-5453-b6a0-81c8d737299@ewheeler.net>
+ <2cc994af-292f-ae7e-e793-058ada23c1ca@easystack.cn>
+In-Reply-To: <2cc994af-292f-ae7e-e793-058ada23c1ca@easystack.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
+        kWDxoPAgseWUFZKDYvK1lXWShZQUlCN1dZLVlBSVdZDwkaFQgSH1lBWUNCSB1WGRlPGhpOQhhNHU
+        xNVRkRExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MSo6Qgw5MTIZSjkqCAFINlE*
+        FQoaCi1VSlVKTU5ISEpLT01PT01DVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSEJJTjcG
+X-HM-Tid: 0a80f0fba0e18421kuqw1db9bc0633
+X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 5/23/22 12:26 AM, Coly Li wrote:
-> On 5/23/22 1:43 AM, Jens Axboe wrote:
->> On 5/22/22 11:07 AM, Coly Li wrote:
->>> Hi Jens,
->>>
->>> The bcache has 4 patches for Linux v5.19 merge window, all from me.
->>> - The first 2 patches are code clean up and potential bug fixes for
->>> multi- threaded btree nodes check (for cache device) and dirty sectors
->>> counting (for backing device), although no report from mailing list for
->>> them, it is good to have the fixes.
->>> - The 3rd patch removes incremental dirty sectors counting because it
->>> is conflicted with multithreaded dirty sectors counting and the latter
->>> one is 10x times faster.
->>> - The last patch fixes a journal no-space deadlock during cache device
->>> registration, it always reserves one journal bucket and only uses it
->>> in registration time, so the no-spance condition won't happen anymore.
->>>
->>> There are still 2 fixes are still under the long time I/O pressure
->>> testing, once they are accomplished, I will submit to you in later
->>> RC cycles.
->>>
->>> Please take them, and thanks in advance.
->> It's late for sending in that stuff, now I have to do a round 2 or
->> your patches would get zero time in linux-next. Please send patches
->> a week in advance at least, not on the day of release...
+
+在 2022/5/23 10:52, Zou Mingzhe 写道:
+> 在 2022/5/21 02:24, Eric Wheeler 写道:
+>> On Fri, 20 May 2022, Zou Mingzhe wrote:
 >>
-> Hi Jens,
-> 
-> This time the situation was awkward, indeed I didn't expect I can
-> submit the fix in this merge window, but just around 1 week before I
-> found the difficult was from influence by other depending issues.
-> After fixed all of them and do I/O pressure testing for 24x2 hours, it
-> comes to such close day to the merge window.
-> 
-> My confusion was, it was very close to the merge window so maybe I
-> should submit them in next merge window (5.20), but this series were
-> bug fixes which should go into mainline earlier. It seems neither
-> option was proper, so I chose the first one...
-> 
-> Could you give me a hint, what is the proper way that I should do for
-> such situation? Then I will try to follow that and avoid adding more
-> workload to you.
+>> Questions:
+>>
+>> 1. Why is the after-"BW NO GC" graph so much flatter than the before-"BW
+>>     NO GC" graph?  I would expect your control measurements to be 
+>> about the
+>>     same before vs after.  You might `blkdiscard` the cachedev and
+>>     re-format between runs in case the FTL is getting in the way, or 
+>> maybe
+>>     something in the patch is affecting the "NO GC" graphs.
+>> 2. I wonder how the latency looks if you zoom into to the latency graph:
+>>     If you truncate the before-"LATENCY DO GC" graph at 3000 us then how
+>>     does the average latency look between the two?
+>> 3. This may be solved if you can fix the control graph issue in #1, but
+>>     the before vs after of "BW DO GC" shows about a 30% decrease in
+>>     bandwidth performance outside of the GC spikes.  "IOPS DO GC" is 
+>> lower
+>>     with the patch too.  Do you think that your dynamic incremental gc
+>>     algorithm be tuned to deal with GC latency and still provide 
+>> nearly the
+>>     same IOPS and bandwidth as before?
+>>
+>>
+>> -- 
+>> Eric Wheeler
 
-It would help if the submission came with an explanation of why they are
-being submitted so late, as I really do expect it to happen around -rc7
-time. Sometimes it's just because people are a bit lazy getting changes
-submitted, and then do it at that last minute. That makes me a bit
-annoyed. And other times there are totally legitimate reasons for why
-they are being submitted late, like your explanation above.
+Hi Eric,
 
-It really depends on the scope of the changes, too. Simple fixes are
-obviously fair game at any time.
+I have done a retest round and update all data on 
+"https://gist.github.com/zoumingzhe/69a353e7c6fffe43142c2f42b94a67b5".
 
--- 
-Jens Axboe
+First, there is only this patch between before and after, I re-format 
+the disk with make-bcache before each fio. Each case was tested 5 times, 
+and the results are as follows:
+
+                     before after
+       NO GC           DO GC          NO GC          DO GC
+1    99162.29     97366.28     99970.89     98290.81
+2    99897.80     97879.99     96829.14     95548.88
+3    98183.49     98834.29     101508.06   98581.53
+4    98563.17     98476.61     96866.40     96676.87
+5    97059.91     98356.50     96248.10     94442.61
+
+Some details are also shown in the new graph, in addition to the raw 
+data available for download.
+
+I confirm that this patch does not cause a drop in iops. We have some 
+other patches that may have affected the previous test, but this patch 
+works fine.
+
+In fact, we mostly modified the gc handling.
+
+mingzhe
+
+
+
+
+
+
 
