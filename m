@@ -2,96 +2,94 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B9FB4532A49
-	for <lists+linux-bcache@lfdr.de>; Tue, 24 May 2022 14:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF31053323D
+	for <lists+linux-bcache@lfdr.de>; Tue, 24 May 2022 22:14:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234334AbiEXMUB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 24 May 2022 08:20:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58600 "EHLO
+        id S241241AbiEXUO3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 24 May 2022 16:14:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237301AbiEXMT5 (ORCPT
+        with ESMTP id S241475AbiEXUO0 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 24 May 2022 08:19:57 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 288F9939A1
-        for <linux-bcache@vger.kernel.org>; Tue, 24 May 2022 05:19:56 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id i24so16283359pfa.7
-        for <linux-bcache@vger.kernel.org>; Tue, 24 May 2022 05:19:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=9IGHMIIKL88803hPgdSaXWlPilBJOtrDzZze0Yj8RM8=;
-        b=xxwql3dVTB8lLlnXy/l+k1i87oKtRlHCr9pCN27Aj4Wm/49QP785GAMydx62OG5hAl
-         yX63M6GgPNiRLySCTQn0n+seMB0KjAkJmzecq1y4PK5hQFnK2Lp9bromahMi61M2+nYQ
-         6vRQ1HpsTTSPBhGi3zv3AWO7s1E3lB7GNd3ExDpoceCa6VvlBg3p9waMPxqoojBi/YV9
-         OOXFnNplZoahr9mTt4MQZCvcomO6fQZMNQZLWHqBI4ZEwrPj7RF9U6CX0G199QXNpMbQ
-         SCJmlMK4Ma7W2/yuiRSlCD2adkSguhpPB76p98YkVTjIROA1Na2opn3hv9XIio4nTmSa
-         Pa3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=9IGHMIIKL88803hPgdSaXWlPilBJOtrDzZze0Yj8RM8=;
-        b=6lY/l6K/lQhbi83U8OIDkfHLqFyeF7O3rEzX2UXefRRCZNKWnftqZWktjNKHPOA/OR
-         H4IlNAAakCa75Z0FsuQqYUq5hAHaNlTDRrztIw3l9Br6HRCHK+wb5eL9NIgu4rfJE3tn
-         uFCr5HwyC8yB9NVShwLLDUgqNPQ6jqnkQcDz9F7YMU8Cdi8OeEyy6V8aPBqwZvLEj5OC
-         GnBAtyYfX7rzfgLymwfNqKjo2I0xBnCij3HwhIl3vZfWD/gkDMdwpnVaK8AFydqmR6Cx
-         +EDK5V/LnItHR5qaXmxr/8wCaCqnpUJpgs9k+0p4NeM4S9EBpBHIlG2/j2lapKxErr+U
-         ofyw==
-X-Gm-Message-State: AOAM531mu0VjN1B/oMQiCTt41aNybjRHOHSCkLFnNIMmATfgQDtxKfNX
-        iKjRmU9avo947oRQg8x0RzYzEj1ws1ZMaA==
-X-Google-Smtp-Source: ABdhPJy0bamjH4IRdcw6z651AuNl4FrLJa4uYywdFKK+/6mPd/plJmVwQKZ2kvKH++ycuoJsSIKrnw==
-X-Received: by 2002:a63:583:0:b0:3f2:3f20:ec1a with SMTP id 125-20020a630583000000b003f23f20ec1amr23927751pgf.460.1653394795180;
-        Tue, 24 May 2022 05:19:55 -0700 (PDT)
-Received: from [127.0.1.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id v17-20020a62c311000000b005087c23ad8dsm9369824pfg.0.2022.05.24.05.19.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 May 2022 05:19:54 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     colyli@suse.de
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-In-Reply-To: <20220524102336.10684-1-colyli@suse.de>
-References: <20220524102336.10684-1-colyli@suse.de>
-Subject: Re: [Resend PATCH v2 0/4] bcache fixes for Linux v5.19 (1st wave)
-Message-Id: <165339479414.6179.11008749918880416100.b4-ty@kernel.dk>
-Date:   Tue, 24 May 2022 06:19:54 -0600
+        Tue, 24 May 2022 16:14:26 -0400
+Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E6BC87214;
+        Tue, 24 May 2022 13:14:22 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mx.ewheeler.net (Postfix) with ESMTP id EB5A447;
+        Tue, 24 May 2022 13:14:21 -0700 (PDT)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id mCSfHmktOpz2; Tue, 24 May 2022 13:14:21 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id 01A8A40;
+        Tue, 24 May 2022 13:14:20 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 01A8A40
+Date:   Tue, 24 May 2022 13:14:18 -0700 (PDT)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
+To:     Christoph Hellwig <hch@infradead.org>
+cc:     Coly Li <colyli@suse.de>,
+        Adriano Silva <adriano_da_silva@yahoo.com.br>,
+        Bcache Linux <linux-bcache@vger.kernel.org>,
+        Matthias Ferdinand <bcache@mfedv.net>,
+        linux-block@vger.kernel.org
+Subject: Re: [RFC] Add sysctl option to drop disk flushes in bcache? (was:
+ Bcache in writes direct with fsync)
+In-Reply-To: <YoxuYU4tze9DYqHy@infradead.org>
+Message-ID: <5486e421-b8d0-3063-4cb9-84e69c41b7a3@ewheeler.net>
+References: <958894243.922478.1652201375900.ref@mail.yahoo.com> <958894243.922478.1652201375900@mail.yahoo.com> <9d59af25-d648-4777-a5c0-c38c246a9610@ewheeler.net> <27ef674d-67e-5739-d5d8-f4aa2887e9c2@ewheeler.net> <YoxuYU4tze9DYqHy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, 24 May 2022 18:23:32 +0800, Coly Li wrote:
-> Thank you for taking the late arrived series, they are all for bcache
-> fixes when I work on the bcache journal no-space deadlock issue. It
-> spent me quite long time to fix because other issues interfered my debug
-> and analysis. When all the depending issues were fixed and my fix for
-> the journal no-space deadlock is verified, this submission is late for
-> Linux v5.19 submission. But it is still worthy to take them into v5.19
-> because real issues are fixed by this series.
+Hi Christoph,
+
+On Mon, 23 May 2022, Christoph Hellwig wrote:
+> ... wait.
 > 
-> [...]
+> Can someone explain what this is all about?  Devices with power fail 
+> protection will advertise that (using VWC flag in NVMe for example) and 
+> we will never send flushes. So anything that explicitly disables flushed 
+> will generally cause data corruption.
 
-Applied, thanks!
+Adriano was getting 1.5ms sync-write ioping's to an NVMe through bcache 
+(instead of the expected ~70us), so perhaps the NVMe flushes were killing 
+performance if every write was also forcing an erase cycle.
 
-[1/4] bcache: improve multithreaded bch_btree_check()
-      commit: 622536443b6731ec82c563aae7807165adbe9178
-[2/4] bcache: improve multithreaded bch_sectors_dirty_init()
-      commit: 4dc34ae1b45fe26e772a44379f936c72623dd407
-[3/4] bcache: remove incremental dirty sector counting for bch_sectors_dirty_init()
-      commit: 80db4e4707e78cb22287da7d058d7274bd4cb370
-[4/4] bcache: avoid journal no-space deadlock by reserving 1 journal bucket
-      commit: 32feee36c30ea06e38ccb8ae6e5c44c6eec790a6
+The suggestion was to disable flushes in bcache as a troubleshooting step 
+to see if that solved the problem, but with the warning that it could be 
+unsafe.
 
-Best regards,
--- 
-Jens Axboe
+Questions:
+
+1. If a user knows their disks have a non-volatile cache then is it safe 
+   to drop flushes?
+
+2. If not, then under what circumstances is it unsafe with a non-volatile 
+   cache?
+  
+3. Since the block layer wont send flushes when the hardware reports that 
+   the cache is non-volatile, then how do you query the device to make 
+   sure it is reporting correctly?  For NVMe you can get VWC as:
+	nvme id-ctrl -H /dev/nvme0 |grep -A1 vwc
+   
+   ...but how do you query a block device (like a RAID LUN) to make sure 
+   it is reporting a non-volatile cache correctly?
+
+--
+Eric Wheeler
 
 
+
+> 
+> 
