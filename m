@@ -2,47 +2,53 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B9D2532773
-	for <lists+linux-bcache@lfdr.de>; Tue, 24 May 2022 12:25:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 424FA53277E
+	for <lists+linux-bcache@lfdr.de>; Tue, 24 May 2022 12:25:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236047AbiEXKX4 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 24 May 2022 06:23:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48592 "EHLO
+        id S236050AbiEXKX5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 24 May 2022 06:23:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234220AbiEXKXz (ORCPT
+        with ESMTP id S234220AbiEXKX5 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 24 May 2022 06:23:55 -0400
+        Tue, 24 May 2022 06:23:57 -0400
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1095484A07;
-        Tue, 24 May 2022 03:23:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61E6164D17;
+        Tue, 24 May 2022 03:23:56 -0700 (PDT)
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id B5FF021A33;
-        Tue, 24 May 2022 10:23:52 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTP id 1AC9721A34;
+        Tue, 24 May 2022 10:23:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1653387832; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=iplS/TeHF/CtFHpdgLxbValjglTQrNdayPcu3zU7Chs=;
-        b=gZxl+ooFGUmwPMzPe4+/jc0OQvDjFo7r5H/ZWydrGVKpU+jWNkihI5S0YGQbWWc3a5QXJe
-        OQLhCIzKZPkhj8bvhuaE6YX2ZfSdaIqXpqtx3iz84rWR0lmiHRqjWLZaN6MNUFdDOzbavW
-        Pxpq88cnRdC67z5qkRBSLS7eoVkkEWY=
+        t=1653387835; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Tzt1nDhDEn3aNis2efvZFQVaFJycxrR/ysnVthgDplo=;
+        b=rmbZfAi5dij8jAI1bGsBKpozZDI80j3G3SPF6aqr1t7TAxEbPfeZWimthxVNjZ+bZDFIud
+        7YvlQomvDt5PXDD8LAi69J/cRePdzx3mwzL4sZHLv5iMN0lmdG0wWs6lpLHqlrOws5nYjz
+        qgsFFwUjUk0AyBSXnPUP3ANQ2H3gB3k=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1653387832;
+        s=susede2_ed25519; t=1653387835;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=iplS/TeHF/CtFHpdgLxbValjglTQrNdayPcu3zU7Chs=;
-        b=uusiBaP6zkyC6B89uxPWRPSXxBYo8RYvM6sX0dcYBieE20aLuYDx9Pcxtsc/1qCsFdezN/
-        xs20f5TZkZ1D65Ag==
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Tzt1nDhDEn3aNis2efvZFQVaFJycxrR/ysnVthgDplo=;
+        b=ClJI85BXABTDePQ7WIexfFdJkIw7wubm/c8YQxtZ22+WMEtkophalVqlt9qMIxEs10Jy1e
+        gsE9cUOGRYN28oCg==
 Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id 48CF32C141;
-        Tue, 24 May 2022 10:23:51 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTP id 331DB2C141;
+        Tue, 24 May 2022 10:23:52 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     axboe@kernel.dk
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>
-Subject: [Resend PATCH v2 0/4] bcache fixes for Linux v5.19 (1st wave)
-Date:   Tue, 24 May 2022 18:23:32 +0800
-Message-Id: <20220524102336.10684-1-colyli@suse.de>
+        Coly Li <colyli@suse.de>, stable@vger.kernel.org
+Subject: [PATCH 1/4] bcache: improve multithreaded bch_btree_check()
+Date:   Tue, 24 May 2022 18:23:33 +0800
+Message-Id: <20220524102336.10684-2-colyli@suse.de>
 X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20220524102336.10684-1-colyli@suse.de>
+References: <20220524102336.10684-1-colyli@suse.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -55,57 +61,153 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Jens,
+Commit 8e7102273f59 ("bcache: make bch_btree_check() to be
+multithreaded") makes bch_btree_check() to be much faster when checking
+all btree nodes during cache device registration. But it isn't in ideal
+shap yet, still can be improved.
 
-Thank you for taking the late arrived series, they are all for bcache
-fixes when I work on the bcache journal no-space deadlock issue. It
-spent me quite long time to fix because other issues interfered my debug
-and analysis. When all the depending issues were fixed and my fix for
-the journal no-space deadlock is verified, this submission is late for
-Linux v5.19 submission. But it is still worthy to take them into v5.19
-because real issues are fixed by this series.
+This patch does the following thing to improve current parallel btree
+nodes check by multiple threads in bch_btree_check(),
+- Add read lock to root node while checking all the btree nodes with
+  multiple threads. Although currently it is not mandatory but it is
+  good to have a read lock in code logic.
+- Remove local variable 'char name[32]', and generate kernel thread name
+  string directly when calling kthread_run().
+- Allocate local variable "struct btree_check_state check_state" on the
+  stack and avoid unnecessary dynamic memory allocation for it.
+- Reduce BCH_BTR_CHKTHREAD_MAX from 64 to 12 which is enough indeed.
+- Increase check_state->started to count created kernel thread after it
+  succeeds to create.
+- When wait for all checking kernel threads to finish, use wait_event()
+  to replace wait_event_interruptible().
 
-The bcache has 4 patches for Linux v5.19 merge window, all from me.
-- The first 2 patches are code clean up and potential bug fixes for
-multi- threaded btree nodes check (for cache device) and dirty sectors
-counting (for backing device), although no report from mailing list for
-them, it is good to have the fixes.
-- The 3rd patch removes incremental dirty sectors counting because it
-is conflicted with multithreaded dirty sectors counting and the latter
-one is 10x times faster.
-- The last patch fixes a journal no-space deadlock during cache device
-registration, it always reserves one journal bucket and only uses it
-in registration time, so the no-spance condition won't happen anymore.
+With this change, the code is more clear, and some potential error
+conditions are avoided.
 
-There are still 2 fixes are still under the long time I/O pressure
-testing, once they are accomplished, I will submit to you in later
-RC cycles.
-
-The v2 series fixed previously detectd oversize stack frame issue, in
-my test I don't observed the stack frame oversize warning and normal
-bcache operations work as expected.
-
-Thank you in advance.
-
-Coly Li
+Fixes: 8e7102273f59 ("bcache: make bch_btree_check() to be multithreaded")
+Signed-off-by: Coly Li <colyli@suse.de>
+Cc: stable@vger.kernel.org
 ---
+ drivers/md/bcache/btree.c | 58 ++++++++++++++++++---------------------
+ drivers/md/bcache/btree.h |  2 +-
+ 2 files changed, 27 insertions(+), 33 deletions(-)
 
-Coly Li (4):
-  bcache: improve multithreaded bch_btree_check()
-  bcache: improve multithreaded bch_sectors_dirty_init()
-  bcache: remove incremental dirty sector counting for
-    bch_sectors_dirty_init()
-  bcache: avoid journal no-space deadlock by reserving 1 journal bucket
-
- drivers/md/bcache/btree.c     |  58 +++++++++----------
- drivers/md/bcache/btree.h     |   2 +-
- drivers/md/bcache/journal.c   |  31 +++++++++--
- drivers/md/bcache/journal.h   |   2 +
- drivers/md/bcache/super.c     |   1 +
- drivers/md/bcache/writeback.c | 101 +++++++++++++---------------------
- drivers/md/bcache/writeback.h |   2 +-
- 7 files changed, 94 insertions(+), 103 deletions(-)
-
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index ad9f16689419..2362bb8ef6d1 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -2006,8 +2006,7 @@ int bch_btree_check(struct cache_set *c)
+ 	int i;
+ 	struct bkey *k = NULL;
+ 	struct btree_iter iter;
+-	struct btree_check_state *check_state;
+-	char name[32];
++	struct btree_check_state check_state;
+ 
+ 	/* check and mark root node keys */
+ 	for_each_key_filter(&c->root->keys, k, &iter, bch_ptr_invalid)
+@@ -2018,63 +2017,58 @@ int bch_btree_check(struct cache_set *c)
+ 	if (c->root->level == 0)
+ 		return 0;
+ 
+-	check_state = kzalloc(sizeof(struct btree_check_state), GFP_KERNEL);
+-	if (!check_state)
+-		return -ENOMEM;
+-
+-	check_state->c = c;
+-	check_state->total_threads = bch_btree_chkthread_nr();
+-	check_state->key_idx = 0;
+-	spin_lock_init(&check_state->idx_lock);
+-	atomic_set(&check_state->started, 0);
+-	atomic_set(&check_state->enough, 0);
+-	init_waitqueue_head(&check_state->wait);
++	check_state.c = c;
++	check_state.total_threads = bch_btree_chkthread_nr();
++	check_state.key_idx = 0;
++	spin_lock_init(&check_state.idx_lock);
++	atomic_set(&check_state.started, 0);
++	atomic_set(&check_state.enough, 0);
++	init_waitqueue_head(&check_state.wait);
+ 
++	rw_lock(0, c->root, c->root->level);
+ 	/*
+ 	 * Run multiple threads to check btree nodes in parallel,
+-	 * if check_state->enough is non-zero, it means current
++	 * if check_state.enough is non-zero, it means current
+ 	 * running check threads are enough, unncessary to create
+ 	 * more.
+ 	 */
+-	for (i = 0; i < check_state->total_threads; i++) {
+-		/* fetch latest check_state->enough earlier */
++	for (i = 0; i < check_state.total_threads; i++) {
++		/* fetch latest check_state.enough earlier */
+ 		smp_mb__before_atomic();
+-		if (atomic_read(&check_state->enough))
++		if (atomic_read(&check_state.enough))
+ 			break;
+ 
+-		check_state->infos[i].result = 0;
+-		check_state->infos[i].state = check_state;
+-		snprintf(name, sizeof(name), "bch_btrchk[%u]", i);
+-		atomic_inc(&check_state->started);
++		check_state.infos[i].result = 0;
++		check_state.infos[i].state = &check_state;
+ 
+-		check_state->infos[i].thread =
++		check_state.infos[i].thread =
+ 			kthread_run(bch_btree_check_thread,
+-				    &check_state->infos[i],
+-				    name);
+-		if (IS_ERR(check_state->infos[i].thread)) {
++				    &check_state.infos[i],
++				    "bch_btrchk[%d]", i);
++		if (IS_ERR(check_state.infos[i].thread)) {
+ 			pr_err("fails to run thread bch_btrchk[%d]\n", i);
+ 			for (--i; i >= 0; i--)
+-				kthread_stop(check_state->infos[i].thread);
++				kthread_stop(check_state.infos[i].thread);
+ 			ret = -ENOMEM;
+ 			goto out;
+ 		}
++		atomic_inc(&check_state.started);
+ 	}
+ 
+ 	/*
+ 	 * Must wait for all threads to stop.
+ 	 */
+-	wait_event_interruptible(check_state->wait,
+-				 atomic_read(&check_state->started) == 0);
++	wait_event(check_state.wait, atomic_read(&check_state.started) == 0);
+ 
+-	for (i = 0; i < check_state->total_threads; i++) {
+-		if (check_state->infos[i].result) {
+-			ret = check_state->infos[i].result;
++	for (i = 0; i < check_state.total_threads; i++) {
++		if (check_state.infos[i].result) {
++			ret = check_state.infos[i].result;
+ 			goto out;
+ 		}
+ 	}
+ 
+ out:
+-	kfree(check_state);
++	rw_unlock(0, c->root);
+ 	return ret;
+ }
+ 
+diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
+index 50482107134f..1b5fdbc0d83e 100644
+--- a/drivers/md/bcache/btree.h
++++ b/drivers/md/bcache/btree.h
+@@ -226,7 +226,7 @@ struct btree_check_info {
+ 	int				result;
+ };
+ 
+-#define BCH_BTR_CHKTHREAD_MAX	64
++#define BCH_BTR_CHKTHREAD_MAX	12
+ struct btree_check_state {
+ 	struct cache_set		*c;
+ 	int				total_threads;
 -- 
 2.35.3
 
