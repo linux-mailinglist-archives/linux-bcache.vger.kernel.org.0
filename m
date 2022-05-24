@@ -2,72 +2,110 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DE7553276E
-	for <lists+linux-bcache@lfdr.de>; Tue, 24 May 2022 12:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B9D2532773
+	for <lists+linux-bcache@lfdr.de>; Tue, 24 May 2022 12:25:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232102AbiEXKXC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 24 May 2022 06:23:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47730 "EHLO
+        id S236047AbiEXKX4 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 24 May 2022 06:23:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234220AbiEXKXB (ORCPT
+        with ESMTP id S234220AbiEXKXz (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 24 May 2022 06:23:01 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29DFA8B09F
-        for <linux-bcache@vger.kernel.org>; Tue, 24 May 2022 03:23:00 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id bq30so30083321lfb.3
-        for <linux-bcache@vger.kernel.org>; Tue, 24 May 2022 03:22:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=4vfQyttDdobHbBrio36ZO852PxT9+1cO/BhU8vf48uk=;
-        b=IlcVRIP4bGz8sQE0sX+kCokzooMxKvU0fegH1v1+64Y0Z2Ruxw4GrjTLaDyaAWFS54
-         4aStPz+uMcvCTohnNRgpri6DigBbKDgRKhqIgv0DaCLA+xqZfXnSqKlJbvLxdM2A/LvJ
-         hR5dle2hZW0mq/q+ZtB6ErSPHSJ53Jl37I6eMwxo2eXceTrQSLDuLMzmgu9qbCtu0gHc
-         PHojbhf2EezoAgPDwpKmoH3fEgV9UgD22SYXDmv+pTwdhd4X7v3l13K2wPmVl6OSQC5g
-         3/a2auoe+kM6wXgIw5dHV0xkoEnRQ+uw+wNLZGGGzNe6egAmm92MWJpGMo4zGyrdY7+S
-         jsiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=4vfQyttDdobHbBrio36ZO852PxT9+1cO/BhU8vf48uk=;
-        b=xOUhhcifYZDLRC/qk4q0YWCpCBZT6Xk2O36kb6D5mgSMOU9UP33rNXLejvdCf7F20I
-         oV2+QB4y6dBkH1my+X6uJXTnBI7u9GfvispdVjtjIS9tXMP0txY7eRDi2CK+F2hnTQEe
-         k7cSM+tBS+s00HJR0vMDXMWKWMuYUgk3u8xUx490Qn/C7ZB6AWAoJJc1pfyHzvCX+cfv
-         eWp4rzqVbHhRlCnYa5L5Y5sj+9u3+9ugWORrZHreSxjn7gN+KRnBlmnQEf9uB53j6KFY
-         QZ41YRnzK+g3toNO1pA7vEnuWd7ccRpesOobe85tjnEnBcZeXIZQWYX31HX3CysiL70x
-         VqFA==
-X-Gm-Message-State: AOAM530TF6g17ZB7AnWczvfJyp4rA3gLJpKQHvkDkStSTg9WkUyVyjsl
-        KD4Jxv06+oBOx1D6D5cBMfwiNnyxbSXRkyQdIRs=
-X-Google-Smtp-Source: ABdhPJzV2prBQ++LNFnyIaWAYWcMfRkyPPdokXm1b5LykMowEPDhmPuKMTg4Uc9UGOp79j/f0bwwXyPQvIuBxCR8WfI=
-X-Received: by 2002:a05:6512:696:b0:478:5a76:d2e with SMTP id
- t22-20020a056512069600b004785a760d2emr12471657lfe.224.1653387778468; Tue, 24
- May 2022 03:22:58 -0700 (PDT)
+        Tue, 24 May 2022 06:23:55 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1095484A07;
+        Tue, 24 May 2022 03:23:54 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id B5FF021A33;
+        Tue, 24 May 2022 10:23:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1653387832; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=iplS/TeHF/CtFHpdgLxbValjglTQrNdayPcu3zU7Chs=;
+        b=gZxl+ooFGUmwPMzPe4+/jc0OQvDjFo7r5H/ZWydrGVKpU+jWNkihI5S0YGQbWWc3a5QXJe
+        OQLhCIzKZPkhj8bvhuaE6YX2ZfSdaIqXpqtx3iz84rWR0lmiHRqjWLZaN6MNUFdDOzbavW
+        Pxpq88cnRdC67z5qkRBSLS7eoVkkEWY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1653387832;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=iplS/TeHF/CtFHpdgLxbValjglTQrNdayPcu3zU7Chs=;
+        b=uusiBaP6zkyC6B89uxPWRPSXxBYo8RYvM6sX0dcYBieE20aLuYDx9Pcxtsc/1qCsFdezN/
+        xs20f5TZkZ1D65Ag==
+Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
+        by relay2.suse.de (Postfix) with ESMTP id 48CF32C141;
+        Tue, 24 May 2022 10:23:51 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     axboe@kernel.dk
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Coly Li <colyli@suse.de>
+Subject: [Resend PATCH v2 0/4] bcache fixes for Linux v5.19 (1st wave)
+Date:   Tue, 24 May 2022 18:23:32 +0800
+Message-Id: <20220524102336.10684-1-colyli@suse.de>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Sender: mo933472@gmail.com
-Received: by 2002:aa6:da47:0:b0:1e5:2939:e49b with HTTP; Tue, 24 May 2022
- 03:22:57 -0700 (PDT)
-From:   Hannah Johnson <hannahjohnson8856@gmail.com>
-Date:   Tue, 24 May 2022 10:22:57 +0000
-X-Google-Sender-Auth: gMpDtZeaLSjpj6eEPaRQDFSJ3MM
-Message-ID: <CAHbkfQxHTPsKgrQutWATt=sXmtm14HdFLs-Qg_YG+N0Gr2c6Hg@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+Hi Jens,
+
+Thank you for taking the late arrived series, they are all for bcache
+fixes when I work on the bcache journal no-space deadlock issue. It
+spent me quite long time to fix because other issues interfered my debug
+and analysis. When all the depending issues were fixed and my fix for
+the journal no-space deadlock is verified, this submission is late for
+Linux v5.19 submission. But it is still worthy to take them into v5.19
+because real issues are fixed by this series.
+
+The bcache has 4 patches for Linux v5.19 merge window, all from me.
+- The first 2 patches are code clean up and potential bug fixes for
+multi- threaded btree nodes check (for cache device) and dirty sectors
+counting (for backing device), although no report from mailing list for
+them, it is good to have the fixes.
+- The 3rd patch removes incremental dirty sectors counting because it
+is conflicted with multithreaded dirty sectors counting and the latter
+one is 10x times faster.
+- The last patch fixes a journal no-space deadlock during cache device
+registration, it always reserves one journal bucket and only uses it
+in registration time, so the no-spance condition won't happen anymore.
+
+There are still 2 fixes are still under the long time I/O pressure
+testing, once they are accomplished, I will submit to you in later
+RC cycles.
+
+The v2 series fixed previously detectd oversize stack frame issue, in
+my test I don't observed the stack frame oversize warning and normal
+bcache operations work as expected.
+
+Thank you in advance.
+
+Coly Li
+---
+
+Coly Li (4):
+  bcache: improve multithreaded bch_btree_check()
+  bcache: improve multithreaded bch_sectors_dirty_init()
+  bcache: remove incremental dirty sector counting for
+    bch_sectors_dirty_init()
+  bcache: avoid journal no-space deadlock by reserving 1 journal bucket
+
+ drivers/md/bcache/btree.c     |  58 +++++++++----------
+ drivers/md/bcache/btree.h     |   2 +-
+ drivers/md/bcache/journal.c   |  31 +++++++++--
+ drivers/md/bcache/journal.h   |   2 +
+ drivers/md/bcache/super.c     |   1 +
+ drivers/md/bcache/writeback.c | 101 +++++++++++++---------------------
+ drivers/md/bcache/writeback.h |   2 +-
+ 7 files changed, 94 insertions(+), 103 deletions(-)
+
 -- 
-Hello
-Nice to meet you
-my name is Hannah Johnson i will be glad if we get to know each other
-more better and share pictures i am  expecting your reply
-thank you
+2.35.3
+
