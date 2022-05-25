@@ -2,81 +2,108 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 18E3C534349
-	for <lists+linux-bcache@lfdr.de>; Wed, 25 May 2022 20:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C99F053440D
+	for <lists+linux-bcache@lfdr.de>; Wed, 25 May 2022 21:16:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235180AbiEYSoS (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 25 May 2022 14:44:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55728 "EHLO
+        id S241682AbiEYTQQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 25 May 2022 15:16:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233325AbiEYSoR (ORCPT
+        with ESMTP id S1344519AbiEYTPA (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 25 May 2022 14:44:17 -0400
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 022DAA186;
-        Wed, 25 May 2022 11:44:16 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id A065046;
-        Wed, 25 May 2022 11:44:16 -0700 (PDT)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id AGSuPP3Baxbp; Wed, 25 May 2022 11:44:15 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 9037940;
-        Wed, 25 May 2022 11:44:15 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 9037940
-Date:   Wed, 25 May 2022 11:44:01 -0700 (PDT)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-To:     Christoph Hellwig <hch@infradead.org>
-cc:     Keith Busch <kbusch@kernel.org>, Coly Li <colyli@suse.de>,
-        Adriano Silva <adriano_da_silva@yahoo.com.br>,
-        Bcache Linux <linux-bcache@vger.kernel.org>,
-        Matthias Ferdinand <bcache@mfedv.net>,
-        linux-block@vger.kernel.org
-Subject: Re: [RFC] Add sysctl option to drop disk flushes in bcache? (was:
- Bcache in writes direct with fsync)
-In-Reply-To: <Yo28kDw8rZgFWpHu@infradead.org>
-Message-ID: <77e7dbf9-d5bd-424-1ef7-8a1bb49e9010@ewheeler.net>
-References: <958894243.922478.1652201375900.ref@mail.yahoo.com> <958894243.922478.1652201375900@mail.yahoo.com> <9d59af25-d648-4777-a5c0-c38c246a9610@ewheeler.net> <27ef674d-67e-5739-d5d8-f4aa2887e9c2@ewheeler.net> <YoxuYU4tze9DYqHy@infradead.org>
- <5486e421-b8d0-3063-4cb9-84e69c41b7a3@ewheeler.net> <Yo1BRxG3nvGkQoyG@kbusch-mbp.dhcp.thefacebook.com> <7759781b-dac-7f84-ff42-86f4b1983ca1@ewheeler.net> <Yo28kDw8rZgFWpHu@infradead.org>
+        Wed, 25 May 2022 15:15:00 -0400
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F33FC5E4E
+        for <linux-bcache@vger.kernel.org>; Wed, 25 May 2022 12:13:11 -0700 (PDT)
+Received: by mail-vs1-xe2b.google.com with SMTP id h4so11317078vsr.13
+        for <linux-bcache@vger.kernel.org>; Wed, 25 May 2022 12:13:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=V3ilouT9genmWgVMdUNI5P/LrIsW5jIirCBfI8vk+4c=;
+        b=fhTOpq5a185u/Fvy/z60mm57+fhOJQXNm75VUupwLqqTeblJ/tIb4vW51Cc+H8f4S6
+         FCtkPdy8eOGE51vGaes+rTg9D3F0vC+iHLjFW/wqBSHMxMyFdcvo/0L5VIqvy7HSEaN6
+         F4+aqn6wSVfCukgoHN6pcM1LA/K8ELktYRC2Fs/aZjgwPzWD2ZDJ8cwwuWoq1iXMEMF2
+         7Ncv8k61QaT/5LzJQuzEx8cWUM5pBYtqVdYL7oQz8t2o4CeTe6AO6KBrza9omJHJz+P3
+         YD6PFoWrPMWXEdNffXF6WZXtAaEa6yePqcU+mV4+zwsUTvb6SOqX49n9LatUUcUDB6Yf
+         Um7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=V3ilouT9genmWgVMdUNI5P/LrIsW5jIirCBfI8vk+4c=;
+        b=DkzjcrI95bVmgVXEjIzJMy9PHGx7ALVh4Cn2gCwjZJ0IdLsgwEzhjScXhOAeDPfaSF
+         4hqy6BTaljSlu9XbuyoDjRn7PaPjsMKOfacHVc6XEoB65rTIkglS2C8osWd2POvevIu/
+         ADMjUcMM7/Jjr4aiGlfYtAupZXfqjD8AxMf+JbFLxpT+rdUwy8yr9Kn6vpcGiret4hPB
+         yEbEFt26by/NgZI1Gz7jxnx5x5p7ifH87BEclMMQTmDgu4g/C9dZzRXHjs4mG5mU3ibb
+         H02MGVQwmr7uVg2X2WeH6CguwDtYYAbGEItvJSjikoBWliw8z2kR0Hw05scF0XsQ286Z
+         ZmNw==
+X-Gm-Message-State: AOAM531NgoFABKbXOl2gdVrgBjAwBgzmgGOA3fKn3IW/iLlD3kmTz0gX
+        ASnrPp3beqRmQZxci4Ii1NuItils/wIPlyfksTw=
+X-Google-Smtp-Source: ABdhPJzq488bGwYxv9tcBBD77w6Et+Hunbcn7CQTEpxqWBhHD7UA935B6/FJyviyRwQGcStzZd5ZrNYVQJxWtBACJKM=
+X-Received: by 2002:a67:d99b:0:b0:335:f18f:7f7d with SMTP id
+ u27-20020a67d99b000000b00335f18f7f7dmr11885495vsj.78.1653505990318; Wed, 25
+ May 2022 12:13:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Received: by 2002:a59:d484:0:b0:2bc:cae4:6d22 with HTTP; Wed, 25 May 2022
+ 12:13:09 -0700 (PDT)
+From:   Rolf Benra <olfbenra@gmail.com>
+Date:   Wed, 25 May 2022 21:13:09 +0200
+Message-ID: <CA+z==VtN8Ah5nEAnNjr=-C8doB_jKQeeHZ4y31LkP-MWAHCg6g@mail.gmail.com>
+Subject: Bitte kontaktaufnahme Erforderlich !!! Please Contact Required !!!
+To:     contact@firstdiamondbk.com
+Cc:     info@firstdiamondbk.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, 24 May 2022, Christoph Hellwig wrote:
-> On Tue, May 24, 2022 at 02:34:23PM -0700, Eric Wheeler wrote:
-> > Is this flag influced at all when /sys/block/sdX/queue/scheduler is set 
-> > to "none", or does the write_cache flag operate independently of the 
-> > selected scheduler?
-> 
-> This is up to the stacking driver.  dm and tend to pass through flushes
-> where needed.
-> 
-> > This confirms what I have suspected all along: We have an LSI MegaRAID 
-> > SAS-3516 where the write policy is "write back" in the LUN, but the cache 
-> > is flagged in Linux as write-through:
-> > 
-> > 	]# cat /sys/block/sdb/queue/write_cache 
-> > 	write through
-> > 
-> > I guess this is the correct place to adjust that behavior!
-> 
-> MegaRAID has had all kinds of unsafe policies in the past unfortunately.
-> I'm not even sure all of them could pass through flushes properly if we
-> asked them to :(
+Guten Tag,
 
-Thanks for the feedback, great info!
+Ich habe mich nur gefragt, ob Sie meine vorherige E-Mail bekommen
 
-In your experience, which SAS/SATA RAID controllers are best behaved in 
-terms of policies and reporting things like io_opt and 
-writeback/writethrough to the kernel?
+haben ?
+
+Ich habe versucht, Sie per E-Mail zu erreichen.
+
+Kommen Sie bitte schnell zu mir zur=C3=BCck, es ist sehr wichtig.
+
+Danke
+
+Rolf Benra
+
+olfbenra@gmail.com
+
+
+
+
+
+
+
+----------------------------------
+
+
+
+
+Good Afternoon,
+
+I was just wondering if you got my Previous E-mail
+have ?
+
+I tried to reach you by E-mail.
+
+Please come back to me quickly, it is very Important.
+
+Thanks
+
+Rolf Benra
+
+olfbenra@gmail.com
