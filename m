@@ -2,73 +2,94 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FB21534C3E
-	for <lists+linux-bcache@lfdr.de>; Thu, 26 May 2022 11:06:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 223135353CF
+	for <lists+linux-bcache@lfdr.de>; Thu, 26 May 2022 21:15:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232347AbiEZJGo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 26 May 2022 05:06:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46048 "EHLO
+        id S238265AbiEZTPo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 26 May 2022 15:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231982AbiEZJGo (ORCPT
+        with ESMTP id S229896AbiEZTPn (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 26 May 2022 05:06:44 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32090EE1D;
-        Thu, 26 May 2022 02:06:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=FFAIKEkbJZeiSFekp3ljhU7NUFXzNR9DXxiGVRu0Nx0=; b=z8amMr/6STOSfuq0B9KWyeNlCd
-        JkAftNc9BuT65Jmos4DTDJ9mmbB3/w998MVwq93xrnsoINYD9x0wiktO+w+jg73Qmf9uczs263Dfc
-        Xj6cuaQMCy+Bz+jCFDVFcJxqVMWdjjKAHH3UwyIQH0hWS+WLCVTnFxIPi3vZ/e9WOSD2KH9whduNf
-        MZFgmpn5kw3q1wrFxQYb0CPC/SBvpMYQ+brCpnasu3cbQCP6Gg2NQSWbQvuYWO5VROKwRnp0FzluP
-        5AJ3rBNOJP73mJr7rEpJXVtUzbF5EkCNqlXi+vTSHVh6Z+oO2xIVNIg0hrE5JCPIyJ21VFjRBigKk
-        IrOszSYQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nu9Rw-00EBBN-Hx; Thu, 26 May 2022 09:06:32 +0000
-Date:   Thu, 26 May 2022 02:06:32 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Eric Wheeler <bcache@lists.ewheeler.net>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Keith Busch <kbusch@kernel.org>, Coly Li <colyli@suse.de>,
-        Adriano Silva <adriano_da_silva@yahoo.com.br>,
+        Thu, 26 May 2022 15:15:43 -0400
+Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70B529CF52
+        for <linux-bcache@vger.kernel.org>; Thu, 26 May 2022 12:15:43 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mx.ewheeler.net (Postfix) with ESMTP id F055540;
+        Thu, 26 May 2022 12:15:42 -0700 (PDT)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id 6kjmlAPEPUZL; Thu, 26 May 2022 12:15:38 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id 9C1E939;
+        Thu, 26 May 2022 12:15:38 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 9C1E939
+Date:   Thu, 26 May 2022 12:15:34 -0700 (PDT)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
+To:     Coly Li <colyli@suse.de>
+cc:     Adriano Silva <adriano_da_silva@yahoo.com.br>,
         Bcache Linux <linux-bcache@vger.kernel.org>,
-        Matthias Ferdinand <bcache@mfedv.net>,
-        linux-block@vger.kernel.org
-Subject: Re: [RFC] Add sysctl option to drop disk flushes in bcache? (was:
- Bcache in writes direct with fsync)
-Message-ID: <Yo9DGE2xBQBCqUP+@infradead.org>
-References: <958894243.922478.1652201375900.ref@mail.yahoo.com>
- <958894243.922478.1652201375900@mail.yahoo.com>
- <9d59af25-d648-4777-a5c0-c38c246a9610@ewheeler.net>
- <27ef674d-67e-5739-d5d8-f4aa2887e9c2@ewheeler.net>
- <YoxuYU4tze9DYqHy@infradead.org>
- <5486e421-b8d0-3063-4cb9-84e69c41b7a3@ewheeler.net>
- <Yo1BRxG3nvGkQoyG@kbusch-mbp.dhcp.thefacebook.com>
- <7759781b-dac-7f84-ff42-86f4b1983ca1@ewheeler.net>
- <Yo28kDw8rZgFWpHu@infradead.org>
- <77e7dbf9-d5bd-424-1ef7-8a1bb49e9010@ewheeler.net>
+        Matthias Ferdinand <bcache@mfedv.net>
+Subject: Re: Bcache in writes direct with fsync. Are IOPS limited?
+In-Reply-To: <a3830c54-5e88-658f-f0ef-7ac675090b24@suse.de>
+Message-ID: <5a9fe523-d88a-b9e-479f-ae6dbb3d596e@ewheeler.net>
+References: <958894243.922478.1652201375900.ref@mail.yahoo.com> <958894243.922478.1652201375900@mail.yahoo.com> <9d59af25-d648-4777-a5c0-c38c246a9610@ewheeler.net> <a3830c54-5e88-658f-f0ef-7ac675090b24@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77e7dbf9-d5bd-424-1ef7-8a1bb49e9010@ewheeler.net>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, May 25, 2022 at 11:44:01AM -0700, Eric Wheeler wrote:
-> In your experience, which SAS/SATA RAID controllers are best behaved in 
-> terms of policies and reporting things like io_opt and 
-> writeback/writethrough to the kernel?
+On Mon, 23 May 2022, Coly Li wrote:
+> On 5/18/22 9:22 AM, Eric Wheeler wrote:
+> > Some time ago you ordered an an SSD to test the 4k cache issue, has that
+> > been fixed?  I've kept an eye out for the patch but not sure if it was
+> > released.
+> 
+> Yes, I got the Intel P3700 PCIe SSD to fix the 4Kn unaligned I/O issue
+> (borrowed from a hardware vendor). The new situation is, current kernel does
+> the sector size alignment checking quite earlier in bio layer, if the LBA is
+> not sector size aligned, it is rejected in the bio code, and the underlying
+> driver doesn't have chance to see the bio anymore. So for now, the unaligned
+> LBA for 4Kn device cannot reach bcache code, that's to say, the original
+> reported condition won't happen now.
 
-I never had actually good experiences with any of them.  That being
-said I also haven't used one for years.  For SAS or SATA attachd to
-expanders setups I've mostly used the mpt2/3 family of controllers
-which are doing okay.
+The issue is not with unaligned 4k IOs hitting /dev/bcache0 because you
+are right, the bio layer will reject those before even getting to
+bcache:
+
+The issue is that the bcache cache metadata sometimes makes metadata or
+journal requests from _inside_ bcache that are not 4k aligned.  When
+this happens the bio layer rejects the request from bcache (not from
+whatever is above bcache).
+
+Correct me if I misunderstood what you meant here, maybe it really was 
+fixed.  Here is your response from that old thread that pointed at 
+unaligned key access where you said "Wow, the above lines are very 
+informative, thanks!"
+
+bcache: check_4k_alignment() KEY_OFFSET(&w->key) is not 4KB aligned:  15725385535
+  https://www.spinics.net/lists/linux-bcache/msg06076.html
+
+In that thread Kent sent a quick top-post asking "have you checked extent 
+merging?"
+	https://www.spinics.net/lists/linux-bcache/msg06077.html
+
+> And after this observation, I stopped my investigation on the unaligned sector
+> size I/O on 4Kn device, and returned the P3700 PCIe SSD to the hardware
+> vendor.
+
+Hmm, sorry that it wasn't reproduced.  I hope I'm wrong, but if bcache is 
+generating the 4k-unaligned requests against the cache meta then this bug 
+might still be floating around for "4Kn" cache users.
+
+-Eric
