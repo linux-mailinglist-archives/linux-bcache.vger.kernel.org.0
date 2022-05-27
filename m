@@ -2,75 +2,100 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BAEA53635F
-	for <lists+linux-bcache@lfdr.de>; Fri, 27 May 2022 15:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FA045364B0
+	for <lists+linux-bcache@lfdr.de>; Fri, 27 May 2022 17:31:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352313AbiE0Nim convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-bcache@lfdr.de>); Fri, 27 May 2022 09:38:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48464 "EHLO
+        id S1352505AbiE0Pbl (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 27 May 2022 11:31:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240544AbiE0Nil (ORCPT
+        with ESMTP id S235167AbiE0Pbk (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 27 May 2022 09:38:41 -0400
-X-Greylist: delayed 8973 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 27 May 2022 06:38:40 PDT
-Received: from mail.composit.net (mail.composit.net [195.49.185.119])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 885A011E48B
-        for <linux-bcache@vger.kernel.org>; Fri, 27 May 2022 06:38:40 -0700 (PDT)
-Received: from mail.composit.net (localhost.localdomain [127.0.0.1])
-        by mail.composit.net (Proxmox) with ESMTP id 94F5838A7FC;
-        Fri, 27 May 2022 14:05:12 +0300 (MSK)
-Received: from mail.composit.net (mail.industrial-flow.com [192.168.101.14])
-        by mail.composit.net (Proxmox) with SMTP id 67377382BAB;
-        Fri, 27 May 2022 14:05:12 +0300 (MSK)
-Received: from [192.168.1.105] (Unknown [197.234.219.23])
-        by mail.composit.net with ESMTPSA
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256)
-        ; Fri, 27 May 2022 14:05:13 +0300
-Message-ID: <09C76DFE-E87F-461F-858C-2D051AB4B7F4@mail.composit.net>
-Content-Type: text/plain; charset="iso-8859-1"
+        Fri, 27 May 2022 11:31:40 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 924E715732;
+        Fri, 27 May 2022 08:31:39 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 4650C1F990;
+        Fri, 27 May 2022 15:31:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1653665498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=iWM1xVXjq5IBCVIKldEBqVGnrRVG64RqmZAkdY45UTg=;
+        b=KEf/qEdtiEGtQ8Tja9NNfj/mt0X2AqQS495XvbbHS1AUuzy+2DjOhpq900pIrWO8xxERjs
+        8UBAfcScCqecXg6bQ55c7Ix5tE6wDeydr51pVyVqUsIcIMSXTD331ZV7IDkvR3/FJExMUc
+        GjUyXGgxRHYOv1ioKKFwn0wuVOMmrAA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1653665498;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=iWM1xVXjq5IBCVIKldEBqVGnrRVG64RqmZAkdY45UTg=;
+        b=6HBwfQDJ+j6KRNGgGIYD8pOSxYE3VvdVjzrBVCC6Gu6FAtbOm/6qSWTFCc7xc0oy7+UA7F
+        0LcVhRVQnKZFT1Ag==
+Received: from localhost.localdomain (unknown [10.163.16.22])
+        by relay2.suse.de (Postfix) with ESMTP id 52DDA2C141;
+        Fri, 27 May 2022 15:31:24 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     axboe@kernel.dk
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Coly Li <colyli@suse.de>
+Subject: [PATCH 0/3] bcache fixes for Linux v5.19 (2nd wave)
+Date:   Fri, 27 May 2022 23:28:15 +0800
+Message-Id: <20220527152818.27545-1-colyli@suse.de>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Greetings From Ukraine.  
-To:     Recipients <heiss@dnet.it>
-From:   "Kostiantyn Chichkov" <heiss@dnet.it>
-Date:   Fri, 27 May 2022 12:04:48 +0100
-Reply-To: kostiantync@online.ee
-X-Spam-Status: Yes, score=5.1 required=5.0 tests=BAYES_50,
-        RCVD_IN_BL_SPAMCOP_NET,RCVD_IN_SBL,RCVD_IN_SORBS_WEB,
-        RCVD_IN_VALIDITY_RPBL,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: *  1.3 RCVD_IN_BL_SPAMCOP_NET RBL: Received via a relay in
-        *      bl.spamcop.net
-        *      [Blocked - see <https://www.spamcop.net/bl.shtml?195.49.185.119>]
-        *  1.5 RCVD_IN_SORBS_WEB RBL: SORBS: sender is an abusable web server
-        *      [197.234.219.23 listed in dnsbl.sorbs.net]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.1 RCVD_IN_SBL RBL: Received via a relay in Spamhaus SBL
-        *      [197.234.219.23 listed in zen.spamhaus.org]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.0 SPF_NONE SPF: sender does not publish an SPF Record
-        *  1.3 RCVD_IN_VALIDITY_RPBL RBL: Relay in Validity RPBL,
-        *      https://senderscore.org/blocklistlookup/
-        *      [195.49.185.119 listed in bl.score.senderscore.com]
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-X-Spam-Level: *****
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Good Morning,
+Hi Jens,
 
-We are Kostiantyn Chychkov and Maryna Chudnovska from Ukraine, we need your service, we have gone through your profile and we will like to work with you on an important service that needs urgent attention due to the ongoing war in our country. Kindly acknowledge this inquiry as soon as possible for a detailed discussion about the service.
+Here are the 2nd wave bcache fixes for Linux v5.19, they just survives
+from my I/O pressure testing and look fine.
 
-Thank you.
+The patch from Jia-Ju Bai is in my testing queue for a while, it handles
+a memory allocation failure in the I/O path on a backing device when it
+is not attached to cache device.
 
-Yours expectantly,
+My first patch adds memset() to zero clean the on-stack local variables
+to keep the code logic consistent as they were previously allocated by
+kzalloc() dynamically.
 
-Kostiantyn Chichkov & Ms. Maryna Chudnovska,
-From Ukraine.
+The second patch from me is an effort to avoid bogus soft lockup warning
+in kernel message. Indeed the busy writeback thread starves writeback
+I/O rate calculation kwork doesn't hurt anything, but the kernel message
+with trace information scares users time to time, makes them to worry
+about something wrong with bcache. This patch permit the writeback rate
+update kworker to retry longer times before finally competing the write-
+back lock with writeback thread, to avoid the unnecessary soft lockup
+warning information.
 
+There is no more patch in my plan for Linux v5.19. Please consider to
+take them, and thank you in advance.
+
+Coly Li (2):
+  bcache: memset on stack variables in bch_btree_check() and
+    bch_sectors_dirty_init()
+  bcache: avoid unnecessary soft lockup in kworker
+    update_writeback_rate()
+
+Jia-Ju Bai (1):
+  md: bcache: check the return value of kzalloc() in
+    detached_dev_do_request()
+
+ drivers/md/bcache/bcache.h    |  7 ++++++
+ drivers/md/bcache/btree.c     |  1 +
+ drivers/md/bcache/request.c   |  6 +++++
+ drivers/md/bcache/writeback.c | 46 +++++++++++++++++++++++++++++++----
+ 4 files changed, 55 insertions(+), 5 deletions(-)
+
+-- 
+2.35.3
 
