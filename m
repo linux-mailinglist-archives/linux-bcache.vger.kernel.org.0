@@ -2,66 +2,69 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C958253664F
-	for <lists+linux-bcache@lfdr.de>; Fri, 27 May 2022 19:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3718C53668F
+	for <lists+linux-bcache@lfdr.de>; Fri, 27 May 2022 19:29:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354151AbiE0RFK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 27 May 2022 13:05:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58718 "EHLO
+        id S237226AbiE0R3K (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 27 May 2022 13:29:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347698AbiE0RFE (ORCPT
+        with ESMTP id S240684AbiE0R3J (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 27 May 2022 13:05:04 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D15F613B8F6;
-        Fri, 27 May 2022 10:05:03 -0700 (PDT)
+        Fri, 27 May 2022 13:29:09 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D97C34DF4D
+        for <linux-bcache@vger.kernel.org>; Fri, 27 May 2022 10:28:59 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 896B221AE2;
-        Fri, 27 May 2022 17:05:02 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 8BEED1F855;
+        Fri, 27 May 2022 17:28:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1653671102; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1653672538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vVQRZwtkfPcLha9nbMLcQeLwMey5IxEKeLqogK9GOd8=;
-        b=M7zh8XczK3HaxHT6qh9aVLK54z3u0LSNU3+Jrrqg6IsWhWP6JizkgOpUwbC846zZoQJpAm
-        hZx0o1Xw2tQgOLYSzvBlEF9WiklXe+NeEVTrCVlm/IEHQBgmmIU8W+fsSttnGJZmS/QTAp
-        ZhaWxQx23tlYlS2JdrSuSPUsB9iDyWQ=
+        bh=4U40bhosnjOpPM/aAy2kNubZ9C0Q3yL6zHOLnC4aaks=;
+        b=J/RLNPPkBiDTVRzsv48xjYr7j3efvbQHTd9ElDg0Gjy39ypD2cHG7OK0CgIjC/eI4Uj2Xz
+        cC8GmnQpsHjuy/DxluWoT4dMgDmoHoSKEGRvZaG234aY50E65Ng5jhyZd9SdNsqmwF3Un3
+        RPezyWCSlAAhmCxGNFFe8/TrBhSx7Zs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1653671102;
+        s=susede2_ed25519; t=1653672538;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vVQRZwtkfPcLha9nbMLcQeLwMey5IxEKeLqogK9GOd8=;
-        b=I++Zr8n1nZvrdUdyP1/IEkxNofzqBOoV/SLrXPEVy5LZ7FoQM/R0GQy/aFmF9A578Ly/4f
-        XUWWQYu+DmlMzXBA==
+        bh=4U40bhosnjOpPM/aAy2kNubZ9C0Q3yL6zHOLnC4aaks=;
+        b=eQCO0c9V+FJya7ss12zqvyTvz+0TZmpVHue42VQtnbdMgf3yj6Flw9kmBtm3sfCJiyemVU
+        5yuL94/hXMS94hCg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7649D13A84;
-        Fri, 27 May 2022 17:05:02 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 830B013A84;
+        Fri, 27 May 2022 17:28:58 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id O9+lHL4EkWJ9LQAAMHmgww
-        (envelope-from <colyli@suse.de>); Fri, 27 May 2022 17:05:02 +0000
+        id Ia7KH1oKkWK5NwAAMHmgww
+        (envelope-from <colyli@suse.de>); Fri, 27 May 2022 17:28:58 +0000
 MIME-Version: 1.0
-Date:   Sat, 28 May 2022 01:05:02 +0800
+Date:   Sat, 28 May 2022 01:28:58 +0800
 From:   colyli <colyli@suse.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 2/3] bcache: avoid unnecessary soft lockup in kworker
- update_writeback_rate()
-In-Reply-To: <ebf7c9e4-89cb-59e4-8304-d7f8a28966f3@kernel.dk>
-References: <20220527152818.27545-1-colyli@suse.de>
- <20220527152818.27545-3-colyli@suse.de>
- <ebf7c9e4-89cb-59e4-8304-d7f8a28966f3@kernel.dk>
+To:     Eric Wheeler <bcache@lists.ewheeler.net>
+Cc:     Adriano Silva <adriano_da_silva@yahoo.com.br>,
+        Bcache Linux <linux-bcache@vger.kernel.org>,
+        Matthias Ferdinand <bcache@mfedv.net>
+Subject: Re: Bcache in writes direct with fsync. Are IOPS limited?
+In-Reply-To: <5a9fe523-d88a-b9e-479f-ae6dbb3d596e@ewheeler.net>
+References: <958894243.922478.1652201375900.ref@mail.yahoo.com>
+ <958894243.922478.1652201375900@mail.yahoo.com>
+ <9d59af25-d648-4777-a5c0-c38c246a9610@ewheeler.net>
+ <a3830c54-5e88-658f-f0ef-7ac675090b24@suse.de>
+ <5a9fe523-d88a-b9e-479f-ae6dbb3d596e@ewheeler.net>
 User-Agent: Roundcube Webmail
-Message-ID: <8251ee2fab43b59ecd5a6140655eeb47@suse.de>
+Message-ID: <56405053a802525729f4e9f08e7861e5@suse.de>
 X-Sender: colyli@suse.de
 Content-Type: text/plain; charset=UTF-8;
  format=flowed
@@ -76,158 +79,85 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-在 2022-05-27 23:49，Jens Axboe 写道：
-> On 5/27/22 9:28 AM, Coly Li wrote:
->> diff --git a/drivers/md/bcache/writeback.c 
->> b/drivers/md/bcache/writeback.c
->> index d138a2d73240..c51671abe74e 100644
->> --- a/drivers/md/bcache/writeback.c
->> +++ b/drivers/md/bcache/writeback.c
->> @@ -214,6 +214,7 @@ static void update_writeback_rate(struct 
->> work_struct *work)
->>  					     struct cached_dev,
->>  					     writeback_rate_update);
->>  	struct cache_set *c = dc->disk.c;
->> +	bool contention = false;
+在 2022-05-27 03:15，Eric Wheeler 写道：
+> On Mon, 23 May 2022, Coly Li wrote:
+>> On 5/18/22 9:22 AM, Eric Wheeler wrote:
+>> > Some time ago you ordered an an SSD to test the 4k cache issue, has that
+>> > been fixed?  I've kept an eye out for the patch but not sure if it was
+>> > released.
 >> 
->>  	/*
->>  	 * should check BCACHE_DEV_RATE_DW_RUNNING before calling
->> @@ -243,13 +244,41 @@ static void update_writeback_rate(struct 
->> work_struct *work)
->>  		 * in maximum writeback rate number(s).
->>  		 */
->>  		if (!set_at_max_writeback_rate(c, dc)) {
->> -			down_read(&dc->writeback_lock);
->> -			__update_writeback_rate(dc);
->> -			update_gc_after_writeback(c);
->> -			up_read(&dc->writeback_lock);
->> +			/*
->> +			 * When contention happens on dc->writeback_lock with
->> +			 * the writeback thread, this kwork may be blocked for
->> +			 * very long time if there are too many dirty data to
->> +			 * writeback, and kerne message will complain a (bogus)
->> +			 * software lockup kernel message. To avoid potential
->> +			 * starving, if down_read_trylock() fails, writeback
->> +			 * rate updating will be skipped for dc->retry_max times
->> +			 * at most while delay this worker a bit longer time.
->> +			 * If dc->retry_max times are tried and the trylock
->> +			 * still fails, then call down_read() to wait for
->> +			 * dc->writeback_lock.
->> +			 */
->> +			if (!down_read_trylock((&dc->writeback_lock))) {
->> +				contention = true;
->> +				dc->retry_nr++;
->> +				if (dc->retry_nr > dc->retry_max)
->> +					down_read(&dc->writeback_lock);
->> +			}
->> +
->> +			if (!contention || dc->retry_nr > dc->retry_max) {
->> +				__update_writeback_rate(dc);
->> +				update_gc_after_writeback(c);
->> +				up_read(&dc->writeback_lock);
->> +				dc->retry_nr = 0;
->> +			}
->>  		}
->>  	}
+>> Yes, I got the Intel P3700 PCIe SSD to fix the 4Kn unaligned I/O issue
+>> (borrowed from a hardware vendor). The new situation is, current 
+>> kernel does
+>> the sector size alignment checking quite earlier in bio layer, if the 
+>> LBA is
+>> not sector size aligned, it is rejected in the bio code, and the 
+>> underlying
+>> driver doesn't have chance to see the bio anymore. So for now, the 
+>> unaligned
+>> LBA for 4Kn device cannot reach bcache code, that's to say, the 
+>> original
+>> reported condition won't happen now.
+> 
+> The issue is not with unaligned 4k IOs hitting /dev/bcache0 because you
+> are right, the bio layer will reject those before even getting to
+> bcache:
+> 
+> The issue is that the bcache cache metadata sometimes makes metadata or
+> journal requests from _inside_ bcache that are not 4k aligned.  When
+> this happens the bio layer rejects the request from bcache (not from
+> whatever is above bcache).
+> 
+> Correct me if I misunderstood what you meant here, maybe it really was
+> fixed.  Here is your response from that old thread that pointed at
+> unaligned key access where you said "Wow, the above lines are very
+> informative, thanks!"
 > 
 
-Hi Jens,
+It was not fixed, at least I didn't do it on purpose. Maybe it was 
+avoided
+by other fixes, e.g. the oversize bkey fix. But I don't have evidence 
+the
+issue was fixed.
 
-Thanks for looking into this :-)
-
-> This is really not very pretty. First of all, why bother with storing a
-> max retry value in there? Doesn't seem like it'd ever be different per
-
-It is because the probability of the lock contention on 
-dc->writeback_lock
-depends on the I/O speed backing device. From my observation during the
-tests, for fast backing device with larger cache device, its writeback
-thread may work harder to flush more dirty data to backing device, the
-lock contention happens more and longer, so the writeback rate update
-kworker has to wait longer time before acquires dc->writeback_lock. So
-its dc->retry_max should be larger then slow backing device.
-
-Therefore I'd like to have a tunable per-backing-device retry_max. And
-the syses interface will be added when users/customers want it. The use
-case is from SAP HANA users, I have report that they observe the soft
-lockup warning for dc->writeback_lock contention and worry about whether
-data is corrupted (indeed, of course not).
-
-> 'dc' anyway. Secondly, something like the below would be a lot more
-> readable. Totally untested.
-
-I response inline for the following suggestion.
-
+> bcache: check_4k_alignment() KEY_OFFSET(&w->key) is not 4KB aligned:
+> 15725385535
+>   https://www.spinics.net/lists/linux-bcache/msg06076.html
 > 
-> diff --git a/drivers/md/bcache/writeback.c 
-> b/drivers/md/bcache/writeback.c
-> index 9ee0005874cd..cbc01372c7a1 100644
-> --- a/drivers/md/bcache/writeback.c
-> +++ b/drivers/md/bcache/writeback.c
-> @@ -235,19 +235,27 @@ static void update_writeback_rate(struct
-> work_struct *work)
->  		return;
->  	}
+> In that thread Kent sent a quick top-post asking "have you checked 
+> extent
+> merging?"
+> 	https://www.spinics.net/lists/linux-bcache/msg06077.html
 > 
-> -	if (atomic_read(&dc->has_dirty) && dc->writeback_percent) {
-> +	if (atomic_read(&dc->has_dirty) && dc->writeback_percent &&
-> +	    !set_at_max_writeback_rate(c, dc)) {
->  		/*
->  		 * If the whole cache set is idle, set_at_max_writeback_rate()
->  		 * will set writeback rate to a max number. Then it is
->  		 * unncessary to update writeback rate for an idle cache set
->  		 * in maximum writeback rate number(s).
->  		 */
-> -		if (!set_at_max_writeback_rate(c, dc)) {
 
-The reason I didn't place '!set_at_max_writeback_rate' with other items 
-in
-previous if() was for the above code comment. If I moved it to previous
-if() without other items, I was not comfortable to place the code 
-comments
-neither before or after the if() check. So I used a separated if() check 
-for
-'!set_at_max_writeback_rate'.
+It embarrassed me that I received your informative debug information, 
+and I
+glared very hard at the code for quite long time, but didn't have any 
+clue
+that how such problem may happen in the extent related code.
 
- From your change, it seems placing the code comments behind is fine (or
-better), can I understand in this way? I try to learn and follow your 
-way
-to handle such code comments situation.
+Since you reported the issue and I believe you, I will keep my eyes on 
+the
+non-aligned 4Kn issue for bcache internal I/O. Hope someday I may have 
+idea
+suddenly to point out where the problem is, and fix it.
 
 
-> -			down_read(&dc->writeback_lock);
-> +		do {
-> +			if (!down_read_trylock(&dc->writeback_lock)) {
-> +				dc->rate_update_retry++;
-> +				if (dc->rate_update_retry < MY_MAX)
-> +					break;
-> +				down_read(&dc->writeback_lock);
-> +				dc->rate_update_retry = 0;
+>> And after this observation, I stopped my investigation on the 
+>> unaligned sector
+>> size I/O on 4Kn device, and returned the P3700 PCIe SSD to the 
+>> hardware
+>> vendor.
+> 
+> Hmm, sorry that it wasn't reproduced.  I hope I'm wrong, but if bcache 
+> is
+> generating the 4k-unaligned requests against the cache meta then this 
+> bug
+> might still be floating around for "4Kn" cache users.
+> 
 
-The incremental reschedule delay was to avoid might-be-useless retry, 
-but
-the above method works too. Just setting the default retry_max from 5 to
-15, for 10 more retry with 5 seconds interval, it's fine. I can modify
-the change in this way to recuse change size.
-
-> +			}
-> +
->  			__update_writeback_rate(dc);
->  			update_gc_after_writeback(c);
->  			up_read(&dc->writeback_lock);
-> -		}
-> +		} while (0);
-
-Aha, this is cool! I never though of using do{}while(0) and break in 
-such a
-genius way! Sure I will use this, thanks for the hint :-)
-
-After you reply my defense of dc->retry_max, and the question of code
-comments location, I will update and test the patch again, and re-sbumit 
-to
-you.
-
-Thanks for your constructive suggestion, especially the do{}while(0) 
-part!
+I don't think you were wrong, you are people whom I believe :-) It just 
+needs
+time and luck...
 
 Coly Li
