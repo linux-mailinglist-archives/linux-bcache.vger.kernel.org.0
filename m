@@ -2,182 +2,131 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B1F536CC2
-	for <lists+linux-bcache@lfdr.de>; Sat, 28 May 2022 14:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92383536CCB
+	for <lists+linux-bcache@lfdr.de>; Sat, 28 May 2022 14:20:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234860AbiE1MJl (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 28 May 2022 08:09:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54878 "EHLO
+        id S235307AbiE1MUM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 28 May 2022 08:20:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229685AbiE1MJk (ORCPT
+        with ESMTP id S1351952AbiE1MUH (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 28 May 2022 08:09:40 -0400
-Received: from sonic305-2.consmr.mail.bf2.yahoo.com (sonic305-2.consmr.mail.bf2.yahoo.com [74.6.133.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB231AD82
-        for <linux-bcache@vger.kernel.org>; Sat, 28 May 2022 05:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com.br; s=s2048; t=1653739776; bh=H5L4m69rzGzQqjA7M5tyN77YTAw6uBdpg2oYX5DtiWM=; h=Date:From:To:Cc:In-Reply-To:References:Subject:From:Subject:Reply-To; b=HKfnMlpK5XTWsKWYNLAH88pGDnAQp8aSXCkVFkRl3aBxvURFpaBQhwRQJObUIdVsyj+AEmgVRyEzNqIXXQqw+XtgsIVFrRG1zkJvadr/yzcFl44la8QVpFKE5dWgUdvkfkDgiwAPqJv+evBtYPebFjBTp+oQ9l1TSdzBNFwr6V/AlpCiYIhloDeQbTXqqCL/9/aK+eV9bslFSiNQ4kvMz6hXnoiJOogHCF1UMUsd3ChJSMdUbgDLnyhwSRbPoFPV5+IuXxcqItBja0RrCROlx3mTUDW6aaGXxxERg7adBgzv0QnaqxX4viJNGPI63GFURzWIBwXuKzSkVMmFWyPukg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1653739776; bh=WEcheklIH2n9la4KzTg9fMXd+AYiNySYWDlGFXwAQi1=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=bgJocDmzwSWSVWpWvjfbvuQbO3LVfiOZSAHGz3Wo3HW6CAKu/6zA5V/e0d4Ac1Sxn3d6tylihVhSAwGNoFNrwSLxM9lHFHIsFJ1xMlkYhspI4P0hUNnldkKmoavP+sQ8zo7JkoIiyy6bwvfUYytYQ6+Tk1C9xqpmvQSF2DrdHMvqet8BLeNvD7Pp+92v/4Cvh7rFc6AyTo6Dz7sPRk66HsWYf89g7E98sackxeotwM9b4ZjJPrjOPq+AWsvsvW/T4Uk2aht+oBMwUXepMhSTuMXJ1VoX1UPNBIVN41ydwg7KSuuv+IOQ8jB91/Y1wfakOLC+qimoyO3WEUnUSK5UBQ==
-X-YMail-OSG: _CxJbtgVM1m3m4jvlbqNvGSzOQB7BQS0D8T0kvBygUJdKEn6umMBVJyjQWjynYS
- 7N29ZsoL2F2CEpaiXsbqok4K8RlCfnLx9LcXFEmIXP7gaz2u5_CaA1lxKQiXvItTpfQ7gxRbVagn
- PWWTRX4QkByHlPrBt8Q_uR5pvEN3TPVdlwhRbim2_cAsR6Pai3ZApx9n9FxB_xI3SRGWLMzoq88D
- 0YkdK9T2IH0ofV4mv_SehIxqwJs3N9Tb9zOhp5xtC4opbh1e7BK3T_VJmBIoVFhNzXrQ5JVLipCW
- 1j.lUUS3FCI_11HpSgLR3wca6El9I84lQ7WGDLjwkiL7aLNxH0Y2T4lFNIBwo8zJkWUAASC7FtwX
- gz0Ql2xlhTosI9G_pwZAIlKwZlecH_7DSKh.6Hh26fK4ZPdzFwXj18G58hfNYEcIWg5HCMcFcQY0
- 3.hgst.T5bxWQLCL1cwlXNFfYp.TbG_HV.2xp0C5gTIBSEGmib_KLpuEacEl3Ht1mwZOeXZKOVKg
- zMiggeGx.KussXbfZvCNZMYA_7ve0pr8qgzGAsiIkov85tyKalO2W5y9iKS_nm4ET9xadawFSbuL
- p5MTNSFyxZTV8LAympLFjjAKv7ByBrrf_FjRLH19g4V5Y3j_d5yF3__8u_SKtLSywVdRH0dYEzK_
- TcNwuuar5lKyX8l8fnTTibQmBp6gnS7wMhqZKO2R_iMCzaJpvJbWcRKdLTqmExRIo6..tEseTFoP
- DBEuLyVTZBJ8F1cKhx8dYZJvREANvaywcekpTTkhbpAq1o47wo14EcLVnIoZdcMGSt2F8O.9RQKb
- ueishqhCQMdquH7ku7RWTTyY.8iXAeVobpFe4.jneDyOy9KXuYIWd7jz3oQ.BFvV2E6saEjMb6_s
- pOeLaRkahDGewP3Jh22.v06KvxkfcN90nWtjrJ7fTvJpaIHMLKcj7C02Z2lTjtE5SKEntiK0rnAI
- 3ou7TlMdn2lT8_gaK.PhdQacFYRvcQYp2wp6A0MlvO9acKB3_jVWRiYFb8egizoyMW5n5bEbWOoq
- mfY1_BHVg_FM.cf.keoAlmYYWaqOK1GC4z2lVGumjJQ_MqszgXaxsslJlb0kmfcjeoRoyd93lK8j
- iBIS0vXzgS0_BFz7y9ppXV8IBAllzwmkikr83RrnPxGpIP_7aBKXoQfuPCiYCreIIk_lfCCflY_x
- pK92hLXXBHSnT16wt2rxbivo7QQxQ0Gx6e6VdXVpGbvykGbPQpsG6XWUFpgSJ6mwPKt17zZUw381
- M1bg91tQX3k22oThKei9_6EeUaTAij1XPYUaFSlm0gIiaL8Rg1IT2BVgRvXtUQ7z1Rm9iRtMfwMh
- zyJBTlMPNhWCOS_JgfOd6BpmDEYCueQrhWcptAjGbJGmxm5b38RredpOQn8t4.DZWlCnse54tEtM
- 7rGLSFB0.V7cZI6e8fw9mrufBzR2mnIbjlb2HKxy_GUXpj43qGUd3bsmZN2KI6GMp862Jeb8dNH.
- UuRYr_ez_z3D8Q3YLDNWqIKZFSQFTiyHnmv5HNNzxRciwcd6wOsxkhabgpGWIv3LSWyHhgxDVJ76
- Blkh.w5nMefLZamfD..r7ZfcAb26mjyu8Wm0CWzEtwq0dASe3mKEJxowZe8uQ4pwzgzv94gjDgCT
- 65AACKfJc1b0XkACySvfoZtzTfga0yuZ._XrWv8s481heO2GkuUvuMHvCA4gio2Sc5m0MNf9TqEL
- gI5sTFPR3lCToSp_cjrDpQsm59LWu6mzh3irCN1N4SwqG56pXwzUhLVOL8GjxXhn9r6IlP1PPpbe
- UdJRpJFPenHpnwQGjYnNSYVTwTr8kYZJ3YKOdEfZfpZNmsJ4cS8Hiy2ZYpM7VuPAPNgJnXaytqMA
- 6rFbUe5qavh_v7fOSZ4mVSxLAW5fkKqqph5W9vf3WI8nLfCty6sMqfX9r4HXbr4GMuU58YZEMQE6
- NHxbITOK42dl50NdoiLloIbuA7Oxz8FDlbPDqMaROZz5zMGPdChJg7evuaZ4kT3EqEnlwSdcQaTC
- NG5B5oI.VvzDlP8pf0I7UzG60z86iipo4LH2ZExBfRjlc12HGCDwB7rnLaeKed6ZUQlX_vIpRChH
- nPLeJeiREFYRxFQS_6xFCRTTcUumAcyvx1XXWfOCtBvHhbiqJhnLaWeTIq5Een0JUjS.9aNORkS1
- GZyYXwwIzd3kKzbK2cm4dwzUZOb5fJtL2Whxm97H0OCEjgAJMQe7uJfrYGXR1tpyhssBEBrLawig
- Xpd6B4psjd2azEFnTAuTL3TaCtHT3avPuMFHzr9F3z899QmzWCckdrAzZkHM1HQ--
-X-Sonic-MF: <adriano_da_silva@yahoo.com.br>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Sat, 28 May 2022 12:09:36 +0000
-Date:   Sat, 28 May 2022 12:09:02 +0000 (UTC)
-From:   Adriano Silva <adriano_da_silva@yahoo.com.br>
-To:     Eric Wheeler <bcache@lists.ewheeler.net>,
-        Matthias Ferdinand <bcache@mfedv.net>
-Cc:     Coly Li <colyli@suse.de>,
-        Bcache Linux <linux-bcache@vger.kernel.org>
-Message-ID: <1978768894.2323492.1653739742429@mail.yahoo.com>
-In-Reply-To: <YpHNts38gQMJspip@xoff>
-References: <958894243.922478.1652201375900.ref@mail.yahoo.com> <958894243.922478.1652201375900@mail.yahoo.com> <9d59af25-d648-4777-a5c0-c38c246a9610@ewheeler.net> <681726005.1812841.1653564986700@mail.yahoo.com> <8aac4160-4da5-453b-48ba-95e79fb8c029@ewheeler.net> <532745340.2051210.1653624441686@mail.yahoo.com> <5b164113-364b-76a8-5bcc-94c1cec868db@ewheeler.net> <YpHNts38gQMJspip@xoff>
-Subject: Re: Bcache in writes direct with fsync. Are IOPS limited?
+        Sat, 28 May 2022 08:20:07 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CA5F1DA60
+        for <linux-bcache@vger.kernel.org>; Sat, 28 May 2022 05:20:05 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id q4so6351681plr.11
+        for <linux-bcache@vger.kernel.org>; Sat, 28 May 2022 05:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=y77sSvpwInuFJDiNYp/3GCu0KvBwGdgfHS//h3DpWbM=;
+        b=VxsGWE4ml7nFCgy1+eZ+wz6x/fGWVT/fa8zyF1euXXpTclJf4tuZl7Hsb+GtorsgJX
+         1d4NcwJ/3OOKVqaI3e69Dla5Es+7rtJKDoGDSYUofbziAKAy2jhihAb8yc4UOmgR1Zj0
+         wUqbIeTbNtx5WgA+kNnIpsOqGK09nq+eb4ggTmUrPJQhrrITeYR8/baK2yQR3fh9S93L
+         4j68XsBEixxOsQq6oirLkA/dk9YnVswqGrCls5o8UaQ33s345BY3eR3QebZdJ5014Ilt
+         yhB27pOvZJXMAEToqO4ETFAJROzt9eHtlA6iPI6ovoe2gCD9Lvl56IP1nCrmJ2ZBMJfj
+         11xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=y77sSvpwInuFJDiNYp/3GCu0KvBwGdgfHS//h3DpWbM=;
+        b=aHBGh4oYbiwAgUgqyATnHSfRy+OlCf6/So1wNsZNrN92mPXOz/78Ngy9YYjgr0jQRc
+         vOdmPLS+0z3HO7aXY9O87QtvGYHpzqyILZaj8d5bsqa8GAXgFQp2N1mDfLHC54TBSXK3
+         A1phBcZpus8bM35Qqf69Ll5FPkivuaDj51wVwtwTWynLyWN+BM3cd2XYIxLQLWnqZ8b0
+         mqXZnOMOOTUeobo1/GYnIK7365zTu6+zTSrGouVOgqkK8HxnbBXUp5O1Uxdm5YpRmnMk
+         EatjVDKE++spFly4p0KHiw1HUM9Gp1OBAs1aTLw3tCaEkXjTM5Yz/G/fUoQtj4QnA+gv
+         IJFQ==
+X-Gm-Message-State: AOAM5316pudwdEIpT2iAwFB4K33pR67dI2cEPKV0JANY+5ZpFCeflcdd
+        E1tQxoMa0oUMcspT9qmLZRx8fA==
+X-Google-Smtp-Source: ABdhPJyAphsKmZO7ie8SGqewH6n/13vXkWFJfFnldWE/6AMkmHNKDXBGpU7vJN2nwsMr0h9rGGdcHA==
+X-Received: by 2002:a17:903:213:b0:15f:4ea:cd63 with SMTP id r19-20020a170903021300b0015f04eacd63mr48068332plh.68.1653740404711;
+        Sat, 28 May 2022 05:20:04 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id m16-20020a170902f65000b0015e8d4eb2ccsm5472254plg.278.2022.05.28.05.20.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 May 2022 05:20:03 -0700 (PDT)
+Message-ID: <8a45c9fa-4cd8-e0e0-63f3-03adb761f9ca@kernel.dk>
+Date:   Sat, 28 May 2022 06:20:02 -0600
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 1/1] bcache: avoid unnecessary soft lockup in kworker
+ update_writeback_rate()
+Content-Language: en-US
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org
+References: <20220528061949.28519-1-colyli@suse.de>
+ <20220528061949.28519-2-colyli@suse.de>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220528061949.28519-2-colyli@suse.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: WebService/1.1.20225 YMailNorrin
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Tankyou Eric, Matthias, Coly..
+On 5/28/22 12:19 AM, Coly Li wrote:
+> The kworker routine update_writeback_rate() is schedued to update the
+> writeback rate in every 5 seconds by default. Before calling
+> __update_writeback_rate() to do real job, semaphore dc->writeback_lock
+> should be held by the kworker routine.
+> 
+> At the same time, bcache writeback thread routine bch_writeback_thread()
+> also needs to hold dc->writeback_lock before flushing dirty data back
+> into the backing device. If the dirty data set is large, it might be
+> very long time for bch_writeback_thread() to scan all dirty buckets and
+> releases dc->writeback_lock. In such case update_writeback_rate() can be
+> starved for long enough time so that kernel reports a soft lockup warn-
+> ing started like:
+>   watchdog: BUG: soft lockup - CPU#246 stuck for 23s! [kworker/246:31:179713]
+> 
+> Such soft lockup condition is unnecessary, because after the writeback
+> thread finishes its job and releases dc->writeback_lock, the kworker
+> update_writeback_rate() may continue to work and everything is fine
+> indeed.
+> 
+> This patch avoids the unnecessary soft lockup by the following method,
+> - Add new member to struct cached_dev
+>   - dc->rate_update_retry (0 by default)
+> - In update_writeback_rate() call down_read_trylock(&dc->writeback_lock)
+>   firstly, if it fails then lock contention happens.
+> - If dc->rate_update_retry <= BCH_WBRATE_UPDATE_RETRY_MAX (15), doesn't
+>   acquire the lock and reschedules the kworker for next try.
+> - If dc->rate_update_retry > BCH_WBRATE_UPDATE_RETRY_MAX, no retry
+>   anymore and call down_read(&dc->writeback_lock) to wait for the lock.
+> 
+> By the above method, at worst case update_writeback_rate() may retry for
+> 1+ minutes before blocking on dc->writeback_lock by calling down_read().
+> For a 4TB cache device with 1TB dirty data, 90%+ of the unnecessary soft
+> lockup warning message can be avoided.
+> 
+> When retrying to acquire dc->writeback_lock in update_writeback_rate(),
+> of course the writeback rate cannot be updated. It is fair, because when
+> the kworker is blocked on the lock contention of dc->writeback_lock, the
+> writeback rate cannot be updated neither.
+> 
+> This change follows Jens Axboe's suggestion to a more clear and simple
+> version.
 
+This looks fine, but it doesn't apply to my current for-5.19/drivers
+branch which the previous ones did. Did you spin this one without the
+other patches, perhaps?
 
-> Disk controllers seem to interpret FLUSH CACHE / FUA differently.
-> If bcache would set FUA for cache device writes while running fio
-> directly on the nvme device would not, that might explain the timing
-> difference.
+One minor thing we might want to change if you're respinning it -
+BCH_WBRATE_UPDATE_RETRY_MAX isn't really named for what it does, since
+it doesn't retry anything, it simply allows updates to be skipped. Why
+not call it BCH_WBRATE_UPDATE_MAX_SKIPS instead? I think that'd be
+better convey what it does.
 
-Matthias,=C2=A0thanks a lot for helping!
+-- 
+Jens Axboe
 
-I believe this test was not aimed at the Ceph context. Although my ultimate=
- goal is to run Ceph (this you are correct), Ceph is still off.=C2=A0Turnin=
-g on Ceph will be my next step, after getting a solid cached device setup. =
-And these direct and synchronized disk-based tests is useful for Ceph, but =
-also can be useful to get an idea of =E2=80=8B=E2=80=8Bhow it will work for=
- other applications too, such as an Oracle database engine, PostgreSQL, or =
-other database engines.=20
-
-On the other hand, I believe that this result is obtained by the fact that =
-an enterprise NVME with PLP (Power Loss Protection) is very fast for direct=
- writes. More than expected from OS caching mechanisms. If I'm not mistaken=
-, the test was about the OS caching mechanism.
-
-Eric,
-
-I don't see big problems in creating the bcache using -w 4096. But there mi=
-ght be some situation that it degrades the performance trying to write in 5=
-12 Bytes, as you said.. This can worry in production environment?
-
-Anyway, the performance even using -w 4096 was still way below the native N=
-VME performance. Is this because of the metadata headers?
-
-I noticed one thing via the dstat tool (seems useful for checking the data =
-flow and the flow of I/O operations to the devices in real time):
-
-For each write of a 4K block to bcache, it results in a 16K write to the ca=
-che device (NVME). This seems to represent that bcache writes an excess 12K=
-B (three times the size of the 4K block) as a form of header, metadata, or =
-whatever, some useful mapping information from it, for each 4K block writte=
-n. That's right? Is correct?
-
-If this is correct, it might explain why I still only have 1/4 of the perfo=
-rmance of NVME writing 4KB blocks, even if I format bcache with -w 4096. Be=
-cause if for every 4KB block I write to bcache, it needs writing 4X that sa=
-me amount of data to the cache device, it's obvious that I'm only going to =
-get 25% of the hardware performance.
-
-That's it ?
-
-Another thing that's intrigued me now, is the difference in performance of =
-bcache from one server to the other... Although I believe that this must be=
- some configuration, because the hardware is identical, I can't imagine whi=
-ch one. I even hit the memory to be the same on both machines, even the SAT=
-A position of the disks, so there is no difference. But even so, the second=
- machine insists on having half the performance of the first, just in the c=
-ache.
-
-And again by dstat, I verify that there are zero Bytes written or read to t=
-he backing device, while 4K blocks are written to the bcache device and NVM=
-E hardware. And that's correct, I think. But at the same time, dstat indica=
-tes that I/O operations are taking place to the backing device. And this do=
-es not occur on the first server, only on the second. It seems clear to me =
-that this behavior is halving the performance on the second server. But why=
-? Why are there IO operations destined for the backup device with "zero" by=
-tes written or read? What kind of IO operation could write or read zero Byt=
-es? And why would they occur?
-
-This is one more step of research..
-
-If anyone has an idea, I'd appreciate it.
-
-Thank you all!
-
-
-
-Em s=C3=A1bado, 28 de maio de 2022 04:22:51 BRT, Matthias Ferdinand <bcache=
-@mfedv.net> escreveu:=20
-
-
-
-
-
-On Fri, May 27, 2022 at 06:27:53PM -0700, Eric Wheeler wrote:
-> > I can say that the performance of tests after the write back command fo=
-r=20
-> > all devices greatly worsens the performance of direct tests on NVME=20
-> > hardware. Below you can see this.
->=20
-> I wonder what is going on there!=C2=A0 I tried the same thing on my syste=
-m and=20
-> 'write through' is faster for me, too, so it would be worth investigating=
-.
-
-In Ceph context, it seems not unusual to disable SSD write back cache
-and see much improved performance (or the other way round: see
-surprisingly low performance with write back cache enabled):
-
-=C2=A0 =C2=A0 https://yourcmc.ru/wiki/Ceph_performance#Drive_cache_is_slowi=
-ng_you_down
-
-Disk controllers seem to interpret FLUSH CACHE / FUA differently.
-If bcache would set FUA for cache device writes while running fio
-directly on the nvme device would not, that might explain the timing
-difference.
-
-Regards
-Matthias
