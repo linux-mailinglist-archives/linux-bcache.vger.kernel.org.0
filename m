@@ -2,50 +2,75 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 982F45369E7
-	for <lists+linux-bcache@lfdr.de>; Sat, 28 May 2022 03:52:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FE02536A33
+	for <lists+linux-bcache@lfdr.de>; Sat, 28 May 2022 04:20:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236927AbiE1Bw2 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 27 May 2022 21:52:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47442 "EHLO
+        id S229496AbiE1CUc (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 27 May 2022 22:20:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231386AbiE1Bw0 (ORCPT
+        with ESMTP id S1352780AbiE1CUb (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 27 May 2022 21:52:26 -0400
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F7C814D14;
-        Fri, 27 May 2022 18:52:24 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id BA8D981;
-        Fri, 27 May 2022 18:52:23 -0700 (PDT)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id x3FTyepQWAUe; Fri, 27 May 2022 18:52:23 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 27 May 2022 22:20:31 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41B41EC312;
+        Fri, 27 May 2022 19:20:28 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id BB3C3B;
-        Fri, 27 May 2022 18:52:22 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net BB3C3B
-Date:   Fri, 27 May 2022 18:52:22 -0700 (PDT)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-To:     Christoph Hellwig <hch@infradead.org>
-cc:     Keith Busch <kbusch@kernel.org>, Coly Li <colyli@suse.de>,
-        Adriano Silva <adriano_da_silva@yahoo.com.br>,
-        Bcache Linux <linux-bcache@vger.kernel.org>,
-        Matthias Ferdinand <bcache@mfedv.net>,
-        linux-block@vger.kernel.org
-Subject: Re: [RFC] Add sysctl option to drop disk flushes in bcache? (was:
- Bcache in writes direct with fsync)
-In-Reply-To: <Yo28kDw8rZgFWpHu@infradead.org>
-Message-ID: <a2ed37b8-2f4a-ef7a-c097-d58c2b965af3@ewheeler.net>
-References: <958894243.922478.1652201375900.ref@mail.yahoo.com> <958894243.922478.1652201375900@mail.yahoo.com> <9d59af25-d648-4777-a5c0-c38c246a9610@ewheeler.net> <27ef674d-67e-5739-d5d8-f4aa2887e9c2@ewheeler.net> <YoxuYU4tze9DYqHy@infradead.org>
- <5486e421-b8d0-3063-4cb9-84e69c41b7a3@ewheeler.net> <Yo1BRxG3nvGkQoyG@kbusch-mbp.dhcp.thefacebook.com> <7759781b-dac-7f84-ff42-86f4b1983ca1@ewheeler.net> <Yo28kDw8rZgFWpHu@infradead.org>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D74BF21A2E;
+        Sat, 28 May 2022 02:20:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1653704426; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=HqDnviQXPm8yTFMB43HF+MiPh0OFlMaqg8aFqbhkp1Y=;
+        b=AtWGp4Lkzhc6zxENgagbrdHwcGRVoLlrs0ckeyUoKJZrJIMgVEVFaYEZAopfloeksQ2hNA
+        EIgkpTq4u64s1F1Be7/TeSmdqb2BNjqJkQ51X/DqAt4xMeQn56YZZK7n2sR8wFta3y74LV
+        hYORb5x1Ijbz1LVSvkHEVjL+MwjbXNs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1653704426;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=HqDnviQXPm8yTFMB43HF+MiPh0OFlMaqg8aFqbhkp1Y=;
+        b=xeWfdqsM6OJIuF4cAlP4QLVa6kzr975UuQl95rZiWquY6wgbwN5vEOxFO6TkEfVzc2zaDU
+        aLw8ik4hDWbN+iDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CE78313941;
+        Sat, 28 May 2022 02:20:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id XaQuMuqGkWJxbgAAMHmgww
+        (envelope-from <colyli@suse.de>); Sat, 28 May 2022 02:20:26 +0000
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1504673015-1653701678=:2952"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Date:   Sat, 28 May 2022 10:20:26 +0800
+From:   colyli <colyli@suse.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH 2/3] bcache: avoid unnecessary soft lockup in kworker
+ update_writeback_rate()
+In-Reply-To: <1a3a151e-a8f9-7f53-f9fc-e7eaea42a462@kernel.dk>
+References: <20220527152818.27545-1-colyli@suse.de>
+ <20220527152818.27545-3-colyli@suse.de>
+ <ebf7c9e4-89cb-59e4-8304-d7f8a28966f3@kernel.dk>
+ <8251ee2fab43b59ecd5a6140655eeb47@suse.de>
+ <1a3a151e-a8f9-7f53-f9fc-e7eaea42a462@kernel.dk>
+User-Agent: Roundcube Webmail
+Message-ID: <49c0852df72f978241fd14a029c91ea9@suse.de>
+X-Sender: colyli@suse.de
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,87 +78,166 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-1504673015-1653701678=:2952
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-On Tue, 24 May 2022, Christoph Hellwig wrote:
-> On Tue, May 24, 2022 at 02:34:23PM -0700, Eric Wheeler wrote:
-> > Is this flag influced at all when /sys/block/sdX/queue/scheduler is set 
-> > to "none", or does the write_cache flag operate independently of the 
-> > selected scheduler?
+在 2022-05-28 08:00，Jens Axboe 写道：
+> On 5/27/22 11:05 AM, colyli wrote:
+>> ? 2022-05-27 23:49?Jens Axboe ???
+>>> On 5/27/22 9:28 AM, Coly Li wrote:
+>>>> diff --git a/drivers/md/bcache/writeback.c 
+>>>> b/drivers/md/bcache/writeback.c
+>>>> index d138a2d73240..c51671abe74e 100644
+>>>> --- a/drivers/md/bcache/writeback.c
+>>>> +++ b/drivers/md/bcache/writeback.c
+>>>> @@ -214,6 +214,7 @@ static void update_writeback_rate(struct 
+>>>> work_struct *work)
+>>>>                           struct cached_dev,
+>>>>                           writeback_rate_update);
+>>>>      struct cache_set *c = dc->disk.c;
+>>>> +    bool contention = false;
+>>>> 
+>>>>      /*
+>>>>       * should check BCACHE_DEV_RATE_DW_RUNNING before calling
+>>>> @@ -243,13 +244,41 @@ static void update_writeback_rate(struct 
+>>>> work_struct *work)
+>>>>           * in maximum writeback rate number(s).
+>>>>           */
+>>>>          if (!set_at_max_writeback_rate(c, dc)) {
+>>>> -            down_read(&dc->writeback_lock);
+>>>> -            __update_writeback_rate(dc);
+>>>> -            update_gc_after_writeback(c);
+>>>> -            up_read(&dc->writeback_lock);
+>>>> +            /*
+>>>> +             * When contention happens on dc->writeback_lock with
+>>>> +             * the writeback thread, this kwork may be blocked for
+>>>> +             * very long time if there are too many dirty data to
+>>>> +             * writeback, and kerne message will complain a (bogus)
+>>>> +             * software lockup kernel message. To avoid potential
+>>>> +             * starving, if down_read_trylock() fails, writeback
+>>>> +             * rate updating will be skipped for dc->retry_max 
+>>>> times
+>>>> +             * at most while delay this worker a bit longer time.
+>>>> +             * If dc->retry_max times are tried and the trylock
+>>>> +             * still fails, then call down_read() to wait for
+>>>> +             * dc->writeback_lock.
+>>>> +             */
+>>>> +            if (!down_read_trylock((&dc->writeback_lock))) {
+>>>> +                contention = true;
+>>>> +                dc->retry_nr++;
+>>>> +                if (dc->retry_nr > dc->retry_max)
+>>>> +                    down_read(&dc->writeback_lock);
+>>>> +            }
+>>>> +
+>>>> +            if (!contention || dc->retry_nr > dc->retry_max) {
+>>>> +                __update_writeback_rate(dc);
+>>>> +                update_gc_after_writeback(c);
+>>>> +                up_read(&dc->writeback_lock);
+>>>> +                dc->retry_nr = 0;
+>>>> +            }
+>>>>          }
+>>>>      }
+>>> 
+>> 
+>> Hi Jens,
+>> 
+>> Thanks for looking into this :-)
+>> 
+>>> This is really not very pretty. First of all, why bother with storing 
+>>> a
+>>> max retry value in there? Doesn't seem like it'd ever be different 
+>>> per
+>> 
+>> It is because the probability of the lock contention on
+>> dc->writeback_lock depends on the I/O speed backing device. From my
+>> observation during the tests, for fast backing device with larger
+>> cache device, its writeback thread may work harder to flush more dirty
+>> data to backing device, the lock contention happens more and longer,
+>> so the writeback rate update kworker has to wait longer time before
+>> acquires dc->writeback_lock. So its dc->retry_max should be larger
+>> then slow backing device.
+>> 
+>> Therefore I'd like to have a tunable per-backing-device retry_max. And
+>> the syses interface will be added when users/customers want it. The
+>> use case is from SAP HANA users, I have report that they observe the
+>> soft lockup warning for dc->writeback_lock contention and worry about
+>> whether data is corrupted (indeed, of course not).
 > 
-> This in completely independent from ﬆhe scheduler.
+> The initial patch has 5 as the default, and there are no sysfs knobs. 
+> If
+> you ever need a sysfs knob, by all means make it a variable and make it
+> configurable too. But don't do it upfront where the '5' suitabled named
+> would do the job.
 > 
-> > Does the block layer stop sending flushes at the first device in the stack 
-> > that is set to "write back"?  For example, if a device mapper target is 
-> > writeback will it strip flushes on the way to the backing device?
+
+Copied.
+
+>>> diff --git a/drivers/md/bcache/writeback.c 
+>>> b/drivers/md/bcache/writeback.c
+>>> index 9ee0005874cd..cbc01372c7a1 100644
+>>> --- a/drivers/md/bcache/writeback.c
+>>> +++ b/drivers/md/bcache/writeback.c
+>>> @@ -235,19 +235,27 @@ static void update_writeback_rate(struct
+>>> work_struct *work)
+>>>          return;
+>>>      }
+>>> 
+>>> -    if (atomic_read(&dc->has_dirty) && dc->writeback_percent) {
+>>> +    if (atomic_read(&dc->has_dirty) && dc->writeback_percent &&
+>>> +        !set_at_max_writeback_rate(c, dc)) {
+>>>          /*
+>>>           * If the whole cache set is idle, 
+>>> set_at_max_writeback_rate()
+>>>           * will set writeback rate to a max number. Then it is
+>>>           * unncessary to update writeback rate for an idle cache set
+>>>           * in maximum writeback rate number(s).
+>>>           */
+>>> -        if (!set_at_max_writeback_rate(c, dc)) {
+>> 
+>> The reason I didn't place '!set_at_max_writeback_rate' with other 
+>> items in
+>> previous if() was for the above code comment. If I moved it to 
+>> previous
+>> if() without other items, I was not comfortable to place the code 
+>> comments
+>> neither before or after the if() check. So I used a separated if() 
+>> check for
+>> '!set_at_max_writeback_rate'.
+>> 
+>> From your change, it seems placing the code comments behind is fine 
+>> (or
+>> better), can I understand in this way? I try to learn and follow your 
+>> way
+>> to handle such code comments situation.
 > 
-> This is up to the stacking driver.  dm and tend to pass through flushes
-> where needed.
+> Just put it higher up if you want, it doesn't really matter, or leave 
+> it
+> where it is.
 > 
-> > This confirms what I have suspected all along: We have an LSI MegaRAID 
-> > SAS-3516 where the write policy is "write back" in the LUN, but the cache 
-> > is flagged in Linux as write-through:
-> > 
-> > 	]# cat /sys/block/sdb/queue/write_cache 
-> > 	write through
 
-Hi Keith, Christoph:
+Copied.
 
-Adriano who started this thread (cc'ed) reported that setting 
-queue/write_cache to "write back" provides much higher latency on his NVMe 
-than "write through"; I tested a system here and found the same thing.
+>>>              __update_writeback_rate(dc);
+>>>              update_gc_after_writeback(c);
+>>>              up_read(&dc->writeback_lock);
+>>> -        }
+>>> +        } while (0);
+>> 
+>> Aha, this is cool! I never though of using do{}while(0) and break in
+>> such a genius way! Sure I will use this, thanks for the hint :-)
+>> 
+>> After you reply my defense of dc->retry_max, and the question of code
+>> comments location, I will update and test the patch again, and
+>> re-sbumit to you.
+>> 
+>> Thanks for your constructive suggestion, especially the do{}while(0)
+>> part!
+> 
+> I would do something similar to my change and drop the 'dc' addition 
+> for
+> the max retries as it, by definition, can only be one value right now.
+> For all I know, you'll never need to change it again, and then you're
+> just wasting memory and making the code harder to read by putting it in
+> dc instead of just having this define.
 
-Here is Adriano's summary:
+Copied. I will do the change and repost it again. Thank you for the 
+review and comments.
 
-        # cat /sys/block/nvme0n1/queue/write_cache
-        write through
-        # ioping -c10 /dev/nvme0n1 -D -Y -WWW -s4K
-        ...
-        min/avg/max/mdev = 60.0 us / 78.7 us / 91.2 us / 8.20 us
-                                     ^^^^ ^^
-
-        # for i in /sys/block/*/queue/write_cache; do echo 'write back' > $i; done
-        # ioping -c10 /dev/nvme0n1 -D -Y -WWW -s4K
-        ...
-        min/avg/max/mdev = 1.81 ms / 1.89 ms / 2.01 ms / 82.3 us
-                                     ^^^^ ^^
-
-Interestingly, Adriano's is 24.01x and ours is 23.97x higher latency
-higher (see below).  These 24x numbers seem too similar to be a
-coincidence on such different configurations.  He's running Linux 5.4
-and we are on 4.19.
-
-Is this expected?
-
-
-More info:
-
-The stack where I verified the behavior Adriano reported is slightly
-different, NVMe's are under md RAID1 with LVM on top, so latency is
-higher, but still basically the same high latency difference with
-writeback enabled:
-
-	]# cat /sys/block/nvme[01]n1/queue/write_cache
-	write through
-	write through
-	]# ionice -c1 -n1 ioping -c10 /dev/ssd/ssd-test -D -s4k -WWW -Y
-	...
-	min/avg/max/mdev = 119.1 us / 754.9 us / 2.67 ms / 1.02 ms
-
-
-	]# cat /sys/block/nvme[01]n1/queue/write_cache
-	write back
-	write back
-	]# ionice -c1 -n1 ioping -c10 /dev/ssd/ssd-test -D -s4k -WWW -Y
-	...
-	min/avg/max/mdev = 113.4 us / 18.1 ms / 29.2 ms / 9.53 ms
-
-
---
-Eric Wheeler
---8323328-1504673015-1653701678=:2952--
+Coly Li
