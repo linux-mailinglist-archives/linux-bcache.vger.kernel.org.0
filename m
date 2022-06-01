@@ -2,75 +2,134 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2171F53A5CB
-	for <lists+linux-bcache@lfdr.de>; Wed,  1 Jun 2022 15:18:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CDC553AD05
+	for <lists+linux-bcache@lfdr.de>; Wed,  1 Jun 2022 20:49:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353168AbiFANSa (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 1 Jun 2022 09:18:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40002 "EHLO
+        id S229647AbiFASsm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 1 Jun 2022 14:48:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353178AbiFANS3 (ORCPT
+        with ESMTP id S229461AbiFASsm (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 1 Jun 2022 09:18:29 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E646A427D5
-        for <linux-bcache@vger.kernel.org>; Wed,  1 Jun 2022 06:18:27 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id q1so1965805ljb.5
-        for <linux-bcache@vger.kernel.org>; Wed, 01 Jun 2022 06:18:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=4IWjHL/5Vo6JeFN3XdXq446L6FUUmY7SjaH1cuJ3kmM=;
-        b=JNfWGMCqD4jqApHRcz5KfIrVqEZ0P+yDeYzl2EbpNOsbRdV3dXN/WLuhiNcbc7HAjY
-         F/bBrZjfSo3KRLtCJlaI6xTWF+o7swL4bkx2ot6Rb7PHPi93Hc1SNafYayaE2UxNA5MF
-         AruvI63X6jYUbslPtX/euhS1RXc3WlVwdqWXCEyEvQLpYci2u1ZZkd5LT2LOY0pVP/zJ
-         JICzja3ZsaB3j//6GXi8ipeVYtyDJYxMH0b79BbrA+WxFfzxKqqrjJ/yt4qQ/QyoVVsl
-         u9ckDf7uwxETK+49c4TInDkZOvyctHfil0/ShzAfgBzXXRbeb/Buri9NzHKuh6lY2W1t
-         WPBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=4IWjHL/5Vo6JeFN3XdXq446L6FUUmY7SjaH1cuJ3kmM=;
-        b=B1ZkZHsKO9eBkOfdqyFZHqSbJdHOUWBjdzeR9LONxEKGjJagsw/23lmizbws8i9dQ4
-         h3ujFzna6QwW/pxjWU3aFRcpZOlXeOzXyOamojsg9kuxhY3Kr8xVJmT1YNwdARmnX2xY
-         EifRhL+wNEzxAYiew60ChbroHt8Gd4K3CSBrLRV61kAQu+IQ6pfYJnZ2FPJ8UvaIObfU
-         dtcs1Z89daCCTwqgRQ3ro9padf9jghtnH6IBd7kOQKCeN3K+hW+ku+lmsfx53NBGPBhy
-         EBs4gyyF7YpUvQO4ondQmizOuZ+a7OQVz/naTpjZd980EyzSdiXCE71JE+5eGQrYSAbR
-         qofw==
-X-Gm-Message-State: AOAM5333tmmkDZt4n0xXzH05N7fwxpileomsoAN26krUrKiyZbP26xsM
-        MYOTe3QMP1M+7i2+RaeJumYhufGWkdFr+AseJHcgi5jN+lo=
-X-Google-Smtp-Source: ABdhPJz7bpz4hE43t2izmj54AAe5IXeqm/SD2e4j41bWWX3jVvJ3UUpBfNBGpHf5rrbyjukCHA2+kfD5Y0qcHM8Nl9g=
-X-Received: by 2002:a2e:980f:0:b0:255:5d00:2386 with SMTP id
- a15-20020a2e980f000000b002555d002386mr4879539ljj.468.1654089506197; Wed, 01
- Jun 2022 06:18:26 -0700 (PDT)
+        Wed, 1 Jun 2022 14:48:42 -0400
+Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA7CED712
+        for <linux-bcache@vger.kernel.org>; Wed,  1 Jun 2022 11:48:39 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mx.ewheeler.net (Postfix) with ESMTP id 9F4114A;
+        Wed,  1 Jun 2022 11:48:38 -0700 (PDT)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id wQHZmPWv5kM7; Wed,  1 Jun 2022 11:48:34 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id F3DC5B;
+        Wed,  1 Jun 2022 11:48:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net F3DC5B
+Date:   Wed, 1 Jun 2022 11:48:33 -0700 (PDT)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
+To:     Keith Busch <kbusch@kernel.org>
+cc:     Adriano Silva <adriano_da_silva@yahoo.com.br>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bcache Linux <linux-bcache@vger.kernel.org>,
+        Matthias Ferdinand <bcache@mfedv.net>, Coly Li <colyli@suse.de>
+Subject: Re: [RFC] Add sysctl option to drop disk flushes in bcache? (was:
+ Bcache in writes direct with fsync)
+In-Reply-To: <Ypa0eVNwr0WjB6Cg@kbusch-mbp.dhcp.thefacebook.com>
+Message-ID: <273d3e7e-4145-cdaf-2f80-dc61823dd6ea@ewheeler.net>
+References: <Yo1BRxG3nvGkQoyG@kbusch-mbp.dhcp.thefacebook.com> <7759781b-dac-7f84-ff42-86f4b1983ca1@ewheeler.net> <Yo28kDw8rZgFWpHu@infradead.org> <a2ed37b8-2f4a-ef7a-c097-d58c2b965af3@ewheeler.net> <YpGsKDQ1aAzXfyWl@infradead.org> <24456292.2324073.1653742646974@mail.yahoo.com>
+ <YpLmDtMgyNLxJgNQ@kbusch-mbp.dhcp.thefacebook.com> <f785ce75-da75-9976-9b60-2dd9f719b96@ewheeler.net> <YpZ482qYC929sS+v@kbusch-mbp.dhcp.thefacebook.com> <1462334e-d0ae-ded-7d0-57474f6eea@ewheeler.net> <Ypa0eVNwr0WjB6Cg@kbusch-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Received: by 2002:ab3:6bef:0:0:0:0:0 with HTTP; Wed, 1 Jun 2022 06:18:25 -0700 (PDT)
-Reply-To: jub47823@gmail.com
-From:   Julian Bikarm <klotsijeann2019@gmail.com>
-Date:   Wed, 1 Jun 2022 06:18:25 -0700
-Message-ID: <CAFjstLyMF158FQiE-DAakHooDi+e5VONFzUYDLY-FEvqN0oMYw@mail.gmail.com>
-Subject: Please can i have your attention
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=4.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Dear ,
+On Tue, 31 May 2022, Keith Busch wrote:
+> On Tue, May 31, 2022 at 04:04:12PM -0700, Eric Wheeler wrote:
+> > 
+> >   * Write-through: write is done synchronously both to the cache and to 
+> >     the backing store.
+> > 
+> >   * Write-back (also called write-behind): initially, writing is done only 
+> >     to the cache. The write to the backing store is postponed until the 
+> >     modified content is about to be replaced by another cache block.
+> >   [ https://en.wikipedia.org/wiki/Cache_(computing)#Writing_policies ]
+> > 
+> > 
+> > So the kernel's notion of "write through" meaning "Drop FLUSH/FUA" sounds 
+> > like the industry meaning of "write-back" as defined above; conversely, 
+> > the kernel's notion of "write back" sounds like the industry definition of 
+> > "write-through"
+> > 
+> > Is there a well-meaning rationale for the kernel's concept of "write 
+> > through" to be different than what end users have been conditioned to 
+> > understand?
+> 
+> I think we all agree what "write through" vs "write back" mean. I'm just not
+> sure what's the source of the disconnect with the kernel's behavior.
+> 
+>   A "write through" device persists data before completing a write operation.
+> 
+>   Flush/FUA says to write data to persistence before completing the operation.
+> 
+> You don't need both. Flush/FUA should be a no-op to a "write through" device
+> because the data is synchronously committed to the backing store automatically.
 
-  Please can I have your attention and possibly help me for humanity's
-sake please. I am writing this message with a heavy heart filled with
-sorrows and sadness.
-Please if you can respond, i have an issue that i will be most
-grateful if you could help me deal with it please.
+Ok, I think I'm starting to understand the rationale, thank you for your 
+patience while I've come to wrap my head around it. So, using a RAID 
+controller cache as an example:
 
-Julian
+1. A RAID controller with a _non-volatile_ "writeback" cache (from the 
+   controller's perspective, ie, _with_ battery) is a "write through"  
+   device as far as the kernel is concerned because the controller will 
+   return the write as complete as soon as it is in the persistent cache.
+
+2. A RAID controller with a _volatile_ "writeback" cache (from the 
+   controller's perspective, ie _without_ battery) is a "write back"  
+   device as far as the kernel is concerned because the controller will 
+   return the write as complete as soon as it is in the cache, but the 
+   cache is not persistent!  So in that case flush/FUA is necessary.
+
+I think it is rare someone would configure a RAID controller is as 
+writeback (in the controller) when the cache is volatile (ie, without 
+battery), but it is an interesting way to disect this to understand the 
+rationale around value choices for the `queue/write_cache` flag in sysfs.
+
+So please correct me here if I'm wrong: theoretically, a RAID controller 
+with a volatile writeback cache is "safe" in terms of any flush/FIO 
+behavior, assuming the controller respects those ops in writeback mode.  
+For example, ext4's journal is probably consistent after a crash, even if 
+2GB of cached data might be lost (assuming FUA and not FLUSH is being 
+used for meta, I don't actually know ext4's implementation there).
+
+
+I would guess that most end users are going to expect queue/write_cache to 
+match their RAID controller's naming convention.  If they see "write 
+through" when they know their controller is in writeback w/battery then 
+they might reasonably expect the flag to show "write back", too.  If they 
+then force it to "write back" then they loose the performance benefit.
+
+Given that, and considering end users that configure raid controllers do 
+not commonly understand the flush/FUA intracies and what really 
+constitutes "write back" vs "write through" from the kernel's perspective, 
+then perhaps it would be a good idea to add more documentation around 
+write_cache here:
+
+  https://www.kernel.org/doc/Documentation/block/queue-sysfs.txt
+
+What do you think?
+
+
+--
+Eric Wheeler
+
+
+
