@@ -2,72 +2,44 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5F5853EB73
-	for <lists+linux-bcache@lfdr.de>; Mon,  6 Jun 2022 19:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D7AD543E83
+	for <lists+linux-bcache@lfdr.de>; Wed,  8 Jun 2022 23:25:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233855AbiFFKeo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 6 Jun 2022 06:34:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55318 "EHLO
+        id S234248AbiFHVZK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 8 Jun 2022 17:25:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233959AbiFFKen (ORCPT
+        with ESMTP id S229882AbiFHVZI (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 6 Jun 2022 06:34:43 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C642D2EA00
-        for <linux-bcache@vger.kernel.org>; Mon,  6 Jun 2022 03:34:37 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 6EB03219F3;
-        Mon,  6 Jun 2022 10:34:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1654511676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JfObIgWnyTl46pgpXQ0lHNqqZE4sWGtq3+9aV/6WZFA=;
-        b=Lunv0ovASv2XyRCU2R2+htCQlcLje/RBaelKoU6Kmz6mzu2Fi/N+1tvDmSrvHM0gum0cEh
-        pzQOPcE1XD8JHbGiAB8UeFeAxI06vICkZqtNA9J2QTWMR8VbPliW++wc2RE0ZBGV3EmxPp
-        czZwU9Lx0yilp4ffxwFsT2KWBL5phfU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1654511676;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JfObIgWnyTl46pgpXQ0lHNqqZE4sWGtq3+9aV/6WZFA=;
-        b=KnkdFEh3XhQKarzyAQUficfj7TfwdCSOLkF3uh20Ik5TAYX5UsQt728pqleAnwEpVfZwEk
-        FqYePAp7slGLW+Bg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 88431139F5;
-        Mon,  6 Jun 2022 10:34:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id MxP0FTvYnWKoGAAAMHmgww
-        (envelope-from <colyli@suse.de>); Mon, 06 Jun 2022 10:34:35 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.100.31\))
-Subject: Re: [PATCH] bcache: try to reuse the slot of invalid_uuid
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <f19c392f-6ad8-9e0c-a8f7-de2339f76cb6@easystack.cn>
-Date:   Mon, 6 Jun 2022 18:34:33 +0800
-Cc:     linux-bcache@vger.kernel.org, dongsheng.yang@easystack.cn,
-        zoumingzhe@qq.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <31FA99EB-4E02-4241-9264-248A03FABA4E@suse.de>
-References: <20220606084522.12680-1-mingzhe.zou@easystack.cn>
- <780B6E6E-F4A8-4801-AED3-8DF81054D491@suse.de>
- <f19c392f-6ad8-9e0c-a8f7-de2339f76cb6@easystack.cn>
-To:     Zou Mingzhe <mingzhe.zou@easystack.cn>
-X-Mailer: Apple Mail (2.3696.100.31)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        Wed, 8 Jun 2022 17:25:08 -0400
+X-Greylist: delayed 2347 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 08 Jun 2022 14:25:06 PDT
+Received: from mail.esperi.org.uk (icebox.esperi.org.uk [81.187.191.129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF68E194BFA
+        for <linux-bcache@vger.kernel.org>; Wed,  8 Jun 2022 14:25:06 -0700 (PDT)
+Received: from loom (nix@sidle.srvr.nix [192.168.14.8])
+        by mail.esperi.org.uk (8.16.1/8.16.1) with ESMTPS id 258KjtIX006175
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 8 Jun 2022 21:45:55 +0100
+From:   Nix <nix@esperi.org.uk>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Nikhil Kshirsagar <nkshirsagar@gmail.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4/4] bcache: avoid journal no-space deadlock by
+ reserving 1 journal bucket
+References: <20220521170502.20026-1-colyli@suse.de>
+        <20220521170502.20026-4-colyli@suse.de>
+Emacs:  the definitive fritterware.
+Date:   Wed, 08 Jun 2022 21:45:55 +0100
+In-Reply-To: <20220521170502.20026-4-colyli@suse.de> (Coly Li's message of
+        "Sun, 22 May 2022 01:05:02 +0800")
+Message-ID: <8735geanp8.fsf@esperi.org.uk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2.50 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-DCC--Metrics: loom 1480; Body=5 Fuz1=5 Fuz2=5
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,97 +47,25 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+On 21 May 2022, Coly Li spake thusly:
 
+> When all journal buckets are fully filled by active jset with heavy
+> write I/O load, the cache set registration (after a reboot) will load
+> all active jsets and inserting them into the btree again (which is
+> called journal replay). If a journaled bkey is inserted into a btree
+> node and results btree node split, new journal request might be
+> triggered. For example, the btree grows one more level after the node
+> split, then the root node record in cache device super block will be
+> upgrade by bch_journal_meta() from bch_btree_set_root(). But there is no
+> space in journal buckets, the journal replay has to wait for new journal
+> bucket to be reclaimed after at least one journal bucket replayed. This
+> is one example that how the journal no-space deadlock happens.
+> 
+> The solution to avoid the deadlock is to reserve 1 journal bucket in
 
-> 2022=E5=B9=B46=E6=9C=886=E6=97=A5 17:29=EF=BC=8CZou Mingzhe =
-<mingzhe.zou@easystack.cn> =E5=86=99=E9=81=93=EF=BC=9A
->=20
->=20
->=20
-> =E5=9C=A8 2022/6/6 16:57, Coly Li =E5=86=99=E9=81=93:
->>=20
->>> 2022=E5=B9=B46=E6=9C=886=E6=97=A5 16:45=EF=BC=8Cmingzhe.zou@easystack.=
-cn
->>>  =E5=86=99=E9=81=93=EF=BC=9A
->>>=20
->>> From: mingzhe=20
->>> <mingzhe.zou@easystack.cn>
->>>=20
->>>=20
->>>=20
->>>=20
->> [snipped]
->>=20
->>=20
->>> We want to use those invalid_uuid slots carefully. Because, the bkey =
-of the inode
->>> may still exist in the btree. So, we need to check the btree before =
-reuse it.
->>>=20
->>> Signed-off-by: mingzhe=20
->>> <mingzhe.zou@easystack.cn>
->>>=20
->>> ---
->>> drivers/md/bcache/btree.c | 35 +++++++++++++++++++++++++++++++++++
->>> drivers/md/bcache/btree.h |  1 +
->>> drivers/md/bcache/super.c | 15 ++++++++++++++-
->>> 3 files changed, 50 insertions(+), 1 deletion(-)
->>>=20
->>> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
->>> index e136d6edc1ed..a5d54af73111 100644
->>> --- a/drivers/md/bcache/btree.c
->>> +++ b/drivers/md/bcache/btree.c
->>> @@ -2755,6 +2755,41 @@ struct keybuf_key =
-*bch_keybuf_next_rescan(struct cache_set *c,
->>> 	return ret;
->>> }
->>>=20
->>> +static bool check_pred(struct keybuf *buf, struct bkey *k)
->>> +{
->>> +	return true;
->>> +}
->>> +
->>> +bool bch_btree_can_inode_reuse(struct cache_set *c, size_t inode)
->>> +{
->>> +	bool ret =3D true;
->>> +	struct keybuf_key *k;
->>> +	struct bkey end_key =3D KEY(inode, MAX_KEY_OFFSET, 0);
->>> +	struct keybuf *keys =3D kzalloc(sizeof(struct keybuf), =
-GFP_KERNEL);
->>> +
->>> +	if (!keys) {
->>> +		ret =3D false;
->>> +		goto out;
->>> +	}
->>> +
->>> +	bch_keybuf_init(keys);
->>> +	keys->last_scanned =3D KEY(inode, 0, 0);
->>> +
->>> +	while (ret) {
->>> +		k =3D bch_keybuf_next_rescan(c, keys, &end_key, =
-check_pred);
->>> +		if (!k)
->>>=20
->>=20
->> This is a single thread iteration, for a large filled cache device it =
-can be very slow. I observed 40+ minutes during my testing.
->>=20
->>=20
->> Coly Li
->>=20
->>=20
-> Hi, Coly
->=20
-> We first use the zero_uuid slot, and reuse only if there is no =
-zero_uuid slot. This is just an imperfect solution to make bcache =
-available, so we haven't tested its performance. We think we will =
-eventually need to actively clean up these bkeys in a new thread and =
-reset the invalid_uuid to zero_uuid.
+It seems to me that this could happen more than once in a single journal
+replay (multiple nodes might be split, etc). Is one bucket actually
+always enough, or is it merely enough nearly all the time?
 
-Current method is the simplest, trust me, there is no much fun to play =
-with register lock, writeback lock, and the btree node locks, live is =
-not easy already...
-
-Coly Li
-
-
+-- 
+NULL && (void)
