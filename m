@@ -2,52 +2,56 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D91354A774
-	for <lists+linux-bcache@lfdr.de>; Tue, 14 Jun 2022 05:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E343754DF8D
+	for <lists+linux-bcache@lfdr.de>; Thu, 16 Jun 2022 12:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231810AbiFNDQx (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 13 Jun 2022 23:16:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47634 "EHLO
+        id S229748AbiFPKyc (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 16 Jun 2022 06:54:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231327AbiFNDQw (ORCPT
+        with ESMTP id S229717AbiFPKyb (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 13 Jun 2022 23:16:52 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70E8E2D1D7
-        for <linux-bcache@vger.kernel.org>; Mon, 13 Jun 2022 20:16:51 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id t1so13064833ybd.2
-        for <linux-bcache@vger.kernel.org>; Mon, 13 Jun 2022 20:16:51 -0700 (PDT)
+        Thu, 16 Jun 2022 06:54:31 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534AD5DE50
+        for <linux-bcache@vger.kernel.org>; Thu, 16 Jun 2022 03:54:30 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id d18so1071465ljc.4
+        for <linux-bcache@vger.kernel.org>; Thu, 16 Jun 2022 03:54:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=gspLfe3xXQIFEFv3jwJwp7mdcuqpcGfIul+0toyvQBY=;
-        b=mnS+thsjCmC5p4rn851URzD5Eyy8OFL5X6t79dX3VL+qqrXJTVtby8FE+H1zegIMat
-         sPUGR991d0s14vOjU1W+wvlKzoxzqx/tTGa/cwbtSZDktd+fVwGB3DNeRI0SgtXaHZWD
-         46YtCGCWOxNFT7dBjL/2TSW2tZtJD/VwAGiYLEQ2ylzonGlJuMoo3w9PBgWy+A8jb+GZ
-         4JZ3vMBDPjZYTivioD65jtWzNIgwTkEGcoaVlsiOamLV+avziVrJJ2b31RWE7c7hUfoW
-         /tsnbgQcayEc5jCtmnxElySjGHf4jlg+cWA9butaga2BFPpjg2vMcw7+kctntuZgQz4H
-         OUBA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mwsxV93OonNjERqsl3fzXC9tFsn9bn1urFMxcyd0co8=;
+        b=YXpzGiSRfWki0RUAUtZfD9X6cGOCPxfqcshQ9ZTSgLVMa7QBP3wH7xEfi2H+MczkAc
+         cgM8Tm/1m3Py4Blko8C2pwwJTgtRC/kbi8i2iQE/L/i9/GbK/p2Q9i0LrfZ3zueghvF4
+         O6mZlXtbOlbK+3PKfuYrNe/yc0yNQOq1l8YSWNODyYzxb+nYslQVLiTDDAjEHxxpQa73
+         IkSK0w1f8uEmtwTgqJwGPP9cB5zH8zW8fyEyaVPntg/1EsvlkR5LKLIqtkubnAM16mlh
+         N5qy8UX6+pZSgDJ6fStLdMSvNybSZ0pHRrDhUkXsQ0E8B24Ys1vuGOfVi1PP/tv+fIMi
+         pMlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=gspLfe3xXQIFEFv3jwJwp7mdcuqpcGfIul+0toyvQBY=;
-        b=bw8S60/6y260wDkTd9ZRe+WYwpcD9qCHxjroDbjbAsteKd0s9Q5jUv0b0xi4d1szRo
-         eF3v5V9w7DAmnlKtinWkiBmBM4ZsS5AyWrwTU6GGx00vhnq1QC6WUtAQGGLgHMmcoyjC
-         5cwKqCNM1rQ+YP2hTpFVLDDOpeVfY7izPbvCq+M9kw7RQEWVDvfJNXKUeQqS69Si532i
-         mO5Tp5M8JDM/AirAy1m+M6SrIe6FgTvVYkKPqKT3NfEmhf/j/9HgQyahFLZ43NFcpos3
-         p1vtcrANMHLt+Eal41wYG1uiQ5rya0np5uAQsHSG1TSyo2a8t5P67FN+UJOXnPI8nHaF
-         2SXg==
-X-Gm-Message-State: AJIora8WBChzDsFO2N3LgsPjCeOFBwkK7d113uX2OWz1F90VlTaWrpZT
-        IVSL1GrhE/NNc4l8meg0w0QK9jYodSZJefBzbyC2G/JqYn/okg==
-X-Google-Smtp-Source: AGRyM1sYLm8GuM/z+PJdUgue1LE5o9JU9RFC68IOW1K+Ol6BStY5DRrJQWLoSqUlINFAnLaGk/ClB52uJEdIHlQ+XQc=
-X-Received: by 2002:a25:76c1:0:b0:65d:211c:a0da with SMTP id
- r184-20020a2576c1000000b0065d211ca0damr2716962ybc.475.1655176610407; Mon, 13
- Jun 2022 20:16:50 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mwsxV93OonNjERqsl3fzXC9tFsn9bn1urFMxcyd0co8=;
+        b=AZ3QbyeLr8KqzUnLxULNSCH35/l7Rw10zY2JeTmH7MZW8JCohfbM8HXB+WEpEMl0BT
+         HxTylLZEVlcRLpZPuM1mWLfNL0NtdiL7fFY5qbRkki3RQiXQ5sd8VqC8K3+vSEeKYZUK
+         CZFeqXki+NY0FQN+EXSWIDUHR4C9PzKjlfSAHJvgO35jIiCTFf+Wfl0ZMvnjidZaZF1w
+         2eXXmyEXwYoQ2WOAeueP2K+xBqt0M+pgf1lbzt01X4T+gNHvi6Vwr3irlOjY9MUDeLR4
+         88eFaVQIdJdf+YGXTQEQ3gOapCjd8cVPgUWrFUbgTrhqLB2EuKP8HOAznNG5XIjAm9zg
+         FPXA==
+X-Gm-Message-State: AJIora85OpKoiuA7M1ProoZlj7YYUw/4JzncyQAfAJmEbB9BZoTQtOJI
+        3QkxVrjqpNtJt1svKUKFInO3A4G58Q6hX/t+/t8N1FycJvJovA==
+X-Google-Smtp-Source: AGRyM1sajVUU288QHTXl/EthMn8zlyqlIfUxRcr1qbs18F05BRllqUrO+CVQ8dh2zKEvrBry5PdFDa4PSMNMHVf9gDI=
+X-Received: by 2002:a2e:8e98:0:b0:255:9d3d:bac3 with SMTP id
+ z24-20020a2e8e98000000b002559d3dbac3mr2110683ljk.103.1655376868318; Thu, 16
+ Jun 2022 03:54:28 -0700 (PDT)
 MIME-Version: 1.0
+References: <CAC6jXv0CQ8QQn9z5=nAyh80z05j3vxBGBz3HmYFbn2Dj3cfO9A@mail.gmail.com>
+In-Reply-To: <CAC6jXv0CQ8QQn9z5=nAyh80z05j3vxBGBz3HmYFbn2Dj3cfO9A@mail.gmail.com>
 From:   Nikhil Kshirsagar <nkshirsagar@gmail.com>
-Date:   Tue, 14 Jun 2022 08:46:39 +0530
-Message-ID: <CAC6jXv0CQ8QQn9z5=nAyh80z05j3vxBGBz3HmYFbn2Dj3cfO9A@mail.gmail.com>
-Subject: backport 32feee36c30ea06e38ccb8ae6e5c44c6eec790a6 to 4.15.0-176.185
+Date:   Thu, 16 Jun 2022 16:24:16 +0530
+Message-ID: <CAC6jXv0ZvnVuzW_nmjQXu+V13CWPP-hFFFbRS22z=YQ5oXVWyw@mail.gmail.com>
+Subject: Re: backport 32feee36c30ea06e38ccb8ae6e5c44c6eec790a6 to 4.15.0-176.185
 To:     linux-bcache@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>
 Content-Type: text/plain; charset="UTF-8"
@@ -61,15 +65,35 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hello all,
+Hello all!
 
-I am trying to backport 32feee36c30ea06e38ccb8ae6e5c44c6eec790a6
-(https://www.spinics.net/lists/kernel/msg4386275.html) onto
-4.15.0-176.185 , please could someone help me understand which other
-patches I need? The cherry-pick needs manual resolution, which I did,
-but this is the issue I run into - https://pastebin.com/nBxdpHdJ
+As mentioned in the earlier email, I am trying to backport
+32feee36c30ea06e38ccb8ae6e5c44c6eec790a6 to kernel 4.15.0-176_185
 
-I'd be very grateful for some help with this.
+This is the diff that built the kernel successfully -
+https://pastebin.com/Ce41Hqaa , and I had to apply it manually since
+the cherry-pick did not apply cleanly and there were many conflicts.
+The main issue seems to be that struct cache_set does not contain
+multiple cache devices in the upstream code, but in 4.15 it did.
+
+Since I am not aware of the internals of the bcache code, I am not
+sure if it might cause unintended side effects, so I would appreciate
+any input about this backport, and if it is a correct backport.
 
 Regards,
 Nikhil.
+
+On Tue, 14 Jun 2022 at 08:46, Nikhil Kshirsagar <nkshirsagar@gmail.com> wrote:
+>
+> Hello all,
+>
+> I am trying to backport 32feee36c30ea06e38ccb8ae6e5c44c6eec790a6
+> (https://www.spinics.net/lists/kernel/msg4386275.html) onto
+> 4.15.0-176.185 , please could someone help me understand which other
+> patches I need? The cherry-pick needs manual resolution, which I did,
+> but this is the issue I run into - https://pastebin.com/nBxdpHdJ
+>
+> I'd be very grateful for some help with this.
+>
+> Regards,
+> Nikhil.
