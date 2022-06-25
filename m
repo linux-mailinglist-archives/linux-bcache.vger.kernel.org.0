@@ -2,74 +2,103 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9981C554E4D
-	for <lists+linux-bcache@lfdr.de>; Wed, 22 Jun 2022 17:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 332FC55A77B
+	for <lists+linux-bcache@lfdr.de>; Sat, 25 Jun 2022 08:29:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235296AbiFVPD5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 22 Jun 2022 11:03:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36266 "EHLO
+        id S231936AbiFYG33 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 25 Jun 2022 02:29:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358948AbiFVPDo (ORCPT
+        with ESMTP id S229529AbiFYG33 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 22 Jun 2022 11:03:44 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B70A326FF
-        for <linux-bcache@vger.kernel.org>; Wed, 22 Jun 2022 08:03:41 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id g10-20020a17090a708a00b001ea8aadd42bso17115078pjk.0
-        for <linux-bcache@vger.kernel.org>; Wed, 22 Jun 2022 08:03:41 -0700 (PDT)
+        Sat, 25 Jun 2022 02:29:29 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A1C049262
+        for <linux-bcache@vger.kernel.org>; Fri, 24 Jun 2022 23:29:28 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id x3so7987837lfd.2
+        for <linux-bcache@vger.kernel.org>; Fri, 24 Jun 2022 23:29:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=vhZEVnaGNBjosB86GDUW8b2wHjB/+QU31bPXl36TqFE=;
-        b=lmXhPRDXrnlbYClAFJkfHZYdowqXsf1nTuDLZnU/Y1W/T6TJ8ApbIv950i47frAtN/
-         OtndHJQoWJG+weygm2GuosJduERMEzUHLtTF4oGKopzqXa+c5O1ob2p5JuwuGNaCZz0D
-         0k2iO6ZG6gpeVsjTt5A+NLMvCH8qDkpG8Ex3xIMBpunG6BNJWrlCGLJYo7boJK6pvBIx
-         W4x550ST0gVpK9sdxwL58OfMVVl7H7xG/39bSvJCxipLUGbdwSBY6WRzvY6hd28wfB/N
-         vDKUfqITg8PxsgA4g6gEDGmS0K0dBg3KSntFmGDvcmLKkvSy/F4e+TYysqkO/txSQBCJ
-         afFQ==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=NIfQtqzeiHr1Bx/wI31cgthQtxe3wj/holKaMR/m9zM=;
+        b=Da78iQBFQ0j5UZFZNq0UDIyvDfLl1sl1+ECWTo6iMYA2wwtr6o9aSWCeHAEYvNB802
+         cGeK2knmCulZLM28E5oGcP6T6V5m9msb7isZR3bc+jQAIj+gHhV5aZD1zFK1F76/zjnV
+         vtF0FSPIE26B1wr7WB01ynmce5Nrle9hCau/kRYsj54webfVIzYcwm5UFcnCp/2xatHf
+         25WO33+iaobAVhFP33WT+wgqv1JpH2YhS0EBuKadJ5Io1pnaJhdBTA68RaKRXoBx54WE
+         p/WosK6sc9HVHWXv311pR0BAf9O7SjZRunLi0mJCszuCDLld3/hox3ruv+tkscZEsL/C
+         wrgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=vhZEVnaGNBjosB86GDUW8b2wHjB/+QU31bPXl36TqFE=;
-        b=xEsVkINbp9MpOp9WqVvzcyDGTy1REgNMlg8BP88tVyzCHpLlgSK5aylGoojsOtyRqE
-         iQQ3dq6NuaAcLxnsETYXQmHif9KrZRvjxQVd3R5n3FQn3H1hvxU3m+/wjUgkn0ZVsOqM
-         Y0QKC/skbMs+adPKaVVJc0MSqLDysgD6Edew4m+SAdxzD0hGq6SJoBHwHlEzR/L1MfIt
-         k7vZgLrQCECsC08SX9SotR0g8LAMQwuC8bYHoAGBL3pl0WQ1FEHNQSH0akVkzcyvT0ZH
-         DrO779foOqJAv72fLPPTaf6/cFlSA2kBLWAvNMiHrMCV3WSmrvjhKP+wy613A4T647JB
-         vwFw==
-X-Gm-Message-State: AJIora8vgJPwJO/AwOGXEJWcG2a1h02+CQ+OMyuGIq/4v3H63jNPYBGM
-        z0wpIh8Y+iqSggxjfqUvhpM3+dpEPmYIp/2I6jA=
-X-Google-Smtp-Source: AGRyM1ulxotWsDV/SS5wzW6q4zt5LXu3F658bS4StYWI/FgPuIBqBz38zqk7aydOTm9FXxU+wDfnf428k+eRTEG/aD8=
-X-Received: by 2002:a17:90b:1988:b0:1ec:f52d:90d4 with SMTP id
- mv8-20020a17090b198800b001ecf52d90d4mr1796737pjb.70.1655910220864; Wed, 22
- Jun 2022 08:03:40 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=NIfQtqzeiHr1Bx/wI31cgthQtxe3wj/holKaMR/m9zM=;
+        b=x3EpqJKMhA0Yp37HcP0rvxWSWvKqEBnqfTJ28K/6KmcomF8IlxM2sLzBR9s8jXQRhE
+         gTsdPrCGNGz7xgIky2jbuVYBQP28hrNGrOuK0rH5Uzga7cdjR+KD0lUIiMEI+2WAZBiS
+         aq1IVYVnbb9TpRevwMftp7tsZyHRrqBFYR6nykgF2NpeLtgevWx7TP6RKWW4HU4pQxpO
+         le3DnOutDxuGHc7hkIKCAz+dh0areRedtOwAliXytaXRERjnyy3HikR1JvwvQWvBZbin
+         e/jnCt7u0wOnihpONaFliTtbzmnGrQnUyBgCOqahzuucHkibnaDvMqm4GXB3YVOrci+d
+         UJ0g==
+X-Gm-Message-State: AJIora9PdcCnmf8YEK0j3F3SnQncz9pzdJ49KTxxWTIyFxnUy5PrxQNg
+        8h9D++ECbwen9BkejXQzGsMqPhcos1yOPZj1iaAbroarxXeFHQ==
+X-Google-Smtp-Source: AGRyM1soR5L8f+XQOVF7UbIqENEjCdFxWNONgems60J5m+ZRw2ciUMk87o2bon5K/9zNyOa5BcItvg/cCdLcRfQKSJI=
+X-Received: by 2002:a05:6512:793:b0:47f:82d0:fadb with SMTP id
+ x19-20020a056512079300b0047f82d0fadbmr1575156lfr.545.1656138565484; Fri, 24
+ Jun 2022 23:29:25 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a17:903:2308:b0:16a:1b3f:f74b with HTTP; Wed, 22 Jun 2022
- 08:03:40 -0700 (PDT)
-Reply-To: sales0212@asonmedsystemsinc.com
-From:   Prasad Ronni <lerwickfinance7@gmail.com>
-Date:   Wed, 22 Jun 2022 16:03:40 +0100
-Message-ID: <CAFkto5vTxj70kORZJZdwOGowXjsZ399eo6DJj=8T==7paSuHTw@mail.gmail.com>
-Subject: Service Needed.
-To:     undisclosed-recipients:;
+From:   Nikhil Kshirsagar <nkshirsagar@gmail.com>
+Date:   Sat, 25 Jun 2022 11:59:13 +0530
+Message-ID: <CAC6jXv0FoE60HEuc7tDMXEA27hkoMkZm5d6gt4NCRkAh2w3WvA@mail.gmail.com>
+Subject: bcache I/O performance tests on 5.15.0-40-generic
+To:     linux-bcache@vger.kernel.org
+Cc:     Coly Li <colyli@suse.de>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.0 required=5.0 tests=BAYES_20,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
--- 
-Hi,
+Hello,
 
-Are you currently open to work as our executive company representative
-on contractual basis working remotely? If yes, we will be happy to
-share more details. Looking forward to your response.
+I've been doing some performance tests of bcache on 5.15.0-40-generic.
+
+The baseline figures for the fast and slow disk for random writes are
+consistent at around 225MiB/s and 3046KiB/s.
+
+But the bcache results inexplicably drop sometimes to 10Mib/s, for
+random write test using fio like this -
+
+fio --rw=randwrite --size=1G --ioengine=libaio --direct=1
+--gtod_reduce=1 --iodepth=128 --bs=4k --name=MY_TEST1
+
+  WRITE: bw=168MiB/s (176MB/s), 168MiB/s-168MiB/s (176MB/s-176MB/s),
+io=1024MiB (1074MB), run=6104-6104msec
+  WRITE: bw=283MiB/s (297MB/s), 283MiB/s-283MiB/s (297MB/s-297MB/s),
+io=1024MiB (1074MB), run=3621-3621msec
+  WRITE: bw=10.3MiB/s (10.9MB/s), 10.3MiB/s-10.3MiB/s
+(10.9MB/s-10.9MB/s), io=1024MiB (1074MB), run=98945-98945msec
+  WRITE: bw=8236KiB/s (8434kB/s), 8236KiB/s-8236KiB/s
+(8434kB/s-8434kB/s), io=1024MiB (1074MB), run=127317-127317msec
+  WRITE: bw=9657KiB/s (9888kB/s), 9657KiB/s-9657KiB/s
+(9888kB/s-9888kB/s), io=1024MiB (1074MB), run=108587-108587msec
+  WRITE: bw=4543KiB/s (4652kB/s), 4543KiB/s-4543KiB/s
+(4652kB/s-4652kB/s), io=1024MiB (1074MB), run=230819-230819msec
+
+This seems to happen after 2 runs of 1gb writes (cache disk is 4gb size)
+
+Some details are here - https://pastebin.com/V9mpLCbY , I will share
+the full testing results soon, but just was wondering about this
+performance drop for no apparent reason once the cache gets about 50%
+full.
+
+I've tested in writeback mode, and also set
+congested_read_threshold_us and congested_write_threshold_us to 0
+
+I did not notice this issue while testing on an older kernel -
+4.15.0-188-generic
 
 Regards,
+Nikhil.
