@@ -2,339 +2,157 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8148E569EF4
-	for <lists+linux-bcache@lfdr.de>; Thu,  7 Jul 2022 11:57:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD4C556A4F3
+	for <lists+linux-bcache@lfdr.de>; Thu,  7 Jul 2022 16:03:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235063AbiGGJ5M (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 7 Jul 2022 05:57:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55578 "EHLO
+        id S235760AbiGGODM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 7 Jul 2022 10:03:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234912AbiGGJ5J (ORCPT
+        with ESMTP id S235541AbiGGODD (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 7 Jul 2022 05:57:09 -0400
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DBD04D4F9
-        for <linux-bcache@vger.kernel.org>; Thu,  7 Jul 2022 02:57:08 -0700 (PDT)
-Received: by mail-qt1-x833.google.com with SMTP id ay10so21919348qtb.1
-        for <linux-bcache@vger.kernel.org>; Thu, 07 Jul 2022 02:57:08 -0700 (PDT)
+        Thu, 7 Jul 2022 10:03:03 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E3B429CA7;
+        Thu,  7 Jul 2022 07:03:01 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id e16so6803647pfm.11;
+        Thu, 07 Jul 2022 07:03:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=devo.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=r8tA9YxvTMtdgqm82y7aG+Q18pNxaaPNWOm9nx/pG48=;
-        b=eIeQXNNLwBP6LC56bVDzbRFvVfMyWq2rJcTWpl+EOrhF5d+Fv4tQnB09M5tb+MqVve
-         N7i6X9ahy8Tt8++U8wRbPufaboUyrv1tU8KD79Thf/gEIPjL/utwuJi6t0Wk+gYXLZ1x
-         Rjxq13DCg2qRg64w2qqq/WCN3MDiAm1TbNvHynPv1T2g9hwl2dUnKAqEiSC8gyEUV60N
-         1Ywn1juIbVhU9+oZc87Af7ESG5pg/1nvSe011UMwrA7OLdST2ozDxaGAVsLodPXwUneD
-         3kmNvSWvvLRJdy330y3/dCqL9n7nxBPiI5EDOG78O+ud9GrYOiJGu6lwLkFuzCC5uSA+
-         pgGQ==
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=afbiyF16Fd4Ewaaf3EKKCpvpR7aHAsNAQp7K3TuQXs4=;
+        b=EzpeppBfdoHkOWruUNAYNHzOi8S5lBuVkWR/uarc/O7MDVJ2qM1NUNdy3hxzZeKinw
+         1f6tPe15AftcBiSP1Sugt5jiQpAKlLcyz+gPyHgHTvK6IkiuSg6SYHkmzqBCpGaHkm3K
+         GirawtqITR+EFkG0pF8QxPm0bxzk97EH7JYJxQXFRi4d1kRfsZVOuxKRapjByLByJ3DF
+         qAVqAZfaAfJT+F8T/W2rPtPmXy6/uaYwejGaDWQ5Frl3XCXwsQlqWF67lU3BIXdseGBS
+         CTJ5pH+oR76s++4uNTCxHCZwHNyWF4xdxY3ay2k5fQlKGRbstnEbIjnAVDZkl7wMQgN9
+         oSpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=r8tA9YxvTMtdgqm82y7aG+Q18pNxaaPNWOm9nx/pG48=;
-        b=CRabtnLz8YCE6qOBCKCKpxjnMyhX1gZ8iMczWGD99gnYROcA9mDvYeHP3RXw2c0vGt
-         P17Z8oVlsv5VkgH1n3qFk+RQa8Vo4BKfUE9E4baaZbOzcrjEQbjf1r7kyA74z6S0QexH
-         j89r675EzRrKWR9TMvrdUOANcaztcKqNUT+NJ71f6yG7pT4pWyzpib2KHiPF4VPEDmAg
-         PCFWxnfIh6bCnVgowdfqtH5Fsul4pmJef00qhKqPgH6MToI241aCp91re4uy8pN/CQPO
-         2Rx3LI2pC499MrT6W6z1FZlqkr/qe6KeQBGxVVK1YUCy+kDAzOKPPGjnhzTuQBSEfK1+
-         3BYA==
-X-Gm-Message-State: AJIora8Ma37ckAzdb1nUW9uILQ/MBi9mmU7zXw1XHuL6ls6NBdl0Hnt6
-        9ed6j4PmQAbDUumM9jL0szIFKhmdh98dBfADbI7ExV/RPVZUnQ==
-X-Google-Smtp-Source: AGRyM1spVIaPVG20Zv+eOQT7g24dIIYu5ydzy5AlAvqVsbSTb7h50476G7yW5U+zcuTS6ywugm08yoeo/tFJ7KAXWW0=
-X-Received: by 2002:ac8:5901:0:b0:317:c667:313b with SMTP id
- 1-20020ac85901000000b00317c667313bmr35822151qty.229.1657187827474; Thu, 07
- Jul 2022 02:57:07 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=afbiyF16Fd4Ewaaf3EKKCpvpR7aHAsNAQp7K3TuQXs4=;
+        b=h9qday3Z6QtmC9RuMlgRhS9l10QWS3D80lqsSnqgBKC1+CKaNJRllCV1qHMEPzZaUM
+         3G4Ul8qgrHisl2n4W631fHuwsdqtWunnfaPvAeGcwV2SjB8YFxGBPM0fbntZUylk9IgL
+         fNwlkHrks28txUTJtICEOG3hV00TiGJeVsYDEd6xIlS0KEuxKgttgVOj1OT2wP8v2E9M
+         JVZQbxroyOnwkD5a9se5zP6O77TDb2VM30ByrUn6H2BGlo/Re0Z+1dExBMcaZTp24oh6
+         A3v83thqObnrjc1T9Z8rnW1KxG52OOaWwjbYRjmhQ7UjKzMSvlXymn+xyEQmMmHsHvAT
+         RX3g==
+X-Gm-Message-State: AJIora9YSLCW5JWGVsmJCaVyIp2MX3BQGmqg5tHK/FJjeqigK/qnJsvY
+        qcPc/QB7vncBioq1CQXdz9E=
+X-Google-Smtp-Source: AGRyM1uGEg1zRLKU3mt/8yK/HfEqKFBdv1eoQpzxhqHLW6DjIp1gLh6JEsU/RWRdBfoHFypH/TfaNQ==
+X-Received: by 2002:a17:90b:4c8f:b0:1ec:cdd0:41b7 with SMTP id my15-20020a17090b4c8f00b001eccdd041b7mr5420238pjb.119.1657202580508;
+        Thu, 07 Jul 2022 07:03:00 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id k127-20020a632485000000b004148cbdd4e5sm1215293pgk.57.2022.07.07.07.02.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Jul 2022 07:02:59 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Thu, 7 Jul 2022 07:02:58 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     kernel test robot <lkp@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        usbb2k-api-dev@nongnu.org, tipc-discussion@lists.sourceforge.net,
+        target-devel@vger.kernel.org, sound-open-firmware@alsa-project.org,
+        samba-technical@lists.samba.org, rds-devel@oss.oracle.com,
+        patches@opensource.cirrus.com, osmocom-net-gprs@lists.osmocom.org,
+        openipmi-developer@lists.sourceforge.net, nvdimm@lists.linux.dev,
+        ntb@lists.linux.dev, netfilter-devel@vger.kernel.org,
+        netdev@vger.kernel.org, mjpeg-users@lists.sourceforge.net,
+        megaraidlinux.pdl@broadcom.com, linuxppc-dev@lists.ozlabs.org,
+        linux1394-devel@lists.sourceforge.net, linux-x25@vger.kernel.org,
+        linux-wpan@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-parport@lists.infradead.org,
+        linux-parisc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-nfc@lists.01.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+        linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-cxl@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linaro-mm-sig@lists.linaro.org,
+        legousb-devel@lists.sourceforge.net, kvm@vger.kernel.org,
+        keyrings@vger.kernel.org, isdn4linux@listserv.isdn4linux.de,
+        iommu@lists.linux.dev, iommu@lists.linux-foundation.org,
+        intel-wired-lan@lists.osuosl.org, greybus-dev@lists.linaro.org,
+        dri-devel@lists.freedesktop.org, dm-devel@redhat.com,
+        devicetree@vger.kernel.org, dev@openvswitch.org,
+        dccp@vger.kernel.org, damon@lists.linux.dev,
+        coreteam@netfilter.org, cgroups@vger.kernel.org,
+        ceph-devel@vger.kernel.org, ath11k@lists.infradead.org,
+        apparmor@lists.ubuntu.com, amd-gfx@lists.freedesktop.org,
+        alsa-devel@alsa-project.org,
+        accessrunner-general@lists.sourceforge.net
+Subject: Re: [linux-next:master] BUILD REGRESSION
+ 088b9c375534d905a4d337c78db3b3bfbb52c4a0
+Message-ID: <20220707140258.GA3492673@roeck-us.net>
+References: <62c683a2.g1VSVt6BrQC6ZzOz%lkp@intel.com>
+ <YsaUgfPbOg7WuBuB@kroah.com>
 MIME-Version: 1.0
-References: <20220704151320.78094-1-andrea.tomassetti-opensource@devo.com>
- <B18A4668-47F5-4219-8336-EDB00D0292C2@suse.de> <CAHykVA48C-8JBsyZG8_iGzBJ9rjDMrW7O0mk9L4PDpRAP0yUXQ@mail.gmail.com>
- <365F8F51-8D66-4DCB-BF05-50727F83B80A@suse.de> <fd11b5db-dc7d-76b3-9396-ed58833c3f6a@ewheeler.net>
-In-Reply-To: <fd11b5db-dc7d-76b3-9396-ed58833c3f6a@ewheeler.net>
-From:   Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
-Date:   Thu, 7 Jul 2022 11:56:56 +0200
-Message-ID: <CAHykVA5wk6Mw+Td4kTTPVnOy0vD=bdt6JRuwTr-FeeAZPyY+kw@mail.gmail.com>
-Subject: Re: [PATCH] bcache: Use bcache without formatting existing device
-To:     Eric Wheeler <bcache@lists.ewheeler.net>
-Cc:     Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Zhang Zhen <zhangzhen.email@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YsaUgfPbOg7WuBuB@kroah.com>
+X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Eric and Coly,
-thank you very much for the interesting discussion.
+On Thu, Jul 07, 2022 at 10:08:33AM +0200, Greg KH wrote:
 
-Let me give you a little bit more context that maybe will help you
-better understand the specific use case that this patch is trying to
-tackle.
-As I stated in a previous email, we're currently using ephemeral disks
-as cache devices so, for us, using bcache in writeback mode is out of
-discussion because it could lead us to data loss.
-Moreover, I fully understand the dangerous implications of registering
-a backing device without formatting it and using it in wb mode. That's
-why this patch is meant to register backing devices *only* (no need to
-register a cache device without formatting it) and in wt mode *only*.
-I'm not saying it cannot be used to register backing devices in wb
-mode, I'm just saying that it needs further and deeper analysis on the
-implications.
-Sorry if this context wasn't clear enough.
+[ ... ]
+> > 
+> > Unverified Error/Warning (likely false positive, please contact us if interested):
+> > 
+> > arch/x86/events/core.c:2114 init_hw_perf_events() warn: missing error code 'err'
+> > drivers/android/binder.c:1481:19-23: ERROR: from is NULL but dereferenced.
+> > drivers/android/binder.c:2920:29-33: ERROR: target_thread is NULL but dereferenced.
+> > drivers/android/binder.c:353:25-35: ERROR: node -> proc is NULL but dereferenced.
+> > drivers/android/binder.c:4888:16-20: ERROR: t is NULL but dereferenced.
+> > drivers/base/regmap/regmap.c:1996:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> > drivers/char/random.c:869:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> > drivers/firmware/arm_scmi/clock.c:394:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> > drivers/firmware/arm_scmi/powercap.c:376:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> > drivers/gpu/drm/amd/amdgpu/../pm/powerplay/hwmgr/vega10_powertune.c:1214:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> > drivers/gpu/drm/amd/display/dc/os_types.h: drm/drm_print.h is included more than once.
+> > drivers/gpu/drm/bridge/ite-it66121.c:1398:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> > drivers/greybus/operation.c:617:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+> 
+> <snip>
+> 
+> When the compiler crashes, why are you blaming all of these different
+> mailing lists?  Perhaps you need to fix your compiler :)
+> 
 
-On Wed, Jul 6, 2022 at 12:03 AM Eric Wheeler <bcache@lists.ewheeler.net> wr=
-ote:
->
-> On Tue, 5 Jul 2022, Coly Li wrote:
-> > > 2022=E5=B9=B47=E6=9C=885=E6=97=A5 16:48=EF=BC=8CAndrea Tomassetti <an=
-drea.tomassetti-opensource@devo.com> =E5=86=99=E9=81=93=EF=BC=9A
-> > > On Mon, Jul 4, 2022 at 5:29 PM Coly Li <colyli@suse.de> wrote:
-> > >>> 2022=E5=B9=B47=E6=9C=884=E6=97=A5 23:13=EF=BC=8CAndrea Tomassetti <=
-andrea.tomassetti-opensource@devo.com> =E5=86=99=E9=81=93=EF=BC=9A
-> > >>> Introducing a bcache control device (/dev/bcache_ctrl) that allows
-> > >>> communicating to the driver from user space via IOCTL. The only
-> > >>> IOCTL commands currently implemented, receives a struct cache_sb an=
-d
-> > >>> uses it to register the backing device without any need of
-> > >>> formatting them.
-> > >>>
-> > >> Back to the patch, I don=E2=80=99t support this idea. For the proble=
-m you are
-> > >> solving, indeed people uses device mapper linear target for many
-> > >> years, and it works perfectly without any code modification.
-> > >>
-> > >> That is, create a 8K image and set it as a loop device, then write a
-> > >> dm table to combine it with the existing hard drive. Then you run
-> > >> =E2=80=9Cbcache make -B <combined dm target>=E2=80=9D, you will get =
-a bcache device
-> > >> whose first 8K in the loop device and existing super block of the
-> > >> hard driver located at expected offset.
-> > >>
-> > > We evaluated this option but we weren't satisfied by the outcomes for=
-,
-> > > at least, two main reasons: complexity and operational drawbacks. For
-> > > the complexity side: in production we use more than 20 HD that need t=
-o
-> > > be cached. It means we need to create 20+ header for them, 20+ loop
-> > > devices and 20+ dm linear devices. So, basically, there's a 3x factor
-> > > for each HD that we want to cache. Moreover, we're currently using
-> > > ephemeral disks as cache devices. In case of a machine reboot,
-> > > ephemeral devices can get lost; at this point, there will be some
-> > > trouble to mount the dm-linear bcache backing device because there
-> > > will be no cache device.
-> >
-> > OK, I get your point. It might make sense for your situation, although =
-I
-> > know some other people use the linear dm-table to solve similar
-> > situation but may be not perfect for you. This patch may work in your
-> > procedure, but there are following things make me uncomfortable,
->
-> Coly is right: there are some issues to address.
->
-> Coly, I do not wish to contradict you, only to add that we have had times
-> where this would be useful. I like the idea, particularly avoiding placin=
-g
-> dm-linear atop of the bdev which reduces the IO codepath.  Maybe there is
-> an implementation that would fit everyone's needs.
->
-> For us, such a superblock-less registration could resolve two issues:
->
-> 1. Most commonly we wish to add bcache to an existing device without
->    re-formatting and without adding the dm-linear complexity.
->
-That's exactly what was preventing us from using bcache in production
-prior to this patch.
+To be fair, it says above "likely false positive, please contact us
+if interested". Also, the 32-bit build errors _are_ real, and the NULL
+dereferences in the binder driver are at the very least suspicious.
 
-> 2. Relatedly, IMHO, I've never liked the default location at 8k because w=
-e
->    like to align our bdev's to the RAID stride width and rarely is the
->    bdev array aligned at 8k (usually 64k or 256k for hardware RAID).  If
->    we forget to pass the --data-offset at make-bcache time then we are
->    stuck with an 8k-misalignment for the life of the device.
->
-> In #2 we usually reformat the volume to avoid dm-linear complexity (and i=
-n
-> both cases we have wanted writeback cache support).  This process can tak=
-e
-> a while to `dd` =E2=80=BE30TBs of bdev on spinning disks and we have to f=
-ind
-> temporary disk space to move that data out and back in.
->
-> > - Copying a user space memory and directly using it as a complicated in=
--kernel memory object.
->
-> In the ioctl changes for bch_write_bdev_super() there does not appear to
-> be a way to handle attaching caches to the running bcache.  For example:
->
-> 1. Add a cacheless bcache0 volume via ioctl
-> 2. Attach a writeback cache, write some data.
-> 3. Unregister everything
-> 4. Re-register the _dirty_ bdev from #1
->
-> In this scenario bcache will start "running" immediately because it
-> cannot update its cset.uuid (as reported by bcache-super-show) which I
-> believe is stored in cache_sb.set_uuid.
->
-> I suppose in step #2 you could update your userspace state with the
-> cset.uuid so your userspace ioctl register tool would put the cset.uuid i=
-n
-> place, but this is fragile without good userspace integration.
->
-> I could imagine something like /etc/bcachetab (like crypttab or
-> mdadm.conf) that maps cset UUID's to bdev UUIDs.  Then your userspace
-> ioctl tool could be included in a udev script to auto-load volumes as the=
-y
-> become available.
-Yes, in conjunction with this patch, I developed a python udev script
-that manages device registration base on a YAML configuration file. I
-even patched bcache-tools to support the new IOCTL registration. You
-will find a link to the Github project at the end of this message.
-
->
-> You want to make sure that when a dirty writeback-cached bdev is
-> registered that it does not activate until either:
->
->   1. The cache is attached
->   2. echo 1 > /sys/block/bcache0/bcache/running
->
-> > - A new IOCTL interface added, even all rested interface are sysfs base=
-d.
->
-> True.  Perhaps something like this would be better, and it would avoid
-> sharing a userspace page for blindly populating `struct cache_sb`, too:
->
->   echo '/dev/bdev [bdev_uuid] [/dev/cachedev|cset_uuid] [options]' > =C2=
-=A5
->           /sys/fs/bcache/register_raw
->
-I thought that introducing an IOCTL interface could be a stopper for
-this patch, so I'm more than welcome to refactor it using sysfs
-entries only. But, I will do so only if there's even the slightest
-chance that this patch can be merged.
-> Because of the writeback issue above, the cache and bdev either need to b=
-e
-> registered simultaneously or the cset uuid need to be specified.
->
-> > - Do things in kernel space while there is solution in user space.
-> >
-> > All the above opinions are quite personal to myself, I don=E2=80=99t sa=
-y you are
-> > wrong or I am correct. If the patch works, that=E2=80=99s cool and you =
-can use
-> > it as you want, but I don=E2=80=99t support it to be in upstream.
->
-> An alternate implementation might be to create a dm-bcache target.  The
-> core bcache code could be left alone except a few EXPORT_SYMBOL()'s so
-> dm-bcache can reach the bcache registration bits.
->
-> This would:
->   * Minimally impact the bcache code base
->   * Solve the blind-populating of `struct cache_sb` issue in the same way
->     as `register_raw` could work above.
->   * Create a nicely segmented codebase (dm target) to upstream separately
->     through the DM team.
->   * Could be maintained cleanly out-of-tree because the bcache
->     registration interfaces change very infrequently.
->   * bdev resize could be done with a `dmsetup replace` but you'll need to
->     add resize support as below.
->
-> > > For the operational drawbacks: from time to time, we exploit the
-> > > online filesystem resize capability of XFS to increase the volume
-> > > size. This would be at least tedious, if not nearly impossible, if th=
-e
-> > > volume is mapped inside a dm-linear.
-> >
-> > Currently bcache doesn=E2=80=99t support cache or backing device resize=
-. I don=E2=80=99t
-> > see the connection between above statement and feeding an in-memory
-> > super block via IOCTL command.
->
-> Resize is perhaps unrelated, so if you decide to tackle bdev or cachedev
-> resize then please start a new list thread.  Briefly: supporting bdev
-> resize is probably easy.  I've looked through the code a few times with
-> this in mind but haven't had time.
->
-> Here's the summary, not sure if there are any other
-> considerations:
->
->   1. Create a sysfs file like /sys/block/bcache0/bcache/resize to trigger
->      resize on echo 1 >.
->   2. Refactor the set_capacity() bits from  bcache_device_init() into its
->      own function.
->   3. Put locks around bcache_device.full_dirty_stripes and
->      bcache_device.stripe_sectors_dirty.  Re-alloc+copy+free and zero the
->      new bytes at the end.
->
-> The cachedev's don't know anything about the bdev size, so (according to
-> Kent) they will "just work" by referencing new offsets that didn't exist
-> before when IOs come through.  (This is basically the same as resizing th=
-e
-> bdev and then unregister/re-register which is how we resize bdevs now.)
->
-> As for resizing a cachedev, I've not looked at all---not sure about that
-> one.  We always detach, resize, make-bcache and re-attach the new cache.
-> Maybe it is similarly simple, but haven't looked.
->
-> > >> It is unnecessary to create a new IOCTL interface, and I feel the wa=
-y
-> > >> how it works is really unconvinced for potential security risk.
-> > >>
-> > > Which potential security risks concern you?
-> > >
-> >
-> > Currently we don=E2=80=99t check all members of struct cache_sb_disk, w=
-hat we do
-> > is to simply trust bcache-tools. Create a new IOCTL interface to send a
-> > user space memory into kernel space as superblock, that needs quite a
-> > lot of checking code to make sure it won=E2=80=99t panic the kernel. It=
- is
-> > possible, but it is not worthy to add so many code for the purpose,
-> > especially adding them into upstream code.
-> >
-> > I am not able to provide an explicit example for security risk, just th=
-e
-> > new adding interface makes me not so confident.
->
-> Maintaining a blind structure population from a userspace page would be
-> difficult as well because even if the kernel validates _everything_ in
-> cache_sb today, anyone extending `struct cache_sb` needs to remember to
-> add checks for that. Failing to enforce validation inside the kernel coul=
-d
-> lead to kernel crashes or data corruption from userspace which is of
-> course never good.
->
-Can I solve this by refactoring the patch and using sysfs based
-registration instead?
-
-For anyone that is interested to try this solution, and as a
-reference, I leave here below the links to my public Github
-repositories:
-- bcache-tools: https://github.com/andreatomassetti/bcache-tools
-- bcache (standalone, patched): https://github.com/andreatomassetti/bcache
-
-Thank you very much,
-Andrea
-
-> We always assume that, somehow, someone could leverage an insecure IOCTL
-> call and crash the OS when they shouldn't be allowed to (even if they are
-> not root, like from sudo).  This is a security issue from an assurance an=
-d
-> integrity point of view, even if there might be neither an obvious
-> privelege escalation nor privacy concern.
->
-> -Eric
->
->
-> > Thanks.
-> >
-> > Coly Li
-> >
-> >
-> >
-> >
+Guenter
