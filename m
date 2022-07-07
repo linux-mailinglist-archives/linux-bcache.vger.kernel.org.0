@@ -2,112 +2,68 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 69001569DDA
-	for <lists+linux-bcache@lfdr.de>; Thu,  7 Jul 2022 10:45:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC454569E7D
+	for <lists+linux-bcache@lfdr.de>; Thu,  7 Jul 2022 11:22:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235184AbiGGIpM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 7 Jul 2022 04:45:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59360 "EHLO
+        id S235199AbiGGJW7 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 7 Jul 2022 05:22:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232615AbiGGIpJ (ORCPT
+        with ESMTP id S234797AbiGGJW6 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 7 Jul 2022 04:45:09 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 563D813F9F;
-        Thu,  7 Jul 2022 01:45:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657183508; x=1688719508;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=edbKoKalbvq90CBmxogPesuIiDjl8rwJ49B+zZvetjQ=;
-  b=BfVKisWKCdx8CvBHxqsYg7j9cXv26yoQXE72HrhvrsHZACMcDf+Q4QeE
-   iezKOt76usGXV+kbwaKO7ucB7IaYA4gBUybR0oLB4xyC1Vm4hlMy3Mfqh
-   9orF/TMUfYsnaA4siDN3OfNN2ZHi8li2Tg62mdzzqPrFaDG0JJbV+DRPP
-   iwpbPp2cvvpvUZ62IKMOCHbcsc96XaEccZnOxR3WRawWvB7mbC3jKctJN
-   8CAuCUDBdHrDFmaFdIMnnGGbzhA6JCPGgQiHYVbqMyi9DeZgOTiWpgxom
-   oJhCT3UL+2okh6qNBEUcmQZZmIof0uguLdB3ImckLr4T46d5mInnCBOBg
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10400"; a="345659129"
-X-IronPort-AV: E=Sophos;i="5.92,252,1650956400"; 
-   d="scan'208";a="345659129"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 01:45:06 -0700
-X-IronPort-AV: E=Sophos;i="5.92,252,1650956400"; 
-   d="scan'208";a="651047273"
-Received: from rongch2-mobl.ccr.corp.intel.com (HELO [10.255.31.6]) ([10.255.31.6])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 01:44:45 -0700
-Subject: Re: [linux-next:master] BUILD REGRESSION
- 088b9c375534d905a4d337c78db3b3bfbb52c4a0
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        kernel test robot <lkp@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        usbb2k-api-dev@nongnu.org, tipc-discussion@lists.sourceforge.net,
-        target-devel@vger.kernel.org, sound-open-firmware@alsa-project.org,
-        samba-technical@lists.samba.org, rds-devel@oss.oracle.com,
-        patches@opensource.cirrus.com, osmocom-net-gprs@lists.osmocom.org,
-        openipmi-developer@lists.sourceforge.net, nvdimm@lists.linux.dev,
-        ntb@lists.linux.dev, netfilter-devel@vger.kernel.org,
-        netdev@vger.kernel.org, mjpeg-users@lists.sourceforge.net,
-        megaraidlinux.pdl@broadcom.com, linuxppc-dev@lists.ozlabs.org,
-        linux1394-devel@lists.sourceforge.net, linux-x25@vger.kernel.org,
-        linux-wpan@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
-        linux-sctp@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-parport@lists.infradead.org,
-        linux-parisc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-nfc@lists.01.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-        linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-fpga@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-cxl@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linaro-mm-sig@lists.linaro.org,
-        legousb-devel@lists.sourceforge.net, kvm@vger.kernel.org,
-        keyrings@vger.kernel.org, isdn4linux@listserv.isdn4linux.de,
-        iommu@lists.linux.dev, iommu@lists.linux-foundation.org,
-        intel-wired-lan@lists.osuosl.org, greybus-dev@lists.linaro.org,
-        dri-devel@lists.freedesktop.org, dm-devel@redhat.com,
-        devicetree@vger.kernel.org, dev@openvswitch.org,
-        dccp@vger.kernel.org, damon@lists.linux.dev,
-        coreteam@netfilter.org, cgroups@vger.kernel.org,
-        ceph-devel@vger.kernel.org, ath11k@lists.infradead.org,
-        apparmor@lists.ubuntu.com, amd-gfx@lists.freedesktop.org,
-        alsa-devel@alsa-project.org,
-        accessrunner-general@lists.sourceforge.net
-References: <62c683a2.g1VSVt6BrQC6ZzOz%lkp@intel.com>
- <YsaUgfPbOg7WuBuB@kroah.com>
-From:   "Chen, Rong A" <rong.a.chen@intel.com>
-Message-ID: <c86816fd-aaba-01a9-5def-44868f0a46c9@intel.com>
-Date:   Thu, 7 Jul 2022 16:44:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.12.0
+        Thu, 7 Jul 2022 05:22:58 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780FA32EDA
+        for <linux-bcache@vger.kernel.org>; Thu,  7 Jul 2022 02:22:57 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id t25so30062567lfg.7
+        for <linux-bcache@vger.kernel.org>; Thu, 07 Jul 2022 02:22:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=MvTZo0RUWhj8QQLLGVVEfrgkX14H+kF4jW0M0ETlN3w=;
+        b=PbB5cm9x8aZt01JYccuQrYAcgCx37PxYUNcp/uCQCIKENjBm36yAfsFRwvSNioNTpm
+         KDs5AG2MSvw59xfWToUFERXqBLY9BEhXbjqzBA/lbX3fZDXPeNUqOZ2TB2UJ3C2u9c9j
+         LUEzYUKa9G5lEbUBK8fwSUs5+UocrFnGkJW+YXBOhI2O7iRIGxiYkpREXoe4jX6MMlli
+         qPfVKnBf1z/VLr+hsvNczqYFN8MYEhtSl9r/zsAERtZoDtKI3g2MbykVrKCc4ZiohxzN
+         HNnVWTG4aype8HUsvKBPqORcnmh5/3pD4eFyiacN81ljXK3k8C1yf5WtsZt1L+CpYl0D
+         OhpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=MvTZo0RUWhj8QQLLGVVEfrgkX14H+kF4jW0M0ETlN3w=;
+        b=Vs18oK6gNMovLQWZHgBTa8SAJfxM2Y15nQMwYxsr1Q2hoAF7IABljPVmSbf4IBRrJD
+         /Os7rJ6QU+WktczeZkcbynljoqDqazIpuYPdEnMzE3CPzCJA6nfS1/pA7O9wEKBlGndP
+         PQN1i1yFV6LWrYtxaH4ncDuKhnhYspgTxRbdUpNHcD8meIdTN3+/UGa5Cu0w6SPHHRWI
+         5Os4mzBriYLo5FQ3KqLTFVnk8nNuFV+AJwNbUqxPK9swbTHQjGuaJ94gjE5aJ14GGWld
+         JDq0miq+ilR9uWuV8UJJeJDf1g4hhWZPGRndHVCZY12gDp38s4b8yx5ID57mjyFdg1uG
+         1DwQ==
+X-Gm-Message-State: AJIora+k4VcNzxWur3ssRoAJS8zf2dnXI3SMLK5unLmazibKorAkPYk/
+        IVtDDQB2lgEN6ZOQtmC8nouo91c8E3c49g6LMXPYhRAvrmrtOQ==
+X-Google-Smtp-Source: AGRyM1vfV9KqwRBjqdryCUa78RkbH//K5M71CQoLJzC08w6tTbnHCDfpVgQTclzgLG0Z/TUU264/KKmpLZASvEdX8QE=
+X-Received: by 2002:a05:6512:3da8:b0:47f:616d:e54c with SMTP id
+ k40-20020a0565123da800b0047f616de54cmr31325790lfv.218.1657185775640; Thu, 07
+ Jul 2022 02:22:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YsaUgfPbOg7WuBuB@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+References: <CAC6jXv07ejbwOtqBLxLtV+Bc-ibBuSNgB+hTgY2QtAXH2tuN3Q@mail.gmail.com>
+ <342D4E30-B29D-4C19-8DE5-90726F97282A@suse.de> <CAC6jXv1SvSQfjrCEX0R9gcYOuVO0AJSfcZoaW9gvSdCRr=Yfew@mail.gmail.com>
+ <AB9B7785-A53B-4015-9217-5D56CFF8E482@suse.de> <CAC6jXv310pcJ5oEJ98cQBeM9iEhSLOUEuSMbtoP5nSL37T17KA@mail.gmail.com>
+ <CAC6jXv1wRjYsDmkR_BjExQ6-kgF+8bAhy84AnVqgObDg1_BEvA@mail.gmail.com>
+ <A6B77C96-E453-4631-BB3C-10B46C41A6FE@suse.de> <CAC6jXv2d3KizHWn+TTiwtzEThbu8UBwgD8fSf7i8AHjyXQFCCQ@mail.gmail.com>
+ <CAC6jXv3aPcuLDC-_sGmJ+QzmX3WmMsv8L8JF6zzNi193MVUMtw@mail.gmail.com> <B10F7435-83E6-451B-ABF6-3E2911C11CA7@suse.de>
+In-Reply-To: <B10F7435-83E6-451B-ABF6-3E2911C11CA7@suse.de>
+From:   Nikhil Kshirsagar <nkshirsagar@gmail.com>
+Date:   Thu, 7 Jul 2022 14:52:44 +0530
+Message-ID: <CAC6jXv3bvrV4_sb68bx3N49uAD3tfxJMkF=4YtvePnMGZ6uuyw@mail.gmail.com>
+Subject: Re: seeing this stace trace on kernel 5.15
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -115,81 +71,136 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+Hi Coly,
+
+Yes, 7d6b902ea0e0 seems to be the fix for it. I cannot reproduce this
+deadlock when I build this patch into 5.15.50.
+
+Thanks for pointing me to this patch!
+
+Regards,
+Nikhil.
 
 
-On 7/7/2022 4:08 PM, Greg KH wrote:
-> On Thu, Jul 07, 2022 at 02:56:34PM +0800, kernel test robot wrote:
->> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
->> branch HEAD: 088b9c375534d905a4d337c78db3b3bfbb52c4a0  Add linux-next specific files for 20220706
->>
->> Error/Warning reports:
->>
->> https://lore.kernel.org/linux-doc/202207070644.x48XOOvs-lkp@intel.com
->>
->> Error/Warning: (recently discovered and may have been fixed)
->>
->> Documentation/arm/google/chromebook-boot-flow.rst: WARNING: document isn't included in any toctree
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1108): undefined reference to `__aeabi_ddiv'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1124): undefined reference to `__aeabi_ui2d'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1164): undefined reference to `__aeabi_dmul'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1170): undefined reference to `__aeabi_dadd'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1180): undefined reference to `__aeabi_dsub'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1190): undefined reference to `__aeabi_d2uiz'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x162c): undefined reference to `__aeabi_d2iz'
->> arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x16b0): undefined reference to `__aeabi_i2d'
->> dc_dmub_srv.c:(.text+0x10f8): undefined reference to `__aeabi_ui2d'
->> dc_dmub_srv.c:(.text+0x464): undefined reference to `__floatunsidf'
->> dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x33c): undefined reference to `__floatunsidf'
->> drivers/pci/endpoint/functions/pci-epf-vntb.c:975:5: warning: no previous prototype for 'pci_read' [-Wmissing-prototypes]
->> drivers/pci/endpoint/functions/pci-epf-vntb.c:984:5: warning: no previous prototype for 'pci_write' [-Wmissing-prototypes]
->> drivers/vfio/vfio_iommu_type1.c:2141:35: warning: cast to smaller integer type 'enum iommu_cap' from 'void *' [-Wvoid-pointer-to-enum-cast]
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x34c): undefined reference to `__floatunsidf'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x378): undefined reference to `__divdf3'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x38c): undefined reference to `__muldf3'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3a0): undefined reference to `__adddf3'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3b4): undefined reference to `__subdf3'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3d4): undefined reference to `__fixunsdfsi'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x750): undefined reference to `__fixdfsi'
->> mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x7c0): undefined reference to `__floatsidf'
->> powerpc-linux-ld: drivers/pci/endpoint/functions/pci-epf-vntb.c:174: undefined reference to `ntb_link_event'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x468): undefined reference to `__divdf3'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x46c): undefined reference to `__muldf3'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x470): undefined reference to `__adddf3'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x474): undefined reference to `__subdf3'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x478): undefined reference to `__fixunsdfsi'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x47c): undefined reference to `__fixdfsi'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x480): undefined reference to `__floatsidf'
->> xtensa-linux-ld: dc_dmub_srv.c:(.text+0x60c): undefined reference to `__floatunsidf'
->>
->> Unverified Error/Warning (likely false positive, please contact us if interested):
->>
->> arch/x86/events/core.c:2114 init_hw_perf_events() warn: missing error code 'err'
->> drivers/android/binder.c:1481:19-23: ERROR: from is NULL but dereferenced.
->> drivers/android/binder.c:2920:29-33: ERROR: target_thread is NULL but dereferenced.
->> drivers/android/binder.c:353:25-35: ERROR: node -> proc is NULL but dereferenced.
->> drivers/android/binder.c:4888:16-20: ERROR: t is NULL but dereferenced.
->> drivers/base/regmap/regmap.c:1996:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/char/random.c:869:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/firmware/arm_scmi/clock.c:394:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/firmware/arm_scmi/powercap.c:376:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/gpu/drm/amd/amdgpu/../pm/powerplay/hwmgr/vega10_powertune.c:1214:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/gpu/drm/amd/display/dc/os_types.h: drm/drm_print.h is included more than once.
->> drivers/gpu/drm/bridge/ite-it66121.c:1398:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
->> drivers/greybus/operation.c:617:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-> 
-> <snip>
-> 
-> When the compiler crashes, why are you blaming all of these different
-> mailing lists?  Perhaps you need to fix your compiler :)
-> 
-> thanks,
-> 
-> greg k-h
-> 
-
-Hi Greg,
-
-Sorry for the inconvience, we'll fix it ASAP.
-
-Best Regards,
-Rong Chen
+On Wed, 29 Jun 2022 at 18:33, Coly Li <colyli@suse.de> wrote:
+>
+>
+>
+> > 2022=E5=B9=B46=E6=9C=8829=E6=97=A5 20:30=EF=BC=8CNikhil Kshirsagar <nks=
+hirsagar@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > Hi Coly,
+> >
+> > I am not able to see this issue on  5.18.0-051800-generic
+> > (https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.18/amd64/), so I am
+> > guessing its been fixed since 5.15.50 sometime. If you are aware of
+> > which commit may be the fix please let me know. I will keep testing on
+> > 5.18.0-051800-generic to see if I see it ever.
+>
+>
+> Hi Nikhil,
+>
+> Thanks for the update. Recently there are several fixes go into stable 5.=
+15.51 (but still one patch I just submitted to Greg yesterday, maybe it wil=
+l show up in future 5.15.52).
+>
+> Maybe you can try stable tree 5.15.51 with appying one more patch,
+> commit 7d6b902ea0e0 (=E2=80=9Cbcache: memset on stack variables in bch_bt=
+ree_check() and bch_sectors_dirty_init()=E2=80=9D)
+>
+> BTW, the journal no-space deadlock fix is in 5.15.51 now.
+>
+> Coly Li
+>
+> >
+> > On Wed, 29 Jun 2022 at 16:03, Nikhil Kshirsagar <nkshirsagar@gmail.com>=
+ wrote:
+> >>
+> >> Hi Coly,
+> >>
+> >> please use this as a reference, this is the source code to refer to
+> >> for the kernel i was able to reproduce this on
+> >> (https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.15.50/)
+> >>
+> >>
+> >> commit 18a33c8dabb88b50b860e0177a73933f2c0ddf68 (tag: v5.15.50)
+> >> Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> Date:   Sat Jun 25 15:18:40 2022 +0200
+> >>
+> >>    Linux 5.15.50
+> >>
+> >>    Link: https://lore.kernel.org/r/20220623164322.288837280@linuxfound=
+ation.org
+> >>    Tested-by: Florian Fainelli <f.fainelli@gmail.com>
+> >>    Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+> >>    Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> >>    Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> >>    Tested-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+> >>    Tested-by: Ron Economos <re@w6rz.net>
+> >>    Tested-by: Guenter Roeck <linux@roeck-us.net>
+> >>    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >>
+> >> I am able to reproduce this bug on older kernels too, like 5.4.0-121.
+> >> I will also test the latest upstream kernel soon.
+> >>
+> >> Regards,
+> >> Nikhil.
+> >>
+> >> On Wed, 29 Jun 2022 at 13:47, Coly Li <colyli@suse.de> wrote:
+> >>>
+> >>>
+> >>>
+> >>>> 2022=E5=B9=B46=E6=9C=8829=E6=97=A5 16:09=EF=BC=8CNikhil Kshirsagar <=
+nkshirsagar@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+> >>>>
+> >>>> Hi Coly,
+> >>>>
+> >>>> Note I used partitions for the bcache as well as the hdd, not sure i=
+f
+> >>>> that's a factor.
+> >>>>
+> >>>> the kernel is upstream kernel -
+> >>>>
+> >>>> # uname -a
+> >>>> Linux bronzor 5.15.50-051550-generic #202206251445 SMP Sat Jun 25
+> >>>> 14:51:22 UTC 2022 x86_64 x86_64 x86_64 GNU/Linux
+> >>>
+> >>>
+> >>> Hi Nikhil,
+> >>>
+> >>> I don=E2=80=99t find the commit id 767db4b286c3e101ac220b813c873f492d=
+9e4ee8 fro neither Linus tree nor stable tree.
+> >>>
+> >>> The tree you mentioned at https://kernel.ubuntu.com/~kernel-ppa/mainl=
+ine/v5.15.50/cod/mainline/v5.15.50 (767db4b286c3e101ac220b813c873f492d9e4ee=
+8), I am not sure whether it is a clone of Linus tree or stable tree. Maybe=
+ you may try v5.15.50 from the stable tree (git://git.kernel.org/pub/scm/li=
+nux/kernel/git/stable/linux.git), then we can focus on identical code base.
+> >>>
+> >>> Thanks.
+> >>>
+> >>> Coly Li
+> >>>
+> >>>
+> >>>>>>>>>
+> >>>
+> >>> [snipped]
+> >>>>>>>>>
+> >>>>>>>>> Is this a bug? It's in writeback mode. I'd setup the cache and =
+run stuff like,
+> >>>>>>>>>
+> >>>>>>>>> echo 0 > /sys/block/bcache0/bcache/sequential_cutoff
+> >>>>>>>>>
+> >>>>>>>>> I had also echoed 0 into congested_read_threshold_us,
+> >>>>>>>>> congested_write_threshold_us.
+> >>>>>>>>>
+> >>>>>>>>> echo writeback > /sys/block/bcache0/bcache/cache_mode
+> >>>>>>>>
+> >>>>>>>> Where do you get the kernel? If this is stable kernel, could you=
+ give me the HEAD commit id?
+> >>>>>>>>
+> >>>>>>>> Coly Li
+> >>>>>>>>
+> >>>>>>
+> >>>
+>
