@@ -2,98 +2,242 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D86557470B
-	for <lists+linux-bcache@lfdr.de>; Thu, 14 Jul 2022 10:37:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E549575C6C
+	for <lists+linux-bcache@lfdr.de>; Fri, 15 Jul 2022 09:34:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237231AbiGNIhG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 14 Jul 2022 04:37:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60518 "EHLO
+        id S229560AbiGOHdJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 15 Jul 2022 03:33:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231356AbiGNIg6 (ORCPT
+        with ESMTP id S231998AbiGOHdJ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 14 Jul 2022 04:36:58 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01D943FA0F
-        for <linux-bcache@vger.kernel.org>; Thu, 14 Jul 2022 01:36:51 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id n18so1666119lfq.1
-        for <linux-bcache@vger.kernel.org>; Thu, 14 Jul 2022 01:36:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=H3bGT1ZyGPu3PRQJlJHyQI9TvTjBPuNSyHjFOzNfiP0=;
-        b=XrPG1uZaQRn1UCA0WJJ2pmJQ1csZW3HabgB7E+QXuACfRhko5FjAocWwoGAFMQM+4K
-         maoBv4gTZQXqu9EJzYUg27HWYGn7H4ps8X1YfFKAamIhhLSUESO1F6QG9mJgGHe0KMpr
-         yS6EmWRT7znGhWAi5CHDysnG1OxosqIxRYFf098GB0Xs4T6zMcBwQ+Ijt6ciUPeVVUwm
-         NwEO+Wz1v4Oa+mBtHNRupxuLErGpDho6oqFPRIm2MU+57eHEreDtv9TWX6BBq17KbV3w
-         UCTpqQeOnk576xhvUmMdcgTy5b4PgstjqS11/4Py/0diTc9tD3MngzVuJ3uMtq9Qr/CL
-         qkvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=H3bGT1ZyGPu3PRQJlJHyQI9TvTjBPuNSyHjFOzNfiP0=;
-        b=Cjc7XSoygp1NDPrNM3/F87ThMKhURXrdjKktrGIASQEA5KSqLBWa2HcIzI11DvptM3
-         LjbWzpA7m6MIIZE9DI4l2VRkc/dYnR0PZcK1VsweN6dQkPFqnYnsiNOuiVGofHfz3mAG
-         0jnODcplQ6c/nWwOoPSuhS8qMeSp911PBrE6crIqH8BslIbqLkG80WWmbZ2+JCPZQlbG
-         l+hZXn4SRRZLyj0bJiTCBSDemW7YBb0vHGp6NVW8T/fdQjtxRqQI3VSOJQmVM3sVJIbx
-         umLApQ04SXNy90oW4Yo3H2MP+3cM09FhfE5C0gdSxFSOX7i8NP/U5rHcAe9Ribt9bb5W
-         XC8A==
-X-Gm-Message-State: AJIora/f8DlmyWmqfouJAV9ZaRmjARQVrssn7dlK4GlgW7XfzxK/k28Z
-        41ZijuxeIdLjOICKmsRiKTTd09CLZDOBuJggPxg=
-X-Google-Smtp-Source: AGRyM1u3j4Kh8ROf600mZ9n+2mzPHZx1NFVtrSntlSiwIK2NP6HVto6IIpM3hlWxyt39lgmrdSwWdCXGiGrSzCPb6JE=
-X-Received: by 2002:a05:6512:3d27:b0:489:e623:f244 with SMTP id
- d39-20020a0565123d2700b00489e623f244mr4930609lfv.236.1657787809582; Thu, 14
- Jul 2022 01:36:49 -0700 (PDT)
+        Fri, 15 Jul 2022 03:33:09 -0400
+X-Greylist: delayed 976 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 15 Jul 2022 00:33:06 PDT
+Received: from mail-m975.mail.163.com (mail-m975.mail.163.com [123.126.97.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8FCE57BE2A
+        for <linux-bcache@vger.kernel.org>; Fri, 15 Jul 2022 00:33:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=UZLhA
+        wegZuGsiS+LTErZqdFI4f9C9xq3JjczmxxEGR0=; b=TXmnagv1Vcgv/SZ0mR/Ie
+        FvXAJdiEj/KQORrU+sKdlDQKdX0W2dkCN053+g6raFwmopO00Ck3qFh1T9rwX2lb
+        7PIPg3V8e4q7x4DM64kVQ5hBPTi5KCUNuggM67Xmg5svorVzPEhq+UTzmmQJaI66
+        fsujtxO9bpXM10fdSScN5Y=
+Received: from localhost.localdomain (unknown [123.58.221.99])
+        by smtp5 (Coremail) with SMTP id HdxpCgAHNq0XFNFiomgFOQ--.5973S2;
+        Fri, 15 Jul 2022 15:15:39 +0800 (CST)
+From:   williamsukatube@163.com
+To:     colyli@suse.de, kent.overstreet@gmail.com,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     William Dean <williamsukatube@gmail.com>,
+        Hacash Robot <hacashRobot@santino.com>
+Subject: [PATCH -next] bcache: Fix spelling mistakes and cleanup code
+Date:   Fri, 15 Jul 2022 15:15:33 +0800
+Message-Id: <20220715071533.2729413-1-williamsukatube@163.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Received: by 2002:a2e:9041:0:0:0:0:0 with HTTP; Thu, 14 Jul 2022 01:36:48
- -0700 (PDT)
-Reply-To: abdwabbomaddahm@gmail.com
-From:   Abdwabbo Maddah <abdwabbomaddah746@gmail.com>
-Date:   Thu, 14 Jul 2022 09:36:48 +0100
-Message-ID: <CAFC-3ifKFkAVLmD=8z4VAKFLX0pV+_h5OJ=Ks62m+0uk+DimKQ@mail.gmail.com>
-Subject: Get back to me... URGENT
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.0 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2a00:1450:4864:20:0:0:0:12c listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4902]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [abdwabbomaddah746[at]gmail.com]
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [abdwabbomaddah746[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.2 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: HdxpCgAHNq0XFNFiomgFOQ--.5973S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3JFWkXr13GFW8Zw48Jw4fZrb_yoWxur1UpF
+        W7X34fAw4vqr4UAryDAa4UuFyrJ3srtFW7G3s7u34rZa4UZr1rCFWUKayDAr1UWFyfGFWx
+        tr15tw1DWF15KaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jRnQUUUUUU=
+X-Originating-IP: [123.58.221.99]
+X-CM-SenderInfo: xzlozx5dpv3yxdwxuvi6rwjhhfrp/xtbB6AQ-g2BHJjqvuQAAs9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+From: William Dean <williamsukatube@gmail.com>
+
+First, fix follow spelling misktakes:
+	automatical  ==> automatic
+	individial  ==> around
+	embeddded  ==> embedded
+	addionally  ==> addtionally
+	unncessary  ==> unnecessary
+	definitly  ==> definitely
+Second, delete extra space or tab where
+appropriate to make code format more standardized.
+
+Reported-by: Hacash Robot <hacashRobot@santino.com>
+Signed-off-by: William Dean <williamsukatube@gmail.com>
+---
+ drivers/md/bcache/bcache.h    | 2 +-
+ drivers/md/bcache/bset.h      | 2 +-
+ drivers/md/bcache/btree.c     | 6 +++---
+ drivers/md/bcache/btree.h     | 2 +-
+ drivers/md/bcache/journal.c   | 2 +-
+ drivers/md/bcache/request.c   | 5 ++---
+ drivers/md/bcache/stats.c     | 2 +-
+ drivers/md/bcache/super.c     | 2 +-
+ drivers/md/bcache/writeback.c | 2 +-
+ drivers/md/bcache/writeback.h | 2 +-
+ 10 files changed, 13 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 2acda9cea0f9..2b35c0a14d4d 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -635,7 +635,7 @@ struct cache_set {
+ 	struct bkey		gc_done;
+ 
+ 	/*
+-	 * For automatical garbage collection after writeback completed, this
++	 * For automatic garbage collection after writeback completed, this
+ 	 * varialbe is used as bit fields,
+ 	 * - 0000 0001b (BCH_ENABLE_AUTO_GC): enable gc after writeback
+ 	 * - 0000 0010b (BCH_DO_AUTO_GC):     do gc after writeback
+diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
+index d795c84246b0..76f75bbcb731 100644
+--- a/drivers/md/bcache/bset.h
++++ b/drivers/md/bcache/bset.h
+@@ -45,7 +45,7 @@
+  * 4 in memory - we lazily resort as needed.
+  *
+  * We implement code here for creating and maintaining auxiliary search trees
+- * (described below) for searching an individial bset, and on top of that we
++ * (described below) for searching an individual bset, and on top of that we
+  * implement a btree iterator.
+  *
+  * BTREE ITERATOR:
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index e136d6edc1ed..3d9fec07e862 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -154,7 +154,7 @@ void bch_btree_node_read_done(struct btree *b)
+ 	/*
+ 	 * c->fill_iter can allocate an iterator with more memory space
+ 	 * than static MAX_BSETS.
+-	 * See the comment arount cache_set->fill_iter.
++	 * See the comment around cache_set->fill_iter.
+ 	 */
+ 	iter = mempool_alloc(&b->c->fill_iter, GFP_NOIO);
+ 	iter->size = b->c->cache->sb.bucket_size / b->c->cache->sb.block_size;
+@@ -2529,8 +2529,8 @@ int __bch_btree_map_nodes(struct btree_op *op, struct cache_set *c,
+ }
+ 
+ int bch_btree_map_keys_recurse(struct btree *b, struct btree_op *op,
+-				      struct bkey *from, btree_map_keys_fn *fn,
+-				      int flags)
++			       struct bkey *from, btree_map_keys_fn *fn,
++			       int flags)
+ {
+ 	int ret = MAP_CONTINUE;
+ 	struct bkey *k;
+diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
+index 1b5fdbc0d83e..b46bf6268aca 100644
+--- a/drivers/md/bcache/btree.h
++++ b/drivers/md/bcache/btree.h
+@@ -54,7 +54,7 @@
+  * Btree nodes never have to be explicitly read in; bch_btree_node_get() handles
+  * this.
+  *
+- * For writing, we have two btree_write structs embeddded in struct btree - one
++ * For writing, we have two btree_write structs embedded in struct btree - one
+  * write in flight, and one being set up, and we toggle between them.
+  *
+  * Writing is done with a single function -  bch_btree_write() really serves two
+diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+index e5da469a4235..c7f6d2611037 100644
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -790,7 +790,7 @@ static void journal_write_unlocked(struct closure *cl)
+ 
+ 		atomic_long_add(sectors, &ca->meta_sectors_written);
+ 
+-		bio_reset(bio, ca->bdev, REQ_OP_WRITE | 
++		bio_reset(bio, ca->bdev, REQ_OP_WRITE |
+ 			  REQ_SYNC | REQ_META | REQ_PREFLUSH | REQ_FUA);
+ 		bio->bi_iter.bi_sector	= PTR_OFFSET(k, i);
+ 		bio->bi_iter.bi_size = sectors << 9;
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index f2c5a7e06fa9..ceba536e0880 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -338,7 +338,6 @@ unsigned int bch_get_congested(const struct cache_set *c)
+ 		return 0;
+ 
+ 	i += CONGESTED_MAX;
+-
+ 	if (i > 0)
+ 		i = fract_exp_two(i, 6);
+ 
+@@ -1326,8 +1325,8 @@ static int flash_dev_ioctl(struct bcache_device *d, fmode_t mode,
+ 
+ void bch_flash_dev_request_init(struct bcache_device *d)
+ {
+-	d->cache_miss				= flash_dev_cache_miss;
+-	d->ioctl				= flash_dev_ioctl;
++	d->cache_miss	= flash_dev_cache_miss;
++	d->ioctl	= flash_dev_ioctl;
+ }
+ 
+ void bch_request_exit(void)
+diff --git a/drivers/md/bcache/stats.c b/drivers/md/bcache/stats.c
+index 68b02216033d..983d16822e53 100644
+--- a/drivers/md/bcache/stats.c
++++ b/drivers/md/bcache/stats.c
+@@ -11,7 +11,7 @@
+ #include "sysfs.h"
+ 
+ /*
+- * We keep absolute totals of various statistics, and addionally a set of three
++ * We keep absolute totals of various statistics, and addtionally a set of three
+  * rolling averages.
+  *
+  * Every so often, a timer goes off and rescales the rolling averages.
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 3563d15dbaf2..aca27386cca2 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -686,6 +686,7 @@ int bch_prio_write(struct cache *ca, bool wait)
+ 
+ 		ca->prio_last_buckets[i] = ca->prio_buckets[i];
+ 	}
++
+ 	return 0;
+ }
+ 
+@@ -2663,7 +2664,6 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 	return ret;
+ }
+ 
+-
+ struct pdev {
+ 	struct list_head list;
+ 	struct cached_dev *dc;
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index 3f0ff3aab6f2..bd83a33b8a2f 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -238,7 +238,7 @@ static void update_writeback_rate(struct work_struct *work)
+ 	/*
+ 	 * If the whole cache set is idle, set_at_max_writeback_rate()
+ 	 * will set writeback rate to a max number. Then it is
+-	 * unncessary to update writeback rate for an idle cache set
++	 * unnecessary to update writeback rate for an idle cache set
+ 	 * in maximum writeback rate number(s).
+ 	 */
+ 	if (atomic_read(&dc->has_dirty) && dc->writeback_percent &&
+diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
+index 31df716951f6..37f66bea522f 100644
+--- a/drivers/md/bcache/writeback.h
++++ b/drivers/md/bcache/writeback.h
+@@ -69,7 +69,7 @@ static inline int offset_to_stripe(struct bcache_device *d,
+ 	}
+ 
+ 	/*
+-	 * Here offset is definitly smaller than INT_MAX,
++	 * Here offset is definitely smaller than INT_MAX,
+ 	 * return it as int will never overflow.
+ 	 */
+ 	return offset;
 -- 
-Dear,
-I had sent you a mail but i don't think you received it that's why am
-writing you again.It is important you get back to me as soon as you
-can.
-Abd-Wabbo Maddah
+2.25.1
+
