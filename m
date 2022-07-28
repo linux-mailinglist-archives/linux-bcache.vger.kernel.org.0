@@ -2,68 +2,68 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ECA558433A
-	for <lists+linux-bcache@lfdr.de>; Thu, 28 Jul 2022 17:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26156584393
+	for <lists+linux-bcache@lfdr.de>; Thu, 28 Jul 2022 17:51:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230332AbiG1PkL (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 28 Jul 2022 11:40:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52494 "EHLO
+        id S231379AbiG1PvU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 28 Jul 2022 11:51:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229875AbiG1PkJ (ORCPT
+        with ESMTP id S231630AbiG1PvS (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 28 Jul 2022 11:40:09 -0400
+        Thu, 28 Jul 2022 11:51:18 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5960DEE
-        for <linux-bcache@vger.kernel.org>; Thu, 28 Jul 2022 08:40:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CE131A81F
+        for <linux-bcache@vger.kernel.org>; Thu, 28 Jul 2022 08:51:17 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id D06451FA2C;
-        Thu, 28 Jul 2022 15:40:04 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id B96431FA2C;
+        Thu, 28 Jul 2022 15:51:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1659022804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1659023475; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ymYaJLoQibVPNafNX5dz+elYWevWuFRhc5V2nDrTe0U=;
-        b=EK5FJUlw69V3L3OC/AwP4HsfysuUHX8BaVhq65Kj2EEsDcu6EqfNRpr7eNjZI1QQChywlj
-        tAUSWFuiCuWBuciU09F5RuuBF7s3VZhobCl5QEVb1IV/08ytk3l6ppYPbeNKzV40ZpONX5
-        gJFAUnMqpvV38MtUCo5i1AW2PYM4Xx4=
+        bh=Mhb9KKuPTKUezwI9DAY5M7lJMPAOJZS/xfg9Kg4lyMg=;
+        b=e38UCoRHVLI326+du1jIaWQhMVXNnUFsQ3dLtDWjqCIOFbjDdsHnRa1+VqkezS255CApu/
+        fpMzoiHfl5bwg2jveC+tvDqNIbVQub+ya0k92i0V+NXzv8Adpf/DL1yad/0zVjWAFwrcnQ
+        PuJLCYrurLhOxYhkuV4pI9F0GMSAArM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1659022804;
+        s=susede2_ed25519; t=1659023475;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ymYaJLoQibVPNafNX5dz+elYWevWuFRhc5V2nDrTe0U=;
-        b=KNx0fvly1/9r3i4A6R0UA/if5AU9NMYURlu5VVt+QCc7/oLGa770Sedu1IE1LqSS2lFxcj
-        H5w+ASqfkKO4GzBQ==
+        bh=Mhb9KKuPTKUezwI9DAY5M7lJMPAOJZS/xfg9Kg4lyMg=;
+        b=Iuwb2IQXhjZtpZ9ZnnFdxG4Cv+PJtqEPlHif3nRrpkBtEqmNTdqLNkJqMobKrqa9cBNyrY
+        7QMaoWq8f74SLuBg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F30AE13427;
-        Thu, 28 Jul 2022 15:40:03 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5308713427;
+        Thu, 28 Jul 2022 15:51:12 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id Ntd1K9Ot4mJGfwAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 28 Jul 2022 15:40:03 +0000
+        id uj7rAnCw4mIQBQAAMHmgww
+        (envelope-from <colyli@suse.de>); Thu, 28 Jul 2022 15:51:12 +0000
 Content-Type: text/plain;
         charset=utf-8
 Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.100.31\))
-Subject: Re: Some persistently stuck cache devices after backing device
- failures
+Subject: Re: bcache I/O performance tests on 5.15.0-40-generic
 From:   Coly Li <colyli@suse.de>
-In-Reply-To: <b86affce-acc4-f23c-dc96-b92567b2f26b@ehuk.net>
-Date:   Thu, 28 Jul 2022 23:40:00 +0800
-Cc:     linux-bcache@vger.kernel.org
+In-Reply-To: <37577c49-6d0-e5f4-2ea3-51128526526e@ewheeler.net>
+Date:   Thu, 28 Jul 2022 23:51:04 +0800
+Cc:     Nikhil Kshirsagar <nkshirsagar@gmail.com>,
+        linux-bcache@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <8820069C-5E97-402A-BFC1-05FF9A5608B0@suse.de>
-References: <b968c31a-aeeb-28fd-78ef-d38344d4ecc1@ehuk.net>
- <B282B4DF-D42C-49BD-9D59-0D2140A210CE@suse.de>
- <b86affce-acc4-f23c-dc96-b92567b2f26b@ehuk.net>
-To:     eddie@ehuk.net
+Message-Id: <1E966D2E-1B9E-46DD-BF79-A3FEDAF227ED@suse.de>
+References: <CAC6jXv0FoE60HEuc7tDMXEA27hkoMkZm5d6gt4NCRkAh2w3WvA@mail.gmail.com>
+ <8C0D66FE-FF1D-469D-A209-10E95F79D2FA@suse.de>
+ <37577c49-6d0-e5f4-2ea3-51128526526e@ewheeler.net>
+To:     Eric Wheeler <bcache@lists.ewheeler.net>
 X-Mailer: Apple Mail (2.3696.100.31)
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -76,200 +76,74 @@ X-Mailing-List: linux-bcache@vger.kernel.org
 
 
 
-> 2022=E5=B9=B47=E6=9C=8828=E6=97=A5 21:14=EF=BC=8CEddie Chapman =
-<eddie@ehuk.net> =E5=86=99=E9=81=93=EF=BC=9A
+> 2022=E5=B9=B47=E6=9C=886=E6=97=A5 04:49=EF=BC=8CEric Wheeler =
+<bcache@lists.ewheeler.net> =E5=86=99=E9=81=93=EF=BC=9A
 >=20
-> On 28/07/2022 13:37, Coly Li wrote:
->>> 2022=E5=B9=B47=E6=9C=8822=E6=97=A5 00:18=EF=BC=8CEddie Chapman =
-<eddie@ehuk.net> =E5=86=99=E9=81=93=EF=BC=9A
+> On Sat, 25 Jun 2022, Coly Li wrote:
+>>> 2022=E5=B9=B46=E6=9C=8825=E6=97=A5 14:29=EF=BC=8CNikhil Kshirsagar =
+<nkshirsagar@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
 >>>=20
 >>> Hello,
 >>>=20
->>> I've been using bcache for several years and have learned how to =
-resolve various problems. However now I have a situation on a live =
-server where I've tried everything but looks like I might have to reboot =
-the kernel to resolve it. This will be a big pain for this server so =
-thought I'd check here if anyone knows something else I could try.
+>>> I've been doing some performance tests of bcache on =
+5.15.0-40-generic.
 >>>=20
->>> Let me try and describe the situation:
+>>> The baseline figures for the fast and slow disk for random writes =
+are
+>>> consistent at around 225MiB/s and 3046KiB/s.
 >>>=20
->>> - system is running vanilla stable kernel 5.10.107 for 100+ days
->>> - There's a single nvme device with 15 partitions
->>> - Each nvme partition is a bcache cache device in writeback mode, =
-attached to a backing device of course (there are various types of =
-backing devices)
->>> - Now a SATA controller has completely failed and taken out 3 =
-spinning SATA disks, leading to several backing devices but not all =
-failing.
->>> - The nvme device is fine and still acting as cache for some =
-remaining, working backing devices which have nothing to do with the =
-failed disks.
->>> - The bcache backing devices that failed and their corresponding =
-caches were in a mixed state immediately after the disks failed, some =
-gone, some not.
->>> - I don't care about any of the failed data, I just want to clean up =
-the mess and re-use the nvme partitions that had backing device failures =
-with some other working spinning disks on the system.
->>> - So, I've been able to unregister, free, wipe and re-use MOST of =
-the cache devices that had failed backing devices.
->>> - Of the cache devices I unregistered I've been able to clean up =
-completely their failed backing devices (both the bcacheN device and =
-failed backing device is completely gone from /sys/block).
->>> - However, there are 3 cache devices, with failed backing devices, =
-which completely refuse to either stop or unregister. I have written 1 =
-many times to the "stop" and "unregister" files but nothing changes and =
-nothing is logged in the kernel log.
->>> - There has not been any crash or warning emitted by bcache in the =
-kernel log, just the normal messages you would expect to see when =
-backing devices fail.
+>>> But the bcache results inexplicably drop sometimes to 10Mib/s, for
+>>> random write test using fio like this -
 >>>=20
->>> For each of these 3 "stuck" cache devices:
+>>> fio --rw=3Drandwrite --size=3D1G --ioengine=3Dlibaio --direct=3D1
+>>> --gtod_reduce=3D1 --iodepth=3D128 --bs=3D4k --name=3DMY_TEST1
 >>>=20
->>>  - The cache directory still exists in /sys/fs/bcache/
->>>  - Inside the cache directory there is no bdev0 symlink anymore. =
-There *is* the cache0 symlink pointing to the nvme partition.
->>>  - The corresponding /sys/block/bcacheN directory does still exist.
->>>  - There is nothing in the /sys/block/bcacheN/holders/ directory. =
-Above the bcache device was LVM devices but I was able to successfully =
-remove all of them with dmsetup remove. There is definitely nothing =
-above still holding the bcacheN device still open.
->>>  - The failed backing device, which is an md raid0, still exists on =
-the system, but it is not possible to stop it with mdadm, it is also =
-"stuck" (I've tried to normally "fail" and "remove" it as well as using =
-mdadm's special "failed" and "detached" keywords). It still shows up in =
-/proc/mdstat. The raid members are the SATA disks which have now =
-disappeared. mdadm -D says the array is in a state "broken, FAILED" and =
-it's disks are all "missing".
->>>  - Inside the /sys/block/mdN/ directory there is NO "bcache" =
-subdirectory
->>>  - Inside the /sys/block/mdN/holders/ directory there is still a =
-working "bcacheN" symlink to /sys/block/bcacheN
->>>  - Inside the /sys/block/bcacheN directory there is a broken =
-"bcache" symlink pointing to the now disappeared /sys/block/mdN/bcache
+>>> WRITE: bw=3D168MiB/s (176MB/s), 168MiB/s-168MiB/s (176MB/s-176MB/s),
+>>> io=3D1024MiB (1074MB), run=3D6104-6104msec
+>>> WRITE: bw=3D283MiB/s (297MB/s), 283MiB/s-283MiB/s (297MB/s-297MB/s),
+>>> io=3D1024MiB (1074MB), run=3D3621-3621msec
+>>> WRITE: bw=3D10.3MiB/s (10.9MB/s), 10.3MiB/s-10.3MiB/s
+>>> (10.9MB/s-10.9MB/s), io=3D1024MiB (1074MB), run=3D98945-98945msec
+>>> WRITE: bw=3D8236KiB/s (8434kB/s), 8236KiB/s-8236KiB/s
+>>> (8434kB/s-8434kB/s), io=3D1024MiB (1074MB), run=3D127317-127317msec
+>>> WRITE: bw=3D9657KiB/s (9888kB/s), 9657KiB/s-9657KiB/s
+>>> (9888kB/s-9888kB/s), io=3D1024MiB (1074MB), run=3D108587-108587msec
+>>> WRITE: bw=3D4543KiB/s (4652kB/s), 4543KiB/s-4543KiB/s
+>>> (4652kB/s-4652kB/s), io=3D1024MiB (1074MB), run=3D230819-230819msec
 >>>=20
+>>> This seems to happen after 2 runs of 1gb writes (cache disk is 4gb =
+size)
 >>>=20
->>> As I said, I don't care about any of the failed data, I only care =
-about freeing the nvme cache devices. But I have 2 problems:
->>>=20
->>> 1. Something in the kernel is constantly reading hundreds of =
-Mbytes/s of data from the 3 "stuck" nvme partitions (but not writing =
-anything, at least not at any significant rate). I can see it using =
-atop. I'm wondering if bcache is stuck in a loop trying to read =
-something from them and that is why it will not let go of these =
-remaining 3 nvme partitions. I believe this is affecting performance of =
-the nvme device as a whole for the other working bcache devices using =
-it. load average is quite high continually as a result.
->>>=20
->>> 2. I cannot re-use these 3 nvme partitions while they are "stuck", =
-though this is less of a problem that 1.
->>>=20
->>> I'm hoping there might be a simple way to force bcache to "let go" =
-of these 3 cache devices without rebooting? I don't care if the leftover =
-stuff of the md backing devices doesn't go away, it is not doing any =
-harm that I can tell, just that I can successfully unregister the cache =
-devices. Or at least stop bcache from constantly reading the hundreds of =
-Mbyte/s, I could live with just that.
->>>=20
->>> I see there is an "io_disable" file in the "internal" subdirectory. =
-What does that do? Maybe it is the solution but I dare not try it as I =
-don't know what it does and don't want to risk crashing the kernel.
->>>=20
->> The io_disable option might be helpful but I don=E2=80=99t recommend. =
-Setting it to 1 will directly reject all external and internal I/Os =
-inside bcache driver, most of time it just triggers errors and forces =
-the cache or backing device to stop, but sometimes if the I/O error is =
-unrecoverable in critical I/O path it may trigger kernel panic in upper =
-layer code.
->> BTW, does it help a bit if you write 1 to =
-/sys/fs/bcache/pendings_cleanup?
->> Coly Li
-> >
+>>> Some details are here - https://pastebin.com/V9mpLCbY , I will share
+>>> the full testing results soon, but just was wondering about this
+>>> performance drop for no apparent reason once the cache gets about =
+50%
+>>> full.
+>>=20
+>>=20
+>> It seems you are stuck by garbage collection. 4GB cache is small, the=20=
+
+>> garbage collection might be invoked quite frequently. Maybe you can =
+see=20
+>> the output of =E2=80=99top -H=E2=80=99 to check whether there is =
+kernel thread named=20
+>> bache_gc.
 >=20
-> Hi Coly,
+> Hi Nikhil,
 >=20
-> Really appreciate you looking at this. The server is still running in =
-this state and I'm still hoping I can free these cache devices somehow.
+> Do you have Mingzhe's GC patch? It might help:
+> https://www.spinics.net/lists/linux-bcache/msg11185.html
 >=20
-> I should have mentioned in my original email that when I was =
-originally searching for solutions I cam across the original mailing =
-list posting for your patch that added /sys/fs/bcache/pendings_cleanup =
-and thought "yes, that sounds like it will do it!". But tried it and =
-unfortunately nothing happened.
+> Coli, did Mingzhe's patch get into your testing tree? It looks like it=20=
 
-Copied. Then there is no luck for this...
+> could be a good addition to bcache.
 
+No. This patch just reduce the early gc action to make IO faster, and =
+accumulates a large gc action finally to cause more lower I/O period.
+The later larger gc may cause longer unpredictable  time I/O stuck, =
+which doesn=E2=80=99t follow current bcache behavior.
 
->=20
-> Thanks for confirming that io_disable is to risky, I'm glad I followed =
-my instinct to not try that :-)
->=20
-> One interesting thing to add is that every 2 or 3 days bcache logs =
-about 50 or so lines of exactly the same:
->=20
-> bcache: bch_count_backing_io_errors() mdX: IO error on backing device, =
-unrecoverable
-
-This is exact the IO error returned from backing device. Since it is a =
-md raid0, one of the component disks might be failing soon.
-
-
->=20
-> With mdX being one of the failed md raid0 backing devices, it can be =
-any of the 3 devices but then all the lines logged are for just that one =
-device (i.e. not a mix of the 3 devices).
->=20
-> It's interesting that it happens sporadically every few days and then =
-bcache goes completely quiet again. Made me wonder if perhaps the cache =
-device is still stuck trying to write old data to the backing devices =
-over and over and every now and then some very long timeout kicks in or =
-something for just a subset of IOs and then it moves onto another =
-subset.
->=20
-
-It is possible, that bcache was trying to writeback while encounter the =
-error location on backing device and try it in next run. In bcache code, =
-if the I/O errors don=E2=80=99t happen frequently in a period, then it =
-may continue to work. If there are too many I/O errors from backing =
-device then the bcache device will stop (io_disable set within the =
-bcache code) and disappear.
-
-
-> So made me wonder maybe there is some configurable timeout setting =
-somewhere in the cache dev settings that I can reduce. Which would then =
-result in bcache giving up and letting go of these devices sooner. e.g =
-in some days instead of months or years?
-
-In the backing device sysfs directory, you may find a file named =
-io_errors, which counts the I/O errors of this backing device. And you =
-may find another file io_error_limit, this is the threshold which stops =
-the bcache device when I/O error reaches the threshold. The default =
-io_error_limit is 64 if I remember correctly, you can modify it to a =
-much smaller number to trigger backing device failure earlier.
-
-For cache device, there are io_errors_halftime and io_error_limit files =
-as well. You may also modify io_error_limit to a smaller value to =
-trigger cache failure earlier.
-
-When io errors reaches io_error_limit, the io_disable tag will be set on =
-cache or backing device (depends on where the I/O errors are from), and =
-bcache will reject all external and internal I/O requests. If some upper =
-layer code encounters an I/O error that it cannot handle, a kernel panic =
-is possible. So setting io_disable file is same to wait for io errors =
-reaches io_error_limit.
-
-This is as-designed behavior, because avoiding data corruption is the =
-highest priority, rejecting I/O to avoid data corruption is more =
-important than avoid a system down.
-
-
->=20
-> If there is any further info I can pull from the system that might be =
-useful please let me know. Ultimately if there's nothing I can do I'll =
-just have to bite the bullet and arrange a reboot.
-
-I am not able to provide more useful suggestion for current situation, =
-maybe arrange a reboot might be an ideal plan.
-
-Thanks.
+It may be helpful for some I/O workloads, but for continuous heavy I/O =
+loads, it won=E2=80=99t help too much.
 
 Coly Li=
