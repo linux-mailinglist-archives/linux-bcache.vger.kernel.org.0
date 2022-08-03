@@ -2,78 +2,89 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 53A6E587A53
-	for <lists+linux-bcache@lfdr.de>; Tue,  2 Aug 2022 12:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B632588A1E
+	for <lists+linux-bcache@lfdr.de>; Wed,  3 Aug 2022 12:06:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236378AbiHBKIQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 2 Aug 2022 06:08:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50082 "EHLO
+        id S237719AbiHCKGM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 3 Aug 2022 06:06:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236477AbiHBKIP (ORCPT
+        with ESMTP id S237799AbiHCKGI (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 2 Aug 2022 06:08:15 -0400
-Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90C392FFFF
-        for <linux-bcache@vger.kernel.org>; Tue,  2 Aug 2022 03:08:14 -0700 (PDT)
-Received: by mail-vs1-xe44.google.com with SMTP id s129so5603221vsb.11
-        for <linux-bcache@vger.kernel.org>; Tue, 02 Aug 2022 03:08:14 -0700 (PDT)
+        Wed, 3 Aug 2022 06:06:08 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED795CE15
+        for <linux-bcache@vger.kernel.org>; Wed,  3 Aug 2022 03:06:06 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id i24so2423582qkg.13
+        for <linux-bcache@vger.kernel.org>; Wed, 03 Aug 2022 03:06:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=edeevZ54MxyNr2ONaDsC9jI+UtdZjrCL/LCuSFC70Ao=;
-        b=BvdjqWEZK3gAP+txc7LcmoCs7F4p97SgEnsgayrpevljjmT4Xvk6dab129SHUznPuo
-         aGR3oGrqNIJWsLYfYPJbsOF2MxQVjp8lgdYkPzpTjvqyzsrmxx6xvcrTGLKkarxd7o7p
-         2PwV7HdiUdSZgU0GY7oCT11etzsB32wOZ7KQ3M9+ppotRidMK4WffkxlM6k2En9+oQXt
-         yHX4yf2116EtSPlwK+dgu5NEtIZJbQOz1Xb99iQEfHjdIX6wLYTZ2a5mMSRwLaA92j+l
-         4UcpQmZV0K+WzxajLtQg5MNXUhbzRp7M/tQMcmH1Z2YY3nsZnjPBOGvI7Fce4fQuS69f
-         zfHw==
+        d=devo.com; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=OSmNM3YvqSEhvcoO4riEcTOu9Mbn71kFOhgq1x9XYYU=;
+        b=Wdzlc3BdzgmiRNNWhA3fXnPJC5SKbALv3KRvbaaqshwaJsmfJ7mbsv4ctFGKfgMXkP
+         7jIu+9VIG2sRlAhBCzK+UNOZTigMJaMlyRPbY4cA0rbwGoZ4SkFbCtH/eZNllBGf1T6q
+         48NkYb3y/TumcpDIDwbnJjIgq9yDh7pZHiu8m/dhD81T0tdawPICYyJ9ATgCoiZjb4gh
+         YGV9pwmkQz4ezxHokgfj+YBtPzjOR+GobGpuD81siuO5MDMgL+bwPKuYD4gcmfrCdeew
+         AcmusGngSzQiolCBbhHHYoNo2SIm32/04TNIQecmp7T4WWDgb9oY/lUIJwKxnGVmnSXF
+         42rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=edeevZ54MxyNr2ONaDsC9jI+UtdZjrCL/LCuSFC70Ao=;
-        b=h3tUTMiH396o6WFE7p9KtLGvMldWSOD7u/maok13VlOecc/IFL0vjTWUglxV+x6eGE
-         S1P66DREaPa3LAz3bg85jzDL2plh3jEoR4bskXOxZnK9Yx4oX7CI0g0JYbHlTMugLznw
-         mMZAV1W5BnOijpDW9rllap5divpL+rfd3mo4+9tHYZIll2vTfjEy+6bnnO03o+/9XfR3
-         aZEgaSrp1c41IQ+yoQAVnXZE7S8cqC6e8Vjf9fkewFhsJEkW8iBcOyF0JGR7TDr0Fq9x
-         YOFDgW2fa6XE85rtK7kyTX/azaeIQ1Z2/RwUrM8a0jxGn5UtX3AK+e5H61kV84TofwVl
-         dhlg==
-X-Gm-Message-State: ACgBeo3xvbugwkSrlpjx887c7p3XABhufrgd0gtAJHg57NmI1/QmBlh4
-        YaDgQXH2jjST/EOfHWZrPc8Cc45Hc63cgKohLLE=
-X-Google-Smtp-Source: AA6agR7glMxiYqpGUrkYu+Jla4cvWKB3zqOJm9sC80CReM1xrawZ0ksdwfSMPtqTqHFiYRr6Fj+0wmKZsIexDUEQ89I=
-X-Received: by 2002:a67:be04:0:b0:37d:db55:6723 with SMTP id
- x4-20020a67be04000000b0037ddb556723mr3930020vsq.49.1659434893658; Tue, 02 Aug
- 2022 03:08:13 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=OSmNM3YvqSEhvcoO4riEcTOu9Mbn71kFOhgq1x9XYYU=;
+        b=AmnbQZSIMCBPwfJbRQkyKc+SvRalBbFYkwQfCBC+ZneBtEpEUqi5s4aH9q+c2CTbmp
+         s1cXRycpPqYQVn4YoSQGwSbptDmicQgzIRb8SvQw6ucjn5HqvGC0u3XK2dpfuo1kEe2V
+         iLGw1YamsC2hYd3lsLP1nrANPncqU5DTYtebDl1QyDFWdZanpdTf0fZ7BgaXUoebRQZg
+         Rgdz3rNGRpK66BWmZqs/Y3UQ3MCTzHrqPXHvIomDIQsjLSLY6bxXb1kY/0uPhlKqnZ4h
+         7t9iS1KphZyEpgaGIwfN2ELOo9aasMx1ZUlz1wThoVQ9WtjUedRQ1rLrJxxMgt+gZj/4
+         qt4Q==
+X-Gm-Message-State: AJIora9a/0wameDs/v+i/sGZNZw+pTB1iFJsYiEKxq5+9J/PViZg49MN
+        nleXHj/83AkpKROnGq13tzKRLnlQOH+zg9u5IvWZ6g==
+X-Google-Smtp-Source: AGRyM1vaGinehPht7+k7WLCIUFu+dsbhrH895mvr4Z9Frc1Cn3QE8PGOQbpOB0tHMXy/IqcgQsRkTpxoeCF+7mYgM+o=
+X-Received: by 2002:a05:620a:1296:b0:6b5:cd9c:2fc9 with SMTP id
+ w22-20020a05620a129600b006b5cd9c2fc9mr17903793qki.115.1659521166083; Wed, 03
+ Aug 2022 03:06:06 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a59:beda:0:b0:2cd:f4a8:c08d with HTTP; Tue, 2 Aug 2022
- 03:08:13 -0700 (PDT)
-Reply-To: mohammedsaeedms934@gmail.com
-From:   Mohammed Saeed <bienevidaherminiia@gmail.com>
-Date:   Tue, 2 Aug 2022 03:08:13 -0700
-Message-ID: <CAHyTKtj1uoTgnrYbEW4zdsfQ8GyHL+tCb80x0Z-UgzWZTckEGg@mail.gmail.com>
-Subject: Proposal
-To:     undisclosed-recipients:;
+From:   Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
+Date:   Wed, 3 Aug 2022 12:05:55 +0200
+Message-ID: <CAHykVA5sgGooeRjM1EepCCpZqkvtQJ_=cY8hmjqe0oQ3FLDFnQ@mail.gmail.com>
+Subject: [RFC] Live resize of backing device
+To:     Coly Li <colyli@suse.de>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=4.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Salam alaikum,
+Hi Coly,
+In one of our previous emails you said that
+> Currently bcache doesn=E2=80=99t support cache or backing device resize
 
-I am the investment officer of UAE based investment company who are
-ready to fund projects outside UAE, in the form of debt finance. We
-grant loan to both Corporate and private entities at a low interest
-rate of 2% ROI per annum. The terms are very flexible and
-interesting.Kindly revert back if you have projects that needs funding
-for further discussion and negotiation.
+I was investigating this point and I actually found a solution. I
+briefly tested it and it seems to work fine.
+Basically what I'm doing is:
+  1. Check if there's any discrepancy between the nr of sectors
+reported by the bcache backing device (holder) and the nr of sectors
+reported by its parent (slave).
+  2. If the number of sectors of the two devices are not the same,
+then call set_capacity_and_notify on the bcache device.
+  3. From user space, depending on the fs used, grow the fs with some
+utility (e.g. xfs_growfs)
 
-Thanks
+This works without any need of unmounting the mounted fs nor stopping
+the bcache backing device.
 
-investment officer
+ So my question is: am I missing something? Can this live resize cause
+some problems (e.g. data loss)? Would it be useful if I send a patch
+on this?
+
+Kind regards,
+Andrea
