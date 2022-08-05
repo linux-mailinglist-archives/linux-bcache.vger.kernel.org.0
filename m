@@ -2,122 +2,116 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2968D589D85
-	for <lists+linux-bcache@lfdr.de>; Thu,  4 Aug 2022 16:32:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAAF558B06E
+	for <lists+linux-bcache@lfdr.de>; Fri,  5 Aug 2022 21:38:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239586AbiHDOcx (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 4 Aug 2022 10:32:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46574 "EHLO
+        id S230437AbiHETii (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 5 Aug 2022 15:38:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234481AbiHDOcx (ORCPT
+        with ESMTP id S238283AbiHETii (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 4 Aug 2022 10:32:53 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 224F147BA6
-        for <linux-bcache@vger.kernel.org>; Thu,  4 Aug 2022 07:32:52 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Fri, 5 Aug 2022 15:38:38 -0400
+Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F8DF2F029
+        for <linux-bcache@vger.kernel.org>; Fri,  5 Aug 2022 12:38:37 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mx.ewheeler.net (Postfix) with ESMTP id C06E046;
+        Fri,  5 Aug 2022 12:38:36 -0700 (PDT)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id hABVS95fQJLp; Fri,  5 Aug 2022 12:38:36 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id C728E4E5BC;
-        Thu,  4 Aug 2022 14:32:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1659623570; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UD0hMm92jhru91m3TH4It/9e/gspYu+rZJp9kVfCArM=;
-        b=UbGknMGknDiMR/FzVgDfdX4nFsqZPJv4txQwvyLG3NiR3mosO9Z9fbxcB6jEpyN3ALiMgT
-        78RRQZEqQcQSi8um4+k0vJj3yUYo7X6bc5iIksdZMM7wD1hGv7F6cIvQL7d4PF4K72AnDf
-        kkMJHhib95IVvVUePkELlmgk4aY3Rc8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1659623570;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UD0hMm92jhru91m3TH4It/9e/gspYu+rZJp9kVfCArM=;
-        b=3eYjV5KioHQqHTegx7uXP8KPr7dvCwTFuBH+hxypZt7+ErXg5BnyMol2HIwGwaCLfn9O+h
-        6zsVSTXsJ7CIakBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BBE7813A94;
-        Thu,  4 Aug 2022 14:32:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id DVWYHpHY62JreAAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 04 Aug 2022 14:32:49 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.100.31\))
-Subject: Re: [RFC] Live resize of backing device
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <CAHykVA5sgGooeRjM1EepCCpZqkvtQJ_=cY8hmjqe0oQ3FLDFnQ@mail.gmail.com>
-Date:   Thu, 4 Aug 2022 22:32:46 +0800
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <626E9340-21BC-462A-8A76-0C137DC4A8E0@suse.de>
-References: <CAHykVA5sgGooeRjM1EepCCpZqkvtQJ_=cY8hmjqe0oQ3FLDFnQ@mail.gmail.com>
+        by mx.ewheeler.net (Postfix) with ESMTPSA id C08DFB;
+        Fri,  5 Aug 2022 12:38:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net C08DFB
+Date:   Fri, 5 Aug 2022 12:38:33 -0700 (PDT)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
 To:     Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
-X-Mailer: Apple Mail (2.3696.100.31)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+cc:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org
+Subject: Re: [RFC] Live resize of backing device
+In-Reply-To: <CAHykVA5sgGooeRjM1EepCCpZqkvtQJ_=cY8hmjqe0oQ3FLDFnQ@mail.gmail.com>
+Message-ID: <9474c19e-56f0-cb4d-68c-405c55aef281@ewheeler.net>
+References: <CAHykVA5sgGooeRjM1EepCCpZqkvtQJ_=cY8hmjqe0oQ3FLDFnQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; BOUNDARY="8323328-1424852501-1659728088=:4200"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-1424852501-1659728088=:4200
+Content-Type: text/plain; CHARSET=ISO-8859-7
+Content-Transfer-Encoding: 8BIT
 
-> 2022=E5=B9=B48=E6=9C=883=E6=97=A5 18:05=EF=BC=8CAndrea Tomassetti =
-<andrea.tomassetti-opensource@devo.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
+On Wed, 3 Aug 2022, Andrea Tomassetti wrote:
 > Hi Coly,
 > In one of our previous emails you said that
->> Currently bcache doesn=E2=80=99t support cache or backing device =
-resize
->=20
+> > Currently bcache doesn¢t support cache or backing device resize
+> 
 > I was investigating this point and I actually found a solution. I
 > briefly tested it and it seems to work fine.
 > Basically what I'm doing is:
->  1. Check if there's any discrepancy between the nr of sectors
+>   1. Check if there's any discrepancy between the nr of sectors
 > reported by the bcache backing device (holder) and the nr of sectors
 > reported by its parent (slave).
->  2. If the number of sectors of the two devices are not the same,
+>   2. If the number of sectors of the two devices are not the same,
 > then call set_capacity_and_notify on the bcache device.
->  3. =46rom user space, depending on the fs used, grow the fs with some
+>   3. From user space, depending on the fs used, grow the fs with some
 > utility (e.g. xfs_growfs)
->=20
+> 
 > This works without any need of unmounting the mounted fs nor stopping
 > the bcache backing device.
->=20
-> So my question is: am I missing something? Can this live resize cause
-> some problems (e.g. data loss)? Would it be useful if I send a patch
-> on this?
+ 
+Well done! +1, would love to see a patch for this!
 
-Hi Andrea,
+ 
+> So my question is: am I missing something? Can this live resize cause 
+> some problems (e.g. data loss)? Would it be useful if I send a patch on 
+> this?
 
-It sounds good. You may look at bcache_device_init() to see how the =
-following items are initialized,
-- d->nr_stripes
-- d->stripe_sectors_dirty
-- d->full_dirty_stripes
+A while a go we looked into doing this.  Here is the summary of our 
+findings, not sure if there are any other considerations:
 
-And you may check calc_cached_dev_sectors() to see how this item is =
-initilaized,
-- c->cached_dev_sectors
+  1. Create a sysfs file like /sys/block/bcache0/bcache/resize to trigger 
+     resize on echo 1 >.
+  2. Refactor the set_capacity() bits from  bcache_device_init() into its 
+     own function.
+  3. Put locks around bcache_device.full_dirty_stripes and 
+     bcache_device.stripe_sectors_dirty.  Re-alloc+copy+free and zero the 
+     new bytes at the end.  Grep where bcache_device.full_dirty_stripes is 
+     used and make sure it is locked appropriately, probably in the 
+     writeback thread, maybe other places too.
 
-All the above items are writeback related, when they are updated with =
-the size increased, you should use proper locks to avoid potential race =
-from where they are referenced in the writeback code flow (maybe =
-somewhere else too).
+The cachedev's don't know anything about the bdev size, so (according to 
+Kent) they will "just work" by referencing new offsets that were 
+previously beyond the disk. (This is basically the same as resizing the 
+bdev and then unregister/re-register which is how we resize bdevs now.)
 
-The overall idea should work, I=E2=80=99d like to see your tested patch =
-:-)
+As for resizing a cachedev, I've not looked at all---not sure about that 
+one.  We always detach, resize, make-bcache and re-attach the new cache.  
+Maybe it is similarly simple, but haven't looked.
 
-Coly Li=
+
+--
+Eric Wheeler
+
+
+
+> 
+> Kind regards,
+> Andrea
+> 
+--8323328-1424852501-1659728088=:4200--
