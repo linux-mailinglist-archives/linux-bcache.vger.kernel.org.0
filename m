@@ -2,100 +2,68 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73AE35A256F
-	for <lists+linux-bcache@lfdr.de>; Fri, 26 Aug 2022 12:09:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A41385A42FB
+	for <lists+linux-bcache@lfdr.de>; Mon, 29 Aug 2022 08:11:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343595AbiHZKHX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 26 Aug 2022 06:07:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32844 "EHLO
+        id S229515AbiH2GLV (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 29 Aug 2022 02:11:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245405AbiHZKGt (ORCPT
+        with ESMTP id S229510AbiH2GLU (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 26 Aug 2022 06:06:49 -0400
-X-Greylist: delayed 235 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 26 Aug 2022 03:05:27 PDT
-Received: from mxout.security-mail.net (mxout.security-mail.net [85.31.212.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D52DAA08
-        for <linux-bcache@vger.kernel.org>; Fri, 26 Aug 2022 03:05:27 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by fx303.security-mail.net (Postfix) with ESMTP id 447A23237FF
-        for <linux-bcache@vger.kernel.org>; Fri, 26 Aug 2022 12:01:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalray.eu;
-        s=sec-sig-email; t=1661508091;
-        bh=uqvZnxQBV/rcNEj03e7Bo6OwdF47XDjBXAdquMG3k+I=;
-        h=From:To:Cc:Subject:Date;
-        b=iw8sJ7Tt23KHAA4RE4PHgUBB7FPytVAsxa6KtPrIJsMrXzaGaAIePMkXCe4pwk10/
-         x4IeLf7YJedfe6Z/vENpuc8WeZ2kLVdEci2ExO1wzgOW5Pghfw+3GYCjRMa1MxEeJ6
-         uK9q7qsnI0+24ojXcASQ6Ie/H6vA6oX0EkCy/ENU=
-Received: from fx303 (localhost [127.0.0.1])
-        by fx303.security-mail.net (Postfix) with ESMTP id 848E93237E2;
-        Fri, 26 Aug 2022 12:01:30 +0200 (CEST)
-X-Virus-Scanned: E-securemail
-Secumail-id: <1362c.630899f9.e66f9.0>
-Received: from zimbra2.kalray.eu (unknown [217.181.231.53])
-        by fx303.security-mail.net (Postfix) with ESMTPS id E894D323819;
-        Fri, 26 Aug 2022 12:01:29 +0200 (CEST)
-Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTPS id CBBDD27E02FA;
-        Fri, 26 Aug 2022 12:01:29 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id B559327E0392;
-        Fri, 26 Aug 2022 12:01:29 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu B559327E0392
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
-        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1661508089;
-        bh=4HEYLEVgKpymk4SBrx8DGY44NHvVKzCZiJtvzBXd/6k=;
-        h=From:To:Date:Message-Id;
-        b=mmG6vCL1wrlNy9YazrAR5V2Q9A3z0cC0x6Zt1w5F8npTM8NEmZQJRelUyF9OOA9gg
-         ibnwlBEt5rkjtueW5ImispqmR3+cM++mf3p+ebjagkVbD3iEFwgNN7WfX5CdFYbKPK
-         cRXrqFKHScskxav+oqdfQBKTIGlRQeatwbruwH8c=
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id sQtvS_Hls00e; Fri, 26 Aug 2022 12:01:29 +0200 (CEST)
-Received: from tellis.lin.mbt.kalray.eu (unknown [192.168.36.206])
-        by zimbra2.kalray.eu (Postfix) with ESMTPSA id A446E27E02FA;
-        Fri, 26 Aug 2022 12:01:29 +0200 (CEST)
-From:   Jules Maselbas <jmaselbas@kalray.eu>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jules Maselbas <jmaselbas@kalray.eu>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org
-Subject: [PATCH] bcache: bset: Fix comment typos
-Date:   Fri, 26 Aug 2022 12:00:52 +0200
-Message-Id: <20220826100052.22945-24-jmaselbas@kalray.eu>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: by Secumail
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        Mon, 29 Aug 2022 02:11:20 -0400
+X-Greylist: delayed 451 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 28 Aug 2022 23:11:19 PDT
+Received: from a2nlsmtp01-02.prod.iad2.secureserver.net (a2nlsmtp01-02.prod.iad2.secureserver.net [198.71.225.36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF6448C9F
+        for <linux-bcache@vger.kernel.org>; Sun, 28 Aug 2022 23:11:18 -0700 (PDT)
+Received: from a2plcpnl0403.prod.iad2.secureserver.net ([198.71.228.79])
+        by : HOSTING RELAY : with ESMTP
+        id SXrCoX1lfIx9ESXrCorhBi; Sun, 28 Aug 2022 23:02:46 -0700
+X-CMAE-Analysis: v=2.4 cv=HvCzp2fS c=1 sm=1 tr=0 ts=630c5686
+ a=cxEC3utqawNMrlyoH68m2w==:117 a=9+rZDBEiDlHhcck0kWbJtElFXBc=:19
+ a=gQX1269ULFhLm4Thdby34LUHVW0=:19 a=IkcTkHD0fZMA:10 a=biHskzXt2R4A:10
+ a=Qz_gOj7jAAAA:8 a=VwQbUJbxAAAA:8 a=G9y_e_2tAAAA:8 a=fg9rsVyuIJcwCMUKCJwA:9
+ a=QEXdDO2ut3YA:10 a=NYa-SRIk_2sA:10 a=DVLJFURoKzpr8-9pIj1x:22
+ a=Whj4QvCb-IqxfSopnfHA:22 a=AjGcO6oz07-iQ99wixmX:22 a=qOY3J7Nsi1QIci84kf6z:22
+X-SECURESERVER-ACCT: wacorp
+Received: from wacorp by a2plcpnl0403.prod.iad2.secureserver.net with local (Exim 4.94.2)
+        (envelope-from <sales@weichaiamerica.com>)
+        id 1oSXrC-00BB0o-F9
+        for linux-bcache@vger.kernel.org; Sun, 28 Aug 2022 23:02:46 -0700
+Date:   Mon, 29 Aug 2022 06:02:46 +0000
+To:     linux-bcache@vger.kernel.org
+From:   "Weichai America Corp." <sales@weichaiamerica.com>
+Reply-To: DouglasNex <linux-bcache@vger.kernel.org>
+Subject: Copy of: Telegram: Ein wichtiges Leck aus dem geschlossenen Club der Kryptomillionare
+Message-ID: <03bd29e6495be9db8657ed58d1b91751@weichaiamerica.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - a2plcpnl0403.prod.iad2.secureserver.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [552368 216] / [47 12]
+X-AntiAbuse: Sender Address Domain - weichaiamerica.com
+X-Get-Message-Sender-Via: a2plcpnl0403.prod.iad2.secureserver.net: authenticated_id: wacorp/from_h
+X-Authenticated-Sender: a2plcpnl0403.prod.iad2.secureserver.net: sales@weichaiamerica.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: weichaiamerica.com:/public_html
+X-CMAE-Envelope: MS4xfCh7ocIdkbKqe4jjyA34ppJ/bhXhR2XT/Jhf3e3Sh4fGqPrydrfzUndWS1rUlqgcgMiEgxp/SAqvuKh4cAP26gEltrNh79cK+7HwUUhEhDbKbqzKxWXd
+ cS7MVOQEjQCjFiYIUrnu65pElvuI+r7lThcDnycW8QNNWcGsW3z5gHk6wVEnEW8dwPuw9zRf0uhvOp9kM44GiZggatJthV/ncGATrar5tOzaql9aAWCybELh
+ 6OfGazjzTzQ9+sqGwZ5v4A==
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_50,LOTS_OF_MONEY,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_FAIL,SPF_HELO_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Remove the redundant word `by`, correct the typo `creaated`.
+This is a copy of the following message you sent to Contact Us via Weichai America Corp.
 
-CC: Kent Overstreet <kent.overstreet@gmail.com>
-CC: linux-bcache@vger.kernel.org
-Signed-off-by: Jules Maselbas <jmaselbas@kalray.eu>
----
- drivers/md/bcache/bset.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is an enquiry email via https://weichaiamerica.com/ from:
+DouglasNex <linux-bcache@vger.kernel.org>
 
-diff --git a/drivers/md/bcache/bset.c b/drivers/md/bcache/bset.c
-index 94d38e8a59b3..2bba4d6aaaa2 100644
---- a/drivers/md/bcache/bset.c
-+++ b/drivers/md/bcache/bset.c
-@@ -1264,7 +1264,7 @@ static void __btree_sort(struct btree_keys *b, struct btree_iter *iter,
- 		 *
- 		 * Don't worry event 'out' is allocated from mempool, it can
- 		 * still be swapped here. Because state->pool is a page mempool
--		 * creaated by by mempool_init_page_pool(), which allocates
-+		 * created by mempool_init_page_pool(), which allocates
- 		 * pages by alloc_pages() indeed.
- 		 */
- 
--- 
-2.17.1
-
+TOP 3 Handelsroboter, die Menschen zu Millionaren machen http://usd-to-bitcoin-converter.compresoresbitzer.com/news-4551
