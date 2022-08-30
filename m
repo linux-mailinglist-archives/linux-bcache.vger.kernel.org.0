@@ -2,73 +2,72 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3708E5A5842
-	for <lists+linux-bcache@lfdr.de>; Tue, 30 Aug 2022 02:01:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 492895A6770
+	for <lists+linux-bcache@lfdr.de>; Tue, 30 Aug 2022 17:30:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbiH3ABC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 29 Aug 2022 20:01:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59170 "EHLO
+        id S230176AbiH3Pat (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 30 Aug 2022 11:30:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbiH3ABA (ORCPT
+        with ESMTP id S229476AbiH3Pas (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 29 Aug 2022 20:01:00 -0400
-Received: from out0.migadu.com (out0.migadu.com [IPv6:2001:41d0:2:267::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BBF62A86;
-        Mon, 29 Aug 2022 17:00:58 -0700 (PDT)
-Date:   Mon, 29 Aug 2022 20:00:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1661817657;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jJPz8pVCwweKgpeW4WUF/uGLiBPtN7wJWGEfgkepeY0=;
-        b=ViRNyaG6zDTNMdiaD9rxTdK/u01sPgpNSj3Cz8YWpvFHHFeYOoyzVXTQRx6dpHDTpj3PSO
-        eBPO2xb7kX7x9Z2MH3OKP6wmmv3wFwZlXvBaJvDwSMbgT6oulbKZk2M2NpQ1ZvbBDu2c45
-        yiEhgvJORFjAy1lCZgXpIeaHiqZNcjw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
-        colyli@suse.de
-Subject: Re: [PATCH 1/3] lib/time_stats: New library for statistics on events
-Message-ID: <20220830000050.u4e7p3ddii4amfbb@moria.home.lan>
-References: <20220829165344.2958640-1-kent.overstreet@linux.dev>
- <20220829165344.2958640-2-kent.overstreet@linux.dev>
- <1e80af02-ca1a-f320-bd3d-0ab674712da4@infradead.org>
+        Tue, 30 Aug 2022 11:30:48 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 532C263F1B;
+        Tue, 30 Aug 2022 08:30:47 -0700 (PDT)
+X-QQ-mid: bizesmtp75t1661873433tnbi9xe6
+Received: from localhost.localdomain ( [182.148.13.26])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Tue, 30 Aug 2022 23:30:32 +0800 (CST)
+X-QQ-SSF: 01000000002000D0E000B00A0000000
+X-QQ-FEAT: mhDoKBI5A3Br7zCoWRcaEUCjM/ldsiKNhPKawKofSTMxtH0iYZxkCWw2ZWO3G
+        aE0kjZa3ZJeepyD+tGykdmrQ3f2sU8M2rMRKTY1F3tuOT6UhmH+ica5jWDguw5xQXgv+7ET
+        5uUoVHWhEFnNyffwgSWHJEmJFrTX/Mm2sfTLRrNGYu3mzJa4hFxoi7Rmpr/Gbtpd4fxOio5
+        //Cz+VLCdKbAuhRH+fRSFz21xIT5oNZb7DRJEx9n8uy717NioNHKJUFsDfVtCyyN21iMKP6
+        2YrKQ7GW+xPZ7FvH/Q35HonaIfygfaEy9yd6YKn91fmm+jqGz4V4VnpMUpnKPRYAKpXebtQ
+        YbgVv0YFOwZjGtGmz+DGZb2P6mHC2QDWbnouXeW5Uo3zKaH4yN7iU8lG9w/dg==
+X-QQ-GoodBg: 0
+From:   Jilin Yuan <yuanjilin@cdjrlc.com>
+To:     colyli@suse.de, kent.overstreet@gmail.com
+Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jilin Yuan <yuanjilin@cdjrlc.com>
+Subject: [PATCH] bcache:: fix repeated words in comments
+Date:   Tue, 30 Aug 2022 23:30:26 +0800
+Message-Id: <20220830153026.16948-1-yuanjilin@cdjrlc.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1e80af02-ca1a-f320-bd3d-0ab674712da4@infradead.org>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:cdjrlc.com:qybglogicsvr:qybglogicsvr4
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Mon, Aug 29, 2022 at 04:34:14PM -0700, Randy Dunlap wrote:
-> 
-> 
-> On 8/29/22 09:53, Kent Overstreet wrote:
-> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> > index bbe3ef939c..bfb49505c9 100644
-> > --- a/lib/Kconfig.debug
-> > +++ b/lib/Kconfig.debug
-> > @@ -1728,6 +1728,9 @@ config LATENCYTOP
-> >  	  Enable this option if you want to use the LatencyTOP tool
-> >  	  to find out which userspace is blocking on what kernel operations.
-> >  
-> > +config TIME_STATS
-> > +	bool
-> > +
-> 
-> Hi Kent,
-> 
-> Why not just in lib/Kconfig?
+Delete the redundant word 'we'.
 
-Probably just lazyness, I'll move it there :)
+Signed-off-by: Jilin Yuan <yuanjilin@cdjrlc.com>
+---
+ drivers/md/bcache/bcache.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 2acda9cea0f9..aebb7ef10e63 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -107,7 +107,7 @@
+  *
+  * BTREE NODES:
+  *
+- * Our unit of allocation is a bucket, and we we can't arbitrarily allocate and
++ * Our unit of allocation is a bucket, and we can't arbitrarily allocate and
+  * free smaller than a bucket - so, that's how big our btree nodes are.
+  *
+  * (If buckets are really big we'll only use part of the bucket for a btree node
+-- 
+2.36.1
+
