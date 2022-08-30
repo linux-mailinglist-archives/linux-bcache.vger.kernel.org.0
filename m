@@ -2,77 +2,73 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0704E5A57A9
-	for <lists+linux-bcache@lfdr.de>; Tue, 30 Aug 2022 01:34:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3708E5A5842
+	for <lists+linux-bcache@lfdr.de>; Tue, 30 Aug 2022 02:01:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229540AbiH2XeR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 29 Aug 2022 19:34:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47218 "EHLO
+        id S229576AbiH3ABC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 29 Aug 2022 20:01:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbiH2XeQ (ORCPT
+        with ESMTP id S229450AbiH3ABA (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 29 Aug 2022 19:34:16 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1596B82851;
-        Mon, 29 Aug 2022 16:34:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=IijE9VZcXhpXniCU02k78oYykjK5r9X2XRaAc/GES+0=; b=z6n3ER6YRXgHRBBOldUxKdStbW
-        wnIBVoyKilC7jQUc13QrkMgupTpyDH1ajCQ+zGmn8aQLoFrtgsOytlYempys+vsO0T03nQ0RsPSCo
-        NEDOsHiCoFv8Pm1zwtB23gRp50d+sh+5C9/gh545dHNZLz15suiDFK77GJm3c17G1uUDT2+qdOwYw
-        sF9mQ8zZQLFWZG3+aFRHvWf/yVEU9JxdH6Yon7imngPh5U29DLkW1xkbIhoTRF+FfbdjqdsFAYeDO
-        VAfjgGzA4wlJpS7l/fBkcIDP53H12URSsjisQ5VTDuhZhlmyLl5oEZaYuhxJIAbZ8NJhev5+PHQ5o
-        6qQxACug==;
-Received: from [2601:1c0:6280:3f0::a6b3]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oSoGl-00DDPl-7L; Mon, 29 Aug 2022 23:34:15 +0000
-Message-ID: <1e80af02-ca1a-f320-bd3d-0ab674712da4@infradead.org>
-Date:   Mon, 29 Aug 2022 16:34:14 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 1/3] lib/time_stats: New library for statistics on events
-Content-Language: en-US
-To:     Kent Overstreet <kent.overstreet@linux.dev>,
-        linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
+        Mon, 29 Aug 2022 20:01:00 -0400
+Received: from out0.migadu.com (out0.migadu.com [IPv6:2001:41d0:2:267::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BBF62A86;
+        Mon, 29 Aug 2022 17:00:58 -0700 (PDT)
+Date:   Mon, 29 Aug 2022 20:00:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1661817657;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jJPz8pVCwweKgpeW4WUF/uGLiBPtN7wJWGEfgkepeY0=;
+        b=ViRNyaG6zDTNMdiaD9rxTdK/u01sPgpNSj3Cz8YWpvFHHFeYOoyzVXTQRx6dpHDTpj3PSO
+        eBPO2xb7kX7x9Z2MH3OKP6wmmv3wFwZlXvBaJvDwSMbgT6oulbKZk2M2NpQ1ZvbBDu2c45
+        yiEhgvJORFjAy1lCZgXpIeaHiqZNcjw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
         colyli@suse.de
+Subject: Re: [PATCH 1/3] lib/time_stats: New library for statistics on events
+Message-ID: <20220830000050.u4e7p3ddii4amfbb@moria.home.lan>
 References: <20220829165344.2958640-1-kent.overstreet@linux.dev>
  <20220829165344.2958640-2-kent.overstreet@linux.dev>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20220829165344.2958640-2-kent.overstreet@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <1e80af02-ca1a-f320-bd3d-0ab674712da4@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1e80af02-ca1a-f320-bd3d-0ab674712da4@infradead.org>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+On Mon, Aug 29, 2022 at 04:34:14PM -0700, Randy Dunlap wrote:
+> 
+> 
+> On 8/29/22 09:53, Kent Overstreet wrote:
+> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> > index bbe3ef939c..bfb49505c9 100644
+> > --- a/lib/Kconfig.debug
+> > +++ b/lib/Kconfig.debug
+> > @@ -1728,6 +1728,9 @@ config LATENCYTOP
+> >  	  Enable this option if you want to use the LatencyTOP tool
+> >  	  to find out which userspace is blocking on what kernel operations.
+> >  
+> > +config TIME_STATS
+> > +	bool
+> > +
+> 
+> Hi Kent,
+> 
+> Why not just in lib/Kconfig?
 
-
-On 8/29/22 09:53, Kent Overstreet wrote:
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index bbe3ef939c..bfb49505c9 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1728,6 +1728,9 @@ config LATENCYTOP
->  	  Enable this option if you want to use the LatencyTOP tool
->  	  to find out which userspace is blocking on what kernel operations.
->  
-> +config TIME_STATS
-> +	bool
-> +
-
-Hi Kent,
-
-Why not just in lib/Kconfig?
-
-thanks.
--- 
-~Randy
+Probably just lazyness, I'll move it there :)
