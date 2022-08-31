@@ -2,46 +2,62 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 317525A847C
-	for <lists+linux-bcache@lfdr.de>; Wed, 31 Aug 2022 19:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EF9E5A84A6
+	for <lists+linux-bcache@lfdr.de>; Wed, 31 Aug 2022 19:46:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231533AbiHaRgv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 31 Aug 2022 13:36:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45450 "EHLO
+        id S229866AbiHaRqk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 31 Aug 2022 13:46:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231418AbiHaRgp (ORCPT
+        with ESMTP id S229510AbiHaRqj (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 31 Aug 2022 13:36:45 -0400
+        Wed, 31 Aug 2022 13:46:39 -0400
 Received: from out2.migadu.com (out2.migadu.com [188.165.223.204])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B7A4B7EF1;
-        Wed, 31 Aug 2022 10:36:43 -0700 (PDT)
-Date:   Wed, 31 Aug 2022 13:36:39 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2643FB941B;
+        Wed, 31 Aug 2022 10:46:38 -0700 (PDT)
+Date:   Wed, 31 Aug 2022 13:46:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1661967401;
+        t=1661967996;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NBRMm1N3TN2sW5l8lmaOsP+pOHJybKZQLg5sV5Bi+Vs=;
-        b=JlOCFCHLrsWklrXM0385YM6w7ONHaEPAHe9rbKLQa6iwi3TeZ6LGh6EG0D5RUZ8bAEay85
-        TAGsGzcCQGLMFTxoEaZr7aTw2maxHxNvr+IE3uFEdinyqTaPDARIxnAdsqWHY3hSd8p5Eu
-        OEYdA4Gxpjs4b1sPxYJbnA0/z/KA/Fw=
+        bh=cNGQu2INYppvwn/vrI+H9fLNjZAQ9LEc2ZMlyG9+b7I=;
+        b=UvGgvRFFFCjI/MJ+R56HoYOSRVpisoRSFrlM+Tnr28bYpzjswOUst1RZvoLN2iOla1UOYk
+        AhrqjPYHyPNC9OtSTSv8bCcogGpeWso0AVnHwUd3AWn+b9IVre9e619KvqRphXZ15fsktW
+        AqO9MlFcMAgNkcSNSSA7HGEzQFUhYiE=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org
-Subject: Re: [PATCH 2/3] bcache: Convert to lib/time_stats
-Message-ID: <20220831173639.sb6bhg5xvn4gbkiu@moria.home.lan>
-References: <20220829165344.2958640-1-kent.overstreet@linux.dev>
- <20220829165344.2958640-3-kent.overstreet@linux.dev>
- <14ACCED7-D24D-4AC4-8677-F7F4630A840A@suse.de>
- <20220831165437.l27raas6k5nlqsdg@moria.home.lan>
- <1F91055C-4253-42CD-8A4A-8B8EA2CF1D6E@suse.de>
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+        roman.gushchin@linux.dev, dave@stgolabs.net, willy@infradead.org,
+        liam.howlett@oracle.com, void@manifault.com, peterz@infradead.org,
+        juri.lelli@redhat.com, ldufour@linux.ibm.com, peterx@redhat.com,
+        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
+        ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+        penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        shakeelb@google.com, songmuchun@bytedance.com, arnd@arndb.de,
+        jbaron@akamai.com, rientjes@google.com, minchan@google.com,
+        kaleshsingh@google.com, kernel-team@android.com,
+        linux-mm@kvack.org, iommu@lists.linux.dev,
+        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 10/30] mm: enable page allocation tagging for
+ __get_free_pages and alloc_pages
+Message-ID: <20220831174629.zpa2pu6hpxmytqya@moria.home.lan>
+References: <20220830214919.53220-1-surenb@google.com>
+ <20220830214919.53220-11-surenb@google.com>
+ <20220831101103.fj5hjgy3dbb44fit@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1F91055C-4253-42CD-8A4A-8B8EA2CF1D6E@suse.de>
+In-Reply-To: <20220831101103.fj5hjgy3dbb44fit@suse.de>
 X-Migadu-Flow: FLOW_OUT
 X-Migadu-Auth-User: linux.dev
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -53,22 +69,50 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 01:02:37AM +0800, Coly Li wrote:
-> Can I understand that rate = 1/frequency ?  Then frequency 4 is around to rate 0.
-
-Correct, rate = 1/frequency.
-
-> > The quantiles are for the duration, they give you an idea of the statistical
-> > distribution, see https://en.wikipedia.org/wiki/Quantile
+On Wed, Aug 31, 2022 at 11:11:03AM +0100, Mel Gorman wrote:
+> On Tue, Aug 30, 2022 at 02:48:59PM -0700, Suren Baghdasaryan wrote:
+> > Redefine alloc_pages, __get_free_pages to record allocations done by
+> > these functions. Instrument deallocation hooks to record object freeing.
+> > 
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > +#ifdef CONFIG_PAGE_ALLOC_TAGGING
+> > +
+> >  #include <linux/alloc_tag.h>
+> >  #include <linux/page_ext.h>
+> >  
+> > @@ -25,4 +27,37 @@ static inline void pgalloc_tag_dec(struct page *page, unsigned int order)
+> >  		alloc_tag_sub(get_page_tag_ref(page), PAGE_SIZE << order);
+> >  }
+> >  
+> > +/*
+> > + * Redefinitions of the common page allocators/destructors
+> > + */
+> > +#define pgtag_alloc_pages(gfp, order)					\
+> > +({									\
+> > +	struct page *_page = _alloc_pages((gfp), (order));		\
+> > +									\
+> > +	if (_page)							\
+> > +		alloc_tag_add(get_page_tag_ref(_page), PAGE_SIZE << (order));\
+> > +	_page;								\
+> > +})
+> > +
 > 
-> I wanted to ask how to read the quantiles line. Does it mean that 1 ns is
-> equally divided by 15 segments, and the counter values are for the divided
-> 1/15 ns segments?
+> Instead of renaming alloc_pages, why is the tagging not done in
+> __alloc_pages()? At least __alloc_pages_bulk() is also missed. The branch
+> can be guarded with IS_ENABLED.
 
-It is the 15 boundaries between 16 equal segments, yes.
+It can't be in a function, it has to be in a wrapper macro.
 
-> Quantiles are much humane, standard deviation is scared… Just FYI LOL.
+alloc_tag_add() is a macro that defines a static struct in a special elf
+section. That struct holds the allocation counters, and putting it in a special
+elf section is how the code to list it in debugfs finds it.
 
-That's valuable feedback then, maybe we'll keep both. The more expensive part of
-time stats is just ingesting data points, but we've got a percpu buffer frontend
-for that - just doing a bit more moth doesn't cost much.
+Look at the dynamic debug code for prior precedence for this trick in the kernel
+- that's how it makes pr_debug() calls dynamically controllable at runtime, from
+debugfs. We're taking that method and turning it into a proper library.
+
+Because all the counters are statically allocated, without even a pointer deref
+to get to them in the allocation path (one pointer deref to get to them in the
+deallocate path), that makes this _much, much_ cheaper than anything that could
+be done with tracing - cheap enough that I expect many users will want to enable
+it in production.
