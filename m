@@ -2,113 +2,202 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF2D45A80F6
-	for <lists+linux-bcache@lfdr.de>; Wed, 31 Aug 2022 17:12:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5EDB5A813A
+	for <lists+linux-bcache@lfdr.de>; Wed, 31 Aug 2022 17:28:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231499AbiHaPMP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 31 Aug 2022 11:12:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50320 "EHLO
+        id S231593AbiHaP2z (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 31 Aug 2022 11:28:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbiHaPMO (ORCPT
+        with ESMTP id S230078AbiHaP2y (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 31 Aug 2022 11:12:14 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFD98D3ECF;
-        Wed, 31 Aug 2022 08:12:13 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7C08C2211C;
-        Wed, 31 Aug 2022 15:12:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1661958732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AhKMQsk03osPCRJxhlweox2ETeW0NDfgWBNTgv9z8Ns=;
-        b=0VmAqpqi4QaPLV0aduWu0xTsv4FFSSLElO6UAsg9RlHo2lIVv69jUmvIt7gHtFAcFaUihe
-        WQk/YIlxr2yQJ/Sjf8en3XP4I4ujB+mAGTGyg9/7TMH64aGoS0rR5EWpnVCYyi+KXY8V0T
-        V/QnZ0e8N8xCPTxqEXHtcC0PBdFg7pw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1661958732;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AhKMQsk03osPCRJxhlweox2ETeW0NDfgWBNTgv9z8Ns=;
-        b=lP3Pn2xScytKYQl+I9x2+Bvg2iU1AnFwwiEZyrNhkrMNegQQ3G6BxCyZFFrtPJl4XaWFZp
-        6tPFvF0f7jPWoQBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 72E1613A7C;
-        Wed, 31 Aug 2022 15:12:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id jAgtC0p6D2OjZgAAMHmgww
-        (envelope-from <colyli@suse.de>); Wed, 31 Aug 2022 15:12:10 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
-Subject: Re: [PATCH] bcache:: fix repeated words in comments
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20220830153026.16948-1-yuanjilin@cdjrlc.com>
-Date:   Wed, 31 Aug 2022 23:12:06 +0800
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A39949D5-FEED-4A59-8BE5-9D90BE63521D@suse.de>
-References: <20220830153026.16948-1-yuanjilin@cdjrlc.com>
-To:     Jilin Yuan <yuanjilin@cdjrlc.com>
-X-Mailer: Apple Mail (2.3696.120.41.1.1)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Wed, 31 Aug 2022 11:28:54 -0400
+Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB8FFD7D3D
+        for <linux-bcache@vger.kernel.org>; Wed, 31 Aug 2022 08:28:52 -0700 (PDT)
+Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-333a4a5d495so310099157b3.10
+        for <linux-bcache@vger.kernel.org>; Wed, 31 Aug 2022 08:28:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=WG3L5AqBV6fri0E+FNG2tsbDp/uFyzzRTMikwR7NSY8=;
+        b=K4mZtzeFsKxJKOsvfz3u8buWcDbdHB0bPmoDat2amZVxf6i7fSAQFaeyCHfBhOW0gn
+         TYiPTPwinxH8yKQGmCabK7zsAg7t70798MwIPLUmtbWdWtkPoH8nkkd0L6+Cf/71NitT
+         pIpTm135oSjNuBnp7lYQC08Y98tRGNR+0DcT0LYO7fxV5Ng1p7CsbsO1uZH/I63XPhjj
+         LoKETIXPqOU+NyCB1s85tiwuh2e//ou8VKmFXVH3pOn419Mn7E1W55VRw4JlXGoTp7nX
+         lwPAdy+2tjWZHnwP0BxNNwETNl+fZjmT1bVCkdUM4qWebnjcYikmadptjs0201jXoXGN
+         /Wug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=WG3L5AqBV6fri0E+FNG2tsbDp/uFyzzRTMikwR7NSY8=;
+        b=6sG0JLE0bQFKydyt2QHE/dBK+kxjkKWmlFGjKZIPD2aQcGOuLkuJcr4RGLSyyKqXai
+         QKXKKUd8nG7xE9AH8VU4/4Y9melQRGJMruf6H/MVB6CjnCMUKVbKzohA5YYkAKJ3dIYr
+         sDpRPEeyyAjGsL7NjfTUVzIlkOpMAriEnBi7Jd31UAKUAJp1DRpZj0gAUEEqEuHv+ATM
+         2IKOZyQs7+g2TF6MD62eplR+SakA4U8ev1BiCea+Un7SjoC/7LCq/OUz40sjoEVbvV42
+         0r3fBhcKURsbpBWlrghz5Ckr2CrPntBsW/vNneA12Y+H/8LGYl8ZQTgCrtqBD9hO0dMc
+         KPUg==
+X-Gm-Message-State: ACgBeo2UkMHXSvrP/hvWUxqbn3FRllXfoaf/EaGtT7xuBxKb/ngAbdJc
+        N3l3zG4reXyU7gtcYZ0oQJ+VdhKFtHeMvD/8JEnrLw==
+X-Google-Smtp-Source: AA6agR42WGqJyo3CQ/wsWtBH4QMjo2FwsKfgLb/Aa3jKv6m3xoE+xzdLy95JXttnzairFt+14Q8rzI0UFGuD4qoW950=
+X-Received: by 2002:a0d:d850:0:b0:340:d2c0:b022 with SMTP id
+ a77-20020a0dd850000000b00340d2c0b022mr16165795ywe.469.1661959731749; Wed, 31
+ Aug 2022 08:28:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220830214919.53220-1-surenb@google.com> <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
+ <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan> <20220831101948.f3etturccmp5ovkl@suse.de>
+ <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
+In-Reply-To: <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Wed, 31 Aug 2022 08:28:40 -0700
+Message-ID: <CAJuCfpGZ==v0HGWBzZzHTgbo4B_ZBe6V6U4T_788LVWj8HhCRQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Mel Gorman <mgorman@suse.de>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Liam R. Howlett" <liam.howlett@oracle.com>,
+        David Vernet <void@manifault.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
+        ytcoode@gmail.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Benjamin Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Christopher Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>, dvyukov@google.com,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
+        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
+        Minchan Kim <minchan@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        kernel-team <kernel-team@android.com>,
+        linux-mm <linux-mm@kvack.org>, iommu@lists.linux.dev,
+        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+On Wed, Aug 31, 2022 at 3:47 AM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Wed 31-08-22 11:19:48, Mel Gorman wrote:
+> > On Wed, Aug 31, 2022 at 04:42:30AM -0400, Kent Overstreet wrote:
+> > > On Wed, Aug 31, 2022 at 09:38:27AM +0200, Peter Zijlstra wrote:
+> > > > On Tue, Aug 30, 2022 at 02:48:49PM -0700, Suren Baghdasaryan wrote:
+> > > > > ===========================
+> > > > > Code tagging framework
+> > > > > ===========================
+> > > > > Code tag is a structure identifying a specific location in the source code
+> > > > > which is generated at compile time and can be embedded in an application-
+> > > > > specific structure. Several applications of code tagging are included in
+> > > > > this RFC, such as memory allocation tracking, dynamic fault injection,
+> > > > > latency tracking and improved error code reporting.
+> > > > > Basically, it takes the old trick of "define a special elf section for
+> > > > > objects of a given type so that we can iterate over them at runtime" and
+> > > > > creates a proper library for it.
+> > > >
+> > > > I might be super dense this morning, but what!? I've skimmed through the
+> > > > set and I don't think I get it.
+> > > >
+> > > > What does this provide that ftrace/kprobes don't already allow?
+> > >
+> > > You're kidding, right?
+> >
+> > It's a valid question. From the description, it main addition that would
+> > be hard to do with ftrace or probes is catching where an error code is
+> > returned. A secondary addition would be catching all historical state and
+> > not just state since the tracing started.
+> >
+> > It's also unclear *who* would enable this. It looks like it would mostly
+> > have value during the development stage of an embedded platform to track
+> > kernel memory usage on a per-application basis in an environment where it
+> > may be difficult to setup tracing and tracking. Would it ever be enabled
+> > in production? Would a distribution ever enable this? If it's enabled, any
+> > overhead cannot be disabled/enabled at run or boot time so anyone enabling
+> > this would carry the cost without never necessarily consuming the data.
 
+Thank you for the question.
+For memory tracking my intent is to have a mechanism that can be enabled in
+the field testing (pre-production testing on a large population of
+internal users).
+The issue that we are often facing is when some memory leaks are happening
+in the field but very hard to reproduce locally. We get a bugreport
+from the user
+which indicates it but often has not enough information to track it. Note that
+quite often these leaks/issues happen in the drivers, so even simply finding out
+where they came from is a big help.
+The way I envision this mechanism to be used is to enable the basic memory
+tracking in the field tests and have a user space process collecting
+the allocation
+statistics periodically (say once an hour). Once it detects some counter growing
+infinitely or atypically (the definition of this is left to the user
+space) it can enable
+context capturing only for that specific location, still keeping the
+overhead to the
+minimum but getting more information about potential issues. Collected stats and
+contexts are then attached to the bugreport and we get more visibility
+into the issue
+when we receive it.
+The goal is to provide a mechanism with low enough overhead that it
+can be enabled
+all the time during these field tests without affecting the device's
+performance profiles.
+Tracing is very cheap when it's disabled but having it enabled all the
+time would
+introduce higher overhead than the counter manipulations.
+My apologies, I should have clarified all this in this cover letter
+from the beginning.
 
-> 2022=E5=B9=B48=E6=9C=8830=E6=97=A5 23:30=EF=BC=8CJilin Yuan =
-<yuanjilin@cdjrlc.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> Delete the redundant word 'we'.
->=20
-> Signed-off-by: Jilin Yuan <yuanjilin@cdjrlc.com>
+As for other applications, maybe I'm not such an advanced user of
+tracing but I think only
+the latency tracking application might be done with tracing, assuming
+we have all the
+right tracepoints but I don't see how we would use tracing for fault
+injections and
+descriptive error codes. Again, I might be mistaken.
 
-Added to my for-next queue. Thanks.
+Thanks,
+Suren.
 
-Coly Li
-
-
-> ---
-> drivers/md/bcache/bcache.h | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 2acda9cea0f9..aebb7ef10e63 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -107,7 +107,7 @@
->  *
->  * BTREE NODES:
->  *
-> - * Our unit of allocation is a bucket, and we we can't arbitrarily =
-allocate and
-> + * Our unit of allocation is a bucket, and we can't arbitrarily =
-allocate and
->  * free smaller than a bucket - so, that's how big our btree nodes =
-are.
->  *
->  * (If buckets are really big we'll only use part of the bucket for a =
-btree node
-> --=20
-> 2.36.1
->=20
-
+> >
+> > It might be an ease-of-use thing. Gathering the information from traces
+> > is tricky and would need combining multiple different elements and that
+> > is development effort but not impossible.
+> >
+> > Whatever asking for an explanation as to why equivalent functionality
+> > cannot not be created from ftrace/kprobe/eBPF/whatever is reasonable.
+>
+> Fully agreed and this is especially true for a change this size
+> 77 files changed, 3406 insertions(+), 703 deletions(-)
+>
+> --
+> Michal Hocko
+> SUSE Labs
