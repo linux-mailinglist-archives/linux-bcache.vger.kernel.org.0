@@ -2,57 +2,57 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A65C85A8274
-	for <lists+linux-bcache@lfdr.de>; Wed, 31 Aug 2022 17:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8CA85A827E
+	for <lists+linux-bcache@lfdr.de>; Wed, 31 Aug 2022 17:57:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231929AbiHaP4R (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 31 Aug 2022 11:56:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37656 "EHLO
+        id S231296AbiHaP47 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 31 Aug 2022 11:56:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232255AbiHaPzq (ORCPT
+        with ESMTP id S232082AbiHaP4j (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 31 Aug 2022 11:55:46 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE6C9268
-        for <linux-bcache@vger.kernel.org>; Wed, 31 Aug 2022 08:55:36 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-33dce2d4bc8so311347977b3.4
-        for <linux-bcache@vger.kernel.org>; Wed, 31 Aug 2022 08:55:36 -0700 (PDT)
+        Wed, 31 Aug 2022 11:56:39 -0400
+Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F41C992E
+        for <linux-bcache@vger.kernel.org>; Wed, 31 Aug 2022 08:56:23 -0700 (PDT)
+Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-3378303138bso311347917b3.9
+        for <linux-bcache@vger.kernel.org>; Wed, 31 Aug 2022 08:56:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=sybFcqH1KKlLZJ30kAOhH4vwj7X3FRQlsLR8cFlMDYU=;
-        b=ONehLJlMia7mkVvk2Zcl9HnY/oTkc+1EwkoR6Jx3DnNxre4Sp/FSdNv9mcbGgEmDyx
-         hcwrMSJR7ZiQ1gQ0UYolLJ1KfSsEifqyTyCpB3HNLZA2KMDBC4nzkHtXo4jdW5MEBTL/
-         oeY/VF0jamX2X6EV+5N0Xd7mZ1j4MlgintI5pKX6sIFdlOA1BP37vU/laD/NgNYsqPs7
-         ry3YkegZ8oI5uWS54z5Ryp1YEZwXewCN8pUvCwKMKDNaZ0LFaWzFXYjHfSoj16inAquU
-         wnZgCdGNLRRqt1agsDuWNICevBAb1Fc4Vo2v2Ob02GeQiQO1vTHDvn4tcp5ikcEVDh90
-         MGRQ==
+        bh=cCRpuq5ugrZCMPNASqLzmnmQqSHwIbDaqesnsW6hpVY=;
+        b=dp7ag/s/XswteEOQhIlZJ0Nr9OSh2piBWOaxYRC3sJJA1h7P9YiBLyTj5ZbqtTA5s/
+         QVBATN/coisioHRuuIpGq3gJNfqJZeq14BoEa/ktEy7OjVkakgw2dN07PvsjfH2DKU0B
+         bxLma1WzIl4FKw+quVea/qjMwPtAOmq0TevZHzdNCNncQhM1PD4uyKVu4HWZvLI6BqTx
+         H7kaRy09fBu1xgcDeDqWrzFeKvin7yA3AAOKZ6MQsBsn3T/kb8YICvKVh7LgyXMq+5Bi
+         FLuEciavzkBG7ruhxzyjiDdwLtfbNolH0swGrGj9z+IyuUE/sK6RMxqKOGNWiAhwfBa3
+         5mXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=sybFcqH1KKlLZJ30kAOhH4vwj7X3FRQlsLR8cFlMDYU=;
-        b=vT8H34yYszJU7jW+cK1UDQmF84ynecXwP7MPDNfycFpwUc7ERpnzCFoqayCmeVbfhp
-         v+n9NYf2UJ/s+lMNYxHaD0xjGv6VvDwyVnPrn+jtsIDSbZ2kR5KgQ9CFT7Ec97nkkyJY
-         6eTDoSxnllUtA5CQAHOSBIQeMR4unb1a7HDUvr6lG2wTo3gapQZtfFRFyxLEFaVQHnBq
-         Bxg/RWZKNfV+g+HAeI1Eu47ZC6TJwLS/Eua5VuLq1DUudA0DQ+AHLBpOYWJyvvv7ANt8
-         DUQCwncrGmc0LB8+h6WIIoeiW3ztVk+RY716IhCZud03HtVlrs+PqAOWmUjC7MIvs500
-         LwsQ==
-X-Gm-Message-State: ACgBeo0jVW3D0LCXEIVL/ApXZl3W/sxAaBAeS2WrmXOwlUnwPICrwBda
-        BD3/b5SxzQdsyeSRF7teHKqtOf0zB42oGkdC0SitSQ==
-X-Google-Smtp-Source: AA6agR4NChdz7hhi2/Bkod2bRWHC00+BPJkQJe+enovUPIqOU12s621gnom9CkqxdAsQy2M3vDnXK/nOmkkUrisgkSc=
-X-Received: by 2002:a81:a186:0:b0:33d:bf97:5b14 with SMTP id
- y128-20020a81a186000000b0033dbf975b14mr18636737ywg.514.1661961335065; Wed, 31
- Aug 2022 08:55:35 -0700 (PDT)
+        bh=cCRpuq5ugrZCMPNASqLzmnmQqSHwIbDaqesnsW6hpVY=;
+        b=HJdMAXWfkO9ovMasIsNBz9v6xj+FmKycHjiqtGKhw2eSLVk8pmWkQUVtkU+oOr7CD2
+         JpucXNa0DgW3NGOLXbuFhiH+4srxSj+ea2eViuLIUOOMIP3kQR1hQrfibIFRGa1i3363
+         dki8600IaPScA8+prdXpU7OmaZ9n4gMVeTtb/YviPB+Mkx/xg7QmGakZZTIHQscpvx9a
+         do+hAfgZ8ftZ6IbOjxaeue/yrEWzPxRftJnB4qw8mowuUsMyrUo9gEYk/dfUIZjQAhl1
+         i7j//AWOHr5n8gCGHJQqzAeke8NUlgX/QTMndMP/EqfQXrL/r0cOecDABxZq9n9zES/U
+         QzqA==
+X-Gm-Message-State: ACgBeo1tkLhsKzknzAnYZ4XMOSPA2IkQY8hrq6VYp9VJ7LR/0SiZA/8m
+        /3l5L9Tgza6/LuFt8XAOSWftE/N+jxihcKTJ3Pkirg==
+X-Google-Smtp-Source: AA6agR7Lu6PK9CdXu23xIn3AG3MYNgxqZ4pzHv7Fy3xw9o0fL/gGGSH+N2uXtSf2ZsqL9IuP0dnF/6Y/gY//h7qjU0c=
+X-Received: by 2002:a81:85c3:0:b0:33d:a4d9:4599 with SMTP id
+ v186-20020a8185c3000000b0033da4d94599mr18562781ywf.237.1661961381492; Wed, 31
+ Aug 2022 08:56:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220830214919.53220-1-surenb@google.com> <20220830214919.53220-28-surenb@google.com>
- <241c05a3-52a2-d49f-6962-3af5a94bc3fc@infradead.org>
-In-Reply-To: <241c05a3-52a2-d49f-6962-3af5a94bc3fc@infradead.org>
+References: <20220830214919.53220-1-surenb@google.com> <20220830214919.53220-23-surenb@google.com>
+ <b252a4e0-57a1-0f27-f4b0-598e851b47ea@infradead.org>
+In-Reply-To: <b252a4e0-57a1-0f27-f4b0-598e851b47ea@infradead.org>
 From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 31 Aug 2022 08:55:24 -0700
-Message-ID: <CAJuCfpE2qrN7uXqZjJz6o20Rh4cQgcUBzAxzP4s+u=6XtmBnbg@mail.gmail.com>
-Subject: Re: [RFC PATCH 27/30] Code tagging based latency tracking
+Date:   Wed, 31 Aug 2022 08:56:10 -0700
+Message-ID: <CAJuCfpFff1iVx50QeJWE7=sJUZ2enig34VTAOCz75u_SY2EXKw@mail.gmail.com>
+Subject: Re: [RFC PATCH 22/30] Code tagging based fault injection
 To:     Randy Dunlap <rdunlap@infradead.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Kent Overstreet <kent.overstreet@linux.dev>,
@@ -106,31 +106,45 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, Aug 30, 2022 at 6:53 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+On Tue, Aug 30, 2022 at 6:52 PM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
 >
 >
 > On 8/30/22 14:49, Suren Baghdasaryan wrote:
-> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> > index b7d03afbc808..b0f86643b8f0 100644
-> > --- a/lib/Kconfig.debug
-> > +++ b/lib/Kconfig.debug
-> > @@ -1728,6 +1728,14 @@ config LATENCYTOP
-> >         Enable this option if you want to use the LatencyTOP tool
-> >         to find out which userspace is blocking on what kernel operations.
+> > From: Kent Overstreet <kent.overstreet@linux.dev>
 > >
-> > +config CODETAG_TIME_STATS
-> > +     bool "Code tagging based latency measuring"
-> > +     depends on DEBUG_FS
-> > +     select TIME_STATS
-> > +     select CODE_TAGGING
-> > +     help
-> > +       Enabling this option makes latency statistics available in debugfs
+> > This adds a new fault injection capability, based on code tagging.
+> >
+> > To use, simply insert somewhere in your code
+> >
+> >   dynamic_fault("fault_class_name")
+> >
+> > and check whether it returns true - if so, inject the error.
+> > For example
+> >
+> >   if (dynamic_fault("init"))
+> >       return -EINVAL;
+> >
+> > There's no need to define faults elsewhere, as with
+> > include/linux/fault-injection.h. Faults show up in debugfs, under
+> > /sys/kernel/debug/dynamic_faults, and can be selected based on
+> > file/module/function/line number/class, and enabled permanently, or in
+> > oneshot mode, or with a specified frequency.
+> >
+> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 >
-> Missing period at the end of the sentence.
+> Missing Signed-off-by: from Suren.
+> See Documentation/process/submitting-patches.rst:
+>
+> When to use Acked-by:, Cc:, and Co-developed-by:
+> ------------------------------------------------
+>
+> The Signed-off-by: tag indicates that the signer was involved in the
+> development of the patch, or that he/she was in the patch's delivery path.
 
-Ack.
+Thanks for the note! Will fix in the next respin.
 
+>
 >
 > --
 > ~Randy
