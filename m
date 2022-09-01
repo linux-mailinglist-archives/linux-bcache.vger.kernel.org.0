@@ -2,57 +2,79 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA8845A8FDC
-	for <lists+linux-bcache@lfdr.de>; Thu,  1 Sep 2022 09:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E5C65A906B
+	for <lists+linux-bcache@lfdr.de>; Thu,  1 Sep 2022 09:37:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233826AbiIAHTk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 1 Sep 2022 03:19:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33716 "EHLO
+        id S233845AbiIAHhI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 1 Sep 2022 03:37:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233907AbiIAHSv (ORCPT
+        with ESMTP id S233057AbiIAHhH (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 1 Sep 2022 03:18:51 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFFAE125353;
-        Thu,  1 Sep 2022 00:18:49 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 43E1B1FB16;
-        Thu,  1 Sep 2022 07:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1662016728; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Thu, 1 Sep 2022 03:37:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B86AF4C94
+        for <linux-bcache@vger.kernel.org>; Thu,  1 Sep 2022 00:37:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1662017823;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=syKqR2otOp+SJa2emYsY57+bVX7vmPgl46yq0SOCcY4=;
-        b=XxPpqvq/CprurzzyArGBkJW5SqAQWQkVT69xczpmMcnZD1oRn53SBe3Vor5qXAepnNw6HZ
-        eJdNzUUUyBCLltPNTrvvxdfpcBBHT8aPch+MIclCvWmw3ouoq0E0fd3IBYzv+2TVw5SAGP
-        eKsPIajcu9OwC55K4pFTrVjv2HlxcBc=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 098CC13A89;
-        Thu,  1 Sep 2022 07:18:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id HuA6ANhcEGMwCAAAMHmgww
-        (envelope-from <mhocko@suse.com>); Thu, 01 Sep 2022 07:18:47 +0000
-Date:   Thu, 1 Sep 2022 09:18:47 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
+        bh=w/uTT8lnpogUVhwkYNDxdhGZzOyBXG3eWWImkgPiyoM=;
+        b=DgayC5dyfaeGXWgqcGu/YcLeWOxlSxKhLpPoQminM/M3pGbY73WxztkrhpaiegTmoZhNJ8
+        izs+WXb28e8YU80Odx6KsPd3FU1KYrTVx+iSPIcqidvGBQAiflWSAlmYLqzBNBPGWuxK7P
+        3MPhtjSRmJCu6jTPnEFblE1h4PJh5q8=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-38-bVy2Ml3GPWSkWPKiDtdZqQ-1; Thu, 01 Sep 2022 03:37:02 -0400
+X-MC-Unique: bVy2Ml3GPWSkWPKiDtdZqQ-1
+Received: by mail-ed1-f72.google.com with SMTP id y12-20020a056402358c00b00448898f1c33so6754446edc.7
+        for <linux-bcache@vger.kernel.org>; Thu, 01 Sep 2022 00:37:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=w/uTT8lnpogUVhwkYNDxdhGZzOyBXG3eWWImkgPiyoM=;
+        b=os8wfPW3RE89lK4k3t7OM8prTgOrNqQjVHH7zzyYzz2O1aoozhRFpqe1rNj2w3JOEi
+         9i2sGS8EwCCadhliecDr+y/rYovJJHqmdGjoXvlPYMLPUlZ6Z8AJ83nZP9hyPFGQ9cfK
+         Xs3r0tsg5RPLFbMpuCi5C/uUtnFC4qlUtN9CqFYIVnSo//2GlQy7cRHnoV3fZmWVxp8A
+         4QIWp2O5s60Q8DkfFoNTU9TCN8jiODz9vyLTzsfGYzxkGMW4HZmh4ODzGtloQBQ5rEWf
+         tVCku8HBhHggWsIVCX15eUhdY+UL7tIYuyEh9Tg7HWrO/zTzrctnGI25bqCBb0pMY0CG
+         Hb4Q==
+X-Gm-Message-State: ACgBeo2GF/xcBD02ORXdCJ8Dg4mSanTTr2V462IB5leG/Xokir2qVI8D
+        fka5j6kJPVTO5wwZbVoasKNxw0dw4X9dTugLYDv+XhgjDASxsNbHIZVamclIyWLmWeIs/GhKJDB
+        jdob3PMh/EBHqUWNqte1Gm9Bl
+X-Received: by 2002:aa7:d90e:0:b0:447:986d:b71e with SMTP id a14-20020aa7d90e000000b00447986db71emr27210726edr.235.1662017821496;
+        Thu, 01 Sep 2022 00:37:01 -0700 (PDT)
+X-Google-Smtp-Source: AA6agR6JkW4ed1WqDsotybL6CAAiG40VbkLtzaIPBaAypGnjlWDX5j26Jhqen11PzZwUzZ8Rc1KOjQ==
+X-Received: by 2002:aa7:d90e:0:b0:447:986d:b71e with SMTP id a14-20020aa7d90e000000b00447986db71emr27210669edr.235.1662017821253;
+        Thu, 01 Sep 2022 00:37:01 -0700 (PDT)
+Received: from [192.168.0.198] (host-87-8-60-205.retail.telecomitalia.it. [87.8.60.205])
+        by smtp.gmail.com with ESMTPSA id u24-20020aa7d998000000b0043a61f6c389sm898086eds.4.2022.09.01.00.36.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Sep 2022 00:37:00 -0700 (PDT)
+Message-ID: <37a66a8d-859d-5a8b-e298-d0c32e2028e7@redhat.com>
+Date:   Thu, 1 Sep 2022 09:36:58 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Content-Language: en-US
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Kent Overstreet <kent.overstreet@linux.dev>
 Cc:     Mel Gorman <mgorman@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
         Suren Baghdasaryan <surenb@google.com>,
-        akpm@linux-foundation.org, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, dave@stgolabs.net, willy@infradead.org,
-        liam.howlett@oracle.com, void@manifault.com, juri.lelli@redhat.com,
-        ldufour@linux.ibm.com, peterx@redhat.com, david@redhat.com,
-        axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-        nathan@kernel.org, changbin.du@intel.com, ytcoode@gmail.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
+        akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
+        willy@infradead.org, liam.howlett@oracle.com, void@manifault.com,
+        juri.lelli@redhat.com, ldufour@linux.ibm.com, peterx@redhat.com,
+        david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
+        ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
         vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
         iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
         elver@google.com, dvyukov@google.com, shakeelb@google.com,
@@ -63,97 +85,51 @@ Cc:     Mel Gorman <mgorman@suse.de>,
         linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-Message-ID: <YxBc1xuGbB36f8zC@dhcp22.suse.cz>
 References: <20220830214919.53220-1-surenb@google.com>
  <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
  <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan>
  <20220831101948.f3etturccmp5ovkl@suse.de>
- <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
- <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+ <20220831155941.q5umplytbx6offku@moria.home.lan>
+ <YxBZv1pZ6N2vwcP3@hirez.programming.kicks-ass.net>
+From:   Daniel Bristot de Oliveira <bristot@redhat.com>
+In-Reply-To: <YxBZv1pZ6N2vwcP3@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed 31-08-22 15:01:54, Kent Overstreet wrote:
-> On Wed, Aug 31, 2022 at 12:47:32PM +0200, Michal Hocko wrote:
-> > On Wed 31-08-22 11:19:48, Mel Gorman wrote:
-> > > Whatever asking for an explanation as to why equivalent functionality
-> > > cannot not be created from ftrace/kprobe/eBPF/whatever is reasonable.
-> > 
-> > Fully agreed and this is especially true for a change this size
-> > 77 files changed, 3406 insertions(+), 703 deletions(-)
-> 
-> In the case of memory allocation accounting, you flat cannot do this with ftrace
-> - you could maybe do a janky version that isn't fully accurate, much slower,
-> more complicated for the developer to understand and debug and more complicated
-> for the end user.
-> 
-> But please, I invite anyone who's actually been doing this with ftrace to
-> demonstrate otherwise.
-> 
-> Ftrace just isn't the right tool for the job here - we're talking about adding
-> per callsite accounting to some of the fastest fast paths in the kernel.
-> 
-> And the size of the changes for memory allocation accounting are much more
-> reasonable:
->  33 files changed, 623 insertions(+), 99 deletions(-)
-> 
-> The code tagging library should exist anyways, it's been open coded half a dozen
-> times in the kernel already.
-> 
-> And once we've got that, the time stats code is _also_ far simpler than doing it
-> with ftrace would be. If anyone here has successfully debugged latency issues
-> with ftrace, I'd really like to hear it. Again, for debugging latency issues you
-> want something that can always be on, and that's not cheap with ftrace - and
-> never mind the hassle of correlating start and end wait trace events, builting
-> up histograms, etc. - that's all handled here.
-> 
-> Cheap, simple, easy to use. What more could you want?
+On 9/1/22 09:05, Peter Zijlstra wrote:
+>> Also, ftrace can drop events. Not really ideal if under system load your memory
+>> accounting numbers start to drift.
+> You could attach custom handlers to tracepoints. If you were to replace
+> these unconditional code hooks of yours with tracepoints then you could
+> conditionally (say at boot) register custom handlers that do the
+> accounting you want.
 
-A big ad on a banner. But more seriously.
+That is strategy in RV (kernel/trace/rv/). It is in C, but I am also
+adding support for monitors in bpf. The osnoise/timerlat tracers work this
+way too, and they are enabled on Fedora/Red Hat/SUSE... production. They
+will also be enabled in Ubuntu and Debian (the interwebs say).
 
-This patchset is _huge_ and touching a lot of different areas. It will
-be not only hard to review but even harder to maintain longterm. So
-it is completely reasonable to ask for potential alternatives with a
-smaller code footprint. I am pretty sure you are aware of that workflow.
+The overhead of attaching code to tracepoints (or any "attachable thing") and
+processing data in kernel is often lower than consuming it in user-space.
+Obviously, when it is possible, e.g., when you respect locking rules, etc.
 
-So I find Peter's question completely appropriate while your response to
-that not so much! Maybe ftrace is not the right tool for the intented
-job. Maybe there are other ways and it would be really great to show
-that those have been evaluated and they are not suitable for a), b) and
-c) reasons.
+This paper (the basis for RV) shows a little comparison:
+https://bristot.me/wp-content/uploads/2019/09/paper.pdf
 
-E.g. Oscar has been working on extending page_ext to track number of
-allocations for specific calltrace[1]. Is this 1:1 replacement? No! But
-it can help in environments where page_ext can be enabled and it is
-completely non-intrusive to the MM code.
+By doing so, we also avoid problems of losing events... and you can also
+generate other events from your attached code.
 
-If the page_ext overhead is not desirable/acceptable then I am sure
-there are other options. E.g. kprobes/LivePatching framework can hook
-into functions and alter their behavior. So why not use that for data
-collection? Has this been evaluated at all?
+(It is also way easier to convince a maintainer to add a tracepoints or a trace
+events than to add arbitrary code... ;-)
 
-And please note that I am not claiming the presented work is approaching
-the problem from a wrong direction. It might very well solve multiple
-problems in a single go _but_ the long term code maintenance burden
-really has to to be carefully evaluated and if we can achieve a
-reasonable subset of the functionality with an existing infrastructure
-then I would be inclined to sacrifice some portions with a considerably
-smaller code footprint.
+-- Daniel
 
-[1] http://lkml.kernel.org/r/20220901044249.4624-1-osalvador@suse.de
-
--- 
-Michal Hocko
-SUSE Labs
