@@ -2,166 +2,113 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 074025A8A43
-	for <lists+linux-bcache@lfdr.de>; Thu,  1 Sep 2022 03:08:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 484F95A8B5A
+	for <lists+linux-bcache@lfdr.de>; Thu,  1 Sep 2022 04:21:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231941AbiIABH6 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 31 Aug 2022 21:07:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38654 "EHLO
+        id S231487AbiIACUK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 31 Aug 2022 22:20:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbiIABH5 (ORCPT
+        with ESMTP id S229992AbiIACUJ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 31 Aug 2022 21:07:57 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F2E5D86C8
-        for <linux-bcache@vger.kernel.org>; Wed, 31 Aug 2022 18:07:55 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id 130so6582652ybw.8
-        for <linux-bcache@vger.kernel.org>; Wed, 31 Aug 2022 18:07:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=MRPzoJhQ6jRX3IlC8DX7IgvLpQbZlMnsgnvZKuuei8w=;
-        b=FN6oNUdWK/epLWx1TsL9yA3judc8GEWbPUlFBZx3N+obm1zvmXwKLTgA0C+din1hae
-         QL+aeoxudtTxFElhfOjbFrb5XsjBAilaB08Ldofl1XN7K/KLlXYDWHTq4s13vSXmuj5f
-         DKOIAo7JDYtLr+88kw7IWfUfQEtwzvbREYO0F51ITJHJcS5BlsMkaJFVMWN04WfbWge0
-         QaMLxE28PQcRoEcCdCRT5hYYcc5qJq1t6S50Lj3dBP+TXgyTlXN6pUj2nAiR7uqNJFnz
-         LBjn/+WoYkZm8EFAaPai3sk01dRp3NFnU9eS/Pc/JsqSX+SuHO7G2QXvivbbuPpvEXP7
-         8nRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=MRPzoJhQ6jRX3IlC8DX7IgvLpQbZlMnsgnvZKuuei8w=;
-        b=ene5E3QzvjhPfLNSClME3HxqsE2T50nuF6SDHGe0jcWGKVnbshpq1ZFcA+s/caY4nz
-         /iRbVTF0c6sYiXoMcW4DobI5UjhR/F06igxgRfTdUV0MSJt6yCFuhjiFn0/AfwkmRSFR
-         mUinCoZkGkLUdwPv6IYnAPuRAfot6Aunp7r7on+mm2srqux9BDDNiNPPO82Y8r/mQ31U
-         FQHk3GvIgPHjhGBhJbsmaUrJIO/fQK7v5Ns8xtVRlOsdmJjn/8jVGnE6xRlSVTnRTGMp
-         XRRWoeKibbXuZNyeWZy2QuzEbsXe3iwgMzIA52hDUaXWw7U/8/cBljOA5GpmBqxDQXDN
-         GXKQ==
-X-Gm-Message-State: ACgBeo3snJRjJlPpwC5X2JTjU4zbK/RLNIYR6KBMq8NAttwoMEpxmDgK
-        ORg+LLS6ptx34aqBGLrnuORhD/ZhqwPeZ31wVqtFmQ==
-X-Google-Smtp-Source: AA6agR7ANRZu1y3V5ec1pN1knn4GFpXcEWezad8yEa+jyRtwuxFDik/95LNfhWenWi2n9p8vw7Ebn9CJDR6Mcs4MSyE=
-X-Received: by 2002:a05:6902:4c7:b0:69a:9e36:debe with SMTP id
- v7-20020a05690204c700b0069a9e36debemr14531815ybs.543.1661994474639; Wed, 31
- Aug 2022 18:07:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220830214919.53220-1-surenb@google.com> <20220830214919.53220-11-surenb@google.com>
- <20220831101103.fj5hjgy3dbb44fit@suse.de> <20220831174629.zpa2pu6hpxmytqya@moria.home.lan>
-In-Reply-To: <20220831174629.zpa2pu6hpxmytqya@moria.home.lan>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 31 Aug 2022 18:07:43 -0700
-Message-ID: <CAJuCfpGxxzHT7X+q2zzu+WRrmyjLsT+RMJ7+LFOECtFuXvt3gA@mail.gmail.com>
-Subject: Re: [RFC PATCH 10/30] mm: enable page allocation tagging for
- __get_free_pages and alloc_pages
+        Wed, 31 Aug 2022 22:20:09 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53F8018361;
+        Wed, 31 Aug 2022 19:20:07 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2953022026;
+        Thu,  1 Sep 2022 02:20:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1661998806; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z5+KTbBI0lr0N4U2DBYmtt5UsQfzNdVRm+NI2VPlVFw=;
+        b=ZcSKLBb3XeldGLBBQmnssBWgugLlWR/UmwlCRtp48ER/otLpjsR33v8bXzWsPL2/TII18b
+        c9CaKi9P9KCcNA3VFYmf0HkW3neyH25V6iJrh1uuUdypeyovvajpsbpaiM3obt/fmUhpzX
+        HbWkf5Dx1tXClIzInxeHo9Kos77IMkw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1661998806;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z5+KTbBI0lr0N4U2DBYmtt5UsQfzNdVRm+NI2VPlVFw=;
+        b=0JSKMp2jiujV2rUgrH8rhd3FefiBDoHAikyQavStCd9WbEuz8gePjjMCvPjKLiYIr8fmCl
+        xpZzu65KYQyVoPAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 671DE133DD;
+        Thu,  1 Sep 2022 02:20:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id eM/0CdQWEGNCTwAAMHmgww
+        (envelope-from <colyli@suse.de>); Thu, 01 Sep 2022 02:20:04 +0000
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
+Subject: Re: [PATCH 2/3] bcache: Convert to lib/time_stats
+From:   Coly Li <colyli@suse.de>
+In-Reply-To: <20220831173639.sb6bhg5xvn4gbkiu@moria.home.lan>
+Date:   Thu, 1 Sep 2022 10:19:59 +0800
+Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <20DDF7B2-8433-49EE-8F9F-CB335D2E7B6C@suse.de>
+References: <20220829165344.2958640-1-kent.overstreet@linux.dev>
+ <20220829165344.2958640-3-kent.overstreet@linux.dev>
+ <14ACCED7-D24D-4AC4-8677-F7F4630A840A@suse.de>
+ <20220831165437.l27raas6k5nlqsdg@moria.home.lan>
+ <1F91055C-4253-42CD-8A4A-8B8EA2CF1D6E@suse.de>
+ <20220831173639.sb6bhg5xvn4gbkiu@moria.home.lan>
 To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Mel Gorman <mgorman@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Liam R. Howlett" <liam.howlett@oracle.com>,
-        David Vernet <void@manifault.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
-        ytcoode@gmail.com, Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Benjamin Segall <bsegall@google.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Christopher Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>, dvyukov@google.com,
-        Shakeel Butt <shakeelb@google.com>,
-        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
-        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
-        Minchan Kim <minchan@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        kernel-team <kernel-team@android.com>,
-        linux-mm <linux-mm@kvack.org>, iommu@lists.linux.dev,
-        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Mailer: Apple Mail (2.3696.120.41.1.1)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 10:46 AM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> On Wed, Aug 31, 2022 at 11:11:03AM +0100, Mel Gorman wrote:
-> > On Tue, Aug 30, 2022 at 02:48:59PM -0700, Suren Baghdasaryan wrote:
-> > > Redefine alloc_pages, __get_free_pages to record allocations done by
-> > > these functions. Instrument deallocation hooks to record object freeing.
-> > >
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > +#ifdef CONFIG_PAGE_ALLOC_TAGGING
-> > > +
-> > >  #include <linux/alloc_tag.h>
-> > >  #include <linux/page_ext.h>
-> > >
-> > > @@ -25,4 +27,37 @@ static inline void pgalloc_tag_dec(struct page *page, unsigned int order)
-> > >             alloc_tag_sub(get_page_tag_ref(page), PAGE_SIZE << order);
-> > >  }
-> > >
-> > > +/*
-> > > + * Redefinitions of the common page allocators/destructors
-> > > + */
-> > > +#define pgtag_alloc_pages(gfp, order)                                      \
-> > > +({                                                                 \
-> > > +   struct page *_page = _alloc_pages((gfp), (order));              \
-> > > +                                                                   \
-> > > +   if (_page)                                                      \
-> > > +           alloc_tag_add(get_page_tag_ref(_page), PAGE_SIZE << (order));\
-> > > +   _page;                                                          \
-> > > +})
-> > > +
-> >
-> > Instead of renaming alloc_pages, why is the tagging not done in
-> > __alloc_pages()? At least __alloc_pages_bulk() is also missed. The branch
-> > can be guarded with IS_ENABLED.
->
-> It can't be in a function, it has to be in a wrapper macro.
 
-Ah, right. __FILE__, __LINE__ and others we use to record the call
-location would point to include/linux/gfp.h instead of the location
-allocation is performed at.
 
->
-> alloc_tag_add() is a macro that defines a static struct in a special elf
-> section. That struct holds the allocation counters, and putting it in a special
-> elf section is how the code to list it in debugfs finds it.
->
-> Look at the dynamic debug code for prior precedence for this trick in the kernel
-> - that's how it makes pr_debug() calls dynamically controllable at runtime, from
-> debugfs. We're taking that method and turning it into a proper library.
->
-> Because all the counters are statically allocated, without even a pointer deref
-> to get to them in the allocation path (one pointer deref to get to them in the
-> deallocate path), that makes this _much, much_ cheaper than anything that could
-> be done with tracing - cheap enough that I expect many users will want to enable
-> it in production.
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
->
+> 2022=E5=B9=B49=E6=9C=881=E6=97=A5 01:36=EF=BC=8CKent Overstreet =
+<kent.overstreet@linux.dev> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On Thu, Sep 01, 2022 at 01:02:37AM +0800, Coly Li wrote:
+>> Can I understand that rate =3D 1/frequency ?  Then frequency 4 is =
+around to rate 0.
+>=20
+> Correct, rate =3D 1/frequency.
+>=20
+>>> The quantiles are for the duration, they give you an idea of the =
+statistical
+>>> distribution, see https://en.wikipedia.org/wiki/Quantile
+>>=20
+>> I wanted to ask how to read the quantiles line. Does it mean that 1 =
+ns is
+>> equally divided by 15 segments, and the counter values are for the =
+divided
+>> 1/15 ns segments?
+>=20
+> It is the 15 boundaries between 16 equal segments, yes.
+>=20
+>> Quantiles are much humane, standard deviation is scared=E2=80=A6 Just =
+FYI LOL.
+>=20
+> That's valuable feedback then, maybe we'll keep both. The more =
+expensive part of
+> time stats is just ingesting data points, but we've got a percpu =
+buffer frontend
+> for that - just doing a bit more moth doesn't cost much.
+
+I don=E2=80=99t have more question so far. Thanks for the detailed =
+replay.
+
+Coly Li=
