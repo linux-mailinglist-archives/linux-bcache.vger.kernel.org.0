@@ -2,108 +2,147 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F4555AA567
-	for <lists+linux-bcache@lfdr.de>; Fri,  2 Sep 2022 03:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2FF05AAE00
+	for <lists+linux-bcache@lfdr.de>; Fri,  2 Sep 2022 14:03:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232992AbiIBB7E (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 1 Sep 2022 21:59:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60514 "EHLO
+        id S235708AbiIBMCW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 2 Sep 2022 08:02:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbiIBB7E (ORCPT
+        with ESMTP id S235637AbiIBMCU (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 1 Sep 2022 21:59:04 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3516A98F4;
-        Thu,  1 Sep 2022 18:59:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8C6ACB8298F;
-        Fri,  2 Sep 2022 01:59:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 171BAC433C1;
-        Fri,  2 Sep 2022 01:58:53 +0000 (UTC)
-Date:   Thu, 1 Sep 2022 21:59:25 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-        mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
-        willy@infradead.org, liam.howlett@oracle.com, void@manifault.com,
-        peterz@infradead.org, juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        peterx@redhat.com, david@redhat.com, axboe@kernel.dk,
-        mcgrof@kernel.org, masahiroy@kernel.org, nathan@kernel.org,
-        changbin.du@intel.com, ytcoode@gmail.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, bristot@redhat.com, vschneid@redhat.com,
-        cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com,
-        42.hyeyoo@gmail.com, glider@google.com, elver@google.com,
-        dvyukov@google.com, shakeelb@google.com, songmuchun@bytedance.com,
-        arnd@arndb.de, jbaron@akamai.com, rientjes@google.com,
-        minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, linux-mm@kvack.org, iommu@lists.linux.dev,
-        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 27/30] Code tagging based latency tracking
-Message-ID: <20220901215925.59ae5cb0@gandalf.local.home>
-In-Reply-To: <20220902013532.6n5cyf3oofntljho@moria.home.lan>
-References: <20220830214919.53220-1-surenb@google.com>
-        <20220830214919.53220-28-surenb@google.com>
-        <20220901173844.36e1683c@gandalf.local.home>
-        <20220901215438.gy3bgqa4ghhm6ztm@moria.home.lan>
-        <20220901183430.120311ce@gandalf.local.home>
-        <20220901225515.ogg7pyljmfzezamr@moria.home.lan>
-        <20220901202311.546a53b5@gandalf.local.home>
-        <20220902013532.6n5cyf3oofntljho@moria.home.lan>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Fri, 2 Sep 2022 08:02:20 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 979DCC0B4B
+        for <linux-bcache@vger.kernel.org>; Fri,  2 Sep 2022 05:02:18 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id h188so1750753pgc.12
+        for <linux-bcache@vger.kernel.org>; Fri, 02 Sep 2022 05:02:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=W8RjYI+n37ofAo9LBQEiCCEo6ndS1LkvyfXGybqsT9Q=;
+        b=KJAXAw3+eV100jVcXnx/LqY4g085qYcLfMEFb+CqK4NNPBI9F8q01WkRiTpC9xcqhF
+         /4FkKnilu36QUVvPSMq5xoJPqh+oM/ajx5O1Ooz3frF0it9D7UMt8os//kh3KVKuZVb/
+         DPPYiXpugkbyENhGTY+/WPxqKyt1jcv2zujzHIJxdB0ew1X0zrJZfMTGT15i+87M0po6
+         0/QMZTGU+ePDJ2R+Ec9/I+/IE6Qsct4tdfUfCSODRxCfpDSAWo9ais93dWCx9G+uqlln
+         0sE9qiRD9Lz9bZ0YZbv1M1UDvvLW735W+u2JopGKR2Y65g0jVSPYyBMRqlC2d3FYstWU
+         49Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=W8RjYI+n37ofAo9LBQEiCCEo6ndS1LkvyfXGybqsT9Q=;
+        b=3MY2DesZkztp83NRyDUDS7mnnyQbeMaEm1n38m+GvEA/z1okk0G/IPwAQJoHGTQg1B
+         a0DmhUh+AcrrwWR6+hi/tIQXaOXBF9t7ZrucSYtF54mwHFdlJHO24zShdJck7DCrXaxw
+         iFbG3Y7N/rcaeEk+oq8q/Cquf7n+8E3vAj5GqBfCD/Y36rYKL9KflGCr1fqyh7xkxw/8
+         zkrBHSJsoY8BVaP4XQILQFEBMFIDYwl+cYmCf1YMA8229GTo7uyRgyD6KmuMi03JYTSq
+         KYMDSe/4RghoN2XIGcSQrIxcuQ6KyEoI9m2ubP6+HbPGsUegP125PySmRRxadtc8Tydh
+         d9aw==
+X-Gm-Message-State: ACgBeo2OFk1XLdPZlIafd9cFPT0f+EnKiv0EGyjecbXsYOz96OnXZ7Gj
+        /MUyIU5+zcsTVgg7Wp5K1/shTA==
+X-Google-Smtp-Source: AA6agR6oz8BXj0U20tJpMgDuL2EJ/favK/h81yeCR3znK+DwDUa+f211F9QgLE7hKWaq2wOql0pxmg==
+X-Received: by 2002:aa7:92d8:0:b0:537:acbf:5e85 with SMTP id k24-20020aa792d8000000b00537acbf5e85mr35570681pfa.61.1662120138036;
+        Fri, 02 Sep 2022 05:02:18 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id v65-20020a622f44000000b00539aa7f0b53sm1557339pfv.104.2022.09.02.05.02.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Sep 2022 05:02:17 -0700 (PDT)
+Message-ID: <3a41b9fc-05f1-3f56-ecd0-70b9a2912a31@kernel.dk>
+Date:   Fri, 2 Sep 2022 06:02:12 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Content-Language: en-US
+To:     Roman Gushchin <roman.gushchin@linux.dev>,
+        Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Yosry Ahmed <yosryahmed@google.com>,
+        Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>, dave@stgolabs.net,
+        Matthew Wilcox <willy@infradead.org>, liam.howlett@oracle.com,
+        void@manifault.com, juri.lelli@redhat.com, ldufour@linux.ibm.com,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
+        ytcoode@gmail.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, Steven Rostedt <rostedt@goodmis.org>,
+        bsegall@google.com, bristot@redhat.com, vschneid@redhat.com,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
+        glider@google.com, elver@google.com, dvyukov@google.com,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
+        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
+        minchan@google.com, kaleshsingh@google.com,
+        kernel-team@android.com, Linux-MM <linux-mm@kvack.org>,
+        iommu@lists.linux.dev, kasan-dev@googlegroups.com,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-modules@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
+ <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan>
+ <20220831101948.f3etturccmp5ovkl@suse.de> <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
+ <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
+ <CAJD7tkaev9B=UDYj2RL6pz-1454J8tv4gEr9y-2dnCksoLK0bw@mail.gmail.com>
+ <YxExz+c1k3nbQMh4@P9FQF9L96D.corp.robot.car>
+ <20220901223720.e4gudprscjtwltif@moria.home.lan>
+ <YxE4BXw5i+BkxxD8@P9FQF9L96D.corp.robot.car>
+ <20220902001747.qqsv2lzkuycffuqe@moria.home.lan>
+ <YxFWrka+Wx0FfLXU@P9FQF9L96D.lan>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <YxFWrka+Wx0FfLXU@P9FQF9L96D.lan>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Thu, 1 Sep 2022 21:35:32 -0400
-Kent Overstreet <kent.overstreet@linux.dev> wrote:
-
-> On Thu, Sep 01, 2022 at 08:23:11PM -0400, Steven Rostedt wrote:
-> > If ftrace, perf, bpf can't do what you want, take a harder look to see if
-> > you can modify them to do so.  
+On 9/1/22 7:04 PM, Roman Gushchin wrote:
+> On Thu, Sep 01, 2022 at 08:17:47PM -0400, Kent Overstreet wrote:
+>> On Thu, Sep 01, 2022 at 03:53:57PM -0700, Roman Gushchin wrote:
+>>> I'd suggest to run something like iperf on a fast hardware. And maybe some
+>>> io_uring stuff too. These are two places which were historically most sensitive
+>>> to the (kernel) memory accounting speed.
+>>
+>> I'm getting wildly inconsistent results with iperf.
+>>
+>> io_uring-echo-server and rust_echo_bench gets me:
+>> Benchmarking: 127.0.0.1:12345
+>> 50 clients, running 512 bytes, 60 sec.
+>>
+>> Without alloc tagging:	120547 request/sec
+>> With:			116748 request/sec
+>>
+>> https://github.com/frevib/io_uring-echo-server
+>> https://github.com/haraldh/rust_echo_bench
+>>
+>> How's that look to you? Close enough? :)
 > 
-> Maybe we can use this exchange to make both of our tools better. I like your
-> histograms - the quantiles algorithm I've had for years is janky, I've been
-> meaning to rip that out, I'd love to take a look at your code for that. And
-> having an on/off switch is a good idea, I'll try to add that at some point.
-> Maybe you got some ideas from my stuff too.
+> Yes, this looks good (a bit too good).
 > 
-> I'd love to get better tracepoints for measuring latency - what I added to
-> init_wait() and finish_wait() was really only a starting point. Figuring out
-> the right places to measure is where I'd like to be investing my time in this
-> area, and there's no reason we couldn't both be making use of that.
+> I'm not that familiar with io_uring, Jens and Pavel should have a better idea
+> what and how to run (I know they've workarounded the kernel memory accounting
+> because of the performance in the past, this is why I suspect it might be an
+> issue here as well).
 
-Yes, this is exactly what I'm talking about. I'm not against your work, I
-just want you to work more with everyone to come up with ideas that can
-help everyone as a whole. That's how "open source communities" is suppose
-to work ;-)
+io_uring isn't alloc+free intensive on a per request basis anymore, it
+would not be a good benchmark if the goal is to check for regressions in
+that area.
 
-The histogram and synthetic events can use some more clean ups. There's a
-lot of places that can be improved in that code. But I feel the ideas
-behind that code is sound. It's just getting the implementation to be a bit
-more efficient.
-
-> 
-> e.g. with kernel waitqueues, I looked at hooking prepare_to_wait() first but not
-> all code uses that, init_wait() got me better coverage. But I've already seen
-> that that misses things, too, there's more work to be done.
-
-I picked prepare_to_wait() just because I was hacking up something quick
-and thought that was "close enough" ;-)
-
--- Steve
-
+-- 
+Jens Axboe
