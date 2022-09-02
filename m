@@ -2,123 +2,120 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E66645AA452
-	for <lists+linux-bcache@lfdr.de>; Fri,  2 Sep 2022 02:24:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA7EF5AA4D4
+	for <lists+linux-bcache@lfdr.de>; Fri,  2 Sep 2022 03:05:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234856AbiIBAY6 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 1 Sep 2022 20:24:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56624 "EHLO
+        id S234921AbiIBBFM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 1 Sep 2022 21:05:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234867AbiIBAYz (ORCPT
+        with ESMTP id S234788AbiIBBFL (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 1 Sep 2022 20:24:55 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 642BFA461
-        for <linux-bcache@vger.kernel.org>; Thu,  1 Sep 2022 17:24:52 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id e71so1042806ybh.9
-        for <linux-bcache@vger.kernel.org>; Thu, 01 Sep 2022 17:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=/pPOPbPw8AnpH29BUzSqTrm5ZvDmaEgEyFxuBQlNiEg=;
-        b=JFydOg9QoPX5QvCMFfTX+qzkxy7dX+yug3qLsycd8X5fIiKliNhG2sOdd7n2FZxg0x
-         wlIQ0PSe2w+jF1eYJALDSn9VwIQg7e+fojjEXzmIOWtowrPcZ8vVaDgvGlc5viuLzbLq
-         BuWwUYh3dJTjnuDVzKYwlUlnzQN1dlqhuf8e4UUJj0Gz3yVOw7ZhtZlACThcN+JogWbQ
-         XLiaLX50zBOT8vT4sikyfQhvA5G9n7Ys1zkULvj3Bu6V7OPgO3m2SYNlgkEGLVgRXA6S
-         YaT8WKnNiPs7HVTvCKPZfxYMJ9fk0eCfVfQjSQqADIJwkH1wr6+8aSYndPr9n1G1vqpS
-         RvLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=/pPOPbPw8AnpH29BUzSqTrm5ZvDmaEgEyFxuBQlNiEg=;
-        b=zbqFmUcsj4Val9W9a360bVheLXeDFi6jj7VLPp2EQkH/+AKkyBqjySAA7puYNIN/Rw
-         w3KdHPONOwMw1gkr+vLGAkQk9a+GUPlvOBZSpFa2GuGuJk9lv+W0b6q0/WknVcA1+8Ye
-         FciphXq2fzLfIS0HLAPtFkCBZtIZZuy5LD3gi5kc5iEV+QVrKtgqUx2N7vzUMGwLBCOL
-         2AhZOqKrPhBEXb390lV5qw58EkwhtGs11nfaSewK/1KRlH6FHuCMegaqukO8IqYV7Svt
-         BjxwNHSaNTc81dvI5+aRtk0cHGeOqrGU6EDlV2v1lTdbBIbFh9DqMNQ32kshrqneyx+2
-         EiFA==
-X-Gm-Message-State: ACgBeo2ypns0o2GHrMLAMXFHLx2LEdyoG72xwz4It+JQ9BWntsGzCA1r
-        lzi5f0iRLk5ulPFQjWqTOmqoIolfiITlXBTl3isdrQ==
-X-Google-Smtp-Source: AA6agR5/Ulv2F+QXTz0x1dcq0Ynnhj3rjvCeoD8VrxwV966KDu/pwW+2XwncQnNg3JY46QNFp+MHM1SP5XYuAvh7JKU=
-X-Received: by 2002:a05:6902:705:b0:695:b3b9:41bc with SMTP id
- k5-20020a056902070500b00695b3b941bcmr21283555ybt.426.1662078291363; Thu, 01
- Sep 2022 17:24:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220830214919.53220-1-surenb@google.com> <20220830214919.53220-15-surenb@google.com>
- <YxFC9NSQ7OADTEwp@P9FQF9L96D.corp.robot.car>
-In-Reply-To: <YxFC9NSQ7OADTEwp@P9FQF9L96D.corp.robot.car>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Thu, 1 Sep 2022 17:24:40 -0700
-Message-ID: <CAJuCfpGRL72qghDf9bNsp_K0kabvLBs5ags2hHXn-5_Ar8RX5A@mail.gmail.com>
-Subject: Re: [RFC PATCH 14/30] mm: prevent slabobj_ext allocations for
- slabobj_ext and kmem_cache objects
-To:     Roman Gushchin <roman.gushchin@linux.dev>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Liam R. Howlett" <liam.howlett@oracle.com>,
-        David Vernet <void@manifault.com>,
+        Thu, 1 Sep 2022 21:05:11 -0400
+Received: from out1.migadu.com (out1.migadu.com [91.121.223.63])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50EA515FDE;
+        Thu,  1 Sep 2022 18:04:59 -0700 (PDT)
+Date:   Thu, 1 Sep 2022 18:04:46 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1662080697;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=oRI44dmgZNXvCbxbx0ytBb5MNkpf1qBSJsTY6pAYXVg=;
+        b=tb82WN7ukOq58edHhF7JOoDon3b2L1v/3IY97PsYRx6OPp66Trpvsx1rbRyhlh12fOiUwG
+        EZmYoO3fSDUB2lu8gxsuWxZiVkHfm4qLeJxKDdrjL94MRoA3GDg6F5I9+Uj2cx14iFfbdO
+        He+0U/hKqYLU04r4PhzKId0lgLZpOKY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Roman Gushchin <roman.gushchin@linux.dev>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Yosry Ahmed <yosryahmed@google.com>,
+        Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
         Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>, dave@stgolabs.net,
+        Matthew Wilcox <willy@infradead.org>, liam.howlett@oracle.com,
+        void@manifault.com, juri.lelli@redhat.com, ldufour@linux.ibm.com,
         Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
-        ytcoode@gmail.com, Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Benjamin Segall <bsegall@google.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Christopher Lameter <cl@linux.com>,
+        David Hildenbrand <david@redhat.com>, axboe@kernel.dk,
+        mcgrof@kernel.org, masahiroy@kernel.org, nathan@kernel.org,
+        changbin.du@intel.com, ytcoode@gmail.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        Steven Rostedt <rostedt@goodmis.org>, bsegall@google.com,
+        bristot@redhat.com, vschneid@redhat.com,
+        Christoph Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
+        glider@google.com, elver@google.com, dvyukov@google.com,
         Shakeel Butt <shakeelb@google.com>,
         Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
         jbaron@akamai.com, David Rientjes <rientjes@google.com>,
-        Minchan Kim <minchan@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        kernel-team <kernel-team@android.com>,
-        linux-mm <linux-mm@kvack.org>, iommu@lists.linux.dev,
-        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        minchan@google.com, kaleshsingh@google.com,
+        kernel-team@android.com, Linux-MM <linux-mm@kvack.org>,
+        iommu@lists.linux.dev, kasan-dev@googlegroups.com,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-modules@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Message-ID: <YxFWrka+Wx0FfLXU@P9FQF9L96D.lan>
+References: <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
+ <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan>
+ <20220831101948.f3etturccmp5ovkl@suse.de>
+ <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
+ <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
+ <CAJD7tkaev9B=UDYj2RL6pz-1454J8tv4gEr9y-2dnCksoLK0bw@mail.gmail.com>
+ <YxExz+c1k3nbQMh4@P9FQF9L96D.corp.robot.car>
+ <20220901223720.e4gudprscjtwltif@moria.home.lan>
+ <YxE4BXw5i+BkxxD8@P9FQF9L96D.corp.robot.car>
+ <20220902001747.qqsv2lzkuycffuqe@moria.home.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220902001747.qqsv2lzkuycffuqe@moria.home.lan>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Thu, Sep 1, 2022 at 4:41 PM Roman Gushchin <roman.gushchin@linux.dev> wrote:
->
-> On Tue, Aug 30, 2022 at 02:49:03PM -0700, Suren Baghdasaryan wrote:
-> > Use __GFP_NO_OBJ_EXT to prevent recursions when allocating slabobj_ext
-> > objects. Also prevent slabobj_ext allocations for kmem_cache objects.
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
->
-> Patches 12-14 look good to me.
-> It's probably to early to ack anything, but otherwise I'd ack them.
+On Thu, Sep 01, 2022 at 08:17:47PM -0400, Kent Overstreet wrote:
+> On Thu, Sep 01, 2022 at 03:53:57PM -0700, Roman Gushchin wrote:
+> > I'd suggest to run something like iperf on a fast hardware. And maybe some
+> > io_uring stuff too. These are two places which were historically most sensitive
+> > to the (kernel) memory accounting speed.
+> 
+> I'm getting wildly inconsistent results with iperf.
+> 
+> io_uring-echo-server and rust_echo_bench gets me:
+> Benchmarking: 127.0.0.1:12345
+> 50 clients, running 512 bytes, 60 sec.
+> 
+> Without alloc tagging:	120547 request/sec
+> With:			116748 request/sec
+> 
+> https://github.com/frevib/io_uring-echo-server
+> https://github.com/haraldh/rust_echo_bench
+> 
+> How's that look to you? Close enough? :)
 
-Thank you for reviewing!
+Yes, this looks good (a bit too good).
 
->
-> Thanks!
+I'm not that familiar with io_uring, Jens and Pavel should have a better idea
+what and how to run (I know they've workarounded the kernel memory accounting
+because of the performance in the past, this is why I suspect it might be an
+issue here as well).
+
+This is a recent optimization on the networking side:
+https://lore.kernel.org/linux-mm/20220825000506.239406-1-shakeelb@google.com/
+
+Maybe you can try to repeat this experiment.
+
+Thanks!
