@@ -2,32 +2,62 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B38B75AB928
-	for <lists+linux-bcache@lfdr.de>; Fri,  2 Sep 2022 22:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C1C5AB96C
+	for <lists+linux-bcache@lfdr.de>; Fri,  2 Sep 2022 22:24:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbiIBUGH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 2 Sep 2022 16:06:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51436 "EHLO
+        id S229565AbiIBUXp (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 2 Sep 2022 16:23:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbiIBUGH (ORCPT
+        with ESMTP id S230489AbiIBUXm (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 2 Sep 2022 16:06:07 -0400
-Received: from out0.migadu.com (out0.migadu.com [94.23.1.103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB28AEA31A;
-        Fri,  2 Sep 2022 13:06:04 -0700 (PDT)
-Date:   Fri, 2 Sep 2022 16:05:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1662149163;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=SemCjjx9bqrqhFAABAkUIroCfCc94PYvIF1DVQSZFl4=;
-        b=DkqxrENv1HGZgJN2jzLkuenZfiCKRaXUD9WzQJ4Gyv/ayHL/Rtg7Xzr8AwspMWXlwZIUIL
-        u2b26PHc1vj3E0HNj7dQceY3+rADhcYIqCEweC9ErZkbq6yycckimIVL96EkhBo8Hg7QMq
-        Oask9xF1FPTxe7xFqrU4hLkV5BMu+ow=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Jens Axboe <axboe@kernel.dk>
+        Fri, 2 Sep 2022 16:23:42 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 312A1F8FCD
+        for <linux-bcache@vger.kernel.org>; Fri,  2 Sep 2022 13:23:41 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id y1so2940682plb.2
+        for <linux-bcache@vger.kernel.org>; Fri, 02 Sep 2022 13:23:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=k6pQn9EMMlV6BZtQiNF0XvMyejT4MeXWM0SLMVDUfUA=;
+        b=atNBwFgIt7igHl+/QHLrFlJtFVTsSH/kJfYVSiBHiTvpkch9s3+zAthZGB6A5YDXlS
+         v71QG7O0GohvTTqFSZ7hQ4jR7KHFNnmgxFUC6YUXp3eVqkrlZqyPHMxKdRrsK3hC7WJ+
+         ratf09sB7a22OqVWFFXLzBVLXIay3MBLrlzBsi890YvKl53SP/bZRFwgW9WLVQrECS+k
+         e6/tO13lZyqAPIynEcJMUR9e2fBT2mJferk6/Xl8AJzVAjPmCX/MyAk+37HMrw2I7UDI
+         9l1WHpQ97YwZWMNi7XR5oEpipq812loh43BTSSYGw8QqCLvIufzr2WYkCLPG0vPEjTfE
+         HLbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=k6pQn9EMMlV6BZtQiNF0XvMyejT4MeXWM0SLMVDUfUA=;
+        b=6zeFfBwxFWF9KV4Dm3iwR/EdGo7jApXs/wsi+p8jImorwAMpXW3ZLmpCOLuZlZkE3a
+         xZn7iJ5F5zyOXALvT0TnPtDpdIF3ZsiDTSpEdnc4uaeMQk3PtZGKqthL+VYfKby8OjwY
+         JaTcGDLLiSGi2MZL6EvzdkTfmuUaOkdROgYDGcpyoQETv6VjwlzhbX3itNHUrm9NwjaJ
+         hNVKk2DUiWuS4Vu+LPVKIXIfTKxvjZ6FL4UQHAmcV+Ni5/GJKF7ZB3F0On4Wxwh3f5Jd
+         reqW24ybGRIjrESdxNNSf0FdkKzGyEI1FBaqCRh1I+rsvMSZcIIEA+/+kVRRftpNug+s
+         PTmg==
+X-Gm-Message-State: ACgBeo0+9LR0EVvtJLaDS8TFZ/XsM0FaUbkzyKNE9QcL21KXHKzGiZu2
+        Zd1u5yoCEhsclWJ2V5rkTdKpvg==
+X-Google-Smtp-Source: AA6agR5AqhuPnCBKUHnmMMoOWG9kI43vIem/phxzSs6gDhTM24/CuEkLWk7/yQtSZJLhY720RHeSVw==
+X-Received: by 2002:a17:902:c94d:b0:16d:c10a:650e with SMTP id i13-20020a170902c94d00b0016dc10a650emr36139251pla.29.1662150220589;
+        Fri, 02 Sep 2022 13:23:40 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id z10-20020a62d10a000000b00535d094d6ecsm2197822pfg.108.2022.09.02.13.23.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Sep 2022 13:23:38 -0700 (PDT)
+Message-ID: <002ab1f2-078e-2bce-83a0-257a573b1f95@kernel.dk>
+Date:   Fri, 2 Sep 2022 14:23:34 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Content-Language: en-US
+To:     Kent Overstreet <kent.overstreet@linux.dev>
 Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
         Yosry Ahmed <yosryahmed@google.com>,
         Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
@@ -58,8 +88,6 @@ Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-modules@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-Message-ID: <20220902200555.h5fyamst6lyamjnw@moria.home.lan>
 References: <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
  <CAJD7tkaev9B=UDYj2RL6pz-1454J8tv4gEr9y-2dnCksoLK0bw@mail.gmail.com>
  <YxExz+c1k3nbQMh4@P9FQF9L96D.corp.robot.car>
@@ -70,30 +98,34 @@ References: <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
  <3a41b9fc-05f1-3f56-ecd0-70b9a2912a31@kernel.dk>
  <20220902194839.xqzgsoowous72jkz@moria.home.lan>
  <d5526090-0380-a586-40e1-7b3bb6fe6fb8@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d5526090-0380-a586-40e1-7b3bb6fe6fb8@kernel.dk>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+ <20220902200555.h5fyamst6lyamjnw@moria.home.lan>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220902200555.h5fyamst6lyamjnw@moria.home.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Fri, Sep 02, 2022 at 01:53:53PM -0600, Jens Axboe wrote:
-> I've complained about memcg accounting before, the slowness of it is why
-> io_uring works around it by caching. Anything we account we try NOT do
-> in the fast path because of it, the slowdown is considerable.
+On 9/2/22 2:05 PM, Kent Overstreet wrote:
+> On Fri, Sep 02, 2022 at 01:53:53PM -0600, Jens Axboe wrote:
+>> I've complained about memcg accounting before, the slowness of it is why
+>> io_uring works around it by caching. Anything we account we try NOT do
+>> in the fast path because of it, the slowdown is considerable.
+> 
+> I'm with you on that, it definitely raises an eyebrow.
+> 
+>> You care about efficiency now? I thought that was relegated to
+>> irrelevant 10M IOPS cases.
+> 
+> I always did, it's just not the only thing I care about.
 
-I'm with you on that, it definitely raises an eyebrow.
+It's not the only thing anyone cares about.
 
-> You care about efficiency now? I thought that was relegated to
-> irrelevant 10M IOPS cases.
-
-I always did, it's just not the only thing I care about.
+-- 
+Jens Axboe
