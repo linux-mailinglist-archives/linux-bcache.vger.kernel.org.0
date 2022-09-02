@@ -2,64 +2,34 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D2FF05AAE00
-	for <lists+linux-bcache@lfdr.de>; Fri,  2 Sep 2022 14:03:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B9B15AB8F4
+	for <lists+linux-bcache@lfdr.de>; Fri,  2 Sep 2022 21:48:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235708AbiIBMCW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 2 Sep 2022 08:02:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43192 "EHLO
+        id S229871AbiIBTsw (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 2 Sep 2022 15:48:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235637AbiIBMCU (ORCPT
+        with ESMTP id S229496AbiIBTsv (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 2 Sep 2022 08:02:20 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 979DCC0B4B
-        for <linux-bcache@vger.kernel.org>; Fri,  2 Sep 2022 05:02:18 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id h188so1750753pgc.12
-        for <linux-bcache@vger.kernel.org>; Fri, 02 Sep 2022 05:02:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=W8RjYI+n37ofAo9LBQEiCCEo6ndS1LkvyfXGybqsT9Q=;
-        b=KJAXAw3+eV100jVcXnx/LqY4g085qYcLfMEFb+CqK4NNPBI9F8q01WkRiTpC9xcqhF
-         /4FkKnilu36QUVvPSMq5xoJPqh+oM/ajx5O1Ooz3frF0it9D7UMt8os//kh3KVKuZVb/
-         DPPYiXpugkbyENhGTY+/WPxqKyt1jcv2zujzHIJxdB0ew1X0zrJZfMTGT15i+87M0po6
-         0/QMZTGU+ePDJ2R+Ec9/I+/IE6Qsct4tdfUfCSODRxCfpDSAWo9ais93dWCx9G+uqlln
-         0sE9qiRD9Lz9bZ0YZbv1M1UDvvLW735W+u2JopGKR2Y65g0jVSPYyBMRqlC2d3FYstWU
-         49Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=W8RjYI+n37ofAo9LBQEiCCEo6ndS1LkvyfXGybqsT9Q=;
-        b=3MY2DesZkztp83NRyDUDS7mnnyQbeMaEm1n38m+GvEA/z1okk0G/IPwAQJoHGTQg1B
-         a0DmhUh+AcrrwWR6+hi/tIQXaOXBF9t7ZrucSYtF54mwHFdlJHO24zShdJck7DCrXaxw
-         iFbG3Y7N/rcaeEk+oq8q/Cquf7n+8E3vAj5GqBfCD/Y36rYKL9KflGCr1fqyh7xkxw/8
-         zkrBHSJsoY8BVaP4XQILQFEBMFIDYwl+cYmCf1YMA8229GTo7uyRgyD6KmuMi03JYTSq
-         KYMDSe/4RghoN2XIGcSQrIxcuQ6KyEoI9m2ubP6+HbPGsUegP125PySmRRxadtc8Tydh
-         d9aw==
-X-Gm-Message-State: ACgBeo2OFk1XLdPZlIafd9cFPT0f+EnKiv0EGyjecbXsYOz96OnXZ7Gj
-        /MUyIU5+zcsTVgg7Wp5K1/shTA==
-X-Google-Smtp-Source: AA6agR6oz8BXj0U20tJpMgDuL2EJ/favK/h81yeCR3znK+DwDUa+f211F9QgLE7hKWaq2wOql0pxmg==
-X-Received: by 2002:aa7:92d8:0:b0:537:acbf:5e85 with SMTP id k24-20020aa792d8000000b00537acbf5e85mr35570681pfa.61.1662120138036;
-        Fri, 02 Sep 2022 05:02:18 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id v65-20020a622f44000000b00539aa7f0b53sm1557339pfv.104.2022.09.02.05.02.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Sep 2022 05:02:17 -0700 (PDT)
-Message-ID: <3a41b9fc-05f1-3f56-ecd0-70b9a2912a31@kernel.dk>
-Date:   Fri, 2 Sep 2022 06:02:12 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-Content-Language: en-US
-To:     Roman Gushchin <roman.gushchin@linux.dev>,
-        Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Yosry Ahmed <yosryahmed@google.com>,
+        Fri, 2 Sep 2022 15:48:51 -0400
+Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F3F120BEB;
+        Fri,  2 Sep 2022 12:48:50 -0700 (PDT)
+Date:   Fri, 2 Sep 2022 15:48:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1662148127;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=n3Vt2n+PBD0eNIsvGTR1l3JrOeVtWEjP88FVSBBEvEY=;
+        b=mPyxzHSCWJDs7FY0KQSQlCnTELLgR0D5y3QUtw1jP0xws7G95PlcumsBf40lKyXM7CpTgQ
+        EQ03B0NpMd3GmyUjL7/LRRu2b7P7CYcc/5drjtaORm2I0b47gBiN9Kk3SiUGyi3Al05Eo0
+        A5b6cgfMPf2NEURa1fE7EOtxMOAAjIs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
+        Yosry Ahmed <yosryahmed@google.com>,
         Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
         Peter Zijlstra <peterz@infradead.org>,
         Suren Baghdasaryan <surenb@google.com>,
@@ -88,9 +58,10 @@ Cc:     Yosry Ahmed <yosryahmed@google.com>,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-modules@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
- <20220831084230.3ti3vitrzhzsu3fs@moria.home.lan>
- <20220831101948.f3etturccmp5ovkl@suse.de> <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Message-ID: <20220902194839.xqzgsoowous72jkz@moria.home.lan>
+References: <20220831101948.f3etturccmp5ovkl@suse.de>
+ <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
  <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
  <CAJD7tkaev9B=UDYj2RL6pz-1454J8tv4gEr9y-2dnCksoLK0bw@mail.gmail.com>
  <YxExz+c1k3nbQMh4@P9FQF9L96D.corp.robot.car>
@@ -98,51 +69,66 @@ References: <Yw8P8xZ4zqu121xL@hirez.programming.kicks-ass.net>
  <YxE4BXw5i+BkxxD8@P9FQF9L96D.corp.robot.car>
  <20220902001747.qqsv2lzkuycffuqe@moria.home.lan>
  <YxFWrka+Wx0FfLXU@P9FQF9L96D.lan>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YxFWrka+Wx0FfLXU@P9FQF9L96D.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+ <3a41b9fc-05f1-3f56-ecd0-70b9a2912a31@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3a41b9fc-05f1-3f56-ecd0-70b9a2912a31@kernel.dk>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 9/1/22 7:04 PM, Roman Gushchin wrote:
-> On Thu, Sep 01, 2022 at 08:17:47PM -0400, Kent Overstreet wrote:
->> On Thu, Sep 01, 2022 at 03:53:57PM -0700, Roman Gushchin wrote:
->>> I'd suggest to run something like iperf on a fast hardware. And maybe some
->>> io_uring stuff too. These are two places which were historically most sensitive
->>> to the (kernel) memory accounting speed.
->>
->> I'm getting wildly inconsistent results with iperf.
->>
->> io_uring-echo-server and rust_echo_bench gets me:
->> Benchmarking: 127.0.0.1:12345
->> 50 clients, running 512 bytes, 60 sec.
->>
->> Without alloc tagging:	120547 request/sec
->> With:			116748 request/sec
->>
->> https://github.com/frevib/io_uring-echo-server
->> https://github.com/haraldh/rust_echo_bench
->>
->> How's that look to you? Close enough? :)
+On Fri, Sep 02, 2022 at 06:02:12AM -0600, Jens Axboe wrote:
+> On 9/1/22 7:04 PM, Roman Gushchin wrote:
+> > On Thu, Sep 01, 2022 at 08:17:47PM -0400, Kent Overstreet wrote:
+> >> On Thu, Sep 01, 2022 at 03:53:57PM -0700, Roman Gushchin wrote:
+> >>> I'd suggest to run something like iperf on a fast hardware. And maybe some
+> >>> io_uring stuff too. These are two places which were historically most sensitive
+> >>> to the (kernel) memory accounting speed.
+> >>
+> >> I'm getting wildly inconsistent results with iperf.
+> >>
+> >> io_uring-echo-server and rust_echo_bench gets me:
+> >> Benchmarking: 127.0.0.1:12345
+> >> 50 clients, running 512 bytes, 60 sec.
+> >>
+> >> Without alloc tagging:	120547 request/sec
+> >> With:			116748 request/sec
+> >>
+> >> https://github.com/frevib/io_uring-echo-server
+> >> https://github.com/haraldh/rust_echo_bench
+> >>
+> >> How's that look to you? Close enough? :)
+> > 
+> > Yes, this looks good (a bit too good).
+> > 
+> > I'm not that familiar with io_uring, Jens and Pavel should have a better idea
+> > what and how to run (I know they've workarounded the kernel memory accounting
+> > because of the performance in the past, this is why I suspect it might be an
+> > issue here as well).
 > 
-> Yes, this looks good (a bit too good).
-> 
-> I'm not that familiar with io_uring, Jens and Pavel should have a better idea
-> what and how to run (I know they've workarounded the kernel memory accounting
-> because of the performance in the past, this is why I suspect it might be an
-> issue here as well).
+> io_uring isn't alloc+free intensive on a per request basis anymore, it
+> would not be a good benchmark if the goal is to check for regressions in
+> that area.
 
-io_uring isn't alloc+free intensive on a per request basis anymore, it
-would not be a good benchmark if the goal is to check for regressions in
-that area.
+Good to know. The benchmark is still a TCP benchmark though, so still useful.
 
--- 
-Jens Axboe
+Matthew suggested
+  while true; do echo 1 >/tmp/foo; rm /tmp/foo; done
+
+I ran that on tmpfs, and the numbers with and without alloc tagging were
+statistically equal - there was a fair amount of variation, it wasn't a super
+controlled test, anywhere from 38-41 seconds with 100000 iterations (and alloc
+tagging was some of the faster runs).
+
+But with memcg off, it ran in 32-33 seconds. We're piggybacking on the same
+mechanism memcg uses for stashing per-object pointers, so it looks like that's
+the bigger cost.
