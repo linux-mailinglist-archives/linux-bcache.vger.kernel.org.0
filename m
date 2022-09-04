@@ -2,130 +2,73 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F3C1C5AB96C
-	for <lists+linux-bcache@lfdr.de>; Fri,  2 Sep 2022 22:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DEC95AC545
+	for <lists+linux-bcache@lfdr.de>; Sun,  4 Sep 2022 18:06:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229565AbiIBUXp (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 2 Sep 2022 16:23:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50852 "EHLO
+        id S229951AbiIDQG4 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 4 Sep 2022 12:06:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230489AbiIBUXm (ORCPT
+        with ESMTP id S234311AbiIDQGz (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 2 Sep 2022 16:23:42 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 312A1F8FCD
-        for <linux-bcache@vger.kernel.org>; Fri,  2 Sep 2022 13:23:41 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id y1so2940682plb.2
-        for <linux-bcache@vger.kernel.org>; Fri, 02 Sep 2022 13:23:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=k6pQn9EMMlV6BZtQiNF0XvMyejT4MeXWM0SLMVDUfUA=;
-        b=atNBwFgIt7igHl+/QHLrFlJtFVTsSH/kJfYVSiBHiTvpkch9s3+zAthZGB6A5YDXlS
-         v71QG7O0GohvTTqFSZ7hQ4jR7KHFNnmgxFUC6YUXp3eVqkrlZqyPHMxKdRrsK3hC7WJ+
-         ratf09sB7a22OqVWFFXLzBVLXIay3MBLrlzBsi890YvKl53SP/bZRFwgW9WLVQrECS+k
-         e6/tO13lZyqAPIynEcJMUR9e2fBT2mJferk6/Xl8AJzVAjPmCX/MyAk+37HMrw2I7UDI
-         9l1WHpQ97YwZWMNi7XR5oEpipq812loh43BTSSYGw8QqCLvIufzr2WYkCLPG0vPEjTfE
-         HLbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=k6pQn9EMMlV6BZtQiNF0XvMyejT4MeXWM0SLMVDUfUA=;
-        b=6zeFfBwxFWF9KV4Dm3iwR/EdGo7jApXs/wsi+p8jImorwAMpXW3ZLmpCOLuZlZkE3a
-         xZn7iJ5F5zyOXALvT0TnPtDpdIF3ZsiDTSpEdnc4uaeMQk3PtZGKqthL+VYfKby8OjwY
-         JaTcGDLLiSGi2MZL6EvzdkTfmuUaOkdROgYDGcpyoQETv6VjwlzhbX3itNHUrm9NwjaJ
-         hNVKk2DUiWuS4Vu+LPVKIXIfTKxvjZ6FL4UQHAmcV+Ni5/GJKF7ZB3F0On4Wxwh3f5Jd
-         reqW24ybGRIjrESdxNNSf0FdkKzGyEI1FBaqCRh1I+rsvMSZcIIEA+/+kVRRftpNug+s
-         PTmg==
-X-Gm-Message-State: ACgBeo0+9LR0EVvtJLaDS8TFZ/XsM0FaUbkzyKNE9QcL21KXHKzGiZu2
-        Zd1u5yoCEhsclWJ2V5rkTdKpvg==
-X-Google-Smtp-Source: AA6agR5AqhuPnCBKUHnmMMoOWG9kI43vIem/phxzSs6gDhTM24/CuEkLWk7/yQtSZJLhY720RHeSVw==
-X-Received: by 2002:a17:902:c94d:b0:16d:c10a:650e with SMTP id i13-20020a170902c94d00b0016dc10a650emr36139251pla.29.1662150220589;
-        Fri, 02 Sep 2022 13:23:40 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id z10-20020a62d10a000000b00535d094d6ecsm2197822pfg.108.2022.09.02.13.23.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Sep 2022 13:23:38 -0700 (PDT)
-Message-ID: <002ab1f2-078e-2bce-83a0-257a573b1f95@kernel.dk>
-Date:   Fri, 2 Sep 2022 14:23:34 -0600
+        Sun, 4 Sep 2022 12:06:55 -0400
+Received: from smtpbg.qq.com (bg4.exmail.qq.com [43.155.67.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F1C37F9D
+        for <linux-bcache@vger.kernel.org>; Sun,  4 Sep 2022 09:06:50 -0700 (PDT)
+X-QQ-mid: bizesmtp91t1662307599tqak1nhs
+Received: from localhost.localdomain ( [182.148.14.80])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Mon, 05 Sep 2022 00:06:34 +0800 (CST)
+X-QQ-SSF: 01000000000000C0C000000A0000000
+X-QQ-FEAT: C4CAQ8sL+YCZ7AXRU04HHIzxOjEh2q1bYKiPGrgtXfvZ7JrBDKaRKWmbZdSFg
+        VKG5nbH0FAhWumqdEzEXr9h/iAvnJPNHRs6kOW4WDS5iX02bVNr9wFJIQ+qSiUKyTTnXair
+        scQJdR3E1/GBE34oNN31j6IPEpwJpYUSNAemWZOvWieYqSa7gaCA789ogK08+JuigBfFcg8
+        uyAs3+96Ih1uhz8mL+TZfOOio5rgJ0qgVt623wCXwbfuQQLGSmqll0cNotAhG9kX5MMOB24
+        apj7M5j7MAxGm9RnqIedXQxKVDUntR+ozg9s6dd1L4T7gkl1up6G3AGoDmMh4eS2tdBSwA0
+        KgJpIpoPaHPQ2jBG/9ixl36d5bHOM+OYkv/TMEb
+X-QQ-GoodBg: 0
+From:   Shaomin Deng <dengshaomin@cdjrlc.com>
+To:     colyli@suse.de, kent.overstreet@gmail.com,
+        linux-bcache@vger.kernel.org
+Cc:     Shaomin Deng <dengshaomin@cdjrlc.com>
+Subject: [PATCH] bcache: Fix typo in comments
+Date:   Sun,  4 Sep 2022 12:06:33 -0400
+Message-Id: <20220904160633.31986-1-dengshaomin@cdjrlc.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-Content-Language: en-US
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
-        Yosry Ahmed <yosryahmed@google.com>,
-        Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>, dave@stgolabs.net,
-        Matthew Wilcox <willy@infradead.org>, liam.howlett@oracle.com,
-        void@manifault.com, juri.lelli@redhat.com, ldufour@linux.ibm.com,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
-        ytcoode@gmail.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, Steven Rostedt <rostedt@goodmis.org>,
-        bsegall@google.com, bristot@redhat.com, vschneid@redhat.com,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
-        glider@google.com, elver@google.com, dvyukov@google.com,
-        Shakeel Butt <shakeelb@google.com>,
-        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
-        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
-        minchan@google.com, kaleshsingh@google.com,
-        kernel-team@android.com, Linux-MM <linux-mm@kvack.org>,
-        iommu@lists.linux.dev, kasan-dev@googlegroups.com,
-        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-modules@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
- <CAJD7tkaev9B=UDYj2RL6pz-1454J8tv4gEr9y-2dnCksoLK0bw@mail.gmail.com>
- <YxExz+c1k3nbQMh4@P9FQF9L96D.corp.robot.car>
- <20220901223720.e4gudprscjtwltif@moria.home.lan>
- <YxE4BXw5i+BkxxD8@P9FQF9L96D.corp.robot.car>
- <20220902001747.qqsv2lzkuycffuqe@moria.home.lan>
- <YxFWrka+Wx0FfLXU@P9FQF9L96D.lan>
- <3a41b9fc-05f1-3f56-ecd0-70b9a2912a31@kernel.dk>
- <20220902194839.xqzgsoowous72jkz@moria.home.lan>
- <d5526090-0380-a586-40e1-7b3bb6fe6fb8@kernel.dk>
- <20220902200555.h5fyamst6lyamjnw@moria.home.lan>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220902200555.h5fyamst6lyamjnw@moria.home.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:cdjrlc.com:qybglogicsvr:qybglogicsvr4
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,RCVD_IN_PBL,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,T_SPF_HELO_TEMPERROR autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 9/2/22 2:05 PM, Kent Overstreet wrote:
-> On Fri, Sep 02, 2022 at 01:53:53PM -0600, Jens Axboe wrote:
->> I've complained about memcg accounting before, the slowness of it is why
->> io_uring works around it by caching. Anything we account we try NOT do
->> in the fast path because of it, the slowdown is considerable.
-> 
-> I'm with you on that, it definitely raises an eyebrow.
-> 
->> You care about efficiency now? I thought that was relegated to
->> irrelevant 10M IOPS cases.
-> 
-> I always did, it's just not the only thing I care about.
+Delete the repeated word "we" in comments.
 
-It's not the only thing anyone cares about.
+Signed-off-by: Shaomin Deng <dengshaomin@cdjrlc.com>
+---
+ drivers/md/bcache/bcache.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 2acda9cea0f9..aebb7ef10e63 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -107,7 +107,7 @@
+  *
+  * BTREE NODES:
+  *
+- * Our unit of allocation is a bucket, and we we can't arbitrarily allocate and
++ * Our unit of allocation is a bucket, and we can't arbitrarily allocate and
+  * free smaller than a bucket - so, that's how big our btree nodes are.
+  *
+  * (If buckets are really big we'll only use part of the bucket for a btree node
 -- 
-Jens Axboe
+2.35.1
+
