@@ -2,114 +2,187 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DAB765B0705
-	for <lists+linux-bcache@lfdr.de>; Wed,  7 Sep 2022 16:34:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 298A95B0B49
+	for <lists+linux-bcache@lfdr.de>; Wed,  7 Sep 2022 19:16:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229553AbiIGOeT (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 7 Sep 2022 10:34:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47744 "EHLO
+        id S229804AbiIGRQE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 7 Sep 2022 13:16:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230159AbiIGOd0 (ORCPT
+        with ESMTP id S229723AbiIGRQD (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 7 Sep 2022 10:33:26 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88ECD6F568
-        for <linux-bcache@vger.kernel.org>; Wed,  7 Sep 2022 07:33:05 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id e18so20009643edj.3
-        for <linux-bcache@vger.kernel.org>; Wed, 07 Sep 2022 07:33:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date;
-        bh=UTPjlhWN0j/3cl0uibj9IdU3K9tIHCNTd74bAPWV+BQ=;
-        b=SSGjyR2bmjYCrAlESugCufneGXl+LZC/mmyGfrjsk2GE1Kx1lZRkYY1EUdreWWyCSQ
-         sqluCme0XsqujJoH+umsfKDs8UrC/9ZGnLj4b+GO0hYgYXhOc+nCt8MOQUxR8CwU83qh
-         IGWw9qH0mLtGh4TXTWi4EI1eoq52zR4PT+F7cJR3CKXNjBfxw1C+s/9CkSbq4quVbWwH
-         EF0HjUUHC7HLHDlCm+xMO8g90CDRQnoLTxG5JG8QRF4Je7sNcgpiBsXy6SB06Zlint9h
-         0vn4j6hkMI2QtivfJh+FavwBs/6jN5+806aKyxNxXrR+uyoh2MnenECAeW2duoYS39/5
-         mPnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=UTPjlhWN0j/3cl0uibj9IdU3K9tIHCNTd74bAPWV+BQ=;
-        b=DvChoJp4oZuhe+ocyNWmnH2gD7VE9ivbB/8Nr1P4mhE3+68651ZifihGIsmeTN5yLw
-         bflsgq4icEU7TnlcEpogh32lbbqdBpGKiGWfOHP+EPOB3lnX+c1oO3FSVQnqfxDkB/3q
-         Csxbj0N5fFP6iIJd8lcUraBPJZAHU620sfFw4cnILE2tEuwEeD3fgDN/9vyYpJ1bmSGl
-         OLIY8l0CdT8oORj9elGPrwD/i+QYIpf3d/uTWyw+6J9OGhTN6DBFakVv5hO8LVoLJWnf
-         BT4fM9U5LRZLb1P/I0dKDjfIqcj+vfvylLdTFK8TThG1TBsUplxboaqsnxSq4673iLil
-         Mkvg==
-X-Gm-Message-State: ACgBeo12Gk7xjU6a8NuwUGqD6XLS4/bzbd7/H4G7fiRNbZ2PBhYKQgwf
-        uRD9me7AZM4vttGLN/DD5LXyIb+zqx0KtVYlIyk=
-X-Google-Smtp-Source: AA6agR7Ln0Ysck8H4qd9CxVijX9Q4k17jVwzW1LjbugbwbdgNpmJiiXSIctkOqhdg+uqPMufZamcMYRcWGF9/uZM6PM=
-X-Received: by 2002:a05:6402:51d1:b0:44b:ea34:6c0a with SMTP id
- r17-20020a05640251d100b0044bea346c0amr3317270edd.369.1662561182925; Wed, 07
- Sep 2022 07:33:02 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a54:3fc4:0:0:0:0:0 with HTTP; Wed, 7 Sep 2022 07:33:02 -0700 (PDT)
-Reply-To: lumar.casey@outlook.com
-From:   LUMAR CASEY <miriankushrat@gmail.com>
-Date:   Wed, 7 Sep 2022 16:33:02 +0200
-Message-ID: <CAO4StN3SO1HAAuHp3muOTACpFXiZdXht6wTH0Y_DFYKUZH6aMg@mail.gmail.com>
-Subject: ATTENTION/PROPOSAL
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=6.8 required=5.0 tests=ADVANCE_FEE_4_NEW_MONEY,
-        BAYES_50,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,LOTS_OF_MONEY,MONEY_FREEMAIL_REPTO,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNDISC_FREEM,UNDISC_MONEY,UPPERCASE_75_100 autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2a00:1450:4864:20:0:0:0:544 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [miriankushrat[at]gmail.com]
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  0.0 UPPERCASE_75_100 message body is 75-100% uppercase
-        *  0.0 LOTS_OF_MONEY Huge... sums of money
-        *  3.1 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-        *  2.0 MONEY_FREEMAIL_REPTO Lots of money from someone using free
-        *      email?
-        *  0.2 UNDISC_MONEY Undisclosed recipients + money/fraud signs
-        *  0.0 ADVANCE_FEE_4_NEW_MONEY Advance Fee fraud and lots of money
-X-Spam-Level: ******
+        Wed, 7 Sep 2022 13:16:03 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96967BC82F
+        for <linux-bcache@vger.kernel.org>; Wed,  7 Sep 2022 10:15:59 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 2359233F79;
+        Wed,  7 Sep 2022 17:15:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1662570958; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/gpCjnHHMyPm2Q9RayhETH3k91oxiLXLcCn8QMwAtls=;
+        b=08avm11FAwNTz8fniFYFfLPuKbC7Al421JDuFno8Ky4cN6l1mrK+wmIO/k3zPi80U0A1Y2
+        tfJON1o9xRdqPBirWAEp6U9X2BnLg5wQskyb05Hc2USv7MH9Uqpn0G0EVBxeRK8Z8oEenn
+        561EINI3ShxnIkFo5/E57drQeCuxirU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1662570958;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/gpCjnHHMyPm2Q9RayhETH3k91oxiLXLcCn8QMwAtls=;
+        b=03OlJmj8oHmkbTwMtKdKweMgCnoDNQv8ngg+3P03nSRPCJ0K3ynVfVMLLefzRlQ9LSzyap
+        A8fHVNOySGflCXBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4F31313A66;
+        Wed,  7 Sep 2022 17:15:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 7u8MB83RGGNNBQAAMHmgww
+        (envelope-from <colyli@suse.de>); Wed, 07 Sep 2022 17:15:57 +0000
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
+Subject: Re: [PATCH] bcache: limit create flash device size
+From:   Coly Li <colyli@suse.de>
+In-Reply-To: <20220907112913.16488-1-mingzhe.zou@easystack.cn>
+Date:   Thu, 8 Sep 2022 01:15:52 +0800
+Cc:     linux-bcache@vger.kernel.org, zoumingzhe@qq.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <AA4299A9-337A-4710-89DA-5C1E3520DA91@suse.de>
+References: <20220907112913.16488-1-mingzhe.zou@easystack.cn>
+To:     Mingzhe Zou <mingzhe.zou@easystack.cn>
+X-Mailer: Apple Mail (2.3696.120.41.1.1)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-ATTENTION
 
-BUSINESS PARTNER,
 
-I AM LUMAR CASEY WORKING WITH AN INSURANCE FINANCIAL INSTITUTE, WITH
-MY POSITION AND PRIVILEGES I WAS ABLE TO SOURCE OUT AN OVER DUE
-PAYMENT OF 12.8 MILLION POUNDS THAT IS NOW SECURED WITH A SHIPPING
-DIPLOMATIC OUTLET.
+> 2022=E5=B9=B49=E6=9C=887=E6=97=A5 19:29=EF=BC=8Cmingzhe.zou@easystack.cn=
+ =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> From: mingzhe <mingzhe.zou@easystack.cn>
+>=20
+> Currently, size is specified and not checked when creating a flash =
+device.
+> This will cause a problem, IO maybe hang when creating a flash device =
+with
+> the actual size of the device.
+>=20
+> ```
+> 	if (attr =3D=3D &sysfs_flash_vol_create) {
+> 		int r;
+> 		uint64_t v;
+>=20
+> 		strtoi_h_or_return(buf, v);
+>=20
+> 		r =3D bch_flash_dev_create(c, v);
+> 		if (r)
+> 			return r;
+> 	}
+> ```
+>=20
+> Because the flash device needs some space for superblock, journal and =
+btree.
+> If the size of data reaches the available size, the new IO cannot =
+allocate
+> space and will hang. At this time, the gc thread will be started =
+frequently.
+>=20
+> Even more unreasonable, we can create flash devices larger than actual =
+size.
+>=20
+> ```
+> [root@zou ~]# echo 2G > /sys/block/vdb/bcache/set/flash_vol_create
+> [root@zou ~]# lsblk /dev/vdb
+> NAME       MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+> vdb        252:16   0   1G  0 disk
+> =E2=94=94=E2=94=80bcache0  251:0    0   2G  0 disk
+> ```
+>=20
+> This patch will limit the size of flash device, reserving at least 5% =
+of
+> available size for the btree.
+>=20
+> ```
+> [root@zou ~]# echo 2G > /sys/block/vdb/bcache/set/flash_vol_create
+> [root@zou ~]# lsblk /dev/vdb
+> NAME       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+> vdb        252:16   0    1G  0 disk
+> =E2=94=94=E2=94=80bcache0  251:0    0  950M  0 disk
+> ```
+>=20
+> Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
+> ---
+> drivers/md/bcache/super.c | 13 ++++++++++++-
+> 1 file changed, 12 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index ba3909bb6bea..f41e09e0e8ee 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -1579,6 +1579,17 @@ static int flash_devs_run(struct cache_set *c)
+> 	return ret;
+> }
+>=20
 
-I AM SEEKING YOUR PARTNERSHIP TO RECEIVE THIS CONSIGNMENT AS AS MY
-PARTNER TO INVEST THIS FUND INTO A PROSPEROUS INVESTMENT VENTURE IN
-YOUR COUNTRY.
 
-I AWAIT YOUR REPLY TO ENABLE US PROCEED WITH THIS BUSINESS PARTNERSHIP TOGETHER.
+Hi Mingzhe,
 
-REGARDS,
+> +static inline sector_t flash_dev_max_sectors(struct cache_set *c)
+> +{
+> +	size_t avail_nbuckets;
+> +	struct cache *ca =3D c->cache;
+> +	size_t first_bucket =3D ca->sb.first_bucket;
+> +	size_t njournal_buckets =3D ca->sb.njournal_buckets;
+> +
+> +	avail_nbuckets =3D c->nbuckets - first_bucket - =
+njournal_buckets;
+> +	return bucket_to_sector(c, avail_nbuckets / 100 * 95);
+> +}
 
-LUMAR CASEY
+Overall I like this idea. This is really something I didn=E2=80=99t =
+realize to fix, nice catch!
+
+BTW, I feel 95% is still quite high rate, how about using 90%? And you =
+may define the rate as a macro in bcache.h.
+
+Thanks for this patch.
+
+Coly Li
+
+> +
+> int bch_flash_dev_create(struct cache_set *c, uint64_t size)
+> {
+> 	struct uuid_entry *u;
+> @@ -1600,7 +1611,7 @@ int bch_flash_dev_create(struct cache_set *c, =
+uint64_t size)
+> 	u->first_reg =3D u->last_reg =3D =
+cpu_to_le32((u32)ktime_get_real_seconds());
+>=20
+> 	SET_UUID_FLASH_ONLY(u, 1);
+> -	u->sectors =3D size >> 9;
+> +	u->sectors =3D min(flash_dev_max_sectors(c), size >> 9);
+>=20
+> 	bch_uuid_write(c);
+>=20
+> --=20
+> 2.17.1
+>=20
+
