@@ -2,32 +2,46 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E60525AF377
-	for <lists+linux-bcache@lfdr.de>; Tue,  6 Sep 2022 20:21:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 940515B0241
+	for <lists+linux-bcache@lfdr.de>; Wed,  7 Sep 2022 13:00:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229722AbiIFSVy (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 6 Sep 2022 14:21:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38102 "EHLO
+        id S229839AbiIGLAN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 7 Sep 2022 07:00:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229693AbiIFSVx (ORCPT
+        with ESMTP id S229817AbiIGLAM (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 6 Sep 2022 14:21:53 -0400
-Received: from out1.migadu.com (out1.migadu.com [91.121.223.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F60D98352;
-        Tue,  6 Sep 2022 11:21:52 -0700 (PDT)
-Date:   Tue, 6 Sep 2022 14:20:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1662488510;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Wed, 7 Sep 2022 07:00:12 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59ABD74372;
+        Wed,  7 Sep 2022 04:00:11 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0A82C2033D;
+        Wed,  7 Sep 2022 11:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1662548410; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=/bRlcVcrWdQKJLJipKk17c91ZfuMwNoEsJqygzANM10=;
-        b=e2VD/HcikFLJhe0V11ErS/Oin4ybn/TXkbGiMkiUOxLxKEWpdcoX4otQ2quaeh2xN9tkEz
-        gJSSZJlOcx5MH/FwRLBQM+nMzvd03D3L1jInmtTiFs1YUwF1FG/7tFAS2gRVdaASeb5tb9
-        7SVVXyTQbLTanYnVJHubYmXd6a/lpqA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Michal Hocko <mhocko@suse.com>
+        bh=HmaE7iOjn6DeLFkNOLr8ASPOm5MulkrwVeS3GjvYnFQ=;
+        b=XJuKUxE3K2H/o+zbOpLWLhtXEgxHdoiWAQxKGUR4cKIaV8UfyJO/UQK0u1N/Q0GiZv99Cx
+        kg8xGbUHizgdfJURCEVo7e1R7yjc93Oufl/51InNOknj8+BajqsA6lihzRcavskk7trfVf
+        XL6FEF6zeAMocGbRwpJqhrx4BFTASfU=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D477413486;
+        Wed,  7 Sep 2022 11:00:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id +m1RM7l5GGMSVwAAMHmgww
+        (envelope-from <mhocko@suse.com>); Wed, 07 Sep 2022 11:00:09 +0000
+Date:   Wed, 7 Sep 2022 13:00:09 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
 Cc:     Suren Baghdasaryan <surenb@google.com>,
         Mel Gorman <mgorman@suse.de>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -69,9 +83,8 @@ Cc:     Suren Baghdasaryan <surenb@google.com>,
         linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-Message-ID: <20220906182058.iijmpzu4rtxowy37@kmo-framework>
-References: <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
- <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
+Message-ID: <Yxh5ueDTAOcwEmCQ@dhcp22.suse.cz>
+References: <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
  <YxBc1xuGbB36f8zC@dhcp22.suse.cz>
  <CAJuCfpGhwPFYdkOLjwwD4ra9JxPqq1T5d1jd41Jy3LJnVnhNdg@mail.gmail.com>
  <YxEE1vOwRPdzKxoq@dhcp22.suse.cz>
@@ -80,57 +93,27 @@ References: <Yw88RFuBgc7yFYxA@dhcp22.suse.cz>
  <YxW4Ig338d2vQAz3@dhcp22.suse.cz>
  <20220905234649.525vorzx27ybypsn@kmo-framework>
  <Yxb1cxDSyte1Ut/F@dhcp22.suse.cz>
+ <20220906182058.iijmpzu4rtxowy37@kmo-framework>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yxb1cxDSyte1Ut/F@dhcp22.suse.cz>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220906182058.iijmpzu4rtxowy37@kmo-framework>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, Sep 06, 2022 at 09:23:31AM +0200, Michal Hocko wrote:
-> On Mon 05-09-22 19:46:49, Kent Overstreet wrote:
-> > On Mon, Sep 05, 2022 at 10:49:38AM +0200, Michal Hocko wrote:
-> > > This is really my main concern about this whole work. Not only it adds a
-> > > considerable maintenance burden to the core MM because
-> > 
-> > [citation needed]
-> 
-> I thought this was clear from the email content (the part you haven't
-> quoted here). But let me be explicit one more time for you.
-> 
-> I hope we can agree that in order for this kind of tracking to be useful
-> you need to cover _callers_ of the allocator or in the ideal world
-> the users/owner of the tracked memory (the later is sometimes much
-> harder/impossible to track when the memory is handed over from one peer
-> to another).
-> 
-> It is not particularly useful IMO to see that a large portion of the
-> memory has been allocated by say vmalloc or kvmalloc, right?  How
-> much does it really tell you that a lot of memory has been allocated
-> by kvmalloc or vmalloc? Yet, neither of the two is handled by the
-> proposed tracking and it would require additional code to be added and
-> _maintained_ to cover them. But that would be still far from complete,
-> we have bulk allocator, mempools etc.
+On Tue 06-09-22 14:20:58, Kent Overstreet wrote:
+[...]
+> Otherwise, saying "code has to be maintained" is a little bit like saying water
+> is wet, and we're all engineers here, I think we know that :)
 
-Of course - and even a light skimming of the patch set would see it does indeed
-address this. We still have to do vmalloc and percpu memory allocations, but
-slab is certainly handled and that's the big one.
-
-> As pointed above this just scales poorly and adds to the API space. Not
-> to mention that direct use of alloc_tag_add can just confuse layers
-> below which rely on the same thing.
-
-It might help you make your case if you'd say something about what you'd like
-better.
-
-Otherwise, saying "code has to be maintained" is a little bit like saying water
-is wet, and we're all engineers here, I think we know that :)
+Hmm, it seems that further discussion doesn't really make much sense
+here. I know how to use my time better.
+-- 
+Michal Hocko
+SUSE Labs
