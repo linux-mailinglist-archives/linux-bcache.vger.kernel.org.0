@@ -2,118 +2,129 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 940515B0241
-	for <lists+linux-bcache@lfdr.de>; Wed,  7 Sep 2022 13:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40EDD5B0333
+	for <lists+linux-bcache@lfdr.de>; Wed,  7 Sep 2022 13:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229839AbiIGLAN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 7 Sep 2022 07:00:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58626 "EHLO
+        id S230104AbiIGLhJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 7 Sep 2022 07:37:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229817AbiIGLAM (ORCPT
+        with ESMTP id S229999AbiIGLgt (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 7 Sep 2022 07:00:12 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59ABD74372;
-        Wed,  7 Sep 2022 04:00:11 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 0A82C2033D;
-        Wed,  7 Sep 2022 11:00:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1662548410; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HmaE7iOjn6DeLFkNOLr8ASPOm5MulkrwVeS3GjvYnFQ=;
-        b=XJuKUxE3K2H/o+zbOpLWLhtXEgxHdoiWAQxKGUR4cKIaV8UfyJO/UQK0u1N/Q0GiZv99Cx
-        kg8xGbUHizgdfJURCEVo7e1R7yjc93Oufl/51InNOknj8+BajqsA6lihzRcavskk7trfVf
-        XL6FEF6zeAMocGbRwpJqhrx4BFTASfU=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D477413486;
-        Wed,  7 Sep 2022 11:00:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id +m1RM7l5GGMSVwAAMHmgww
-        (envelope-from <mhocko@suse.com>); Wed, 07 Sep 2022 11:00:09 +0000
-Date:   Wed, 7 Sep 2022 13:00:09 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Liam R. Howlett" <liam.howlett@oracle.com>,
-        David Vernet <void@manifault.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, mcgrof@kernel.org,
-        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
-        ytcoode@gmail.com, Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Benjamin Segall <bsegall@google.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Christopher Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
-        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
-        Minchan Kim <minchan@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        kernel-team <kernel-team@android.com>,
-        linux-mm <linux-mm@kvack.org>, iommu@lists.linux.dev,
-        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
-Message-ID: <Yxh5ueDTAOcwEmCQ@dhcp22.suse.cz>
-References: <20220831190154.qdlsxfamans3ya5j@moria.home.lan>
- <YxBc1xuGbB36f8zC@dhcp22.suse.cz>
- <CAJuCfpGhwPFYdkOLjwwD4ra9JxPqq1T5d1jd41Jy3LJnVnhNdg@mail.gmail.com>
- <YxEE1vOwRPdzKxoq@dhcp22.suse.cz>
- <CAJuCfpHuzJGTA_-m0Jfawc7LgJLt4GztUUY4K9N9-7bFqJuXnw@mail.gmail.com>
- <20220901201502.sn6223bayzwferxv@moria.home.lan>
- <YxW4Ig338d2vQAz3@dhcp22.suse.cz>
- <20220905234649.525vorzx27ybypsn@kmo-framework>
- <Yxb1cxDSyte1Ut/F@dhcp22.suse.cz>
- <20220906182058.iijmpzu4rtxowy37@kmo-framework>
+        Wed, 7 Sep 2022 07:36:49 -0400
+X-Greylist: delayed 419 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 07 Sep 2022 04:36:25 PDT
+Received: from mail-m2837.qiye.163.com (mail-m2837.qiye.163.com [103.74.28.37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 280AA19C00
+        for <linux-bcache@vger.kernel.org>; Wed,  7 Sep 2022 04:36:24 -0700 (PDT)
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m2837.qiye.163.com (Hmail) with ESMTPA id B37B56003D5;
+        Wed,  7 Sep 2022 19:29:22 +0800 (CST)
+From:   mingzhe.zou@easystack.cn
+To:     colyli@suse.de, linux-bcache@vger.kernel.org
+Cc:     zoumingzhe@qq.com, mingzhe <mingzhe.zou@easystack.cn>
+Subject: [PATCH] bcache: limit create flash device size
+Date:   Wed,  7 Sep 2022 19:29:13 +0800
+Message-Id: <20220907112913.16488-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220906182058.iijmpzu4rtxowy37@kmo-framework>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSUkeVkwaSkJLTElDGB5CHlUZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKQ1VKS0tVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MBQ6ASo*TzITAT8oGAwYTxUB
+        NjowCj1VSlVKTU1JTk5LSk1ISUlCVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSElJQjcG
+X-HM-Tid: 0a8317b63dc9841fkuqwb37b56003d5
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue 06-09-22 14:20:58, Kent Overstreet wrote:
-[...]
-> Otherwise, saying "code has to be maintained" is a little bit like saying water
-> is wet, and we're all engineers here, I think we know that :)
+From: mingzhe <mingzhe.zou@easystack.cn>
 
-Hmm, it seems that further discussion doesn't really make much sense
-here. I know how to use my time better.
+Currently, size is specified and not checked when creating a flash device.
+This will cause a problem, IO maybe hang when creating a flash device with
+the actual size of the device.
+
+```
+	if (attr == &sysfs_flash_vol_create) {
+		int r;
+		uint64_t v;
+
+		strtoi_h_or_return(buf, v);
+
+		r = bch_flash_dev_create(c, v);
+		if (r)
+			return r;
+	}
+```
+
+Because the flash device needs some space for superblock, journal and btree.
+If the size of data reaches the available size, the new IO cannot allocate
+space and will hang. At this time, the gc thread will be started frequently.
+
+Even more unreasonable, we can create flash devices larger than actual size.
+
+```
+[root@zou ~]# echo 2G > /sys/block/vdb/bcache/set/flash_vol_create
+[root@zou ~]# lsblk /dev/vdb
+NAME       MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+vdb        252:16   0   1G  0 disk
+└─bcache0  251:0    0   2G  0 disk
+```
+
+This patch will limit the size of flash device, reserving at least 5% of
+available size for the btree.
+
+```
+[root@zou ~]# echo 2G > /sys/block/vdb/bcache/set/flash_vol_create
+[root@zou ~]# lsblk /dev/vdb
+NAME       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+vdb        252:16   0    1G  0 disk
+└─bcache0  251:0    0  950M  0 disk
+```
+
+Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/super.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index ba3909bb6bea..f41e09e0e8ee 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1579,6 +1579,17 @@ static int flash_devs_run(struct cache_set *c)
+ 	return ret;
+ }
+ 
++static inline sector_t flash_dev_max_sectors(struct cache_set *c)
++{
++	size_t avail_nbuckets;
++	struct cache *ca = c->cache;
++	size_t first_bucket = ca->sb.first_bucket;
++	size_t njournal_buckets = ca->sb.njournal_buckets;
++
++	avail_nbuckets = c->nbuckets - first_bucket - njournal_buckets;
++	return bucket_to_sector(c, avail_nbuckets / 100 * 95);
++}
++
+ int bch_flash_dev_create(struct cache_set *c, uint64_t size)
+ {
+ 	struct uuid_entry *u;
+@@ -1600,7 +1611,7 @@ int bch_flash_dev_create(struct cache_set *c, uint64_t size)
+ 	u->first_reg = u->last_reg = cpu_to_le32((u32)ktime_get_real_seconds());
+ 
+ 	SET_UUID_FLASH_ONLY(u, 1);
+-	u->sectors = size >> 9;
++	u->sectors = min(flash_dev_max_sectors(c), size >> 9);
+ 
+ 	bch_uuid_write(c);
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
