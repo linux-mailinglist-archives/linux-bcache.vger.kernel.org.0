@@ -2,141 +2,124 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E5845B1453
-	for <lists+linux-bcache@lfdr.de>; Thu,  8 Sep 2022 08:03:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 424FA5B14B4
+	for <lists+linux-bcache@lfdr.de>; Thu,  8 Sep 2022 08:36:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230039AbiIHGDC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 8 Sep 2022 02:03:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36308 "EHLO
+        id S230357AbiIHGgN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 8 Sep 2022 02:36:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230115AbiIHGC7 (ORCPT
+        with ESMTP id S229437AbiIHGgA (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 8 Sep 2022 02:02:59 -0400
-Received: from mail-m2838.qiye.163.com (mail-m2838.qiye.163.com [103.74.28.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA519CAC56
-        for <linux-bcache@vger.kernel.org>; Wed,  7 Sep 2022 23:02:56 -0700 (PDT)
-Received: from localhost.localdomain (unknown [218.94.118.90])
-        by mail-m2838.qiye.163.com (Hmail) with ESMTPA id 56F9D3C0109;
-        Thu,  8 Sep 2022 14:02:54 +0800 (CST)
-From:   mingzhe.zou@easystack.cn
-To:     colyli@suse.de, linux-bcache@vger.kernel.org
-Cc:     zoumingzhe@qq.com
-Subject: [PATCH v2] bcache: limit create flash device size
-Date:   Thu,  8 Sep 2022 14:02:52 +0800
-Message-Id: <20220908060252.11195-1-mingzhe.zou@easystack.cn>
-X-Mailer: git-send-email 2.17.1
+        Thu, 8 Sep 2022 02:36:00 -0400
+Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1EC1BE4E2;
+        Wed,  7 Sep 2022 23:35:58 -0700 (PDT)
+Date:   Thu, 8 Sep 2022 02:35:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1662618957;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jE7lXd8zCts/b8YEvdDXlJ5bev/XqPVvJNSIvscjpW4=;
+        b=MwAw2Fh829Y+/YeGPA6cd+g09bbtapNU9zRq06d/HsaMRntRRP6MbOYfQljjG1XjFWCvOk
+        g5bFgnPsu1HhGw2GHv2epjG5rpfLXTCK/UCnYQNU2I1noPA+19zOHe58qz47ue59dsiSE2
+        9ELesyPyEojCr6xzzvxPIlQ1Kgt58y4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Liam R. Howlett" <liam.howlett@oracle.com>,
+        David Vernet <void@manifault.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, mcgrof@kernel.org,
+        masahiroy@kernel.org, nathan@kernel.org, changbin.du@intel.com,
+        ytcoode@gmail.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Benjamin Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Christopher Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, 42.hyeyoo@gmail.com,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>, arnd@arndb.de,
+        jbaron@akamai.com, David Rientjes <rientjes@google.com>,
+        Minchan Kim <minchan@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        kernel-team <kernel-team@android.com>,
+        linux-mm <linux-mm@kvack.org>, iommu@lists.linux.dev,
+        kasan-dev@googlegroups.com, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-bcache@vger.kernel.org, linux-modules@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 00/30] Code tagging framework and applications
+Message-ID: <20220908063548.u4lqkhquuvkwzvda@kmo-framework>
+References: <YxEE1vOwRPdzKxoq@dhcp22.suse.cz>
+ <CAJuCfpHuzJGTA_-m0Jfawc7LgJLt4GztUUY4K9N9-7bFqJuXnw@mail.gmail.com>
+ <20220901201502.sn6223bayzwferxv@moria.home.lan>
+ <YxW4Ig338d2vQAz3@dhcp22.suse.cz>
+ <20220905234649.525vorzx27ybypsn@kmo-framework>
+ <Yxb1cxDSyte1Ut/F@dhcp22.suse.cz>
+ <20220906182058.iijmpzu4rtxowy37@kmo-framework>
+ <Yxh5ueDTAOcwEmCQ@dhcp22.suse.cz>
+ <20220907130323.rwycrntnckc6h43n@kmo-framework>
+ <20220907094306.3383dac2@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGhkdVkxOHR1OHx5DQkkeQlUZERMWGhIXJBQOD1
-        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKQ1VKS0tZBg++
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ODY6Sgw4VjILFT5LTws6K0sO
-        DCEKCyFVSlVKTU1JTUpNQkxPQ09JVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSE1OSjcG
-X-HM-Tid: 0a831bb1b49e8420kuqw56f9d3c0109
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220907094306.3383dac2@gandalf.local.home>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: mingzhe <mingzhe.zou@easystack.cn>
+On Wed, Sep 07, 2022 at 09:45:18AM -0400, Steven Rostedt wrote:
+> On Wed, 7 Sep 2022 09:04:28 -0400
+> Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> 
+> > On Wed, Sep 07, 2022 at 01:00:09PM +0200, Michal Hocko wrote:
+> > > Hmm, it seems that further discussion doesn't really make much sense
+> > > here. I know how to use my time better.  
+> > 
+> > Just a thought, but I generally find it more productive to propose ideas than to
+> > just be disparaging.
+> > 
+> 
+> But it's not Michal's job to do so. He's just telling you that the given
+> feature is not worth the burden. He's telling you the issues that he has
+> with the patch set. It's the submitter's job to address those concerns and
+> not the maintainer's to tell you how to make it better.
+> 
+> When Linus tells us that a submission is crap, we don't ask him how to make
+> it less crap, we listen to why he called it crap, and then rewrite to be
+> not so crappy. If we cannot figure it out, it doesn't get in.
 
-Currently, size is specified and not checked when creating a flash device.
-This will cause a problem, IO maybe hang when creating a flash device with
-the actual size of the device.
+When Linus tells someone a submission is crap, he _always_ has a sound, and
+_specific_ technical justification for doing so.
 
-```
-	if (attr == &sysfs_flash_vol_create) {
-		int r;
-		uint64_t v;
-
-		strtoi_h_or_return(buf, v);
-
-		r = bch_flash_dev_create(c, v);
-		if (r)
-			return r;
-	}
-```
-
-Because the flash device needs some space for superblock, journal and btree.
-If the size of data reaches the available size, the new IO cannot allocate
-space and will hang. At this time, the gc thread will be started frequently.
-
-Even more unreasonable, we can create flash devices larger than actual size.
-
-```
-[root@zou ~]# echo 2G > /sys/block/vdb/bcache/set/flash_vol_create
-[root@zou ~]# lsblk /dev/vdb
-NAME       MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
-vdb        252:16   0   1G  0 disk
-└─bcache0  251:0    0   2G  0 disk
-```
-
-This patch will limit the size of flash device, reserving a portion of
-available size for the btree, available ratio can be modified by macro.
-
-```
-[root@zou ~]# echo 2G > /sys/block/vdb/bcache/set/flash_vol_create
-[root@zou ~]# lsblk /dev/vdb
-NAME       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-vdb        252:16   0    1G  0 disk
-└─bcache0  251:0    0  900M  0 disk
-```
-
-Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
----
- drivers/md/bcache/bcache.h |  1 +
- drivers/md/bcache/super.c  | 13 ++++++++++++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 2acda9cea0f9..f4436229cd83 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -525,6 +525,7 @@ struct cache_set {
- 
- 	struct cache		*cache;
- 
-+#define FLASH_DEV_AVAILABLE_RATIO	90
- 	struct bcache_device	**devices;
- 	unsigned int		devices_max_used;
- 	atomic_t		attached_dev_nr;
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index ba3909bb6bea..214a384dc1d7 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1579,6 +1579,17 @@ static int flash_devs_run(struct cache_set *c)
- 	return ret;
- }
- 
-+static inline sector_t flash_dev_max_sectors(struct cache_set *c)
-+{
-+	size_t avail_nbuckets;
-+	struct cache *ca = c->cache;
-+	size_t first_bucket = ca->sb.first_bucket;
-+	size_t njournal_buckets = ca->sb.njournal_buckets;
-+
-+	avail_nbuckets = c->nbuckets - first_bucket - njournal_buckets;
-+	return bucket_to_sector(c, avail_nbuckets / 100 * FLASH_DEV_AVAILABLE_RATIO);
-+}
-+
- int bch_flash_dev_create(struct cache_set *c, uint64_t size)
- {
- 	struct uuid_entry *u;
-@@ -1600,7 +1611,7 @@ int bch_flash_dev_create(struct cache_set *c, uint64_t size)
- 	u->first_reg = u->last_reg = cpu_to_le32((u32)ktime_get_real_seconds());
- 
- 	SET_UUID_FLASH_ONLY(u, 1);
--	u->sectors = size >> 9;
-+	u->sectors = min(flash_dev_max_sectors(c), size >> 9);
- 
- 	bch_uuid_write(c);
- 
--- 
-2.17.1
-
+"This code is going to be a considerable maintenance burden" is vapid, and lazy.
+It's the kind of feedback made by someone who has looked at the number of lines
+of code a patch touches and not much more.
