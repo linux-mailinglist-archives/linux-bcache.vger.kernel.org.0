@@ -2,45 +2,45 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECEFE5BBDB2
-	for <lists+linux-bcache@lfdr.de>; Sun, 18 Sep 2022 14:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C60065BBDB6
+	for <lists+linux-bcache@lfdr.de>; Sun, 18 Sep 2022 14:17:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbiIRMIR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 18 Sep 2022 08:08:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39026 "EHLO
+        id S229608AbiIRMQ5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 18 Sep 2022 08:16:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbiIRMIQ (ORCPT
+        with ESMTP id S229591AbiIRMQ5 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 18 Sep 2022 08:08:16 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8043D23142
-        for <linux-bcache@vger.kernel.org>; Sun, 18 Sep 2022 05:08:15 -0700 (PDT)
+        Sun, 18 Sep 2022 08:16:57 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D89801D0E2
+        for <linux-bcache@vger.kernel.org>; Sun, 18 Sep 2022 05:16:55 -0700 (PDT)
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 333F121F5F;
-        Sun, 18 Sep 2022 12:08:14 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 559CA1FE81;
+        Sun, 18 Sep 2022 12:16:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1663502894; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1663503414; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=eoY/UHQ81tiKfOfU8EMUh/zrjeXRpMTHB+9TCToFEBQ=;
-        b=e+WRP4ZO0fIGhiOk0+MqrByYYsq8b+fnMezddzqsyXZ8YxnXUnTLUsoKzS46Em3rKer8MN
-        HQ2plyzcH41Do6zaotnA9lfZT9n40A8Enf2pxj1A6hqsUGj1E/B7hdW9zxA6UjWUgtdrCr
-        YjWK5jrnjr1dTwqgEY1JtZcvhPgnJWI=
+        bh=8NPmqu6IVK+pEduNt/Ry1EfjDdCYrWaKS+In+p9/Mg0=;
+        b=lxHVSLIknFUsv+ShTrEsEKbaCkbx5YvJ9b9xQBY004fs8/1n5LAoqNlRvrDAixob+/hLlX
+        3FR3He4kDw94brVJV7MKpnahyV4A2A58ZA/pbRmzGXDSWyYoZYm6g68+pWs2mfxs7OD5Ia
+        7qGnvMQEOhoiNVBVpWO5nBQ2zWY3DjA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1663502894;
+        s=susede2_ed25519; t=1663503414;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=eoY/UHQ81tiKfOfU8EMUh/zrjeXRpMTHB+9TCToFEBQ=;
-        b=mt2pG/ThtA9zzUB711XgoL6nJt+vJhgifglLVbUpW33Pb1UPOVFFVe5/ctdO/SxYCj8d7V
-        UGdY9xSciKknlSDA==
+        bh=8NPmqu6IVK+pEduNt/Ry1EfjDdCYrWaKS+In+p9/Mg0=;
+        b=k6UQwJRigMtruJ1F/Pj8RW/bo8pHoGrdza8WKop1RvSs1/QxeyUln7zh+Vx11jMZKM0qqe
+        9zUFKADlpqHXIqDg==
 Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id 8E7ED2C141;
-        Sun, 18 Sep 2022 12:08:10 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTP id BD6AE2C141;
+        Sun, 18 Sep 2022 12:16:52 +0000 (UTC)
 From:   Coly Li <colyli@suse.de>
 To:     linux-bcache@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>, Mingzhe Zou <mingzhe.zou@easystack.cn>
-Subject: [PATCH] bcache: fix set_at_max_writeback_rate() for multiple attached devices
-Date:   Sun, 18 Sep 2022 20:07:59 +0800
-Message-Id: <20220918120759.102723-1-colyli@suse.de>
+Subject: [PATCH v2] bcache: fix set_at_max_writeback_rate() for multiple attached devices
+Date:   Sun, 18 Sep 2022 20:16:47 +0800
+Message-Id: <20220918121647.103458-1-colyli@suse.de>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -71,11 +71,16 @@ routine idle_counter_exceeded() is added to make code be more clear.
 Reported-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/writeback.c | 74 ++++++++++++++++++++++++-----------
- 1 file changed, 52 insertions(+), 22 deletions(-)
+Changelog:
+v2: Add the missing "!atomic_read(&c->at_max_writeback_rate)" part
+    back.
+v1: Original verison.
+
+ drivers/md/bcache/writeback.c | 73 +++++++++++++++++++++++++----------
+ 1 file changed, 52 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 647661005176..c8a7dd48cd9b 100644
+index 647661005176..c186bf55fe61 100644
 --- a/drivers/md/bcache/writeback.c
 +++ b/drivers/md/bcache/writeback.c
 @@ -157,6 +157,53 @@ static void __update_writeback_rate(struct cached_dev *dc)
@@ -156,7 +161,7 @@ index 647661005176..c8a7dd48cd9b 100644
  		return false;
  
  	if (atomic_read(&c->at_max_writeback_rate) != 1)
-@@ -195,14 +229,10 @@ static bool set_at_max_writeback_rate(struct cache_set *c,
+@@ -195,13 +229,10 @@ static bool set_at_max_writeback_rate(struct cache_set *c,
  	dc->writeback_rate_change = 0;
  
  	/*
@@ -169,11 +174,10 @@ index 647661005176..c8a7dd48cd9b 100644
  	 */
 -	if ((atomic_read(&c->idle_counter) <
 -	     atomic_read(&c->attached_dev_nr) * 6) ||
--	    !atomic_read(&c->at_max_writeback_rate))
-+	if (!idle_counter_exceeded(c))
++	if (!idle_counter_exceeded(c) ||
+ 	    !atomic_read(&c->at_max_writeback_rate))
  		return false;
  
- 	return true;
 -- 
 2.35.3
 
