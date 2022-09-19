@@ -2,186 +2,101 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D75B75BD20B
-	for <lists+linux-bcache@lfdr.de>; Mon, 19 Sep 2022 18:17:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C04E45BD36B
+	for <lists+linux-bcache@lfdr.de>; Mon, 19 Sep 2022 19:14:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbiISQRu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 19 Sep 2022 12:17:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45746 "EHLO
+        id S229735AbiISROH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 19 Sep 2022 13:14:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229799AbiISQRr (ORCPT
+        with ESMTP id S231225AbiISRNR (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 19 Sep 2022 12:17:47 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAAE83AB0B;
-        Mon, 19 Sep 2022 09:17:42 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id DA69621AC2;
-        Mon, 19 Sep 2022 16:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1663604260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yavwVdcOwkRxq1Ojd2Q5m3eBvPT2tJIyu1OTolveTFg=;
-        b=Id/6pHorgKV/uVLtSDuL6dNJbNYvLeDHqBhywBS5tKkRIvASI71aDhom3pbjo9ZlbUso33
-        YFxLZ9bowWDIbenZWMf6NvZ8oJOSbzaOmYYp7PaSJw8fUEWospbUaeBafMfc0j4fPYUXHG
-        IX7MfvOfFDAxf4NH5/nBPN3kanZ1neI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1663604260;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yavwVdcOwkRxq1Ojd2Q5m3eBvPT2tJIyu1OTolveTFg=;
-        b=QpPl8hDmepPD/m4FEGIjeV7ha0adbbyB5ysqmZUh+DyuE8cTfFWNUdpcihQ/CshDOK2Sl0
-        cSppWng/hMtfpuCA==
-Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id 83DEE2C141;
-        Mon, 19 Sep 2022 16:17:36 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     axboe@kernel.dk
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>,
-        Mingzhe Zou <mingzhe.zou@easystack.cn>
-Subject: [PATCH 5/5] bcache: fix set_at_max_writeback_rate() for multiple attached devices
-Date:   Tue, 20 Sep 2022 00:16:47 +0800
-Message-Id: <20220919161647.81238-6-colyli@suse.de>
-X-Mailer: git-send-email 2.35.3
+        Mon, 19 Sep 2022 13:13:17 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A1EC3C160
+        for <linux-bcache@vger.kernel.org>; Mon, 19 Sep 2022 10:12:52 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id k9so15138305ils.12
+        for <linux-bcache@vger.kernel.org>; Mon, 19 Sep 2022 10:12:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date;
+        bh=isFqxYJS0Ih2m1cQEE/2UjOIr1qkpqnToPzi0naES18=;
+        b=cRgoJ9/zZiUayTqe5THraccN+zuECYLtzSk2ttJDhyPy4lH49fbFQu/z5Lqby4K4GZ
+         RSZ8gMuUcx0iSNtbi3bjMoguFrgdEV+bh3rqLdADfaXyHJ9zIXVrdOM/iMmJ66GB+qyH
+         7wxp86wjzPTK9UrCsdW0Cfirwcw7SdQl6RCtTwY7ZMOJsYJnt0aSb1ue76BPfd/7vx4K
+         KwYF0P/jpLEUFBbzygxeClTgAsYdtB2mxByA3nfuK+QufrneoqSV9aX8x7c6XTd+stH2
+         dLYsFbB6te9SBTJ3L8qDRZRNC+pN3v4HIYB9YEwB64Km6ZjFJblmrrSllnPI50CGhK+H
+         kEQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=isFqxYJS0Ih2m1cQEE/2UjOIr1qkpqnToPzi0naES18=;
+        b=5ufUe6Be9Im3IOawenbSD/FLpiMU33lE1HlKRFhI1BDJXKUuOVrZB9Tf3xMevhoeKh
+         q2DGW1/DmdQcbUA6z3M+O6sbolsjxgy9VwMcIuUnlt3L1GrDZPKsNFhjpXQLHdbsgEub
+         6F9lOmcXkChtvXV1GkUt+ykE2nzjj7BMT3mfWQqWag6DqEPHBHaYy55QcSVRpnRqP/BY
+         aC0klkDlA6+7MNaCI8YZQWmJkjIsOnTAnW0FBSacFOZjPo2urO1wnBeevJa/TfQjkIw2
+         ESeAbT/wvMmNm1P8Fdqp4e//9QI66mB3FQeGE7Cw1DGWvV6sxyvsRkzovqpxvP/G1et8
+         WfeQ==
+X-Gm-Message-State: ACrzQf2mOHfnchr/HHM0YOP3GcW+lsSh2oPAk8yLOfmARHtYw8gIPxid
+        bxG+8hOGMF0KA55fAkwwprI4Pw==
+X-Google-Smtp-Source: AMsMyM4VKFA6gmD9GzgAsEzHhgIdT3ZLUDquZvpLKy03aFVmB1pIVeBLkFenBtK2NZ0b5tjh7f2TlA==
+X-Received: by 2002:a05:6e02:ec7:b0:2f5:4c1:5208 with SMTP id i7-20020a056e020ec700b002f504c15208mr6060138ilk.178.1663607571422;
+        Mon, 19 Sep 2022 10:12:51 -0700 (PDT)
+Received: from [127.0.0.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id n2-20020a056638110200b003580ab611a2sm5662875jal.93.2022.09.19.10.12.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Sep 2022 10:12:50 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org
 In-Reply-To: <20220919161647.81238-1-colyli@suse.de>
 References: <20220919161647.81238-1-colyli@suse.de>
+Subject: Re: [PATCH 0/5] bcache patches for Linux v6.1
+Message-Id: <166360757047.16805.18160063101665809906.b4-ty@kernel.dk>
+Date:   Mon, 19 Sep 2022 11:12:50 -0600
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Mailer: b4 0.10.0-dev-355bd
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Inside set_at_max_writeback_rate() the calculation in following if()
-check is wrong,
-	if (atomic_inc_return(&c->idle_counter) <
-	    atomic_read(&c->attached_dev_nr) * 6)
+On Tue, 20 Sep 2022 00:16:42 +0800, Coly Li wrote:
+> This is the 1st wave bcache patches for Linux v6.1.
+> 
+> The patch from me fixes a calculation mistake reported by Mingzhe Zou,
+> now the idle time to wait before setting maximum writeback rate can be
+> increased when more backing devices attached.
+> 
+> And we also have other code cleanup patches from Jilin Yuan,
+> Jules Maselbas, Lei Li and Lin Feng.
+> 
+> [...]
 
-Because each attached backing device has its own writeback thread
-running and increasing c->idle_counter, the counter increates much
-faster than expected. The correct calculation should be,
-	(counter / dev_nr) < dev_nr * 6
-which equals to,
-	counter < dev_nr * dev_nr * 6
+Applied, thanks!
 
-This patch fixes the above mistake with correct calculation, and helper
-routine idle_counter_exceeded() is added to make code be more clear.
+[1/5] bcache: remove unnecessary flush_workqueue
+      commit: 97d26ae764a43bfaf870312761a0a0f9b49b6351
+[2/5] bcache: remove unused bch_mark_cache_readahead function def in stats.h
+      commit: d86b4e6dc88826f2b5cfa90c4ebbccb19a88bc39
+[3/5] bcache: bset: Fix comment typos
+      commit: 11e529ccea33f24af6b54fe10bb3be9c1c48eddb
+[4/5] bcache:: fix repeated words in comments
+      commit: 6dd3be6923eec2c49860e7292e4e2783c74a9dff
+[5/5] bcache: fix set_at_max_writeback_rate() for multiple attached devices
+      commit: d2d05b88035d2d51a5bb6c5afec88a0880c73df4
 
-Reported-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
-Signed-off-by: Coly Li <colyli@suse.de>
-Acked-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
----
- drivers/md/bcache/writeback.c | 73 +++++++++++++++++++++++++----------
- 1 file changed, 52 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 647661005176..c186bf55fe61 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -157,6 +157,53 @@ static void __update_writeback_rate(struct cached_dev *dc)
- 	dc->writeback_rate_target = target;
- }
- 
-+static bool idle_counter_exceeded(struct cache_set *c)
-+{
-+	int counter, dev_nr;
-+
-+	/*
-+	 * If c->idle_counter is overflow (idel for really long time),
-+	 * reset as 0 and not set maximum rate this time for code
-+	 * simplicity.
-+	 */
-+	counter = atomic_inc_return(&c->idle_counter);
-+	if (counter <= 0) {
-+		atomic_set(&c->idle_counter, 0);
-+		return false;
-+	}
-+
-+	dev_nr = atomic_read(&c->attached_dev_nr);
-+	if (dev_nr == 0)
-+		return false;
-+
-+	/*
-+	 * c->idle_counter is increased by writeback thread of all
-+	 * attached backing devices, in order to represent a rough
-+	 * time period, counter should be divided by dev_nr.
-+	 * Otherwise the idle time cannot be larger with more backing
-+	 * device attached.
-+	 * The following calculation equals to checking
-+	 *	(counter / dev_nr) < (dev_nr * 6)
-+	 */
-+	if (counter < (dev_nr * dev_nr * 6))
-+		return false;
-+
-+	return true;
-+}
-+
-+/*
-+ * Idle_counter is increased every time when update_writeback_rate() is
-+ * called. If all backing devices attached to the same cache set have
-+ * identical dc->writeback_rate_update_seconds values, it is about 6
-+ * rounds of update_writeback_rate() on each backing device before
-+ * c->at_max_writeback_rate is set to 1, and then max wrteback rate set
-+ * to each dc->writeback_rate.rate.
-+ * In order to avoid extra locking cost for counting exact dirty cached
-+ * devices number, c->attached_dev_nr is used to calculate the idle
-+ * throushold. It might be bigger if not all cached device are in write-
-+ * back mode, but it still works well with limited extra rounds of
-+ * update_writeback_rate().
-+ */
- static bool set_at_max_writeback_rate(struct cache_set *c,
- 				       struct cached_dev *dc)
- {
-@@ -167,21 +214,8 @@ static bool set_at_max_writeback_rate(struct cache_set *c,
- 	/* Don't set max writeback rate if gc is running */
- 	if (!c->gc_mark_valid)
- 		return false;
--	/*
--	 * Idle_counter is increased everytime when update_writeback_rate() is
--	 * called. If all backing devices attached to the same cache set have
--	 * identical dc->writeback_rate_update_seconds values, it is about 6
--	 * rounds of update_writeback_rate() on each backing device before
--	 * c->at_max_writeback_rate is set to 1, and then max wrteback rate set
--	 * to each dc->writeback_rate.rate.
--	 * In order to avoid extra locking cost for counting exact dirty cached
--	 * devices number, c->attached_dev_nr is used to calculate the idle
--	 * throushold. It might be bigger if not all cached device are in write-
--	 * back mode, but it still works well with limited extra rounds of
--	 * update_writeback_rate().
--	 */
--	if (atomic_inc_return(&c->idle_counter) <
--	    atomic_read(&c->attached_dev_nr) * 6)
-+
-+	if (!idle_counter_exceeded(c))
- 		return false;
- 
- 	if (atomic_read(&c->at_max_writeback_rate) != 1)
-@@ -195,13 +229,10 @@ static bool set_at_max_writeback_rate(struct cache_set *c,
- 	dc->writeback_rate_change = 0;
- 
- 	/*
--	 * Check c->idle_counter and c->at_max_writeback_rate agagain in case
--	 * new I/O arrives during before set_at_max_writeback_rate() returns.
--	 * Then the writeback rate is set to 1, and its new value should be
--	 * decided via __update_writeback_rate().
-+	 * In case new I/O arrives during before
-+	 * set_at_max_writeback_rate() returns.
- 	 */
--	if ((atomic_read(&c->idle_counter) <
--	     atomic_read(&c->attached_dev_nr) * 6) ||
-+	if (!idle_counter_exceeded(c) ||
- 	    !atomic_read(&c->at_max_writeback_rate))
- 		return false;
- 
+Best regards,
 -- 
-2.35.3
+Jens Axboe
+
 
