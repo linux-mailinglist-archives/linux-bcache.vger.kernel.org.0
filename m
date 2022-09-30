@@ -2,38 +2,41 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 223E25F0708
-	for <lists+linux-bcache@lfdr.de>; Fri, 30 Sep 2022 11:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB9685F0709
+	for <lists+linux-bcache@lfdr.de>; Fri, 30 Sep 2022 11:02:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbiI3JCZ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 30 Sep 2022 05:02:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58472 "EHLO
+        id S231286AbiI3JC3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 30 Sep 2022 05:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231293AbiI3JCW (ORCPT
+        with ESMTP id S231303AbiI3JCX (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 30 Sep 2022 05:02:22 -0400
+        Fri, 30 Sep 2022 05:02:23 -0400
 Received: from mail-m3164.qiye.163.com (mail-m3164.qiye.163.com [103.74.31.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 480301F9CAE
-        for <linux-bcache@vger.kernel.org>; Fri, 30 Sep 2022 02:02:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C701FBC86
+        for <linux-bcache@vger.kernel.org>; Fri, 30 Sep 2022 02:02:18 -0700 (PDT)
 Received: from localhost.localdomain (unknown [218.94.118.90])
-        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id D97EF6202F3;
-        Fri, 30 Sep 2022 17:02:14 +0800 (CST)
+        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id AFCF86202EF;
+        Fri, 30 Sep 2022 17:02:15 +0800 (CST)
 From:   mingzhe.zou@easystack.cn
 To:     colyli@suse.de, linux-bcache@vger.kernel.org
 Cc:     zoumingzhe@qq.com, dongsheng.yang@easystack.cn
-Subject: [PATCH 2/3] bcache: support QoS for the writeback_rate of cache_set
-Date:   Fri, 30 Sep 2022 17:02:12 +0800
-Message-Id: <20220930090213.11072-2-mingzhe.zou@easystack.cn>
+Subject: [PATCH 3/3] bcache: make writeback inflight configurable in sysfs
+Date:   Fri, 30 Sep 2022 17:02:13 +0800
+Message-Id: <20220930090213.11072-3-mingzhe.zou@easystack.cn>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220930090213.11072-1-mingzhe.zou@easystack.cn>
 References: <20220930090213.11072-1-mingzhe.zou@easystack.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkZQ0lIVktMGR8dSE8ZTUhMHVUZERMWGhIXJBQOD1
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDHR1JVhpLTUgYHRgaTExCSVUZERMWGhIXJBQOD1
         lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pkk6TTo4LDIcARwrLwsxKTUK
-        UQoaC05VSlVKTU1PTklDTkhOTU1JVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSktKSU83Bg++
-X-HM-Tid: 0a838da1cdd800a4kurmd97ef6202f3
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ogg6TQw6DjINLxwiAQlNKTcw
+        SiEKCQJVSlVKTU1PTklDTkhNTEhPVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTEpLTjcG
+X-HM-Tid: 0a838da1d11700a4kurmafcf86202ef
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -42,269 +45,188 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: mingzhe <mingzhe.zou@easystack.cn>
+From: Dongsheng Yang <dongsheng.yang@easystack.cn>
 
-The PI controller of the writeback thread takes backing as
-the control object, but it cannot specify the upper limit.
+This commit introduce a new sysfs file:
+/sys/block/bcache0/bcache/writeback_inflight (read only)
+/sys/block/bcache0/bcache/writeback_inflight_max (read write)
 
-If the backing device is not an independent disk, too fast
-writeback will also affect other business IO. For example,
-when rbd is used as the backing device, the writeback_rate
-is not limited, the ceph cluster will appear slow_request.
+(1) read the writeback_inflight will output the current inflight writeback op.
+(2）read the writeback_inflight_max will output the max number of writeback inflight.
+(3) write the writeback_inflight_max can set the max number of writeback inflight,
+valid range is [1, INT_MAX).
 
-This patch supports QoS for the writeback of cache_set.
+E.g:
+ $ ll /sys/block/bcache0/bcache/writeback_inflight*
+-r--r--r-- 1 root root 4096 Oct 27 08:45 /sys/block/bcache0/bcache/writeback_inflight
+-rw-r--r-- 1 root root 4096 Oct 27 08:45 /sys/block/bcache0/bcache/writeback_inflight_max
+ $ cat /sys/block/bcache0/bcache/writeback_inflight
+0
+ $ cat /sys/block/bcache0/bcache/writeback_inflight_max
+64
+ $ echo 1024 > /sys/block/bcache0/bcache/writeback_inflight_max
+ $ cat /sys/block/bcache0/bcache/writeback_inflight_max
+1024
 
+Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
 ---
- drivers/md/bcache/bcache.h    |  9 ++++
- drivers/md/bcache/super.c     | 11 ++++
- drivers/md/bcache/sysfs.c     | 18 +++++++
- drivers/md/bcache/writeback.c | 99 +++++++++++++++++++++++++++++++++++
- drivers/md/bcache/writeback.h |  9 ++++
- 5 files changed, 146 insertions(+)
+ drivers/md/bcache/bcache.h    |  6 ++++-
+ drivers/md/bcache/sysfs.c     | 20 ++++++++++++++++
+ drivers/md/bcache/writeback.c | 43 ++++++++++++++++++++++++++++++++---
+ 3 files changed, 65 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 4e1d2cd169cf..f1ea639defbe 100644
+index f1ea639defbe..82a6a2d293d0 100644
 --- a/drivers/md/bcache/bcache.h
 +++ b/drivers/md/bcache/bcache.h
-@@ -719,6 +719,15 @@ struct cache_set {
- 	atomic_long_t		writeback_counter;
+@@ -337,7 +337,11 @@ struct cached_dev {
  	struct delayed_work	writeback_rate_update;
  
-+	uint64_t		writeback_qos_bw;
-+	uint64_t		writeback_qos_io;
-+	uint64_t		writeback_qos_time;
-+	atomic_long_t		writeback_token_bw;
-+	atomic_long_t		writeback_token_io;
-+	spinlock_t		writeback_qos_lock;
-+	wait_queue_head_t	writeback_qos_wait;
-+	struct delayed_work	writeback_qos_update;
+ 	/* Limit number of writeback bios in flight */
+-	struct semaphore	in_flight;
++	atomic_t		wb_inflight;
++	unsigned long		wb_inflight_max;
++	spinlock_t		wb_inflight_lock;
++	wait_queue_head_t	wb_inflight_wait;
 +
- 	atomic_long_t		reclaim;
- 	atomic_long_t		reclaimed_journal_buckets;
- 	atomic_long_t		flush_write;
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 9db8dbe0d05c..496fa46aaf28 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1912,6 +1912,17 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
- 			  cache_set_update_writeback_rate);
- 	schedule_delayed_work(&c->writeback_rate_update, HZ);
+ 	struct task_struct	*writeback_thread;
+ 	struct workqueue_struct	*writeback_write_wq;
  
-+	c->writeback_qos_time	= local_clock();
-+	c->writeback_qos_bw	= WRITEBACK_QOS_BW_DEFAULT;
-+	c->writeback_qos_io	= WRITEBACK_QOS_IOPS_DEFAULT;
-+	atomic_long_set(&c->writeback_token_bw, WRITEBACK_QOS_BW_DEFAULT);
-+	atomic_long_set(&c->writeback_token_io, WRITEBACK_QOS_IOPS_DEFAULT);
-+	spin_lock_init(&c->writeback_qos_lock);
-+	init_waitqueue_head(&c->writeback_qos_wait);
-+	INIT_DELAYED_WORK(&c->writeback_qos_update,
-+			  cache_set_update_writeback_qos);
-+	schedule_delayed_work(&c->writeback_qos_update, HZ);
-+
- 	bch_moving_init_cache_set(c);
- 
- 	INIT_LIST_HEAD(&c->list);
 diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index 81eb7a70295a..f3f8fce74fab 100644
+index f3f8fce74fab..8d1a86249f99 100644
 --- a/drivers/md/bcache/sysfs.c
 +++ b/drivers/md/bcache/sysfs.c
-@@ -101,6 +101,8 @@ read_attribute(flush_write);
- read_attribute(writeback_keys_done);
- read_attribute(writeback_keys_failed);
- read_attribute(cache_writeback_rate);
-+rw_attribute(cache_writeback_qos_bw);
-+rw_attribute(cache_writeback_qos_iops);
- read_attribute(io_errors);
- read_attribute(congested);
- read_attribute(cutoff_writeback);
-@@ -770,6 +772,8 @@ SHOW(__bch_cache_set)
- 	sysfs_print(writeback_keys_failed,
- 		    atomic_long_read(&c->writeback_keys_failed));
- 	sysfs_hprint(cache_writeback_rate, c->writeback_rate);
-+	sysfs_hprint(cache_writeback_qos_bw, c->writeback_qos_bw);
-+	sysfs_print(cache_writeback_qos_iops, c->writeback_qos_io);
+@@ -120,6 +120,8 @@ rw_attribute(writeback_running);
+ rw_attribute(writeback_percent);
+ rw_attribute(writeback_delay);
+ rw_attribute(writeback_rate);
++read_attribute(writeback_inflight);
++rw_attribute(writeback_inflight_max);
+ rw_attribute(writeback_consider_fragment);
  
- 	if (attr == &sysfs_errors)
- 		return bch_snprint_string_list(buf, PAGE_SIZE, error_actions,
-@@ -933,6 +937,18 @@ STORE(__bch_cache_set)
- 	 */
- 	sysfs_strtoul_clamp(gc_after_writeback, c->gc_after_writeback, 0, 1);
+ rw_attribute(writeback_rate_update_seconds);
+@@ -204,6 +206,8 @@ SHOW(__bch_cached_dev)
+ 	var_printf(writeback_consider_fragment,	"%i");
+ 	var_print(writeback_delay);
+ 	var_print(writeback_percent);
++	sysfs_printf(writeback_inflight, "%i", atomic_read(&dc->wb_inflight));
++	sysfs_printf(writeback_inflight_max, "%li", dc->wb_inflight_max);
+ 	sysfs_hprint(writeback_rate,
+ 		     wb ? atomic_long_read(&dc->writeback_rate.rate) << 9 : 0);
+ 	sysfs_printf(io_errors,		"%i", atomic_read(&dc->io_errors));
+@@ -451,6 +455,20 @@ STORE(__cached_dev)
+ 	if (attr == &sysfs_detach && dc->disk.c)
+ 		bch_cached_dev_detach(dc);
  
-+	sysfs_strtoul_clamp(cache_writeback_qos_iops,
-+			    c->writeback_qos_io,
-+			    WRITEBACK_QOS_IOPS_MIN,
-+			    WRITEBACK_QOS_IOPS_MAX);
-+	if (attr == &sysfs_cache_writeback_qos_bw) {
-+		uint64_t v;
-+		strtoi_h_or_return(buf, v);
-+		c->writeback_qos_bw = clamp_t(uint64_t, v,
-+					      WRITEBACK_QOS_BW_MIN,
-+					      WRITEBACK_QOS_BW_MAX);
++	if (attr == &sysfs_writeback_inflight_max) {
++		ssize_t ret;
++		unsigned long v;
++
++		ret = strtoul_safe_clamp(buf, v, 1, INT_MAX);
++		if (ret)
++			return ret;
++
++		spin_lock(&dc->wb_inflight_lock);
++		dc->wb_inflight_max = v;
++		spin_unlock(&dc->wb_inflight_lock);
++		wake_up(&dc->wb_inflight_wait);
 +	}
 +
- 	return size;
- }
- STORE_LOCKED(bch_cache_set)
-@@ -984,6 +1000,8 @@ static struct attribute *bch_cache_set_attrs[] = {
- 	&sysfs_clear_stats,
+ 	if (attr == &sysfs_stop)
+ 		bcache_device_stop(&dc->disk);
  
- 	&sysfs_cache_writeback_rate,
-+	&sysfs_cache_writeback_qos_bw,
-+	&sysfs_cache_writeback_qos_iops,
- 	NULL
- };
- ATTRIBUTE_GROUPS(bch_cache_set);
+@@ -517,6 +535,8 @@ static struct attribute *bch_cached_dev_attrs[] = {
+ 	&sysfs_writeback_running,
+ 	&sysfs_writeback_delay,
+ 	&sysfs_writeback_percent,
++	&sysfs_writeback_inflight,
++	&sysfs_writeback_inflight_max,
+ 	&sysfs_writeback_rate,
+ 	&sysfs_writeback_consider_fragment,
+ 	&sysfs_writeback_rate_update_seconds,
 diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 3174e333fd5f..7f60800e9f5f 100644
+index 7f60800e9f5f..6c33c2ad2e8d 100644
 --- a/drivers/md/bcache/writeback.c
 +++ b/drivers/md/bcache/writeback.c
-@@ -305,6 +305,90 @@ void cache_set_update_writeback_rate(struct work_struct *work)
- 	schedule_delayed_work(&c->writeback_rate_update, HZ);
+@@ -428,6 +428,7 @@ static void dirty_io_destructor(struct closure *cl)
+ 	kfree(io);
  }
  
-+static inline bool cache_set_writeback_should_wait(struct cache_set *c)
-+{
-+	if (atomic_long_read(&c->writeback_token_bw) < 0)
-+		return true;
-+	if (atomic_long_read(&c->writeback_token_io) < 0)
-+		return true;
-+
-+	return false;
-+}
-+
-+static inline bool cache_set_writeback_qos_control(struct cache_set *c)
-+{
-+	int64_t delta_bw, delta_io, token_bw, token_io;
-+	uint64_t clock, delta;
-+
-+	/*
-+	 * The cache_set_writeback_qos_control() can be called
-+	 * at the same time, so it needs to be locked.
-+	 */
-+	spin_lock(&c->writeback_qos_lock);
-+
-+	clock = local_clock();
-+	delta = clock - c->writeback_qos_time;
-+	delta = div64_u64(clock - c->writeback_qos_time, NSEC_PER_MSEC);
-+	if (delta >= WRITEBACK_QOS_UPDATE_MSECS_MIN) {
-+		c->writeback_qos_time = clock;
-+		delta = min_t(uint64_t, delta, MSEC_PER_SEC);
-+		delta_bw = div64_u64(c->writeback_qos_bw * delta, MSEC_PER_SEC);
-+		delta_io = div64_u64(c->writeback_qos_io * delta, MSEC_PER_SEC);
-+		token_bw = atomic_long_read(&c->writeback_token_bw) + delta_bw;
-+		token_io = atomic_long_read(&c->writeback_token_io) + delta_io;
-+		/*
-+		 * The number of tokens in the token bucket should
-+		 * not be greater than the increment of the token.
-+		 * Otherwise, the token will keep increasing when
-+		 * there is no dirty data to writeback.
-+		 */
-+		atomic_long_set(&c->writeback_token_bw, min(token_bw, delta_bw));
-+		atomic_long_set(&c->writeback_token_io, min(token_io, delta_io));
-+	}
-+
-+	if (!cache_set_writeback_should_wait(c))
-+		goto out_wake_up_all;
-+
-+	spin_unlock(&c->writeback_qos_lock);
-+	return true;
-+
-+out_wake_up_all:
-+	wake_up_all(&c->writeback_qos_wait);
-+	spin_unlock(&c->writeback_qos_lock);
-+	return false;
-+}
-+
-+void cache_set_update_writeback_qos(struct work_struct *work)
-+{
-+	struct cache_set *c = container_of(to_delayed_work(work),
-+					   struct cache_set,
-+					   writeback_qos_update);
-+
-+	/*
-+	 * If the number of tokens in the token bucket is
-+	 * negative, we need to increase the tokens faster.
-+	 * Otherwise, we just need to update every second.
-+	 */
-+	if (cache_set_writeback_qos_control(c))
-+		schedule_delayed_work(&c->writeback_qos_update,
-+			msecs_to_jiffies(WRITEBACK_QOS_UPDATE_MSECS_MIN));
-+	else
-+		schedule_delayed_work(&c->writeback_qos_update, HZ);
-+}
-+
-+static void writeback_wait(struct cache_set *c)
++static void end_wb_inflight(struct cached_dev *dc);
+ static void write_dirty_finish(struct closure *cl)
+ {
+ 	struct dirty_io *io = container_of(cl, struct dirty_io, cl);
+@@ -465,7 +466,7 @@ static void write_dirty_finish(struct closure *cl)
+ 	}
+ 
+ 	bch_keybuf_del(&dc->writeback_keys, w);
+-	up(&dc->in_flight);
++	end_wb_inflight(dc);
+ 
+ 	closure_return_with_destructor(cl, dirty_io_destructor);
+ }
+@@ -554,6 +555,38 @@ static void read_dirty_submit(struct closure *cl)
+ 	continue_at(cl, write_dirty, io->dc->writeback_write_wq);
+ }
+ 
++static void start_wb_inflight(struct cached_dev *dc)
 +{
 +	DEFINE_WAIT(w);
 +
-+	if (cache_set_writeback_should_wait(c) &&
-+	    cache_set_writeback_qos_control(c)) {
-+		prepare_to_wait(&c->writeback_qos_wait,
-+				&w, TASK_UNINTERRUPTIBLE);
++	spin_lock(&dc->wb_inflight_lock);
++	if (atomic_read(&dc->wb_inflight) < dc->wb_inflight_max)
++		goto out;
++
++	do {
++		prepare_to_wait(&dc->wb_inflight_wait, &w,
++				TASK_UNINTERRUPTIBLE);
++
++		spin_unlock(&dc->wb_inflight_lock);
 +		schedule();
-+		finish_wait(&c->writeback_qos_wait, &w);
-+	}
++		spin_lock(&dc->wb_inflight_lock);
++	} while (atomic_read(&dc->wb_inflight) >= dc->wb_inflight_max);
++
++	finish_wait(&dc->wb_inflight_wait, &w);
++
++out:
++	BUG_ON(atomic_inc_return(&dc->wb_inflight) > dc->wb_inflight_max);
++	spin_unlock(&dc->wb_inflight_lock);
 +}
 +
- static unsigned int writeback_delay(struct cached_dev *dc,
- 				    unsigned int sectors)
++static void end_wb_inflight(struct cached_dev *dc)
++{
++	spin_lock(&dc->wb_inflight_lock);
++	BUG_ON(atomic_dec_return(&dc->wb_inflight) < 0);
++	spin_unlock(&dc->wb_inflight_lock);
++	wake_up(&dc->wb_inflight_wait);
++}
++
+ static void read_dirty(struct cached_dev *dc)
  {
-@@ -479,6 +563,7 @@ static void read_dirty(struct cached_dev *dc)
- 	struct dirty_io *io;
- 	struct closure cl;
- 	uint16_t sequence = 0;
-+	int64_t token_bw, token_io;
+ 	unsigned int delay = 0;
+@@ -641,7 +674,7 @@ static void read_dirty(struct cached_dev *dc)
  
- 	BUG_ON(!llist_empty(&dc->writeback_ordering_wait.list));
- 	atomic_set(&dc->writeback_sequence_next, sequence);
-@@ -558,6 +643,20 @@ static void read_dirty(struct cached_dev *dc)
+ 			trace_bcache_writeback(&w->key);
  
- 			down(&dc->in_flight);
+-			down(&dc->in_flight);
++			start_wb_inflight(dc);
  
-+			/*
-+			 * The number of tokens in the token bucket
-+			 * is allowed to be negative, at this time
-+			 * the thread needs to wait, but it will
-+			 * wake up as the token increases.
-+			 */
-+			token_bw = atomic_long_sub_return(
-+					KEY_SIZE(&w->key) << 9,
-+					&dc->disk.c->writeback_token_bw);
-+			token_io = atomic_long_dec_return(
-+					&dc->disk.c->writeback_token_io);
-+			if (token_bw < 0 || token_io < 0)
-+				writeback_wait(dc->disk.c);
-+
  			/*
- 			 * We've acquired a semaphore for the maximum
- 			 * simultaneous number of writebacks; from here
-diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
-index 7540983f2c9f..7e5a2fe03429 100644
---- a/drivers/md/bcache/writeback.h
-+++ b/drivers/md/bcache/writeback.h
-@@ -14,6 +14,14 @@
- #define WRITEBACK_RATE_UPDATE_SECS_MAX		60
- #define WRITEBACK_RATE_UPDATE_SECS_DEFAULT	5
+ 			 * The number of tokens in the token bucket
+@@ -1124,7 +1157,11 @@ void bch_sectors_dirty_init(struct bcache_device *d)
  
-+#define WRITEBACK_QOS_UPDATE_MSECS_MIN	50
-+#define WRITEBACK_QOS_IOPS_DEFAULT	100000LLU
-+#define WRITEBACK_QOS_IOPS_MAX		10000000LLU
-+#define WRITEBACK_QOS_IOPS_MIN		1000LLU
-+#define WRITEBACK_QOS_BW_DEFAULT	52428800LLU
-+#define WRITEBACK_QOS_BW_MAX		107374182400LLU
-+#define WRITEBACK_QOS_BW_MIN		1048576LLU
+ void bch_cached_dev_writeback_init(struct cached_dev *dc)
+ {
+-	sema_init(&dc->in_flight, 64);
++	atomic_set(&dc->wb_inflight, 0);
++	dc->wb_inflight_max = 64;
++	spin_lock_init(&dc->wb_inflight_lock);
++	init_waitqueue_head(&dc->wb_inflight_wait);
 +
- #define BCH_AUTO_GC_DIRTY_THRESHOLD	50
+ 	init_rwsem(&dc->writeback_lock);
+ 	bch_keybuf_init(&dc->writeback_keys);
  
- #define BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW 50
-@@ -153,5 +161,6 @@ void bch_cached_dev_writeback_init(struct cached_dev *dc);
- int bch_cached_dev_writeback_start(struct cached_dev *dc);
- 
- void cache_set_update_writeback_rate(struct work_struct *work);
-+void cache_set_update_writeback_qos(struct work_struct *work);
- 
- #endif
 -- 
 2.17.1
 
