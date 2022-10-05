@@ -2,231 +2,109 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB9685F0709
-	for <lists+linux-bcache@lfdr.de>; Fri, 30 Sep 2022 11:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90C9A5F50C3
+	for <lists+linux-bcache@lfdr.de>; Wed,  5 Oct 2022 10:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231286AbiI3JC3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 30 Sep 2022 05:02:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58480 "EHLO
+        id S230001AbiJEIZI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 5 Oct 2022 04:25:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231303AbiI3JCX (ORCPT
+        with ESMTP id S229996AbiJEIYd (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 30 Sep 2022 05:02:23 -0400
-Received: from mail-m3164.qiye.163.com (mail-m3164.qiye.163.com [103.74.31.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C701FBC86
-        for <linux-bcache@vger.kernel.org>; Fri, 30 Sep 2022 02:02:18 -0700 (PDT)
-Received: from localhost.localdomain (unknown [218.94.118.90])
-        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id AFCF86202EF;
-        Fri, 30 Sep 2022 17:02:15 +0800 (CST)
-From:   mingzhe.zou@easystack.cn
-To:     colyli@suse.de, linux-bcache@vger.kernel.org
-Cc:     zoumingzhe@qq.com, dongsheng.yang@easystack.cn
-Subject: [PATCH 3/3] bcache: make writeback inflight configurable in sysfs
-Date:   Fri, 30 Sep 2022 17:02:13 +0800
-Message-Id: <20220930090213.11072-3-mingzhe.zou@easystack.cn>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220930090213.11072-1-mingzhe.zou@easystack.cn>
-References: <20220930090213.11072-1-mingzhe.zou@easystack.cn>
+        Wed, 5 Oct 2022 04:24:33 -0400
+X-Greylist: delayed 508 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Oct 2022 01:24:22 PDT
+Received: from wtwrp.de (wtwrp.de [IPv6:2a01:4f8:231:40ed::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 088C64055E
+        for <linux-bcache@vger.kernel.org>; Wed,  5 Oct 2022 01:24:21 -0700 (PDT)
+Message-ID: <5ff94948-9406-9b86-2ab3-db74fcb44d00@ezl.re>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wtwrp.de; s=dkim;
+        t=1664957751;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=uBDtKSMA63r719Ro6kv62SP8Xn1bolXrcGVOwoKFmlU=;
+        b=U+Lgc7X7Y6nlmtAVSr26UCBIGFzx9NZLzdHgbnpy/NS9FpurTEdl46vZOFtwmg50EKAnvi
+        scmyNMCL2TkIydw3YKAOWMxmcN+ZiP4eEEqt3uB31Wk/rjGEexa2ec9hEs165Wx3GgKOp+
+        ZekJbtgeadTajeYNYTQV1vZaXLAio6S1BvK7+GrDJYmjSYTIY749euC9hsoISmHJo+JV6x
+        yQawaAmRhN/yu7+33rQXtf+4hhr8lWnsGdVKfHAt7GZnuoBlSVVDNWJMvdVT4uNWArDLYv
+        w0n0+Ma6svQZr2br6uWvRONIgrDWrVp8FkWiiPjetesfiT81aimsuJgVe1BMeg==
+Date:   Wed, 5 Oct 2022 10:15:47 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDHR1JVhpLTUgYHRgaTExCSVUZERMWGhIXJBQOD1
-        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ogg6TQw6DjINLxwiAQlNKTcw
-        SiEKCQJVSlVKTU1PTklDTkhNTEhPVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTEpLTjcG
-X-HM-Tid: 0a838da1d11700a4kurmafcf86202ef
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Language: en-US
+To:     linux-bcache@vger.kernel.org
+From:   Cobra_Fast <cobra_fast@wtwrp.de>
+Subject: Feature Request - Full Bypass/Verify Mode
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------wqa78htvwTuVpUwKgqO6UgO0"
+Authentication-Results: wtwrp.de;
+        auth=pass smtp.mailfrom=cobra_fast@wtwrp.de
+X-Spamd-Bar: -----------
+X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Dongsheng Yang <dongsheng.yang@easystack.cn>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------wqa78htvwTuVpUwKgqO6UgO0
+Content-Type: multipart/mixed; boundary="------------qYa6NCE9BxMS40d5AcXOH0wl";
+ protected-headers="v1"
+From: Cobra_Fast <cobra_fast@wtwrp.de>
+To: linux-bcache@vger.kernel.org
+Message-ID: <5ff94948-9406-9b86-2ab3-db74fcb44d00@ezl.re>
+Subject: Feature Request - Full Bypass/Verify Mode
 
-This commit introduce a new sysfs file:
-/sys/block/bcache0/bcache/writeback_inflight (read only)
-/sys/block/bcache0/bcache/writeback_inflight_max (read write)
+--------------qYa6NCE9BxMS40d5AcXOH0wl
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-(1) read the writeback_inflight will output the current inflight writeback op.
-(2）read the writeback_inflight_max will output the max number of writeback inflight.
-(3) write the writeback_inflight_max can set the max number of writeback inflight,
-valid range is [1, INT_MAX).
+R3JlZXRpbmdzLA0KDQpJIGFtIHVzaW5nIGJjYWNoZSBpbiBjb25qdW5jdGlvbiB3aXRoIFNu
+YXBSQUlELCB3aGljaCB3b3JrcyBvbiB0aGUgDQpGUy1sZXZlbCwgYW5kIEkgaGF2ZSBub3Rp
+Y2VkIHRoYXQgcGFyaXR5IHN5bmNzIGFzIHdlbGwgYXMgc2NydWJzIHJlYWQgDQpkYXRhIGZy
+b20gdGhlIGNhY2hlIHJhdGhlciB0aGFuIHRoZSBiYWNraW5nIGRldmljZS4gVGhpcyBwcm9i
+YWJseSBub3QgYSANCnByb2JsZW0gd2hlbiBjcmVhdGluZyBwYXJpdHkgZm9yIG5ldyBmaWxl
+cywgYnV0IGNvdWxkIGJlIGEgcHJvYmxlbSB3aGVuIA0KcnVubmluZyBzY3J1YnMsIGFzIHRo
+ZSBwYXJpdHkgaXMgbmV2ZXIgY2hlY2tlZCBhZ2FpbnN0IGRhdGEgb24gZGlzayANCnNpbmNl
+IGJjYWNoZSBoaWRlcyBpdC4NCg0KSSB3b3VsZCB0aGVyZWZvcmUgdmVyeSBtdWNoIGxpa2Ug
+YSBjYWNoZV9tb2RlIHRoYXQgd291bGQgYnlwYXNzIGFueSBhbmQgDQphbGwgcmVhZHMsIHRo
+YXQgY2FuIGJlIGVuYWJsZWQgZm9yIHRoZSBkdXJhdGlvbiBvZiBhIFNuYXBSQUlEIHN5bmMg
+b3IgDQpzY3J1Yi4gRm9yIHdyaXRlcyBJIHN1cHBvc2UgdGhpcyBtb2RlIHNob3VsZCBhY3Qg
+dGhlIHNhbWUgYXMgIm5vbmUiLg0KDQpUaGlzIG9wcG9ydHVuaXR5IGNvdWxkIGJlIHRha2Vu
+IHRvIHZlcmlmeSBkYXRhIG9uIGNhY2hlIGFzIHdlbGw7IHJlYWQgDQpmcm9tIGJvdGggYmFj
+a2luZyBhbmQgY2FjaGUgYW5kIGludmFsaWRhdGUgdGhlIGNhY2hlIHBhZ2UgaWYgaXQgZGlm
+ZmVycyANCmZyb20gdGhlIGJhY2tpbmcgZGF0YSwgd2hpbGUgc2F0aXNmeWluZyB0aGUgYWN0
+dWFsIHJlYWQgZnJvbSBiYWNraW5nIGluIA0KYW55IGNhc2UuDQoNClBlcmhhcHMgc29tZXRo
+aW5nIGxpa2UgdGhpcyBpcyBhbHJlYWR5IHBvc3NpYmxlIGFuZCBJJ20ganVzdCBub3Qgc2Vl
+aW5nIGl0Pw0KSSBrbm93IEkgY2FuIGRldGFjaCBiYWNraW5nIGRldmljZXMsIGJ1dCB0byBt
+eSB1bmRlcnN0YW5kaW5nIHRoYXQgYWxzbyANCmludmFsaWRhdGVzIGFsbCBpdHMgY2FjaGVk
+IHBhZ2VzIGFuZCBJIHdvdWxkIG9idmlvdXNseSBsaWtlIHRvIGtlZXAgdGhlbSANCmZvciB0
+aGlzIHB1cnBvc2UuDQoNCkxvb2tpbmcgZm9yd2FyZCB0byB5b3VyIG9waW5pb25zLA0KQmVz
+dCByZWdhcmRzLA0KQW5keQ0K
 
-E.g:
- $ ll /sys/block/bcache0/bcache/writeback_inflight*
--r--r--r-- 1 root root 4096 Oct 27 08:45 /sys/block/bcache0/bcache/writeback_inflight
--rw-r--r-- 1 root root 4096 Oct 27 08:45 /sys/block/bcache0/bcache/writeback_inflight_max
- $ cat /sys/block/bcache0/bcache/writeback_inflight
-0
- $ cat /sys/block/bcache0/bcache/writeback_inflight_max
-64
- $ echo 1024 > /sys/block/bcache0/bcache/writeback_inflight_max
- $ cat /sys/block/bcache0/bcache/writeback_inflight_max
-1024
+--------------qYa6NCE9BxMS40d5AcXOH0wl--
 
-Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
-Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
----
- drivers/md/bcache/bcache.h    |  6 ++++-
- drivers/md/bcache/sysfs.c     | 20 ++++++++++++++++
- drivers/md/bcache/writeback.c | 43 ++++++++++++++++++++++++++++++++---
- 3 files changed, 65 insertions(+), 4 deletions(-)
+--------------wqa78htvwTuVpUwKgqO6UgO0
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index f1ea639defbe..82a6a2d293d0 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -337,7 +337,11 @@ struct cached_dev {
- 	struct delayed_work	writeback_rate_update;
- 
- 	/* Limit number of writeback bios in flight */
--	struct semaphore	in_flight;
-+	atomic_t		wb_inflight;
-+	unsigned long		wb_inflight_max;
-+	spinlock_t		wb_inflight_lock;
-+	wait_queue_head_t	wb_inflight_wait;
-+
- 	struct task_struct	*writeback_thread;
- 	struct workqueue_struct	*writeback_write_wq;
- 
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index f3f8fce74fab..8d1a86249f99 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -120,6 +120,8 @@ rw_attribute(writeback_running);
- rw_attribute(writeback_percent);
- rw_attribute(writeback_delay);
- rw_attribute(writeback_rate);
-+read_attribute(writeback_inflight);
-+rw_attribute(writeback_inflight_max);
- rw_attribute(writeback_consider_fragment);
- 
- rw_attribute(writeback_rate_update_seconds);
-@@ -204,6 +206,8 @@ SHOW(__bch_cached_dev)
- 	var_printf(writeback_consider_fragment,	"%i");
- 	var_print(writeback_delay);
- 	var_print(writeback_percent);
-+	sysfs_printf(writeback_inflight, "%i", atomic_read(&dc->wb_inflight));
-+	sysfs_printf(writeback_inflight_max, "%li", dc->wb_inflight_max);
- 	sysfs_hprint(writeback_rate,
- 		     wb ? atomic_long_read(&dc->writeback_rate.rate) << 9 : 0);
- 	sysfs_printf(io_errors,		"%i", atomic_read(&dc->io_errors));
-@@ -451,6 +455,20 @@ STORE(__cached_dev)
- 	if (attr == &sysfs_detach && dc->disk.c)
- 		bch_cached_dev_detach(dc);
- 
-+	if (attr == &sysfs_writeback_inflight_max) {
-+		ssize_t ret;
-+		unsigned long v;
-+
-+		ret = strtoul_safe_clamp(buf, v, 1, INT_MAX);
-+		if (ret)
-+			return ret;
-+
-+		spin_lock(&dc->wb_inflight_lock);
-+		dc->wb_inflight_max = v;
-+		spin_unlock(&dc->wb_inflight_lock);
-+		wake_up(&dc->wb_inflight_wait);
-+	}
-+
- 	if (attr == &sysfs_stop)
- 		bcache_device_stop(&dc->disk);
- 
-@@ -517,6 +535,8 @@ static struct attribute *bch_cached_dev_attrs[] = {
- 	&sysfs_writeback_running,
- 	&sysfs_writeback_delay,
- 	&sysfs_writeback_percent,
-+	&sysfs_writeback_inflight,
-+	&sysfs_writeback_inflight_max,
- 	&sysfs_writeback_rate,
- 	&sysfs_writeback_consider_fragment,
- 	&sysfs_writeback_rate_update_seconds,
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 7f60800e9f5f..6c33c2ad2e8d 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -428,6 +428,7 @@ static void dirty_io_destructor(struct closure *cl)
- 	kfree(io);
- }
- 
-+static void end_wb_inflight(struct cached_dev *dc);
- static void write_dirty_finish(struct closure *cl)
- {
- 	struct dirty_io *io = container_of(cl, struct dirty_io, cl);
-@@ -465,7 +466,7 @@ static void write_dirty_finish(struct closure *cl)
- 	}
- 
- 	bch_keybuf_del(&dc->writeback_keys, w);
--	up(&dc->in_flight);
-+	end_wb_inflight(dc);
- 
- 	closure_return_with_destructor(cl, dirty_io_destructor);
- }
-@@ -554,6 +555,38 @@ static void read_dirty_submit(struct closure *cl)
- 	continue_at(cl, write_dirty, io->dc->writeback_write_wq);
- }
- 
-+static void start_wb_inflight(struct cached_dev *dc)
-+{
-+	DEFINE_WAIT(w);
-+
-+	spin_lock(&dc->wb_inflight_lock);
-+	if (atomic_read(&dc->wb_inflight) < dc->wb_inflight_max)
-+		goto out;
-+
-+	do {
-+		prepare_to_wait(&dc->wb_inflight_wait, &w,
-+				TASK_UNINTERRUPTIBLE);
-+
-+		spin_unlock(&dc->wb_inflight_lock);
-+		schedule();
-+		spin_lock(&dc->wb_inflight_lock);
-+	} while (atomic_read(&dc->wb_inflight) >= dc->wb_inflight_max);
-+
-+	finish_wait(&dc->wb_inflight_wait, &w);
-+
-+out:
-+	BUG_ON(atomic_inc_return(&dc->wb_inflight) > dc->wb_inflight_max);
-+	spin_unlock(&dc->wb_inflight_lock);
-+}
-+
-+static void end_wb_inflight(struct cached_dev *dc)
-+{
-+	spin_lock(&dc->wb_inflight_lock);
-+	BUG_ON(atomic_dec_return(&dc->wb_inflight) < 0);
-+	spin_unlock(&dc->wb_inflight_lock);
-+	wake_up(&dc->wb_inflight_wait);
-+}
-+
- static void read_dirty(struct cached_dev *dc)
- {
- 	unsigned int delay = 0;
-@@ -641,7 +674,7 @@ static void read_dirty(struct cached_dev *dc)
- 
- 			trace_bcache_writeback(&w->key);
- 
--			down(&dc->in_flight);
-+			start_wb_inflight(dc);
- 
- 			/*
- 			 * The number of tokens in the token bucket
-@@ -1124,7 +1157,11 @@ void bch_sectors_dirty_init(struct bcache_device *d)
- 
- void bch_cached_dev_writeback_init(struct cached_dev *dc)
- {
--	sema_init(&dc->in_flight, 64);
-+	atomic_set(&dc->wb_inflight, 0);
-+	dc->wb_inflight_max = 64;
-+	spin_lock_init(&dc->wb_inflight_lock);
-+	init_waitqueue_head(&dc->wb_inflight_wait);
-+
- 	init_rwsem(&dc->writeback_lock);
- 	bch_keybuf_init(&dc->writeback_keys);
- 
--- 
-2.17.1
+-----BEGIN PGP SIGNATURE-----
 
+wsF5BAABCAAjFiEE1WY5pamBRKDWIBbjRka/iREL/PMFAmM9PTMFAwAAAAAACgkQRka/iREL/PNw
+rw//XLPEN72nj8c0f9qm9SY6VZ0yF7mopQK4Q2Sm+u4QLFJb+7ldQvsMrk2YJV8Cz4PKjSBfOJYN
+08FY5Ed1Vl54lSbkte/8/VEB7EQwL4vMkNWQ2OK3KXq/fEz0ithB5Oe9ETI9M5KEWaO1TiUtNuAF
+nSO/q/nHlS+ACWyWJBm8edrMRNLqEvSzvDsqCQdQaEFiPj8tQBfD9ucbgQEdUxmpWVLosuF93/E3
+O/cizNCycKGMxuXqPP9y/O75qICqXnKwAYnjvlFtlN02ovbMPxu0z5s/40zPuy4FOElQhc01B4+s
+KPShvsDWcbLXbRuzuFh5qiHTJELtzX8ETSgtbeuzb9KqPBd7HY8Ms68Kq/d/JQZLakKAPFGWKqXO
+W6/RNkMFBAC1NpnFg9YgoJO8G2ea4xWwZw7xxGaT+93LXmJkrr5B6ADeksvx5uZDa02isY7+qp0s
+qlFlUQVYLTx53Kx/rxWXXovXa+T00r7cSvJVjAjSyiPOMejkyYzAoZ03xmK3W55rcU49D9jO+rDD
+zi5P6H1Di7UQAUIuksDMi9bEkTP1VtVYBQ3Z2DtfDujSzT6YXNnXUS2kVemf4UgVaWr63xlFf7OJ
+xbqdvHu3l3bT3oqlcm6rUk+fJpSd1iL3odBOiTxC+LLxTTdCLVqIhTS92FOTTxLt2N2vIUCYfmHE
+WhU=
+=5Lpv
+-----END PGP SIGNATURE-----
+
+--------------wqa78htvwTuVpUwKgqO6UgO0--
