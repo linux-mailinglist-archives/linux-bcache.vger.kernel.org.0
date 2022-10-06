@@ -2,109 +2,101 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90C9A5F50C3
-	for <lists+linux-bcache@lfdr.de>; Wed,  5 Oct 2022 10:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99CA65F5E72
+	for <lists+linux-bcache@lfdr.de>; Thu,  6 Oct 2022 03:46:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbiJEIZI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 5 Oct 2022 04:25:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50250 "EHLO
+        id S229608AbiJFBq5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 5 Oct 2022 21:46:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229996AbiJEIYd (ORCPT
+        with ESMTP id S229890AbiJFBq4 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 5 Oct 2022 04:24:33 -0400
-X-Greylist: delayed 508 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Oct 2022 01:24:22 PDT
-Received: from wtwrp.de (wtwrp.de [IPv6:2a01:4f8:231:40ed::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 088C64055E
-        for <linux-bcache@vger.kernel.org>; Wed,  5 Oct 2022 01:24:21 -0700 (PDT)
-Message-ID: <5ff94948-9406-9b86-2ab3-db74fcb44d00@ezl.re>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wtwrp.de; s=dkim;
-        t=1664957751;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type;
-        bh=uBDtKSMA63r719Ro6kv62SP8Xn1bolXrcGVOwoKFmlU=;
-        b=U+Lgc7X7Y6nlmtAVSr26UCBIGFzx9NZLzdHgbnpy/NS9FpurTEdl46vZOFtwmg50EKAnvi
-        scmyNMCL2TkIydw3YKAOWMxmcN+ZiP4eEEqt3uB31Wk/rjGEexa2ec9hEs165Wx3GgKOp+
-        ZekJbtgeadTajeYNYTQV1vZaXLAio6S1BvK7+GrDJYmjSYTIY749euC9hsoISmHJo+JV6x
-        yQawaAmRhN/yu7+33rQXtf+4hhr8lWnsGdVKfHAt7GZnuoBlSVVDNWJMvdVT4uNWArDLYv
-        w0n0+Ma6svQZr2br6uWvRONIgrDWrVp8FkWiiPjetesfiT81aimsuJgVe1BMeg==
-Date:   Wed, 5 Oct 2022 10:15:47 +0200
+        Wed, 5 Oct 2022 21:46:56 -0400
+X-Greylist: delayed 445 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Oct 2022 18:46:55 PDT
+Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DFD870AE
+        for <linux-bcache@vger.kernel.org>; Wed,  5 Oct 2022 18:46:55 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mx.ewheeler.net (Postfix) with ESMTP id 073D349;
+        Wed,  5 Oct 2022 18:39:30 -0700 (PDT)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id IZvssRXb4l1o; Wed,  5 Oct 2022 18:39:29 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id 0AA4D40;
+        Wed,  5 Oct 2022 18:39:29 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 0AA4D40
+Date:   Wed, 5 Oct 2022 18:39:26 -0700 (PDT)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
+To:     Cobra_Fast <cobra_fast@wtwrp.de>
+cc:     linux-bcache@vger.kernel.org
+Subject: Re: Feature Request - Full Bypass/Verify Mode
+In-Reply-To: <5ff94948-9406-9b86-2ab3-db74fcb44d00@ezl.re>
+Message-ID: <216bf3b3-b827-efbc-190-31e86de0a85b@ewheeler.net>
+References: <5ff94948-9406-9b86-2ab3-db74fcb44d00@ezl.re>
 MIME-Version: 1.0
-Content-Language: en-US
-To:     linux-bcache@vger.kernel.org
-From:   Cobra_Fast <cobra_fast@wtwrp.de>
-Subject: Feature Request - Full Bypass/Verify Mode
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------wqa78htvwTuVpUwKgqO6UgO0"
-Authentication-Results: wtwrp.de;
-        auth=pass smtp.mailfrom=cobra_fast@wtwrp.de
-X-Spamd-Bar: -----------
-X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=0.0 required=5.0 tests=BAYES_20,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------wqa78htvwTuVpUwKgqO6UgO0
-Content-Type: multipart/mixed; boundary="------------qYa6NCE9BxMS40d5AcXOH0wl";
- protected-headers="v1"
-From: Cobra_Fast <cobra_fast@wtwrp.de>
-To: linux-bcache@vger.kernel.org
-Message-ID: <5ff94948-9406-9b86-2ab3-db74fcb44d00@ezl.re>
-Subject: Feature Request - Full Bypass/Verify Mode
+On Wed, 5 Oct 2022, Cobra_Fast wrote:
 
---------------qYa6NCE9BxMS40d5AcXOH0wl
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+> Greetings,
+> 
+> I am using bcache in conjunction with SnapRAID, which works on the FS-level,
+> and I have noticed that parity syncs as well as scrubs read data from the
+> cache rather than the backing device. This probably not a problem when
+> creating parity for new files, but could be a problem when running scrubs, as
+> the parity is never checked against data on disk since bcache hides it.
 
-R3JlZXRpbmdzLA0KDQpJIGFtIHVzaW5nIGJjYWNoZSBpbiBjb25qdW5jdGlvbiB3aXRoIFNu
-YXBSQUlELCB3aGljaCB3b3JrcyBvbiB0aGUgDQpGUy1sZXZlbCwgYW5kIEkgaGF2ZSBub3Rp
-Y2VkIHRoYXQgcGFyaXR5IHN5bmNzIGFzIHdlbGwgYXMgc2NydWJzIHJlYWQgDQpkYXRhIGZy
-b20gdGhlIGNhY2hlIHJhdGhlciB0aGFuIHRoZSBiYWNraW5nIGRldmljZS4gVGhpcyBwcm9i
-YWJseSBub3QgYSANCnByb2JsZW0gd2hlbiBjcmVhdGluZyBwYXJpdHkgZm9yIG5ldyBmaWxl
-cywgYnV0IGNvdWxkIGJlIGEgcHJvYmxlbSB3aGVuIA0KcnVubmluZyBzY3J1YnMsIGFzIHRo
-ZSBwYXJpdHkgaXMgbmV2ZXIgY2hlY2tlZCBhZ2FpbnN0IGRhdGEgb24gZGlzayANCnNpbmNl
-IGJjYWNoZSBoaWRlcyBpdC4NCg0KSSB3b3VsZCB0aGVyZWZvcmUgdmVyeSBtdWNoIGxpa2Ug
-YSBjYWNoZV9tb2RlIHRoYXQgd291bGQgYnlwYXNzIGFueSBhbmQgDQphbGwgcmVhZHMsIHRo
-YXQgY2FuIGJlIGVuYWJsZWQgZm9yIHRoZSBkdXJhdGlvbiBvZiBhIFNuYXBSQUlEIHN5bmMg
-b3IgDQpzY3J1Yi4gRm9yIHdyaXRlcyBJIHN1cHBvc2UgdGhpcyBtb2RlIHNob3VsZCBhY3Qg
-dGhlIHNhbWUgYXMgIm5vbmUiLg0KDQpUaGlzIG9wcG9ydHVuaXR5IGNvdWxkIGJlIHRha2Vu
-IHRvIHZlcmlmeSBkYXRhIG9uIGNhY2hlIGFzIHdlbGw7IHJlYWQgDQpmcm9tIGJvdGggYmFj
-a2luZyBhbmQgY2FjaGUgYW5kIGludmFsaWRhdGUgdGhlIGNhY2hlIHBhZ2UgaWYgaXQgZGlm
-ZmVycyANCmZyb20gdGhlIGJhY2tpbmcgZGF0YSwgd2hpbGUgc2F0aXNmeWluZyB0aGUgYWN0
-dWFsIHJlYWQgZnJvbSBiYWNraW5nIGluIA0KYW55IGNhc2UuDQoNClBlcmhhcHMgc29tZXRo
-aW5nIGxpa2UgdGhpcyBpcyBhbHJlYWR5IHBvc3NpYmxlIGFuZCBJJ20ganVzdCBub3Qgc2Vl
-aW5nIGl0Pw0KSSBrbm93IEkgY2FuIGRldGFjaCBiYWNraW5nIGRldmljZXMsIGJ1dCB0byBt
-eSB1bmRlcnN0YW5kaW5nIHRoYXQgYWxzbyANCmludmFsaWRhdGVzIGFsbCBpdHMgY2FjaGVk
-IHBhZ2VzIGFuZCBJIHdvdWxkIG9idmlvdXNseSBsaWtlIHRvIGtlZXAgdGhlbSANCmZvciB0
-aGlzIHB1cnBvc2UuDQoNCkxvb2tpbmcgZm9yd2FyZCB0byB5b3VyIG9waW5pb25zLA0KQmVz
-dCByZWdhcmRzLA0KQW5keQ0K
+Interesting.
+ 
+> I would therefore very much like a cache_mode that would bypass any and all
+> reads, that can be enabled for the duration of a SnapRAID sync or scrub. For
+> writes I suppose this mode should act the same as "none".
+> 
+> This opportunity could be taken to verify data on cache as well; read from
+> both backing and cache and invalidate the cache page if it differs from the
+> backing data, while satisfying the actual read from backing in any case.
 
---------------qYa6NCE9BxMS40d5AcXOH0wl--
+assuming that one or the other is correct... I'm not sure bcache could 
+tell which block is valid, and SnapRAID doesn't know about the lldevs.
+ 
+> Perhaps something like this is already possible and I'm just not seeing it?
+> I know I can detach backing devices, but to my understanding that also
+> invalidates all its cached pages and I would obviously like to keep them for
+> this purpose.
 
---------------wqa78htvwTuVpUwKgqO6UgO0
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
+Well you can only read-validate pages that are not dirty...if its dirty 
+you _must_ read from cache for consistency.
 
------BEGIN PGP SIGNATURE-----
+You could put it in write_around mode and wait for dirty_bytes to be 0, 
+but I think it will still read from the cache if the page is hot.
 
-wsF5BAABCAAjFiEE1WY5pamBRKDWIBbjRka/iREL/PMFAmM9PTMFAwAAAAAACgkQRka/iREL/PNw
-rw//XLPEN72nj8c0f9qm9SY6VZ0yF7mopQK4Q2Sm+u4QLFJb+7ldQvsMrk2YJV8Cz4PKjSBfOJYN
-08FY5Ed1Vl54lSbkte/8/VEB7EQwL4vMkNWQ2OK3KXq/fEz0ithB5Oe9ETI9M5KEWaO1TiUtNuAF
-nSO/q/nHlS+ACWyWJBm8edrMRNLqEvSzvDsqCQdQaEFiPj8tQBfD9ucbgQEdUxmpWVLosuF93/E3
-O/cizNCycKGMxuXqPP9y/O75qICqXnKwAYnjvlFtlN02ovbMPxu0z5s/40zPuy4FOElQhc01B4+s
-KPShvsDWcbLXbRuzuFh5qiHTJELtzX8ETSgtbeuzb9KqPBd7HY8Ms68Kq/d/JQZLakKAPFGWKqXO
-W6/RNkMFBAC1NpnFg9YgoJO8G2ea4xWwZw7xxGaT+93LXmJkrr5B6ADeksvx5uZDa02isY7+qp0s
-qlFlUQVYLTx53Kx/rxWXXovXa+T00r7cSvJVjAjSyiPOMejkyYzAoZ03xmK3W55rcU49D9jO+rDD
-zi5P6H1Di7UQAUIuksDMi9bEkTP1VtVYBQ3Z2DtfDujSzT6YXNnXUS2kVemf4UgVaWr63xlFf7OJ
-xbqdvHu3l3bT3oqlcm6rUk+fJpSd1iL3odBOiTxC+LLxTTdCLVqIhTS92FOTTxLt2N2vIUCYfmHE
-WhU=
-=5Lpv
------END PGP SIGNATURE-----
+Detach sounds like the only option at the moment to get what you're 
+seeking.  Future work could include adding a `readaround` to 
+/sys/block/bcache0/bcache/cache_mode, but it would still have to read from 
+the cache if dirty.  Or maybe if `readaround` hits a dirty block it evicts 
+it and re-reads the backing device?  But that sounds messy and slow.
 
---------------wqa78htvwTuVpUwKgqO6UgO0--
+Maybe you could assume that if the cache is correct then the backing 
+device is correct and a verify atop of bcache means that bcache is 
+consistent, independent of the lower layers.  This is certainly true for 
+dirty blocks, and probably for clean (in-cache) blocks too.
+
+-Eric
+
+> 
+> Looking forward to your opinions,
+> Best regards,
+> Andy
+> 
+> 
