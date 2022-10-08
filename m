@@ -2,101 +2,72 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99CA65F5E72
-	for <lists+linux-bcache@lfdr.de>; Thu,  6 Oct 2022 03:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9BA75F8473
+	for <lists+linux-bcache@lfdr.de>; Sat,  8 Oct 2022 10:56:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbiJFBq5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 5 Oct 2022 21:46:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46568 "EHLO
+        id S229708AbiJHI4g (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 8 Oct 2022 04:56:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbiJFBq4 (ORCPT
+        with ESMTP id S229651AbiJHI4f (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 5 Oct 2022 21:46:56 -0400
-X-Greylist: delayed 445 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Oct 2022 18:46:55 PDT
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DFD870AE
-        for <linux-bcache@vger.kernel.org>; Wed,  5 Oct 2022 18:46:55 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id 073D349;
-        Wed,  5 Oct 2022 18:39:30 -0700 (PDT)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id IZvssRXb4l1o; Wed,  5 Oct 2022 18:39:29 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 0AA4D40;
-        Wed,  5 Oct 2022 18:39:29 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 0AA4D40
-Date:   Wed, 5 Oct 2022 18:39:26 -0700 (PDT)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-To:     Cobra_Fast <cobra_fast@wtwrp.de>
-cc:     linux-bcache@vger.kernel.org
-Subject: Re: Feature Request - Full Bypass/Verify Mode
-In-Reply-To: <5ff94948-9406-9b86-2ab3-db74fcb44d00@ezl.re>
-Message-ID: <216bf3b3-b827-efbc-190-31e86de0a85b@ewheeler.net>
-References: <5ff94948-9406-9b86-2ab3-db74fcb44d00@ezl.re>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Status: No, score=0.0 required=5.0 tests=BAYES_20,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        Sat, 8 Oct 2022 04:56:35 -0400
+Received: from mail-m3164.qiye.163.com (mail-m3164.qiye.163.com [103.74.31.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5504857E29
+        for <linux-bcache@vger.kernel.org>; Sat,  8 Oct 2022 01:56:33 -0700 (PDT)
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id DDC0A6202BE;
+        Sat,  8 Oct 2022 16:56:30 +0800 (CST)
+From:   mingzhe.zou@easystack.cn
+To:     colyli@suse.de, linux-bcache@vger.kernel.org
+Cc:     zoumingzhe@qq.com
+Subject: [PATCH] bcache: improve bch_hprint() output
+Date:   Sat,  8 Oct 2022 16:56:30 +0800
+Message-Id: <20221008085630.8321-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHUgaVk8aGBkfQ0NDQklIGVUZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKQ1VKS0tVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MSo6GSo5MTIPPxc6LwsKS0sq
+        HTwwChpVSlVKTU1OSUpCSEJKSE1LVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSk1LSDcG
+X-HM-Tid: 0a83b6cf6e4a00a4kurmddc0a6202be
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, 5 Oct 2022, Cobra_Fast wrote:
+From: mingzhe <mingzhe.zou@easystack.cn>
 
-> Greetings,
-> 
-> I am using bcache in conjunction with SnapRAID, which works on the FS-level,
-> and I have noticed that parity syncs as well as scrubs read data from the
-> cache rather than the backing device. This probably not a problem when
-> creating parity for new files, but could be a problem when running scrubs, as
-> the parity is never checked against data on disk since bcache hides it.
+The current suffix of bch_hprint() uses the SI (The International System of Units)
+standard. In the SI brochure, the symbol for the kilo prefix is k instead of K.
+Because K is the symbol for the thermodynamic temperature unit kelvin.
 
-Interesting.
+In fact, SI is based on decimal not binary. However, bch_hprint() is binary based,
+so it should conform to the IEC 60027-2 (Letter symbols to be used in electrical
+technology - Part 2: Telecommunications and electronics) standard.
+
+Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+index ae380bc3992e..91ab36ec2deb 100644
+--- a/drivers/md/bcache/util.c
++++ b/drivers/md/bcache/util.c
+@@ -91,7 +91,7 @@ STRTO_H(strtoull, unsigned long long)
+  */
+ ssize_t bch_hprint(char *buf, int64_t v)
+ {
+-	static const char units[] = "?kMGTPEZY";
++	static const char units[] = "?KMGTPEZY";
+ 	int u = 0, t;
  
-> I would therefore very much like a cache_mode that would bypass any and all
-> reads, that can be enabled for the duration of a SnapRAID sync or scrub. For
-> writes I suppose this mode should act the same as "none".
-> 
-> This opportunity could be taken to verify data on cache as well; read from
-> both backing and cache and invalidate the cache page if it differs from the
-> backing data, while satisfying the actual read from backing in any case.
+ 	uint64_t q;
+-- 
+2.17.1
 
-assuming that one or the other is correct... I'm not sure bcache could 
-tell which block is valid, and SnapRAID doesn't know about the lldevs.
- 
-> Perhaps something like this is already possible and I'm just not seeing it?
-> I know I can detach backing devices, but to my understanding that also
-> invalidates all its cached pages and I would obviously like to keep them for
-> this purpose.
-
-Well you can only read-validate pages that are not dirty...if its dirty 
-you _must_ read from cache for consistency.
-
-You could put it in write_around mode and wait for dirty_bytes to be 0, 
-but I think it will still read from the cache if the page is hot.
-
-Detach sounds like the only option at the moment to get what you're 
-seeking.  Future work could include adding a `readaround` to 
-/sys/block/bcache0/bcache/cache_mode, but it would still have to read from 
-the cache if dirty.  Or maybe if `readaround` hits a dirty block it evicts 
-it and re-reads the backing device?  But that sounds messy and slow.
-
-Maybe you could assume that if the cache is correct then the backing 
-device is correct and a verify atop of bcache means that bcache is 
-consistent, independent of the lower layers.  This is certainly true for 
-dirty blocks, and probably for clean (in-cache) blocks too.
-
--Eric
-
-> 
-> Looking forward to your opinions,
-> Best regards,
-> Andy
-> 
-> 
