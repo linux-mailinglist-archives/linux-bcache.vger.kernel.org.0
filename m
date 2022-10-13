@@ -2,47 +2,47 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFCF55FCFF5
-	for <lists+linux-bcache@lfdr.de>; Thu, 13 Oct 2022 02:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28AA45FD0D1
+	for <lists+linux-bcache@lfdr.de>; Thu, 13 Oct 2022 02:30:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230271AbiJMAYZ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 12 Oct 2022 20:24:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56226 "EHLO
+        id S231406AbiJMAaJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 12 Oct 2022 20:30:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230244AbiJMAXQ (ORCPT
+        with ESMTP id S231561AbiJMA2u (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 12 Oct 2022 20:23:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 759E5128CAD;
-        Wed, 12 Oct 2022 17:20:28 -0700 (PDT)
+        Wed, 12 Oct 2022 20:28:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1719DDBE5F;
+        Wed, 12 Oct 2022 17:25:51 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 85EC061697;
-        Thu, 13 Oct 2022 00:19:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A4E0C4347C;
-        Thu, 13 Oct 2022 00:19:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 39CC3616E0;
+        Thu, 13 Oct 2022 00:22:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F70C433C1;
+        Thu, 13 Oct 2022 00:22:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665620390;
-        bh=pyFqEjCsJm/B3AhoMs/+9UBXpGWPBTmE33Qm6IaChXk=;
+        s=k20201202; t=1665620542;
+        bh=TWhaQ473v7czgusdWlqqUndbnHAzvtf0Y5h/S757e4A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J4BGsqwseNPZViKIT/AH6RfUAu80g7RVqWwD9FbY4YU99+xeTvPQ1xsUcyLWSBXi5
-         UYEXPzR1Em30enlwZcM6z//LNTRPZjyoXfg5QxFJGyJgyEDp+wVKi7Q1edQtfuMOcB
-         kHHMui4oJqd09s9JtUpxddgrlRNz+4hxeSygnNqb1+fgp36f8UyC4YMquPEHQsvAtM
-         57/Oxd7qEMOpFbsD14GqyhzNsuH1cwr7yWO3QAAGNEwX9o5mliSfbd5ghz4Ak2Qqld
-         A11cK+9MJpENLZmQZJRE1oRh6XRUxIzY1NxpohsYrChwuyPP4Lp+/AB76poptISsFD
-         rObvjUktlLBMA==
+        b=MCNTfYmZiCoFg0j6o1sATXJhzFnys3ptBGnA0ttgEN83oXE73tKN307dEWlkuJrQG
+         r4L+fcftY970SAqgCuqxt4B2MtF1X+XmpknJ04VMMFpBCiHzmABG+ba2aGVCeioQjY
+         7wgTY1QEyjNo6MdmFTcIQvrmoRtdz8HFucB3VFTQE7CTa8WL3lFhFzN/zaWxO7JjMB
+         RvuLQFYAgVeGArblJ6VqLE6/35o9RQcl1urE+EHDsluP9+VbqjnzrCcH/9V8YoL2oQ
+         PcJXWwLQ5Ef+iLIfH4389qgmLFrdYfFVwkOFDFiD+XHOPiYa3bUXV3BVqfRWzH2i/1
+         Gwvv52JghSbAA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Coly Li <colyli@suse.de>, Mingzhe Zou <mingzhe.zou@easystack.cn>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         kent.overstreet@gmail.com, linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.19 26/63] bcache: fix set_at_max_writeback_rate() for multiple attached devices
-Date:   Wed, 12 Oct 2022 20:18:00 -0400
-Message-Id: <20221013001842.1893243-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 20/47] bcache: fix set_at_max_writeback_rate() for multiple attached devices
+Date:   Wed, 12 Oct 2022 20:20:55 -0400
+Message-Id: <20221013002124.1894077-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221013001842.1893243-1-sashal@kernel.org>
-References: <20221013001842.1893243-1-sashal@kernel.org>
+In-Reply-To: <20221013002124.1894077-1-sashal@kernel.org>
+References: <20221013002124.1894077-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -86,7 +86,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 52 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 3f0ff3aab6f2..9c227e4a8465 100644
+index 96a07839864b..ee7ad999e924 100644
 --- a/drivers/md/bcache/writeback.c
 +++ b/drivers/md/bcache/writeback.c
 @@ -157,6 +157,53 @@ static void __update_writeback_rate(struct cached_dev *dc)
