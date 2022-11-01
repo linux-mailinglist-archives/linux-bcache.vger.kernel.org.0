@@ -2,77 +2,105 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AF3A612F3C
-	for <lists+linux-bcache@lfdr.de>; Mon, 31 Oct 2022 04:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC847615317
+	for <lists+linux-bcache@lfdr.de>; Tue,  1 Nov 2022 21:20:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229552AbiJaDKZ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 30 Oct 2022 23:10:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33672 "EHLO
+        id S229930AbiKAUUv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 1 Nov 2022 16:20:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiJaDKY (ORCPT
+        with ESMTP id S229875AbiKAUUu (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 30 Oct 2022 23:10:24 -0400
-Received: from todd.t-8ch.de (todd.t-8ch.de [IPv6:2a01:4f8:c010:41de::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A59A99582
-        for <linux-bcache@vger.kernel.org>; Sun, 30 Oct 2022 20:10:22 -0700 (PDT)
-Date:   Mon, 31 Oct 2022 04:10:12 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=t-8ch.de; s=mail;
-        t=1667185820; bh=/pQg/IjUKHqVJH9bxaRci8NQT9eKgH49pC7lMcqIuUw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m9iNb07Wibudj/x0Ipoh9mFMCm/eNqBx/4nrVvlC++ZpzCZHFakvd3S9RsqMqTm7T
-         mkp2mz6SRo9Xma/mJaIvqsERhC0cv22A13fSJ7w8Tx7XqvYhUq79oMgeiEluHaE1GL
-         xtpZpImW3WDKeHKpMZVa/PSZDbFa4qenLimMKW/A=
-From:   Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     linux-bcache@vger.kernel.org, linux-bcachefs@vger.kernel.org
-Subject: Re: bcachefs-tools: O_DIRECT necessary?
-Message-ID: <bb3fa56a-7fa2-4920-98a2-6768845ef6cd@t-8ch.de>
-References: <b82ce4e9-7f8f-4f67-a6b9-09dc90ccd49c@t-8ch.de>
- <20221031014000.hgohrfv7t4dpraia@moria.home.lan>
+        Tue, 1 Nov 2022 16:20:50 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9A41C102
+        for <linux-bcache@vger.kernel.org>; Tue,  1 Nov 2022 13:20:48 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id r186-20020a1c44c3000000b003cf4d389c41so21868wma.3
+        for <linux-bcache@vger.kernel.org>; Tue, 01 Nov 2022 13:20:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jazalyn.art; s=google;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OhBOxjBbs6f8h2djX5Z6K82EHmDv1+X64P92gv8riY4=;
+        b=QZKe3kdTR0PI8dZj0ZRhfTpBzoUuvBz9VAGhhlekdRU407DZbdkWyyaDZvH2cVvPbB
+         KPBTafUR/4+PuEYBn6eU1NnzKZyWTRc3y2yJlUxuAsBHhQHqDN0kGuAELySPVYsy0l+u
+         GZJ4jkKV8NPSkVBupl37uFnkvPie/1dDicXmM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OhBOxjBbs6f8h2djX5Z6K82EHmDv1+X64P92gv8riY4=;
+        b=3xzNvSRnMM4NdDtr8U+Ioj5616TSU6miv4zZ/ALMcQDT+lXXGECsB45HymkWtCM0qn
+         J2Gc1mDr+qlGYu+CRqWMOoQRv3ZpkUnlM0UuQAJ5prJ3XdEXK9I7n8cc0V28hmf3Kvn0
+         trAk0ijfZmREVKL+khKt9mT3TlJHpgUvRou08nIKiRNUQOwWkk3AQlyWH28fSk7XxDev
+         kwf3Tjj53z2gwNwXV4fQteqT4HdGEynkP7jJlemdnQoRlX5K87kAimLlYFiAIxuAWEjP
+         xowinJUgfKJMI6Q1SmQ0zNmWg72gIfbw4g6rC5OaR7aARo4mCUrgJMqU+IQcyE8o0wjV
+         zDkg==
+X-Gm-Message-State: ACrzQf2wNyyF+8m56dllpjfSewNc/zS88vPEX6BXVqW8C7Cq9NxZ80ug
+        gW0v7XDj30TffqGgmQ5xDnFLxQXZcbMBF06N59byqYvCot84NKDAUAOIPQ==
+X-Google-Smtp-Source: AMsMyM7v9eGsIVmyo2TF9Cs1QFJm+DpbEgLMd7xm8Ne2uaMeQBbwFEKKxfMePMPgDzrWFSOBTSnO6ZfBWdcTyuFp/YFaZyQwU0k=
+X-Received: by 2002:a1c:cc0e:0:b0:3cf:71f9:6048 with SMTP id
+ h14-20020a1ccc0e000000b003cf71f96048mr7788359wmb.124.1667334046617; Tue, 01
+ Nov 2022 13:20:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221031014000.hgohrfv7t4dpraia@moria.home.lan>
-Jabber-ID: thomas@t-8ch.de
-X-Accept: text/plain, text/html;q=0.2, text/*;q=0.1
-X-Accept-Language: en-us, en;q=0.8, de-de;q=0.7, de;q=0.6
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+From:   J Jazalyn <j@jazalyn.art>
+Date:   Tue, 1 Nov 2022 13:06:47 -0700
+Message-ID: <CAL89Uq=UQFvZKc4b-=aYZFuLKBeaGCvogN0XwJU5oO9sHMkTOA@mail.gmail.com>
+Subject: Reviews for Jazalyn's Novels
+To:     linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 2022-10-30 21:41-0400, Kent Overstreet wrote:
-> On Mon, Oct 31, 2022 at 02:18:40AM +0100, Thomas Weißschuh wrote:
-> > Hi all,
-> > 
-> > I just tried to run the unittests of bcachefs-tools and they are failing for
-> > me.
-> > The culprit is that mkfs.bcachefs tries to open the disk image with O_DIRECT
-> > which is not allowed on tmpfs.
-> > 
-> > Is O_DIRECT really necessary for mkfs? It does not seem necessary for other
-> > filesystems.
-> 
-> Hey - the proper mailing list for bcachefs is linux-bcachefs@vger.kernel.org now
-> :)
+Hello, I'm an emerging global author-poet and I would like to have a
+review from you for one/two orall three of my current books of your
+choice. They are light poetry novels: short read poems with a premise.
+It's abstract fiction written in lyrical verse.
 
-My bad, I copied the wrong list from one of your mails.
+Brief Introduction:
 
-> It's not strictly necessary, we use O_DIRECT because we're emulating the kernel
-> bio interface. There are other situations where this has been a problem though,
-> we need to add either a flag to use buffered IO or preferably a way to
-> automatically fall back to buffered IO.
-> 
-> Could you open a bug for this? I'll try to get to it in the near future
-> 
-> https://github.com/koverstreet/bcachefs/issues/
+vViIrRuUsS: INever Forget, dystopian apocalyptic science fiction
+mystery of crime fiction
+Premise: A dangerous world where everyone can become a criminal.
 
-I opened it in the tools repo because those are broken:
-https://github.com/koverstreet/bcachefs-tools/issues/132
+Rose: Future Heart, dark fantasy cozy mystery of
+empowerment/healing/self-love
+Premise: A rare rose strives to turn a blurry past into a bright future.
 
-Thomas
+Hollow: A Love Like ALife, supernatural romantic suspense of
+spiritual/mystical fantasy romance
+Premise: A spiritual wind makes an impossible romance possible.
+
+Wide Publication: 2020, 2021, 2022 Independently Published
+
+Word count: Around 10.000 words each
+
+I could send to you the book/s through Book Funnel, you'll have a wide
+variety of options how to download the book/s. *Note: you don't have
+to have Bookfunnel account.
+
+Main Links to my books:
+
+jazalyn.art/poetic-novels
+amazon.com/Jazalyn/e/B08R27QGLC/
+goodreads.com/jazalyn
+BookBub.com/author/jazalyn
+play.google.com/store/books/author?id=Jazalyn
+books.apple.com/us/author/jazalyn/id1478665962
+kobo.com/us/en/search?fcsearchfield=Author&query=jazalyn
+barnesandnoble.com/s/jazalyn
+
+Main Social Media:
+
+twitter.com/justjazalyn
+instagram.com/justjazalyn
+TikTok.com/jjaazzaall
+
+
+Thank you
