@@ -2,105 +2,75 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC847615317
-	for <lists+linux-bcache@lfdr.de>; Tue,  1 Nov 2022 21:20:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F243961D9E4
+	for <lists+linux-bcache@lfdr.de>; Sat,  5 Nov 2022 13:35:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229930AbiKAUUv (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 1 Nov 2022 16:20:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57990 "EHLO
+        id S229642AbiKEMfi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 5 Nov 2022 08:35:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229875AbiKAUUu (ORCPT
+        with ESMTP id S229587AbiKEMfi (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 1 Nov 2022 16:20:50 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9A41C102
-        for <linux-bcache@vger.kernel.org>; Tue,  1 Nov 2022 13:20:48 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id r186-20020a1c44c3000000b003cf4d389c41so21868wma.3
-        for <linux-bcache@vger.kernel.org>; Tue, 01 Nov 2022 13:20:48 -0700 (PDT)
+        Sat, 5 Nov 2022 08:35:38 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 577D915730
+        for <linux-bcache@vger.kernel.org>; Sat,  5 Nov 2022 05:35:37 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id a67so11114865edf.12
+        for <linux-bcache@vger.kernel.org>; Sat, 05 Nov 2022 05:35:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jazalyn.art; s=google;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=OhBOxjBbs6f8h2djX5Z6K82EHmDv1+X64P92gv8riY4=;
-        b=QZKe3kdTR0PI8dZj0ZRhfTpBzoUuvBz9VAGhhlekdRU407DZbdkWyyaDZvH2cVvPbB
-         KPBTafUR/4+PuEYBn6eU1NnzKZyWTRc3y2yJlUxuAsBHhQHqDN0kGuAELySPVYsy0l+u
-         GZJ4jkKV8NPSkVBupl37uFnkvPie/1dDicXmM=
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=c8XA1N0uaxkLO/wKHErNWHaSuu64k5Pjb5u9dmcZrOc=;
+        b=cBRQ6Y8RpefIRHVQrLMSbFXJhzjFVhKUVpWiqphfFD7ZpdDCO4bkiuF3D/wQA8szCV
+         N9/bn9IHCh7XDMLbhEEGrfqiLIOEs4dJxsB83TL3DNqg7MfoEPuluMIpDp6ZBO90y4DD
+         fWKUOs/7GSTK6BhMWPmhNXEAq6hohjAMxPiWpy1hZI9WsxxcpRo2Yb+NBHr+rq8EXy5G
+         MP37jw6howTDBU0pbP6pioWqE/qZyyX+SMTGB3BuhtQMIjk4NfTxtGc7ZD/jM6B1zSTJ
+         SG+flxql5YVXo/GQ+GhmgMs26VLfUnwwzfizS49eehXvsuQO1umllX/v9vFFdjUUHgmE
+         ubNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OhBOxjBbs6f8h2djX5Z6K82EHmDv1+X64P92gv8riY4=;
-        b=3xzNvSRnMM4NdDtr8U+Ioj5616TSU6miv4zZ/ALMcQDT+lXXGECsB45HymkWtCM0qn
-         J2Gc1mDr+qlGYu+CRqWMOoQRv3ZpkUnlM0UuQAJ5prJ3XdEXK9I7n8cc0V28hmf3Kvn0
-         trAk0ijfZmREVKL+khKt9mT3TlJHpgUvRou08nIKiRNUQOwWkk3AQlyWH28fSk7XxDev
-         kwf3Tjj53z2gwNwXV4fQteqT4HdGEynkP7jJlemdnQoRlX5K87kAimLlYFiAIxuAWEjP
-         xowinJUgfKJMI6Q1SmQ0zNmWg72gIfbw4g6rC5OaR7aARo4mCUrgJMqU+IQcyE8o0wjV
-         zDkg==
-X-Gm-Message-State: ACrzQf2wNyyF+8m56dllpjfSewNc/zS88vPEX6BXVqW8C7Cq9NxZ80ug
-        gW0v7XDj30TffqGgmQ5xDnFLxQXZcbMBF06N59byqYvCot84NKDAUAOIPQ==
-X-Google-Smtp-Source: AMsMyM7v9eGsIVmyo2TF9Cs1QFJm+DpbEgLMd7xm8Ne2uaMeQBbwFEKKxfMePMPgDzrWFSOBTSnO6ZfBWdcTyuFp/YFaZyQwU0k=
-X-Received: by 2002:a1c:cc0e:0:b0:3cf:71f9:6048 with SMTP id
- h14-20020a1ccc0e000000b003cf71f96048mr7788359wmb.124.1667334046617; Tue, 01
- Nov 2022 13:20:46 -0700 (PDT)
+        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c8XA1N0uaxkLO/wKHErNWHaSuu64k5Pjb5u9dmcZrOc=;
+        b=xW+wnnbphbp/IB7ccJR1+XwDL3WTxXY82+IAQvpHgCyMXwKSoxcLRJnyTywRK5Y2du
+         a9+phqu/iru3WxPrcKNdFt86pkTlM7EzW3o+JUxiQ3UEQciWxh0gQzEPAQfqjfYmQo0q
+         WgqcZ7jaEZ9mjQl++PCoO9ZmakmJYPPQsOqFXt8yWf21ierLAuMptNyrcezONApn6mwY
+         1Pgeek9R8bnQj8a/WWGKsD/J8TAqtr1BjKCSeXS3iQIdfoJMV1qXuq9eb4EVALXcLftI
+         SC0eDtOmKciZbrds77DxAcGh4swWA9sYegv+WakiaYQyBvZGcLTYj0Tp5hSOXo6uTegn
+         UGxQ==
+X-Gm-Message-State: ACrzQf1sE9gZ4zlwAO+yEUDgjk/ICLf5o82WJTcskl0CigfY25MaT2Q8
+        qJbcT3ilN7wcJKZpBFrJ4K1Xf1pITGNlDabbU8I=
+X-Google-Smtp-Source: AMsMyM7ov6riUwC0zZeruMWfTOWyLCbUC37ops/VJH6Iz0RYno+LBVMMQ4SF3SwUDowxxmVLzV5y8vk580CQgz/obwk=
+X-Received: by 2002:a05:6402:2947:b0:451:32a:2222 with SMTP id
+ ed7-20020a056402294700b00451032a2222mr39283693edb.376.1667651735582; Sat, 05
+ Nov 2022 05:35:35 -0700 (PDT)
 MIME-Version: 1.0
-From:   J Jazalyn <j@jazalyn.art>
-Date:   Tue, 1 Nov 2022 13:06:47 -0700
-Message-ID: <CAL89Uq=UQFvZKc4b-=aYZFuLKBeaGCvogN0XwJU5oO9sHMkTOA@mail.gmail.com>
-Subject: Reviews for Jazalyn's Novels
-To:     linux-bcache@vger.kernel.org
+Received: by 2002:a17:906:3c41:b0:78d:b654:8aec with HTTP; Sat, 5 Nov 2022
+ 05:35:34 -0700 (PDT)
+Reply-To: stefanopessia755@hotmail.com
+From:   Stefano Pessina <annastaciamutuku87@gmail.com>
+Date:   Sat, 5 Nov 2022 15:35:34 +0300
+Message-ID: <CA+Rj53bd_Xp1QaoObL4LCwiUdRsk7BNXS8hYLLL5HqpCEx86qg@mail.gmail.com>
+Subject: Geldspende
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=4.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,UNDISC_FREEM autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hello, I'm an emerging global author-poet and I would like to have a
-review from you for one/two orall three of my current books of your
-choice. They are light poetry novels: short read poems with a premise.
-It's abstract fiction written in lyrical verse.
-
-Brief Introduction:
-
-vViIrRuUsS: INever Forget, dystopian apocalyptic science fiction
-mystery of crime fiction
-Premise: A dangerous world where everyone can become a criminal.
-
-Rose: Future Heart, dark fantasy cozy mystery of
-empowerment/healing/self-love
-Premise: A rare rose strives to turn a blurry past into a bright future.
-
-Hollow: A Love Like ALife, supernatural romantic suspense of
-spiritual/mystical fantasy romance
-Premise: A spiritual wind makes an impossible romance possible.
-
-Wide Publication: 2020, 2021, 2022 Independently Published
-
-Word count: Around 10.000 words each
-
-I could send to you the book/s through Book Funnel, you'll have a wide
-variety of options how to download the book/s. *Note: you don't have
-to have Bookfunnel account.
-
-Main Links to my books:
-
-jazalyn.art/poetic-novels
-amazon.com/Jazalyn/e/B08R27QGLC/
-goodreads.com/jazalyn
-BookBub.com/author/jazalyn
-play.google.com/store/books/author?id=Jazalyn
-books.apple.com/us/author/jazalyn/id1478665962
-kobo.com/us/en/search?fcsearchfield=Author&query=jazalyn
-barnesandnoble.com/s/jazalyn
-
-Main Social Media:
-
-twitter.com/justjazalyn
-instagram.com/justjazalyn
-TikTok.com/jjaazzaall
-
-
-Thank you
+--=20
+Die Summe von 500.000,00 =E2=82=AC wurde Ihnen von STEFANO PESSINA gespende=
+t.
+Bitte kontaktieren Sie uns f=C3=BCr weitere Informationen =C3=BCber
+stefanopessia755@hotmail.com
