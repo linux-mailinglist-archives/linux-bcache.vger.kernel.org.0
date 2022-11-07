@@ -2,111 +2,129 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B888861E576
-	for <lists+linux-bcache@lfdr.de>; Sun,  6 Nov 2022 20:11:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 851E361F067
+	for <lists+linux-bcache@lfdr.de>; Mon,  7 Nov 2022 11:24:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbiKFTLn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 6 Nov 2022 14:11:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36332 "EHLO
+        id S231683AbiKGKYB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 7 Nov 2022 05:24:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbiKFTLn (ORCPT
+        with ESMTP id S231743AbiKGKXz (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 6 Nov 2022 14:11:43 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7530B64C0
-        for <linux-bcache@vger.kernel.org>; Sun,  6 Nov 2022 11:11:41 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id 13so25152589ejn.3
-        for <linux-bcache@vger.kernel.org>; Sun, 06 Nov 2022 11:11:41 -0800 (PST)
+        Mon, 7 Nov 2022 05:23:55 -0500
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C04B218B21
+        for <linux-bcache@vger.kernel.org>; Mon,  7 Nov 2022 02:23:52 -0800 (PST)
+Received: by mail-pj1-x1043.google.com with SMTP id m14-20020a17090a3f8e00b00212dab39bcdso14158296pjc.0
+        for <linux-bcache@vger.kernel.org>; Mon, 07 Nov 2022 02:23:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jazalyn.art; s=google;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Z5OO2QlZdIKebXiykrFspzwqmuWt73xAdFhSgfWqkQ0=;
-        b=lGoad/9pi4hAN/fV9WCJaZXmZ1XjCVgEllns46BEF3Dp3+4pOiTccIalRmTZlkZuXb
-         tz94/xepTfjE9+dC+kuJ9dSx/6cCJNP5oHq5doS7lTYeuJ3wGvoMBy/rM00zIvAEUlqE
-         MN3TG48NsO/q3G+zR7Z5YiO9hFBpahAFCzGJQ=
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AOmtRIzmF5dcnWrT0j3skK83MYTC+QvduwZ6ndeN2Ks=;
+        b=Zv++OJ/ncK2pWuUWAQT+z52+cIoHK/WVJU4bVze52hunD5wDL4D5XJdl5mW2VbRjhi
+         PKA0tQ/z42/ONfUnPJoBfdYRGEG2gwiyoDRW7hecaxcg+/0t0u3g44ISFlpe+B9l1fvu
+         TmkNgtKOyak6WThRMAIvY+g5IgPZxvnz63e21BpajeaX9653GP4qpHUHyfV7BL4cSNb4
+         pCU1fNGxZBn7NlKzWZCMHMxM9LSs8sKofgpQ0FSoeb/qTDQ+CPP+tvlBe/vGQ8T8hOyn
+         vdUZr48/zTuwVxtBDF6IrOR7pT19nf73qD9i1Q8QUWEzM8dVJjwmGS+xVbVCXqFaE09J
+         SKzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z5OO2QlZdIKebXiykrFspzwqmuWt73xAdFhSgfWqkQ0=;
-        b=rE759aP7P9DX4Vn6ucY3txROMcTyadwKoEHgR2oonB5YzxZYrs0Gu9EoUrlVBzWx84
-         yleMlhBjrHx/sUR6Vdfy9fL2RjDocbJzV/dWj7MgCByR9ZDjk3OwyQJf/95aPokWtnzC
-         6+TmdNG82BJh8GmpNvowmyVhWE2Mx5HjWRM8kvXVCMWbi606JNmVWUzr/WpodgxSVWnA
-         KfggcWlkc+gHbQij9Rdkg6VSV5yo9Ok3cI/EuXwI9+0Ej3vvnOQRvbJOJhvxZBwDeJF6
-         ScKH0CsHECtcz628PlqkDwdx3rmsDLwNk1MbSX6+pQP5NPOqOUBxuOLCyp0L/TsdRQcv
-         MSVg==
-X-Gm-Message-State: ANoB5pmfRlpDn0N9JuiQuhZ1h01MHfpqWdaS2dIEvuP2wTkxth8R9iFV
-        +ceFj147Sbqvfh0OM8uLpLMXNP2zdWwrrbU+I9MjidjahtWycmTkW1CfkrNe
-X-Google-Smtp-Source: AMsMyM51VhAaQKJDBQA8LD1sP5cMkG6E5YfHjv+tuhrpFm1yX4PFB1oy4T/qj6l7fyR2xwje6dHbZKONtpXkBRyUZTkNgug2ip8=
-X-Received: by 2002:a17:906:c14f:b0:793:30e1:96be with SMTP id
- dp15-20020a170906c14f00b0079330e196bemr12066135ejc.447.1667761899803; Sun, 06
- Nov 2022 11:11:39 -0800 (PST)
+        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AOmtRIzmF5dcnWrT0j3skK83MYTC+QvduwZ6ndeN2Ks=;
+        b=aVczX5OyHoBMYrOfMCiig1pKZWdxK8KaU3lVJRTaiVDGJeKsmUlKQBskor+OZaTZca
+         ohUTetEbiIPYLnbRcNxNt5apBM0aeRR9Q3Zjb1W2O7mJy5MCLCkF2EAlh3aSA07ZrvpT
+         PiFfw6SxYr2dvIvzZaWSCB2m3QzeN+bsv8eIEsPgbheeBT9WCgt7IPqnA70ABgEXfNJN
+         AGk6F0vgx1K+/Gyac3KskyI4t3M2VIzlqz7vZ312shEhDDEbw2EC0dovH6k5vEKB5iyg
+         YM09M/0YMnZ577pL7sOfApIpasKFJgGewMMBpVvXDd5hwS5GvCu66Szpy5ReagQbaf3X
+         8yVA==
+X-Gm-Message-State: ACrzQf3q9WOKomvoCFmBUFM7PNl1tNjCtFAReLsytwh/ofgM+HYIS+vd
+        m7q80vCT1y+eOSMN/VqIJBNkAoB0vJ3IxgoZ6tI=
+X-Google-Smtp-Source: AMsMyM7DPjaK7bSeUBIcMTkNZUaqK+NSwCEUfp88ZZDLY5TXShnQ2+B86xH3ryBKqTyGQWW3ozA/96x60VupsK8qo34=
+X-Received: by 2002:a17:902:8a90:b0:186:b145:f5ec with SMTP id
+ p16-20020a1709028a9000b00186b145f5ecmr50774476plo.103.1667816632274; Mon, 07
+ Nov 2022 02:23:52 -0800 (PST)
 MIME-Version: 1.0
-From:   Authoress Jazalyn <authoress@jazalyn.art>
-Date:   Sun, 6 Nov 2022 14:09:20 -0500
-Message-ID: <CAPSgrJO-_nSV8Sw9pj_DK5qZgu5zTcpFT334q45FDUtHzxWLxg@mail.gmail.com>
-Subject: Reviews For Jazalyn's Novels
-To:     linux-bcache@vger.kernel.org
+Received: by 2002:a05:6a06:925:b0:587:19e0:c567 with HTTP; Mon, 7 Nov 2022
+ 02:23:51 -0800 (PST)
+Reply-To: contact@ammico.it
+From:   =?UTF-8?Q?Mrs=2E_Monika_Everenov=C3=A1?= <977638ib@gmail.com>
+Date:   Mon, 7 Nov 2022 11:23:51 +0100
+Message-ID: <CAHAXD+bPNCns8Ez=7iXmPLADMtJgZj3-mFTk3NMhWC-Ca1b9rw@mail.gmail.com>
+Subject: Re:
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: Yes, score=5.8 required=5.0 tests=ADVANCE_FEE_2_NEW_MONEY,
+        BAYES_20,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FROM,FROM_STARTS_WITH_NUMS,LOTS_OF_MONEY,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_HK_NAME_FM_MR_MRS,UNDISC_MONEY autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:1043 listed in]
+        [list.dnswl.org]
+        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
+        *      [score: 0.1811]
+        *  0.7 FROM_STARTS_WITH_NUMS From: starts with several numbers
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [977638ib[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  0.0 T_HK_NAME_FM_MR_MRS No description available.
+        *  0.0 LOTS_OF_MONEY Huge... sums of money
+        *  3.3 UNDISC_MONEY Undisclosed recipients + money/fraud signs
+        *  2.0 ADVANCE_FEE_2_NEW_MONEY Advance Fee fraud and lots of money
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hello, I'm an emerging global author-poet and I would like to have a
-review from you for one/two orall three of my current books of your
-choice. They are light poetry novels: short read poems with a premise.
-It's abstract fiction written in lyrical verse.
-
-In general, you can expect abstract narrative poetry,
-psychophilosophical mystery, supernatural science fantasy etc.
-
-I'm interested notonly for expertise but also impressions from a
-simple point of view. Even a few words would suffice.
-
-Brief Introduction:
-
-vViIrRuUsS: INever Forget, dystopian apocalyptic science fantasy
-mystery of crime fiction
-Premise: A dangerous world where everyone can become a criminal.
-
-Rose: Future Heart, dark fantasy cozy mystery of
-empowerment/healing/self-love
-Premise: A rare rose strives to turn a blurry past into a bright future.
-
-Hollow: A Love Like ALife, supernatural romantic suspense of
-spiritual/mystical fantasy romance
-Premise: A spiritual wind makes an impossible romance possible.
-
-Wide Publication: 2020, 2021, 2022 Independently Published
-
-Word count: Around 10.000 words each
-
-I could send to you the book/s through Book Funnel, you'll have a wide
-variety of options how to download the book/s. *Note: you don't have
-to have Bookfunnel account.
-
-Main Links to my books:
-
-jazalyn.art/poetic-novels
-amazon.com/Jazalyn/e/B08R27QGLC/
-goodreads.com/jazalyn
-BookBub.com/author/jazalyn
-play.google.com/store/books/author?id=Jazalyn
-books.apple.com/us/author/jazalyn/id1478665962
-kobo.com/us/en/search?fcsearchfield=Author&query=jazalyn
-barnesandnoble.com/s/jazalyn
-
-Main Social Media:
-
-twitter.com/justjazalyn
-instagram.com/justjazalyn
-TikTok.com/jjaazzaall
-
-
-Thank you
+Hei ja miten voit?
+Nimeni on rouva Evereen, l=C3=A4het=C3=A4n t=C3=A4m=C3=A4n viestin suurella=
+ toivolla
+v=C3=A4lit=C3=B6n vastaus, koska minun on teht=C3=A4v=C3=A4 uusi syd=C3=A4n=
+leikkaus
+t=C3=A4ll=C3=A4 hetkell=C3=A4 huonokuntoinen ja v=C3=A4h=C3=A4iset mahdolli=
+suudet selviyty=C3=A4.
+Mutta ennen kuin min=C3=A4
+Tee toinen vaarallinen operaatio, annan sen sinulle
+Minulla on 6 550 000 dollaria yhdysvaltalaisella pankkitilill=C3=A4
+sijoittamista, hallinnointia ja k=C3=A4ytt=C3=B6=C3=A4 varten
+voittoa hyv=C3=A4ntekev=C3=A4isyysprojektin toteuttamiseen. Tarkoitan saira=
+iden auttamista
+ja k=C3=B6yh=C3=A4t ovat viimeinen haluni maan p=C3=A4=C3=A4ll=C3=A4, sill=
+=C3=A4 minulla ei ole niit=C3=A4
+kenelt=C3=A4 perii rahaa.
+Vastaa minulle nopeasti
+terveisi=C3=A4
+Rouva Monika Evereen
+Florida, Amerikan Yhdysvallat
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+Hi and how are you?
+My name is Mrs. Evereen, I am sending this message with great hope for
+an immediate response, as I have to undergo heart reoperation in my
+current poor health with little chance of survival. But before I
+undertake the second dangerous operation, I will give you the
+$6,550,000 I have in my US bank account to invest well, manage and use
+the profits to run a charity project for me. I count helping the sick
+and the poor as my last wish on earth, because I have no one to
+inherit money from.
+Please give me a quick reply
+regards
+Mrs. Monika Evereen
+Florida, United States of America
