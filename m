@@ -2,139 +2,112 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A341C646748
-	for <lists+linux-bcache@lfdr.de>; Thu,  8 Dec 2022 03:55:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6579647238
+	for <lists+linux-bcache@lfdr.de>; Thu,  8 Dec 2022 15:53:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbiLHCzg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 7 Dec 2022 21:55:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43440 "EHLO
+        id S229893AbiLHOxU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 8 Dec 2022 09:53:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbiLHCzg (ORCPT
+        with ESMTP id S229964AbiLHOxG (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 7 Dec 2022 21:55:36 -0500
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAFE8950CB
-        for <linux-bcache@vger.kernel.org>; Wed,  7 Dec 2022 18:55:33 -0800 (PST)
-Received: by mail-pf1-x433.google.com with SMTP id 130so207231pfu.8
-        for <linux-bcache@vger.kernel.org>; Wed, 07 Dec 2022 18:55:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+YnwWLbC1k13FDuBmbkgFl4RERtAqz8Hk2l0zfW6u80=;
-        b=fU4y3lEGFEK3oscBjLkN1vxfgNM/FZidlQ+rI70OHvgxD0rXJh0EwSK3e2bczFqMkA
-         tO2LwtPOEAYZtGQjimEXQ8aStoM+oHrRCZpJNDNOrJTKI/JHeBOK30eol6bW+IR4iBg5
-         6bvbpaQVxY9TyhU2N+c7QQA9h+c23vE28pNce8JLnQVD9Bz7KVFAZVNBp+U4WY4PzC6f
-         oXQvkaSCLJVDYLe3bcQFvuvQN3QZ2UfyLUBGJaQmSeDW96IREZIk3AzUiqppD7zsYIqk
-         Vd2qy53kRGJVHi8kjxDmOkqm8yZRn4/hLIi6OYpVIqVtAFlNgX78uWUxSxkcznrsySrQ
-         SZ+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+YnwWLbC1k13FDuBmbkgFl4RERtAqz8Hk2l0zfW6u80=;
-        b=DRd8NF4U7u5run4PFaI77fDE67aWzbyL4LqZ0DErZCKghHZseRqdJl7ju54tjy+0RE
-         7c7O2ZxBQVRZqzkl9sRrlUnkSbDC7V99J1DNU9uiQKmXwj2z/OE8ms6LX8jrJVAIdjk7
-         nq9gnPtNkXv2t8Gozdyuo4HoE0PGEISkz47NeFsopu4uchRnyE9VN+HUCzpB84Z7Ja3K
-         /vSTxnGOIvmFWNDTX/TBAAR7tcv0dMR53RdxqhZlymkmgE219vGK9y+qYaVT54+y8BbR
-         Dnp/M6flWtLVKsF4k62zFQybkpgqk6VCcXS/u3y/aqDxgXMGLwM7JpiVLPMyEU3LR2FT
-         62zQ==
-X-Gm-Message-State: ANoB5pnGrvGmpgpAMyDHmmy/NETympWr/bHWZNokSSEgeeTep+P/NCxG
-        FFSvEjzElM0r52Qx4j9+IDT4zg==
-X-Google-Smtp-Source: AA0mqf4GKdTwpvzKHdR+jWKD59yHhtQiQj6o4bMAawT3TKX0knE/TZzrpzeE/R5qCEqb2PjMIqK3qA==
-X-Received: by 2002:a63:d151:0:b0:478:c28a:2f36 with SMTP id c17-20020a63d151000000b00478c28a2f36mr13058187pgj.182.1670468133285;
-        Wed, 07 Dec 2022 18:55:33 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n13-20020a170903404d00b0016d773aae60sm15211981pla.19.2022.12.07.18.55.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Dec 2022 18:55:32 -0800 (PST)
-Message-ID: <4d118f20-9006-0af9-8d97-0d28d85a3585@kernel.dk>
-Date:   Wed, 7 Dec 2022 19:55:30 -0700
+        Thu, 8 Dec 2022 09:53:06 -0500
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A122ED7D;
+        Thu,  8 Dec 2022 06:53:04 -0800 (PST)
+Received: from [2a02:8108:963f:de38:eca4:7d19:f9a2:22c5]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1p3IGl-0006kQ-BB; Thu, 08 Dec 2022 15:53:03 +0100
+Message-ID: <19200730-a3ba-6f4f-bb81-71339bdbbf73@leemhuis.info>
+Date:   Thu, 8 Dec 2022 15:53:02 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.1
-Subject: Re: [RFC for-6.2/block V2] block: Change the granularity of io ticks
- from ms to ns
-Content-Language: en-US
-To:     Keith Busch <kbusch@kernel.org>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>
-Cc:     Gulam Mohamed <gulam.mohamed@oracle.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "philipp.reisner@linbit.com" <philipp.reisner@linbit.com>,
-        "lars.ellenberg@linbit.com" <lars.ellenberg@linbit.com>,
-        "christoph.boehmwalder@linbit.com" <christoph.boehmwalder@linbit.com>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "ngupta@vflare.org" <ngupta@vflare.org>,
-        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-        "colyli@suse.de" <colyli@suse.de>,
-        "kent.overstreet@gmail.com" <kent.overstreet@gmail.com>,
-        "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@kernel.org" <snitzer@kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "song@kernel.org" <song@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-        "dave.jiang@intel.com" <dave.jiang@intel.com>,
-        "ira.weiny@intel.com" <ira.weiny@intel.com>,
-        "junxiao.bi@oracle.com" <junxiao.bi@oracle.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "joe.jin@oracle.com" <joe.jin@oracle.com>
-References: <20221207223204.22459-1-gulam.mohamed@oracle.com>
- <abaa2003-4ddf-5ef9-d62c-1708a214609d@kernel.dk>
- <09be5cbe-9251-d28c-e91a-3f2e5e9e99f2@nvidia.com>
- <Y5Exa1TV/2VLcEWR@kbusch-mbp>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Y5Exa1TV/2VLcEWR@kbusch-mbp>
+Content-Language: en-US, de-DE
+From:   Thorsten Leemhuis <regressions@leemhuis.info>
+To:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-bcache@vger.kernel.org,
+        "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexandre Pereira <alexpereira@disroot.org>
+Subject: =?UTF-8?Q?=5bregression=5d_Bug=c2=a0216785_-_=22memcpy=3a_detected_?=
+ =?UTF-8?Q?field-spanning_write=2e=2e=2e=22_warnings_with_bcache?=
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1670511185;0d3d8e8c;
+X-HE-SMSGID: 1p3IGl-0006kQ-BB
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 12/7/22 5:35?PM, Keith Busch wrote:
-> On Wed, Dec 07, 2022 at 11:17:12PM +0000, Chaitanya Kulkarni wrote:
->> On 12/7/22 15:08, Jens Axboe wrote:
->>>
->>> My default peak testing runs at 122M IOPS. That's also the peak IOPS of
->>> the devices combined, and with iostats disabled. If I enabled iostats,
->>> then the performance drops to 112M IOPS. It's no longer device limited,
->>> that's a drop of about 8.2%.
->>>
->>
->> Wow, clearly not acceptable that's exactly I asked for perf
->> numbers :).
+Hi, this is your Linux kernel regression tracker speaking.
+
+I noticed a regression report in bugzilla.kernel.org. As many (most?)
+kernel developer don't keep an eye on it, I decided to forward it by
+mail. Quoting some of
+https://bugzilla.kernel.org/show_bug.cgi?id=216785 :
+
+>  Alexandre Pereira 2022-12-07 18:51:55 UTC
 > 
-> For the record, we did say per-io ktime_get() has a measurable
-> performance harm and should be aggregated.
+> Testing linux kernel 6.1-rc8, I have several kernel erros regarding bcache.
 > 
->   https://www.spinics.net/lists/linux-block/msg89937.html
+> For context, I have a bcache configuration that is working without issues on 6.0.x and previous versions.
+> 
+> The errors:
+> 
+> dez 07 18:33:45 stormtrooper kernel: ------------[ cut here ]------------
+> dez 07 18:33:45 stormtrooper kernel: memcpy: detected field-spanning write (size 264) of single field "&i->j" at drivers/md/bcache/journal.c:152 (size 240)
+> dez 07 18:33:45 stormtrooper kernel: WARNING: CPU: 12 PID: 182 at drivers/md/bcache/journal.c:152 journal_read_bucket+0x476/0x5a0 [bcache]
+> dez 07 18:33:45 stormtrooper kernel: Modules linked in: snd_timer crypto_simd sp5100_tco snd cryptd tpm_crb(+) pcc_cpufreq(-) rapl gigabyte_wmi wmi_bmof ccp k10temp dca s>
+> dez 07 18:33:45 stormtrooper kernel: CPU: 12 PID: 182 Comm: kworker/12:1 Not tainted 6.1.0-rc8-1-cachyos-rc-lto #1 338e4715ba3f0cf5a31b9c6d6a0812b10d93e6a7
+> dez 07 18:33:45 stormtrooper kernel: Hardware name: Gigabyte Technology Co., Ltd. X470 AORUS ULTRA GAMING/X470 AORUS ULTRA GAMING-CF, BIOS F62d 10/13/2021
+> dez 07 18:33:45 stormtrooper kernel: Workqueue: events register_cache_worker [bcache]
+> dez 07 18:33:45 stormtrooper kernel: RIP: 0010:journal_read_bucket+0x476/0x5a0 [bcache]
+> dez 07 18:33:45 stormtrooper kernel: Code: 18 e9 63 fd ff ff c6 05 30 af 02 00 01 b9 f0 00 00 00 48 c7 c7 c6 e8 d5 c1 48 8b 74 24 30 48 c7 c2 8d cb d5 c1 e8 6a f0 96 f3 <>
+> dez 07 18:33:45 stormtrooper kernel: RSP: 0018:ffffb1688085fbc8 EFLAGS: 00010246
+> dez 07 18:33:45 stormtrooper kernel: RAX: 3e6a0611f0c96400 RBX: ffffb1688085fd58 RCX: 0000000000000027
+> dez 07 18:33:45 stormtrooper kernel: RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff9e38eed21688
+> dez 07 18:33:45 stormtrooper kernel: RBP: ffff9e35c50f1600 R08: 0000000000000000 R09: ffff9e38ff247140
+> dez 07 18:33:45 stormtrooper kernel: R10: 00000000ffffffff R11: ffff9e38ff2f7140 R12: ffff9e35c50f1618
+> dez 07 18:33:45 stormtrooper kernel: R13: ffffb1688085fd58 R14: 0000000000000001 R15: ffff9e35d82d8000
+> dez 07 18:33:45 stormtrooper kernel: FS:  0000000000000000(0000) GS:ffff9e38eed00000(0000) knlGS:0000000000000000
+> dez 07 18:33:45 stormtrooper kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> dez 07 18:33:45 stormtrooper kernel: CR2: 00007fb814ccffe0 CR3: 0000000107b72000 CR4: 0000000000350ee0
+> dez 07 18:33:45 stormtrooper kernel: Call Trace:
+> dez 07 18:33:45 stormtrooper kernel:  <TASK>
+> dez 07 18:33:45 stormtrooper kernel:  ? __closure_sync+0xa0/0xa0 [bcache de8d79cf2937e54690676a125d53bc2d3cfbb49a]
+> dez 07 18:33:45 stormtrooper kernel:  bch_journal_read+0xa0/0x350 [bcache de8d79cf2937e54690676a125d53bc2d3cfbb49a]
+> dez 07 18:33:45 stormtrooper kernel:  ? __kernfs_new_node+0x1c5/0x230
+> dez 07 18:33:45 stormtrooper kernel:  run_cache_set+0xb8/0x8f0 [bcache de8d79cf2937e54690676a125d53bc2d3cfbb49a]
+> dez 07 18:33:45 stormtrooper kernel:  ? kernfs_add_one+0x20a/0x250
+> dez 07 18:33:45 stormtrooper kernel:  register_cache_worker+0xb8b/0xce0 [bcache de8d79cf2937e54690676a125d53bc2d3cfbb49a]
+> dez 07 18:33:45 stormtrooper kernel:  process_one_work+0x23a/0x3f0
+> dez 07 18:33:45 stormtrooper kernel:  worker_thread+0x280/0x5c0
+> dez 07 18:33:45 stormtrooper kernel:  ? worker_clr_flags+0x40/0x40
+> dez 07 18:33:45 stormtrooper kernel:  kthread+0x149/0x170
+> dez 07 18:33:45 stormtrooper kernel:  ? kthread_blkcg+0x30/0x30
+> dez 07 18:33:45 stormtrooper kernel:  ret_from_fork+0x1f/0x30
+> dez 07 18:33:45 stormtrooper kernel:  </TASK>
+> dez 07 18:33:45 stormtrooper kernel: ---[ end trace 0000000000000000 ]---
 
-Yes, I iterated that in the v1 posting as well, and mentioned it was the
-reason the time batching was done. From the results I posted, if you
-look at a profile of the run, here are the time related additions:
+See the ticket for more details.
 
-+   27.22%  io_uring  [kernel.vmlinux]  [k] read_tsc
-+    4.37%  io_uring  [kernel.vmlinux]  [k] ktime_get
+BTW, let me use this mail to also add the report to the list of tracked
+regressions to ensure it's doesn't fall through the cracks:
 
-which are #1 and $4, respectively. That's a LOT of added overhead. Not
-sure why people think time keeping is free, particularly high
-granularity time keeping. It's definitely not, and adding 2-3 per IO is
-very noticeable.
+#regzbot introduced v6.0..v6.1-rc8
+https://bugzilla.kernel.org/show_bug.cgi?id=216785
+#regzbot title bcache: memcpy: detected field-spanning write...
+#regzbot ignore-activity
 
--- 
-Jens Axboe
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
 
+P.S.: As the Linux kernel's regression tracker I deal with a lot of
+reports and sometimes miss something important when writing mails like
+this. If that's the case here, don't hesitate to tell me in a public
+reply, it's in everyone's interest to set the public record straight.
