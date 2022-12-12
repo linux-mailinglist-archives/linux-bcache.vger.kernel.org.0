@@ -2,369 +2,105 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 430A3648032
-	for <lists+linux-bcache@lfdr.de>; Fri,  9 Dec 2022 10:37:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26BE0649835
+	for <lists+linux-bcache@lfdr.de>; Mon, 12 Dec 2022 04:26:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229589AbiLIJhM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 9 Dec 2022 04:37:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51906 "EHLO
+        id S230367AbiLLD0N (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 11 Dec 2022 22:26:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbiLIJhL (ORCPT
+        with ESMTP id S229823AbiLLD0M (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 9 Dec 2022 04:37:11 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFC6720361
-        for <linux-bcache@vger.kernel.org>; Fri,  9 Dec 2022 01:37:09 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B07B8337BE;
-        Fri,  9 Dec 2022 09:37:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1670578628; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OwXd4PjkjwYD2YSFYwNuzVfYzPFStpn6Y34p2Vojh8g=;
-        b=RqtcOXbMznbyAsBrMf7kq1rJ8IPPoxDoMSnOybRuBZbEmeIj4AUO89Rn+Av33GZfNbJgvY
-        3Dk2ypwxmWcJo1XgMlXMLwIR1GlUXDSQ07ekUgjRgyThbIhlB48i4mRXeBENARc0W2k0RD
-        JBF9jMxKs3B4qis8ytLlMiCRy67SJlM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1670578628;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OwXd4PjkjwYD2YSFYwNuzVfYzPFStpn6Y34p2Vojh8g=;
-        b=0/fAJ27CEZd0msh9LRVzViu6SadIBI+PP85/CQqXmha6Eq2urWxRnVkDJt5688nJTT5s6d
-        NG2DgtjdwFKT9FBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9222013597;
-        Fri,  9 Dec 2022 09:37:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id /fPiFsMBk2MPagAAMHmgww
-        (envelope-from <colyli@suse.de>); Fri, 09 Dec 2022 09:37:07 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.200.110.1.12\))
-Subject: Re: [RFC] Live resize of backing device
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <CAHykVA4tz_WxmYae9i+TUPLmEsUpJ0rxMV_cs=4st0voM=Oo9w@mail.gmail.com>
-Date:   Fri, 9 Dec 2022 17:36:54 +0800
-Cc:     Eric Wheeler <bcache@lists.ewheeler.net>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BF11120A-1148-427E-966A-A46F6002FCC4@suse.de>
-References: <CAHykVA5sgGooeRjM1EepCCpZqkvtQJ_=cY8hmjqe0oQ3FLDFnQ@mail.gmail.com>
- <9474c19e-56f0-cb4d-68c-405c55aef281@ewheeler.net>
- <CAHykVA4zGN=WA4A3njQ3VdX4age2-AXq3EcW1qRTFbf=o1=yDw@mail.gmail.com>
- <4ddb082f-cefc-644e-2ccf-56d41207ecd3@devo.com>
- <14c2bdbd-e4ae-a5d1-3947-6ea6dc29f0bc@devo.com>
- <E8AC75B3-1BAD-4AD8-AD77-ADE8A2E9E8C6@suse.de>
- <CAHykVA4tz_WxmYae9i+TUPLmEsUpJ0rxMV_cs=4st0voM=Oo9w@mail.gmail.com>
-To:     Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
-X-Mailer: Apple Mail (2.3731.200.110.1.12)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Sun, 11 Dec 2022 22:26:12 -0500
+X-Greylist: delayed 317 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 11 Dec 2022 19:26:11 PST
+Received: from mail-m3164.qiye.163.com (mail-m3164.qiye.163.com [103.74.31.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42704BCA6
+        for <linux-bcache@vger.kernel.org>; Sun, 11 Dec 2022 19:26:10 -0800 (PST)
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id 955FE6201FA;
+        Mon, 12 Dec 2022 11:20:50 +0800 (CST)
+From:   mingzhe.zou@easystack.cn
+To:     colyli@suse.de, linux-bcache@vger.kernel.org
+Cc:     zoumingzhe@qq.com
+Subject: [PATCH 1/3] bcache: add dirty_data in struct bcache_device
+Date:   Mon, 12 Dec 2022 11:20:48 +0800
+Message-Id: <20221212032050.9511-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTh5IVkkfGU1LS0JDHx1OS1UZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ni46URw4KTJIKlEWH1YRQg4S
+        GhEwCz9VSlVKTUxLQ0pOSU5KS0NCVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSU1PSTcG
+X-HM-Tid: 0a850459791300a4kurm955fe6201fa
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Andrea,
+From: mingzhe <mingzhe.zou@easystack.cn>
 
-Hope I can have time late in this month, and response you.
+Currently, the dirty_data of cached_dev and flash_dev depend on the stripe.
 
-Thanks.
+Since the flash device supports resize, it may cause a bug (resize the flash
+from 1T to 2T, and nr_stripes from 1 to 2).
 
-Coly Li
+The patch add dirty_data in struct bcache_device, we can get the value of
+dirty_data quickly and fixes the bug of resize flash device.
 
+Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/bcache.h    | 1 +
+ drivers/md/bcache/writeback.c | 2 ++
+ drivers/md/bcache/writeback.h | 7 +------
+ 3 files changed, 4 insertions(+), 6 deletions(-)
 
-
-> 2022=E5=B9=B412=E6=9C=889=E6=97=A5 16:57=EF=BC=8CAndrea Tomassetti =
-<andrea.tomassetti-opensource@devo.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> Hi Coly,
-> just a kind reminder for this patch.
->=20
-> Thank you very much,
-> Andrea
->=20
-> On Mon, Sep 19, 2022 at 2:17 PM Coly Li <colyli@suse.de> wrote:
->>=20
->>=20
->>=20
->>> 2022=E5=B9=B49=E6=9C=8819=E6=97=A5 19:42=EF=BC=8CAndrea Tomassetti =
-<andrea.tomassetti-opensource@devo.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>=20
->>> Hi Coly,
->>> have you had any time to take a look at this? Do you prefer if I =
-send the patch as a separate thread?
->>>=20
->>> Thank you very much,
->>> Andrea
->>=20
->>=20
->> Yes, it is on my queue, just after I finish my tasks on hand, I will =
-take a look on it.
->>=20
->> Thanks.
->>=20
->> Coly Li
->>=20
->>=20
->>>=20
->>> On 8/9/22 10:32, Andrea Tomassetti wrote:
->>>> =46rom 59787372cf21af0b79e895578ae05b6586dfeb09 Mon Sep 17 00:00:00 =
-2001
->>>> From: Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
->>>> Date: Thu, 8 Sep 2022 09:47:55 +0200
->>>> Subject: [PATCH] bcache: Add support for live resize of backing =
-devices
->>>> Signed-off-by: Andrea Tomassetti =
-<andrea.tomassetti-opensource@devo.com>
->>>> ---
->>>> Hi Coly,
->>>> Here is the first version of the patch. There are some points I =
-noted down
->>>> that I would like to discuss with you:
->>>> - I found it pretty convenient to hook the call of the new added =
-function
->>>>   inside the `register_bcache`. In fact, every time (at least from =
-my
->>>>   understandings) a disk changes size, it will trigger a new probe =
-and,
->>>>   thus, `register_bcache` will be triggered. The only inconvenient
->>>>   is that, in case of success, the function will output
->>>>   `error: capacity changed` even if it's not really an error.
->>>> - I'm using `kvrealloc`, introduced in kernel version 5.15, to =
-resize
->>>>   `stripe_sectors_dirty` and `full_dirty_stripes`. It shouldn't be =
-a
->>>>   problem, right?
->>>> - There is some reused code between this new function and
->>>>   `bcache_device_init`. Maybe I can move `const size_t max_stripes` =
-to
->>>>   a broader scope or make it a macro, what do you think?
->>>> Thank you very much,
->>>> Andrea
->>>> drivers/md/bcache/super.c | 75 =
-++++++++++++++++++++++++++++++++++++++-
->>>> 1 file changed, 74 insertions(+), 1 deletion(-)
->>>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
->>>> index ba3909bb6bea..9a77caf2a18f 100644
->>>> --- a/drivers/md/bcache/super.c
->>>> +++ b/drivers/md/bcache/super.c
->>>> @@ -2443,6 +2443,76 @@ static bool bch_is_open(dev_t dev)
->>>>     return bch_is_open_cache(dev) || bch_is_open_backing(dev);
->>>> }
->>>> +static bool bch_update_capacity(dev_t dev)
->>>> +{
->>>> +    const size_t max_stripes =3D min_t(size_t, INT_MAX,
->>>> +                     SIZE_MAX / sizeof(atomic_t));
->>>> +
->>>> +    uint64_t n, n_old;
->>>> +    int nr_stripes_old;
->>>> +    bool res =3D false;
->>>> +
->>>> +    struct bcache_device *d;
->>>> +    struct cache_set *c, *tc;
->>>> +    struct cached_dev *dcp, *t, *dc =3D NULL;
->>>> +
->>>> +    uint64_t parent_nr_sectors;
->>>> +
->>>> +    list_for_each_entry_safe(c, tc, &bch_cache_sets, list)
->>>> +        list_for_each_entry_safe(dcp, t, &c->cached_devs, list)
->>>> +            if (dcp->bdev->bd_dev =3D=3D dev) {
->>>> +                dc =3D dcp;
->>>> +                goto dc_found;
->>>> +            }
->>>> +
->>>> +dc_found:
->>>> +    if (!dc)
->>>> +        return false;
->>>> +
->>>> +    parent_nr_sectors =3D bdev_nr_sectors(dc->bdev) - =
-dc->sb.data_offset;
->>>> +
->>>> +    if (parent_nr_sectors =3D=3D =
-bdev_nr_sectors(dc->disk.disk->part0))
->>>> +        return false;
->>>> +
->>>> +    if (!set_capacity_and_notify(dc->disk.disk, =
-parent_nr_sectors))
->>>> +        return false;
->>>> +
->>>> +    d =3D &dc->disk;
->>>> +
->>>> +    /* Force cached device sectors re-calc */
->>>> +    calc_cached_dev_sectors(d->c);
->>>> +
->>>> +    /* Block writeback thread */
->>>> +    down_write(&dc->writeback_lock);
->>>> +    nr_stripes_old =3D d->nr_stripes;
->>>> +    n =3D DIV_ROUND_UP_ULL(parent_nr_sectors, d->stripe_size);
->>>> +    if (!n || n > max_stripes) {
->>>> +        pr_err("nr_stripes too large or invalid: %llu (start =
-sector beyond end of disk?)\n",
->>>> +            n);
->>>> +        goto unblock_and_exit;
->>>> +    }
->>>> +    d->nr_stripes =3D n;
->>>> +
->>>> +    n =3D d->nr_stripes * sizeof(atomic_t);
->>>> +    n_old =3D nr_stripes_old * sizeof(atomic_t);
->>>> +    d->stripe_sectors_dirty =3D kvrealloc(d->stripe_sectors_dirty, =
-n_old,
->>>> +        n, GFP_KERNEL);
->>>> +    if (!d->stripe_sectors_dirty)
->>>> +        goto unblock_and_exit;
->>>> +
->>>> +    n =3D BITS_TO_LONGS(d->nr_stripes) * sizeof(unsigned long);
->>>> +    n_old =3D BITS_TO_LONGS(nr_stripes_old) * sizeof(unsigned =
-long);
->>>> +    d->full_dirty_stripes =3D kvrealloc(d->full_dirty_stripes, =
-n_old, n, GFP_KERNEL);
->>>> +    if (!d->full_dirty_stripes)
->>>> +        goto unblock_and_exit;
->>>> +
->>>> +    res =3D true;
->>>> +
->>>> +unblock_and_exit:
->>>> +    up_write(&dc->writeback_lock);
->>>> +    return res;
->>>> +}
->>>> +
->>>> struct async_reg_args {
->>>>     struct delayed_work reg_work;
->>>>     char *path;
->>>> @@ -2569,7 +2639,10 @@ static ssize_t register_bcache(struct =
-kobject *k, struct kobj_attribute *attr,
->>>>             mutex_lock(&bch_register_lock);
->>>>             if (lookup_bdev(strim(path), &dev) =3D=3D 0 &&
->>>>                 bch_is_open(dev))
->>>> -                err =3D "device already registered";
->>>> +                if (bch_update_capacity(dev))
->>>> +                    err =3D "capacity changed";
->>>> +                else
->>>> +                    err =3D "device already registered";
->>>>             else
->>>>                 err =3D "device busy";
->>>>             mutex_unlock(&bch_register_lock);
->>>> --
->>>> 2.37.3
->>>> On 6/9/22 15:22, Andrea Tomassetti wrote:
->>>>> Hi Coly,
->>>>> I have finally some time to work on the patch. I already have a =
-first
->>>>> prototype that seems to work but, before sending it, I would like =
-to
->>>>> ask you two questions:
->>>>>   1. Inspecting the code, I found that the only lock mechanism is =
-the
->>>>> writeback_lock semaphore. Am I correct?
->>>>>   2. How can I effectively test my patch? So far I'm doing =
-something like this:
->>>>>      a. make-bcache --writeback -B /dev/vdb -C /dev/vdc
->>>>>      b. mkfs.xfs /dev/bcache0
->>>>>      c. dd if=3D/dev/random of=3D/mnt/random bs=3D1M count=3D1000
->>>>>      d. md5sum /mnt/random | tee /mnt/random.md5
->>>>>      e. live resize the disk and repeat c. and d.
->>>>>      f. umount/reboot/remount and check that the md5 hashes are =
-correct
->>>>>=20
->>>>> Any suggestions?
->>>>>=20
->>>>> Thank you very much,
->>>>> Andrea
->>>>>=20
->>>>> On Fri, Aug 5, 2022 at 9:38 PM Eric Wheeler =
-<bcache@lists.ewheeler.net> wrote:
->>>>>>=20
->>>>>> On Wed, 3 Aug 2022, Andrea Tomassetti wrote:
->>>>>>> Hi Coly,
->>>>>>> In one of our previous emails you said that
->>>>>>>> Currently bcache doesn=E2=80=99t support cache or backing =
-device resize
->>>>>>>=20
->>>>>>> I was investigating this point and I actually found a solution. =
-I
->>>>>>> briefly tested it and it seems to work fine.
->>>>>>> Basically what I'm doing is:
->>>>>>>   1. Check if there's any discrepancy between the nr of sectors
->>>>>>> reported by the bcache backing device (holder) and the nr of =
-sectors
->>>>>>> reported by its parent (slave).
->>>>>>>   2. If the number of sectors of the two devices are not the =
-same,
->>>>>>> then call set_capacity_and_notify on the bcache device.
->>>>>>>   3. =46rom user space, depending on the fs used, grow the fs =
-with some
->>>>>>> utility (e.g. xfs_growfs)
->>>>>>>=20
->>>>>>> This works without any need of unmounting the mounted fs nor =
-stopping
->>>>>>> the bcache backing device.
->>>>>>=20
->>>>>> Well done! +1, would love to see a patch for this!
->>>>>>=20
->>>>>>=20
->>>>>>> So my question is: am I missing something? Can this live resize =
-cause
->>>>>>> some problems (e.g. data loss)? Would it be useful if I send a =
-patch on
->>>>>>> this?
->>>>>>=20
->>>>>> A while a go we looked into doing this.  Here is the summary of =
-our
->>>>>> findings, not sure if there are any other considerations:
->>>>>>=20
->>>>>>   1. Create a sysfs file like /sys/block/bcache0/bcache/resize to =
-trigger
->>>>>>      resize on echo 1 >.
->>>>>>   2. Refactor the set_capacity() bits from  bcache_device_init() =
-into its
->>>>>>      own function.
->>>>>>   3. Put locks around bcache_device.full_dirty_stripes and
->>>>>>      bcache_device.stripe_sectors_dirty.  Re-alloc+copy+free and =
-zero the
->>>>>>      new bytes at the end.  Grep where =
-bcache_device.full_dirty_stripes is
->>>>>>      used and make sure it is locked appropriately, probably in =
-the
->>>>>>      writeback thread, maybe other places too.
->>>>>>=20
->>>>>> The cachedev's don't know anything about the bdev size, so =
-(according to
->>>>>> Kent) they will "just work" by referencing new offsets that were
->>>>>> previously beyond the disk. (This is basically the same as =
-resizing the
->>>>>> bdev and then unregister/re-register which is how we resize bdevs =
-now.)
->>>>>>=20
->>>>>> As for resizing a cachedev, I've not looked at all---not sure =
-about that
->>>>>> one.  We always detach, resize, make-bcache and re-attach the new =
-cache.
->>>>>> Maybe it is similarly simple, but haven't looked.
->>>>>>=20
->>>>>>=20
->>>>>> --
->>>>>> Eric Wheeler
->>>>>>=20
->>>>>>=20
->>>>>>=20
->>>>>>>=20
->>>>>>> Kind regards,
->>>>>>> Andrea
->>>>>>>=20
->>=20
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 621a2ae1767b..5da991505b45 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -268,6 +268,7 @@ struct bcache_device {
+ 	unsigned int		stripe_size;
+ 	atomic_t		*stripe_sectors_dirty;
+ 	unsigned long		*full_dirty_stripes;
++	atomic_long_t		dirty_sectors;
+ 
+ 	struct bio_set		bio_split;
+ 
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index f21295dea71b..7b5009e8b4ff 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -769,6 +769,8 @@ void bcache_dev_sectors_dirty_add(struct cache_set *c, unsigned int inode,
+ 	if (stripe < 0)
+ 		return;
+ 
++	atomic_long_add(nr_sectors, &d->dirty_sectors);
++
+ 	if (UUID_FLASH_ONLY(&c->uuids[inode]))
+ 		atomic_long_add(nr_sectors, &c->flash_dev_dirty_sectors);
+ 
+diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
+index 7e5a2fe03429..12765c0dfd5c 100644
+--- a/drivers/md/bcache/writeback.h
++++ b/drivers/md/bcache/writeback.h
+@@ -56,12 +56,7 @@ struct bch_dirty_init_state {
+ 
+ static inline uint64_t bcache_dev_sectors_dirty(struct bcache_device *d)
+ {
+-	uint64_t i, ret = 0;
+-
+-	for (i = 0; i < d->nr_stripes; i++)
+-		ret += atomic_read(d->stripe_sectors_dirty + i);
+-
+-	return ret;
++	return atomic_long_read(&d->dirty_sectors);
+ }
+ 
+ static inline int offset_to_stripe(struct bcache_device *d,
+-- 
+2.17.1
 
