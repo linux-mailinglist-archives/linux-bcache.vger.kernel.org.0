@@ -2,80 +2,81 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6074066027A
-	for <lists+linux-bcache@lfdr.de>; Fri,  6 Jan 2023 15:49:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97AB5660716
+	for <lists+linux-bcache@lfdr.de>; Fri,  6 Jan 2023 20:25:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbjAFOtA (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 6 Jan 2023 09:49:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47902 "EHLO
+        id S235750AbjAFTZE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 6 Jan 2023 14:25:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234376AbjAFOs5 (ORCPT
+        with ESMTP id S235638AbjAFTY6 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 6 Jan 2023 09:48:57 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED6C80AF8
-        for <linux-bcache@vger.kernel.org>; Fri,  6 Jan 2023 06:48:50 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B93FA24BE7
-        for <linux-bcache@vger.kernel.org>; Fri,  6 Jan 2023 14:48:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1673016528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=3nwKpRFfYT2NVDiHDAvBpULAZTb5h/G6VPLA6BrACyU=;
-        b=l2ChldOPsijT/ZJ+sQVqqePkb3aeEU44y3fHMF6x1fCRb/8OGckNjUuqli3e4E9x+MyJbG
-        PrGgpRSglMT87+JfG6Gqv1wrTJyukdshhbmpytELYert7oAMRmBybX1zFDaAqZH74/sEqU
-        BKUmAn2McA8BvONUXxveA9z6EC972bA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1673016528;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=3nwKpRFfYT2NVDiHDAvBpULAZTb5h/G6VPLA6BrACyU=;
-        b=PhQjRZbkK0epnZJE4KpYoiHq/EvvzdMR3muL4VrMs7clxBDsxKNmbEGxL3achTvs+pErCY
-        iZnNGVCA3bQp4XDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 50E14139D5
-        for <linux-bcache@vger.kernel.org>; Fri,  6 Jan 2023 14:48:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id B5B6BtA0uGMFBQAAMHmgww
-        (envelope-from <colyli@suse.de>)
-        for <linux-bcache@vger.kernel.org>; Fri, 06 Jan 2023 14:48:48 +0000
-From:   Coly Li <colyli@suse.de>
-Content-Type: text/plain;
-        charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.300.101.1.3\))
-Subject: On vacation from Jan 9 to Jan 13
-Message-Id: <E7732F91-5902-42E1-94A8-CBC6723BA70E@suse.de>
-Date:   Fri, 6 Jan 2023 22:48:35 +0800
-To:     linux-bcache@vger.kernel.org
-X-Mailer: Apple Mail (2.3731.300.101.1.3)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Fri, 6 Jan 2023 14:24:58 -0500
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EB5777AD2
+        for <linux-bcache@vger.kernel.org>; Fri,  6 Jan 2023 11:24:57 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id c6so2660542pls.4
+        for <linux-bcache@vger.kernel.org>; Fri, 06 Jan 2023 11:24:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fiUE7qV3TeV37sE/MZLGbTWtsmtid5YxK7EKlhT6SGg=;
+        b=MXH8ZdJjYceMJd78W18JC6QxLzARKE3ZtdTSLjQwai1d3HdQPJ4fOdw2sEpu8yOMN3
+         I51Kadx9i3axJMZ0Kvw3GWIn2uq9Va+t0zMmXjj50Taw3qrHOG+4OEO1DGh0Jb7O9raH
+         nEqmB/bNEPCTQPOLc0APx/JhQ6E4JMVU4MKHA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fiUE7qV3TeV37sE/MZLGbTWtsmtid5YxK7EKlhT6SGg=;
+        b=mpazfQznx/juy1PaJbOxqqJRWhr3w6XTI0esOVfMWMcbMsss+ELuPjcRLo7PSrn7PW
+         GcfDJwcQMCM9UyjnNyMp9WrF2+gaUbGe1qzbKEpKz+sjKQoAbYJRuqMx139MCUvMyh1z
+         zsf7LFOppdrf8ueHpBt2NrpwZlBBOtIFkUxm2KK64TFYGKZ9yGXrcFGo7doeQ3OUQu90
+         GHIdwWh2vm25sexUJEyrzrmyzYYVxlYX6OzB0seGK3lDWg2BtialDIqo/M3SPAoI6jKA
+         O8joVVA+iu2zjdMdGImfD91sy+PV33fNDiacBY/fsTJo8bEjBKC9Gqz7b5x1ylosl/hY
+         npWw==
+X-Gm-Message-State: AFqh2krKTFOT2aogsfalUqo3nOOZ3gQ5Df/RDfXFBR88HCMHN1/hKqiT
+        aow6Y5xYOXJ6oPCvNOq/J3rU3Q==
+X-Google-Smtp-Source: AMrXdXtYF5piKCXiUZQXel2DI8vWqRDQ2w9OM/03QCu8R/HdiOeb5HUA7z5UHy5QM+F6NCGh5/i7qw==
+X-Received: by 2002:a17:90b:238d:b0:225:cc25:8037 with SMTP id mr13-20020a17090b238d00b00225cc258037mr52191457pjb.31.1673033097054;
+        Fri, 06 Jan 2023 11:24:57 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id u6-20020a17090a410600b00225dfb6e8b3sm3164308pjf.11.2023.01.06.11.24.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jan 2023 11:24:56 -0800 (PST)
+Date:   Fri, 6 Jan 2023 11:24:55 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Thorsten Leemhuis <linux@leemhuis.info>
+Cc:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] bcache: Silence memcpy() run-time false positive warnings
+Message-ID: <202301061124.E4F9C502@keescook>
+References: <20230106060229.never.047-kees@kernel.org>
+ <132043f4-d19a-911d-04c4-a24fdf89153f@leemhuis.info>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <132043f4-d19a-911d-04c4-a24fdf89153f@leemhuis.info>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi folks,
+On Fri, Jan 06, 2023 at 11:01:05AM +0100, Thorsten Leemhuis wrote:
+> Credit where credit is due, this should be:
+> 
+> Reported-by: Alexandre Pereira <alexpereira@disroot.org>
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=216785
 
-Now I just survived from the Omicron pandemic infection, and not totally =
-recovered. Next week I will be on vacation, and it is predictable that =
-all email, and bug report cannot be responded until I back to my laptop =
-after Jan 14.
+Ah-ha, thank you! I've updated this.
 
-Just for your information, and hope all of you are safe and healthy.
-
-Best regards,
-
-Coly Li=
+-- 
+Kees Cook
