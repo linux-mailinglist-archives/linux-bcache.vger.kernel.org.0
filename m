@@ -2,113 +2,106 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BBD065FB64
-	for <lists+linux-bcache@lfdr.de>; Fri,  6 Jan 2023 07:22:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF9665FD77
+	for <lists+linux-bcache@lfdr.de>; Fri,  6 Jan 2023 10:19:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231834AbjAFGWG (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 6 Jan 2023 01:22:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60252 "EHLO
+        id S232511AbjAFJTW (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 6 Jan 2023 04:19:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231377AbjAFGWG (ORCPT
+        with ESMTP id S232606AbjAFJTH (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 6 Jan 2023 01:22:06 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4228E43A18
-        for <linux-bcache@vger.kernel.org>; Thu,  5 Jan 2023 22:22:05 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id o21so644655pjw.0
-        for <linux-bcache@vger.kernel.org>; Thu, 05 Jan 2023 22:22:05 -0800 (PST)
+        Fri, 6 Jan 2023 04:19:07 -0500
+Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55B9C6B5B4
+        for <linux-bcache@vger.kernel.org>; Fri,  6 Jan 2023 01:19:06 -0800 (PST)
+Received: by mail-vs1-xe42.google.com with SMTP id i10so903681vsr.12
+        for <linux-bcache@vger.kernel.org>; Fri, 06 Jan 2023 01:19:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P3P39B3+R/DWnUo27dj0CuajbLtQj508AlEFbLQeeco=;
-        b=gFfwNN2cBsPVNqo5NLC1hz0fbBDjCCVekPUQUzDXQiNrz3vaAbuoC2l2Rcv5KDD1BR
-         GGUDQU1BU/ZGDR7W9+LH+2DU1RDh1tJ3gm2EJRk9EzScNFktUgzFV4suePITtV+8chsg
-         2hXm3VHigwfCzIzwicjfr2JbSL9rgoJAREUDI=
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HyQfDA5JQKapTqk95xlLXJ5aD/AVTOh+bnm0DaoViy4=;
+        b=BqI9T+0NLSRqO+gLXIqfqqT8pKAaQMS1UtU7qzWGzsaND5xL5vYJLqRw614SdxkIsG
+         tRL+qLtg6j6Ipk3b99C/hilGg8u89vAW3jGPpZ3o4a0LsyTZzGZaQoH9tgIBMa1LZAFW
+         XHG8LtD67QdrdVlUPDNBeZoFqOCpZEWtA6p457zEzsizpTNGqwDju2kMTuM6+wSvi/5f
+         OjvvEjTp9JrNc5tOCkD2qFmM8DTNOWzCLba+EreTXgaj5XQb5t8vBjVdbK2rpkTz2sjQ
+         M7N8IYpIOmCh8M4PPtFfcYlCb1I1Wk2tXHeqbcXRIFI4sxGrb6yomJDGyndy2qKPO7F3
+         fWMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P3P39B3+R/DWnUo27dj0CuajbLtQj508AlEFbLQeeco=;
-        b=F/jgO+RFo4kwlLgDp74I9Ntmnc1raNGKN50grfD6AoRzTmjKi0H1tHs2WYpAVclCdv
-         ZAMfKS2y8PYRJYmfCUrAKG8ZeoAWnthEVoM8pMUPhMryZH24i9uz9UEHzufMAtLkaoaT
-         LhnOYxu+tVP1EDTk9LQaNWQQRavWaFCjjAaGzjW9GkHzDJo+/nfp9Jh5yZfQnU0SrZX2
-         yjX/Bka+5ZpiHLn3pTH4ivYcHIyar+6UOxk+fP2MnyF7Ui0dNSrATjvZ9YY6wqpRNCur
-         7nvmoP1kBF3ApGiZnk3pCX3mM6LM/D7J5T82RApLPYNhOm/A2bFyxrKAjHVxrzNusAAL
-         j0vg==
-X-Gm-Message-State: AFqh2kpvcC2wlhwyeC5Ha+35QDELWmJQ8Nj3IZEPVn5ODbLRdnExBeqv
-        Ci9cmRBw45ccN9LUluGYQ8kiQw==
-X-Google-Smtp-Source: AMrXdXtM1vP5dcgTHPDfmr3om3PPOARVroyAjqYZI9GdQBO0YB4PrzpyQj622REF2D7RDm2EKP3p1w==
-X-Received: by 2002:a17:90a:d78b:b0:219:34cb:477e with SMTP id z11-20020a17090ad78b00b0021934cb477emr57605129pju.44.1672986124780;
-        Thu, 05 Jan 2023 22:22:04 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y128-20020a633286000000b004768ce9e4fasm257954pgy.59.2023.01.05.22.22.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jan 2023 22:22:04 -0800 (PST)
-Date:   Thu, 5 Jan 2023 22:22:03 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Thorsten Leemhuis <regressions@leemhuis.info>
-Cc:     "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
-        linux-bcache@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [regression] =?iso-8859-1?Q?Bug=A02167?=
- =?iso-8859-1?Q?85_-_=22memcpy=3A_detected_field-spannin?= =?iso-8859-1?Q?g?=
- write..." warnings with bcache #forregzbot
-Message-ID: <202301052218.042D2BFE@keescook>
-References: <19200730-a3ba-6f4f-bb81-71339bdbbf73@leemhuis.info>
- <2e4e65a8-87b4-fac6-ef89-76b118b0cec4@leemhuis.info>
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HyQfDA5JQKapTqk95xlLXJ5aD/AVTOh+bnm0DaoViy4=;
+        b=4s9tGY1HxKILNDBPTWlcN0ol3cTcRTmINd/UdYKGPPMb6E++A+Vx5AnSkt4jURMOYe
+         P5qpZdTdJqL+PoO+C8hIuDvixMTe+AJkJIMrmhqhkRgzZDhNn4QzHTJa3zC9NKnmdQGV
+         ov7u8VFFH54PdktofRirqToi7NmkW3iy1po/4QUjzNNDTUdskBVPZvkahJ/bE7UdcUzI
+         fVkBBuvl7S6Qnj+Q4C/ylhre9Q9QM916w6h3FoO1VKpRqyIP8TKEjbqD/bSz8WloL5IZ
+         m0qKLzrKRq919115FOuzbrdMt7VJq9aXXsj1QlK3l/lZDanKmxUtBPwSSXPlmKzMLEv3
+         S0fg==
+X-Gm-Message-State: AFqh2kpCx1uN7DcuMce8PTfhT5fVzQmrTDZ+YJUTcIo49sTfiW2uBgHo
+        HCciNIb8k+mR19iidzEvXqO55HysEsFlVYj+gpo=
+X-Google-Smtp-Source: AMrXdXurvLRcLiMOWitTt9rEpFU/HNVS4rk0YP2Eq3mK1r/eIXTtIQxbZFMg/hjbbDfHG0AtapjizSbDjONRItaBWcY=
+X-Received: by 2002:a05:6102:508a:b0:3ce:a5a8:1f22 with SMTP id
+ bl10-20020a056102508a00b003cea5a81f22mr1564870vsb.28.1672996745100; Fri, 06
+ Jan 2023 01:19:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e4e65a8-87b4-fac6-ef89-76b118b0cec4@leemhuis.info>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a59:ddd7:0:b0:325:e5:9888 with HTTP; Fri, 6 Jan 2023
+ 01:19:04 -0800 (PST)
+Reply-To: dravasmith27@gmail.com
+From:   Dr Ava Smith <daswas250@gmail.com>
+Date:   Fri, 6 Jan 2023 01:19:04 -0800
+Message-ID: <CAM1W4N7ESa2cLb+6e2qAUvxybJ2JDMNRHOiUfNf70wJgZw-hSg@mail.gmail.com>
+Subject: GREETINGS FROM DR AVA SMITH
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=5.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,SUBJ_ALL_CAPS,UNDISC_FREEM
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:e42 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5105]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [daswas250[at]gmail.com]
+        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [dravasmith27[at]gmail.com]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [daswas250[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        *  2.7 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Thu, Dec 15, 2022 at 08:11:06AM +0100, Thorsten Leemhuis wrote:
-> [Note: this mail contains only information for Linux kernel regression
-> tracking. Mails like these contain '#forregzbot' in the subject to make
-> then easy to spot and filter out. The author also tried to remove most
-> or all individuals from the list of recipients to spare them the hassle.]
-> 
-> On 08.12.22 15:53, Thorsten Leemhuis wrote:
-> > https://bugzilla.kernel.org/show_bug.cgi?id=216785 :
-> > 
-> >>  Alexandre Pereira 2022-12-07 18:51:55 UTC
-> >>
-> >> Testing linux kernel 6.1-rc8, I have several kernel erros regarding bcache.
-> >>
-> >> For context, I have a bcache configuration that is working without issues on 6.0.x and previous versions.
-> >>
-> >> The errors:
-> >>
-> >> dez 07 18:33:45 stormtrooper kernel: ------------[ cut here ]------------
-> >> dez 07 18:33:45 stormtrooper kernel: memcpy: detected field-spanning write (size 264) of single field "&i->j" at drivers/md/bcache/journal.c:152 (size 240)
-> 
-> #regzbot inconclusive: stop tracking field-spanning write warnings, they
-> come from a new security feature
-> 
-> https://lore.kernel.org/all/20210727205855.411487-1-keescook@chromium.org/
-> 
-> Tracking them would cost time I better spend on more important things
-> for now
-
-FWIW, I'd find it handy to see these. I've been trying to track and fix
-them. To that end, I've just sent out the following patches:
-
-https://lore.kernel.org/lkml/20230106045327.never.413-kees@kernel.org/
-https://lore.kernel.org/lkml/20230106053153.never.999-kees@kernel.org/
-https://lore.kernel.org/lkml/20230106060229.never.047-kees@kernel.org/
-https://lore.kernel.org/lkml/20230106061659.never.817-kees@kernel.org/
-
-Thanks!
-
--Kees
-
 -- 
-Kees Cook
+Hello Dear,
+How are you doing.My name is DR. AVA SMITH from United States.
+I am a French and American national (dual) living in the U.S and
+sometimes in the U.K for the Purpose of Work.
+I hope you consider my friend request and consider me worthy to be your friend.
+I will share some of my pics and more details about my self when i get
+your response
+With love
+Dr. Ava
