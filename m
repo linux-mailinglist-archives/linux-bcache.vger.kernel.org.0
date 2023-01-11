@@ -2,74 +2,275 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C17F661EC2
-	for <lists+linux-bcache@lfdr.de>; Mon,  9 Jan 2023 07:39:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2F75665FE0
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 Jan 2023 17:01:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231280AbjAIGjI (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 9 Jan 2023 01:39:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48212 "EHLO
+        id S231453AbjAKQBf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 Jan 2023 11:01:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233780AbjAIGjH (ORCPT
+        with ESMTP id S231602AbjAKQBZ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 9 Jan 2023 01:39:07 -0500
-Received: from mail-m3179.qiye.163.com (mail-m3179.qiye.163.com [103.74.31.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D727CBB3
-        for <linux-bcache@vger.kernel.org>; Sun,  8 Jan 2023 22:39:05 -0800 (PST)
-Received: from easystack.cn (unknown [127.0.0.1])
-        by mail-m3179.qiye.163.com (Hmail) with ESMTP id 7524A780259;
-        Mon,  9 Jan 2023 14:39:03 +0800 (CST)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Message-ID: <AMYARABzI4pRI7BguO2NtKo2.2.1673246343472.Hmail.mingzhe.zou@easystack.cn>
-To:     colyli <colyli@suse.de>, linux-bcache@vger.kernel.org
-Subject: =?UTF-8?B?UmU6W1BBVENIXSBiY2FjaGU6IGltcHJvdmUgYmNoX2hwcmludCgpIG91dHB1dA==?=
-X-Priority: 3
-X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2015-163.com
-X-Originating-IP: 218.94.118.90
-In-Reply-To: <20221008085630.8321-1-mingzhe.zou@easystack.cn>
-References: <20221008085630.8321-1-mingzhe.zou@easystack.cn>
+        Wed, 11 Jan 2023 11:01:25 -0500
+Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49E50B37
+        for <linux-bcache@vger.kernel.org>; Wed, 11 Jan 2023 08:01:24 -0800 (PST)
+Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-1433ef3b61fso15948087fac.10
+        for <linux-bcache@vger.kernel.org>; Wed, 11 Jan 2023 08:01:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=devo.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tn+5uI/6G2dJ/K0lqj0Ce2rv5haFjBb7F1FBKD0eP10=;
+        b=jpC81sSxUbLRPnHV2rHtDG7WJVtKSCCubm2E9XWEv+K/ePs6FRaAfJimz0bcbJnLEF
+         +3IryANMO72Kcvj/leopzVq+CWtIIxRAjPIMiuvtYe1XhXbWXHwz+5T0LKomFL1UdWS5
+         ckTxyIdtGGqZbjkc11qx69rtXB6LrxxByKqT9Y8UGHmlGwL3F07RarEmU6lPvtSRNivA
+         ZScmZJj1YSPjP1yVkmIkL0lsTuiQk5E2brdNMm7euUozDXKnaGi1r3P7ly+0g6JHNz0j
+         9Bu/HBsflYeg1BCf8LzxKf3UIg3A7x/KhoqhsSBUNhQpdal+Pib1WNFwO+fJjdSlg9I/
+         0JrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tn+5uI/6G2dJ/K0lqj0Ce2rv5haFjBb7F1FBKD0eP10=;
+        b=xzu3RD41El729hcUcBaVGlKgsEBIfHAbYOI5dnAE4D/GhJvx/xOtD5ZyQtYr7soTvB
+         sYTd4GSqFj4AG9vTwXg2nwb7bdJS/I88F8iN/dVA5yNBNtjAOV1xVYMl2NysMjt9JE2k
+         mUU0x88qu1H2HUysv097+pfVel7T45LM4pdKDH9ZgxbjurwoRJRMKHwn4JlRZ1MlU/Kw
+         D0v5cEnzv4JeBj6VObaTqb3xpK+B9GO7CCQnsSdPpr0LVPk/+QH3QHEjj8vFNiXLsYXg
+         eFi7KAWnM7RBnqOByTMx/RmcYRHw/T1eFvY9mO2Wq8XEN/p8/tvEQcT/Fojp1tQoIKBM
+         F7Kg==
+X-Gm-Message-State: AFqh2koJNG1MXno+nXSS3dFM1meiKta/PL3Ya22XMfJXy548QlF8aHQF
+        uChPG+b7TlwUpjcbhlqkjXefzfezalXnLr1gpkmoMQ==
+X-Google-Smtp-Source: AMrXdXsbpXCgFGoy2lQirrY3T5AHSPROdt0Vw0VLcyCOHJHQ72M/OJ73yuwVt3jzy8wlFx6KaIxiYt+ZL3PxStimzXM=
+X-Received: by 2002:a05:6871:20b:b0:148:1f9e:f27b with SMTP id
+ t11-20020a056871020b00b001481f9ef27bmr5143523oad.6.1673452883589; Wed, 11 Jan
+ 2023 08:01:23 -0800 (PST)
 MIME-Version: 1.0
-Received: from mingzhe.zou@easystack.cn( [218.94.118.90) ] by ajax-webmail ( [127.0.0.1] ) ; Mon, 9 Jan 2023 14:39:03 +0800 (GMT+08:00)
-From:   =?UTF-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>
-Date:   Mon, 9 Jan 2023 14:39:03 +0800 (GMT+08:00)
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaT0kZVhlCGR8eTB9ITE5ITFUZERMWGhIXJBQOD1
-        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
-X-HM-Sender-Digest: e1kJHlYWEh9ZQUpPQkNMT0xDSkJOQzdXWQweGVlBDwkOHldZEh8eFQ9Z
-        QVlHOjYiOik6OQEyTwspMkw5HA40STUPMBRJVUlVSk1MSElPTUhPSENMTlUzFhoSF1UWEhUcARMe
-        VQEUDjseGggCCA8aGBBVGBVFWVdZEgtZQVlJSkNVQk9VSkpDVUJLWVdZCAFZQUhNTUI3V1kUCw8S
-        FBUIWUFLNwY+
-X-HM-Tid: 0a859539663900b3kurm1855dc54a34
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        MSGID_FROM_MTA_HEADER,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <CAHykVA5sgGooeRjM1EepCCpZqkvtQJ_=cY8hmjqe0oQ3FLDFnQ@mail.gmail.com>
+ <9474c19e-56f0-cb4d-68c-405c55aef281@ewheeler.net> <CAHykVA4zGN=WA4A3njQ3VdX4age2-AXq3EcW1qRTFbf=o1=yDw@mail.gmail.com>
+ <4ddb082f-cefc-644e-2ccf-56d41207ecd3@devo.com> <107e8ceb-748e-b296-ae60-c2155d68352d@suse.de>
+In-Reply-To: <107e8ceb-748e-b296-ae60-c2155d68352d@suse.de>
+From:   Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
+Date:   Wed, 11 Jan 2023 17:01:12 +0100
+Message-ID: <CAHykVA4WfYysOcKnQETkUyUjx_tFypFCWYG1RidRMVNqObGmRg@mail.gmail.com>
+Subject: Re: [RFC] Live resize of backing device
+To:     Coly Li <colyli@suse.de>
+Cc:     Eric Wheeler <bcache@lists.ewheeler.net>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-SGkgQ29seQoKVGhpcyBpcyBhIHNpbXBsZSBmaXguIEFuZCB3aGVuIHVzZSBudW1mbXQsIHdlIHdp
-bGwgZ2V0IGVycm9yLgoKbWluZ3poZQoKCkZyb206IG1pbmd6aGUuem91QGVhc3lzdGFjay5jbgpE
-YXRlOiAyMDIyLTEwLTA4IDE2OjU2OjMwClRvOiAgY29seWxpQHN1c2UuZGUsbGludXgtYmNhY2hl
-QHZnZXIua2VybmVsLm9yZwpDYzogIHpvdW1pbmd6aGVAcXEuY29tClN1YmplY3Q6IFtQQVRDSF0g
-YmNhY2hlOiBpbXByb3ZlIGJjaF9ocHJpbnQoKSBvdXRwdXQ+RnJvbTogbWluZ3poZSA8bWluZ3po
-ZS56b3VAZWFzeXN0YWNrLmNuPgo+Cj5UaGUgY3VycmVudCBzdWZmaXggb2YgYmNoX2hwcmludCgp
-IHVzZXMgdGhlIFNJIChUaGUgSW50ZXJuYXRpb25hbCBTeXN0ZW0gb2YgVW5pdHMpCj5zdGFuZGFy
-ZC4gSW4gdGhlIFNJIGJyb2NodXJlLCB0aGUgc3ltYm9sIGZvciB0aGUga2lsbyBwcmVmaXggaXMg
-ayBpbnN0ZWFkIG9mIEsuCj5CZWNhdXNlIEsgaXMgdGhlIHN5bWJvbCBmb3IgdGhlIHRoZXJtb2R5
-bmFtaWMgdGVtcGVyYXR1cmUgdW5pdCBrZWx2aW4uCj4KPkluIGZhY3QsIFNJIGlzIGJhc2VkIG9u
-IGRlY2ltYWwgbm90IGJpbmFyeS4gSG93ZXZlciwgYmNoX2hwcmludCgpIGlzIGJpbmFyeSBiYXNl
-ZCwKPnNvIGl0IHNob3VsZCBjb25mb3JtIHRvIHRoZSBJRUMgNjAwMjctMiAoTGV0dGVyIHN5bWJv
-bHMgdG8gYmUgdXNlZCBpbiBlbGVjdHJpY2FsCj50ZWNobm9sb2d5IC0gUGFydCAyOiBUZWxlY29t
-bXVuaWNhdGlvbnMgYW5kIGVsZWN0cm9uaWNzKSBzdGFuZGFyZC4KPgo+U2lnbmVkLW9mZi1ieTog
-bWluZ3poZSA8bWluZ3poZS56b3VAZWFzeXN0YWNrLmNuPgo+LS0tCj4gZHJpdmVycy9tZC9iY2Fj
-aGUvdXRpbC5jIHwgMiArLQo+IDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxl
-dGlvbigtKQo+Cj5kaWZmIC0tZ2l0IGEvZHJpdmVycy9tZC9iY2FjaGUvdXRpbC5jIGIvZHJpdmVy
-cy9tZC9iY2FjaGUvdXRpbC5jCj5pbmRleCBhZTM4MGJjMzk5MmUuLjkxYWIzNmVjMmRlYiAxMDA2
-NDQKPi0tLSBhL2RyaXZlcnMvbWQvYmNhY2hlL3V0aWwuYwo+KysrIGIvZHJpdmVycy9tZC9iY2Fj
-aGUvdXRpbC5jCj5AQCAtOTEsNyArOTEsNyBAQCBTVFJUT19IKHN0cnRvdWxsLCB1bnNpZ25lZCBs
-b25nIGxvbmcpCj4gICovCj4gc3NpemVfdCBiY2hfaHByaW50KGNoYXIgKmJ1ZiwgaW50NjRfdCB2
-KQo+IHsKPi0Jc3RhdGljIGNvbnN0IGNoYXIgdW5pdHNbXSA9ICI/a01HVFBFWlkiOwo+KwlzdGF0
-aWMgY29uc3QgY2hhciB1bml0c1tdID0gIj9LTUdUUEVaWSI7Cj4gCWludCB1ID0gMCwgdDsKPiAK
-PiAJdWludDY0X3QgcTsKPi0tIAo+Mi4xNy4xCj4KDQoNCg==
+Hi Coly,
+thank you for taking the time to reply, I really hope you are feeling
+better now.
+
+On Fri, Dec 30, 2022 at 11:41 AM Coly Li <colyli@suse.de> wrote:
+>
+> On 9/8/22 4:32 PM, Andrea Tomassetti wrote:
+> > From 59787372cf21af0b79e895578ae05b6586dfeb09 Mon Sep 17 00:00:00 2001
+> > From: Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
+> > Date: Thu, 8 Sep 2022 09:47:55 +0200
+> > Subject: [PATCH] bcache: Add support for live resize of backing devices
+> >
+> > Signed-off-by: Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
+>
+> Hi Andrea,
+>
+> I am just recovered from Omicron, and able to reply email. Let me place
+> my comments inline.
+>
+>
+> > ---
+> > Hi Coly,
+> > Here is the first version of the patch. There are some points I noted
+> > down
+> > that I would like to discuss with you:
+> >  - I found it pretty convenient to hook the call of the new added
+> > function
+> >    inside the `register_bcache`. In fact, every time (at least from my
+> >    understandings) a disk changes size, it will trigger a new probe and,
+> >    thus, `register_bcache` will be triggered. The only inconvenient
+> >    is that, in case of success, the function will output
+>
+> The resize should be triggered manually, and not to do it automatically.
+>
+> You may create a sysfs file under the cached device's directory, name it
+> as "extend_size" or something else you think better.
+>
+> Then the sysadmin may extend the cached device size explicitly on a
+> predictable time.
+>
+> > `error: capacity changed` even if it's not really an error.
+> >  - I'm using `kvrealloc`, introduced in kernel version 5.15, to resize
+> >    `stripe_sectors_dirty` and `full_dirty_stripes`. It shouldn't be a
+> >    problem, right?
+> >  - There is some reused code between this new function and
+> >    `bcache_device_init`. Maybe I can move `const size_t max_stripes` to
+> >    a broader scope or make it a macro, what do you think?
+> >
+> > Thank you very much,
+> > Andrea
+> >
+> >  drivers/md/bcache/super.c | 75 ++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 74 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> > index ba3909bb6bea..9a77caf2a18f 100644
+> > --- a/drivers/md/bcache/super.c
+> > +++ b/drivers/md/bcache/super.c
+> > @@ -2443,6 +2443,76 @@ static bool bch_is_open(dev_t dev)
+> >      return bch_is_open_cache(dev) || bch_is_open_backing(dev);
+> >  }
+> >
+> > +static bool bch_update_capacity(dev_t dev)
+> > +{
+> > +    const size_t max_stripes = min_t(size_t, INT_MAX,
+> > +                     SIZE_MAX / sizeof(atomic_t));
+> > +
+> > +    uint64_t n, n_old;
+> > +    int nr_stripes_old;
+> > +    bool res = false;
+> > +
+> > +    struct bcache_device *d;
+> > +    struct cache_set *c, *tc;
+> > +    struct cached_dev *dcp, *t, *dc = NULL;
+> > +
+> > +    uint64_t parent_nr_sectors;
+> > +
+> > +    list_for_each_entry_safe(c, tc, &bch_cache_sets, list)
+> > +        list_for_each_entry_safe(dcp, t, &c->cached_devs, list)
+> > +            if (dcp->bdev->bd_dev == dev) {
+> > +                dc = dcp;
+> > +                goto dc_found;
+> > +            }
+> > +
+> > +dc_found:
+> > +    if (!dc)
+> > +        return false;
+> > +
+> > +    parent_nr_sectors = bdev_nr_sectors(dc->bdev) - dc->sb.data_offset;
+> > +
+> > +    if (parent_nr_sectors == bdev_nr_sectors(dc->disk.disk->part0))
+> > +        return false;
+> > +
+>
+> The above code only handles whole disk using as cached device. If a
+> partition of a hard drive is used as cache device, and there are other
+> data after this partition, such condition should be handled as well. So
+> far I am fine to only extend size when using the whole hard drive as
+> cached device, but more code is necessary to check and only permits
+> size-extend for such condition.
+I don't understand if there's a misalignment here so let me be more
+clear: this patch is intended to support the live resize of *backing
+devices*, is this what you mean with "cached device"?
+When I was working on the patch I didn't consider the possibility of
+live resizing the cache devices, but it should be trivial.
+So, as far as I understand, a partition cannot be used as a backing
+device, correct? The whole disk should be used as a backing device,
+that's why I'm checking and that's why this check should be correct.
+Am I wrong?
+
+>
+> > +    if (!set_capacity_and_notify(dc->disk.disk, parent_nr_sectors))
+> > +        return false;
+>
+> The above code should be done when all rested are set.
+>
+>
+> > +
+> > +    d = &dc->disk;
+> > +
+> > +    /* Force cached device sectors re-calc */
+> > +    calc_cached_dev_sectors(d->c);
+>
+> Here c->cached_dev_sectors might be changed, if any of the following
+> steps fails, it should be restored to previous value.
+>
+>
+> > +
+> > +    /* Block writeback thread */
+> > +    down_write(&dc->writeback_lock);
+> > +    nr_stripes_old = d->nr_stripes;
+> > +    n = DIV_ROUND_UP_ULL(parent_nr_sectors, d->stripe_size);
+> > +    if (!n || n > max_stripes) {
+> > +        pr_err("nr_stripes too large or invalid: %llu (start sector
+> > beyond end of disk?)\n",
+> > +            n);
+> > +        goto unblock_and_exit;
+> > +    }
+> > +    d->nr_stripes = n;
+> > +
+> > +    n = d->nr_stripes * sizeof(atomic_t);
+> > +    n_old = nr_stripes_old * sizeof(atomic_t);
+> > +    d->stripe_sectors_dirty = kvrealloc(d->stripe_sectors_dirty, n_old,
+> > +        n, GFP_KERNEL);
+> > +    if (!d->stripe_sectors_dirty)
+> > +        goto unblock_and_exit;
+> > +
+> > +    n = BITS_TO_LONGS(d->nr_stripes) * sizeof(unsigned long);
+> > +    n_old = BITS_TO_LONGS(nr_stripes_old) * sizeof(unsigned long);
+> > +    d->full_dirty_stripes = kvrealloc(d->full_dirty_stripes, n_old,
+> > n, GFP_KERNEL);
+> > +    if (!d->full_dirty_stripes)
+> > +        goto unblock_and_exit;
+>
+> If kvrealloc() fails and NULL set to d->full_dirty_sripes, the previous
+> array should be restored.
+>
+> > +
+> > +    res = true;
+> > +
+> > +unblock_and_exit:
+> > +    up_write(&dc->writeback_lock);
+> > +    return res;
+> > +}
+> > +
+>
+> I didn't test the patch, from the first glance, I feel the failure
+> handling should restore all previous values, otherwise the cache device
+> may be in a non-consistent state when extend size fails.
+>
+Completely agree with you on this point. I changed it locally and, as
+soon as we agree on the other points I'll send a newer version of the
+patch.
+>
+> >  struct async_reg_args {
+> >      struct delayed_work reg_work;
+> >      char *path;
+> > @@ -2569,7 +2639,10 @@ static ssize_t register_bcache(struct kobject
+> > *k, struct kobj_attribute *attr,
+> >              mutex_lock(&bch_register_lock);
+> >              if (lookup_bdev(strim(path), &dev) == 0 &&
+> >                  bch_is_open(dev))
+> > -                err = "device already registered";
+> > +                if (bch_update_capacity(dev))
+> > +                    err = "capacity changed";
+> > +                else
+> > +                    err = "device already registered";
+>
+>
+> As I said, it should be a separated write-only sysfile under the cache
+> device's directory.
+Can I ask why you don't like the automatic resize way? Why should the
+resize be manual?
+Someone needs to trigger the block device resize, so shouldn't that be enough?
+
+Andrea
+>
+>
+> > else
+> >                  err = "device busy";
+> >              mutex_unlock(&bch_register_lock);
+> > --
+> > 2.37.3
+> >
+>
