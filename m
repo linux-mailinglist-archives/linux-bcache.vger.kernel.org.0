@@ -2,343 +2,335 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E903766E344
-	for <lists+linux-bcache@lfdr.de>; Tue, 17 Jan 2023 17:18:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D27666E5B9
+	for <lists+linux-bcache@lfdr.de>; Tue, 17 Jan 2023 19:14:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230245AbjAQQSz (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 17 Jan 2023 11:18:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37706 "EHLO
+        id S230013AbjAQSOm (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 17 Jan 2023 13:14:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230115AbjAQQSz (ORCPT
+        with ESMTP id S229600AbjAQSLP (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 17 Jan 2023 11:18:55 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BCE93BDBF
-        for <linux-bcache@vger.kernel.org>; Tue, 17 Jan 2023 08:18:53 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id E8FD23891F;
-        Tue, 17 Jan 2023 16:18:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1673972331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Tue, 17 Jan 2023 13:11:15 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974D13B666
+        for <linux-bcache@vger.kernel.org>; Tue, 17 Jan 2023 09:52:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673977947;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=jWv5QVuK4hguB7lelP7G47RJ1hnbwkkvAnSZSO+qKbw=;
-        b=og6wsu61YNorQYAQO3iEvbsnp/JhtmzjFQmkAtxz6ZkC0ybljVCXa1OixBvkl1Z1nAb5OY
-        52FnBiBkjhyvO/LQh4t9GB1KfAwoZTLq3bA5UPi5IJ/qPX/sV1e2SCgspfTDkibFB31f07
-        vzVvsYiJgEml7lmXAZXjd5WQHGqjd5g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1673972331;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jWv5QVuK4hguB7lelP7G47RJ1hnbwkkvAnSZSO+qKbw=;
-        b=h0VyYpCE0YIFb8tOAKDCf0fSeII99RnXHi+zWuxuoZmo/uw3RPViULRPGrC/9jyMujbwAZ
-        pRIOfunYDQZWFtAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E77BD13357;
-        Tue, 17 Jan 2023 16:18:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id /bstLWrKxmP4aAAAMHmgww
-        (envelope-from <colyli@suse.de>); Tue, 17 Jan 2023 16:18:50 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.300.101.1.3\))
-Subject: Re: [RFC] Live resize of backing device
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <CAHykVA4WfYysOcKnQETkUyUjx_tFypFCWYG1RidRMVNqObGmRg@mail.gmail.com>
-Date:   Wed, 18 Jan 2023 00:18:38 +0800
-Cc:     Eric Wheeler <bcache@lists.ewheeler.net>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B7718488-B00D-4F72-86CA-0FF335AD633F@suse.de>
-References: <CAHykVA5sgGooeRjM1EepCCpZqkvtQJ_=cY8hmjqe0oQ3FLDFnQ@mail.gmail.com>
- <9474c19e-56f0-cb4d-68c-405c55aef281@ewheeler.net>
- <CAHykVA4zGN=WA4A3njQ3VdX4age2-AXq3EcW1qRTFbf=o1=yDw@mail.gmail.com>
- <4ddb082f-cefc-644e-2ccf-56d41207ecd3@devo.com>
- <107e8ceb-748e-b296-ae60-c2155d68352d@suse.de>
- <CAHykVA4WfYysOcKnQETkUyUjx_tFypFCWYG1RidRMVNqObGmRg@mail.gmail.com>
-To:     Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
-X-Mailer: Apple Mail (2.3731.300.101.1.3)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        bh=7bhc0N8lOZgDifhC2frdOWe817b3omvaW/l36eahars=;
+        b=hMhlvu2pHDoglaQTx5U6fE9p+NZornx+4EGBk6/glFqKG78UFWOMF4MVN+HEsFRbmvPaqS
+        CTnhdR8LiBnJ7S0Kei4cG3IdIiEgpDoxzIOTJnyRU36SKVMJWw/Ljgq2s6cCNKOvzOJ8sz
+        Q2NM+j6GAMtvxQjHsvXYytYUYQ0QNSw=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-349-Z-Azd_u_Pu-k-xyKm9ZBSw-1; Tue, 17 Jan 2023 12:52:25 -0500
+X-MC-Unique: Z-Azd_u_Pu-k-xyKm9ZBSw-1
+Received: by mail-qk1-f199.google.com with SMTP id j11-20020a05620a410b00b007066f45a99aso4404729qko.1
+        for <linux-bcache@vger.kernel.org>; Tue, 17 Jan 2023 09:52:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7bhc0N8lOZgDifhC2frdOWe817b3omvaW/l36eahars=;
+        b=jMUrfYwRJJ/1IbidJREy5NgBEECCP26CISX9ky/FxzkwSzqdQLRKB1gNsglbkeIKQb
+         a6m6PXMWVCyieNLxptcXGLOLkzdMBkMd5vOeG8wSoj+11XW07T9rvRS9H83R4/q7a82E
+         I+4va6xzhpzkQHlUbaJKrz9BAD5R59usabqukDTOMDET8CtwRLG9uI2LdK9DoOFyfmzA
+         gJA8e+jB8okgflTsWDRK+KNj893Y6EdjlMyhrxTTUPTZjv+8vijPHDLGik92sJ7JKAfH
+         Q1piErDP9QzJWaIEy3zFs8WdpNDZ4MStfsHay3yG1pddDF+soFN+aE1CqW/WtlOGm/1Y
+         u/pg==
+X-Gm-Message-State: AFqh2kqVmTIWiQey2gk2mE461LqJ7w8IS68LngcqlRAQNdt+dLHtQcgm
+        skuPahOPmR+vyZvWsvkm+helIhbvmaZm+eFpzLmL995TxH9YyJh4OQeH3RW68j3CCQ/YFlH8FWi
+        WzeUcpdViVU00QLGqJfGT5fU=
+X-Received: by 2002:ac8:480a:0:b0:3ae:55ba:8392 with SMTP id g10-20020ac8480a000000b003ae55ba8392mr4862305qtq.32.1673977944875;
+        Tue, 17 Jan 2023 09:52:24 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXtgV1rHPprpYlV6nz/fDPisM7ofVJJ0FHk5YLTcA4e90viVYHPitevtt/bN1J4+T4+w8pQt7w==
+X-Received: by 2002:ac8:480a:0:b0:3ae:55ba:8392 with SMTP id g10-20020ac8480a000000b003ae55ba8392mr4862262qtq.32.1673977944562;
+        Tue, 17 Jan 2023 09:52:24 -0800 (PST)
+Received: from localhost (pool-68-160-145-102.bstnma.fios.verizon.net. [68.160.145.102])
+        by smtp.gmail.com with ESMTPSA id x21-20020a05620a0b5500b0070688f60025sm2768704qkg.76.2023.01.17.09.52.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jan 2023 09:52:24 -0800 (PST)
+Date:   Tue, 17 Jan 2023 12:52:22 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Gulam Mohamed <gulam.mohamed@oracle.com>
+Cc:     linux-block@vger.kernel.org, nvdimm@lists.linux.dev,
+        shminderjit.singh@oracle.com, linux-kernel@vger.kernel.org,
+        song@kernel.org, dm-devel@redhat.com, ira.weiny@intel.com,
+        agk@redhat.com, drbd-dev@lists.linbit.com, dave.jiang@intel.com,
+        christoph.boehmwalder@linbit.com, vishal.l.verma@intel.com,
+        konrad.wilk@oracle.com, joe.jin@oracle.com,
+        kent.overstreet@gmail.com, ngupta@vflare.org, kch@nvidia.com,
+        senozhatsky@chromium.org, snitzer@kernel.org, colyli@suse.de,
+        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
+        dan.j.williams@intel.com, axboe@kernel.dk,
+        martin.petersen@oracle.com, rajesh.sivaramasubramaniom@oracle.com,
+        philipp.reisner@linbit.com, junxiao.bi@oracle.com,
+        minchan@kernel.org, lars.ellenberg@linbit.com
+Subject: Re: [PATCH for-6.2/block V3 2/2] block: Change the granularity of io
+ ticks from ms to ns
+Message-ID: <Y8bgVh7HQx9jZWtF@redhat.com>
+References: <20221221040506.1174644-1-gulam.mohamed@oracle.com>
+ <20221221040506.1174644-2-gulam.mohamed@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221221040506.1174644-2-gulam.mohamed@oracle.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+[comments/questions inlined below]
 
+On Tue, Dec 20 2022 at 11:05P -0500,
+Gulam Mohamed <gulam.mohamed@oracle.com> wrote:
 
-> 2023=E5=B9=B41=E6=9C=8812=E6=97=A5 00:01=EF=BC=8CAndrea Tomassetti =
-<andrea.tomassetti-opensource@devo.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> Hi Coly,
-> thank you for taking the time to reply, I really hope you are feeling
-> better now.
+> Problem Desc
+> ============
+> The "iostat" user-space utility was showing %util as 100% for the disks
+> which has latencies less than a milli-second i.e for latencies in the
+> range of micro-seconds and below.
+> 
+> Root Cause
+> ==========
+> The IO accounting in block layer is currently done by updating the
+> io_ticks in jiffies which is of milli-seconds granularity. Due to this,
+> for the devices with IO latencies less than a milli-second, the latency
+> will be accounted as 1 milli-second even-though its in the range of
+> micro-seconds. This was causing the iostat command to show %util
+> as 100% which is incorrect.
+> 
+> Recreationg of the issue
+> ========================
+> Setup
+> -----
+> Devices: NVMe 24 devices
+> Model number: 4610 (Intel)
+> 
+> fio
+> ---
+> [global]
+> bs=4K
+> iodepth=1
+> direct=1
+> ioengine=libaio
+> group_reporting
+> time_based
+> runtime=100
+> thinktime=1ms
+> numjobs=1
+> name=raw-write
+> rw=randrw
+> ignore_error=EIO:EIO
+> [job1]
+> filename=/dev/nvme0n1
+> 
+> iostat o/p
+> ----------
+> 
+> Device   %wrqm r_await w_await aqu-sz rareq-sz wareq-sz  svctm  %util
+> nvme3n1   0.00    0.05    0.00  75.38     0.50     0.00   0.00 100.00
+> 
+> Device   %wrqm r_await w_await aqu-sz rareq-sz wareq-sz  svctm  %util
+> nvme3n1   0.00    0.05    0.00  74.74     0.50     0.00   0.00 100.00
+> 
+> Solution
+> ========
+> Use ktime_get_ns() to update the disk_stats io_ticks so that the io_ticks
+> are updated for every io start and end times.
+> 
+> Issues using ktime
+> ==================
+> 
+> Using ktime_get_ns() has a performance overhead as ktime will go ahead
+> and reads the clock everytime its called. Following test environment
+> was used by Jens Axboe on which t/io_uring was run which has shown a
+> high performance drop.
+> 
+> Devices
+> -------
+> SSDs: P5800X
+> No of devices: 24
+> 
+> io_uring config
+> ---------------
+> Polled IO
+> iostats: Enabled
+> Reads: Random
+> Block Size: 512
+> QDepth: 128
+> Batch Submit: 32
+> Batch Complete: 32
+> No of Threads: 24
+> 
+> With the above environment and ktime patch, it has shown a performance
+> drop of ~25% from iostats disabled and ~19% performance drop from current
+> iostats enabled. This performance drop is high.
+> 
+> Suggestion from Jens Axboe
+> ==========================
+> Jens Axboe suggested to split the bigger patch into two as follows:
+> 
+> 1. In first patch, change all the types from unsigned long to u64, that
+>    can be done while retaining jiffies.
+> 
+> 2. In second patch, add an iostats == 2 setting, which enables the higher
+>    resolution mode using ktime. We'd still default to 1, lower granularity
+>    iostats enabled.
+> 
+> Fix details
+> ===========
+> 1. Use ktime_get_ns() to get the current nano-seconds to update the
+>    io_ticks for start and end time stamps in block layer for io accounting
+> 
+> 2. Create a new setting '2' in sysfs for iostats variable i.e for
+>    /sys/block/<device-name>/queue/iostats, to enable the iostat (io
+>    accounting) with nano-seconds (using ktime) granularity. This setting
+>    should be enabled only if the iostat is needed with high resolution
+>    mode as it has a high performance drop
+> 
+> 3. Earlier available settings were 0 and 1 for disable and enable io
+>    accounting with milli-seconds granularity (jiffies)
+> 
+> Testing
+> =======
+> Ran the t/io_uring command with following setup:
+> 
+> Devices
+> -------
+> SSDs: P4610
+> No of devices: 8
+> 
+> io_uring config
+> ---------------
+> Polled IO
+> iostats: Enabled
+> Reads: Random
+> Block Size: 512
+> QDepth: 128
+> Batch Submit: 32
+> Batch Complete: 32
+> No of Threads: 24
+> 
+> io_uring o/p
+> ------------
+> iostat=0, with patch: Maximum IOPS=10.09M
+> iostat=1, with patch: Maximum IOPS=9.84M
+> iostat=2, with patch: Maximum IOPS=9.48M
+> 
+> Changes from V2 to V3
+> =====================
+> 1. Changed all the required variables data-type to u64 as a first patch
+> 2. Create a new setting '2' for iostats in sysfs in this patch
+> 3. Change the code to get the ktime values when iostat=2, in this patch
+> 
+> Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
+> ---
+>  block/blk-core.c                  | 26 +++++++++++++++++----
+>  block/blk-mq.c                    |  4 ++--
+>  block/blk-sysfs.c                 | 39 ++++++++++++++++++++++++++++++-
+>  block/genhd.c                     | 18 ++++++++++----
+>  drivers/block/drbd/drbd_debugfs.c | 12 ++++++++--
+>  drivers/block/zram/zram_drv.c     |  3 ++-
+>  drivers/md/dm.c                   | 13 +++++++++--
+>  include/linux/blkdev.h            |  4 ++++
+>  8 files changed, 103 insertions(+), 16 deletions(-)
+> 
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index 5670032fe932..0b5e4eb909a5 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -927,6 +927,18 @@ int iocb_bio_iopoll(struct kiocb *kiocb, struct io_comp_batch *iob,
+>  }
+>  EXPORT_SYMBOL_GPL(iocb_bio_iopoll);
+>  
+> +/*
+> + * Get the time based upon the available granularity for io accounting
+> + * If the resolution mode is set to precise (2) i.e
+> + * (/sys/block/<device>/queue/iostats = 2), then this will return time
+> + * in nano-seconds else this will return time in jiffies
+> + */
+> +u64  blk_get_iostat_ticks(struct request_queue *q)
+> +{
+> +       return (blk_queue_precise_io_stat(q) ? ktime_get_ns() : jiffies);
+> +}
+> +EXPORT_SYMBOL_GPL(blk_get_iostat_ticks);
+> +
 
-Thanks. But the recovery is really slow, and my response cannot be in =
-time. I was told it might be better after 1 month, hope it is true.
+Would prefer to see blk_get_iostat_ticks tagged with 'static inline'
+and moved to blkdev.h (obviously below blk_queue_precise_io_stat).
 
->=20
-> On Fri, Dec 30, 2022 at 11:41 AM Coly Li <colyli@suse.de> wrote:
->>=20
->> On 9/8/22 4:32 PM, Andrea Tomassetti wrote:
->>> =46rom 59787372cf21af0b79e895578ae05b6586dfeb09 Mon Sep 17 00:00:00 =
-2001
->>> From: Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
->>> Date: Thu, 8 Sep 2022 09:47:55 +0200
->>> Subject: [PATCH] bcache: Add support for live resize of backing =
-devices
->>>=20
->>> Signed-off-by: Andrea Tomassetti =
-<andrea.tomassetti-opensource@devo.com>
->>=20
->> Hi Andrea,
->>=20
->> I am just recovered from Omicron, and able to reply email. Let me =
-place
->> my comments inline.
->>=20
->>=20
->>> ---
->>> Hi Coly,
->>> Here is the first version of the patch. There are some points I =
-noted
->>> down
->>> that I would like to discuss with you:
->>> - I found it pretty convenient to hook the call of the new added
->>> function
->>>   inside the `register_bcache`. In fact, every time (at least from =
-my
->>>   understandings) a disk changes size, it will trigger a new probe =
-and,
->>>   thus, `register_bcache` will be triggered. The only inconvenient
->>>   is that, in case of success, the function will output
->>=20
->> The resize should be triggered manually, and not to do it =
-automatically.
->>=20
->> You may create a sysfs file under the cached device's directory, name =
-it
->> as "extend_size" or something else you think better.
->>=20
->> Then the sysadmin may extend the cached device size explicitly on a
->> predictable time.
->>=20
->>> `error: capacity changed` even if it's not really an error.
->>> - I'm using `kvrealloc`, introduced in kernel version 5.15, to =
-resize
->>>   `stripe_sectors_dirty` and `full_dirty_stripes`. It shouldn't be a
->>>   problem, right?
->>> - There is some reused code between this new function and
->>>   `bcache_device_init`. Maybe I can move `const size_t max_stripes` =
-to
->>>   a broader scope or make it a macro, what do you think?
->>>=20
->>> Thank you very much,
->>> Andrea
->>>=20
->>> drivers/md/bcache/super.c | 75 =
-++++++++++++++++++++++++++++++++++++++-
->>> 1 file changed, 74 insertions(+), 1 deletion(-)
->>>=20
->>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
->>> index ba3909bb6bea..9a77caf2a18f 100644
->>> --- a/drivers/md/bcache/super.c
->>> +++ b/drivers/md/bcache/super.c
->>> @@ -2443,6 +2443,76 @@ static bool bch_is_open(dev_t dev)
->>>     return bch_is_open_cache(dev) || bch_is_open_backing(dev);
->>> }
->>>=20
->>> +static bool bch_update_capacity(dev_t dev)
->>> +{
->>> +    const size_t max_stripes =3D min_t(size_t, INT_MAX,
->>> +                     SIZE_MAX / sizeof(atomic_t));
->>> +
->>> +    uint64_t n, n_old;
->>> +    int nr_stripes_old;
->>> +    bool res =3D false;
->>> +
->>> +    struct bcache_device *d;
->>> +    struct cache_set *c, *tc;
->>> +    struct cached_dev *dcp, *t, *dc =3D NULL;
->>> +
->>> +    uint64_t parent_nr_sectors;
->>> +
->>> +    list_for_each_entry_safe(c, tc, &bch_cache_sets, list)
->>> +        list_for_each_entry_safe(dcp, t, &c->cached_devs, list)
->>> +            if (dcp->bdev->bd_dev =3D=3D dev) {
->>> +                dc =3D dcp;
->>> +                goto dc_found;
->>> +            }
->>> +
->>> +dc_found:
->>> +    if (!dc)
->>> +        return false;
->>> +
->>> +    parent_nr_sectors =3D bdev_nr_sectors(dc->bdev) - =
-dc->sb.data_offset;
->>> +
->>> +    if (parent_nr_sectors =3D=3D =
-bdev_nr_sectors(dc->disk.disk->part0))
->>> +        return false;
->>> +
->>=20
->> The above code only handles whole disk using as cached device. If a
->> partition of a hard drive is used as cache device, and there are =
-other
->> data after this partition, such condition should be handled as well. =
-So
->> far I am fine to only extend size when using the whole hard drive as
->> cached device, but more code is necessary to check and only permits
->> size-extend for such condition.
-> I don't understand if there's a misalignment here so let me be more
-> clear: this patch is intended to support the live resize of *backing
-> devices*, is this what you mean with "cached device"?
+Also, just a general comment: I've historically been a bigger (ab)user
+of jump_labels to avoid excess branching costs per IO, e.g. see commit
+442761fd2b29 ("dm: conditionally enable branching for less used features").
+It could be there is an opportunity for a follow-on patch that
+leverages them?  Or should that just be left to each driver to decide
+to do with its own resources (rather than have block core provide that)?
 
-Yes, backing device is cached device.
+(if nothing in the system ever uses QUEUE_FLAG_PRECISE_IO_STAT then
+it'd be nice to avoid needless branching).
 
+<snip>
 
-> When I was working on the patch I didn't consider the possibility of
-> live resizing the cache devices, but it should be trivial.
-> So, as far as I understand, a partition cannot be used as a backing
-> device, correct? The whole disk should be used as a backing device,
-> that's why I'm checking and that's why this check should be correct.
-> Am I wrong?
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index 011a85ea40da..1bb58a0b8cd1 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -482,7 +482,11 @@ static int dm_blk_ioctl(struct block_device *bdev, fmode_t mode,
+>  
+>  u64 dm_start_time_ns_from_clone(struct bio *bio)
+>  {
+> -	return jiffies_to_nsecs(clone_to_tio(bio)->io->start_time);
+> +	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
+> +	u64 start_time_ns = (blk_queue_precise_io_stat(q) ?
+> +				clone_to_tio(bio)->io->start_time :
+> +				jiffies_to_nsecs(clone_to_tio(bio)->io->start_time));
+> +	return start_time_ns;
+>  }
+>  EXPORT_SYMBOL_GPL(dm_start_time_ns_from_clone);
+>  
+> @@ -498,6 +502,11 @@ static void dm_io_acct(struct dm_io *io, bool end)
+>  	struct mapped_device *md = io->md;
+>  	struct bio *bio = io->orig_bio;
+>  	unsigned int sectors;
+> +	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
+> +
+> +	u64 start_time = (blk_queue_precise_io_stat(q) ?
+> +				nsecs_to_jiffies(io->start_time) :
+> +				io->start_time);
+>  
+>  	/*
+>  	 * If REQ_PREFLUSH set, don't account payload, it will be
+> @@ -589,7 +598,7 @@ static struct dm_io *alloc_io(struct mapped_device *md, struct bio *bio)
+>  	io->orig_bio = bio;
+>  	io->md = md;
+>  	spin_lock_init(&io->lock);
+> -	io->start_time = jiffies;
+> +	io->start_time = blk_get_iostat_ticks(bio->bi_bdev->bd_queue);
+>  	io->flags = 0;
+>  
+>  	if (static_branch_unlikely(&stats_enabled))
 
-Yes a partition can be used as a backing (cached) device.
-That is to say, if a file system is format on top of the cached device, =
-this file system cannot be directly accessed via the partition. It has =
-to be accessed via the bcache device e.g. /dev/bcache0.
+The above seems correct, by checking the top-level DM device's
+disposition on QUEUE_FLAG_PRECISE_IO_STAT, but I'm now wondering
+if there should be code that ensures consistency across stacked
+devices (which DM is the biggest creator/consumer of)?
 
+dm_table_set_restrictions() deals with such inconsistencies at DM
+device creation time (so basically: if any device in the DM table has
+QUEUE_FLAG_PRECISE_IO_STAT set then the top-level DM device should
+inherit that queue flag). A user could still override it but at least
+the default will be sane initially.
 
->=20
->>=20
->>> +    if (!set_capacity_and_notify(dc->disk.disk, parent_nr_sectors))
->>> +        return false;
->>=20
->> The above code should be done when all rested are set.
->>=20
->>=20
->>> +
->>> +    d =3D &dc->disk;
->>> +
->>> +    /* Force cached device sectors re-calc */
->>> +    calc_cached_dev_sectors(d->c);
->>=20
->> Here c->cached_dev_sectors might be changed, if any of the following
->> steps fails, it should be restored to previous value.
->>=20
->>=20
->>> +
->>> +    /* Block writeback thread */
->>> +    down_write(&dc->writeback_lock);
->>> +    nr_stripes_old =3D d->nr_stripes;
->>> +    n =3D DIV_ROUND_UP_ULL(parent_nr_sectors, d->stripe_size);
->>> +    if (!n || n > max_stripes) {
->>> +        pr_err("nr_stripes too large or invalid: %llu (start sector
->>> beyond end of disk?)\n",
->>> +            n);
->>> +        goto unblock_and_exit;
->>> +    }
->>> +    d->nr_stripes =3D n;
->>> +
->>> +    n =3D d->nr_stripes * sizeof(atomic_t);
->>> +    n_old =3D nr_stripes_old * sizeof(atomic_t);
->>> +    d->stripe_sectors_dirty =3D kvrealloc(d->stripe_sectors_dirty, =
-n_old,
->>> +        n, GFP_KERNEL);
->>> +    if (!d->stripe_sectors_dirty)
->>> +        goto unblock_and_exit;
->>> +
->>> +    n =3D BITS_TO_LONGS(d->nr_stripes) * sizeof(unsigned long);
->>> +    n_old =3D BITS_TO_LONGS(nr_stripes_old) * sizeof(unsigned =
-long);
->>> +    d->full_dirty_stripes =3D kvrealloc(d->full_dirty_stripes, =
-n_old,
->>> n, GFP_KERNEL);
->>> +    if (!d->full_dirty_stripes)
->>> +        goto unblock_and_exit;
->>=20
->> If kvrealloc() fails and NULL set to d->full_dirty_sripes, the =
-previous
->> array should be restored.
->>=20
->>> +
->>> +    res =3D true;
->>> +
->>> +unblock_and_exit:
->>> +    up_write(&dc->writeback_lock);
->>> +    return res;
->>> +}
->>> +
->>=20
->> I didn't test the patch, from the first glance, I feel the failure
->> handling should restore all previous values, otherwise the cache =
-device
->> may be in a non-consistent state when extend size fails.
->>=20
-> Completely agree with you on this point. I changed it locally and, as
-> soon as we agree on the other points I'll send a newer version of the
-> patch.
->>=20
->>> struct async_reg_args {
->>>     struct delayed_work reg_work;
->>>     char *path;
->>> @@ -2569,7 +2639,10 @@ static ssize_t register_bcache(struct kobject
->>> *k, struct kobj_attribute *attr,
->>>             mutex_lock(&bch_register_lock);
->>>             if (lookup_bdev(strim(path), &dev) =3D=3D 0 &&
->>>                 bch_is_open(dev))
->>> -                err =3D "device already registered";
->>> +                if (bch_update_capacity(dev))
->>> +                    err =3D "capacity changed";
->>> +                else
->>> +                    err =3D "device already registered";
->>=20
->>=20
->> As I said, it should be a separated write-only sysfile under the =
-cache
->> device's directory.
-> Can I ask why you don't like the automatic resize way? Why should the
-> resize be manual?
-
-Most of system administrators don=E2=80=99t like such silently automatic =
-things. They want to extend the size explicitly, especially when there =
-is other dependences in their configurations.
-
-
-> Someone needs to trigger the block device resize, so shouldn't that be =
-enough?
-
-Yes, an explicit write operation on a sysfs file to trigger the resize. =
-Then we can permit people to do the size extend explicit and avoid to =
-change current behavior.
-
-Thanks.
-
-Coly Li
-
->=20
-> Andrea
->>=20
->>=20
->>> else
->>>                 err =3D "device busy";
->>>             mutex_unlock(&bch_register_lock);
->>> --
->>> 2.37.3
->>>=20
->>=20
+Mike
 
