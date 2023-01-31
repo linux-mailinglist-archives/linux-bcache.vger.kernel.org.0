@@ -2,117 +2,130 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD63E68305F
-	for <lists+linux-bcache@lfdr.de>; Tue, 31 Jan 2023 16:01:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDDF46831DF
+	for <lists+linux-bcache@lfdr.de>; Tue, 31 Jan 2023 16:51:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232457AbjAaPBi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 31 Jan 2023 10:01:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60534 "EHLO
+        id S232728AbjAaPvr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 31 Jan 2023 10:51:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232283AbjAaPAg (ORCPT
+        with ESMTP id S230295AbjAaPvq (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 31 Jan 2023 10:00:36 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B167539A6;
-        Tue, 31 Jan 2023 07:00:26 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 31 Jan 2023 10:51:46 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ED1615CA0
+        for <linux-bcache@vger.kernel.org>; Tue, 31 Jan 2023 07:51:45 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9578961565;
-        Tue, 31 Jan 2023 15:00:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22602C4339E;
-        Tue, 31 Jan 2023 15:00:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675177225;
-        bh=2eJvU72bguGWNcOSPX5RnYvIcsZFnsi3YJtrC2eEK7I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FF7N+hOU3dPlZ2reCprCMbWhFtMARMJ2CXpdZQ48ehokiBpZCRQa2o92dRgSeFx8D
-         S+IS+9Csw2F8IfIlfoYc0/mBluHtCl0JSI8MBluJJ4R6ooQ5aXVNuGv+IrqeQRavgn
-         QYHWeG0PMQwK3qQpnDpaFK3mi1vxfB9mOPSCc5ANyX1jGhRxNWNyAqKnWlH35D1g2a
-         uAr5n8cYqjjCrFan/GVupfgtNq9A9Uf2hs8MRr/TYu8ZsSd0A/4jPKKISKGV+/LlVL
-         VSNL65YyeZegbIQDIoZuMSXpiU6xEKlXpSEC6Ldc3IIJ3FfMHHdNwRLAdGNK++Vb09
-         734XkCsyaDgKQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kees Cook <keescook@chromium.org>,
-        Alexandre Pereira <alexpereira@disroot.org>,
-        Coly Li <colyli@suse.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 6.1 19/20] bcache: Silence memcpy() run-time false positive warnings
-Date:   Tue, 31 Jan 2023 09:59:45 -0500
-Message-Id: <20230131145946.1249850-19-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230131145946.1249850-1-sashal@kernel.org>
-References: <20230131145946.1249850-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        by smtp-out2.suse.de (Postfix) with ESMTPS id CFEC6206C7;
+        Tue, 31 Jan 2023 15:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1675180303; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TwhLWPrg+HeNKo4WvD/QWVVLg5L92od03KN5AyUkhQI=;
+        b=qCyyoWSLDREXln4VJ7kUkE1VAHlJ6oiDsKstyTLAkYkHVFh2bcQDShsN4++390iM1JRmCu
+        zadUXYvGOCF2+bpAHM3XTTWNX94JtcwpwGwiUsfahT6YHKYcBfxm4shoO/VY6qGN+pKXPF
+        9EtrwAkEM2uBegGq2D2em80w7G+pjoI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1675180303;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TwhLWPrg+HeNKo4WvD/QWVVLg5L92od03KN5AyUkhQI=;
+        b=md03R63xeKku2MQFuvznwhYtY0aXzmaQlOGPCNXjITQoB2AuHjV+r14DSgjmlm+FzY0OFT
+        qNvb/3KXbbNiJwBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EE26A138E8;
+        Tue, 31 Jan 2023 15:51:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id BcVFLg452WONbAAAMHmgww
+        (envelope-from <colyli@suse.de>); Tue, 31 Jan 2023 15:51:42 +0000
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.300.101.1.3\))
+Subject: Re: Multi-Level Caching
+From:   Coly Li <colyli@suse.de>
+In-Reply-To: <CAHykVA6L3bQkGJ11N3jG_QSgPbyr40zc8rBNPPwBN9a5RHwC6Q@mail.gmail.com>
+Date:   Tue, 31 Jan 2023 23:51:30 +0800
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <AA6912BA-7DE5-466E-8E85-9EB58FCFC81D@suse.de>
+References: <CAHykVA6L3bQkGJ11N3jG_QSgPbyr40zc8rBNPPwBN9a5RHwC6Q@mail.gmail.com>
+To:     Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
+X-Mailer: Apple Mail (2.3731.300.101.1.3)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit be0d8f48ad97f5b775b0af3310343f676dbf318a ]
 
-struct bkey has internal padding in a union, but it isn't always named
-the same (e.g. key ## _pad, key_p, etc). This makes it extremely hard
-for the compiler to reason about the available size of copies done
-against such keys. Use unsafe_memcpy() for now, to silence the many
-run-time false positive warnings:
+> 2023=E5=B9=B41=E6=9C=8826=E6=97=A5 19:30=EF=BC=8CAndrea Tomassetti =
+<andrea.tomassetti-opensource@devo.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> Hi,
+> I know that bcache doesn't natively support multi-level caching but I
+> was playing with it and found this interesting "workaround":
+>  make-bcache -B /dev/vdb -C /dev/vdc
+> the above command will generate a /dev/bcache0 device that we can now
+> use as backing (or cached) device:
+>  make-bcache -B /dev/bcache0 -C /dev/vdd
+> This will make the kernel panic because the driver is trying to create
+> a duplicated "bcache" folder under /sys/block/bcache0/ .
+> So, simply patching the code inside register_bdev to create a folder
+> "bcache2" if "bcache" already exists does the trick.
+> Now I have:
+> vdb                       252:16   0    5G  0 disk
+> =E2=94=94=E2=94=80bcache0                 251:0    0    5G  0 disk
+>  =E2=94=94=E2=94=80bcache1               251:128  0    5G  0 disk =
+/mnt/bcache1
+> vdc                       252:32   0   10G  0 disk
+> =E2=94=94=E2=94=80bcache0                 251:0    0    5G  0 disk
+>  =E2=94=94=E2=94=80bcache1               251:128  0    5G  0 disk =
+/mnt/bcache1
+> vdd                       252:48   0    5G  0 disk
+> =E2=94=94=E2=94=80bcache1                 251:128  0    5G  0 disk =
+/mnt/bcache1
+>=20
+> Is anyone using this functionality? I assume not, because by default
+> it doesn't work.
+> Is there any good reason why this doesn't work by default?
+>=20
+> I tried to understand how data will be read out of /dev/bcache1: will
+> the /dev/vdd cache, secondly created cache device, be interrogated
+> first and then will it be the turn of /dev/vdc ?
+> Meaning: can we consider that now the layer structure is
+>=20
+> vdd
+> =E2=94=94=E2=94=80vdc
+>       =E2=94=94=E2=94=80bcache0
+>             =E2=94=94=E2=94=80bcache1
+> ?
 
-  memcpy: detected field-spanning write (size 264) of single field "&i->j" at drivers/md/bcache/journal.c:152 (size 240)
-  memcpy: detected field-spanning write (size 24) of single field "&b->key" at drivers/md/bcache/btree.c:939 (size 16)
-  memcpy: detected field-spanning write (size 24) of single field "&temp.key" at drivers/md/bcache/extents.c:428 (size 16)
+IIRC, there was a patch tried to achieve similar purpose. I was not =
+supportive for this idea because I didn=E2=80=99t see really useful use =
+case.
+In general, extra layer cache means extra latency in the I/O path. What =
+I see in practical deployments are, people try very hard to minimize the =
+cache layer and place it close to application.
 
-Reported-by: Alexandre Pereira <alexpereira@disroot.org>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=216785
-Acked-by: Coly Li <colyli@suse.de>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: linux-bcache@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Link: https://lore.kernel.org/r/20230106060229.never.047-kees@kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/md/bcache/bcache_ondisk.h | 3 ++-
- drivers/md/bcache/journal.c       | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Introduce stackable bcache for itself may work, but I don=E2=80=99t see =
+real usage yet, and no motivation to maintain such usage still.
 
-diff --git a/drivers/md/bcache/bcache_ondisk.h b/drivers/md/bcache/bcache_ondisk.h
-index 97413586195b..f96034e0ba4f 100644
---- a/drivers/md/bcache/bcache_ondisk.h
-+++ b/drivers/md/bcache/bcache_ondisk.h
-@@ -106,7 +106,8 @@ static inline unsigned long bkey_bytes(const struct bkey *k)
- 	return bkey_u64s(k) * sizeof(__u64);
- }
- 
--#define bkey_copy(_dest, _src)	memcpy(_dest, _src, bkey_bytes(_src))
-+#define bkey_copy(_dest, _src)	unsafe_memcpy(_dest, _src, bkey_bytes(_src), \
-+					/* bkey is always padded */)
- 
- static inline void bkey_copy_key(struct bkey *dest, const struct bkey *src)
- {
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index e5da469a4235..c182c21de2e8 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -149,7 +149,8 @@ reread:		left = ca->sb.bucket_size - offset;
- 				    bytes, GFP_KERNEL);
- 			if (!i)
- 				return -ENOMEM;
--			memcpy(&i->j, j, bytes);
-+			unsafe_memcpy(&i->j, j, bytes,
-+				/* "bytes" was calculated by set_bytes() above */);
- 			/* Add to the location after 'where' points to */
- 			list_add(&i->list, where);
- 			ret = 1;
--- 
-2.39.0
+Thanks.
 
+Coly Li=
