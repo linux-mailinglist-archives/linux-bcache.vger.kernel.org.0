@@ -2,244 +2,183 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5D7686DB4
-	for <lists+linux-bcache@lfdr.de>; Wed,  1 Feb 2023 19:13:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0EE3687086
+	for <lists+linux-bcache@lfdr.de>; Wed,  1 Feb 2023 22:39:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230245AbjBASN1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 1 Feb 2023 13:13:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54466 "EHLO
+        id S229601AbjBAVj6 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 1 Feb 2023 16:39:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjBASN0 (ORCPT
+        with ESMTP id S229551AbjBAVj5 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 1 Feb 2023 13:13:26 -0500
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C76713B
-        for <linux-bcache@vger.kernel.org>; Wed,  1 Feb 2023 10:13:25 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id CE17A86;
-        Wed,  1 Feb 2023 10:13:24 -0800 (PST)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 4QwD-5IVR6mM; Wed,  1 Feb 2023 10:13:20 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 6CDD049;
-        Wed,  1 Feb 2023 10:13:20 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 6CDD049
-Date:   Wed, 1 Feb 2023 10:13:20 -0800 (PST)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-To:     mingzhe <mingzhe.zou@easystack.cn>
-cc:     colyli@suse.de, andrea.tomassetti-opensource@devo.com,
+        Wed, 1 Feb 2023 16:39:57 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D093045887
+        for <linux-bcache@vger.kernel.org>; Wed,  1 Feb 2023 13:39:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1675287595; x=1706823595;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=E349jM/kwjl5HlI8qq0f7Mh0xl5qabzrVNPAGr8GscQ=;
+  b=T3xXQ8kIu7Oe+3GVhGYQ//1hiiAqsORIGvjDdv4P526wxsAGzVxoL3BI
+   u6+/+APTBbuBMu5qVA+zLUc3A72zeCwveNvnu8ps6dGXsbI+r2vJV5UEK
+   w8HXiZ/yKoL9oJqnZZpYHPRP4GtnQ4u0keLdVneYEpdrkoKd9+H31ONmD
+   s/hJuoRjjIkPEcQAPOs8zslOVwdyhz7YEg78dxB17HHoDe3pP0xJHxzad
+   MeTXmYeLQ62Hu9YrsHCng8SJXSM/dT9f+TeHgECxInK8qJfQs/zw+gkHD
+   CHUe2OeJj+NjuXRSALSOuyk3MqCarNDs+F0icJU0RBMvfOLgE4kB0dyGN
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10608"; a="308624048"
+X-IronPort-AV: E=Sophos;i="5.97,265,1669104000"; 
+   d="scan'208";a="308624048"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2023 13:39:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10608"; a="614998243"
+X-IronPort-AV: E=Sophos;i="5.97,265,1669104000"; 
+   d="scan'208";a="614998243"
+Received: from lkp-server01.sh.intel.com (HELO ffa7f14d1d0f) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 01 Feb 2023 13:39:51 -0800
+Received: from kbuild by ffa7f14d1d0f with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pNKpa-0005pm-1X;
+        Wed, 01 Feb 2023 21:39:50 +0000
+Date:   Thu, 2 Feb 2023 05:39:04 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     mingzhe.zou@easystack.cn, colyli@suse.de,
+        andrea.tomassetti-opensource@devo.com, bcache@lists.ewheeler.net
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
         kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
-        zoumingzhe@qq.com, Dongsheng Yang <dongsheng.yang@easystack.cn>
+        zoumingzhe@qq.com, Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        mingzhe <mingzhe.zou@easystack.cn>
 Subject: Re: [PATCH 3/3] bcache: support overlay bcache
-In-Reply-To: <20230201065202.17610-3-mingzhe.zou@easystack.cn>
-Message-ID: <e4a4362e-85d9-285d-726d-3b1df73329f8@ewheeler.net>
-References: <20230201065202.17610-1-mingzhe.zou@easystack.cn> <20230201065202.17610-3-mingzhe.zou@easystack.cn>
+Message-ID: <202302020507.y0NPeWHf-lkp@intel.com>
+References: <20230201065202.17610-3-mingzhe.zou@easystack.cn>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-125853957-1675275200=:28752"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230201065202.17610-3-mingzhe.zou@easystack.cn>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi,
 
---8323328-125853957-1675275200=:28752
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+I love your patch! Yet something to improve:
 
-On Wed, 1 Feb 2023, mingzhe.zou@easystack.cn wrote:
-> From: Dongsheng Yang <dongsheng.yang@easystack.cn>
-> 
-> If we want to build a bcache device with backing device of a bcache flash device,
-> we will fail with creating a duplicated sysfs filename.
-> 
-> E.g:
-> (1) we create bcache0 with vdc, then there is "/sys/block/bcache0/bcache" as a link to "/sys/block/vdc/bcache"
->  $ readlink /sys/block/bcache0/bcache
-> ../../../pci0000:00/0000:00:0b.0/virtio4/block/vdc/bcache
-> 
-> (2) if we continue to create bcache1 with bcache0:
->  $ make-bcache -B /dev/bcache0
-> 
-> We will fail to register bdev with "sysfs: cannot create duplicate 
-> filename '/devices/virtual/block/bcache0/bcache'"
-> 
-> How this commit solving this problem?
-> E.g:
->    we have vdf as cache disk, vdc as backing disk.
->
->  $ make-bcache -C /dev/vdf -B /dev/vdc --wipe-bcache
->  $ echo 100G > /sys/block/vdf/bcache_cache/set/flash_vol_create
->  $ lsblk
-> NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-> vdf                        252:80   0   50G  0 disk
-> ├─bcache0                  251:0    0  100G  0 disk
-> └─bcache1                  251:128  0  100G  0 disk
-> vdc                        252:32   0  100G  0 disk
-> └─bcache0                  251:0    0  100G  0 disk
-> 
-> (a) rename sysfs file to more meaningful name:
-> (a.2) bcahce_cache -> sysfs filename under cache disk (/sys/block/vdf/bcache_cache)
-> (a.1) bcache_fdev -> flash bcache device (/sys/block/bcache1/bcache_fdev)
-> (a.4) bcache_bdev -> sysfs filename for backing disk (/sys/block/vdc/bcache_bdev)
-> (a.3) bcache_cdev -> link to /sys/block/vdc/bcache_bdev (/sys/block/bcache0/bcache_cdev)
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.2-rc6 next-20230201]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Good idea.
+url:    https://github.com/intel-lab-lkp/linux/commits/mingzhe-zou-easystack-cn/bcache-submit-writeback-inflight-dirty-writes-in-batch/20230201-145421
+patch link:    https://lore.kernel.org/r/20230201065202.17610-3-mingzhe.zou%40easystack.cn
+patch subject: [PATCH 3/3] bcache: support overlay bcache
+config: riscv-randconfig-r042-20230130 (https://download.01.org/0day-ci/archive/20230202/202302020507.y0NPeWHf-lkp@intel.com/config)
+compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 4196ca3278f78c6e19246e54ab0ecb364e37d66a)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install riscv cross compiling tool for clang build
+        # apt-get install binutils-riscv64-linux-gnu
+        # https://github.com/intel-lab-lkp/linux/commit/785b6ea709e3008e2df009d5555c80db709e6d5f
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review mingzhe-zou-easystack-cn/bcache-submit-writeback-inflight-dirty-writes-in-batch/20230201-145421
+        git checkout 785b6ea709e3008e2df009d5555c80db709e6d5f
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash
 
-> (b) create ->bcache lagacy link file for backward compatability
-> $ ll /sys/block/vdc/bcache
-> lrwxrwxrwx 1 root root 0 Oct 26 11:21 /sys/block/vdc/bcache -> bcache_bdev
-> $ ll /sys/block/bcache0/bcache
-> lrwxrwxrwx 1 root root 0 Oct 26 11:21 /sys/block/bcache0/bcache -> ../../../pci0000:00/0000:00:0b.0/virtio4/block/vdc/bcache_bdev
-> $ ll /sys/block/bcache1/bcache
-> lrwxrwxrwx 1 root root 0 Oct 26 11:19 /sys/block/bcache1/bcache -> bcache_fdev
-> $ ll /sys/block/vdf/bcache
-> lrwxrwxrwx 1 root root 0 Oct 26 11:17 /sys/block/vdf/bcache -> bcache_cache
-> 
-> These link are created with sysfs_create_link_nowarn(), that means, we dont
-> care about the failure when creating if these links are already created.
-> Because these lagacy sysfile are only for backwards compatability in no-overlay usecase
-> of bcache, in the no-overlay use, bcache will never create duplicated link.
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
 
-awesome.
- 
-> In overlay usecase after this commit, please dont use bcache link any more, instead
-> use bcache_cdev, bcache_fdev, bcache_bdev or bcache_cache.
-> 
-> Then we can create a cached_dev with bcache1 (flash dev) as backing dev.
-> $ make-bcache -B /dev/bcache1
-> $ lsblk
-> NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-> vdf                        252:80   0   50G  0 disk
-> ├─bcache0                  251:0    0  100G  0 disk
-> └─bcache1                  251:128  0  100G  0 disk
->   └─bcache2                251:256  0  100G  0 disk
-> 
-> As a result there is a cached device bcache2 with backing device of a flash device bcache1.
->         ----------------------------
->         | bcache2 (cached_dev)     |
->         | ------------------------ |
->         | |   sdb (cache_dev)    | |
->         | ------------------------ |
->         | ------------------------ |
->         | |   bcache1 (flash_dev)| |
->         | ------------------------ |
->         ----------------------------
+All errors (new ones prefixed by >>):
 
-Does this allow an arbitrary depth of bcache stacking?
+>> drivers/md/bcache/super.c:1475:34: error: call to undeclared function 'part_to_dev'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+           ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
+                                           ^
+   drivers/md/bcache/super.c:1475:62: error: member reference type 'int' is not a pointer
+           ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~  ^
+   drivers/md/bcache/super.c:1475:52: error: no member named 'bd_part' in 'struct block_device'
+           ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
+                                                       ~~~~  ^
+   drivers/md/bcache/super.c:2403:34: error: call to undeclared function 'part_to_dev'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+           ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
+                                           ^
+   drivers/md/bcache/super.c:2403:62: error: member reference type 'int' is not a pointer
+           ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~  ^
+   drivers/md/bcache/super.c:2403:52: error: no member named 'bd_part' in 'struct block_device'
+           ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
+                                                       ~~~~  ^
+   6 errors generated.
 
--Eric
 
-> 
-> Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
-> Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
-> ---
->  drivers/md/bcache/super.c | 40 +++++++++++++++++++++++++++++++++++----
->  1 file changed, 36 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index ba3909bb6bea..0ca8c05831c9 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1087,12 +1087,19 @@ int bch_cached_dev_run(struct cached_dev *dc)
->  
->  	if (sysfs_create_link(&d->kobj, &disk_to_dev(d->disk)->kobj, "dev") ||
->  	    sysfs_create_link(&disk_to_dev(d->disk)->kobj,
-> -			      &d->kobj, "bcache")) {
-> +			      &d->kobj, "bcache_cdev")) {
->  		pr_err("Couldn't create bcache dev <-> disk sysfs symlinks\n");
->  		ret = -ENOMEM;
->  		goto out;
->  	}
->  
-> +	ret = sysfs_create_link_nowarn(&disk_to_dev(d->disk)->kobj,
-> +				       &d->kobj, "bcache");
-> +	if (ret && ret != -EEXIST) {
-> +		pr_err("Couldn't create lagacy disk sysfs ->bcache symlinks\n");
-> +		goto out;
-> +	}
-> +
->  	dc->status_update_thread = kthread_run(cached_dev_status_update,
->  					       dc, "bcache_status_update");
->  	if (IS_ERR(dc->status_update_thread)) {
-> @@ -1461,8 +1468,17 @@ static int register_bdev(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
->  		goto err;
->  
->  	err = "error creating kobject";
-> -	if (kobject_add(&dc->disk.kobj, bdev_kobj(bdev), "bcache"))
-> +	if (kobject_add(&dc->disk.kobj, bdev_kobj(bdev), "bcache_bdev"))
->  		goto err;
-> +
-> +	err = "error creating lagacy sysfs link";
-> +	ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
-> +				       &dc->disk.kobj, "bcache");
-> +	if (ret && ret != -EEXIST) {
-> +		pr_err("Couldn't create lagacy disk sysfs ->bcache");
-> +		goto err;
-> +	}
-> +
->  	if (bch_cache_accounting_add_kobjs(&dc->accounting, &dc->disk.kobj))
->  		goto err;
->  
-> @@ -1524,6 +1540,7 @@ static void flash_dev_flush(struct closure *cl)
->  
->  static int flash_dev_run(struct cache_set *c, struct uuid_entry *u)
->  {
-> +	int ret;
->  	int err = -ENOMEM;
->  	struct bcache_device *d = kzalloc(sizeof(struct bcache_device),
->  					  GFP_KERNEL);
-> @@ -1546,10 +1563,17 @@ static int flash_dev_run(struct cache_set *c, struct uuid_entry *u)
->  	if (err)
->  		goto err;
->  
-> -	err = kobject_add(&d->kobj, &disk_to_dev(d->disk)->kobj, "bcache");
-> +	err = kobject_add(&d->kobj, &disk_to_dev(d->disk)->kobj, "bcache_fdev");
->  	if (err)
->  		goto err;
->  
-> +	ret = sysfs_create_link_nowarn(&disk_to_dev(d->disk)->kobj,
-> +				       &d->kobj, "bcache");
-> +	if (ret && ret != -EEXIST) {
-> +		pr_err("Couldn't create lagacy flash dev ->bcache");
-> +		goto err;
-> +	}
-> +
->  	bcache_device_link(d, c, "volume");
->  
->  	if (bch_has_feature_obso_large_bucket(&c->cache->sb)) {
-> @@ -2370,12 +2394,20 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
->  		goto err;
->  	}
->  
-> -	if (kobject_add(&ca->kobj, bdev_kobj(bdev), "bcache")) {
-> +	if (kobject_add(&ca->kobj, bdev_kobj(bdev), "bcache_cache")) {
->  		err = "error calling kobject_add";
->  		ret = -ENOMEM;
->  		goto out;
->  	}
->  
-> +	ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
-> +				       &ca->kobj, "bcache");
-> +	if (ret && ret != -EEXIST) {
-> +		pr_err("Couldn't create lagacy disk sysfs ->cache symlinks\n");
-> +		goto out;
-> +	} else
-> +		ret = 0;
-> +
->  	mutex_lock(&bch_register_lock);
->  	err = register_cache_set(ca);
->  	mutex_unlock(&bch_register_lock);
-> -- 
-> 2.17.1
-> 
-> 
---8323328-125853957-1675275200=:28752--
+vim +/part_to_dev +1475 drivers/md/bcache/super.c
+
+  1453	
+  1454	static int register_bdev(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+  1455					 struct block_device *bdev,
+  1456					 struct cached_dev *dc)
+  1457	{
+  1458		const char *err = "cannot allocate memory";
+  1459		struct cache_set *c;
+  1460		int ret = -ENOMEM;
+  1461	
+  1462		memcpy(&dc->sb, sb, sizeof(struct cache_sb));
+  1463		dc->bdev = bdev;
+  1464		dc->bdev->bd_holder = dc;
+  1465		dc->sb_disk = sb_disk;
+  1466	
+  1467		if (cached_dev_init(dc, sb->block_size << 9))
+  1468			goto err;
+  1469	
+  1470		err = "error creating kobject";
+  1471		if (kobject_add(&dc->disk.kobj, bdev_kobj(bdev), "bcache_bdev"))
+  1472			goto err;
+  1473	
+  1474		err = "error creating lagacy sysfs link";
+> 1475		ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
+  1476					       &dc->disk.kobj, "bcache");
+  1477		if (ret && ret != -EEXIST) {
+  1478			pr_err("Couldn't create lagacy disk sysfs ->bcache");
+  1479			goto err;
+  1480		}
+  1481	
+  1482		if (bch_cache_accounting_add_kobjs(&dc->accounting, &dc->disk.kobj))
+  1483			goto err;
+  1484	
+  1485		pr_info("registered backing device %pg\n", dc->bdev);
+  1486	
+  1487		list_add(&dc->list, &uncached_devices);
+  1488		/* attach to a matched cache set if it exists */
+  1489		list_for_each_entry(c, &bch_cache_sets, list)
+  1490			bch_cached_dev_attach(dc, c, NULL);
+  1491	
+  1492		if (BDEV_STATE(&dc->sb) == BDEV_STATE_NONE ||
+  1493		    BDEV_STATE(&dc->sb) == BDEV_STATE_STALE) {
+  1494			err = "failed to run cached device";
+  1495			ret = bch_cached_dev_run(dc);
+  1496			if (ret)
+  1497				goto err;
+  1498		}
+  1499	
+  1500		return 0;
+  1501	err:
+  1502		pr_notice("error %pg: %s\n", dc->bdev, err);
+  1503		bcache_device_stop(&dc->disk);
+  1504		return ret;
+  1505	}
+  1506	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
