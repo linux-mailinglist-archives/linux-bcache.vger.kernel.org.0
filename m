@@ -2,224 +2,166 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B87BE685FF7
-	for <lists+linux-bcache@lfdr.de>; Wed,  1 Feb 2023 07:52:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FDF968655F
+	for <lists+linux-bcache@lfdr.de>; Wed,  1 Feb 2023 12:25:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231360AbjBAGwh (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 1 Feb 2023 01:52:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36452 "EHLO
+        id S229514AbjBALZa (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 1 Feb 2023 06:25:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229884AbjBAGwc (ORCPT
+        with ESMTP id S229512AbjBALZ3 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 1 Feb 2023 01:52:32 -0500
-Received: from mail-m3164.qiye.163.com (mail-m3164.qiye.163.com [103.74.31.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A0771353A
-        for <linux-bcache@vger.kernel.org>; Tue, 31 Jan 2023 22:52:29 -0800 (PST)
-Received: from localhost.localdomain (unknown [218.94.118.90])
-        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id DF9066201F3;
-        Wed,  1 Feb 2023 14:52:25 +0800 (CST)
-From:   mingzhe.zou@easystack.cn
-To:     colyli@suse.de, andrea.tomassetti-opensource@devo.com,
-        bcache@lists.ewheeler.net
-Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
-        zoumingzhe@qq.com, Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        mingzhe <mingzhe.zou@easystack.cn>
-Subject: [PATCH 3/3] bcache: support overlay bcache
-Date:   Wed,  1 Feb 2023 14:52:02 +0800
-Message-Id: <20230201065202.17610-3-mingzhe.zou@easystack.cn>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230201065202.17610-1-mingzhe.zou@easystack.cn>
-References: <20230201065202.17610-1-mingzhe.zou@easystack.cn>
+        Wed, 1 Feb 2023 06:25:29 -0500
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 396937A88
+        for <linux-bcache@vger.kernel.org>; Wed,  1 Feb 2023 03:25:28 -0800 (PST)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-16332831ed0so23095185fac.10
+        for <linux-bcache@vger.kernel.org>; Wed, 01 Feb 2023 03:25:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=devo.com; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Xlwa7w/peQSBlsqSgNwUqdqLZxCSA4GIJ22ASmmtV8=;
+        b=V03oyCA6LNqlOQARODHlMdlZX4bBPeoOc9DFVEXXDmS/4Np3IgUjjHZX2OTsAV44qt
+         uPowEN9GVkSk1tTwgmWg8zDcays62X/DKeTM0VyBo3r3fRbIWHOhw30NTmATdWxCV2qo
+         xHCZ3OkjG4SJr/6P70QagQM/A/9jbHrQ6gG57yY5VwETwrbygl77yk6TzclRIutYUJn0
+         8Hqf1sizANr/2joPoOHaoxmwjyWDcqPivAv+8I7tUepqXmdos37fmgrYHGpX8NyObpVu
+         0G7yVau3KbX4z2UhtRJxgVjHFa4CQL1AhcSpsjHjAJP7ymtmtkZHvCgv9kQPDSTWYlyo
+         qgrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Xlwa7w/peQSBlsqSgNwUqdqLZxCSA4GIJ22ASmmtV8=;
+        b=bJke6gHLbQKcE9anrKh1QYzZWh8bRdUoYiA78BNnf9KNDf51fUSH8u7R78c3Qbrr8i
+         1F3Z556E4iBzByDkyr1BtJOEItZZY7je4mQLFA5WRZEvsC4q5QfKgzPbwsL590jdN50X
+         rPM4K3y89CYm+4daRu2ERuFu+ZZAe8aGfav/Ft/HE9Z5LfPZN8150RzY6uimvmCeGpMl
+         l4I2Zs42G6TpzwK+h6dxAiGhYQf7R/ihmsZDPBNOpmEX41IJhg3aNaixQ7zZ2n4grrqG
+         5qlUcoTTdC4GtAgSdYAPGGas7pIXpzWwgTF4X8sW+U2OibbP1LZZ6ztTBWU6B5h1aHG2
+         WddQ==
+X-Gm-Message-State: AO0yUKVimuqE8MqkkZNY6UQlFPKfa6j+SxJ9C9Ah0rAdgM/L8wgEqIZf
+        0k7iSVuOroNQ7NSSrk/SpsKI7Z1UAW1mfQYtj1HOwA==
+X-Google-Smtp-Source: AK7set8b4j3d5XMeF2m0NMuHgdAt8IFfEjhS/ecjrEGshtr+gaaTOdr5h02TNFGEvx5kN8DGnko2O7qqBKygCv3UJ00=
+X-Received: by 2002:a05:6870:c88f:b0:163:23ed:982c with SMTP id
+ er15-20020a056870c88f00b0016323ed982cmr105640oab.230.1675250727504; Wed, 01
+ Feb 2023 03:25:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaHU8eVh5KSk4dGRhOSxgdSlUZERMWGhIXJBQOD1
-        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6N0k6KCo6HTJPORE5MRIyPSk4
-        LEoKCTlVSlVKTUxOSUhPSE9NQkNDVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBQ0tMSTcG
-X-HM-Tid: 0a860bbf84e700a4kurmdf9066201f3
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <CAHykVA6L3bQkGJ11N3jG_QSgPbyr40zc8rBNPPwBN9a5RHwC6Q@mail.gmail.com>
+ <AA6912BA-7DE5-466E-8E85-9EB58FCFC81D@suse.de> <3ac5b76c-4f73-5668-50da-d3038f162040@easystack.cn>
+In-Reply-To: <3ac5b76c-4f73-5668-50da-d3038f162040@easystack.cn>
+From:   Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
+Date:   Wed, 1 Feb 2023 12:25:16 +0100
+Message-ID: <CAHykVA5DmjjuLan1N9cHkhshtZ==M0FVjEJ7cHGjWBymE4kP0A@mail.gmail.com>
+Subject: Re: Multi-Level Caching
+To:     mingzhe <mingzhe.zou@easystack.cn>
+Cc:     Coly Li <colyli@suse.de>, Eric Wheeler <bcache@lists.ewheeler.net>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Hi Coly,
 
-If we want to build a bcache device with backing device of a bcache flash device,
-we will fail with creating a duplicated sysfs filename.
+On Wed, Feb 1, 2023 at 4:03 AM mingzhe <mingzhe.zou@easystack.cn> wrote:
+>
+>
+>
+> =E5=9C=A8 2023/1/31 23:51, Coly Li =E5=86=99=E9=81=93:
+> >
+> >
+> >> 2023=E5=B9=B41=E6=9C=8826=E6=97=A5 19:30=EF=BC=8CAndrea Tomassetti <an=
+drea.tomassetti-opensource@devo.com> =E5=86=99=E9=81=93=EF=BC=9A
+> >>
+> >> Hi,
+> >> I know that bcache doesn't natively support multi-level caching but I
+> >> was playing with it and found this interesting "workaround":
+> >>   make-bcache -B /dev/vdb -C /dev/vdc
+> >> the above command will generate a /dev/bcache0 device that we can now
+> >> use as backing (or cached) device:
+> >>   make-bcache -B /dev/bcache0 -C /dev/vdd
+> >> This will make the kernel panic because the driver is trying to create
+> >> a duplicated "bcache" folder under /sys/block/bcache0/ .
+> >> So, simply patching the code inside register_bdev to create a folder
+> >> "bcache2" if "bcache" already exists does the trick.
+> >> Now I have:
+> >> vdb                       252:16   0    5G  0 disk
+> >> =E2=94=94=E2=94=80bcache0                 251:0    0    5G  0 disk
+> >>   =E2=94=94=E2=94=80bcache1               251:128  0    5G  0 disk /mn=
+t/bcache1
+> >> vdc                       252:32   0   10G  0 disk
+> >> =E2=94=94=E2=94=80bcache0                 251:0    0    5G  0 disk
+> >>   =E2=94=94=E2=94=80bcache1               251:128  0    5G  0 disk /mn=
+t/bcache1
+> >> vdd                       252:48   0    5G  0 disk
+> >> =E2=94=94=E2=94=80bcache1                 251:128  0    5G  0 disk /mn=
+t/bcache1
+> >>
+> >> Is anyone using this functionality? I assume not, because by default
+> >> it doesn't work.
+> >> Is there any good reason why this doesn't work by default?
+> >>
+> >> I tried to understand how data will be read out of /dev/bcache1: will
+> >> the /dev/vdd cache, secondly created cache device, be interrogated
+> >> first and then will it be the turn of /dev/vdc ?
+> >> Meaning: can we consider that now the layer structure is
+> >>
+> >> vdd
+> >> =E2=94=94=E2=94=80vdc
+> >>        =E2=94=94=E2=94=80bcache0
+> >>              =E2=94=94=E2=94=80bcache1
+> >> ?
+> >
+> > IIRC, there was a patch tried to achieve similar purpose. I was not sup=
+portive for this idea because I didn=E2=80=99t see really useful use case.
+I didn't test it extensively but it looks like that the patch to
+achieve this is just a one-line patch, it could be very beneficial. (I
+just realized that mingzhe sent a relevant patch on this, thank for
+your work)
+Our use case will be to be able to take advantage of different
+blocking devices that differ in performance and cost.
+Some of these blocking devices are ephemeral and not suitable for wb
+cache mode, but stacking them with non-ephemeral ones would be a very
+nice and neat solution.
 
-E.g:
-(1) we create bcache0 with vdc, then there is "/sys/block/bcache0/bcache" as a link to "/sys/block/vdc/bcache"
- $ readlink /sys/block/bcache0/bcache
-../../../pci0000:00/0000:00:0b.0/virtio4/block/vdc/bcache
+Cheers,
+Andrea
 
-(2) if we continue to create bcache1 with bcache0:
- $ make-bcache -B /dev/bcache0
 
-We will fail to register bdev with "sysfs: cannot create duplicate filename '/devices/virtual/block/bcache0/bcache'"
-
-How this commit solving this problem?
-E.g:
-   we have vdf as cache disk, vdc as backing disk.
-
- $ make-bcache -C /dev/vdf -B /dev/vdc --wipe-bcache
- $ echo 100G > /sys/block/vdf/bcache_cache/set/flash_vol_create
- $ lsblk
-NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-vdf                        252:80   0   50G  0 disk
-├─bcache0                  251:0    0  100G  0 disk
-└─bcache1                  251:128  0  100G  0 disk
-vdc                        252:32   0  100G  0 disk
-└─bcache0                  251:0    0  100G  0 disk
-
-(a) rename sysfs file to more meaningful name:
-(a.2) bcahce_cache -> sysfs filename under cache disk (/sys/block/vdf/bcache_cache)
-(a.1) bcache_fdev -> flash bcache device (/sys/block/bcache1/bcache_fdev)
-(a.4) bcache_bdev -> sysfs filename for backing disk (/sys/block/vdc/bcache_bdev)
-(a.3) bcache_cdev -> link to /sys/block/vdc/bcache_bdev (/sys/block/bcache0/bcache_cdev)
-
-(b) create ->bcache lagacy link file for backward compatability
-$ ll /sys/block/vdc/bcache
-lrwxrwxrwx 1 root root 0 Oct 26 11:21 /sys/block/vdc/bcache -> bcache_bdev
-$ ll /sys/block/bcache0/bcache
-lrwxrwxrwx 1 root root 0 Oct 26 11:21 /sys/block/bcache0/bcache -> ../../../pci0000:00/0000:00:0b.0/virtio4/block/vdc/bcache_bdev
-$ ll /sys/block/bcache1/bcache
-lrwxrwxrwx 1 root root 0 Oct 26 11:19 /sys/block/bcache1/bcache -> bcache_fdev
-$ ll /sys/block/vdf/bcache
-lrwxrwxrwx 1 root root 0 Oct 26 11:17 /sys/block/vdf/bcache -> bcache_cache
-
-These link are created with sysfs_create_link_nowarn(), that means, we dont
-care about the failure when creating if these links are already created.
-Because these lagacy sysfile are only for backwards compatability in no-overlay usecase
-of bcache, in the no-overlay use, bcache will never create duplicated link.
-
-In overlay usecase after this commit, please dont use bcache link any more, instead
-use bcache_cdev, bcache_fdev, bcache_bdev or bcache_cache.
-
-Then we can create a cached_dev with bcache1 (flash dev) as backing dev.
-$ make-bcache -B /dev/bcache1
-$ lsblk
-NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-vdf                        252:80   0   50G  0 disk
-├─bcache0                  251:0    0  100G  0 disk
-└─bcache1                  251:128  0  100G  0 disk
-  └─bcache2                251:256  0  100G  0 disk
-
-As a result there is a cached device bcache2 with backing device of a flash device bcache1.
-        ----------------------------
-        | bcache2 (cached_dev)     |
-        | ------------------------ |
-        | |   sdb (cache_dev)    | |
-        | ------------------------ |
-        | ------------------------ |
-        | |   bcache1 (flash_dev)| |
-        | ------------------------ |
-        ----------------------------
-
-Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
-Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
----
- drivers/md/bcache/super.c | 40 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 36 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index ba3909bb6bea..0ca8c05831c9 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1087,12 +1087,19 @@ int bch_cached_dev_run(struct cached_dev *dc)
- 
- 	if (sysfs_create_link(&d->kobj, &disk_to_dev(d->disk)->kobj, "dev") ||
- 	    sysfs_create_link(&disk_to_dev(d->disk)->kobj,
--			      &d->kobj, "bcache")) {
-+			      &d->kobj, "bcache_cdev")) {
- 		pr_err("Couldn't create bcache dev <-> disk sysfs symlinks\n");
- 		ret = -ENOMEM;
- 		goto out;
- 	}
- 
-+	ret = sysfs_create_link_nowarn(&disk_to_dev(d->disk)->kobj,
-+				       &d->kobj, "bcache");
-+	if (ret && ret != -EEXIST) {
-+		pr_err("Couldn't create lagacy disk sysfs ->bcache symlinks\n");
-+		goto out;
-+	}
-+
- 	dc->status_update_thread = kthread_run(cached_dev_status_update,
- 					       dc, "bcache_status_update");
- 	if (IS_ERR(dc->status_update_thread)) {
-@@ -1461,8 +1468,17 @@ static int register_bdev(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
- 		goto err;
- 
- 	err = "error creating kobject";
--	if (kobject_add(&dc->disk.kobj, bdev_kobj(bdev), "bcache"))
-+	if (kobject_add(&dc->disk.kobj, bdev_kobj(bdev), "bcache_bdev"))
- 		goto err;
-+
-+	err = "error creating lagacy sysfs link";
-+	ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
-+				       &dc->disk.kobj, "bcache");
-+	if (ret && ret != -EEXIST) {
-+		pr_err("Couldn't create lagacy disk sysfs ->bcache");
-+		goto err;
-+	}
-+
- 	if (bch_cache_accounting_add_kobjs(&dc->accounting, &dc->disk.kobj))
- 		goto err;
- 
-@@ -1524,6 +1540,7 @@ static void flash_dev_flush(struct closure *cl)
- 
- static int flash_dev_run(struct cache_set *c, struct uuid_entry *u)
- {
-+	int ret;
- 	int err = -ENOMEM;
- 	struct bcache_device *d = kzalloc(sizeof(struct bcache_device),
- 					  GFP_KERNEL);
-@@ -1546,10 +1563,17 @@ static int flash_dev_run(struct cache_set *c, struct uuid_entry *u)
- 	if (err)
- 		goto err;
- 
--	err = kobject_add(&d->kobj, &disk_to_dev(d->disk)->kobj, "bcache");
-+	err = kobject_add(&d->kobj, &disk_to_dev(d->disk)->kobj, "bcache_fdev");
- 	if (err)
- 		goto err;
- 
-+	ret = sysfs_create_link_nowarn(&disk_to_dev(d->disk)->kobj,
-+				       &d->kobj, "bcache");
-+	if (ret && ret != -EEXIST) {
-+		pr_err("Couldn't create lagacy flash dev ->bcache");
-+		goto err;
-+	}
-+
- 	bcache_device_link(d, c, "volume");
- 
- 	if (bch_has_feature_obso_large_bucket(&c->cache->sb)) {
-@@ -2370,12 +2394,20 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
- 		goto err;
- 	}
- 
--	if (kobject_add(&ca->kobj, bdev_kobj(bdev), "bcache")) {
-+	if (kobject_add(&ca->kobj, bdev_kobj(bdev), "bcache_cache")) {
- 		err = "error calling kobject_add";
- 		ret = -ENOMEM;
- 		goto out;
- 	}
- 
-+	ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
-+				       &ca->kobj, "bcache");
-+	if (ret && ret != -EEXIST) {
-+		pr_err("Couldn't create lagacy disk sysfs ->cache symlinks\n");
-+		goto out;
-+	} else
-+		ret = 0;
-+
- 	mutex_lock(&bch_register_lock);
- 	err = register_cache_set(ca);
- 	mutex_unlock(&bch_register_lock);
--- 
-2.17.1
-
+>
+> Hi, Coly
+>
+> Maybe we have a case like this. We are considering make-bcache a hdd as
+> a cache device and create a flash device in it, and then using the flash
+> device as a backing. So=EF=BC=8C completely converts writeback to sequent=
+ial
+> writes.
+>
+> However, we found that there may be many unknown problems in the flash
+> device, such as the created size, etc.
+>
+> For now, we've put it due to time=EF=BC=8Cbut we think it might be a good=
+ thing
+> to do. We also have some patches, I will post them.
+>
+> mingzhe
+>
+> > In general, extra layer cache means extra latency in the I/O path. What=
+ I see in practical deployments are, people try very hard to minimize the c=
+ache layer and place it close to application.
+> >
+> > Introduce stackable bcache for itself may work, but I don=E2=80=99t see=
+ real usage yet, and no motivation to maintain such usage still.
+> >
+> > Thanks.
+> >
+> > Coly Li
