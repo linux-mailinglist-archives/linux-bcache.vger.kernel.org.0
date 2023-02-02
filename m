@@ -2,42 +2,41 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3EBC687396
-	for <lists+linux-bcache@lfdr.de>; Thu,  2 Feb 2023 04:03:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D814687397
+	for <lists+linux-bcache@lfdr.de>; Thu,  2 Feb 2023 04:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230519AbjBBDD5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 1 Feb 2023 22:03:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42912 "EHLO
+        id S229655AbjBBDEE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 1 Feb 2023 22:04:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231589AbjBBDDp (ORCPT
+        with ESMTP id S231486AbjBBDD5 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 1 Feb 2023 22:03:45 -0500
+        Wed, 1 Feb 2023 22:03:57 -0500
 Received: from mail-m3164.qiye.163.com (mail-m3164.qiye.163.com [103.74.31.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E11C77DDB
-        for <linux-bcache@vger.kernel.org>; Wed,  1 Feb 2023 19:03:13 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A7027AE48
+        for <linux-bcache@vger.kernel.org>; Wed,  1 Feb 2023 19:03:21 -0800 (PST)
 Received: from localhost.localdomain (unknown [218.94.118.90])
-        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id D5DB262024F;
-        Thu,  2 Feb 2023 11:02:32 +0800 (CST)
+        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id C35F16202B4;
+        Thu,  2 Feb 2023 11:02:33 +0800 (CST)
 From:   mingzhe.zou@easystack.cn
 To:     colyli@suse.de, andrea.tomassetti-opensource@devo.com,
         bcache@lists.ewheeler.net
 Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
         zoumingzhe@qq.com, Dongsheng Yang <dongsheng.yang@easystack.cn>,
         mingzhe <mingzhe.zou@easystack.cn>
-Subject: [PATCH v2 1/3] bcache: make writeback inflight configurable in sysfs
-Date:   Thu,  2 Feb 2023 11:02:19 +0800
-Message-Id: <20230202030221.14397-1-mingzhe.zou@easystack.cn>
+Subject: [PATCH v2 2/3] bcache: submit writeback inflight dirty writes in batch
+Date:   Thu,  2 Feb 2023 11:02:20 +0800
+Message-Id: <20230202030221.14397-2-mingzhe.zou@easystack.cn>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230202030221.14397-1-mingzhe.zou@easystack.cn>
+References: <20230202030221.14397-1-mingzhe.zou@easystack.cn>
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCGExOVk5OGEJLGhkeHkNOS1UZERMWGhIXJBQOD1
-        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OBg6NAw*NzIBNRAqIkMNAzE*
-        TAgaC0NVSlVKTUxOSEtNQk5ITEhLVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTElKTTcG
-X-HM-Tid: 0a8610136a1c00a4kurmd5db262024f
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTElJVh5CGhpJGUMaS0xNH1UZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpISkJIS1VKS0tVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6M1E6MQw4IjJRDxASIkIBAx9N
+        ORhPCwlVSlVKTUxOSEtNQk5PTk5IVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBQ0tNTjcG
+X-HM-Tid: 0a8610136d4200a4kurmc35f16202b4
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -48,187 +47,203 @@ X-Mailing-List: linux-bcache@vger.kernel.org
 
 From: Dongsheng Yang <dongsheng.yang@easystack.cn>
 
-This commit introduce a new sysfs file:
-/sys/block/bcache0/bcache/writeback_inflight (read only)
-/sys/block/bcache0/bcache/writeback_inflight_max (read write)
+If we have a backing device of log-structured block device (such as bcache flash dev),
+there is a possibility to merge the writes in writeback, as the all writes into bcache flash_dev
+are stored in bucket as log-structured.
 
-(1) read the writeback_inflight will output the current inflight writeback op.
-(2）read the writeback_inflight_max will output the max number of writeback inflight.
-(3) write the writeback_inflight_max can set the max number of writeback inflight,
-valid range is [1, INT_MAX).
+That means, if we have a cached_dev as below:
+        ----------------------------
+        | bcache2 (cached_dev)     |
+        | ------------------------ |
+        | |   sdb (cache_dev)    | |
+        | ------------------------ |
+        | ------------------------ |
+        | |   bcache1 (flash_dev)| |
+        | ------------------------ |
+        ----------------------------
 
-E.g:
- $ ll /sys/block/bcache0/bcache/writeback_inflight*
--r--r--r-- 1 root root 4096 Oct 27 08:45 /sys/block/bcache0/bcache/writeback_inflight
--rw-r--r-- 1 root root 4096 Oct 27 08:45 /sys/block/bcache0/bcache/writeback_inflight_max
- $ cat /sys/block/bcache0/bcache/writeback_inflight
-0
- $ cat /sys/block/bcache0/bcache/writeback_inflight_max
-64
- $ echo 1024 > /sys/block/bcache0/bcache/writeback_inflight_max
- $ cat /sys/block/bcache0/bcache/writeback_inflight_max
-1024
+we can merge the dirty writes in writeback, if we can submit the dirty writes in batch and around start_plug/finish_plug.
+
+So this commit change the dirty_write to add the a dirty_io into a rb_tree, and queue a worker to submit all dirty_io,
+This provide a timing to merge these writes, which can improve the writeback bandwidth.
 
 Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
 ---
- drivers/md/bcache/bcache.h    |  6 ++++-
- drivers/md/bcache/sysfs.c     | 21 +++++++++++++++++
- drivers/md/bcache/writeback.c | 43 ++++++++++++++++++++++++++++++++---
- 3 files changed, 66 insertions(+), 4 deletions(-)
+ drivers/md/bcache/bcache.h    |   4 ++
+ drivers/md/bcache/writeback.c | 102 ++++++++++++++++++++++------------
+ 2 files changed, 72 insertions(+), 34 deletions(-)
 
 diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index aebb7ef10e63..74434a7730bb 100644
+index 74434a7730bb..a82974aefc90 100644
 --- a/drivers/md/bcache/bcache.h
 +++ b/drivers/md/bcache/bcache.h
-@@ -337,7 +337,11 @@ struct cached_dev {
- 	struct delayed_work	writeback_rate_update;
+@@ -356,6 +356,10 @@ struct cached_dev {
+ 	struct closure_waitlist writeback_ordering_wait;
+ 	atomic_t		writeback_sequence_next;
  
- 	/* Limit number of writeback bios in flight */
--	struct semaphore	in_flight;
-+	atomic_t		wb_inflight;
-+	unsigned long		wb_inflight_max;
-+	spinlock_t		wb_inflight_lock;
-+	wait_queue_head_t	wb_inflight_wait;
++	struct rb_root		writeback_ios;
++	spinlock_t		writeback_ios_lock;
++	struct work_struct	write_dirty_work;
 +
- 	struct task_struct	*writeback_thread;
- 	struct workqueue_struct	*writeback_write_wq;
- 
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index c6f677059214..0382b70c29d5 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -119,6 +119,9 @@ rw_attribute(writeback_delay);
- rw_attribute(writeback_rate);
- rw_attribute(writeback_consider_fragment);
- 
-+read_attribute(writeback_inflight);
-+rw_attribute(writeback_inflight_max);
-+
- rw_attribute(writeback_rate_update_seconds);
- rw_attribute(writeback_rate_i_term_inverse);
- rw_attribute(writeback_rate_p_term_inverse);
-@@ -201,6 +204,8 @@ SHOW(__bch_cached_dev)
- 	var_printf(writeback_consider_fragment,	"%i");
- 	var_print(writeback_delay);
- 	var_print(writeback_percent);
-+	sysfs_printf(writeback_inflight, "%i", atomic_read(&dc->wb_inflight));
-+	sysfs_printf(writeback_inflight_max, "%li", dc->wb_inflight_max);
- 	sysfs_hprint(writeback_rate,
- 		     wb ? atomic_long_read(&dc->writeback_rate.rate) << 9 : 0);
- 	sysfs_printf(io_errors,		"%i", atomic_read(&dc->io_errors));
-@@ -448,6 +453,20 @@ STORE(__cached_dev)
- 	if (attr == &sysfs_detach && dc->disk.c)
- 		bch_cached_dev_detach(dc);
- 
-+	if (attr == &sysfs_writeback_inflight_max) {
-+		ssize_t ret;
-+		unsigned long v;
-+
-+		ret = strtoul_safe_clamp(buf, v, 1, INT_MAX);
-+		if (ret)
-+			return ret;
-+
-+		spin_lock(&dc->wb_inflight_lock);
-+		dc->wb_inflight_max = v;
-+		spin_unlock(&dc->wb_inflight_lock);
-+		wake_up(&dc->wb_inflight_wait);
-+	}
-+
- 	if (attr == &sysfs_stop)
- 		bcache_device_stop(&dc->disk);
- 
-@@ -514,6 +533,8 @@ static struct attribute *bch_cached_dev_attrs[] = {
- 	&sysfs_writeback_running,
- 	&sysfs_writeback_delay,
- 	&sysfs_writeback_percent,
-+	&sysfs_writeback_inflight,
-+	&sysfs_writeback_inflight_max,
- 	&sysfs_writeback_rate,
- 	&sysfs_writeback_consider_fragment,
- 	&sysfs_writeback_rate_update_seconds,
+ 	/* For tracking sequential IO */
+ #define RECENT_IO_BITS	7
+ #define RECENT_IO	(1 << RECENT_IO_BITS)
 diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index d4a5fc0650bb..0c5f25816e2e 100644
+index 0c5f25816e2e..315fb91a8066 100644
 --- a/drivers/md/bcache/writeback.c
 +++ b/drivers/md/bcache/writeback.c
-@@ -348,6 +348,7 @@ static void dirty_io_destructor(struct closure *cl)
- 	kfree(io);
+@@ -323,6 +323,7 @@ struct dirty_io {
+ 	struct closure		cl;
+ 	struct cached_dev	*dc;
+ 	uint16_t		sequence;
++	struct rb_node		node;
+ 	struct bio		bio;
+ };
+ 
+@@ -401,53 +402,81 @@ static void dirty_endio(struct bio *bio)
+ 	closure_put(&io->cl);
  }
  
-+static void end_wb_inflight(struct cached_dev *dc);
- static void write_dirty_finish(struct closure *cl)
+-static void write_dirty(struct closure *cl)
++static inline int dirty_io_cmp(struct dirty_io *l, struct dirty_io *r)
++{
++	return (l->sequence < r->sequence) ? -1 : (l->sequence > r->sequence);
++}
++
++static void queue_dirty_write(struct closure *cl)
  {
  	struct dirty_io *io = container_of(cl, struct dirty_io, cl);
-@@ -382,7 +383,7 @@ static void write_dirty_finish(struct closure *cl)
+-	struct keybuf_key *w = io->bio.bi_private;
+ 	struct cached_dev *dc = io->dc;
+ 
+-	uint16_t next_sequence;
++	spin_lock(&dc->writeback_ios_lock);
++	BUG_ON(RB_INSERT(&dc->writeback_ios, io, node, dirty_io_cmp));
++	spin_unlock(&dc->writeback_ios_lock);
+ 
+-	if (atomic_read(&dc->writeback_sequence_next) != io->sequence) {
+-		/* Not our turn to write; wait for a write to complete */
+-		closure_wait(&dc->writeback_ordering_wait, cl);
++	queue_work(dc->writeback_write_wq, &dc->write_dirty_work);
++}
+ 
+-		if (atomic_read(&dc->writeback_sequence_next) == io->sequence) {
+-			/*
+-			 * Edge case-- it happened in indeterminate order
+-			 * relative to when we were added to wait list..
+-			 */
+-			closure_wake_up(&dc->writeback_ordering_wait);
+-		}
++static void write_dirty(struct work_struct *work)
++{
++	struct cached_dev *dc = container_of(work, struct cached_dev,
++						write_dirty_work);
++	struct dirty_io *io;
++	struct keybuf_key *w;
++	uint16_t next_sequence;
++	struct blk_plug plug;
+ 
+-		continue_at(cl, write_dirty, io->dc->writeback_write_wq);
++	spin_lock(&dc->writeback_ios_lock);
++	if (RB_EMPTY_ROOT(&dc->writeback_ios)) {
++		spin_unlock(&dc->writeback_ios_lock);
+ 		return;
  	}
  
- 	bch_keybuf_del(&dc->writeback_keys, w);
--	up(&dc->in_flight);
-+	end_wb_inflight(dc);
+-	next_sequence = io->sequence + 1;
++	io = RB_FIRST(&dc->writeback_ios, struct dirty_io, node);
++	if (io->sequence != atomic_read(&dc->writeback_sequence_next)) {
++		spin_unlock(&dc->writeback_ios_lock);
++		return;
++	}
  
- 	closure_return_with_destructor(cl, dirty_io_destructor);
+-	/*
+-	 * IO errors are signalled using the dirty bit on the key.
+-	 * If we failed to read, we should not attempt to write to the
+-	 * backing device.  Instead, immediately go to write_dirty_finish
+-	 * to clean up.
+-	 */
+-	if (KEY_DIRTY(&w->key)) {
+-		dirty_init(w);
+-		io->bio.bi_opf = REQ_OP_WRITE;
+-		io->bio.bi_iter.bi_sector = KEY_START(&w->key);
+-		bio_set_dev(&io->bio, io->dc->bdev);
+-		io->bio.bi_end_io	= dirty_endio;
+-
+-		/* I/O request sent to backing device */
+-		closure_bio_submit(io->dc->disk.c, &io->bio, cl);
++	blk_start_plug(&plug);
++	next_sequence = io->sequence;
++
++	while(io) {
++		if (io->sequence != next_sequence)
++			break;
++
++		rb_erase(&io->node, &dc->writeback_ios);
++		spin_unlock(&dc->writeback_ios_lock);
++		w = io->bio.bi_private;
++		/*
++		 * IO errors are signalled using the dirty bit on the key.
++		 * If we failed to read, we should not attempt to write to the
++		 * backing device.  Instead, immediately go to write_dirty_finish
++		 * to clean up.
++		 */
++		if (KEY_DIRTY(&w->key)) {
++			dirty_init(w);
++			io->bio.bi_opf = REQ_OP_WRITE;
++			io->bio.bi_iter.bi_sector = KEY_START(&w->key);
++			bio_set_dev(&io->bio, io->dc->bdev);
++			io->bio.bi_end_io	= dirty_endio;
++
++			/* I/O request sent to backing device */
++			closure_bio_submit(io->dc->disk.c, &io->bio, &io->cl);
++		}
++
++		continue_at(&io->cl, write_dirty_finish, io->dc->writeback_write_wq);
++
++		spin_lock(&dc->writeback_ios_lock);
++		io = RB_FIRST(&dc->writeback_ios, struct dirty_io, node);
++		next_sequence++;
+ 	}
+ 
+ 	atomic_set(&dc->writeback_sequence_next, next_sequence);
+-	closure_wake_up(&dc->writeback_ordering_wait);
+-
+-	continue_at(cl, write_dirty_finish, io->dc->writeback_write_wq);
++	spin_unlock(&dc->writeback_ios_lock);
++	blk_finish_plug(&plug);
  }
-@@ -471,6 +472,38 @@ static void read_dirty_submit(struct closure *cl)
- 	continue_at(cl, write_dirty, io->dc->writeback_write_wq);
+ 
+ static void read_dirty_endio(struct bio *bio)
+@@ -469,7 +498,7 @@ static void read_dirty_submit(struct closure *cl)
+ 
+ 	closure_bio_submit(io->dc->disk.c, &io->bio, cl);
+ 
+-	continue_at(cl, write_dirty, io->dc->writeback_write_wq);
++	continue_at(cl, queue_dirty_write, io->dc->writeback_write_wq);
  }
  
-+static void start_wb_inflight(struct cached_dev *dc)
-+{
-+	DEFINE_WAIT(w);
-+
-+	spin_lock(&dc->wb_inflight_lock);
-+	if (atomic_read(&dc->wb_inflight) < dc->wb_inflight_max)
-+		goto out;
-+
-+	do {
-+		prepare_to_wait(&dc->wb_inflight_wait, &w,
-+				TASK_UNINTERRUPTIBLE);
-+
-+		spin_unlock(&dc->wb_inflight_lock);
-+		schedule();
-+		spin_lock(&dc->wb_inflight_lock);
-+	} while (atomic_read(&dc->wb_inflight) >= dc->wb_inflight_max);
-+
-+	finish_wait(&dc->wb_inflight_wait, &w);
-+
-+out:
-+	BUG_ON(atomic_inc_return(&dc->wb_inflight) > dc->wb_inflight_max);
-+	spin_unlock(&dc->wb_inflight_lock);
-+}
-+
-+static void end_wb_inflight(struct cached_dev *dc)
-+{
-+	spin_lock(&dc->wb_inflight_lock);
-+	BUG_ON(atomic_dec_return(&dc->wb_inflight) < 0);
-+	spin_unlock(&dc->wb_inflight_lock);
-+	wake_up(&dc->wb_inflight_wait);
-+}
-+
- static void read_dirty(struct cached_dev *dc)
- {
- 	unsigned int delay = 0;
-@@ -557,7 +590,7 @@ static void read_dirty(struct cached_dev *dc)
+ static void start_wb_inflight(struct cached_dev *dc)
+@@ -578,6 +607,7 @@ static void read_dirty(struct cached_dev *dc)
+ 			w->private	= io;
+ 			io->dc		= dc;
+ 			io->sequence    = sequence++;
++			RB_CLEAR_NODE(&io->node);
  
- 			trace_bcache_writeback(&w->key);
- 
--			down(&dc->in_flight);
-+			start_wb_inflight(dc);
- 
- 			/*
- 			 * We've acquired a semaphore for the maximum
-@@ -1025,7 +1058,11 @@ void bch_sectors_dirty_init(struct bcache_device *d)
- 
- void bch_cached_dev_writeback_init(struct cached_dev *dc)
- {
--	sema_init(&dc->in_flight, 64);
-+	atomic_set(&dc->wb_inflight, 0);
-+	dc->wb_inflight_max = 64;
-+	spin_lock_init(&dc->wb_inflight_lock);
-+	init_waitqueue_head(&dc->wb_inflight_wait);
-+
+ 			dirty_init(w);
+ 			io->bio.bi_opf = REQ_OP_READ;
+@@ -1066,6 +1096,10 @@ void bch_cached_dev_writeback_init(struct cached_dev *dc)
  	init_rwsem(&dc->writeback_lock);
  	bch_keybuf_init(&dc->writeback_keys);
  
++	spin_lock_init(&dc->writeback_ios_lock);
++	dc->writeback_ios		= RB_ROOT;
++	INIT_WORK(&dc->write_dirty_work, write_dirty);
++
+ 	dc->writeback_metadata		= true;
+ 	dc->writeback_running		= false;
+ 	dc->writeback_consider_fragment = true;
 -- 
 2.17.1
 
