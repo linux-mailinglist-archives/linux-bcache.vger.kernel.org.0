@@ -2,245 +2,103 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 26E0968758C
-	for <lists+linux-bcache@lfdr.de>; Thu,  2 Feb 2023 06:51:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F386687B7C
+	for <lists+linux-bcache@lfdr.de>; Thu,  2 Feb 2023 12:07:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232181AbjBBFvM (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 2 Feb 2023 00:51:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46144 "EHLO
+        id S229618AbjBBLHB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 2 Feb 2023 06:07:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232261AbjBBFu5 (ORCPT
+        with ESMTP id S229991AbjBBLGw (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 2 Feb 2023 00:50:57 -0500
-Received: from mail-m3164.qiye.163.com (mail-m3164.qiye.163.com [103.74.31.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E3208418B
-        for <linux-bcache@vger.kernel.org>; Wed,  1 Feb 2023 21:49:16 -0800 (PST)
-Received: from [192.168.0.234] (unknown [218.94.118.90])
-        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id 558EA62027D;
-        Thu,  2 Feb 2023 13:48:48 +0800 (CST)
-Message-ID: <994cd286-1929-60e2-8be9-71efd825ae84@easystack.cn>
-Date:   Thu, 2 Feb 2023 13:48:47 +0800
+        Thu, 2 Feb 2023 06:06:52 -0500
+Received: from m12.mail.163.com (m12.mail.163.com [220.181.12.214])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4980E1206E;
+        Thu,  2 Feb 2023 03:06:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=5BWjL
+        d1/jaEBccjludNTfPy3Z/B05OXtOx+r4AztbjY=; b=qdBYC9xRAg87mLEPd00qD
+        9hXuyHGWQuuURF/BRRb3NHeWzBNMq2xVOGlGTjd8D4KfEFXYtq5xPoj5OT6BuCd2
+        brWwhlKen3/gOhDp4qPfSursxccvyOmpm8Yyfj5L8EglB2yEJ3xCThMrDQWpIfl0
+        9UMTDOmFJOn9hVs2+wO4Zk=
+Received: from leanderwang-LC2.localdomain (unknown [111.206.145.21])
+        by zwqz-smtp-mta-g4-0 (Coremail) with SMTP id _____wDX0+8ImdtjYQxBCg--.48198S2;
+        Thu, 02 Feb 2023 19:05:44 +0800 (CST)
+From:   Zheng Wang <zyytlz.wz@163.com>
+To:     colyli@suse.de
+Cc:     hackerzheng666@gmail.com, kent.overstreet@gmail.com,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+        security@kernel.org, alex000young@gmail.com,
+        Zheng Wang <zyytlz.wz@163.com>
+Subject: [PATCH] bcache: Fix a NULL or wild pointer dereference in btree_split
+Date:   Thu,  2 Feb 2023 19:05:43 +0800
+Message-Id: <20230202110543.27548-1-zyytlz.wz@163.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 3/3] bcache: support overlay bcache
-To:     Eric Wheeler <bcache@lists.ewheeler.net>
-Cc:     colyli@suse.de, andrea.tomassetti-opensource@devo.com,
-        kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
-        zoumingzhe@qq.com, Dongsheng Yang <dongsheng.yang@easystack.cn>
-References: <20230201065202.17610-1-mingzhe.zou@easystack.cn>
- <20230201065202.17610-3-mingzhe.zou@easystack.cn>
- <e4a4362e-85d9-285d-726d-3b1df73329f8@ewheeler.net>
-Content-Language: en-US
-From:   mingzhe <mingzhe.zou@easystack.cn>
-In-Reply-To: <e4a4362e-85d9-285d-726d-3b1df73329f8@ewheeler.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDThlIVh5OSU0ZT09MHUxNTFUZERMWGhIXJBQOD1
-        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nz46Hhw*HzJMAxApN00YNR4f
-        FAkKCSxVSlVKTUxOSEpNQklDQkJMVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBQkhLSjcG
-X-HM-Tid: 0a8610aba04500a4kurm558ea62027d
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-CM-TRANSID: _____wDX0+8ImdtjYQxBCg--.48198S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tF1UXF1xZw15CFWDJFW3GFg_yoW8Wr4xpF
+        4xWFy3trW8Xr4jk3y5X3W0vF9Yv3WaqFWYk3s5ua48ZasxZr1fCFy0k34jvryUurs7Xa17
+        tr1Fvw15XF1UtaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziaLv_UUUUU=
+X-Originating-IP: [111.206.145.21]
+X-CM-SenderInfo: h2113zf2oz6qqrwthudrp/xtbBzg4KU2I0XNTkLgAAsN
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+In btree_split, btree_node_alloc_replacement() is assigned to
+n1 and return error code or NULL on failure. n1->c->cache is
+passed to block_bytes. So there is a dereference of it
+ without checks, which may lead to wild pointer dereference or
+  NULL pointer dereference depending on n1. The initial code only
+  judge the error code but igore the NULL pointer.
+So does n2 and n3.
 
+Fix this bug by adding IS_ERR_OR_NULL check of n1, n2 and n3.
 
-在 2023/2/2 02:13, Eric Wheeler 写道:
-> On Wed, 1 Feb 2023, mingzhe.zou@easystack.cn wrote:
->> From: Dongsheng Yang <dongsheng.yang@easystack.cn>
->>
->> If we want to build a bcache device with backing device of a bcache flash device,
->> we will fail with creating a duplicated sysfs filename.
->>
->> E.g:
->> (1) we create bcache0 with vdc, then there is "/sys/block/bcache0/bcache" as a link to "/sys/block/vdc/bcache"
->>   $ readlink /sys/block/bcache0/bcache
->> ../../../pci0000:00/0000:00:0b.0/virtio4/block/vdc/bcache
->>
->> (2) if we continue to create bcache1 with bcache0:
->>   $ make-bcache -B /dev/bcache0
->>
->> We will fail to register bdev with "sysfs: cannot create duplicate
->> filename '/devices/virtual/block/bcache0/bcache'"
->>
->> How this commit solving this problem?
->> E.g:
->>     we have vdf as cache disk, vdc as backing disk.
->>
->>   $ make-bcache -C /dev/vdf -B /dev/vdc --wipe-bcache
->>   $ echo 100G > /sys/block/vdf/bcache_cache/set/flash_vol_create
->>   $ lsblk
->> NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
->> vdf                        252:80   0   50G  0 disk
->> ├─bcache0                  251:0    0  100G  0 disk
->> └─bcache1                  251:128  0  100G  0 disk
->> vdc                        252:32   0  100G  0 disk
->> └─bcache0                  251:0    0  100G  0 disk
->>
->> (a) rename sysfs file to more meaningful name:
->> (a.2) bcahce_cache -> sysfs filename under cache disk (/sys/block/vdf/bcache_cache)
->> (a.1) bcache_fdev -> flash bcache device (/sys/block/bcache1/bcache_fdev)
->> (a.4) bcache_bdev -> sysfs filename for backing disk (/sys/block/vdc/bcache_bdev)
->> (a.3) bcache_cdev -> link to /sys/block/vdc/bcache_bdev (/sys/block/bcache0/bcache_cdev)
-> 
-> Good idea.
-> 
->> (b) create ->bcache lagacy link file for backward compatability
->> $ ll /sys/block/vdc/bcache
->> lrwxrwxrwx 1 root root 0 Oct 26 11:21 /sys/block/vdc/bcache -> bcache_bdev
->> $ ll /sys/block/bcache0/bcache
->> lrwxrwxrwx 1 root root 0 Oct 26 11:21 /sys/block/bcache0/bcache -> ../../../pci0000:00/0000:00:0b.0/virtio4/block/vdc/bcache_bdev
->> $ ll /sys/block/bcache1/bcache
->> lrwxrwxrwx 1 root root 0 Oct 26 11:19 /sys/block/bcache1/bcache -> bcache_fdev
->> $ ll /sys/block/vdf/bcache
->> lrwxrwxrwx 1 root root 0 Oct 26 11:17 /sys/block/vdf/bcache -> bcache_cache
->>
->> These link are created with sysfs_create_link_nowarn(), that means, we dont
->> care about the failure when creating if these links are already created.
->> Because these lagacy sysfile are only for backwards compatability in no-overlay usecase
->> of bcache, in the no-overlay use, bcache will never create duplicated link.
-> 
-> awesome.
->   
->> In overlay usecase after this commit, please dont use bcache link any more, instead
->> use bcache_cdev, bcache_fdev, bcache_bdev or bcache_cache.
->>
->> Then we can create a cached_dev with bcache1 (flash dev) as backing dev.
->> $ make-bcache -B /dev/bcache1
->> $ lsblk
->> NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
->> vdf                        252:80   0   50G  0 disk
->> ├─bcache0                  251:0    0  100G  0 disk
->> └─bcache1                  251:128  0  100G  0 disk
->>    └─bcache2                251:256  0  100G  0 disk
->>
->> As a result there is a cached device bcache2 with backing device of a flash device bcache1.
->>          ----------------------------
->>          | bcache2 (cached_dev)     |
->>          | ------------------------ |
->>          | |   sdb (cache_dev)    | |
->>          | ------------------------ |
->>          | ------------------------ |
->>          | |   bcache1 (flash_dev)| |
->>          | ------------------------ |
->>          ----------------------------
-> 
-> Does this allow an arbitrary depth of bcache stacking?
-> 
-> -Eric
-> 
-More than 2 layers we did not test, but should be allowed.
+Note that, as a bug found by static analysis, it can be a false
+positive or hard to trigger.
 
-mingzhe
->>
->> Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
->> Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
->> ---
->>   drivers/md/bcache/super.c | 40 +++++++++++++++++++++++++++++++++++----
->>   1 file changed, 36 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
->> index ba3909bb6bea..0ca8c05831c9 100644
->> --- a/drivers/md/bcache/super.c
->> +++ b/drivers/md/bcache/super.c
->> @@ -1087,12 +1087,19 @@ int bch_cached_dev_run(struct cached_dev *dc)
->>   
->>   	if (sysfs_create_link(&d->kobj, &disk_to_dev(d->disk)->kobj, "dev") ||
->>   	    sysfs_create_link(&disk_to_dev(d->disk)->kobj,
->> -			      &d->kobj, "bcache")) {
->> +			      &d->kobj, "bcache_cdev")) {
->>   		pr_err("Couldn't create bcache dev <-> disk sysfs symlinks\n");
->>   		ret = -ENOMEM;
->>   		goto out;
->>   	}
->>   
->> +	ret = sysfs_create_link_nowarn(&disk_to_dev(d->disk)->kobj,
->> +				       &d->kobj, "bcache");
->> +	if (ret && ret != -EEXIST) {
->> +		pr_err("Couldn't create lagacy disk sysfs ->bcache symlinks\n");
->> +		goto out;
->> +	}
->> +
->>   	dc->status_update_thread = kthread_run(cached_dev_status_update,
->>   					       dc, "bcache_status_update");
->>   	if (IS_ERR(dc->status_update_thread)) {
->> @@ -1461,8 +1468,17 @@ static int register_bdev(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
->>   		goto err;
->>   
->>   	err = "error creating kobject";
->> -	if (kobject_add(&dc->disk.kobj, bdev_kobj(bdev), "bcache"))
->> +	if (kobject_add(&dc->disk.kobj, bdev_kobj(bdev), "bcache_bdev"))
->>   		goto err;
->> +
->> +	err = "error creating lagacy sysfs link";
->> +	ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
->> +				       &dc->disk.kobj, "bcache");
->> +	if (ret && ret != -EEXIST) {
->> +		pr_err("Couldn't create lagacy disk sysfs ->bcache");
->> +		goto err;
->> +	}
->> +
->>   	if (bch_cache_accounting_add_kobjs(&dc->accounting, &dc->disk.kobj))
->>   		goto err;
->>   
->> @@ -1524,6 +1540,7 @@ static void flash_dev_flush(struct closure *cl)
->>   
->>   static int flash_dev_run(struct cache_set *c, struct uuid_entry *u)
->>   {
->> +	int ret;
->>   	int err = -ENOMEM;
->>   	struct bcache_device *d = kzalloc(sizeof(struct bcache_device),
->>   					  GFP_KERNEL);
->> @@ -1546,10 +1563,17 @@ static int flash_dev_run(struct cache_set *c, struct uuid_entry *u)
->>   	if (err)
->>   		goto err;
->>   
->> -	err = kobject_add(&d->kobj, &disk_to_dev(d->disk)->kobj, "bcache");
->> +	err = kobject_add(&d->kobj, &disk_to_dev(d->disk)->kobj, "bcache_fdev");
->>   	if (err)
->>   		goto err;
->>   
->> +	ret = sysfs_create_link_nowarn(&disk_to_dev(d->disk)->kobj,
->> +				       &d->kobj, "bcache");
->> +	if (ret && ret != -EEXIST) {
->> +		pr_err("Couldn't create lagacy flash dev ->bcache");
->> +		goto err;
->> +	}
->> +
->>   	bcache_device_link(d, c, "volume");
->>   
->>   	if (bch_has_feature_obso_large_bucket(&c->cache->sb)) {
->> @@ -2370,12 +2394,20 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
->>   		goto err;
->>   	}
->>   
->> -	if (kobject_add(&ca->kobj, bdev_kobj(bdev), "bcache")) {
->> +	if (kobject_add(&ca->kobj, bdev_kobj(bdev), "bcache_cache")) {
->>   		err = "error calling kobject_add";
->>   		ret = -ENOMEM;
->>   		goto out;
->>   	}
->>   
->> +	ret = sysfs_create_link_nowarn(&part_to_dev(bdev->bd_part)->kobj,
->> +				       &ca->kobj, "bcache");
->> +	if (ret && ret != -EEXIST) {
->> +		pr_err("Couldn't create lagacy disk sysfs ->cache symlinks\n");
->> +		goto out;
->> +	} else
->> +		ret = 0;
->> +
->>   	mutex_lock(&bch_register_lock);
->>   	err = register_cache_set(ca);
->>   	mutex_unlock(&bch_register_lock);
->> -- 
->> 2.17.1
->>
+Fixes: cafe56359144 ("bcache: A block layer cache")
+Signed-off-by: Zheng Wang <zyytlz.wz@163.com>
+---
+ drivers/md/bcache/btree.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 147c493a989a..d5ed382fc43c 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -2206,7 +2206,7 @@ static int btree_split(struct btree *b, struct btree_op *op,
+ 	}
+ 
+ 	n1 = btree_node_alloc_replacement(b, op);
+-	if (IS_ERR(n1))
++	if (IS_ERR_OR_NULL(n1))
+ 		goto err;
+ 
+ 	split = set_blocks(btree_bset_first(n1),
+@@ -2218,12 +2218,12 @@ static int btree_split(struct btree *b, struct btree_op *op,
+ 		trace_bcache_btree_node_split(b, btree_bset_first(n1)->keys);
+ 
+ 		n2 = bch_btree_node_alloc(b->c, op, b->level, b->parent);
+-		if (IS_ERR(n2))
++		if (IS_ERR_OR_NULL(n2))
+ 			goto err_free1;
+ 
+ 		if (!b->parent) {
+ 			n3 = bch_btree_node_alloc(b->c, op, b->level + 1, NULL);
+-			if (IS_ERR(n3))
++			if (IS_ERR_OR_NULL(n3))
+ 				goto err_free2;
+ 		}
+ 
+-- 
+2.25.1
+
