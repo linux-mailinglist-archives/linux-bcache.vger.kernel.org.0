@@ -2,144 +2,109 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 20D4C688E77
-	for <lists+linux-bcache@lfdr.de>; Fri,  3 Feb 2023 05:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE41B689257
+	for <lists+linux-bcache@lfdr.de>; Fri,  3 Feb 2023 09:33:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232277AbjBCEMR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 2 Feb 2023 23:12:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45234 "EHLO
+        id S229602AbjBCIbX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 3 Feb 2023 03:31:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232392AbjBCEMI (ORCPT
+        with ESMTP id S230384AbjBCIbW (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 2 Feb 2023 23:12:08 -0500
-Received: from m12.mail.163.com (m12.mail.163.com [220.181.12.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E37C289F98;
-        Thu,  2 Feb 2023 20:12:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=WrR//
-        zva4ZesymP/eKoj5KyCPnat+CUvA7ZEtVA4JNA=; b=nxOlHKommfrlibSizMmPx
-        DutsLeIDJQP8sGT9cquP1vr2436CwSUO2ewBsF8J9eyOmRVFaX/+GzZ0SLHJmkRg
-        petgKK4VnkZIGuJixy0LkGcz/CIAB5liAGPMhNhdCi5de9Ovf2ReMYnpfTLVicSU
-        jrj2cbuxWjEyNVPO8GL75U=
-Received: from leanderwang-LC2.localdomain (unknown [111.206.145.21])
-        by zwqz-smtp-mta-g2-2 (Coremail) with SMTP id _____wBnbNCFidxj79KlCg--.56852S2;
-        Fri, 03 Feb 2023 12:11:49 +0800 (CST)
-From:   Zheng Wang <zyytlz.wz@163.com>
-To:     colyli@suse.de
-Cc:     hackerzheng666@gmail.com, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alex000young@gmail.com, Zheng Wang <zyytlz.wz@163.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v3] bcache: Remove some unnecessary NULL point check for the  return value of __bch_btree_node_alloc-related pointer
-Date:   Fri,  3 Feb 2023 12:11:47 +0800
-Message-Id: <20230203041147.581389-1-zyytlz.wz@163.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 3 Feb 2023 03:31:22 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4773348597
+        for <linux-bcache@vger.kernel.org>; Fri,  3 Feb 2023 00:31:21 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id v3so3150556pgh.4
+        for <linux-bcache@vger.kernel.org>; Fri, 03 Feb 2023 00:31:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zu2y/4MWJnFonrJxDyZ6rAlSIWBncWmXyCnHWDIviA8=;
+        b=WTtn/RNLG5A2REqjOO3Zjeybff8ScqTwxFE9byTs1urSsVCXozMHM/XiPW5rNsc4UU
+         ut4aMi71deb11CiPSbbDpWHQHTueyn394CWNntMvz2/VGnZ8/wq8/iWUTJbTjGxdel/M
+         3W5fXFQttEbEk3ehNBXmQPvd3DXJ7aURgWV8cohA8psiYzk1qElmeNiHBfT07UXg9zLq
+         Cm1RfP5qxoKpEHAz6DDk3SKKnyybDMEphrfSx1T6qZtr5KF/g/2gp+I1rzo6/Y80LJu2
+         z/prs2oVT5d46YheKqahPkuHtxka+T8vQhmYqqLEodOPbNZUOdayKzuRMNBCUI9sSbOk
+         T2PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zu2y/4MWJnFonrJxDyZ6rAlSIWBncWmXyCnHWDIviA8=;
+        b=41vFR+WfIQgUUv6fiOX1Oxgv5BfFZb6OYrKzIsVvz7KJZ4hRe8MVOB56GqZJ3CLGoO
+         StA67iSA6JRNh7mJjAqtHMqoliacKRJXKmnh2uNWez1aRkFW4wFHTNxI4zN3fVVang5v
+         GWHn3aVBmRsTSu2rU7r6rzgdBf4+P8I/cWM+Il8RCZk+jujdsduv1WwSzy875t4f6cA2
+         8oMpOT1vYmIf6zjwecgqjlvisSbBcPR/LOOjZsefhCtCUkq9XpugW74NEOYU4HvKiYM8
+         nRb4jbrx7FRnYDvHsk9Qm7gL0WFp2xtBB0WJiY9kXvMozPBitXyH3kYN0+xtuYb392an
+         EQkg==
+X-Gm-Message-State: AO0yUKWDI+RbRKtnAELppT6Hfd2BnG0ezIPy/OavzktSuAgl6EnTPnxm
+        qXf7xymncPr5wqI3+o97+3KoL52YrNZUsty1gE8=
+X-Google-Smtp-Source: AK7set+7AFx3F2LUR15lCVVepw4RU5GcvbUMXJ7Cea5noVJlwqwI2PnWXr2UnW/2jHD36dT5kCDeyB+1fZ8ojSGmcxI=
+X-Received: by 2002:a63:cc0f:0:b0:4cf:122f:2102 with SMTP id
+ x15-20020a63cc0f000000b004cf122f2102mr1516079pgf.98.1675413079979; Fri, 03
+ Feb 2023 00:31:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _____wBnbNCFidxj79KlCg--.56852S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAr48WF4xXrW3Aw4ktFWxtFb_yoW5CF1Dpr
-        W29ryayr97Xr4UCr9Yg3WvvFyfXw12vFWUWr93u3WfZry7AFyrCay0934jvrWUuFWxuF4U
-        Zr40yw1UXr4UtF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziIPfLUUUUU=
-X-Originating-IP: [111.206.145.21]
-X-CM-SenderInfo: h2113zf2oz6qqrwthudrp/xtbBzgwLU2I0XNypJwAAsC
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a05:6a10:3dcb:b0:3f8:bec7:db13 with HTTP; Fri, 3 Feb 2023
+ 00:31:19 -0800 (PST)
+Reply-To: kolowskimrk9@gmail.com
+From:   "M. Kozlowski" <lphbtprzcenter@gmail.com>
+Date:   Fri, 3 Feb 2023 09:31:19 +0100
+Message-ID: <CABMFT_m1E=HrCXcZTiPR=hGxptXn870DR4AU96KezsBzeF0FAg@mail.gmail.com>
+Subject: Waiting for your reply
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=5.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,HK_RANDOM_ENVFROM,HK_RANDOM_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,UNDISC_FREEM autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:533 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 HK_RANDOM_ENVFROM Envelope sender username looks random
+        *  1.0 HK_RANDOM_FROM From username looks random
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [kolowskimrk9[at]gmail.com]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [lphbtprzcenter[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Due to the previously fix of __bch_btree_node_alloc, the return value will
-never be a NULL pointer. So IS_ERR is enough to handle the failure
- situation. Fix it by replacing IS_ERR_OR_NULL check to IS_ERR check.
-
-Fixes: cafe56359144 ("bcache: A block layer cache")
-Cc: stable@vger.kernel.org
-Signed-off-by: Zheng Wang <zyytlz.wz@163.com>
----
-v3:
-- Add Cc: stable@vger.kernel.org suggested by Eric
-v2:
-- Replace more checks
----
- drivers/md/bcache/btree.c | 10 +++++-----
- drivers/md/bcache/super.c |  4 ++--
- 2 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 147c493a989a..7c21e54468bf 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -1138,7 +1138,7 @@ static struct btree *btree_node_alloc_replacement(struct btree *b,
- {
- 	struct btree *n = bch_btree_node_alloc(b->c, op, b->level, b->parent);
- 
--	if (!IS_ERR_OR_NULL(n)) {
-+	if (!IS_ERR(n)) {
- 		mutex_lock(&n->write_lock);
- 		bch_btree_sort_into(&b->keys, &n->keys, &b->c->sort);
- 		bkey_copy_key(&n->key, &b->key);
-@@ -1340,7 +1340,7 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
- 	memset(new_nodes, 0, sizeof(new_nodes));
- 	closure_init_stack(&cl);
- 
--	while (nodes < GC_MERGE_NODES && !IS_ERR_OR_NULL(r[nodes].b))
-+	while (nodes < GC_MERGE_NODES && !IS_ERR(r[nodes].b))
- 		keys += r[nodes++].keys;
- 
- 	blocks = btree_default_blocks(b->c) * 2 / 3;
-@@ -1352,7 +1352,7 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
- 
- 	for (i = 0; i < nodes; i++) {
- 		new_nodes[i] = btree_node_alloc_replacement(r[i].b, NULL);
--		if (IS_ERR_OR_NULL(new_nodes[i]))
-+		if (IS_ERR(new_nodes[i]))
- 			goto out_nocoalesce;
- 	}
- 
-@@ -1487,7 +1487,7 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
- 	bch_keylist_free(&keylist);
- 
- 	for (i = 0; i < nodes; i++)
--		if (!IS_ERR_OR_NULL(new_nodes[i])) {
-+		if (!IS_ERR(new_nodes[i])) {
- 			btree_node_free(new_nodes[i]);
- 			rw_unlock(true, new_nodes[i]);
- 		}
-@@ -1669,7 +1669,7 @@ static int bch_btree_gc_root(struct btree *b, struct btree_op *op,
- 	if (should_rewrite) {
- 		n = btree_node_alloc_replacement(b, NULL);
- 
--		if (!IS_ERR_OR_NULL(n)) {
-+		if (!IS_ERR(n)) {
- 			bch_btree_node_write_sync(n);
- 
- 			bch_btree_set_root(n);
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index ba3909bb6bea..7660962e7b8b 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1724,7 +1724,7 @@ static void cache_set_flush(struct closure *cl)
- 	if (!IS_ERR_OR_NULL(c->gc_thread))
- 		kthread_stop(c->gc_thread);
- 
--	if (!IS_ERR_OR_NULL(c->root))
-+	if (!IS_ERR(c->root))
- 		list_add(&c->root->list, &c->btree_cache);
- 
- 	/*
-@@ -2088,7 +2088,7 @@ static int run_cache_set(struct cache_set *c)
- 
- 		err = "cannot allocate new btree root";
- 		c->root = __bch_btree_node_alloc(c, NULL, 0, true, NULL);
--		if (IS_ERR_OR_NULL(c->root))
-+		if (IS_ERR(c->root))
- 			goto err;
- 
- 		mutex_lock(&c->root->write_lock);
 -- 
-2.25.1
+Good Day,
 
+I am Marek Kozlowski, an International Relationships Manager with an
+International Bank in Europe. I handle portfolios of high net-worth
+individuals (Foreign Investors) and have over 200 of these high
+net-worth investors attached to my portfolio whose Capital Investment
+Funds are being managed and administered by me. I have an important
+information/proposal for you but for security reasons, I have decided
+not to include more information in this letter, but as soon as you
+respond, I will be able to provide you with more confidential
+information.
+Best Regards,
+Marek Kozlowski
+International Relationships Manager
