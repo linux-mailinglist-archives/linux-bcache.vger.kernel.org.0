@@ -2,48 +2,47 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4332F688E71
-	for <lists+linux-bcache@lfdr.de>; Fri,  3 Feb 2023 05:09:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20D4C688E77
+	for <lists+linux-bcache@lfdr.de>; Fri,  3 Feb 2023 05:12:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230368AbjBCEJ5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 2 Feb 2023 23:09:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44566 "EHLO
+        id S232277AbjBCEMR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 2 Feb 2023 23:12:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230094AbjBCEJ4 (ORCPT
+        with ESMTP id S232392AbjBCEMI (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 2 Feb 2023 23:09:56 -0500
-X-Greylist: delayed 5764 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 02 Feb 2023 20:09:53 PST
-Received: from m12.mail.163.com (m12.mail.163.com [220.181.12.216])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6C83D88CC7;
-        Thu,  2 Feb 2023 20:09:52 -0800 (PST)
+        Thu, 2 Feb 2023 23:12:08 -0500
+Received: from m12.mail.163.com (m12.mail.163.com [220.181.12.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E37C289F98;
+        Thu,  2 Feb 2023 20:12:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=eP1j+
-        lElSPssDtSj8LwargtGGcq1VDnKNYy6CzlJ97A=; b=U0SkCvWVLZ7Agp2Z1bCnX
-        hJQM4BxYzBNcDq+INaq6q0N4/3/++5o3HSxYyqddAgo+W5uQnubtr1ZqeJcIS0VP
-        e+EsYCmoQZCBm8RZtJRC5tbAhRNNTlSx+F+WH5C5Nw1Dm2E5rH6aNi+tV1n1c5jv
-        pBqTSpRuQW3lXeSO3fjL0I=
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=WrR//
+        zva4ZesymP/eKoj5KyCPnat+CUvA7ZEtVA4JNA=; b=nxOlHKommfrlibSizMmPx
+        DutsLeIDJQP8sGT9cquP1vr2436CwSUO2ewBsF8J9eyOmRVFaX/+GzZ0SLHJmkRg
+        petgKK4VnkZIGuJixy0LkGcz/CIAB5liAGPMhNhdCi5de9Ovf2ReMYnpfTLVicSU
+        jrj2cbuxWjEyNVPO8GL75U=
 Received: from leanderwang-LC2.localdomain (unknown [111.206.145.21])
-        by zwqz-smtp-mta-g0-1 (Coremail) with SMTP id _____wDXeqAFidxjvnijCg--.55564S2;
-        Fri, 03 Feb 2023 12:09:41 +0800 (CST)
+        by zwqz-smtp-mta-g2-2 (Coremail) with SMTP id _____wBnbNCFidxj79KlCg--.56852S2;
+        Fri, 03 Feb 2023 12:11:49 +0800 (CST)
 From:   Zheng Wang <zyytlz.wz@163.com>
 To:     colyli@suse.de
 Cc:     hackerzheng666@gmail.com, kent.overstreet@gmail.com,
         linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
         alex000young@gmail.com, Zheng Wang <zyytlz.wz@163.com>,
         stable@vger.kernel.org
-Subject: [PATCH v3] bcache: Fix __bch_btree_node_alloc to make the failure  behavior consistent
-Date:   Fri,  3 Feb 2023 12:09:40 +0800
-Message-Id: <20230203040940.580903-1-zyytlz.wz@163.com>
+Subject: [PATCH v3] bcache: Remove some unnecessary NULL point check for the  return value of __bch_btree_node_alloc-related pointer
+Date:   Fri,  3 Feb 2023 12:11:47 +0800
+Message-Id: <20230203041147.581389-1-zyytlz.wz@163.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _____wDXeqAFidxjvnijCg--.55564S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WrWfCr45Kw47XFWDuF4DArb_yoW8JFWUpF
-        W2gryFyF4Fgr4UAas3W3WjvFyrZ34jvFWYkas3Zw1FvrnrZrn3XFWjy3y0v345CFW8GF47
-        Jr1rtw18Zr1jkF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziaiiDUUUUU=
+X-CM-TRANSID: _____wBnbNCFidxj79KlCg--.56852S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAr48WF4xXrW3Aw4ktFWxtFb_yoW5CF1Dpr
+        W29ryayr97Xr4UCr9Yg3WvvFyfXw12vFWUWr93u3WfZry7AFyrCay0934jvrWUuFWxuF4U
+        Zr40yw1UXr4UtF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziIPfLUUUUU=
 X-Originating-IP: [111.206.145.21]
-X-CM-SenderInfo: h2113zf2oz6qqrwthudrp/1tbiXAkLU1Xl5gPspwAAsT
+X-CM-SenderInfo: h2113zf2oz6qqrwthudrp/xtbBzgwLU2I0XNypJwAAsC
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,SPF_HELO_NONE,
         SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -53,12 +52,9 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In some specific situation, the return value of __bch_btree_node_alloc may
-be NULL. This may lead to poential NULL pointer dereference in caller
- function like a calling chaion :
- btree_split->bch_btree_node_alloc->__bch_btree_node_alloc.
-
-Fix it by initialize return value in __bch_btree_node_alloc before return.
+Due to the previously fix of __bch_btree_node_alloc, the return value will
+never be a NULL pointer. So IS_ERR is enough to handle the failure
+ situation. Fix it by replacing IS_ERR_OR_NULL check to IS_ERR check.
 
 Fixes: cafe56359144 ("bcache: A block layer cache")
 Cc: stable@vger.kernel.org
@@ -67,29 +63,83 @@ Signed-off-by: Zheng Wang <zyytlz.wz@163.com>
 v3:
 - Add Cc: stable@vger.kernel.org suggested by Eric
 v2:
-- split patch v1 into two patches to make it clearer suggested by Coly Li
+- Replace more checks
 ---
- drivers/md/bcache/btree.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/md/bcache/btree.c | 10 +++++-----
+ drivers/md/bcache/super.c |  4 ++--
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 147c493a989a..cae25e74b9e0 100644
+index 147c493a989a..7c21e54468bf 100644
 --- a/drivers/md/bcache/btree.c
 +++ b/drivers/md/bcache/btree.c
-@@ -1090,10 +1090,12 @@ struct btree *__bch_btree_node_alloc(struct cache_set *c, struct btree_op *op,
- 				     struct btree *parent)
+@@ -1138,7 +1138,7 @@ static struct btree *btree_node_alloc_replacement(struct btree *b,
  {
- 	BKEY_PADDED(key) k;
--	struct btree *b = ERR_PTR(-EAGAIN);
-+	struct btree *b;
+ 	struct btree *n = bch_btree_node_alloc(b->c, op, b->level, b->parent);
  
- 	mutex_lock(&c->bucket_lock);
- retry:
-+	/* return ERR_PTR(-EAGAIN) when it fails */
-+	b = ERR_PTR(-EAGAIN);
- 	if (__bch_bucket_alloc_set(c, RESERVE_BTREE, &k.key, wait))
- 		goto err;
+-	if (!IS_ERR_OR_NULL(n)) {
++	if (!IS_ERR(n)) {
+ 		mutex_lock(&n->write_lock);
+ 		bch_btree_sort_into(&b->keys, &n->keys, &b->c->sort);
+ 		bkey_copy_key(&n->key, &b->key);
+@@ -1340,7 +1340,7 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
+ 	memset(new_nodes, 0, sizeof(new_nodes));
+ 	closure_init_stack(&cl);
  
+-	while (nodes < GC_MERGE_NODES && !IS_ERR_OR_NULL(r[nodes].b))
++	while (nodes < GC_MERGE_NODES && !IS_ERR(r[nodes].b))
+ 		keys += r[nodes++].keys;
+ 
+ 	blocks = btree_default_blocks(b->c) * 2 / 3;
+@@ -1352,7 +1352,7 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
+ 
+ 	for (i = 0; i < nodes; i++) {
+ 		new_nodes[i] = btree_node_alloc_replacement(r[i].b, NULL);
+-		if (IS_ERR_OR_NULL(new_nodes[i]))
++		if (IS_ERR(new_nodes[i]))
+ 			goto out_nocoalesce;
+ 	}
+ 
+@@ -1487,7 +1487,7 @@ static int btree_gc_coalesce(struct btree *b, struct btree_op *op,
+ 	bch_keylist_free(&keylist);
+ 
+ 	for (i = 0; i < nodes; i++)
+-		if (!IS_ERR_OR_NULL(new_nodes[i])) {
++		if (!IS_ERR(new_nodes[i])) {
+ 			btree_node_free(new_nodes[i]);
+ 			rw_unlock(true, new_nodes[i]);
+ 		}
+@@ -1669,7 +1669,7 @@ static int bch_btree_gc_root(struct btree *b, struct btree_op *op,
+ 	if (should_rewrite) {
+ 		n = btree_node_alloc_replacement(b, NULL);
+ 
+-		if (!IS_ERR_OR_NULL(n)) {
++		if (!IS_ERR(n)) {
+ 			bch_btree_node_write_sync(n);
+ 
+ 			bch_btree_set_root(n);
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index ba3909bb6bea..7660962e7b8b 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1724,7 +1724,7 @@ static void cache_set_flush(struct closure *cl)
+ 	if (!IS_ERR_OR_NULL(c->gc_thread))
+ 		kthread_stop(c->gc_thread);
+ 
+-	if (!IS_ERR_OR_NULL(c->root))
++	if (!IS_ERR(c->root))
+ 		list_add(&c->root->list, &c->btree_cache);
+ 
+ 	/*
+@@ -2088,7 +2088,7 @@ static int run_cache_set(struct cache_set *c)
+ 
+ 		err = "cannot allocate new btree root";
+ 		c->root = __bch_btree_node_alloc(c, NULL, 0, true, NULL);
+-		if (IS_ERR_OR_NULL(c->root))
++		if (IS_ERR(c->root))
+ 			goto err;
+ 
+ 		mutex_lock(&c->root->write_lock);
 -- 
 2.25.1
 
