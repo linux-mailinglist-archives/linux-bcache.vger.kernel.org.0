@@ -2,109 +2,63 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE41B689257
-	for <lists+linux-bcache@lfdr.de>; Fri,  3 Feb 2023 09:33:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 317A368B934
+	for <lists+linux-bcache@lfdr.de>; Mon,  6 Feb 2023 11:00:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbjBCIbX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 3 Feb 2023 03:31:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40212 "EHLO
+        id S229448AbjBFJ7z (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 6 Feb 2023 04:59:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230384AbjBCIbW (ORCPT
+        with ESMTP id S230129AbjBFJ7e (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 3 Feb 2023 03:31:22 -0500
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4773348597
-        for <linux-bcache@vger.kernel.org>; Fri,  3 Feb 2023 00:31:21 -0800 (PST)
-Received: by mail-pg1-x533.google.com with SMTP id v3so3150556pgh.4
-        for <linux-bcache@vger.kernel.org>; Fri, 03 Feb 2023 00:31:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zu2y/4MWJnFonrJxDyZ6rAlSIWBncWmXyCnHWDIviA8=;
-        b=WTtn/RNLG5A2REqjOO3Zjeybff8ScqTwxFE9byTs1urSsVCXozMHM/XiPW5rNsc4UU
-         ut4aMi71deb11CiPSbbDpWHQHTueyn394CWNntMvz2/VGnZ8/wq8/iWUTJbTjGxdel/M
-         3W5fXFQttEbEk3ehNBXmQPvd3DXJ7aURgWV8cohA8psiYzk1qElmeNiHBfT07UXg9zLq
-         Cm1RfP5qxoKpEHAz6DDk3SKKnyybDMEphrfSx1T6qZtr5KF/g/2gp+I1rzo6/Y80LJu2
-         z/prs2oVT5d46YheKqahPkuHtxka+T8vQhmYqqLEodOPbNZUOdayKzuRMNBCUI9sSbOk
-         T2PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zu2y/4MWJnFonrJxDyZ6rAlSIWBncWmXyCnHWDIviA8=;
-        b=41vFR+WfIQgUUv6fiOX1Oxgv5BfFZb6OYrKzIsVvz7KJZ4hRe8MVOB56GqZJ3CLGoO
-         StA67iSA6JRNh7mJjAqtHMqoliacKRJXKmnh2uNWez1aRkFW4wFHTNxI4zN3fVVang5v
-         GWHn3aVBmRsTSu2rU7r6rzgdBf4+P8I/cWM+Il8RCZk+jujdsduv1WwSzy875t4f6cA2
-         8oMpOT1vYmIf6zjwecgqjlvisSbBcPR/LOOjZsefhCtCUkq9XpugW74NEOYU4HvKiYM8
-         nRb4jbrx7FRnYDvHsk9Qm7gL0WFp2xtBB0WJiY9kXvMozPBitXyH3kYN0+xtuYb392an
-         EQkg==
-X-Gm-Message-State: AO0yUKWDI+RbRKtnAELppT6Hfd2BnG0ezIPy/OavzktSuAgl6EnTPnxm
-        qXf7xymncPr5wqI3+o97+3KoL52YrNZUsty1gE8=
-X-Google-Smtp-Source: AK7set+7AFx3F2LUR15lCVVepw4RU5GcvbUMXJ7Cea5noVJlwqwI2PnWXr2UnW/2jHD36dT5kCDeyB+1fZ8ojSGmcxI=
-X-Received: by 2002:a63:cc0f:0:b0:4cf:122f:2102 with SMTP id
- x15-20020a63cc0f000000b004cf122f2102mr1516079pgf.98.1675413079979; Fri, 03
- Feb 2023 00:31:19 -0800 (PST)
+        Mon, 6 Feb 2023 04:59:34 -0500
+X-Greylist: delayed 311 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 06 Feb 2023 01:59:24 PST
+Received: from mail.render-wahnsinn.de (unknown [IPv6:2a01:4f9:3b:4ea6::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 777848692
+        for <linux-bcache@vger.kernel.org>; Mon,  6 Feb 2023 01:59:24 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6933F1B4A11
+        for <linux-bcache@vger.kernel.org>; Mon,  6 Feb 2023 10:54:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=render-wahnsinn.de;
+        s=dkim; t=1675677251; h=from:subject:date:message-id:to:mime-version:content-type:
+         content-transfer-encoding:content-language;
+        bh=21Gf12/tG7XJHAY6PLrc+O6AW7swme/IjEdbqGfjQy8=;
+        b=KaGZpXSpicPG1sJmBYi5MvvS0/ILyj+n/5I+4tjRCS5u5zAkACHLkibz0GLagTOOE8qZqA
+        wFah4Ffs6gmjMZ1gAcUIUMPYagNmDsag/SxhwTVH/oXv6rkmonVjKsjQL1zb3K808mk9iO
+        RMqPQ0E3DVJrIwTDXnXirBT/FL6Y7y3fQgKZw1tm9/q3Un5cc70iHJB1Wy8Be6yhwqcN9H
+        JVmL6pSJnYTprO7pNmBPrVIh+aVuzM0DxuuxxOClSV1Luz6YMc2UHMheq6agvtYKGXdntk
+        KXJUNrqhmfN068NqIPTUAbMaK0cs90ni2d0S8vmUvjtXEzonmqlEuEnWOilogg==
+Message-ID: <92a2df4d-3631-b669-c275-1f067ad72bd1@render-wahnsinn.de>
+Date:   Mon, 6 Feb 2023 10:54:09 +0100
 MIME-Version: 1.0
-Received: by 2002:a05:6a10:3dcb:b0:3f8:bec7:db13 with HTTP; Fri, 3 Feb 2023
- 00:31:19 -0800 (PST)
-Reply-To: kolowskimrk9@gmail.com
-From:   "M. Kozlowski" <lphbtprzcenter@gmail.com>
-Date:   Fri, 3 Feb 2023 09:31:19 +0100
-Message-ID: <CABMFT_m1E=HrCXcZTiPR=hGxptXn870DR4AU96KezsBzeF0FAg@mail.gmail.com>
-Subject: Waiting for your reply
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        FREEMAIL_REPLYTO_END_DIGIT,HK_RANDOM_ENVFROM,HK_RANDOM_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,UNDISC_FREEM autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:533 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 HK_RANDOM_ENVFROM Envelope sender username looks random
-        *  1.0 HK_RANDOM_FROM From username looks random
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [kolowskimrk9[at]gmail.com]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [lphbtprzcenter[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+To:     linux-bcache@vger.kernel.org
+Content-Language: en-US
+From:   Robert Krig <robert.krig@render-wahnsinn.de>
+Subject: Can you switch caching modes on the fly during use?
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RDNS_NONE,SPF_FAIL,
+        SPF_HELO_NONE autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
--- 
-Good Day,
+Hi. I was just wondering.
 
-I am Marek Kozlowski, an International Relationships Manager with an
-International Bank in Europe. I handle portfolios of high net-worth
-individuals (Foreign Investors) and have over 200 of these high
-net-worth investors attached to my portfolio whose Capital Investment
-Funds are being managed and administered by me. I have an important
-information/proposal for you but for security reasons, I have decided
-not to include more information in this letter, but as soon as you
-respond, I will be able to provide you with more confidential
-information.
-Best Regards,
-Marek Kozlowski
-International Relationships Manager
+My cache device is a MD Raid1 SSD.
+My backing device is a BTRFS Raid10 on 8 Spinning disks.
+
+
+Everything is setup as default. Which, as far as I recall means 
+writethrough caching.
+
+Can I just switch the caching mode on the fly while the filesystem is in 
+use, without any risks of corruption, or do I need to detach the cache, 
+unmount the FS, etc...?
+
