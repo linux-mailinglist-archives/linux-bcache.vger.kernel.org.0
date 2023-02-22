@@ -2,72 +2,64 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B27169F08F
-	for <lists+linux-bcache@lfdr.de>; Wed, 22 Feb 2023 09:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DE7869F0B8
+	for <lists+linux-bcache@lfdr.de>; Wed, 22 Feb 2023 09:53:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231187AbjBVInE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 22 Feb 2023 03:43:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60824 "EHLO
+        id S231129AbjBVIxy (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 22 Feb 2023 03:53:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230466AbjBVInD (ORCPT
+        with ESMTP id S229865AbjBVIxx (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 22 Feb 2023 03:43:03 -0500
-Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 143E986B7
-        for <linux-bcache@vger.kernel.org>; Wed, 22 Feb 2023 00:43:02 -0800 (PST)
-Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-1722c48a773so5734681fac.2
-        for <linux-bcache@vger.kernel.org>; Wed, 22 Feb 2023 00:43:02 -0800 (PST)
+        Wed, 22 Feb 2023 03:53:53 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10AAC1C581
+        for <linux-bcache@vger.kernel.org>; Wed, 22 Feb 2023 00:53:52 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id l2-20020a05600c1d0200b003e1f6dff952so5556580wms.1
+        for <linux-bcache@vger.kernel.org>; Wed, 22 Feb 2023 00:53:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=devo.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EpQSKRWPmR+JSJo5hqn45c9XmYpXU/mB3sDivHoOnn8=;
-        b=mNVxERoImNl+DCcV3LXKpU5qH/Y5Zd19ivctK7PbG95KjgaYcyjj1jh2Wx8s1BnlDE
-         C5EcBapkznbtytifv0QdvpDxcK/iYAu/7QKZsnwY1RJmj6hAndR7E2G5UGRfZLY6SWif
-         fIejbuLccEgS+Cb71BKhBD8uBamMNK55SoBbSYjuvQjwYoTcBWh2nGow04TzP+LjMyJm
-         OzJ+ZhkXK86aZRCrdkB17hOug0rdIZAhknmBswjohQinylo2xfEU9t2LDmrrlzER1gA/
-         PeCedXrhK6dybLet/Wr00vK98yIlKGIxBccKDQUqbygNSaH8SS8W2MaeAfWjeU8Ixx+6
-         TRBQ==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dVFw1d3E5p6ZAOiPPhC7Cv6PHO+c9gQTcv/x1pvDVtU=;
+        b=DiWBkE/5XDNBSZhAoqNoClgUwCHjrKNYXw2HCSYHaIdhq0pVt1Ar55eg9aOTWXRa5p
+         s7Rh8h0m7RCB4SzHyBF32LnHp0sbQ4Pcej9LEuftQvS6mWL1dLwKoOpKSS++qefYeeum
+         wy5C8fN2LMjb3gB3HIMqxEpTEHYusRpDAiM8ZfzSp6+EqIhCxY/MzihSErbcU4q1PvWf
+         FhNt3AICVMGRFiZK9vL6PZSrRWAoAfGKEz7UVGsKPNk9SVP/XduE9GhjXVRqXUXI+QA0
+         9YVCKr6Un38A3alP8jG/r7ynn55+V1mK+Ah7vEqw5zzg/HwKq5MaZlPY0Jn7hI3ZM3XB
+         DFDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EpQSKRWPmR+JSJo5hqn45c9XmYpXU/mB3sDivHoOnn8=;
-        b=doU7YjhROtNyN7+d3M2/FdeFmvajCzTXfsuT0qNOIKjH5746MBKEszzuT6ao0ySs95
-         +EJuufH8DiohYxTo4jFgwRe41Tet5QZBpOsPsFU+hDjI1jDc5x4sX5ACePsv1r1PDnGU
-         BfYtdDal7odDnm8Jc1FHFwP8ZL6PVcPDKxgYN3b+B/2FlH0Jqi26aGbaGP4RaOuKEHwV
-         tinsdlDSo45578STzBRc7UZqBvF1AjfwPRLt+2pqSQ+CSTnPglZIUNvVIRCcxS3oVCSF
-         d6QW0RxNfUNrUqOL51uoPPO9t1iSPE9bqwdwUSpbHBrZYvrPEqnq4IdpogxnmdOKRdH2
-         bEeA==
-X-Gm-Message-State: AO0yUKWQpNhTIFSP70NUs/gaEvjYadhWBCosCma0jueWztJFUoDgZH/j
-        TqaJdxp/a4fKBAdJ9JFMF+VzAdHxxwmGZeFUb+7b6w==
-X-Google-Smtp-Source: AK7set9ZNFcbE2PfrK/dojkwRz7Z10FNLprCoQ8he/VvEqWHO/Qzt0Yk1d8C0ptItrDnEnrUUpmNsd9cA/qSwWSRvyY=
-X-Received: by 2002:a05:6870:d148:b0:16d:dc93:691d with SMTP id
- f8-20020a056870d14800b0016ddc93691dmr967205oac.6.1677055381374; Wed, 22 Feb
- 2023 00:43:01 -0800 (PST)
-MIME-Version: 1.0
-References: <CAHykVA5sgGooeRjM1EepCCpZqkvtQJ_=cY8hmjqe0oQ3FLDFnQ@mail.gmail.com>
- <9474c19e-56f0-cb4d-68c-405c55aef281@ewheeler.net> <CAHykVA4zGN=WA4A3njQ3VdX4age2-AXq3EcW1qRTFbf=o1=yDw@mail.gmail.com>
- <4ddb082f-cefc-644e-2ccf-56d41207ecd3@devo.com> <107e8ceb-748e-b296-ae60-c2155d68352d@suse.de>
- <CAHykVA4WfYysOcKnQETkUyUjx_tFypFCWYG1RidRMVNqObGmRg@mail.gmail.com>
- <B7718488-B00D-4F72-86CA-0FF335AD633F@suse.de> <CAHykVA7_e1r9x2PfiDe8czH2WRaWtNxTJWcNmdyxJTSVGCxDHA@mail.gmail.com>
- <755CAB25-BC58-4100-A524-6F922E1C13DC@suse.de> <50e64fcd-3bd8-4175-c96e-5fa2ffe051d4@devo.com>
- <8C5EA413-6FBB-4483-AAFA-2BC0A083C30D@suse.de> <cd023413-a05c-0f63-cde7-ed019b811575@easystack.cn>
- <266DA9D9-CD6A-420F-8FB2-CE47489D74E1@suse.de>
-In-Reply-To: <266DA9D9-CD6A-420F-8FB2-CE47489D74E1@suse.de>
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dVFw1d3E5p6ZAOiPPhC7Cv6PHO+c9gQTcv/x1pvDVtU=;
+        b=p3xzim/eBM7vUCzTSAa7LmDkLUWddvJ7TPia/l58ITAU0FZ1iERgHXSDSerX3I6cWk
+         0WGaJo7B69BlS4qQ6cNG961Z5fJjVDGaK3EEGi87FYulHzoQjTOCPFDad/z7oy/jMwrz
+         WPT0qG1iHG1dUUOPwaCBOvkpUOJ3KzRGQgM+eeP6bt8fLur4HizS93zaZWykDZx2WDX/
+         o1FfCKvwLKZRkyGUsyFAkHTIVXQBVFJibsjrEqVyLmPX5IsFY6tGss09eINmKl5V3tUG
+         1m4b9OeV1dq/3E98rdnRDjaR3q7frzdlrJ/ZaxDRlsseuX2++UqMwooNksi8P/UpuCSb
+         lXhg==
+X-Gm-Message-State: AO0yUKUWjKU8OcFQBWIF3fT0CYTImOQPV7oS/4aN4+v9vEnb0/oXHBdn
+        d1qdrWJVex8+oqT1l4/LKLL9aQ==
+X-Google-Smtp-Source: AK7set8mkC6fGSF14zgWl1qcup8BuOMEYbbhfNKp0UCu4+rPCdFWhCE+nrMX/DkOF2xyVEJvUlxWqQ==
+X-Received: by 2002:a05:600c:929:b0:3df:3bd6:63e5 with SMTP id m41-20020a05600c092900b003df3bd663e5mr4811728wmp.12.1677056030514;
+        Wed, 22 Feb 2023 00:53:50 -0800 (PST)
+Received: from 2021-EMEA-0269.devotools.com (143.69.14.37.dynamic.jazztel.es. [37.14.69.143])
+        by smtp.googlemail.com with ESMTPSA id bh21-20020a05600c3d1500b003e2052bad94sm1076255wmb.33.2023.02.22.00.53.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Feb 2023 00:53:49 -0800 (PST)
 From:   Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
-Date:   Wed, 22 Feb 2023 09:42:50 +0100
-Message-ID: <CAHykVA5rpx7zOK2QqHsMKaJW6m6uMdRMSc_0NLfuF4tVGd7B-Q@mail.gmail.com>
-Subject: Re: [RFC] Live resize of backing device
 To:     Coly Li <colyli@suse.de>
-Cc:     mingzhe <mingzhe.zou@easystack.cn>,
-        Eric Wheeler <bcache@lists.ewheeler.net>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org,
+        Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
+Subject: [PATCH v2] bcache: Add support for live resize of backing devices
+Date:   Wed, 22 Feb 2023 09:53:33 +0100
+Message-Id: <20230222085333.39021-1-andrea.tomassetti-opensource@devo.com>
+X-Mailer: git-send-email 2.39.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -77,75 +69,134 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+When a disk changes size, udev rules are fired and register_bcache
+function get called. With this patch, every time this happens, the
+disk's capacity get checked: if it has changed then the new
+bch_update_capacity function get called, otherwise it fails as before.
+
+Signed-off-by: Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
+---
 Hi Coly,
+this is the second version of the patch. As you correctly pointed out,
+I implemented roll-back functionalities in case of error.
+I'm testing this funcionality using QEMU/KVM vm via libvirt.
+Here the steps:
+  1. make-bcache --writeback -B /dev/vdb -C /dev/vdc
+  2. mkfs.xfs /dev/bcache0
+  3. mount /dev/bcache0 /mnt
+  3. dd if=/dev/random of=/mnt/random0 bs=1M count=1000
+  4. md5sum /mnt/random0 | tee /mnt/random0.md5
+  5. [HOST] virsh blockresize <vm-name> --path <disk-path> --size <new-size>
+  6. xfs_growfs /dev/bcache0
+  6. Repeat steps 3 and 4 with a different file name (e.g. random1.md5)
+  7. umount/reboot/remount and check that the md5 hashes are correct with
+        md5sum -c /mnt/random?.md5
 
-On Mon, Feb 20, 2023 at 1:30 PM Coly Li <colyli@suse.de> wrote:
->
->
->
-> > 2023=E5=B9=B42=E6=9C=8820=E6=97=A5 16:27=EF=BC=8Cmingzhe <mingzhe.zou@e=
-asystack.cn> =E5=86=99=E9=81=93=EF=BC=9A
-> >
-> >
-> >
-> > =E5=9C=A8 2023/2/19 17:39, Coly Li =E5=86=99=E9=81=93:
-> >>> 2023=E5=B9=B41=E6=9C=8827=E6=97=A5 20:44=EF=BC=8CAndrea Tomassetti <a=
-ndrea.tomassetti-opensource@devo.com> =E5=86=99=E9=81=93=EF=BC=9A
-> >>>
-> >>> From 83f490ec8e81c840bdaf69e66021d661751975f2 Mon Sep 17 00:00:00 200=
-1
-> >>> From: Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
-> >>> Date: Thu, 8 Sep 2022 09:47:55 +0200
-> >>> Subject: [PATCH v2] bcache: Add support for live resize of backing de=
-vices
-> >>>
-> >>> Signed-off-by: Andrea Tomassetti <andrea.tomassetti-opensource@devo.c=
-om>
-> >> Hi Andrea,
-> >> I am fine with this patch and added it in my test queue now. Do you ha=
-ve an updated version, (e.g. more coding refine or adding commit log), then=
- I can update my local version.
-Thank you very much. I appreciate it. I don't have any other version,
-there's just some code in common with `bcache_device_init` but I
-couldn't find an elegant way to avoid copy paste of those few lines.
+ drivers/md/bcache/super.c | 84 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 83 insertions(+), 1 deletion(-)
 
-> >> BTW, it could be better if the patch will be sent out as a separated e=
-mail.
-I'll send it right now on a separate thread.
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index ba3909bb6bea..1435a3f605f8 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2443,6 +2443,85 @@ static bool bch_is_open(dev_t dev)
+ 	return bch_is_open_cache(dev) || bch_is_open_backing(dev);
+ }
 
-Thank you,
-Andrea
++static bool bch_update_capacity(dev_t dev)
++{
++	const size_t max_stripes = min_t(size_t, INT_MAX,
++					 SIZE_MAX / sizeof(atomic_t));
++
++	uint64_t n, n_old, orig_cached_sectors = 0;
++	void *tmp_realloc;
++
++	int nr_stripes_old;
++	bool res = false;
++
++	struct bcache_device *d;
++	struct cache_set *c, *tc;
++	struct cached_dev *dcp, *t, *dc = NULL;
++
++	uint64_t parent_nr_sectors;
++
++	list_for_each_entry_safe(c, tc, &bch_cache_sets, list)
++		list_for_each_entry_safe(dcp, t, &c->cached_devs, list)
++			if (dcp->bdev->bd_dev == dev) {
++				dc = dcp;
++				goto dc_found;
++			}
++
++dc_found:
++	if (!dc)
++		return false;
++
++	parent_nr_sectors = bdev_nr_sectors(dc->bdev) - dc->sb.data_offset;
++
++	if (parent_nr_sectors == bdev_nr_sectors(dc->disk.disk->part0))
++		return false;
++
++	d = &dc->disk;
++	orig_cached_sectors = d->c->cached_dev_sectors;
++
++	/* Force cached device sectors re-calc */
++	calc_cached_dev_sectors(d->c);
++
++	/* Block writeback thread */
++	down_write(&dc->writeback_lock);
++	nr_stripes_old = d->nr_stripes;
++	n = DIV_ROUND_UP_ULL(parent_nr_sectors, d->stripe_size);
++	if (!n || n > max_stripes) {
++		pr_err("nr_stripes too large or invalid: %llu (start sector beyond end of disk?)\n",
++			n);
++		goto restore_dev_sectors;
++	}
++	d->nr_stripes = n;
++
++	n = d->nr_stripes * sizeof(atomic_t);
++	n_old = nr_stripes_old * sizeof(atomic_t);
++	tmp_realloc = kvrealloc(d->stripe_sectors_dirty, n_old,
++		n, GFP_KERNEL);
++	if (!tmp_realloc)
++		goto restore_nr_stripes;
++
++	d->stripe_sectors_dirty = (atomic_t *) tmp_realloc;
++
++	n = BITS_TO_LONGS(d->nr_stripes) * sizeof(unsigned long);
++	n_old = BITS_TO_LONGS(nr_stripes_old) * sizeof(unsigned long);
++	tmp_realloc = kvrealloc(d->full_dirty_stripes, n_old, n, GFP_KERNEL);
++	if (!tmp_realloc)
++		goto restore_nr_stripes;
++
++	d->full_dirty_stripes = (unsigned long *) tmp_realloc;
++
++	if ((res = set_capacity_and_notify(dc->disk.disk, parent_nr_sectors)))
++		goto unblock_and_exit;
++
++restore_nr_stripes:
++	d->nr_stripes = nr_stripes_old;
++restore_dev_sectors:
++	d->c->cached_dev_sectors = orig_cached_sectors;
++unblock_and_exit:
++	up_write(&dc->writeback_lock);
++	return res;
++}
++
+ struct async_reg_args {
+ 	struct delayed_work reg_work;
+ 	char *path;
+@@ -2569,7 +2648,10 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 			mutex_lock(&bch_register_lock);
+ 			if (lookup_bdev(strim(path), &dev) == 0 &&
+ 			    bch_is_open(dev))
+-				err = "device already registered";
++				if (bch_update_capacity(dev))
++					err = "capacity changed";
++				else
++					err = "device already registered";
+ 			else
+ 				err = "device busy";
+ 			mutex_unlock(&bch_register_lock);
+--
+2.39.0
 
-> >> Thanks.
-> >> Coly Li
-> > Hi, Coly
-> >
-> > I posted some patchsets about online resize.
-> >
-> > -[PATCH v5 1/3] bcache: add dirty_data in struct bcache_device
-> > -[PATCH v5 2/3] bcache: allocate stripe memory when partial_stripes_exp=
-ensive is true
-> > -[PATCH v5 3/3] bcache: support online resizing of cached_dev
-> >
-> > There are some differences:
-> > 1. Create /sys/block/bcache0/bcache/size in sysfs to trigger resize
-> > 2. Allocate stripe memory only if partial_stripes_expensive is true
-> > 3. Simplify bcache_dev_sectors_dirty()
-> >
-> > Since the bcache superblock uses some sectors, the actual space of the =
-bcache device is smaller than the backing. In order to provide a bcache dev=
-ice with a user-specified size, we need to create a backing device with a l=
-arger space, and then resize bcache. So resize can specify the size is very=
- necessary.
-> >
-> >
->
-> Yes, they are in my for-test queue already. I will test both and make a c=
-hoice.
->
-> Thanks.
->
-> Coly Li
->
-> [snipped]
->
