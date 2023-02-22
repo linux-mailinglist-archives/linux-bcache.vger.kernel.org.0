@@ -2,92 +2,150 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB4A669E442
-	for <lists+linux-bcache@lfdr.de>; Tue, 21 Feb 2023 17:09:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B27169F08F
+	for <lists+linux-bcache@lfdr.de>; Wed, 22 Feb 2023 09:43:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233340AbjBUQJ2 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 21 Feb 2023 11:09:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35854 "EHLO
+        id S231187AbjBVInE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 22 Feb 2023 03:43:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232992AbjBUQJ1 (ORCPT
+        with ESMTP id S230466AbjBVInD (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 21 Feb 2023 11:09:27 -0500
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 730C522DC1
-        for <linux-bcache@vger.kernel.org>; Tue, 21 Feb 2023 08:09:26 -0800 (PST)
-Received: by mail-io1-xd35.google.com with SMTP id i202so2056225ioa.3
-        for <linux-bcache@vger.kernel.org>; Tue, 21 Feb 2023 08:09:26 -0800 (PST)
+        Wed, 22 Feb 2023 03:43:03 -0500
+Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 143E986B7
+        for <linux-bcache@vger.kernel.org>; Wed, 22 Feb 2023 00:43:02 -0800 (PST)
+Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-1722c48a773so5734681fac.2
+        for <linux-bcache@vger.kernel.org>; Wed, 22 Feb 2023 00:43:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lWxp10o6SutV8Ut2SPOyU50CO9t0iyh+TuUkX3vQXfA=;
-        b=bbQRdoqOTsNNyvpTbNpXszm+Olfna1RzMRT4EltpM3B7Pr9JewHgFbyChRwLSu3A8t
-         8jWpAXeDaB/2ifTCrEaTQctACmiQlNE+o0RADUH+dKPSeMKJN3FO2wiSGsMkNKN3UF6N
-         L7BGcWSKAzZ+dspHI0B9nn6P/CIjuo9OAU+cStoVSRbjNlhcmnNNJHKYXtd+s5xi5YXn
-         5rN5m51PVWLeCaucJb1rj7mwp9estmIlkAPS+coGUdOQ6D3WzptYFj3zq0OYj21CxxH+
-         IitN9TZbcfJ4LLIyp5qkAXuAJwKqirQRaKwsNYjGYGCxoIZWfdvbzcbOZPG995/NnQoe
-         CqrA==
+        d=devo.com; s=google;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EpQSKRWPmR+JSJo5hqn45c9XmYpXU/mB3sDivHoOnn8=;
+        b=mNVxERoImNl+DCcV3LXKpU5qH/Y5Zd19ivctK7PbG95KjgaYcyjj1jh2Wx8s1BnlDE
+         C5EcBapkznbtytifv0QdvpDxcK/iYAu/7QKZsnwY1RJmj6hAndR7E2G5UGRfZLY6SWif
+         fIejbuLccEgS+Cb71BKhBD8uBamMNK55SoBbSYjuvQjwYoTcBWh2nGow04TzP+LjMyJm
+         OzJ+ZhkXK86aZRCrdkB17hOug0rdIZAhknmBswjohQinylo2xfEU9t2LDmrrlzER1gA/
+         PeCedXrhK6dybLet/Wr00vK98yIlKGIxBccKDQUqbygNSaH8SS8W2MaeAfWjeU8Ixx+6
+         TRBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lWxp10o6SutV8Ut2SPOyU50CO9t0iyh+TuUkX3vQXfA=;
-        b=zuxMesIxaepQqEIfh8EsHmF8WXHDLtw8ZJGn2oQYYfKQwPIrVUvL7nTbHN+NpjUriL
-         79g84SE8Px5CfjhESex4bGylPWb9/3Np3rWpWttx50+mmxjPYK5liZ/DW6oABcfY2W1U
-         7IZs8pxIJZE1qxqlyAMB+djkentCkknFeRcjEVrS6ZI6v3/BO5uyKrLVcVdprhiCiyVB
-         o9YPjjEBEfqJhDz6Y5R+XwVU/AUMkUDigJCiU2h78VEK/23QB4Xn5N6YcUiyj8nVm4L3
-         IpCcCTI5sFV2al9cUAxfdAXZtBkDuubLx24NbknxiybWQ6GiihousJg1ZNI11lMneOmP
-         xWOQ==
-X-Gm-Message-State: AO0yUKXnXUtfFYeZc/LAsA4PD3OnnwHiYM2lufFLhkVRy227wvTjO7ad
-        yQZD76PpZEHkt02OTQLG71VWvgERfYdAnpzm2DQ=
-X-Google-Smtp-Source: AK7set+G1KIZMhfZ4aFTr4MDFdbYq/rkfyNL4pcluOwIdny5/YV1TibD8KOsH42inGUZd3xST40k8p1VHueDl309XQw=
-X-Received: by 2002:a05:6638:229a:b0:3be:81d3:5af3 with SMTP id
- y26-20020a056638229a00b003be81d35af3mr2230102jas.3.1676995765776; Tue, 21 Feb
- 2023 08:09:25 -0800 (PST)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EpQSKRWPmR+JSJo5hqn45c9XmYpXU/mB3sDivHoOnn8=;
+        b=doU7YjhROtNyN7+d3M2/FdeFmvajCzTXfsuT0qNOIKjH5746MBKEszzuT6ao0ySs95
+         +EJuufH8DiohYxTo4jFgwRe41Tet5QZBpOsPsFU+hDjI1jDc5x4sX5ACePsv1r1PDnGU
+         BfYtdDal7odDnm8Jc1FHFwP8ZL6PVcPDKxgYN3b+B/2FlH0Jqi26aGbaGP4RaOuKEHwV
+         tinsdlDSo45578STzBRc7UZqBvF1AjfwPRLt+2pqSQ+CSTnPglZIUNvVIRCcxS3oVCSF
+         d6QW0RxNfUNrUqOL51uoPPO9t1iSPE9bqwdwUSpbHBrZYvrPEqnq4IdpogxnmdOKRdH2
+         bEeA==
+X-Gm-Message-State: AO0yUKWQpNhTIFSP70NUs/gaEvjYadhWBCosCma0jueWztJFUoDgZH/j
+        TqaJdxp/a4fKBAdJ9JFMF+VzAdHxxwmGZeFUb+7b6w==
+X-Google-Smtp-Source: AK7set9ZNFcbE2PfrK/dojkwRz7Z10FNLprCoQ8he/VvEqWHO/Qzt0Yk1d8C0ptItrDnEnrUUpmNsd9cA/qSwWSRvyY=
+X-Received: by 2002:a05:6870:d148:b0:16d:dc93:691d with SMTP id
+ f8-20020a056870d14800b0016ddc93691dmr967205oac.6.1677055381374; Wed, 22 Feb
+ 2023 00:43:01 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a02:cab3:0:b0:39e:a318:6450 with HTTP; Tue, 21 Feb 2023
- 08:09:25 -0800 (PST)
-Reply-To: americabnkcapitalloan@outlook.com
-From:   America Bank Capital Loan <nschc97@gmail.com>
-Date:   Tue, 21 Feb 2023 17:09:25 +0100
-Message-ID: <CAB1PbNxAKoufAzMBhzboR6TVVrwgedORWbhsq7aiKSR=agAhNA@mail.gmail.com>
-Subject: Re:
-To:     undisclosed-recipients:;
+References: <CAHykVA5sgGooeRjM1EepCCpZqkvtQJ_=cY8hmjqe0oQ3FLDFnQ@mail.gmail.com>
+ <9474c19e-56f0-cb4d-68c-405c55aef281@ewheeler.net> <CAHykVA4zGN=WA4A3njQ3VdX4age2-AXq3EcW1qRTFbf=o1=yDw@mail.gmail.com>
+ <4ddb082f-cefc-644e-2ccf-56d41207ecd3@devo.com> <107e8ceb-748e-b296-ae60-c2155d68352d@suse.de>
+ <CAHykVA4WfYysOcKnQETkUyUjx_tFypFCWYG1RidRMVNqObGmRg@mail.gmail.com>
+ <B7718488-B00D-4F72-86CA-0FF335AD633F@suse.de> <CAHykVA7_e1r9x2PfiDe8czH2WRaWtNxTJWcNmdyxJTSVGCxDHA@mail.gmail.com>
+ <755CAB25-BC58-4100-A524-6F922E1C13DC@suse.de> <50e64fcd-3bd8-4175-c96e-5fa2ffe051d4@devo.com>
+ <8C5EA413-6FBB-4483-AAFA-2BC0A083C30D@suse.de> <cd023413-a05c-0f63-cde7-ed019b811575@easystack.cn>
+ <266DA9D9-CD6A-420F-8FB2-CE47489D74E1@suse.de>
+In-Reply-To: <266DA9D9-CD6A-420F-8FB2-CE47489D74E1@suse.de>
+From:   Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
+Date:   Wed, 22 Feb 2023 09:42:50 +0100
+Message-ID: <CAHykVA5rpx7zOK2QqHsMKaJW6m6uMdRMSc_0NLfuF4tVGd7B-Q@mail.gmail.com>
+Subject: Re: [RFC] Live resize of backing device
+To:     Coly Li <colyli@suse.de>
+Cc:     mingzhe <mingzhe.zou@easystack.cn>,
+        Eric Wheeler <bcache@lists.ewheeler.net>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.5 required=5.0 tests=BAYES_60,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:d35 listed in]
-        [list.dnswl.org]
-        *  1.5 BAYES_60 BODY: Bayes spam probability is 60 to 80%
-        *      [score: 0.6140]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [nschc97[at]gmail.com]
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [nschc97[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  3.0 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Are you in need of a loan? Contact us now! Amadeo Giannini.
+Hi Coly,
+
+On Mon, Feb 20, 2023 at 1:30 PM Coly Li <colyli@suse.de> wrote:
+>
+>
+>
+> > 2023=E5=B9=B42=E6=9C=8820=E6=97=A5 16:27=EF=BC=8Cmingzhe <mingzhe.zou@e=
+asystack.cn> =E5=86=99=E9=81=93=EF=BC=9A
+> >
+> >
+> >
+> > =E5=9C=A8 2023/2/19 17:39, Coly Li =E5=86=99=E9=81=93:
+> >>> 2023=E5=B9=B41=E6=9C=8827=E6=97=A5 20:44=EF=BC=8CAndrea Tomassetti <a=
+ndrea.tomassetti-opensource@devo.com> =E5=86=99=E9=81=93=EF=BC=9A
+> >>>
+> >>> From 83f490ec8e81c840bdaf69e66021d661751975f2 Mon Sep 17 00:00:00 200=
+1
+> >>> From: Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
+> >>> Date: Thu, 8 Sep 2022 09:47:55 +0200
+> >>> Subject: [PATCH v2] bcache: Add support for live resize of backing de=
+vices
+> >>>
+> >>> Signed-off-by: Andrea Tomassetti <andrea.tomassetti-opensource@devo.c=
+om>
+> >> Hi Andrea,
+> >> I am fine with this patch and added it in my test queue now. Do you ha=
+ve an updated version, (e.g. more coding refine or adding commit log), then=
+ I can update my local version.
+Thank you very much. I appreciate it. I don't have any other version,
+there's just some code in common with `bcache_device_init` but I
+couldn't find an elegant way to avoid copy paste of those few lines.
+
+> >> BTW, it could be better if the patch will be sent out as a separated e=
+mail.
+I'll send it right now on a separate thread.
+
+Thank you,
+Andrea
+
+> >> Thanks.
+> >> Coly Li
+> > Hi, Coly
+> >
+> > I posted some patchsets about online resize.
+> >
+> > -[PATCH v5 1/3] bcache: add dirty_data in struct bcache_device
+> > -[PATCH v5 2/3] bcache: allocate stripe memory when partial_stripes_exp=
+ensive is true
+> > -[PATCH v5 3/3] bcache: support online resizing of cached_dev
+> >
+> > There are some differences:
+> > 1. Create /sys/block/bcache0/bcache/size in sysfs to trigger resize
+> > 2. Allocate stripe memory only if partial_stripes_expensive is true
+> > 3. Simplify bcache_dev_sectors_dirty()
+> >
+> > Since the bcache superblock uses some sectors, the actual space of the =
+bcache device is smaller than the backing. In order to provide a bcache dev=
+ice with a user-specified size, we need to create a backing device with a l=
+arger space, and then resize bcache. So resize can specify the size is very=
+ necessary.
+> >
+> >
+>
+> Yes, they are in my for-test queue already. I will test both and make a c=
+hoice.
+>
+> Thanks.
+>
+> Coly Li
+>
+> [snipped]
+>
