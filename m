@@ -2,304 +2,128 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A6ABB6ADBA2
-	for <lists+linux-bcache@lfdr.de>; Tue,  7 Mar 2023 11:19:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC8116ADE42
+	for <lists+linux-bcache@lfdr.de>; Tue,  7 Mar 2023 13:03:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229723AbjCGKTB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 7 Mar 2023 05:19:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57114 "EHLO
+        id S230127AbjCGMDJ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 7 Mar 2023 07:03:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbjCGKTA (ORCPT
+        with ESMTP id S231187AbjCGMDI (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 7 Mar 2023 05:19:00 -0500
-Received: from mail-m3164.qiye.163.com (mail-m3164.qiye.163.com [103.74.31.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125CB31E17
-        for <linux-bcache@vger.kernel.org>; Tue,  7 Mar 2023 02:18:57 -0800 (PST)
-Received: from localhost.localdomain (unknown [218.94.118.90])
-        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id 9F4D66202C8;
-        Tue,  7 Mar 2023 18:18:55 +0800 (CST)
-From:   mingzhe <mingzhe.zou@easystack.cn>
-To:     colyli@suse.de, bcache@lists.ewheeler.net,
-        andrea.tomassetti-opensource@devo.com
-Cc:     linux-bcache@vger.kernel.org, zoumingzhe@qq.com
-Subject: [PATCH v6 3/3] bcache: support online resizing of cached_dev
-Date:   Tue,  7 Mar 2023 18:18:42 +0800
-Message-Id: <20230307101842.2450-3-mingzhe.zou@easystack.cn>
-X-Mailer: git-send-email 2.39.2.windows.1
-In-Reply-To: <20230307101842.2450-1-mingzhe.zou@easystack.cn>
+        Tue, 7 Mar 2023 07:03:08 -0500
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F0291589E
+        for <linux-bcache@vger.kernel.org>; Tue,  7 Mar 2023 04:03:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678190586; x=1709726586;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=l1clGx5jIFXWTjr0l7YZHDdAwr7fHjYS3AtzNmceqmM=;
+  b=cadxGpv6+xHPD458A6Izg8WJ66fzPY4z1VmsiJh7dtuswusYWp0fhpT5
+   HvA7UIgQeh5VIGWGXS0sIvmYoAP3lgaqHvpeWUxbGcNCB8DDAeApXlyCo
+   8wCAEjypj6ACri0YCEwcd29A4LQxeP2h7ijB1wwY7FUAeMl8/BXMqjAo8
+   9Vc5V0179kEhZ/gJLeF///SxmnssbJ6He6lIaDYebkcOLc9eH5D5XQgQx
+   VImZqjei4O6LLAiqc/lsmVKTYoXusuS6XG7hqISG6yRAcdFdvGQSSnwCC
+   L6yiG84XPnMEhzVQazmrJCp/iqaLB8w8vghDtO0l0hXCrXONuAXLCWOml
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="315487119"
+X-IronPort-AV: E=Sophos;i="5.98,240,1673942400"; 
+   d="scan'208";a="315487119"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2023 04:03:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="745438490"
+X-IronPort-AV: E=Sophos;i="5.98,240,1673942400"; 
+   d="scan'208";a="745438490"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 07 Mar 2023 04:03:03 -0800
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pZW22-0001H9-2h;
+        Tue, 07 Mar 2023 12:03:02 +0000
+Date:   Tue, 7 Mar 2023 20:02:41 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     mingzhe <mingzhe.zou@easystack.cn>, colyli@suse.de,
+        bcache@lists.ewheeler.net, andrea.tomassetti-opensource@devo.com
+Cc:     oe-kbuild-all@lists.linux.dev, linux-bcache@vger.kernel.org,
+        zoumingzhe@qq.com
+Subject: Re: [PATCH v6 1/3] bcache: add dirty_data in struct bcache_device
+Message-ID: <202303071948.FdodHBjj-lkp@intel.com>
 References: <20230307101842.2450-1-mingzhe.zou@easystack.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaH08eVhhCH08fHhgaSEhLTlUZERMWGhIXJBQOD1
-        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKQ1VKS0tVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PE06ERw5FTJPCjcZNDgTFA0a
-        Fx4aChJVSlVKTUxDSkNPSEhNSEtLVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBQktOSTcG
-X-HM-Tid: 0a86bb94c9be00a4kurm9f4d66202c8
-X-HM-MType: 1
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230307101842.2450-1-mingzhe.zou@easystack.cn>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-When partial_stripes_expensive is false, resizing causes nr_stripes to change.
-So, stripe_sectors_dirty and full_dirty_stripes memory must be reallocated.
-If the device is smaller, only nr_stripes need to be modified.
+Hi mingzhe,
 
-Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
+Thank you for the patch! Yet something to improve:
 
----
-Changelog:
-v6: Add resize in sysfs
-v5: Update api calls.
-v4: Fix up overflow and null pointer
-v3: Fix up errors.
-v2: Fix up errors.
-v1: Original verison.
----
- drivers/md/bcache/bcache.h |  1 +
- drivers/md/bcache/btree.c  | 31 ++++++++++++++
- drivers/md/bcache/btree.h  |  2 +
- drivers/md/bcache/super.c  | 86 ++++++++++++++++++++++++++++++++++++++
- drivers/md/bcache/sysfs.c  | 22 +++++++++-
- 5 files changed, 140 insertions(+), 2 deletions(-)
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.3-rc1 next-20230307]
+[cannot apply to song-md/md-next device-mapper-dm/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index db3439d65582..74498cd53e2c 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -1021,6 +1021,7 @@ void bcache_write_super(struct cache_set *c);
- 
- int bch_flash_dev_create(struct cache_set *c, uint64_t size);
- 
-+int bch_cached_dev_resize(struct cached_dev *dc, sector_t sectors);
- int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
- 			  uint8_t *set_uuid);
- void bch_cached_dev_detach(struct cached_dev *dc);
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 147c493a989a..07388e51ff9c 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -2467,6 +2467,37 @@ int bch_btree_insert(struct cache_set *c, struct keylist *keys,
- 	return ret;
- }
- 
-+int bch_btree_insert_invalidate(struct cache_set *c, unsigned int inode,
-+				sector_t offset, sector_t length)
-+{
-+	int ret = 0;
-+	sector_t num;
-+	struct keylist insert_keys;
-+
-+	bch_keylist_init(&insert_keys);
-+	while (!ret && length) {
-+		num = min_t(sector_t, length, 1U << (KEY_SIZE_BITS - 1));
-+
-+		if ((ret = __bch_keylist_realloc(&insert_keys, 2))) {
-+			pr_err("cannot allocate memory");
-+			break;
-+		}
-+
-+		offset += num;
-+		length -= num;
-+
-+		bch_keylist_add(&insert_keys, &KEY(inode, offset, num));
-+		if ((ret = bch_btree_insert(c, &insert_keys, NULL, NULL))) {
-+			pr_err("invalidating %llu sectors from %llu error %d",
-+				num, offset - num, ret);
-+			break;
-+		}
-+	}
-+	bch_keylist_free(&insert_keys);
-+
-+	return ret;
-+}
-+
- void bch_btree_set_root(struct btree *b)
- {
- 	unsigned int i;
-diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
-index 1b5fdbc0d83e..28c8885ecea1 100644
---- a/drivers/md/bcache/btree.h
-+++ b/drivers/md/bcache/btree.h
-@@ -276,6 +276,8 @@ int bch_btree_insert_check_key(struct btree *b, struct btree_op *op,
- 			       struct bkey *check_key);
- int bch_btree_insert(struct cache_set *c, struct keylist *keys,
- 		     atomic_t *journal_ref, struct bkey *replace_key);
-+int bch_btree_insert_invalidate(struct cache_set *c, unsigned int inode,
-+				sector_t offset, sector_t length);
- 
- int bch_gc_thread_start(struct cache_set *c);
- void bch_initial_gc_finish(struct cache_set *c);
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 6be02d6e0ba1..56535d79648d 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1345,6 +1345,92 @@ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
- 	return 0;
- }
- 
-+int bch_cached_dev_resize(struct cached_dev *dc, sector_t sectors)
-+{
-+	struct cache_set *c = dc->disk.c;
-+	uint64_t nr_stripes, n, i;
-+	sector_t length, sectors_dirty;
-+	atomic_t *stripe_sectors_dirty;
-+	unsigned long *full_dirty_stripes;
-+	const size_t max_stripes = min_t(size_t, INT_MAX,
-+					 SIZE_MAX / sizeof(atomic_t));
-+
-+	/* Block writeback thread and all requests */
-+	down_write(&dc->writeback_lock);
-+
-+	if (!dc->partial_stripes_expensive)
-+		goto set_capacity;
-+
-+	nr_stripes = DIV_ROUND_UP_ULL(sectors, dc->disk.stripe_size);
-+	if (!nr_stripes || nr_stripes > max_stripes) {
-+		pr_err("nr_stripes too large or invalid: %llu", nr_stripes);
-+		up_write(&dc->writeback_lock);
-+		return -ENOMEM;
-+	}
-+
-+	if (nr_stripes > dc->disk.nr_stripes)
-+		goto realloc;
-+
-+	for (i = nr_stripes; i < dc->disk.nr_stripes; i++) {
-+		sectors_dirty = atomic_read(dc->disk.stripe_sectors_dirty + i);
-+		atomic_long_sub(sectors_dirty, &dc->disk.dirty_sectors);
-+	}
-+	goto nr_stripes;
-+
-+realloc:
-+	n = nr_stripes * sizeof(atomic_t);
-+	stripe_sectors_dirty = kvzalloc(n, GFP_KERNEL);
-+	if (!stripe_sectors_dirty) {
-+		up_write(&dc->writeback_lock);
-+		return -ENOMEM;
-+	}
-+
-+	n = BITS_TO_LONGS(nr_stripes) * sizeof(unsigned long);
-+	full_dirty_stripes = kvzalloc(n, GFP_KERNEL);
-+	if (!full_dirty_stripes) {
-+		kvfree(stripe_sectors_dirty);
-+		up_write(&dc->writeback_lock);
-+		return -ENOMEM;
-+	}
-+
-+	for (i = 0; i < dc->disk.nr_stripes; i++) {
-+		sectors_dirty = atomic_read(dc->disk.stripe_sectors_dirty + i);
-+		atomic_set(stripe_sectors_dirty + i, sectors_dirty);
-+		if (sectors_dirty == dc->disk.stripe_size)
-+			set_bit(i, full_dirty_stripes);
-+	}
-+
-+	kvfree(dc->disk.full_dirty_stripes);
-+	kvfree(dc->disk.stripe_sectors_dirty);
-+	dc->disk.stripe_sectors_dirty = stripe_sectors_dirty;
-+	dc->disk.full_dirty_stripes = full_dirty_stripes;
-+
-+nr_stripes:
-+	dc->disk.nr_stripes = nr_stripes;
-+
-+set_capacity:
-+	length = get_capacity(dc->disk.disk);
-+	set_capacity_and_notify(dc->disk.disk, sectors);
-+
-+	if (!c || length <= sectors)
-+		goto skip_invalidate;
-+	length -= sectors;
-+
-+	/* invalidate dirty data not used */
-+	pr_info("invalidating %llu sectors from %llu", length, sectors);
-+	bch_btree_insert_invalidate(c, dc->disk.id, sectors, length);
-+
-+	/* recount dirty sectors */
-+	if (!dc->partial_stripes_expensive) {
-+		atomic_long_set(&dc->disk.dirty_sectors, 0);
-+		bch_sectors_dirty_init(&dc->disk);
-+	}
-+
-+skip_invalidate:
-+	up_write(&dc->writeback_lock);
-+	return 0;
-+}
-+
- /* when dc->disk.kobj released */
- void bch_cached_dev_release(struct kobject *kobj)
- {
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index c6f677059214..ee31b873ab2a 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -150,7 +150,9 @@ rw_attribute(btree_shrinker_disabled);
- rw_attribute(copy_gc_enabled);
- rw_attribute(idle_max_writeback_rate);
- rw_attribute(gc_after_writeback);
--rw_attribute(size);
-+
-+read_attribute(size);
-+write_attribute(resize);
- 
- static ssize_t bch_snprint_string_list(char *buf,
- 				       size_t size,
-@@ -194,6 +196,7 @@ SHOW(__bch_cached_dev)
- 
- 
- 	sysfs_printf(data_csum,		"%i", dc->disk.data_csum);
-+	sysfs_hprint(size,		get_capacity(dc->disk.disk) << 9);
- 	var_printf(verify,		"%i");
- 	var_printf(bypass_torture_test,	"%i");
- 	var_printf(writeback_metadata,	"%i");
-@@ -305,6 +308,18 @@ STORE(__cached_dev)
- #define d_strtoi_h(var)		sysfs_hatoi(var, dc->var)
- 
- 	sysfs_strtoul(data_csum,	dc->disk.data_csum);
-+
-+	if (attr == &sysfs_resize) {
-+		ssize_t ret;
-+		sector_t v, max, sectors;
-+
-+		strtoi_h_or_return(buf, v);
-+		max = bdev_nr_sectors(dc->bdev) - dc->sb.data_offset;
-+		sectors = clamp_t(sector_t, v >> 9, 0, max);
-+		ret = bch_cached_dev_resize(dc, sectors);
-+		return ret ? ret : size;
-+	}
-+
- 	d_strtoul(verify);
- 	sysfs_strtoul_bool(bypass_torture_test, dc->bypass_torture_test);
- 	sysfs_strtoul_bool(writeback_metadata, dc->writeback_metadata);
-@@ -535,6 +550,8 @@ static struct attribute *bch_cached_dev_attrs[] = {
- 	&sysfs_running,
- 	&sysfs_state,
- 	&sysfs_label,
-+	&sysfs_size,
-+	&sysfs_resize,
- #ifdef CONFIG_BCACHE_DEBUG
- 	&sysfs_verify,
- 	&sysfs_bypass_torture_test,
-@@ -577,7 +594,7 @@ STORE(__bch_flash_dev)
- 
- 	sysfs_strtoul(data_csum,	d->data_csum);
- 
--	if (attr == &sysfs_size) {
-+	if (attr == &sysfs_resize) {
- 		uint64_t v;
- 
- 		strtoi_h_or_return(buf, v);
-@@ -608,6 +625,7 @@ static struct attribute *bch_flash_dev_attrs[] = {
- #endif
- 	&sysfs_label,
- 	&sysfs_size,
-+	&sysfs_resize,
- 	NULL
- };
- ATTRIBUTE_GROUPS(bch_flash_dev);
+url:    https://github.com/intel-lab-lkp/linux/commits/mingzhe/bcache-allocate-stripe-memory-when-partial_stripes_expensive-is-true/20230307-181923
+patch link:    https://lore.kernel.org/r/20230307101842.2450-1-mingzhe.zou%40easystack.cn
+patch subject: [PATCH v6 1/3] bcache: add dirty_data in struct bcache_device
+config: m68k-allyesconfig (attached as .config)
+compiler: m68k-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/9c7354d0ffcbc41178540901315f22fb0a16b11a
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review mingzhe/bcache-allocate-stripe-memory-when-partial_stripes_expensive-is-true/20230307-181923
+        git checkout 9c7354d0ffcbc41178540901315f22fb0a16b11a
+        # save the config file
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 ARCH=m68k olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 ARCH=m68k 
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303071948.FdodHBjj-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/Kconfig:42: can't open file "drivers/md/Kconfig"
+   make[2]: *** [scripts/kconfig/Makefile:77: allyesconfig] Error 1
+   make[1]: *** [Makefile:693: allyesconfig] Error 2
+   make: *** [Makefile:226: __sub-make] Error 2
+   make: Target 'allyesconfig' not remade because of errors.
+--
+>> drivers/Kconfig:42: can't open file "drivers/md/Kconfig"
+   make[2]: *** [scripts/kconfig/Makefile:77: oldconfig] Error 1
+   make[1]: *** [Makefile:693: oldconfig] Error 2
+   make: *** [Makefile:226: __sub-make] Error 2
+   make: Target 'oldconfig' not remade because of errors.
+--
+>> drivers/Kconfig:42: can't open file "drivers/md/Kconfig"
+   make[2]: *** [scripts/kconfig/Makefile:77: olddefconfig] Error 1
+   make[1]: *** [Makefile:693: olddefconfig] Error 2
+   make: *** [Makefile:226: __sub-make] Error 2
+   make: Target 'olddefconfig' not remade because of errors.
+
+
+vim +42 drivers/Kconfig
+
+c6fd280766a050 Jeff Garzik    2006-08-10  41  
+^1da177e4c3f41 Linus Torvalds 2005-04-16 @42  source "drivers/md/Kconfig"
+^1da177e4c3f41 Linus Torvalds 2005-04-16  43  
+
 -- 
-2.39.2.windows.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
