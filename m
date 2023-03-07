@@ -2,41 +2,41 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F18536ADBA3
+	by mail.lfdr.de (Postfix) with ESMTP id A6ABB6ADBA2
 	for <lists+linux-bcache@lfdr.de>; Tue,  7 Mar 2023 11:19:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229671AbjCGKTC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 7 Mar 2023 05:19:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57116 "EHLO
+        id S229723AbjCGKTB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 7 Mar 2023 05:19:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbjCGKTA (ORCPT
+        with ESMTP id S229671AbjCGKTA (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
         Tue, 7 Mar 2023 05:19:00 -0500
 Received: from mail-m3164.qiye.163.com (mail-m3164.qiye.163.com [103.74.31.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 127653527D
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125CB31E17
         for <linux-bcache@vger.kernel.org>; Tue,  7 Mar 2023 02:18:57 -0800 (PST)
 Received: from localhost.localdomain (unknown [218.94.118.90])
-        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id E738762036E;
-        Tue,  7 Mar 2023 18:18:54 +0800 (CST)
+        by mail-m3164.qiye.163.com (Hmail) with ESMTPA id 9F4D66202C8;
+        Tue,  7 Mar 2023 18:18:55 +0800 (CST)
 From:   mingzhe <mingzhe.zou@easystack.cn>
 To:     colyli@suse.de, bcache@lists.ewheeler.net,
         andrea.tomassetti-opensource@devo.com
 Cc:     linux-bcache@vger.kernel.org, zoumingzhe@qq.com
-Subject: [PATCH v6 2/3] bcache: allocate stripe memory when partial_stripes_expensive is true
-Date:   Tue,  7 Mar 2023 18:18:41 +0800
-Message-Id: <20230307101842.2450-2-mingzhe.zou@easystack.cn>
+Subject: [PATCH v6 3/3] bcache: support online resizing of cached_dev
+Date:   Tue,  7 Mar 2023 18:18:42 +0800
+Message-Id: <20230307101842.2450-3-mingzhe.zou@easystack.cn>
 X-Mailer: git-send-email 2.39.2.windows.1
 In-Reply-To: <20230307101842.2450-1-mingzhe.zou@easystack.cn>
 References: <20230307101842.2450-1-mingzhe.zou@easystack.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTh9PVk9PSUlNSEtDGkNMSVUZERMWGhIXJBQOD1
-        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ORw6KCo6VjICMDcVDjlPFBAK
-        EBFPCy9VSlVKTUxDSkNPSEhOTk5IVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTU5MSzcG
-X-HM-Tid: 0a86bb94c6fe00a4kurme738762036e
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaH08eVhhCH08fHhgaSEhLTlUZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKQ1VKS0tVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PE06ERw5FTJPCjcZNDgTFA0a
+        Fx4aChJVSlVKTUxDSkNPSEhNSEtLVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBQktOSTcG
+X-HM-Tid: 0a86bb94c9be00a4kurm9f4d66202c8
 X-HM-MType: 1
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
@@ -46,161 +46,260 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Currently, bcache_device (cached_dev and flash_dev) always allocate
-memory for stripe_sectors_dirty and full_dirty_stripes, regardless of
-whether partial_stripes_expensive is true or not. When the device's
-partial_stripes_expensive is false, only bcache_dev_sectors_dirty_add()
-will use stripe_sectors_dirty.
-
-When stripe_size is 0, it is forced to 2^31, which is about 1T (2^31*512).
-However, some non-raid devices (such as rbd) will provide non-zero io_opt.
-In https://bugzilla.redhat.com/show_bug.cgi?id=1783075, some block devices
-which large capacity (e.g. 8TB) but small io_opt size (e.g. 8 sectors), the
-nr_stripes will be very large. Even though the overflow bug is fixed in
-65f0f017e7be and 7a1481267999, it still returns an error when register.
-
-I don't think it's necessary to allocate stripe memory for devices where
-partial_stripes_expensive is false. This patch will allocate stripe memory
-when partial_stripes_expensive is true.
+When partial_stripes_expensive is false, resizing causes nr_stripes to change.
+So, stripe_sectors_dirty and full_dirty_stripes memory must be reallocated.
+If the device is smaller, only nr_stripes need to be modified.
 
 Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
 
 ---
 Changelog:
+v6: Add resize in sysfs
+v5: Update api calls.
+v4: Fix up overflow and null pointer
+v3: Fix up errors.
 v2: Fix up errors.
 v1: Original verison.
 ---
- drivers/md/bcache/super.c     | 32 ++++++++++++++++++++++----------
- drivers/md/bcache/writeback.c | 14 ++++++++++----
- 2 files changed, 32 insertions(+), 14 deletions(-)
+ drivers/md/bcache/bcache.h |  1 +
+ drivers/md/bcache/btree.c  | 31 ++++++++++++++
+ drivers/md/bcache/btree.h  |  2 +
+ drivers/md/bcache/super.c  | 86 ++++++++++++++++++++++++++++++++++++++
+ drivers/md/bcache/sysfs.c  | 22 +++++++++-
+ 5 files changed, 140 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index db3439d65582..74498cd53e2c 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -1021,6 +1021,7 @@ void bcache_write_super(struct cache_set *c);
+ 
+ int bch_flash_dev_create(struct cache_set *c, uint64_t size);
+ 
++int bch_cached_dev_resize(struct cached_dev *dc, sector_t sectors);
+ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
+ 			  uint8_t *set_uuid);
+ void bch_cached_dev_detach(struct cached_dev *dc);
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 147c493a989a..07388e51ff9c 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -2467,6 +2467,37 @@ int bch_btree_insert(struct cache_set *c, struct keylist *keys,
+ 	return ret;
+ }
+ 
++int bch_btree_insert_invalidate(struct cache_set *c, unsigned int inode,
++				sector_t offset, sector_t length)
++{
++	int ret = 0;
++	sector_t num;
++	struct keylist insert_keys;
++
++	bch_keylist_init(&insert_keys);
++	while (!ret && length) {
++		num = min_t(sector_t, length, 1U << (KEY_SIZE_BITS - 1));
++
++		if ((ret = __bch_keylist_realloc(&insert_keys, 2))) {
++			pr_err("cannot allocate memory");
++			break;
++		}
++
++		offset += num;
++		length -= num;
++
++		bch_keylist_add(&insert_keys, &KEY(inode, offset, num));
++		if ((ret = bch_btree_insert(c, &insert_keys, NULL, NULL))) {
++			pr_err("invalidating %llu sectors from %llu error %d",
++				num, offset - num, ret);
++			break;
++		}
++	}
++	bch_keylist_free(&insert_keys);
++
++	return ret;
++}
++
+ void bch_btree_set_root(struct btree *b)
+ {
+ 	unsigned int i;
+diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
+index 1b5fdbc0d83e..28c8885ecea1 100644
+--- a/drivers/md/bcache/btree.h
++++ b/drivers/md/bcache/btree.h
+@@ -276,6 +276,8 @@ int bch_btree_insert_check_key(struct btree *b, struct btree_op *op,
+ 			       struct bkey *check_key);
+ int bch_btree_insert(struct cache_set *c, struct keylist *keys,
+ 		     atomic_t *journal_ref, struct bkey *replace_key);
++int bch_btree_insert_invalidate(struct cache_set *c, unsigned int inode,
++				sector_t offset, sector_t length);
+ 
+ int bch_gc_thread_start(struct cache_set *c);
+ void bch_initial_gc_finish(struct cache_set *c);
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index ba3909bb6bea..6be02d6e0ba1 100644
+index 6be02d6e0ba1..56535d79648d 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -887,15 +887,20 @@ static void bcache_device_free(struct bcache_device *d)
- 	}
- 
- 	bioset_exit(&d->bio_split);
--	kvfree(d->full_dirty_stripes);
--	kvfree(d->stripe_sectors_dirty);
-+
-+	if (d->full_dirty_stripes)
-+		kvfree(d->full_dirty_stripes);
-+
-+	if (d->stripe_sectors_dirty)
-+		kvfree(d->stripe_sectors_dirty);
- 
- 	closure_debug_destroy(&d->cl);
+@@ -1345,6 +1345,92 @@ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
+ 	return 0;
  }
  
- static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
--		sector_t sectors, struct block_device *cached_bdev,
--		const struct block_device_operations *ops)
-+			      sector_t sectors, bool enable_stripe,
-+			      struct block_device *cached_bdev,
-+			      const struct block_device_operations *ops)
++int bch_cached_dev_resize(struct cached_dev *dc, sector_t sectors)
++{
++	struct cache_set *c = dc->disk.c;
++	uint64_t nr_stripes, n, i;
++	sector_t length, sectors_dirty;
++	atomic_t *stripe_sectors_dirty;
++	unsigned long *full_dirty_stripes;
++	const size_t max_stripes = min_t(size_t, INT_MAX,
++					 SIZE_MAX / sizeof(atomic_t));
++
++	/* Block writeback thread and all requests */
++	down_write(&dc->writeback_lock);
++
++	if (!dc->partial_stripes_expensive)
++		goto set_capacity;
++
++	nr_stripes = DIV_ROUND_UP_ULL(sectors, dc->disk.stripe_size);
++	if (!nr_stripes || nr_stripes > max_stripes) {
++		pr_err("nr_stripes too large or invalid: %llu", nr_stripes);
++		up_write(&dc->writeback_lock);
++		return -ENOMEM;
++	}
++
++	if (nr_stripes > dc->disk.nr_stripes)
++		goto realloc;
++
++	for (i = nr_stripes; i < dc->disk.nr_stripes; i++) {
++		sectors_dirty = atomic_read(dc->disk.stripe_sectors_dirty + i);
++		atomic_long_sub(sectors_dirty, &dc->disk.dirty_sectors);
++	}
++	goto nr_stripes;
++
++realloc:
++	n = nr_stripes * sizeof(atomic_t);
++	stripe_sectors_dirty = kvzalloc(n, GFP_KERNEL);
++	if (!stripe_sectors_dirty) {
++		up_write(&dc->writeback_lock);
++		return -ENOMEM;
++	}
++
++	n = BITS_TO_LONGS(nr_stripes) * sizeof(unsigned long);
++	full_dirty_stripes = kvzalloc(n, GFP_KERNEL);
++	if (!full_dirty_stripes) {
++		kvfree(stripe_sectors_dirty);
++		up_write(&dc->writeback_lock);
++		return -ENOMEM;
++	}
++
++	for (i = 0; i < dc->disk.nr_stripes; i++) {
++		sectors_dirty = atomic_read(dc->disk.stripe_sectors_dirty + i);
++		atomic_set(stripe_sectors_dirty + i, sectors_dirty);
++		if (sectors_dirty == dc->disk.stripe_size)
++			set_bit(i, full_dirty_stripes);
++	}
++
++	kvfree(dc->disk.full_dirty_stripes);
++	kvfree(dc->disk.stripe_sectors_dirty);
++	dc->disk.stripe_sectors_dirty = stripe_sectors_dirty;
++	dc->disk.full_dirty_stripes = full_dirty_stripes;
++
++nr_stripes:
++	dc->disk.nr_stripes = nr_stripes;
++
++set_capacity:
++	length = get_capacity(dc->disk.disk);
++	set_capacity_and_notify(dc->disk.disk, sectors);
++
++	if (!c || length <= sectors)
++		goto skip_invalidate;
++	length -= sectors;
++
++	/* invalidate dirty data not used */
++	pr_info("invalidating %llu sectors from %llu", length, sectors);
++	bch_btree_insert_invalidate(c, dc->disk.id, sectors, length);
++
++	/* recount dirty sectors */
++	if (!dc->partial_stripes_expensive) {
++		atomic_long_set(&dc->disk.dirty_sectors, 0);
++		bch_sectors_dirty_init(&dc->disk);
++	}
++
++skip_invalidate:
++	up_write(&dc->writeback_lock);
++	return 0;
++}
++
+ /* when dc->disk.kobj released */
+ void bch_cached_dev_release(struct kobject *kobj)
  {
- 	struct request_queue *q;
- 	const size_t max_stripes = min_t(size_t, INT_MAX,
-@@ -903,6 +908,9 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
- 	uint64_t n;
- 	int idx;
- 
-+	if (!enable_stripe)
-+		goto skip_stripe;
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index c6f677059214..ee31b873ab2a 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -150,7 +150,9 @@ rw_attribute(btree_shrinker_disabled);
+ rw_attribute(copy_gc_enabled);
+ rw_attribute(idle_max_writeback_rate);
+ rw_attribute(gc_after_writeback);
+-rw_attribute(size);
 +
- 	if (!d->stripe_size)
- 		d->stripe_size = 1 << 31;
++read_attribute(size);
++write_attribute(resize);
  
-@@ -924,6 +932,7 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
- 	if (!d->full_dirty_stripes)
- 		goto out_free_stripe_sectors_dirty;
+ static ssize_t bch_snprint_string_list(char *buf,
+ 				       size_t size,
+@@ -194,6 +196,7 @@ SHOW(__bch_cached_dev)
  
-+skip_stripe:
- 	idx = ida_simple_get(&bcache_device_idx, 0,
- 				BCACHE_DEVICE_IDX_MAX, GFP_KERNEL);
- 	if (idx < 0)
-@@ -982,9 +991,11 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
- out_ida_remove:
- 	ida_simple_remove(&bcache_device_idx, idx);
- out_free_full_dirty_stripes:
--	kvfree(d->full_dirty_stripes);
-+	if (d->full_dirty_stripes)
-+		kvfree(d->full_dirty_stripes);
- out_free_stripe_sectors_dirty:
--	kvfree(d->stripe_sectors_dirty);
-+	if (d->stripe_sectors_dirty)
-+		kvfree(d->stripe_sectors_dirty);
- 	return -ENOMEM;
  
- }
-@@ -1397,6 +1408,7 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
- 	int ret;
- 	struct io *io;
- 	struct request_queue *q = bdev_get_queue(dc->bdev);
-+	sector_t sectors = bdev_nr_sectors(dc->bdev) - dc->sb.data_offset;
+ 	sysfs_printf(data_csum,		"%i", dc->disk.data_csum);
++	sysfs_hprint(size,		get_capacity(dc->disk.disk) << 9);
+ 	var_printf(verify,		"%i");
+ 	var_printf(bypass_torture_test,	"%i");
+ 	var_printf(writeback_metadata,	"%i");
+@@ -305,6 +308,18 @@ STORE(__cached_dev)
+ #define d_strtoi_h(var)		sysfs_hatoi(var, dc->var)
  
- 	__module_get(THIS_MODULE);
- 	INIT_LIST_HEAD(&dc->list);
-@@ -1422,9 +1434,9 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
- 		dc->partial_stripes_expensive =
- 			q->limits.raid_partial_stripes_expensive;
- 
--	ret = bcache_device_init(&dc->disk, block_size,
--			 bdev_nr_sectors(dc->bdev) - dc->sb.data_offset,
--			 dc->bdev, &bcache_cached_ops);
-+	ret = bcache_device_init(&dc->disk, block_size, sectors,
-+				 dc->partial_stripes_expensive,
-+				 dc->bdev, &bcache_cached_ops);
- 	if (ret)
- 		return ret;
- 
-@@ -1535,7 +1547,7 @@ static int flash_dev_run(struct cache_set *c, struct uuid_entry *u)
- 
- 	kobject_init(&d->kobj, &bch_flash_dev_ktype);
- 
--	if (bcache_device_init(d, block_bytes(c->cache), u->sectors,
-+	if (bcache_device_init(d, block_bytes(c->cache), u->sectors, false,
- 			NULL, &bcache_flash_ops))
- 		goto err;
- 
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 65c997b25cca..e2ac1a863fee 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -596,6 +596,7 @@ static void read_dirty(struct cached_dev *dc)
- void bcache_dev_sectors_dirty_add(struct cache_set *c, unsigned int inode,
- 				  uint64_t offset, int nr_sectors)
- {
-+	struct cached_dev *dc = NULL;
- 	struct bcache_device *d = c->devices[inode];
- 	unsigned int stripe_offset, sectors_dirty;
- 	int stripe;
-@@ -603,14 +604,19 @@ void bcache_dev_sectors_dirty_add(struct cache_set *c, unsigned int inode,
- 	if (!d)
- 		return;
- 
--	stripe = offset_to_stripe(d, offset);
--	if (stripe < 0)
--		return;
--
- 	atomic_long_add(nr_sectors, &d->dirty_sectors);
- 
- 	if (UUID_FLASH_ONLY(&c->uuids[inode]))
- 		atomic_long_add(nr_sectors, &c->flash_dev_dirty_sectors);
-+	else
-+		dc = container_of(d, struct cached_dev, disk);
+ 	sysfs_strtoul(data_csum,	dc->disk.data_csum);
 +
-+	if (!dc || !dc->partial_stripes_expensive)
-+		return;
++	if (attr == &sysfs_resize) {
++		ssize_t ret;
++		sector_t v, max, sectors;
 +
-+	stripe = offset_to_stripe(d, offset);
-+	if (stripe < 0)
-+		return;
++		strtoi_h_or_return(buf, v);
++		max = bdev_nr_sectors(dc->bdev) - dc->sb.data_offset;
++		sectors = clamp_t(sector_t, v >> 9, 0, max);
++		ret = bch_cached_dev_resize(dc, sectors);
++		return ret ? ret : size;
++	}
++
+ 	d_strtoul(verify);
+ 	sysfs_strtoul_bool(bypass_torture_test, dc->bypass_torture_test);
+ 	sysfs_strtoul_bool(writeback_metadata, dc->writeback_metadata);
+@@ -535,6 +550,8 @@ static struct attribute *bch_cached_dev_attrs[] = {
+ 	&sysfs_running,
+ 	&sysfs_state,
+ 	&sysfs_label,
++	&sysfs_size,
++	&sysfs_resize,
+ #ifdef CONFIG_BCACHE_DEBUG
+ 	&sysfs_verify,
+ 	&sysfs_bypass_torture_test,
+@@ -577,7 +594,7 @@ STORE(__bch_flash_dev)
  
- 	stripe_offset = offset & (d->stripe_size - 1);
+ 	sysfs_strtoul(data_csum,	d->data_csum);
  
+-	if (attr == &sysfs_size) {
++	if (attr == &sysfs_resize) {
+ 		uint64_t v;
+ 
+ 		strtoi_h_or_return(buf, v);
+@@ -608,6 +625,7 @@ static struct attribute *bch_flash_dev_attrs[] = {
+ #endif
+ 	&sysfs_label,
+ 	&sysfs_size,
++	&sysfs_resize,
+ 	NULL
+ };
+ ATTRIBUTE_GROUPS(bch_flash_dev);
 -- 
 2.39.2.windows.1
 
