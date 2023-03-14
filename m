@@ -2,48 +2,48 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 802666BDB10
-	for <lists+linux-bcache@lfdr.de>; Thu, 16 Mar 2023 22:36:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46F4A6BE655
+	for <lists+linux-bcache@lfdr.de>; Fri, 17 Mar 2023 11:15:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229692AbjCPVgi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 16 Mar 2023 17:36:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37778 "EHLO
+        id S229534AbjCQKPK (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 17 Mar 2023 06:15:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbjCPVgh (ORCPT
+        with ESMTP id S229966AbjCQKPJ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 16 Mar 2023 17:36:37 -0400
+        Fri, 17 Mar 2023 06:15:09 -0400
 Received: from sragenkab.go.id (mail.sragenkab.go.id [103.172.109.4])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 348645BC99
-        for <linux-bcache@vger.kernel.org>; Thu, 16 Mar 2023 14:36:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 57D6A7D81
+        for <linux-bcache@vger.kernel.org>; Fri, 17 Mar 2023 03:15:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sragenkab.go.id;
          h=mime-version:content-type:content-transfer-encoding:date:from
         :to:subject:reply-to:message-id; q=dns/txt; s=dkim1; bh=QGcIAmD5
-        O/Y9qXzDV8MxyimbsW3+rMaQ/kz75GzBHbk=; b=qaxj4dUxOVFwqa1ijOXiOM+h
-        DAyYzgD/heliEQc0iqereYdrwE0IbwRbmNf4Vy//1IQnKnuhmBCmz4cCYCSnEHMm
-        NLPLwpXF6fdM5BFbrcE0Zt4HbXg0P/yx9ySN9xe3vUJwvvmS0FI2cBzPYLmRA5La
-        YI76/Xl/upU0llabR+T8N0Q8RhMWEkA9lEZBHrkn2zyDGy2iSvW073HUM/SVRNNI
-        ic3umxZSJ4KiH2xm2u8ePVY5Fzl3ambUfduOI2EzZLFDAP3B6oQ+uyaoSeNSJtYL
-        lf4raskS0m1HYGPstPr9FaAZlwMRqHZ2niKV3/ub+1e1o4rJU1q05Mj1UYiZjA==
-Received: (qmail 67778 invoked from network); 15 Mar 2023 02:20:46 -0000
+        O/Y9qXzDV8MxyimbsW3+rMaQ/kz75GzBHbk=; b=yVxX3+WBQo3sGJb28wHP45qe
+        I6LWvEOpiT4dHZ1Rnn/FfwD5yTbW3mQD8/bfW7z1khsaxflagoQsuxsua+OzXdWN
+        lAvjJoh05krrM630tvaGG2Y8n3Tz4GjUvaDPHYVQhM8MDiLadqWijXE9x+gmsWGQ
+        T7g6n4WYICG3FKk8/5R8Cn+EL49OcjIYOiOSFikoueXaJi6YQRATTefBHbbYyb28
+        Y5AoR5bDMkIeEuMcP3dg9Rm5g7M0tRRv0ZepQutqhIw+8ifgZwm/4mwJaZfPvQ+I
+        lab1HaOnMk9H64S8sfRW63lDuIqcD/pWWOcNV+4KMBiDKnwIvcG5NjBpbRupNw==
+Received: (qmail 88172 invoked from network); 14 Mar 2023 21:21:47 -0000
 Received: from localhost (HELO mail2.sragenkab.go.id) (127.0.0.1)
-  by localhost with SMTP; 15 Mar 2023 02:20:46 -0000
+  by localhost with SMTP; 14 Mar 2023 21:21:47 -0000
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 14 Mar 2023 19:20:45 -0700
+Date:   Tue, 14 Mar 2023 14:21:46 -0700
 From:   Ibrahim Tafa <jurnalsukowati@sragenkab.go.id>
 To:     undisclosed-recipients:;
-Subject: LOAN OPPORTUNITY AT LOW-INTEREST RATE.!
+Subject: LOAN OPPORTUNITY AT LOW-INTEREST RATE
 Reply-To: <ibrahimtafa@abienceinvestmentsfze.com>
 Mail-Reply-To: <ibrahimtafa@abienceinvestmentsfze.com>
-Message-ID: <eedb6b710f8a180efdaef8c4f58a4c4c@sragenkab.go.id>
+Message-ID: <b8a601f09ac660119fe78f6ee653386a@sragenkab.go.id>
 X-Sender: jurnalsukowati@sragenkab.go.id
 User-Agent: Roundcube Webmail/0.8.1
 X-Spam-Status: No, score=3.1 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        SUBJ_ALL_CAPS,UNDISC_MONEY autolearn=no autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
+        SPF_PASS,SUBJ_ALL_CAPS,UNDISC_MONEY,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
