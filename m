@@ -2,76 +2,68 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 191BA6BAA6A
-	for <lists+linux-bcache@lfdr.de>; Wed, 15 Mar 2023 09:06:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 802666BDB10
+	for <lists+linux-bcache@lfdr.de>; Thu, 16 Mar 2023 22:36:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230376AbjCOIGE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 15 Mar 2023 04:06:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51912 "EHLO
+        id S229692AbjCPVgi (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 16 Mar 2023 17:36:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230348AbjCOIGD (ORCPT
+        with ESMTP id S229534AbjCPVgh (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 15 Mar 2023 04:06:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDA4C22113;
-        Wed, 15 Mar 2023 01:06:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4506761BE6;
-        Wed, 15 Mar 2023 08:06:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56FF2C433D2;
-        Wed, 15 Mar 2023 08:05:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1678867559;
-        bh=QoCkV91dLU3WdHeO9GZXCr4B6ThMlsaAQLPzVTot7m4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fDsPpmTCNSsGF5lsh1aWR5FL/47tgALDQ/WeBflRXG1zeZ/XBvcCVaoDUteBl24U+
-         olCp0YVHxDniZLdyI2r4QArAjhy101qk+LrB72cfJBuLXCukakHbxwiFW1FDpMwnRu
-         xMzTggI61fQJSKPYhEq5IeazJtcGPA7AXWpssu1w=
-Date:   Wed, 15 Mar 2023 09:05:57 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Eric Wheeler <stable@lists.ewheeler.net>
-Cc:     stable@vger.kernel.org, linux-bcache@vger.kernel.org,
-        Coly Li <colyli@suse.de>
-Subject: Re: [CHERRY-PICK] bcache: fixes that missed a Cc:
- stable@vger.kernel.org
-Message-ID: <ZBF8ZcxFggKt6FAq@kroah.com>
-References: <81201ca-5263-1b20-8e21-8c88edb552c9@ewheeler.net>
- <ZALpL/xVJHFwuCIL@kroah.com>
+        Thu, 16 Mar 2023 17:36:37 -0400
+Received: from sragenkab.go.id (mail.sragenkab.go.id [103.172.109.4])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 348645BC99
+        for <linux-bcache@vger.kernel.org>; Thu, 16 Mar 2023 14:36:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sragenkab.go.id;
+         h=mime-version:content-type:content-transfer-encoding:date:from
+        :to:subject:reply-to:message-id; q=dns/txt; s=dkim1; bh=QGcIAmD5
+        O/Y9qXzDV8MxyimbsW3+rMaQ/kz75GzBHbk=; b=qaxj4dUxOVFwqa1ijOXiOM+h
+        DAyYzgD/heliEQc0iqereYdrwE0IbwRbmNf4Vy//1IQnKnuhmBCmz4cCYCSnEHMm
+        NLPLwpXF6fdM5BFbrcE0Zt4HbXg0P/yx9ySN9xe3vUJwvvmS0FI2cBzPYLmRA5La
+        YI76/Xl/upU0llabR+T8N0Q8RhMWEkA9lEZBHrkn2zyDGy2iSvW073HUM/SVRNNI
+        ic3umxZSJ4KiH2xm2u8ePVY5Fzl3ambUfduOI2EzZLFDAP3B6oQ+uyaoSeNSJtYL
+        lf4raskS0m1HYGPstPr9FaAZlwMRqHZ2niKV3/ub+1e1o4rJU1q05Mj1UYiZjA==
+Received: (qmail 67778 invoked from network); 15 Mar 2023 02:20:46 -0000
+Received: from localhost (HELO mail2.sragenkab.go.id) (127.0.0.1)
+  by localhost with SMTP; 15 Mar 2023 02:20:46 -0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZALpL/xVJHFwuCIL@kroah.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 14 Mar 2023 19:20:45 -0700
+From:   Ibrahim Tafa <jurnalsukowati@sragenkab.go.id>
+To:     undisclosed-recipients:;
+Subject: LOAN OPPORTUNITY AT LOW-INTEREST RATE.!
+Reply-To: <ibrahimtafa@abienceinvestmentsfze.com>
+Mail-Reply-To: <ibrahimtafa@abienceinvestmentsfze.com>
+Message-ID: <eedb6b710f8a180efdaef8c4f58a4c4c@sragenkab.go.id>
+X-Sender: jurnalsukowati@sragenkab.go.id
+User-Agent: Roundcube Webmail/0.8.1
+X-Spam-Status: No, score=3.1 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        SUBJ_ALL_CAPS,UNDISC_MONEY autolearn=no autolearn_force=no
         version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Sat, Mar 04, 2023 at 07:46:07AM +0100, Greg KH wrote:
-> On Fri, Mar 03, 2023 at 01:26:53PM -0800, Eric Wheeler wrote:
-> > Dear stable tree maintainers: 
-> > 
-> > Please pick the following commits that should be pulled into stable but 
-> > missed the `Cc` tag to make it happen automatically.
-> > 
-> > I have checked with Coly, the bcache maintainer, and he agrees that they 
-> > should go into stable:
-> > 
-> > 
-> > d55f7cb2e5c0 bcache: fix error info in register_bcache()
-> > 7b1002f7cfe5 bcache: fixup bcache_dev_sectors_dirty_add() multithreaded CPU false sharing
-> > a1a2d8f0162b bcache: avoid unnecessary soft lockup in kworker update_writeback_rate()
-> > 
-> > # NOTICE: These two depend on each other, so apply both or neither!
-> > 0259d4498ba4 bcache: move calc_cached_dev_sectors to proper place on backing device detach
-> > aa97f6cdb7e9 bcache: fix NULL pointer reference in cached_dev_detach_finish
-> 
-> What stable tree(s) should these all go to?
 
-Dropped from my queue due to lack of response :(
+
+-- 
+Greetings,
+   I am contacting you based on the Investment/Loan opportunity for 
+companies in need of financing a project/business, We have developed a 
+new method of financing that doesn't take long to receive financing from 
+our clients.
+    If you are looking for funds to finance your project/Business or if 
+you are willing to work as our agent in your country to find clients in 
+need of financing and earn commissions, then get back to me for more 
+details.
+
+Regards,
+Ibrahim Tafa
+ABIENCE INVESTMENT GROUP FZE, United Arab Emirates
