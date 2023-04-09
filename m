@@ -2,64 +2,64 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 670296DC15B
-	for <lists+linux-bcache@lfdr.de>; Sun,  9 Apr 2023 22:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FDF86DC176
+	for <lists+linux-bcache@lfdr.de>; Sun,  9 Apr 2023 23:08:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229568AbjDIUPQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 9 Apr 2023 16:15:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51420 "EHLO
+        id S229462AbjDIVII (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sun, 9 Apr 2023 17:08:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjDIUPP (ORCPT
+        with ESMTP id S229455AbjDIVIH (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 9 Apr 2023 16:15:15 -0400
-Received: from sonic305-3.consmr.mail.bf2.yahoo.com (sonic305-3.consmr.mail.bf2.yahoo.com [74.6.133.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A0D13598
-        for <linux-bcache@vger.kernel.org>; Sun,  9 Apr 2023 13:15:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com.br; s=s2048; t=1681071312; bh=0dUvSeulfbZqUac4MFsfI4ifB1orWT6XGek2/VI0Ptw=; h=Date:From:To:Cc:In-Reply-To:References:Subject:From:Subject:Reply-To; b=AIhFBJ2eNLIboaGlXN/CcLAsnPxSXiSiw7NeTOI4/iP26edcdXCqLOUKT+ScOBbx7XM3tsk/h2OSLDhzcsesva+A/DRbz2+lrzxvP2XJDdpQ2Lb4yfszxqpwDErPF6CmaERS8MFdrOwEnaf3zRQdlgNgGS5+KYnKUN6drxGxZg3u2Xkb/H5OmzKKddJ/gABRLEa+PWhYHRk2KvShAgQXbPqNCgu3WYQQgPW/+qqH9tVL15PAHylq7XovSeMBeYbZsB36enA1zwJno6aH/LjHGRDzXcJwDArkgHSrkjtEb3+OMtKzZT7AGDnkIQD5hzFOA6BS72t9ukl3aDJopesi5Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1681071312; bh=TjHttEgpi+zPENigv23ih/85p405G5298bRObxvb7FE=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=QKwxjLGfSjvkZqvXn7SoppSm6ZND6mQZ4S0UTBryMQE9s+5D3KqY7i6ZcMx/SmPIZqWtTZgczvNR+TQaY1KIGGsxWkwdvDCe6Llc5QeSN0kJ0xX4cqAKeO+hotya+C/aUTC3FfvinkdMPtWVT2Yp0zEkGrIMyLAwVsJJ+UNASGR2i3x3d0l9N3ok43fntO6px/Hh2Gic8pWwpEdx/mLirdfu5ZB7aFz0dkqfxWoxs75Jyzhg8yS3p5YTRa3YLwWpW/ZHVTTmCsD5MO6BS6sRq8bhPyJ8suuMybEgzK/bpapRjQ4saCOnu/srOZYGMs5xDn7E9mFAOk6LT4DA2XCIOA==
-X-YMail-OSG: MkoV0LoVM1loKniFKlLBafHsS9XVtmKEKb5Zg2heaPs2nrH_nHpG1FIfkrR20mA
- XR6gtqGSSfskebXBqC4fSODqG_7TF6.J5DIeny7pCyuJ3hUNgRvpCQbpnr7nAgmk8.D7Tm7KQT1r
- JbJ1GwxfyEE6.JCa8Dmh2vJmQi4XgJO3hxOfDIHXNELx6opyjTZvlyxzPSvJCMW5rTCo9fLKqaIP
- ZMDrcAPrCwynWoYtXPt9RDCWNazf8Lj2ICO25Szm8bmzWo9u5zSJlacf1InlgYC7V2.C.O0P2yGe
- UhQSEixOSJcIIUuBOJyYEJpiacDRGMZxCIe3JqiEGiOopkO91s2bK3OhMUYjY9tqwEGt7CfINmaQ
- LBmLcx63yQWcYu9oFrtSB5XxFR_6GFaB6.axdIvJmS1kiP8htTwnlaYiZKNfu655fScdCC35yQm2
- OQzHT7Ikv7TC9s_NSm9JKvUrCSw.LZHxabMSEQSoMb9Ar1NELrG5KJZEbuan3HHwyD2MKKYLt4ra
- Wup_Iu1nPhZZBU5iFdN74jkxE0PG1yms6dmzGtdhm2_6XnTvYG_rhNw_2Jx7EsSUwImb29aA6Y1L
- qMkBECgwWrCEsHgTAugdcD7xEjvo9EQmES2PUzDbFTczEAtT.JT8bgo4.HL2CblyyWnlT3C9aImA
- brfWH.JlkyC9zoaN6AHvITx0mvnBSQCOmYvCRxOATDdfXmwjrquxXTIRN0MjZ__OrlJIHemlonb_
- yfzm8e99DEQupxBqOBdVVWqKoQKUtgAVgwR5h3C8tc2k.LttzQheuZDL5.cdWZaIFB4ShUFHVjJn
- uAzKZqJGl3uBEBe63c.RG0dOhh1RMB7sLA2nKqmOsSuUmjuLFOlE7jnmcfTcb2b6XqcJV4mAWoii
- PiTTq7Dd08j3R4geu10e7ZMfvBNBAAJCG5e3DHKWYpFlfe2Y2Xt2KD5sp5TPkeZhj19zpLRKqfs7
- XzRhfAspphhDkSF264J3w_8TpePVI3038QG4umKdqXF2Su_kRm3aqk4sW8Ea6FXifXcUVwicFaLH
- _4r0hq.Ou6BfODPfDcyPUPKqbwhT_KlPtnEm_XXZhpAFLKVYjmI.SUhMjUxAxrvLpHdRGjkRQIDp
- pR7kOMeby_32.XK5Tjuzateww.8_kSgwQzJOXYZhpas8oYCpIW3Rrf8g2SFIcxFtPc8AFj6VVLyW
- khS9Tyb2loGVwewzjfTVYw.wg2jpQZSxBw5A0FoINyNKOuHNiLMiYb35Sownaz7eM2sXQ0GAYiCD
- V9VG7UoYxNRnYPC_BSdo9VGWyrkx4jr9Zhq.jueCXjySwZnPjf4jVvy6CIWcUqY0W07LZJmbF0P1
- urHOLBo0P4CJF8Kjb9Uw4FPfo7IdYKevwTtp37.7OUATdHXD6ix1.1UWAGB_yn_WtdAEvflTo7E1
- L1EsE43utluSyAT3_wX8GDm38Z342e..hx1CZhkHlxeQ5XmUeeKw0X0NCEBytB1H8BsKJlrsl8ke
- KjzvkPHYEW4l1wDoJU21glwZLBqFuFpfc44iWaOGUz.ytyPc_SyoUG5WaP.kOH_NlGFLPSNq_SfK
- RcVi2mrdoq_fnLdxO60t_PHCPCS0sRyq.2rjkG4aSS58VFuuL4.zPa0ZfNoNj4EBI3gU0CY4rbdm
- QN8Fr4QQXGcCV7sze.nCEGI_Ofe_BbsJoaCx.oMH_4nn3.HzTOUNBIJVLz_Z5Zz63AUr4yEXfN2s
- LSI5eAeCcGzHjvhmk7qwCey9rIQ8ctjqChIqWAV7r5iuGLRiTxXNJESW7OtMucBrdOpxoqJs1DBm
- BLlbEFPkJOW2nweDf85gtuDEKIl53_6sErVHradkmRSD0esDkaUDhMZKWBKmM2d5K0LOeYXt.wIr
- tiTNMsT8zr5n71uw2L.jZb.lRnpIJ.332LoyVeverAo5TIcO1a5YrBKfYmm45J1qcY0_MedvTfk2
- hNjdfIuN_9iZS2y6oRG3.lqAFe_U2vf4Tk6lldtUM4Fc7jT.Jo2BZQv7bM9BvMxidE9q3lVVpzGr
- 29SpXZrjxVxY.dKeokf97mYNKoaNcvCvU_topN743ROpUH3CZ6vat0jLuq4SMtV1UUJOwFMtzR_6
- sXhQyVpofG4ZQmfsEalEa6wAPM6jigm3JKUN.3sIVyzTI41lBjfN2bZ634uxw2kR3eFdUIR0lKq1
- 605y2nYMY9ZSw693DQXPk9mgCbg1WwrjegWghmUa8xVm1n4HixDEWv0XW._phaHjDK9ik_Ryh2BG
- tvbfVKxu7lj4Gxrm6FWpv.Z86ECyuNlPfm3llqNZ.3lZbjZnGrg--
+        Sun, 9 Apr 2023 17:08:07 -0400
+Received: from sonic308-2.consmr.mail.bf2.yahoo.com (sonic308-2.consmr.mail.bf2.yahoo.com [74.6.130.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ABDA2D4F
+        for <linux-bcache@vger.kernel.org>; Sun,  9 Apr 2023 14:08:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com.br; s=s2048; t=1681074484; bh=/lm6rQ4hM5FTWJHyI4IySY+Y2T9ILsCe01ge8uJyfCE=; h=Date:From:To:Cc:In-Reply-To:References:Subject:From:Subject:Reply-To; b=eG+L/+u9hE6k3WGsBfFpZl6WjLmCRhGzJtwyj3GAMdC4QQaGK1aYFFkSPxEG89QNmLm6ScUrlTd2Xk3P3jjIIMA1wxB4IieSRYJFjDTT2BF+yocXErEw0OEVut3rNWbFIu/vObBKcTMH73KdmgCBNHtXof/jULJQJydbl9iL7165lbKMAJWWrElYhGZHp3DfKJGUXF7rDwIbIcrvLb2QCQkql2sVa0SjkbHcKqZ/TSgfkud0i3hgnxEcz3jsq4ItArDRGfDhjVt2XGnA1o4K/R2coJpGYMFF9cg8JbRt+vS4+U8nOYpKbUUUWujHr8OqOBqhlEChm9CYwoX2dwu8tw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1681074484; bh=V5yotdti0i9QABNaL3jYC7rJOdlnzRFO/IZWKxqXNB4=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=spRQ7ks+iVEEUkwr1h9Hvh3nAkpZW1y8LiFoy8DQ6P+AE/TOWFXLY+Z2kC3zIyOVjSBNMitxF/tgWd3QAvWEaIu9gG/m4CbaYO1emyC9s8FVhm4cb0cPbvqRYGIsTh1GMDduNMiIWwto+uiLq8mvF+oomXsmPcQr4ZPxKqiJiQSuaa7LTupqQKzn2UzxoVJ4JhM3eNrclMKBfN3yWRSyaPyEC0WL3BEdGcesqnnWjSDMgdvp59WBy98rL4CyrPCt55WqlKhXBzcdqwiDgGoT4QcbTkcRlJI0yAdH60vkm7URE6SjcrFqmUDmoAFLompRXFG1akw9YwxCK0XujYh1cA==
+X-YMail-OSG: e0ayUZoVM1n.b6z3mhfQKHXiOq95oEmtxvb9bV41XA0721aJK0niydIU1ebYcuZ
+ VLiUm_C6hOkikuOkJ_.KzRGzL108zee26EYy0E7xroATqQpY25K8Au2aIkq_Pd2YV7qu.nvdKsHE
+ dPlWrRrKL3d9SS32k34BKODQMB0Y8fYysvjSq8f2bJLEx7j8k9umCDneclaeVkyB8iKB0Cu5iXll
+ AYT0pw0_fsPovLAzSIj5KhWMS.KbujcH7HAhufrt76XUY37k933IPfMSoreHz4zoPlWCQHNDjW9O
+ eHPLA0Rsp02uHyD0biyidj5nhKc839rq6NN96Kw1GkVDLTBezmd1msU5XykXCWa7HrCfgfv1J6yz
+ 8AwJplOhr10fNj.v5vL4X1VS8SNuAOPXzWDTejrAzpwjTEF7wqSaMPAePMlnoaPDqHkVDQwRnNiQ
+ AZy2v4Y5tXE3ICjTgLdYrj8sO8TOp1_tiut0fgzSfL49fuYRj1h.SVdha4AiCoqYc.xpn8HXlWw6
+ BevItfFfmiwidASqghO3StsLIoL0sKUEAjMZl7K02VrRN9QVkZDJu_NQnj5CoFoBZAPGFY40yRDo
+ edI5YTbGaang1zvG6EdItTrsJmesiOhicjDzCJQUOAxR5lO0dVg_7cr2ETefbmhtjQwxwHnJsbfw
+ zVMEoY5Ja85iZbmOnFCWuSm5dQls0f8w._gvNr5gJntIacI9buQ7Bnc1139NyZgsbc8xy1phGR8D
+ v09MdYPyzOcl5Apa2jy.qKTi3HEVzkB.1aEdGmtNobixUiSZRzhLllGKa5p1mtTna6Ayziu7PSdT
+ 0Q8PplDU39Roi.BWpEiS9rK6m3rLkYsCtx8K.HcdOuItwwElghB43CgYSNeDWotoqzQmxfAWQfy6
+ hWXcLpdGvnFXNSINZjkwE.XEOU4nc_lMCRTFMaJFY5rmLnbcyLYDPtD3PFtToCFWBszmT2nm.oRU
+ 4Rhi.GLmKA7q2Z.GbBD9rcrxdjNEyUSyl6nXQXsnzu45h8O6a4CwagQZZpN2sP1dNGeVQOAXjni1
+ iIRPDXPgKV5Hmzxa3jsgoFY8M2uIz19t2MWolsw96z59eDohkBrDng.NDAALK.qNHCGs7alH7qTT
+ odWzoYV1YhzWEuVbfgD.2rKIe_uXNYzRLv_LmfGKIiXoJ1KDnnw8jlm8YAI5iuTE3_Z0oVs0GnJ3
+ PGrenewBzlXrwlUbzGqYfvZVqy64Lgzx9iVk8ZGoAMcq5r7cDo7zTSN6u1tJRs6rASjsbl2ATZmu
+ p1LR0pxvtEXnmX4u1R2SUDF7cOnFIUqmc.maBlhjCEMKYMySUPXt7DsB1JR.LFVyOQssxv0GLavZ
+ EVl8eJG9vKIxMUjPVpngzKhR4pEtG2DesMlDenp05yb5KOT3S.Qu7V6bRYGS0gp79CQ_R2bKCANx
+ lfAYyWI4Cy1YERirQxwn3wUiA3uMPT97btd6rrM6Do8pRbp6QOO7Lk.z9aCwMf151kGvPw9R2ZnG
+ uTFvPlsoQ54bGLH_KfbBTXE2HiEzu2faxEOzUC9q8tmT2m2VxKLfmZsnrB_.Y.3tp6qDry9cVBJd
+ .9sKQ7YutDNZvDOP3rRH9ZoFrzR_d7aa9rS6cGXqXyfHeznxZKUU5vE2nS8CgiBPXl0H7oLinQ_.
+ q3apg8Fxq36tG4w8AFEwoGdde3thk2N0.x.yPHIsk9mUjjsLyLO7KzWRKcC3yAVcJiLRw9MrLBci
+ 92_WZniDayTHU3f5FdLA3.Bb0aO4eINsR8JjDdCjumfSgIQzN72.7Wu6tlV_MKaMAQbqBLW1AQP6
+ e4CSjpzrtc3bIT4NePY_DZDhrq9y9_BXx3AECbYytxFZqqr0joTtrwbgscibwS5RyGkDzo_ronyq
+ I21a9vO09DkFonpI3zjiP7t2FuA5Jyx9O.85n20abNtPKsq35tQhd82P82cB3XdXIf9Lej7THRz6
+ Xznail9t9BzcBFBDZY8crhPNemHUizzZ.XxHeCwesgTOWDpsmoUoOl8a3RHXtbLMVMst2AjI8uaE
+ wPb.bL4iO3VmZgiob0H4QQDiGY989sO3SrZRxJkJmvbgkFUQDDTTnalTPt6Kcy3mHWRtdolPTHuu
+ cK3PEF6cqHHIn8gdVelHUpXjjlPNFvt..X7q4O8cxTMNaFPlcKfaTZFztYQlYBLECVoP.26WL8Hm
+ Tt9_zK1oWizc0YhfYBMNlzWKmco0Jj_a63phVYeeSmuvhKNjjtpplMXS4MAswve02OShyHbnqDXg
+ 4Lp.Z5jPlCJDtlSyu0lelAA--
 X-Sonic-MF: <adriano_da_silva@yahoo.com.br>
-X-Sonic-ID: cda92d35-1f0f-423b-9feb-4c478a3f68e4
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Sun, 9 Apr 2023 20:15:12 +0000
-Date:   Sun, 9 Apr 2023 20:14:57 +0000 (UTC)
+X-Sonic-ID: daeb59c2-eb14-47a4-9673-e200902049d5
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.bf2.yahoo.com with HTTP; Sun, 9 Apr 2023 21:08:04 +0000
+Date:   Sun, 9 Apr 2023 21:07:41 +0000 (UTC)
 From:   Adriano Silva <adriano_da_silva@yahoo.com.br>
 To:     Coly Li <colyli@suse.de>
 Cc:     Eric Wheeler <bcache@lists.ewheeler.net>,
         Bcache Linux <linux-bcache@vger.kernel.org>,
         Martin McClure <martin.mcclure@gemtalksystems.com>
-Message-ID: <1806824772.518963.1681071297025@mail.yahoo.com>
-In-Reply-To: <6726BA46-A908-4EA5-BDD0-7FA13ADD384F@suse.de>
-References: <1012241948.1268315.1680082721600.ref@mail.yahoo.com> <1012241948.1268315.1680082721600@mail.yahoo.com> <e0e6c881-f1e4-f02c-ce76-1dbc6170ff1f@gemtalksystems.com> <1121771993.1793905.1680221827127@mail.yahoo.com> <eca36733-cdbd-6e16-2436-906ab2a38da9@ewheeler.net> <E69AB364-712A-41A3-91EB-46F85A8F3E69@suse.de> <fd12e250-92a8-74f-e24-f7cc62a5b4a4@ewheeler.net> <D4D242AA-D5C3-46B6-AE83-4BE52D2E504B@suse.de> <1783117292.2943582.1680640140702@mail.yahoo.com> <A48EBD27-D83B-4552-8EEC-838162B76BC4@suse.de> <2054791833.3229438.1680723106142@mail.yahoo.com> <6726BA46-A908-4EA5-BDD0-7FA13ADD384F@suse.de>
+Message-ID: <125091407.524221.1681074461490@mail.yahoo.com>
+In-Reply-To: <1806824772.518963.1681071297025@mail.yahoo.com>
+References: <1012241948.1268315.1680082721600.ref@mail.yahoo.com> <1012241948.1268315.1680082721600@mail.yahoo.com> <e0e6c881-f1e4-f02c-ce76-1dbc6170ff1f@gemtalksystems.com> <1121771993.1793905.1680221827127@mail.yahoo.com> <eca36733-cdbd-6e16-2436-906ab2a38da9@ewheeler.net> <E69AB364-712A-41A3-91EB-46F85A8F3E69@suse.de> <fd12e250-92a8-74f-e24-f7cc62a5b4a4@ewheeler.net> <D4D242AA-D5C3-46B6-AE83-4BE52D2E504B@suse.de> <1783117292.2943582.1680640140702@mail.yahoo.com> <A48EBD27-D83B-4552-8EEC-838162B76BC4@suse.de> <2054791833.3229438.1680723106142@mail.yahoo.com> <6726BA46-A908-4EA5-BDD0-7FA13ADD384F@suse.de> <1806824772.518963.1681071297025@mail.yahoo.com>
 Subject: Re: Writeback cache all used.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -67,13 +67,59 @@ Content-Transfer-Encoding: quoted-printable
 X-Mailer: WebService/1.1.21365 YMailNorrin
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
         DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
+
+Hi Coly!=20
+
+Talking about the TRIM (discard) made in the cache...
+
+> There was such attempt but indeed doesn=E2=80=99t help at all.=20
+> The reason is, bcache can only know which bucket can=20
+> be discarded when it is handled by garbage collection.
+
+Come to think of it, I spoke to Eric before something curious, but I could =
+be wrong. What I understand about the "garbage collector" is that the "garb=
+age" would be parts of buckets (blocks) that would not have been reused and=
+ were "lost" outside the c->free list and also outside the free_inc list. I=
+f I'm correct in my perception, I think the garbage collector would help ve=
+ry little in my case. Of course, all help is welcome. But I'm already think=
+ing about the bigger one.
+
+If I think correctly, I don't think that in my case most of the buckets wou=
+ld be collected by the garbage collector. Because it is data that has not b=
+een erased in the file system. They would need to be cleaned (saved to the =
+mass device) and after some time passed without access, removed from the ca=
+che. That is, in the cache would only be hot data. That is recently accesse=
+d data (LRU), but never allowing the cache to fill completely.
+
+Using the same logic that bcache already uses to choose a bucket to be eras=
+ed and replaced (in case the cache is already completely full and a new wri=
+te is requested), it would do the same, allocating empty space by erasing t=
+he data in the bucket (in many buckets) previously whenever you notice that=
+ the cache is very close to being full. You can do this in the background, =
+asynchronously. So in this case I understand that TRIM/discard should help =
+a lot. Do not you think?
+
+So my question would be: is bcache capable of ranking recently accessed buc=
+kets, differentiating into lines (levels) of more or less recently accessed=
+ buckets?
+
+I think the variable I mentioned, which I saw in the kernel documentation (=
+freelist_percent), may have been designed for this purpose.
+
+Coly, thank you very much!
+
+
+
+Em domingo, 9 de abril de 2023 =C3=A0s 17:14:57 BRT, Adriano Silva <adriano=
+_da_silva@yahoo.com.br> escreveu:=20
+
 
 Hello Eric !
 
@@ -411,3 +457,4 @@ Let me look into this=E2=80=A6
 Thanks.
 
 Coly Li
+
