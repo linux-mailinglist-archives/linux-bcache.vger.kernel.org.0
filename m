@@ -2,121 +2,76 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 25E3E6EC963
-	for <lists+linux-bcache@lfdr.de>; Mon, 24 Apr 2023 11:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAB536ECA0D
+	for <lists+linux-bcache@lfdr.de>; Mon, 24 Apr 2023 12:20:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231623AbjDXJtq (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 24 Apr 2023 05:49:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46726 "EHLO
+        id S230427AbjDXKUL (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 24 Apr 2023 06:20:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231522AbjDXJtc (ORCPT
+        with ESMTP id S231131AbjDXKUK (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 24 Apr 2023 05:49:32 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E013AAE
-        for <linux-bcache@vger.kernel.org>; Mon, 24 Apr 2023 02:49:24 -0700 (PDT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230424094922epoutp0491f93321e5809c4b4df8b3a9cab36fb7~Y1gFbpeIK0650506505epoutp04v
-        for <linux-bcache@vger.kernel.org>; Mon, 24 Apr 2023 09:49:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230424094922epoutp0491f93321e5809c4b4df8b3a9cab36fb7~Y1gFbpeIK0650506505epoutp04v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1682329762;
-        bh=31RWr4izbPdOzAjp5njGY46la8LA9hZVsJhRUiuap1A=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=knWrGkKDgVyfX2HdOQAUVW+EcuDk6gTCHb6pj25SxR4gcWVbESQJWrMY4kbp3UdaP
-         2jyTwIFRIiXRkIxKdj5EVKhCzLNax1zbEdm4GZb/PyEGgSTOBZDoFqs9kBnUTMh0Qg
-         BIgSKogYte2CfFr96cwN3uq3QCBTR0agf3lktDsg=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20230424094921epcas5p226e6574fce697200e5b529220d615123~Y1gE7W_b42348523485epcas5p2U;
-        Mon, 24 Apr 2023 09:49:21 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4Q4gMM6cvHz4x9Pp; Mon, 24 Apr
-        2023 09:49:19 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F5.38.54880.F9056446; Mon, 24 Apr 2023 18:49:19 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230424092940epcas5p3407002e7d5c79593ffbafc38f2b49e51~Y1O4ma3pU2242622426epcas5p3H;
-        Mon, 24 Apr 2023 09:29:40 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230424092940epsmtrp10d8a2619094be279d56ab0a06e1ffd23~Y1O4k3zOG1327913279epsmtrp1X;
-        Mon, 24 Apr 2023 09:29:40 +0000 (GMT)
-X-AuditID: b6c32a49-8c5ff7000001d660-a7-6446509febca
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9F.41.27706.30C46446; Mon, 24 Apr 2023 18:29:39 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230424092937epsmtip1f2178ee6e7ac23f48d0d223ba1f56cf6~Y1O2MU2HJ0425804258epsmtip1T;
-        Mon, 24 Apr 2023 09:29:37 +0000 (GMT)
-Date:   Mon, 24 Apr 2023 14:56:41 +0530
-From:   Nitesh Shetty <nj.shetty@samsung.com>
-To:     Chaitanya Kulkarni <kch@nvidia.com>
+        Mon, 24 Apr 2023 06:20:10 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB535B7;
+        Mon, 24 Apr 2023 03:20:09 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 79A7F1FD7D;
+        Mon, 24 Apr 2023 10:20:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1682331608; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8HvVdeDiIgiuBeUDj17fn5dqrFt5dqGREda0ixO83bE=;
+        b=Yy0WJzsZgknyxIkT8ZupXHV2gU8R7J656Huu1VcKZASk4jNNz3aAg7P+5vyYwq3T3kUxNu
+        26W06XckOTCE9/mTcWWlPCeF9z1YOo9dB4dyn4LPJQin7G3/7fQs4qLl9rBLah3RoWxAOL
+        2SEKUgl8G4pbePizxsUWt4yKYtCjcII=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1682331608;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8HvVdeDiIgiuBeUDj17fn5dqrFt5dqGREda0ixO83bE=;
+        b=XrWNSOJ06s3ar4CN/oq0TfkqoQSJ0De+M0u+cLclK1VYnGBkIMzBDKwjmZ4MumXxxx9O9u
+        JIurkNzeN2kqgZAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 40B081390E;
+        Mon, 24 Apr 2023 10:20:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id DckIBNVXRmQ7KwAAMHmgww
+        (envelope-from <colyli@suse.de>); Mon, 24 Apr 2023 10:20:05 +0000
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.500.231\))
+Subject: Re: [PATCH 5/5] bcache: don't clear the flag that is not  =?ISO-8859-1?Q?=20set=1B?=
+From:   Coly Li <colyli@suse.de>
+In-Reply-To: <20230424073023.38935-6-kch@nvidia.com>
+Date:   Mon, 24 Apr 2023 18:19:52 +0800
 Cc:     linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
         axboe@kernel.dk, josef@toxicpanda.com, minchan@kernel.org,
-        senozhatsky@chromium.org, colyli@suse.de,
-        kent.overstreet@gmail.com, dlemoal@kernel.org,
-        johannes.thumshirn@wdc.com, bvanassche@acm.org,
+        senozhatsky@chromium.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        dlemoal@kernel.org, johannes.thumshirn@wdc.com, bvanassche@acm.org,
         vincent.fu@samsung.com, akinobu.mita@gmail.com,
-        shinichiro.kawasaki@wdc.com, nbd@other.debian.org, Jason@zx2c4.com
-Subject: Re: [PATCH 0/5] block/drivers: don't clear the flag that is not set
-Message-ID: <20230424092641.u6u25eyojewvasj4@green245>
-MIME-Version: 1.0
-In-Reply-To: <20230424073023.38935-1-kch@nvidia.com>
-User-Agent: NeoMutt/20171215
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBJsWRmVeSWpSXmKPExsWy7bCmhu78ALcUg1/njCxeHehgtFh9t5/N
-        YtqHn8wW0xvPs1s82G9v8eCqlMXfrntMFn8eGlo8vTqLyeJIU5XFsW3XmCz23tK2WPb1PbvF
-        76drmSx2b1zEZrFvlqfF4+4ORgdBj8tXvD1mN1xk8dg56y67x+WzpR6bVnWyefQ2v2PzuPqt
-        mdmjb8sqRo/Np6s9JmzeyOrxeZOcR/uBbiaPyX+fMgfwRmXbZKQmpqQWKaTmJeenZOal2yp5
-        B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gD9paRQlphTChQKSCwuVtK3synKLy1JVcjI
-        Ly6xVUotSMkpMCnQK07MLS7NS9fLSy2xMjQwMDIFKkzIzjiz9ANjQQdrxaUn2Q2MK1i6GDk4
-        JARMJLa9Tu9i5OIQEtjNKNFzch0ThPOJUeLm3eOsXYycQM43RonOz/ogNkjDt4vdzBDxvYwS
-        zy+oQtjPGCX+XvAGsVkEVCXWL77EDrKATUBb4vR/DpCwiIC6xNQDPawg85kF/jNJdPRtYARJ
-        CAv4SJxr+8QOYvMKmEn827CLEcIWlDg58wkLiM0JtHfx8ilgNaICMhIzln5lBhkkIfCFQ+Lc
-        uzksEMe5SBya0Q1lC0u8Or6FHcKWknjZ3wZll0usnLKCDaK5hVFi1vVZjBAJe4nWU/1gnzEL
-        ZEhM2DsdapCsxNRToGABifNJ9P5+wgQR55XYMQ/GVpZYs34BG4QtKXHteyMbJHg9JOZfloYE
-        UDujxPsT/hMY5Wch+W0Wkm0QtpVE54cm1llA3cwC0hLL/3FAmJoS63fpL2BkXcUomVpQnJue
-        WmxaYJiXWg6P7OT83E2M4CSv5bmD8e6DD3qHGJk4GA8xSnAwK4nwepQ6pQjxpiRWVqUW5ccX
-        leakFh9iNAXG1URmKdHkfGCeySuJNzSxNDAxMzMzsTQ2M1QS51W3PZksJJCeWJKanZpakFoE
-        08fEwSnVwMS4SkK+/0joLaemjtC+3u/3DDPuHzn1qa555Qb9/L+T39ROZ9k5/ah/mYeXwvOw
-        60+3dm+7xGC26s6xprDOv0Epu+Z3KJdtDJwctHZqruuiI8db77dIRd9ONF/mNv37ebG8hASp
-        24qGD5vzQx96nlSp1BeN9Sg/fyT8R2t+44GIQsObLjomG7T/vFddsvraAr9XAgu41xbpq0yf
-        NCPJaN+BD9JsESv82opWBEjwfKk0uuMuai/orKr55c5hRYZ3cpM1etTEVZtbp5udFjJS/lyr
-        ZHBn3f/WSRo3RSbN1zGvyDaP/LR4+dYv2yu/LCtd0acSqR5Ueex8XEOqwgSRHs1zB65z657Z
-        8W7RsoJ5z5VYijMSDbWYi4oTAVgfIwR7BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsWy7bCSnC6zj1uKwdWrNhavDnQwWqy+289m
-        Me3DT2aL6Y3n2S0e7Le3eHBVyuJv1z0miz8PDS2eXp3FZHGkqcri2LZrTBZ7b2lbLPv6nt3i
-        99O1TBa7Ny5is9g3y9PicXcHo4Ogx+Ur3h6zGy6yeOycdZfd4/LZUo9NqzrZPHqb37F5XP3W
-        zOzRt2UVo8fm09UeEzZvZPX4vEnOo/1AN5PH5L9PmQN4o7hsUlJzMstSi/TtErgyjt3YzFKw
-        i6ni0dTF7A2MXxi7GDk5JARMJL5d7GbuYuTiEBLYzShxd+YKqISkxLK/R5ghbGGJlf+es0MU
-        PWGUWLX0IgtIgkVAVWL94ktACQ4ONgFtidP/OUDCIgLqElMP9LCC1DML/GeS2NXWCDZIWMBH
-        4lzbJ3YQm1fATOLfhl1gy4QEjCWenVvFChEXlDg58wnYfGagmnmbHzKDzGcWkJZY/g9sPifQ
-        0YuXTwEbIyogIzFj6VfmCYyCs5B0z0LSPQuhewEj8ypGydSC4tz03GLDAsO81HK94sTc4tK8
-        dL3k/NxNjOAo1dLcwbh91Qe9Q4xMHIyHGCU4mJVEeD1KnVKEeFMSK6tSi/Lji0pzUosPMUpz
-        sCiJ817oOhkvJJCeWJKanZpakFoEk2Xi4JRqYBJx3HiibFLrPZ4DGpwzFylMVnRKSxZYYzyt
-        7hL793uyj0/PEj1/uTXqRu3SzUV+mec0ZhgEJu0wjYmqs79d4F3eUrw9a2vzq8D1aZNv6B0w
-        ujznw48pL77MfL2l/3NA+3H1U5x7pl5uX3xnwck/Zq5LNrxQXcCWNeXBzFSnxLKGQx1lljvu
-        LwmfNOm4rZTb6qzfjlNnPu07HN4f35caM91M5fXjhjRjo/Xhj5mKbe+4KKicvZjsVK93757Z
-        luV3JG5zlD43qEzJPtP/7JTjE4GGc4+bFp2yKN7JKHA1076ogZM5SqJjyemZR2uao5Q+hzEZ
-        7GwIMzl48LpH9D3tmZPkP8semz7tpoPja99fLySVWIozEg21mIuKEwFY4cnVQQMAAA==
-X-CMS-MailID: 20230424092940epcas5p3407002e7d5c79593ffbafc38f2b49e51
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----6TPaBgSVJHTP5aYW_KCyJfD-AyyqAIDIArT8HI0pnVcs47o3=_3f117_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230424092940epcas5p3407002e7d5c79593ffbafc38f2b49e51
+        shinichiro.kawasaki@wdc.com, nbd@other.debian.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F1D47747-F82A-4395-9B11-8A717BB2D96A@suse.de>
 References: <20230424073023.38935-1-kch@nvidia.com>
-        <CGME20230424092940epcas5p3407002e7d5c79593ffbafc38f2b49e51@epcas5p3.samsung.com>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+ <20230424073023.38935-6-kch@nvidia.com>
+To:     Chaitanya Kulkarni <kch@nvidia.com>
+X-Mailer: Apple Mail (2.3731.500.231)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -124,29 +79,38 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-------6TPaBgSVJHTP5aYW_KCyJfD-AyyqAIDIArT8HI0pnVcs47o3=_3f117_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+On Mon, Apr 24, 2023 at 12:30:23AM -0700, Chaitanya Kulkarni wrote:
+> QUEUE_FLAG_ADD_RANDOM is not set in bcache_device_init() before we =
+clear
+> it. There is no point in clearing the flag that is not set.
+> Remove blk_queue_flag_clear() for QUEUE_FLAG_ADD_RANDOM.
+>=20
+> Signed-off-by: Chaitanya Kulkarni <kch@nvidia.com>
 
-On 23/04/24 12:30AM, Chaitanya Kulkarni wrote:
->null_blk
->brd
->nbd
->zram
->bcache
+Acked-by: Coly Li <colyli@suse.de>
 
-Any particular reason for leaving out mtip and s390 drivers ?
+Thanks.
 
-Will it be better to use the flag similar to scsi devices and
-use it for random number generation ?
+> ---
+> drivers/md/bcache/super.c | 1 -
+> 1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index ba3909bb6bea..7e9d19fd21dd 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -971,7 +971,6 @@ static int bcache_device_init(struct bcache_device =
+*d, unsigned int block_size,
+> 	}
+>=20
+> 	blk_queue_flag_set(QUEUE_FLAG_NONROT, d->disk->queue);
+> -	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, d->disk->queue);
+>=20
+> 	blk_queue_write_cache(q, true, true);
+>=20
+> --=20
+> 2.40.0
+>=20
 
-Otherwise looks good to me.
-
-Regards,
-Nitesh Shetty
-
-------6TPaBgSVJHTP5aYW_KCyJfD-AyyqAIDIArT8HI0pnVcs47o3=_3f117_
-Content-Type: text/plain; charset="utf-8"
-
-
-------6TPaBgSVJHTP5aYW_KCyJfD-AyyqAIDIArT8HI0pnVcs47o3=_3f117_--
+--=20
+Coly Li
