@@ -2,493 +2,470 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 460CA6E92EA
-	for <lists+linux-bcache@lfdr.de>; Thu, 20 Apr 2023 13:36:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 620806EC71A
+	for <lists+linux-bcache@lfdr.de>; Mon, 24 Apr 2023 09:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234304AbjDTLgk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 20 Apr 2023 07:36:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40424 "EHLO
+        id S230179AbjDXHbC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 24 Apr 2023 03:31:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233993AbjDTLgj (ORCPT
+        with ESMTP id S230476AbjDXHbB (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 20 Apr 2023 07:36:39 -0400
-Received: from sonic308-1.consmr.mail.bf2.yahoo.com (sonic308-1.consmr.mail.bf2.yahoo.com [74.6.130.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B9FE6A4B
-        for <linux-bcache@vger.kernel.org>; Thu, 20 Apr 2023 04:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com.br; s=s2048; t=1681990560; bh=zWgvvn6ekdKdejfM3RgdJsfdzH0224Q5aEu61Lod9PU=; h=Date:From:To:Cc:In-Reply-To:References:Subject:From:Subject:Reply-To; b=SLnof93SOmTAQhpz6z2c/JCa0BIcrQAf5H9VV39ms0pJt9QufHPSwjc5D2kyoQrmjZbxCpu+eqbFVesLpb6+UXNaz31tiRM4E8BelYLWi9z9U+FQe4Wj29QYaTZ/AjBcrVBSaVdpody5wrjPSVj5g1V6DNqR/HkM0vpdu2dUmduGQ9b81dkIYecoFQ/BW0NzxQ9Edg5TZ2IBsboMVZJVj8ITx9vVx3E5fCA9lsXLHLuTrlUyFTebAGvfS1bwzU1rkMXRsJVo09Bv70j756W9Fa1TKItr0YwoJ619w88VphMSwAWCBl6Lf2EJSPchppazEAh7JTLxOj2liCvdgI1/Bg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1681990560; bh=3+z550PYqomI07xDiAcVsqfKpBLYpKvQ2nzC1yTyLKJ=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=eNkgBuhOwSZ9OHZK9DmG4GwrXYoiawEvjgEF0iMCFUwBr6/nHGbRIXmyrw2FA8JpS86J5WNxbLUiTIaYFXFN52ShByO2NMMpA3F9DT5Yq8dzRahUhQnOwwdabf66TEzm5UsLvh/YaG+OsGOKDHmoMeafLj3GTBDZUgV30d/rNlMtXL38BJjoDMW5qrP4tQFwVPkGCJOrGndXp4PLk6+DX8upkQbhsAKo1wnJTxMOpz2ENgwmRufGApg4M7t06qs6tfscZi6DVfUnDBlEvnLV4SI3Err1EFRsFyANU+/9Z4Ke4oOsQreaZIZNnUZC8Ds4F2XDD7wiQfHXgGVgQB3RZw==
-X-YMail-OSG: idEPjyEVM1mlR6xt.Htwi2buGhjYpbknx94FshkwSQHrP0Wd.lViu_T4AxfdumC
- iQ5rBpYXvaTvEQAFGGjHsMMXUCCSJALiU5dIuAMmZnmHgSyV3bYVCJYYvnVo5XVq6EobZi63uydX
- zU5sMmpNNxfO.TntNotNDoFj7tGBpLhkETFbX6j7D4F8TGS1Kj_hILDZ3DR0BxRucNoseothkwD6
- EM6WKm3quDkOmoq0umb9WYDBdpr7xURnXgGwgMZ7EmI9sfp3HW8Qmhrw8H4JA9xjIZtiVVoEHdWe
- xhzP6sb5.JwzKbVF_JqP6YazcK4PVLFGuXDVrS1skRPUuE2hGJ.iasjrAlCELKbFWusQU7uyLUPF
- cMa.1_t7WZWmHMkqbZ1lKYLUwi1XCVXNDqgW0fPkAJsWSwgS_QEOJYcaRXXObIdPV9Srjn5Z6SHJ
- sDbQnKO4OOPxaZnVgL0K1sLxzapNo_64GVILrYg39Oue2g2K7jVYsuGQMf6zKUAF9qf4rFOff_mT
- 8m2BiammK_zdfRoUp6KIlD3gMX3b2ibzNBRDfz3QOGqVGR.cuCnOn3nfyUERgqXw09y5d0zbYMXZ
- G3BWC6qyrx6_MFQeZHAeCu9KDthB4QKnHlBOdU7ifVkIO46jZSxOrk4MsozBfTks1mguklxxX.2Y
- RaiBoIR9XA0p3L54J42U0qw4rggBcwsWHLzI4qqUkYt3NgDZtuWkgBj8L2MfkA0WMvsyY3HLsJqh
- Pv6__BVM7QxjopIO3YKBMZZJAvRXToWvOWPhJn3gurs.KxhLgp2V2MtxMMHm3XiaEhKF_Nv4zA7i
- S5kDiTH3gtbCubMk.CIp05PPABVcHH7c_DV33MqdfLeOVoZwF0wiDlbpZp90g8h1KZDbk9CY99HB
- nk6MCNmIQKJLplSW7FN2DH6z5js7nUnf39GankklKisJ0t_AWPXtYI4pVWdN0L_ZgB2XaspZUpLf
- ljRvm1D5eP5hdEuNJRLHlNSIEvk1Mwt_pC0G8xylLh2kf._PhS_z0MrJZmNtevMSUsj9A.euPpn7
- Yg86B6QlI2mHxQTTeQdDhNOcpeJZPNIEtUOkeueTN4LjzS.HMSsKyD14P4HY_.xreErU8f1mH1hW
- 6F_RdNeL106TZY0G9COfC..Cx0FF70Oyv.wNtP8phLdZ6M7fmYD38iTvW2UhTYdB8AZ1P8CnvaDC
- 4n.E6Cm6vzmjoVVRJfDr83QqAm6VqwVyB8XnNj72VWeH2pHMiHZFiwavXM3SPO5kc2eTTqsJrQWX
- mm3PO4A5JLrcD27rhGNXiABVhDLWqFdmwqDkwaNP.8SkmAqvQ3V79SNwJhTAljgxLhdx98y8Sw_p
- ohn3QZwjApdJXluhWOOSAcynODfzz4WlH2HB7Nz6YApg8aw4s34.JpYmiRLoYdwrIadPJ5ebc0o6
- y_W0GRDOV.ubgyzMyh7ePe22d6RSnSlXNnvRowMVAZFVEXj8ZkzTQ.llWWie9ok5zHnlgulNKzFI
- yFjjrPnMO.sCDl_Ije_IQYhoSO3XcRi1tQz4vLdI.Itiwhsb_0jyNnD5pqFzJSK6nTg4ACxCj8kF
- GYiqvvmpH0SQqOSXp4viNS6kOyVkPpgOeAfgMmWhoYAeFaTFrVQZ5lhjal0QVsvwYuDIlN.xuEjO
- d1l0CD9D9VfeaNssJhKFzGQYoHxkRmOmQh.Es9me1T_2zFZhV.o5bMg4pMtc1XsDCzLwnXbckzL_
- NEQh_mfl0pRyqGn_xsM98Z_v9rcuAcIXg2ibBWL0xGc_w._w29xDC8WD9u5Zp8gSkuF11F7OVzSd
- iw4TFL2vaYB53FbOnLnFC0ScCRll6Wd9v.BFXNj.OHD2YQu0ZExnCvqxKPZKBppuI4t3PoWDFGbV
- G7miqlNUMaoyQPDNHICdGw1oPQkZtJdHr4VQrnf7FI_aecmmWjvXMZ1FAnPOFaMepUTjU6Lvf988
- 3QKl7X9Kx8nC9Dj2mQ0VfDZOfLvS4yquune8Oij0S6XDRODvaOrAKjXc0eU.dk9BjKZQsqZD1Ad2
- 6FFHIhlfLQDFHrBZSasqGJRLG0kyjjnZ0OBAcuBrV1EyQtpg.0LXdvBOQEN1qJF96PS4g3XsqdR5
- WoPJ0JXAkOcJPTF8GASBjG6nZpNU1MRFbAXjyLNOAba5xtYDT.ohwyjGxgYu3VQrjthg.7UWTn_U
- xpORgqPvkc_SRTnz5oo79I.HiH27GT.bOCXdMNWEuiEbY1vo3ibny3nm6dujKOQUxNi6q_r_SQAq
- rWaHTJPzKfLC5ABiYZo5z3CHzvwoLxH6SuJL.ykgkTACbGH6l0w--
-X-Sonic-MF: <adriano_da_silva@yahoo.com.br>
-X-Sonic-ID: 3c42dcd7-7029-4ef9-bfed-e8749830af78
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Apr 2023 11:36:00 +0000
-Date:   Thu, 20 Apr 2023 11:35:58 +0000 (UTC)
-From:   Adriano Silva <adriano_da_silva@yahoo.com.br>
-To:     Coly Li <colyli@suse.de>
-Cc:     Eric Wheeler <bcache@lists.ewheeler.net>,
-        Bcache Linux <linux-bcache@vger.kernel.org>,
-        Martin McClure <martin.mcclure@gemtalksystems.com>
-Message-ID: <1399491299.3275222.1681990558684@mail.yahoo.com>
-In-Reply-To: <125091407.524221.1681074461490@mail.yahoo.com>
-References: <1012241948.1268315.1680082721600.ref@mail.yahoo.com> <1012241948.1268315.1680082721600@mail.yahoo.com> <e0e6c881-f1e4-f02c-ce76-1dbc6170ff1f@gemtalksystems.com> <1121771993.1793905.1680221827127@mail.yahoo.com> <eca36733-cdbd-6e16-2436-906ab2a38da9@ewheeler.net> <E69AB364-712A-41A3-91EB-46F85A8F3E69@suse.de> <fd12e250-92a8-74f-e24-f7cc62a5b4a4@ewheeler.net> <D4D242AA-D5C3-46B6-AE83-4BE52D2E504B@suse.de> <1783117292.2943582.1680640140702@mail.yahoo.com> <A48EBD27-D83B-4552-8EEC-838162B76BC4@suse.de> <2054791833.3229438.1680723106142@mail.yahoo.com> <6726BA46-A908-4EA5-BDD0-7FA13ADD384F@suse.de> <1806824772.518963.1681071297025@mail.yahoo.com> <125091407.524221.1681074461490@mail.yahoo.com>
-Subject: Re: Writeback cache all used.
+        Mon, 24 Apr 2023 03:31:01 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12hn20331.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe59::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08B6E61;
+        Mon, 24 Apr 2023 00:30:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lIbHIPmT2r2cVTHxZE1oQP90SlKAwDMFkP7W1e8V6B7m5iobLwuAfdgRajh0EQEP3wobNf+mT4vrGX4WyJyxEdQv0DgDHHdKANavWC9Ra+ERq9MUkw0KBs7vGbG1vS6TOUK3KePtOmsJEge5pCt0E7vV8a6iv2y3qR7k5yHNCC80uvdPkzKsKd1iLSLiQOvn5L+3SFKKudQC/YU1/h9o85UwZljxU0GaQwwn7JkBzVZcIWNksN67s/iMv3f5Spk+DhKRHbeCI4/op5QW2sCdmXOrtxvT+m12UUA7dNhMkrTHrHPCS1ph2nidsk8stN/KG+4wJIRlhhI46eM/PkyTCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nytqj6kK+1CFCF3WparGk2NKPIjakkl1iSmzK5piFno=;
+ b=C5vEwyPe072ZBzK4aGdGt7/S2BMc93eIf61yfJDdmBeYtonJWpDBD4C8aS84+VxUAM1b+psgMJY4FX1zFoN7Fr8bogIZ95DLX0vUEE3dNfAiIULDJt5MEhFTeFHdIaXTT7lkFp7LUwqwBpa3xrtKY4Zq6r9aeEoPC5g5DGVgLfOAzW118wtPyn0JvXl4OPqRjaAZDXfQ1hL5k+HCyPun8jiubsOrQfEutkc70D8SYG0eqfW55eEr2VfOy9nOwjUCoZV9rF16sgHSdvOPFaE7pAXjXc8PBNjwKdnv4mM7R6E7RyDDkh1GwOdzNlY2N57XQc5ZRkf2GDXtgEV8zk7wbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nytqj6kK+1CFCF3WparGk2NKPIjakkl1iSmzK5piFno=;
+ b=qV2rUe4trJW/iKHaiET+SvBhRtGFyaOmMYeoH45vI2VgprpVupc2rXiXCX88r+SS7dj0oXPimhsiD/eGAvX6xau8w703cBzeN5QfPwWym+MVXwRRzA2H8L3Ak8J1wUWU++n040mG2iWtaF1n1G1biJ2KCmIOwL8JoX9so0dk3bnQAscah1s/GINNwgQ+xVpM5orHX7eNdqdBLI5KsXUzhhRu9LZ3wFnp3D5PBZdBRCTTG21W/sIUScG4YWoX1BOR8VzPZdAhdtOQFZtIGRf4gSjqokGAGUhn48YxNN6M/8yySyNNAkYDm5xSlaf5c2AyOVI/qCXTJ8D6U7LQ4CSvDg==
+Received: from MW4PR03CA0096.namprd03.prod.outlook.com (2603:10b6:303:b7::11)
+ by MN2PR12MB4288.namprd12.prod.outlook.com (2603:10b6:208:1d2::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.33; Mon, 24 Apr
+ 2023 07:30:49 +0000
+Received: from CO1NAM11FT007.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:b7:cafe::2a) by MW4PR03CA0096.outlook.office365.com
+ (2603:10b6:303:b7::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.33 via Frontend
+ Transport; Mon, 24 Apr 2023 07:30:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1NAM11FT007.mail.protection.outlook.com (10.13.174.131) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6340.19 via Frontend Transport; Mon, 24 Apr 2023 07:30:49 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Mon, 24 Apr 2023
+ 00:30:32 -0700
+Received: from dev.nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Mon, 24 Apr
+ 2023 00:30:31 -0700
+From:   Chaitanya Kulkarni <kch@nvidia.com>
+To:     <linux-block@vger.kernel.org>, <linux-bcache@vger.kernel.org>
+CC:     <axboe@kernel.dk>, <josef@toxicpanda.com>, <minchan@kernel.org>,
+        <senozhatsky@chromium.org>, <colyli@suse.de>,
+        <kent.overstreet@gmail.com>, <dlemoal@kernel.org>,
+        <kch@nvidia.com>, <johannes.thumshirn@wdc.com>,
+        <bvanassche@acm.org>, <vincent.fu@samsung.com>,
+        <akinobu.mita@gmail.com>, <shinichiro.kawasaki@wdc.com>,
+        <nbd@other.debian.org>
+Subject: [PATCH 0/5] block/drivers: don't clear the flag that is not set
+Date:   Mon, 24 Apr 2023 00:30:18 -0700
+Message-ID: <20230424073023.38935-1-kch@nvidia.com>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: WebService/1.1.21365 YMailNorrin
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT007:EE_|MN2PR12MB4288:EE_
+X-MS-Office365-Filtering-Correlation-Id: 393eb4b2-f453-49a0-b514-08db4495d383
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Na1GVKDne/1uX+ZvKLvZZcPgzCvfxFZkC/u+DjYsLc4MJEMLd6AxgN5jda7QrVSNt79tvofGVPxqEtr7Vf3tMAS1AwS5t0z9Kxe6BLl08UtiUkYS9clb14yyP2gmYCds5YKi6VoCIXrRwY8va3zmsi6q4Nnf5hI4yt8tjRh3JCLkMD2le7uejJiB6s9Ub7YXvLTdCsf77mLYvSG9dlYXCrZmM4Ir+3ua+/NsjZ/P2BnVhd718YhFuC3YpdCzDM51P+jFrpyPgTkmH/2r1sUYjVH6mX1oO8H2I/OJudcQPuwGyL3QyREHErC0Xos0mlg2QxUoh7uxZXjRqvOk4Gv4ZaPxiWkERO9VlBeY03lsjpkI8gvpowpAW2NW09/zJuma5COwSwOYPKl7q4d/qOS31Ch5rEoEOpRdm083TJKQtaz9a/f+XOIpEWzM282pD1yUjQRtpn6GI5BCTCMqzu6ZYZPOzK9D+K+xVN1dtVoqncW+5wkT7MDUrlVZjy5R2sCrUnfJADVJSApy/jcAWiRkla9i5pXliJDLl5xtW+nR7EKyFjl+qlpQ45TPre9TN1RN6Lr5fZxfLr3NEtLrMT1MYaO752Jlam3X5Z4tertpASDA343sSkRAUNWlSTuVTERiBGM02TZcEximuGAfGyKZjK6y1qpoHZKBB5SIXlKjzikh+aCb+ncPIYQrJazGJwrdizCjOYj5ZcxWkIuNXWqmIxN8iCYzhZ6ZYwyXDSnXEcTxUIbOVgoMFieud3ogX6tox3tPuZ2h1stE1qwIxV/pcg==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(39860400002)(376002)(346002)(5400799015)(451199021)(46966006)(36840700001)(40470700004)(1076003)(26005)(40480700001)(336012)(426003)(2616005)(34020700004)(36756003)(83380400001)(36860700001)(47076005)(186003)(16526019)(40460700003)(7636003)(356005)(82740400003)(70206006)(70586007)(478600001)(8936002)(8676002)(54906003)(7416002)(110136005)(5660300002)(7696005)(41300700001)(30864003)(2906002)(82310400005)(4326008)(6666004)(316002)(12100799030);DIR:OUT;SFP:1501;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2023 07:30:49.1560
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 393eb4b2-f453-49a0-b514-08db4495d383
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT007.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4288
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hey guys. All right with you?
+Hi,
 
-I continue to investigate the situation. There is actually a performance ga=
-in when the bcache device is only half filled versus full. There is a reduc=
-tion and greater stability in the latency of direct writes and this improve=
-s my scenario.
+The drivers in this patch-series tries to clear the
+QUEUE_FLAG_ADD_RANDOM that is not set at all in the queue allocation
+and initialization path in :-
 
-But it should be noted that the difference is noticed when we wait for the =
-device to rest (organize itself internally) after being cleaned. Maybe for =
-him to clear his internal caches?
+drivers/block/mtip32xx/mtip32xx.c:	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, dd->queue);
+drivers/block/null_blk/main.c:	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, nullb->q);
+drivers/block/rbd.c:	/* QUEUE_FLAG_ADD_RANDOM is off by default for blk-mq */
+drivers/block/zram/zram_drv.c:	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, zram->disk->queue);
+drivers/block/nbd.c:	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, disk->queue);
+drivers/block/brd.c:	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, disk->queue);
+drivers/md/bcache/super.c:	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, d->disk->queue);
+drivers/md/dm-table.c:	 * Clear QUEUE_FLAG_ADD_RANDOM if any underlying device does not
+drivers/md/dm-table.c:		blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
+drivers/mmc/core/queue.c:	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, mq->queue);
+drivers/mtd/mtd_blkdevs.c:	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, new->rq);
+drivers/s390/block/scm_blk.c:	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, rq);
+drivers/scsi/sd.c:		blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
+drivers/scsi/sd.c:		blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
+include/linux/blkdev.h:#define QUEUE_FLAG_ADD_RANDOM	10	/* Contributes to random pool */
+include/linux/blkdev.h:#define blk_queue_add_random(q)	test_bit(QUEUE_FLAG_ADD_RANDOM, &(q)->queue_flags)
 
-I thought about keeping gc_after_writeback on all the time and also turning=
- on bcache's discard option to see if that improves. But my back device is =
-an HDD.
+Since sd is the only driver that sets this flag:-
 
-One thing that wasn't clear to me since the last conversation is about the =
-bcache discard option, because Coly even said that the discard would be pas=
-sed only to the back device. However, Eric pulled up a snippet of source co=
-de that supposedly could indicate something different, asking Coly if there=
- could be a mistake. Anyway Coly, can you confirm whether or not the discar=
-d is passed on to the buckets deleted from the cache? Or does it confirm th=
-at it would really only be for the back device?
+drivers/scsi/sd.c: blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
+drivers/scsi/sd.c: blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
 
-Thank you all!
+it is unclear how it will be set for null_blk, brd. nbd, zram, and
+bcache in the allocation path so we have to clear it explicitly.
 
+Remove the call to clear QUEUE_FLAG_ADD_RANDOM. Below is testlog for :-
 
+null_blk
+brd
+nbd
+zram
+bcache
 
-Em domingo, 9 de abril de 2023 =C3=A0s 18:07:41 BRT, Adriano Silva <adriano=
-_da_silva@yahoo.com.br> escreveu:=20
+Below is the test log.
 
+-ck
 
+Chaitanya Kulkarni (5):
+  null_blk: don't clear the flag that is not set
+  brd: don't clear the flag that is not set
+  nbd: don't clear the flag that is not set
+  zram: don't clear the flag that is not set
+  bcache: don't clear the flag that is not set
 
-
-
-Hi Coly!=20
-
-Talking about the TRIM (discard) made in the cache...
-
-> There was such attempt but indeed doesn=E2=80=99t help at all.=20
-> The reason is, bcache can only know which bucket can=20
-> be discarded when it is handled by garbage collection.
-
-Come to think of it, I spoke to Eric before something curious, but I could =
-be wrong. What I understand about the "garbage collector" is that the "garb=
-age" would be parts of buckets (blocks) that would not have been reused and=
- were "lost" outside the c->free list and also outside the free_inc list. I=
-f I'm correct in my perception, I think the garbage collector would help ve=
-ry little in my case. Of course, all help is welcome. But I'm already think=
-ing about the bigger one.
-
-If I think correctly, I don't think that in my case most of the buckets wou=
-ld be collected by the garbage collector. Because it is data that has not b=
-een erased in the file system. They would need to be cleaned (saved to the =
-mass device) and after some time passed without access, removed from the ca=
-che. That is, in the cache would only be hot data. That is recently accesse=
-d data (LRU), but never allowing the cache to fill completely.
-
-Using the same logic that bcache already uses to choose a bucket to be eras=
-ed and replaced (in case the cache is already completely full and a new wri=
-te is requested), it would do the same, allocating empty space by erasing t=
-he data in the bucket (in many buckets) previously whenever you notice that=
- the cache is very close to being full. You can do this in the background, =
-asynchronously. So in this case I understand that TRIM/discard should help =
-a lot. Do not you think?
-
-So my question would be: is bcache capable of ranking recently accessed buc=
-kets, differentiating into lines (levels) of more or less recently accessed=
- buckets?
-
-I think the variable I mentioned, which I saw in the kernel documentation (=
-freelist_percent), may have been designed for this purpose.
-
-Coly, thank you very much!
+ drivers/block/brd.c           | 1 -
+ drivers/block/nbd.c           | 1 -
+ drivers/block/null_blk/main.c | 1 -
+ drivers/block/zram/zram_drv.c | 1 -
+ drivers/md/bcache/super.c     | 1 -
+ 5 files changed, 5 deletions(-)
 
 
+* NULL_BLK:-
+-----------------------------------------------------------------------
 
-Em domingo, 9 de abril de 2023 =C3=A0s 17:14:57 BRT, Adriano Silva <adriano=
-_da_silva@yahoo.com.br> escreveu:=20
+With this debug patch :-
+@@ -2128,7 +2128,11 @@ static int null_add_dev(struct nullb_device *dev)
+ 
+ 	nullb->q->queuedata = nullb;
+ 	blk_queue_flag_set(QUEUE_FLAG_NONROT, nullb->q);
++	pr_info("%s %d BEFORE ADD RANDOM = %s\n", __func__, __LINE__,
++			blk_queue_add_random(nullb->q) ? "TRUE" : "FALSE" );
+ 	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, nullb->q);
++	pr_info("%s %d AFTER ADD RANDOM = %s\n", __func__, __LINE__,
++			blk_queue_add_random(nullb->q) ? "TRUE" : "FALSE" );
+ 
+ 	mutex_lock(&lock);
+ 	rv = ida_simple_get(&nullb_indexes, 0, 0, GFP_KERNEL);
 
++ modprobe -r null_blk
++ lsmod
++ grep null_blk
+++ nproc
++ make -j 48 M=drivers/block modules
++ HOST=drivers/block/null_blk/
+++ uname -r
++ HOST_DEST=/lib/modules/6.3.0-rc7lblk+/kernel/drivers/block/null_blk/
++ cp drivers/block/null_blk//null_blk.ko /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block/null_blk//
++ ls -lrth /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block/null_blk//null_blk.ko
+-rw-r--r--. 2 root root 1.2M Apr 23 13:00 /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block/null_blk//null_blk.ko
++ sleep 1
++ dmesg -c
++ modprobe null_blk queue_mode=0
++ dmesg -c
+[33316.880281] null_blk: null_add_dev 2147 BEFORE ADD RANDOM = FALSE
+[33316.880288] null_blk: null_add_dev 2150 AFTER ADD RANDOM = FALSE
+[33316.880705] null_blk: disk nullb0 created
+[33316.880707] null_blk: module loaded
++ modprobe -r null_blk
++ modprobe null_blk queue_mode=2
++ dmesg -c
+[33316.920977] null_blk: null_add_dev 2147 BEFORE ADD RANDOM = FALSE
+[33316.920981] null_blk: null_add_dev 2150 AFTER ADD RANDOM = FALSE
+[33316.922640] null_blk: disk nullb0 created
+[33316.922643] null_blk: module loaded
++ modprobe -r null_blk
 
-Hello Eric !
-
-> Did you try to trigger gc after setting gc_after_writeback=3D1?
->=20
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 echo 1 > /sys/block/bcache0/bcache/cache/inte=
-rnal/trigger_gc
->=20
-> The `gc_after_writeback=3D1` setting might not trigger until writeback
-> finishes, but if writeback is already finished and there is no new IO the=
-n
-> it may never trigger unless it is forced via `tigger_gc`
->=20
-> -Eric
-
-
-Yes, I use the two commands indicated several times, one after the other, f=
-irst one, then the other, then in reversed order... successive times, after=
- hours of zero disk writing/reading. On more than one server. I tested it o=
-n all my servers actually. And in all, the results are similar, there is no=
- significant cache space flush.
-
-And to make matters worse, in other performance tests, I realized that depe=
-nding on the size of the block I manipulate, the difference in performance =
-is frightening. With 4MB blocks I can write 691MB/s with freshly formatted =
-cache.
-
-root@pve-01-007:~# ceph tell osd.0 bench=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=
-=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0
-{=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=
-=A0
-=C2=A0=C2=A0=C2=A0=C2=A0bytes_written: 1073741824,=C2=A0=C2=A0 =C2=A0=C2=A0=
-=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0
-=C2=A0=C2=A0=C2=A0=C2=A0blocksize: 4194304,=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =
-=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0
-=C2=A0=C2=A0=C2=A0=C2=A0elapsed_sec: 1.5536911500000001,=C2=A0=C2=A0 =C2=A0=
-=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0
-=C2=A0=C2=A0=C2=A0=C2=A0bytes_per_sec: 691090905.67967761,
-=C2=A0=C2=A0=C2=A0=C2=A0iops: 164.76891176216068
-}=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=
-=A0
-root@pve-01-007:~#
-
-In the same test I only get 142MB/s when all cache is occupied.
-
-root@pve-00-005:~# ceph tell osd.0 bench
-{
-=C2=A0=C2=A0=C2=A0=C2=A0bytes_written: 1073741824,
-=C2=A0=C2=A0=C2=A0=C2=A0blocksize: 4194304,
-=C2=A0=C2=A0=C2=A0=C2=A0elapsed_sec: 7.5302066820000002,
-=C2=A0=C2=A0=C2=A0=C2=A0bytes_per_sec: 142591281.93209398,
-=C2=A0=C2=A0=C2=A0=C2=A0iops: 33.996410830520148
-}
-root@pve-00-005:~#
-
-That is, with the cache after all occupied, the bcache can write with only =
-21% of the performance obtained with the newly formatted cache. It doesn't =
-look like we're talking about exactly the same hardware... Same NVME, same =
-processors, same RAM, same server, same OS, same bcache settings..... If yo=
-u format the cache, it returns to the original performance.
-
-I'm looking at the bcache source code to see if I can pick up anything that=
- might be useful to me. But the code is big and complex. I confess that it =
-is not quick to understand.
-
-I created a little C program to try and call a built-in bcache function for=
- testing, but I spent Sunday and couldn't even compile the program. It is f=
-unny.
-
-But what would the garbage collector be in this case? What I understand is =
-that the "garbage" would be parts of buckets (blocks) that would not have b=
-een reused and were "lost" outside the c->free list and also outside the fr=
-ee_inc list. I think that would help yes, but maybe in a very limited way. =
-Is this the condition of most buckets that are in use?
-
-As it seems to me (I could be talking nonsense), what would solve the probl=
-em would be to get bcache to allocate an adequate amount of buckets in the =
-c->free list. I see this being mentioned in bcache/alloc.c
-
-Would it be through invalidate_buckets(ca) called through the bch_allocator=
-_thread(void *arg) thread? I don't know. What is limiting the action of thi=
-s thread? I could not understand.
-
-But here in my anxious ignorance, I'm left thinking maybe this was the way,=
- a way to call this function to invalidate many clean buckets in the lru or=
-der and discard them. So I looked for an external interface that calls it, =
-but I didn't find it.
-
-Thank you very much!
-
-Em domingo, 9 de abril de 2023 =C3=A0s 13:37:32 BRT, Coly Li <colyli@suse.d=
-e> escreveu:=20
++ modprobe -r null_blk
++ lsmod
++ grep null_blk
+++ nproc
++ make -j 48 M=drivers/block modules
++ HOST=drivers/block/null_blk/
+++ uname -r
++ HOST_DEST=/lib/modules/6.3.0-rc7lblk+/kernel/drivers/block/null_blk/
++ cp drivers/block/null_blk//null_blk.ko /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block/null_blk//
++ ls -lrth /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block/null_blk//null_blk.ko
+-rw-r--r--. 2 root root 1.2M Apr 23 13:00 /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block/null_blk//null_blk.ko
++ sleep 1
++ dmesg -c
++ modprobe null_blk queue_mode=0
++ dmesg -c
+[33316.880281] null_blk: null_add_dev 2147 BEFORE ADD RANDOM = FALSE
+[33316.880288] null_blk: null_add_dev 2150 AFTER ADD RANDOM = FALSE
+[33316.880705] null_blk: disk nullb0 created
+[33316.880707] null_blk: module loaded
++ modprobe -r null_blk
++ modprobe null_blk queue_mode=2
++ dmesg -c
+[33316.920977] null_blk: null_add_dev 2147 BEFORE ADD RANDOM = FALSE
+[33316.920981] null_blk: null_add_dev 2150 AFTER ADD RANDOM = FALSE
+[33316.922640] null_blk: disk nullb0 created
+[33316.922643] null_blk: module loaded
++ modprobe -r null_blk
 
 
+* BRD:-
+-----------------------------------------------------------------------
+
+With this debug patch :-
+@@ -404,7 +404,11 @@ static int brd_alloc(int i)
+ 	/* Tell the block layer that this is not a rotational device */
+ 	blk_queue_flag_set(QUEUE_FLAG_NONROT, disk->queue);
+ 	blk_queue_flag_set(QUEUE_FLAG_SYNCHRONOUS, disk->queue);
++	pr_info("%s %d BEFORE ADD RANDOM = %s\n", __func__, __LINE__,
++			blk_queue_add_random(disk->queue) ? "TRUE" : "FALSE" );
+ 	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, disk->queue);
++	pr_info("%s %d AFTER ADD RANDOM = %s\n", __func__, __LINE__,
++			blk_queue_add_random(disk->queue) ? "TRUE" : "FALSE" );
+ 	blk_queue_flag_set(QUEUE_FLAG_NOWAIT, disk->queue);
+ 	err = add_disk(disk);
+ 	if (err)
+
++ modprobe -r brd
++ lsmod
++ grep brd
+++ nproc
++ make -j 48 M=drivers/block modules
++ HOST=drivers/block/brd.ko
+++ uname -r
++ HOST_DEST=/lib/modules/6.3.0-rc7lblk+/kernel/drivers/block/
++ cp drivers/block/brd.ko /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block//
++ ls -lrth /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block//brd.ko
+-rw-r--r--. 1 root root 381K Apr 23 14:09 /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block//brd.ko
++ dmesg -c
++ lsmod
++ grep brd
++ modprobe brd
++ dmesg -c
+[ 3785.884916] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.884921] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.885320] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.885322] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.885662] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.885664] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.886270] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.886272] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.886451] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.886452] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.886621] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.886622] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.886831] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.886833] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.886990] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.886991] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.887176] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.887177] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.887368] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.887369] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.888011] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.888013] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.888212] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.888214] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.888687] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.888689] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.888911] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.888913] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.889390] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.889392] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.889585] brd_alloc 407 BEFORE ADD RANDOM = FALSE
+[ 3785.889586] brd_alloc 410 AFTER ADD RANDOM = FALSE
+[ 3785.890099] brd: module loaded
++ modprobe -r brd
+
+* NBD :-
+-----------------------------------------------------------------------
+
+With this debug patch :-
+@@ -1805,7 +1805,11 @@ static struct nbd_device *nbd_dev_add(int index, unsigned int refs)
+ 	 * Tell the block layer that we are not a rotational device
+ 	 */
+ 	blk_queue_flag_set(QUEUE_FLAG_NONROT, disk->queue);
++	pr_info("%s %d BEFORE ADD RANDOM = %s\n", __func__, __LINE__,
++			blk_queue_add_random(disk->queue) ? "TRUE" : "FALSE" );
+ 	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, disk->queue);
++	pr_info("%s %d AFTER ADD RANDOM = %s\n", __func__, __LINE__,
++			blk_queue_add_random(disk->queue) ? "TRUE" : "FALSE" );
+ 	disk->queue->limits.discard_granularity = 0;
+ 	blk_queue_max_discard_sectors(disk->queue, 0);
+ 	blk_queue_max_segment_size(disk->queue, UINT_MAX);
+
++ modprobe -r nbd
++ lsmod
++ grep nbd
+++ nproc
++ make -j 48 M=drivers/block modules
++ HOST=drivers/block/nbd.ko
+++ uname -r
++ HOST_DEST=/lib/modules/6.3.0-rc7lblk+/kernel/drivers/block/
++ cp drivers/block/nbd.ko /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block//
++ ls -lrth /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block//nbd.ko
+-rw-r--r--. 1 root root 998K Apr 23 14:09 /lib/modules/6.3.0-rc7lblk+/kernel/drivers/block//nbd.ko
++ dmesg -c
++ lsmod
++ grep nbd
++ modprobe nbd
++ dmesg -c
+[ 3786.953726] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.953731] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.954877] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.954880] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.956753] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.956759] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.958118] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.958121] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.959372] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.959374] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.960139] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.960141] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.960878] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.960880] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.961558] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.961560] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.962303] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.962305] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.963063] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.963065] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.963821] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.963824] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.964573] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.964575] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.965282] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.965284] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.966067] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.966069] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.966851] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.966854] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
+[ 3786.967544] nbd: nbd_dev_add 1808 BEFORE ADD RANDOM = FALSE
+[ 3786.967545] nbd: nbd_dev_add 1811 AFTER ADD RANDOM = FALSE
++ modprobe -r nbd
+
+* ZRAM:-
+-----------------------------------------------------------------------
+
+With this debug patch :-
+@@ -2323,7 +2323,11 @@ static int zram_add(void)
+        /* zram devices sort of resembles non-rotational disks */
+        blk_queue_flag_set(QUEUE_FLAG_NONROT, zram->disk->queue);
+        blk_queue_flag_set(QUEUE_FLAG_SYNCHRONOUS, zram->disk->queue);
++       pr_info("%s %d BEFORE ADD RANDOM = %s\n", __func__, __LINE__,
++                       blk_queue_add_random(zram->disk->queue) ? "TRUE" : "FALSE" );
+        blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, zram->disk->queue);
++       pr_info("%s %d AFTER ADD RANDOM = %s\n", __func__, __LINE__,
++                       blk_queue_add_random(zram->disk->queue) ? "TRUE" : "FALSE" );
+ 
+        /*
+         * To ensure that we always get PAGE_SIZE aligned
+
+[    9.020829] zram: loading out-of-tree module taints kernel.
+[    9.030043] zram: zram_add 2326 BEFORE ADD RANDOM = FALSE
+[    9.030047] zram: zram_add 2329 AFTER ADD RANDOM = FALSE
+[    9.030579] zram: Added device: zram0
+[    9.168858] systemd[1]: Created slice system-systemd\x2dzram\x2dsetup.slice.
+[    9.544414] zram0: detected capacity change from 0 to 16777216
+[    9.600893] Adding 8388604k swap on /dev/zram0.  Priority:100 extents:1 across:8388604k SSFS
 
 
+* BCACHE:-
+-----------------------------------------------------------------------
 
+With this debug patch :-
+@@ -971,7 +971,11 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+ 	}
+ 
+ 	blk_queue_flag_set(QUEUE_FLAG_NONROT, d->disk->queue);
++	pr_info("%s %d BEFORE ADD RANDOM = %s\n", __func__, __LINE__,
++			blk_queue_add_random(d->disk->queue) ? "TRUE" : "FALSE" );
+ 	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, d->disk->queue);
++	pr_info("%s %d AFTER ADD RANDOM = %s\n", __func__, __LINE__,
++			blk_queue_add_random(d->disk->queue) ? "TRUE" : "FALSE" );
+ 
+ 	blk_queue_write_cache(q, true, true);
 
++ makej M=drivers/md/bcache
++ modprobe null_blk queue_mode=2 nr_devices=2 memory_backed=1 gb=1
++ insmod drivers/md/bcache/bcache.ko
++ bcache make -B /dev/nullb0 -C /dev/nullb1
+Name			/dev/nullb1
+Label			
+Type			cache
+UUID:			0694b66e-970e-49e2-ab2c-791f84a53b8e
+Set UUID:		e8be54f6-18c9-4965-b406-63e602201395
+version:		0
+nbuckets:		2048
+block_size_in_sectors:	1
+bucket_size_in_sectors:	1024
+nr_in_set:		1
+nr_this_dev:		0
+first_bucket:		1
+                                ...
+Name			/dev/nullb0
+Label			
+Type			data
+UUID:			8a64d20c-12ce-4ca5-a9fb-f978bfba52df
+Set UUID:		e8be54f6-18c9-4965-b406-63e602201395
+version:		1
+block_size_in_sectors:	1
+data_offset_in_sectors:	16
 
-> 2023=E5=B9=B44=E6=9C=886=E6=97=A5 03:31=EF=BC=8CAdriano Silva <adriano_da=
-_silva@yahoo.com.br> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> Hello Coly.
->=20
-> Yes, the server is always on. I allowed it to stay on for more than 24 ho=
-urs with zero disk I/O to the bcache device. The result is that there are n=
-o movements on the cache or data disks, nor on the bcache device as we can =
-see:
->=20
-> root@pve-00-005:~# dstat -drt -D sdc,nvme0n1,bcache0
-> --dsk/sdc---dsk/nvme0n1-dsk/bcache0 ---io/sdc----io/nvme0n1--io/bcache0 -=
----system----
->=C2=A0 read=C2=A0 writ: read=C2=A0 writ: read=C2=A0 writ| read=C2=A0 writ:=
- read=C2=A0 writ: read=C2=A0 writ|=C2=A0 =C2=A0 time=C2=A0 =C2=A0=20
->=C2=A0 54k=C2=A0 154k: 301k=C2=A0 221k: 223k=C2=A0 169k|0.67=C2=A0 0.54 :6=
-.99=C2=A0 20.5 :6.77=C2=A0 12.3 |05-04 14:45:50
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:45:51
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:45:52
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:45:53
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:45:54
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:45:55
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:45:56
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:45:57
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:45:58
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:45:59
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:46:00
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:46:01
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:46:02
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:46:03
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:46:04
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:46:05
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:46:06
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 14:46:07
->=20
-> It can stay like that for hours without showing any, zero data flow, eith=
-er read or write on any of the devices.
->=20
-> root@pve-00-005:~# cat /sys/block/bcache0/bcache/state
-> clean
-> root@pve-00-005:~#
->=20
-> But look how strange, in another command (priority_stats), it shows that =
-there is still 1% of dirt in the cache. And 0% unused cache space. Even aft=
-er hours of server on and completely idle:
->=20
-> root@pve-00-005:~# cat /sys/devices/pci0000:80/0000:80:01.1/0000:82:00.0/=
-nvme/nvme0/nvme0n1/nvme0n1p1/bcache/priority_stats
-> Unused:=C2=A0 =C2=A0 =C2=A0 =C2=A0 0%
-> Clean:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 98%
-> Dirty:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 1%
-> Metadata:=C2=A0 =C2=A0 =C2=A0 0%
-> Average:=C2=A0 =C2=A0 =C2=A0 =C2=A0 1137
-> Sectors per Q:=C2=A0 36245232
-> Quantiles:=C2=A0 =C2=A0 =C2=A0 [12 26 42 60 80 127 164 237 322 426 552 65=
-1 765 859 948 1030 1176 1264 1370 1457 1539 1674 1786 1899 1989 2076 2232 2=
-350 2471 2594 2764]
->=20
-> Why is this happening?
->=20
->> Can you try to write 1 to cache set sysfs file=20
->> gc_after_writeback?=20
->> When it is set, a gc will be waken up automatically after=20
->> all writeback accomplished. Then most of the clean cache=20
->> might be shunk and the B+tree nodes will be deduced=20
->> quite a lot.
->=20
-> Would this be the command you ask me for?
->=20
-> root@pve-00-005:~# echo 1 > /sys/fs/bcache/a18394d8-186e-44f9-979a-8c07cb=
-3fbbcd/internal/gc_after_writeback
->=20
-> If this command is correct, I already advance that it did not give the ex=
-pected result. The Cache continues with 100% of the occupied space. Nothing=
- has changed despite the cache being cleaned and having written the command=
- you recommended. Let's see:
->=20
-> root@pve-00-005:~# cat /sys/block/bcache0/bcache/cache/cache0/priority_st=
-ats
-> Unused:=C2=A0 =C2=A0 =C2=A0 =C2=A0 0%
-> Clean:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 98%
-> Dirty:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 1%
-> Metadata:=C2=A0 =C2=A0 =C2=A0 0%
-> Average:=C2=A0 =C2=A0 =C2=A0 =C2=A0 1137
-> Sectors per Q:=C2=A0 36245232
-> Quantiles:=C2=A0 =C2=A0 =C2=A0 [12 26 42 60 80 127 164 237 322 426 552 65=
-1 765 859 948 1030 1176 1264 1370 1457 1539 1674 1786 1899 1989 2076 2232 2=
-350 2471 2594 2764]
->=20
-> But if there was any movement on the disks after the command, I couldn't =
-detect it:
->=20
-> root@pve-00-005:~# dstat -drt -D sdc,nvme0n1,bcache0
-> --dsk/sdc---dsk/nvme0n1-dsk/bcache0 ---io/sdc----io/nvme0n1--io/bcache0 -=
----system----
->=C2=A0 read=C2=A0 writ: read=C2=A0 writ: read=C2=A0 writ| read=C2=A0 writ:=
- read=C2=A0 writ: read=C2=A0 writ|=C2=A0 =C2=A0 time=C2=A0 =C2=A0=20
->=C2=A0 54k=C2=A0 153k: 300k=C2=A0 221k: 222k=C2=A0 169k|0.67=C2=A0 0.53 :6=
-.97=C2=A0 20.4 :6.76=C2=A0 12.3 |05-04 15:28:57
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 15:28:58
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 15:28:59
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 15:29:00
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 15:29:01
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 15:29:02
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 15:29:03
->=C2=A0 =C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =C2=A0 0 :=C2=A0 0=C2=A0 =
-=C2=A0 0 |05-04 15:29:04^C
-> root@pve-00-005:~#
->=20
-> Why were there no changes?
++ echo /dev/nullb0
++ echo /dev/nullb1
++ dmesg -c
+[ 3788.828220] null_blk: null_add_dev 2147 BEFORE ADD RANDOM = FALSE
+[ 3788.828227] null_blk: null_add_dev 2150 AFTER ADD RANDOM = FALSE
+[ 3788.829617] null_blk: disk nullb0 created
+[ 3788.829699] null_blk: null_add_dev 2147 BEFORE ADD RANDOM = FALSE
+[ 3788.829701] null_blk: null_add_dev 2150 AFTER ADD RANDOM = FALSE
+[ 3788.830484] null_blk: disk nullb1 created
+[ 3788.830485] null_blk: module loaded
+[ 3788.863458] bcache: bcache_device_init() bcache_device_init 974 BEFORE ADD RANDOM = FALSE
+[ 3788.863462] bcache: bcache_device_init() bcache_device_init 977 AFTER ADD RANDOM = FALSE
+[ 3788.863491] bcache: register_bdev() registered backing device nullb0
+[ 3788.864156] bcache: run_cache_set() invalidating existing data
+[ 3788.866970] bcache: bch_cached_dev_run() cached dev nullb0 is running already
+[ 3788.866976] bcache: bch_cached_dev_attach() Caching nullb0 as bcache0 on set e8be54f6-18c9-4965-b406-63e602201395
+[ 3788.866990] bcache: register_cache() registered cache device nullb1
++ sleep 1
++ bcache unregister /dev/nullb0
++ bcache unregister /dev/nullb1
++ sleep 1
++ modprobe -r bcache
++ modprobe -r null_blk
 
-Thanks for the above information. The result is unexpected from me. Let me =
-check whether the B+tree nodes are not shrunk, this is something should be =
-improved. And when the write erase time matters for write requests, normall=
-y it is the condition that heavy write loads coming. In such education, the=
- LBA of the collected buckets might be allocated out very soon even before =
-the SSD controller finishes internal write-erasure by the hint of discard/t=
-rim. Therefore issue discard/trim right before writing to this LBA doesn=E2=
-=80=99t help on any write performance and involves in extra unnecessary wor=
-kload into the SSD controller.
-
-And for nowadays SATA/NVMe SSDs, with your workload described above, the wr=
-ite performance drawback can be almost ignored
-
->=20
->> Currently there is no such option for limit bcache=20
->> in-memory B+tree nodes cache occupation, but when I/O=20
->> load reduces, such memory consumption may drop very=20
->> fast by the reaper from system memory management=20
->> code. So it won=E2=80=99t be a problem. Bcache will try to use any=20
->> possible memory for B+tree nodes cache if it is=20
->> necessary, and throttle I/O performance to return these=20
->> memory back to memory management code when the=20
->> available system memory is low. By default, it should=20
->> work well and nothing should be done from user.
->=20
-> I've been following the server's operation a lot and I've never seen less=
- than 50 GB of free RAM memory. Let's see:=20
->=20
-> root@pve-00-005:~# free=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 t=
-otal=C2=A0 =C2=A0 =C2=A0 =C2=A0 used=C2=A0 =C2=A0 =C2=A0 =C2=A0 free=C2=A0 =
-=C2=A0 =C2=A0 shared=C2=A0 buff/cache=C2=A0 available
-> Mem:=C2=A0 =C2=A0 =C2=A0 131980688=C2=A0 =C2=A0 72670448=C2=A0 =C2=A0 190=
-88648=C2=A0 =C2=A0 =C2=A0 76780=C2=A0 =C2=A0 40221592=C2=A0 =C2=A0 57335704
-> Swap:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 0=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 0=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 0
-> root@pve-00-005:~#
->=20
-> There is always plenty of free RAM, which makes me ask: Could there reall=
-y be a problem related to a lack of RAM?
-
-No, this is not because of insufficient memory. From your information the m=
-emory is enough.
-
->=20
->> Bcache doesn=E2=80=99t issue trim request proactively.=20
->> [...]
->> In run time, bcache code only forward the trim request to backing device=
- (not cache device).
->=20
-> Wouldn't it be advantageous if bcache sent TRIM (discard) to the cache te=
-mporarily? I believe flash drives (SSD or NVMe) that need TRIM to maintain =
-top performance are typically used as a cache for bcache. So, I think that =
-if the TRIM command was used regularly by bcache, in the background (only f=
-or clean and free buckets), with a controlled frequency, or even if execute=
-d by a manually triggered by the user background task (always only for clea=
-n and free buckets), it could help to reduce the write latency of the cache=
-. I believe it would help the writeback efficiency a lot. What do you think=
- about this?
-
-There was such attempt but indeed doesn=E2=80=99t help at all. The reason i=
-s, bcache can only know which bucket can be discarded when it is handled by=
- garbage collection.=20
-
-
->=20
-> Anyway, this issue of the free buckets not appearing is keeping me awake =
-at night. Could it be a problem with my Kernel version (Linux 5.15)?
->=20
-> As I mentioned before, I saw in the bcache documentation (https://docs.ke=
-rnel.org/admin-guide/bcache.html) a variable (freelist_percent) that was su=
-pposed to control a minimum rate of free buckets. Could it be a solution? I=
- don't know. But in practice, I didn't find this variable in my system (cou=
-ld it be because of the OS version?)
-
-Let me look into this=E2=80=A6
-
-
-Thanks.
-
-Coly Li
+-- 
+2.40.0
 
