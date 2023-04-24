@@ -2,75 +2,98 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A681F6ECAA5
-	for <lists+linux-bcache@lfdr.de>; Mon, 24 Apr 2023 12:51:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DF1C6ED2A9
+	for <lists+linux-bcache@lfdr.de>; Mon, 24 Apr 2023 18:39:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231131AbjDXKvz (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 24 Apr 2023 06:51:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38462 "EHLO
+        id S231845AbjDXQjf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 24 Apr 2023 12:39:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229696AbjDXKvy (ORCPT
+        with ESMTP id S231893AbjDXQjd (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 24 Apr 2023 06:51:54 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED6BD3598
-        for <linux-bcache@vger.kernel.org>; Mon, 24 Apr 2023 03:51:51 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-54fe08015c1so50675357b3.3
-        for <linux-bcache@vger.kernel.org>; Mon, 24 Apr 2023 03:51:51 -0700 (PDT)
+        Mon, 24 Apr 2023 12:39:33 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92F3F49FD
+        for <linux-bcache@vger.kernel.org>; Mon, 24 Apr 2023 09:39:32 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id ca18e2360f4ac-763740a7f31so14293239f.0
+        for <linux-bcache@vger.kernel.org>; Mon, 24 Apr 2023 09:39:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682333511; x=1684925511;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dQlu0Oc2Q0nPMBCNq5iTPUZpwrRZlsMdPt2zjra8+VI=;
-        b=BDOU7+6CjKGfGxohfwPSUG5dvZEz+JIUkSiwN2TDnXREO1m7tnshm1ywQFqtwjCtuy
-         sdc62qMh2n/GKkLEd6inRVKNj3gr719YRClRe48cHw3AS8uelP+ymyFB0srKimerVisT
-         13Xtkz0SBiM8bJqS0byCbOX7vMjZt1uP8WbY7Dvmdpvz4bea0qvNLSFK3Fpq3xaNdk1A
-         qM5VVSk6ocRnmhVuQME3HxgmrkTm+A9wuvOqJRe5jylGoGOAUFMgmutSHMerkJpOSlvK
-         vk/P+3RIGhTNsyHCwljHvfrhHmReD3nCq/AILJxglY3kVglksym9zePn5jHaXsmq1bcD
-         nsfg==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1682354372; x=1684946372;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y4EQyKul/PdMUukH7r+B8jj3xQ5gjwr3+n4cMj9T93M=;
+        b=29hXv3LfoLDsyNLiV0sfsQ2fn8nNm+A8pxirwf0CJw6BzcQlwfzRksV2KCNtPYnjo/
+         1BT1zoykFbJcHgasIxZHCh8X+sDWp3bV5/ZiYWkNNAj8XQ0JF8yw6y2YVBhM2P6/Ng/9
+         Ey4+LPNv1vD1kBOiaOhQUktdJMX5L7iCZaWGNhMly4NdzLpuSyqaEutLzhiAkwwpG8sY
+         3wTfCAASktnW6QPnwPifGp59NTq0/xw0GmNzFCkvxgkRkg9DeC79NJou/QpDVikoPsSI
+         4Vz8StPE7ZoPp6a9+y8axPIWdvbe8sg7PZwGFlXWzk6rXEVS5zXVc6+m+ea2fVHFPHAA
+         Z/Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682333511; x=1684925511;
-        h=to:subject:message-id:date:from:reply-to:mime-version
+        d=1e100.net; s=20221208; t=1682354372; x=1684946372;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dQlu0Oc2Q0nPMBCNq5iTPUZpwrRZlsMdPt2zjra8+VI=;
-        b=bEg+ywiXx9wDSA+QQm1M3w6biMblkoiecXf3lB8gAKpz3WyhYCVJpGXnUrFWHeSjKd
-         SdTfs3Jz69PbBXkAOZgDst4z+vfBdOiRJjqqHVcxglhaHZTwacu9oU5EbP0A5Se+LQ4d
-         ZPZUe6txUXbVhCvj3fhgLBkgfazI1P3LRvwlWcyH+owzvqFn6Kc+656pv1sOmavFXCzO
-         lc62owuoGXFONapsufetW2lfubUsfd6lX34QhN4o5ZLA0g+RH+7gJ2kEhWwtleQWdOd9
-         Q6bdK6R5jWnBmBZ4Xkh/0TG2jLiH9VsOinu1270IFP7r6QCFsXvSHrusRyS4k5q5WqaZ
-         jR2A==
-X-Gm-Message-State: AAQBX9e1VATjNBQtk0hrD2Bw/8/EzZxrwmwRl7hn7hqLoazWAZRCwvLZ
-        jsDVljSaFmpYz7yvZ8jVU1DSEo7nYjKbGq5wDwI=
-X-Google-Smtp-Source: AKy350YG4FdHU8gQxPU2msbtN2QdEjv9b6BhW9wIbc0BoX66FKTBxxpsjwaRJQwRDUNbtvTNf1tLcLROs6TnCelMCbI=
-X-Received: by 2002:a81:4809:0:b0:533:9fa7:bbe9 with SMTP id
- v9-20020a814809000000b005339fa7bbe9mr7936227ywa.8.1682333511052; Mon, 24 Apr
- 2023 03:51:51 -0700 (PDT)
+        bh=Y4EQyKul/PdMUukH7r+B8jj3xQ5gjwr3+n4cMj9T93M=;
+        b=cfcKbhojO3rMFqtgBf/70onsQ9F0ADkPCER5mCRITEqaggbydQdkbT0ktXwYmbDYbn
+         9PEDfzx/aw2/8rOMk3Lju4EdFgEeTYChB+E+gRsJAUKXEKgmYZotiBYbrVWlmnep+86G
+         qx4l5qo9BzDRVeL4xaftJw2JORiqfSdwga7sO6V/HVOset81vfu9XkYDQpjR+O9iDGJy
+         +nhGwg3X8a2reyd7e27tArrW3B7fyd+1CAvKnKPBjvt5FFDxjvMSFb2GM/nXTRePbW+Q
+         XBwGID1h2GtDVcOe0pXSjS+8yfNEzRTl9qJeEOj48f8iRofavbdgez6WmHWP3a7qn551
+         TDvA==
+X-Gm-Message-State: AAQBX9cEJY8zj+OY8iBPeWWZ21pMe8Hbuqulx5bf+Pksm9Fa3OUCMBDe
+        xg9skXHeHqFs5/uchEknlQ3U5g==
+X-Google-Smtp-Source: AKy350ajXxXeVsLsPGCPIDs2KWsbK3IbqXDcwyhmCVO7RwKx5h+Hj/ArBKuJkx40ZgROUWHvnlluAw==
+X-Received: by 2002:a5d:9d90:0:b0:760:dfd3:208d with SMTP id ay16-20020a5d9d90000000b00760dfd3208dmr10585566iob.0.1682354371932;
+        Mon, 24 Apr 2023 09:39:31 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id cp14-20020a056638480e00b00411c415b4acsm495470jab.19.2023.04.24.09.39.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Apr 2023 09:39:31 -0700 (PDT)
+Message-ID: <17f55b16-cc5f-a585-baa3-2a39cb5e9cf3@kernel.dk>
+Date:   Mon, 24 Apr 2023 10:39:30 -0600
 MIME-Version: 1.0
-Received: by 2002:a05:7010:7499:b0:32d:e51f:dee8 with HTTP; Mon, 24 Apr 2023
- 03:51:50 -0700 (PDT)
-Reply-To: mariamkouame.info@myself.com
-From:   Mariam Kouame <mariamkouame1990@gmail.com>
-Date:   Mon, 24 Apr 2023 03:51:50 -0700
-Message-ID: <CAKXL+w08stRVVXkGQO0pBQ1x_ozGpGTcLNjscr9ZhQ3xnJgTTA@mail.gmail.com>
-Subject: from mariam kouame
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Level: **
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 0/5] block/drivers: don't clear the flag that is not set
+Content-Language: en-US
+To:     Chaitanya Kulkarni <kch@nvidia.com>, linux-block@vger.kernel.org,
+        linux-bcache@vger.kernel.org
+Cc:     josef@toxicpanda.com, minchan@kernel.org, senozhatsky@chromium.org,
+        colyli@suse.de, kent.overstreet@gmail.com, dlemoal@kernel.org,
+        johannes.thumshirn@wdc.com, bvanassche@acm.org,
+        vincent.fu@samsung.com, akinobu.mita@gmail.com,
+        shinichiro.kawasaki@wdc.com, nbd@other.debian.org
+References: <20230424073023.38935-1-kch@nvidia.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230424073023.38935-1-kch@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Dear,
+On 4/24/23 1:30?AM, Chaitanya Kulkarni wrote:
+> Hi,
+> 
+> The drivers in this patch-series tries to clear the
+> QUEUE_FLAG_ADD_RANDOM that is not set at all in the queue allocation
+> and initialization path in :-
 
-Please grant me permission to share a very crucial discussion with
-you. I am looking forward to hearing from you at your earliest
-convenience.
+Just roll this into one, as it should be a non-functional change since
+we don't default to ADD_RANDOM with MQ ops. And then change the title to
+something meaningful, ala:
 
-Mrs. Mariam Kouame
+block/drivers: remove dead clear of QUEUE_FLAG_ADD_RANDOM
+
+or something like that, as your title currently makes very little sense
+(eg it's hard to parse and it doesn't really say what is being done).
+
+-- 
+Jens Axboe
+
