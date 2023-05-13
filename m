@@ -2,152 +2,245 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 64EAA7013A9
-	for <lists+linux-bcache@lfdr.de>; Sat, 13 May 2023 03:09:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66CF67019F8
+	for <lists+linux-bcache@lfdr.de>; Sat, 13 May 2023 23:05:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241591AbjEMBJU (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 12 May 2023 21:09:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37520 "EHLO
+        id S229870AbjEMVFd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 13 May 2023 17:05:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241144AbjEMBJQ (ORCPT
+        with ESMTP id S230041AbjEMVFd (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 12 May 2023 21:09:16 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on20606.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe5b::606])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CACB59F9;
-        Fri, 12 May 2023 18:09:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=moOHlzgkSFFdeN/by54UrBm/GumJ640l15vTZpffYJtjKGAYvJxkOlYMOZ0tqsrJYrQyynwDQttOcjTR8n61hOZmX9lNjaRrIq13CXs7B/dJc0IqkiR9KnEprje/3Ru1RH3k01F7eTTcmxo2VVqFfUHJe+SuP7xE5RF+hJ9XzwQtGrpEeVtdtcYkH7dVIENZfeq7KnpAIBg6a4oLhlwAjEfsez1w2maTPo7Br1jIYAc5Yq0CDz+VJsyt1Kd72XIOn+ByK6D6Z29KcNsc6wcTCUaWeb5Xb4mJ2ZTIWgrURiNniyXyAe0vRf+HyjAPa4sPdnygmbKS6JKcV7/he7/JOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FFNd/JYMdRcyAwNJX8eyJpCPQct8JJUMy12Y5dQxrhs=;
- b=Wp9lcLNnF0WRGxcpN3c284FCtFxQhE2KCkcyCzS7WFWrjJZbSEn2IwRMPAKht4PDtuuZeO8ZZ+La+5wiP2qt4HjZXiIhoc9mvw0twTgfsqm8NLTA9vXJinkA/8XBkW4IgjwW05L8V5c/tKuSw2n86pogSwAQhh8+KRNR88B41UYnfYVWBD4/neTjiSQuGhzjGRALqUCSCfanzXp5odFnOso5Fii1MgvAWLcUJkHegZPfBfM3uOJc8ox08sehKStgprKv5FsiL5FUI07ynnkarDTXueUrt1E9/qc8QNZStz1kxotsMG1g0S4xAO43uoboO85aWlygnNarqxasYKoIRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FFNd/JYMdRcyAwNJX8eyJpCPQct8JJUMy12Y5dQxrhs=;
- b=TFRW9i+T+wXD2XFX9zSCvritR47Dd3X6O33Gxfw50DjO9xRKcTgzstCg4yDQoOPzd/7r/fApoitWBIq14UDgaHLK4vTKntCtdt52HvWQQiFnsCALuwur9QqNOj5/Uz0FFuFgBaL+7JTcqPXC5gBhvR4/Dn8tJpTfTO5r67No8whQrmUeXZcrv9vjAVfL423zr2umytLeeOFby1LbyPLH+YrVQ8Qas0bqrnUhzfXAzN7fo1LsJtHrr/vDDmEtw855mAou+57XFK0CkEUVu6VB0iRefk5Wq/fzQbF8Vvneo24n5B6FbkgVchyLqR+Z3sTYDQeBkbsPuAchZJVgic+0Ow==
-Received: from MW2PR12MB4667.namprd12.prod.outlook.com (2603:10b6:302:12::28)
- by CH0PR12MB5044.namprd12.prod.outlook.com (2603:10b6:610:e3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.24; Sat, 13 May
- 2023 01:09:12 +0000
-Received: from MW2PR12MB4667.namprd12.prod.outlook.com
- ([fe80::92c6:4b21:586d:dabc]) by MW2PR12MB4667.namprd12.prod.outlook.com
- ([fe80::92c6:4b21:586d:dabc%4]) with mapi id 15.20.6387.021; Sat, 13 May 2023
- 01:09:11 +0000
-From:   Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>
-CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "colyli@suse.de" <colyli@suse.de>,
-        "kent.overstreet@gmail.com" <kent.overstreet@gmail.com>,
-        "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@kernel.org" <snitzer@kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "song@kernel.org" <song@kernel.org>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Subject: Re: [RFC PATCH] block: add meaningful macro for flush op flags
-Thread-Topic: [RFC PATCH] block: add meaningful macro for flush op flags
-Thread-Index: AQHZhKjuJTefUUOpAkGElu0wVddDH69WmjEAgADLioA=
-Date:   Sat, 13 May 2023 01:09:11 +0000
-Message-ID: <67376534-ac4a-3cd9-fab6-fd3a062f5e48@nvidia.com>
-References: <20230512080757.387523-1-kch@nvidia.com>
- <20230512130042.GA29078@lst.de>
-In-Reply-To: <20230512130042.GA29078@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MW2PR12MB4667:EE_|CH0PR12MB5044:EE_
-x-ms-office365-filtering-correlation-id: 06da0f20-0d2f-4f15-7a7f-08db534ea945
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: SBzOp/GJtiU8F85vDkiTc3zfq/tTiPy23x8C1FOZ9Ir5TDxsoT4TwPd452NoA9vWLVgCvw/a5bKUiUqrP9QErPswf/urJLihOj/iqYKWbiMDRggJ5opVW39ntJkhtwbmFYCi7/4QoYwWSNXwQvqfbOpINxUVMAFUVOuOFRbfbPIHbUs/5rqSTF/gPj6as01mQMMo2earDejFo5henVkktUgw/0IFrTztz6sO5L4aa853+faEf/Pb/NhTOnH3ITpqizcARF94ZP14MKHeOaTJurlOgVL14J7NvgPD11YXxHbmDJpZ+7PWTFaq3PkHQ24A32SxEtXgu+58RmbHjO9KRZ2xt+rh+FeG5P07i1JT0Pbd/32YZph+br2jyTMf+36zKTddsXCmLNsFcj4E9lZSf8NT4NpDlOrEgY9JsOXvWoBoyNQTlsM+vyxIgy3SOcJCwGsF8mOLvRRFlR8v7Wy+EEflEnbfTrWud/6Y87yFg29vJAZQGqrOfURvMI+PY8WSo+2ZtOV/6OTC8W4rxCrL3rDnPl1lC1fY7VjE8rPWXkYHEQ1J8WOextj0GCO72BSR9YXBNZuBkm9xxpGsPSTuuyf/m4FZ0KGFKURRjghTjmeBi3QtbIKW7jB9fXHD9C8tdTLyVSittuHDj8QePrturKKaeBsaJQAcmgMQ1crNSOGt32chrt1MbEz4Hl70zz8j
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW2PR12MB4667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(39860400002)(366004)(136003)(376002)(346002)(451199021)(6486002)(38100700002)(38070700005)(4326008)(122000001)(53546011)(6512007)(6506007)(2616005)(186003)(4744005)(2906002)(8676002)(5660300002)(8936002)(7416002)(478600001)(36756003)(54906003)(110136005)(31696002)(41300700001)(71200400001)(316002)(66476007)(86362001)(66446008)(76116006)(66556008)(66946007)(64756008)(91956017)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Uk5oRnFrbTBWMmhSTjB0WjFhYnViZTM5eG9nY1ZhejVwZ1cwNVBTbmoxZ1R0?=
- =?utf-8?B?MHJkTW43TkxVSnpwc0I5Slh2Mi9XYnRlUVZyTDMxZEs0aDY5NkxtSnVNckVQ?=
- =?utf-8?B?cUFoN285V2o1blV6cTFBY2lhNWphbFdzNDNwclhyQ3dDRTR3OGRZUE56TXZC?=
- =?utf-8?B?ZmprcEE4ZFlnWFFLbWhWeUVBS2c2TE10VzBLV1RaUXpYTnRZRDZMZGVTMTEw?=
- =?utf-8?B?U21xV3hyWUkrRjQ1Q3FqNkVTeDN1NTBrNHd2OFhsKzJTNU55bzIxUnJnN2E4?=
- =?utf-8?B?TG43VU1qUXRQNHJPTVJiK2ZGamkxTWprNGluRWZZTy96bVdLYkcxaEwzY01K?=
- =?utf-8?B?R283Q3BXZUx0QTBiOXRsZlZ6cjFYYkhqdERMemdLRTVqR0tkaXl6cUlrUmd1?=
- =?utf-8?B?UDNkRW1QTlU5Y2tyUFBiSXc2aG13YTR0UjhEZE91QSthM2JCK2hyQVViY0Vj?=
- =?utf-8?B?eXczdUQ5MUZDb2Vuby81NVFNQzZrYThMVnY2bEtpSjVJZnlTam9qWmhwYzhO?=
- =?utf-8?B?VUFkTlNhZWJyaUN3TXBoSUowekQrQ2JISG9SVTRnSXJDRzlsRWVPd1JDOXNl?=
- =?utf-8?B?RUZZeC9ZTHZ3ejFvOXI5cjAwZFY4TW9heEx6aE1JRmkvQU1tUk1BTzU0SFpZ?=
- =?utf-8?B?cVBMN2d2Qlc0K1VaU2Q2Q1J4OXZReU1HaXVnd2V1dHA2ZVo2MmFXbGt4TzB3?=
- =?utf-8?B?bkRPT0h5ci94MzJiQWdpZEJ2L1dpNnRzemMzNngvNHJTL2hUdTFBS3p4N0lD?=
- =?utf-8?B?SjFJSzJUSENjd3pCejhpUUNndHJybmhMVS9LaFdraUl1UG0zV2I4SHhpbzN3?=
- =?utf-8?B?d1AzRFNrdGNaS2RqdGxlWVRJQmFBYitQQURmMlBIYUI2eEFac2Q5ODB3UXd1?=
- =?utf-8?B?Zk1lNEVBTE5sbjNnemtYcW5uYmk5VG9mSUE5ODl5N1VSQ3M4WXZIUDNpNlI0?=
- =?utf-8?B?Q3NVSWJKaHZFaldpMzg0dE1SWTZZbDhVVVJpTmpEeEJ4cEFSbXR6U1BiVjV0?=
- =?utf-8?B?Um5CUjZiTWFoWFVSWWYrMEc5Rlo2YlZBa01WRlFGb055dCtxOVduNXV1YUo4?=
- =?utf-8?B?NEZuMEtFZmJ2cHNOdHhLV1BMODYvcUlxSHpUU1RTbkY3U0hvUTBveE9kd3or?=
- =?utf-8?B?c0ZNOW9KbFJFUm15QkdweXN3akFkS0U3YjdnbC91RkdBUE9yRjFHemMwRFR3?=
- =?utf-8?B?MFdrOW5udUdaeWZiUTB3bUxReFRleW5icnRGT001OXYvN0pPRmtvWU4rT3hY?=
- =?utf-8?B?TU9uVTdnVFNLYTVFOExRanVrTW16c3Y2K1gySmNsS0Z0bXJFRHVCR21PTXFl?=
- =?utf-8?B?S2IxTGdreHpnaE9hTU0xSkxMRGgyd2ZUaE1IRXluTGI3dUNTRWc5bkM3ZVhG?=
- =?utf-8?B?UjBGVFgrZzZyVHlMcXpvSy8wVldoWTBQVEs3RnM4cEovQkIveXZUZTJTQ2NF?=
- =?utf-8?B?YnZURjN4U0k2RmN2TFFSUDVyNmhNRUlLdkxXOGFXNTBZU2lIMWhWeUJ1M3Vs?=
- =?utf-8?B?UXFUSzVhYXJwRC9JWFFpaU9PU0tVNXpQV0FBcXhUeUZhQSsyVjVUOFMzWGdi?=
- =?utf-8?B?NDM0WjdyMjk5NlNHdWhPZVp2WTQxcVpQQ0dqWWhsSEJldnRRRnRTeWhpeHdo?=
- =?utf-8?B?L3ByKytJcDVZVW90VmdHMXR2K0JscTEvbDlFVlpNMDYvVHQ2WnQzN3F0WDk5?=
- =?utf-8?B?UWVDdGNHR0E1ekJWYTNaVDVVYldPRTY1TzlQOHJmU1JhbjZ5aUNhbFo1Z1Z0?=
- =?utf-8?B?QURIUGphUHJrZkFtRUZNbHlMb0dsUldGZDhjZkhvaERJaTZQSHBqR0JJaGVm?=
- =?utf-8?B?U012U3o1cTdzbGdndzJ2aGRMRE9vS25CSmg2OS96enJYT0Jud1o4Y2hGRkFs?=
- =?utf-8?B?d2dTU2J4clJHQmNhYWJBbzdpemVYbVhpQkZYZFEwTkNMKzZiTmNHR01WY0pH?=
- =?utf-8?B?VWt4Y0djYTRzVVlXTnl5aFFHNVRNMmFwWUlGYlFLbTQ3b3BCT2txWlpycXlN?=
- =?utf-8?B?cnZvTVF4bjBhM0RXWVpZdDcvRjZneHgzR3UvcVN0MTIwMWg5dXFXc1RzN3E5?=
- =?utf-8?B?TnNFbU5sWGlPSGx5ZU0wTVJuTTlRZmdPNjQ5TnZjcVdnWEFjbS9EbVprQm5S?=
- =?utf-8?B?Mk1OVEEvV1NLNEdTVG1SMzJvWnhsVEtvU0RlUXIzUGdXL3N3YVY1TDBaZFhl?=
- =?utf-8?Q?zEUBaCMSXwtzNzF2fFcxg5bkDA8QQQWU/vAJjsogeQux?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <750E4C657651274B839324D156D21A23@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Sat, 13 May 2023 17:05:33 -0400
+Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E1F1FDE
+        for <linux-bcache@vger.kernel.org>; Sat, 13 May 2023 14:05:31 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mx.ewheeler.net (Postfix) with ESMTP id E48A545;
+        Sat, 13 May 2023 14:05:30 -0700 (PDT)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id F0bhVnGT7RQr; Sat, 13 May 2023 14:05:26 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id 6ED8E40;
+        Sat, 13 May 2023 14:05:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 6ED8E40
+Date:   Sat, 13 May 2023 14:05:26 -0700 (PDT)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
+To:     Coly Li <colyli@suse.de>
+cc:     Adriano Silva <adriano_da_silva@yahoo.com.br>,
+        Bcache Linux <linux-bcache@vger.kernel.org>,
+        Martin McClure <martin.mcclure@gemtalksystems.com>
+Subject: Re: Writeback cache all used.
+In-Reply-To: <pcwgnlftmhdpqt7byqfinxrjif7laqchpkhv2a4kae46u2mbrf@7eqa2sq6xbzx>
+Message-ID: <b33952ec-da5d-ad1-c710-ac374955215@ewheeler.net>
+References: <2054791833.3229438.1680723106142@mail.yahoo.com> <6726BA46-A908-4EA5-BDD0-7FA13ADD384F@suse.de> <1806824772.518963.1681071297025@mail.yahoo.com> <125091407.524221.1681074461490@mail.yahoo.com> <1399491299.3275222.1681990558684@mail.yahoo.com>
+ <98d8ab2f-93ff-4df9-a91a-d0fb65bf675@ewheeler.net> <95701AD2-A13A-4E79-AE27-AAEFF6AA87D3@suse.de> <29836c81-3388-cf59-99b1-15bbf0eaac@ewheeler.net> <2050992229.3201284.1683598895474@mail.yahoo.com> <938a1b-c126-6962-ab3c-64e94fa08bcd@ewheeler.net>
+ <pcwgnlftmhdpqt7byqfinxrjif7laqchpkhv2a4kae46u2mbrf@7eqa2sq6xbzx>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW2PR12MB4667.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06da0f20-0d2f-4f15-7a7f-08db534ea945
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2023 01:09:11.5038
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ImhtPkay8Jgpum5FOFmitrbma2hkPOo6moo2T9vA7u5WKSq62UDaliLIjjp6PCBiBOGKoVXZk3mg9eaqaTLbGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5044
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: multipart/mixed; BOUNDARY="8323328-1248967855-1684011012=:22690"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-T24gNS8xMi8yMyAwNjowMCwgQ2hyaXN0b3BoIEhlbGx3aWcgd3JvdGU6DQo+IEhlbGwgbm8uICBU
-aGlzIGlzIGp1c3Qgb2JzZnVjYXRpb24uICBXZSBjYW4gbG9vayBpbnRvIGFjdHVhbGx5IGV4cG9z
-aW5nDQo+IFJFUV9PUF9GTFVTSCBhdCB0aGUgYmlvIGxldmVsLCBidXQgbm90IHNvbWV0aGluZyBs
-aWtlIHRoaXMuDQo+DQoNCmFuZCB0aGF0J3Mgd2h5IEkgbWFkZSBpdCBSRkMsIHRoYW5rcyBmb3Ig
-dGhlIGNhbiB5b3UgcGxlYXNlIGVsYWJvcmF0ZQ0Kb24gImV4cG9zaW5nIFJFUV9PUF9GTFVTSCBh
-dCB0aGUgYmlvIGxldmVsIiA/DQoNCkknZCByZWFsbHkgbGlrZSB3b3JrIHRoYXQgLi4uDQoNCi1j
-aw0KDQoNCg==
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-1248967855-1684011012=:22690
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Fri, 12 May 2023, Coly Li wrote:
+> On Thu, May 11, 2023 at 04:10:51PM -0700, Eric Wheeler wrote:
+> > On Tue, 9 May 2023, Adriano Silva wrote:
+> > > I got the parameters with this script, although I also checked / sys, doing the math everything is right.
+> > > 
+> > > https://gist.github.com/damoxc/6267899
+> > 
+> > Thanks.  prio_stats gives me what I'm looking for.  More below.
+> >  
+> > > Em segunda-feira, 8 de maio de 2023 às 21:42:26 BRT, Eric Wheeler <bcache@lists.ewheeler.net> escreveu: 
+> > > On Thu, 4 May 2023, Coly Li wrote:
+> > > > > 2023年5月3日 04:34，Eric Wheeler <bcache@lists.ewheeler.net> 写道：
+> > > > > 
+> > > > > On Thu, 20 Apr 2023, Adriano Silva wrote:
+> > > > >> I continue to investigate the situation. There is actually a performance 
+> > > > >> gain when the bcache device is only half filled versus full. There is a 
+> > > > >> reduction and greater stability in the latency of direct writes and this 
+> > > > >> improves my scenario.
+> > > > > 
+> > > > > Hi Coly, have you been able to look at this?
+> > > > > 
+> > > > > This sounds like a great optimization and Adriano is in a place to test 
+> > > > > this now and report his findings.
+> > > > > 
+> > > > > I think you said this should be a simple hack to add early reclaim, so 
+> > > > > maybe you can throw a quick patch together (even a rough first-pass with 
+> > > > > hard-coded reclaim values)
+> > > > > 
+> > > > > If we can get back to Adriano quickly then he can test while he has an 
+> > > > > easy-to-reproduce environment.  Indeed, this could benefit all bcache 
+> > > > > users.
+> > > > 
+> > > > My current to-do list on hand is a little bit long. Yes I’d like and 
+> > > > plan to do it, but the response time cannot be estimated.
+> > > 
+> > > I understand.  Maybe I can put something together if you can provide some 
+> > > pointers since you are _the_ expert on bcache these days.  Here are a few 
+> > > questions:
+> > > 
+> > > Q's for Coly:
+> > 
+> > 
+> > It _looks_ like bcache frees buckets while the `ca->free_inc` list is 
+> > full, but it could go further.  Consider this hypothetical:
+> > 
+> 
+> Hi Eric,
+> 
+> Bcache starts to invalidate bucket when ca->free_inc is full, and selects some
+> buckets to be invalidate by the replacement policy. Then continues to call
+> bch_invalidate_one_bucket() and pushes the invalidated bucket into ca->free_inc
+> until this list is full or no more candidate bucket to invalidate.
+
+Understood.  The goal:  In an attempt to work around Adriano's performance 
+issue, we wish to invalidate buckets even after free_inc is full.  If we 
+can keep ~20% of buckets unused (ie, !GC_SECTORS_USED(b) ) then I think it 
+will fix his issue.  That is the theory we wish to test and validate.
+
+> > https://elixir.bootlin.com/linux/v6.4-rc1/source/drivers/md/bcache/alloc.c#L179
+> > 
+> > 	static void invalidate_buckets_lru(struct cache *ca)
+> > 	{
+> > 	...
+> 
+> the mutex_lock()/unlock may introduce deadlock. Before invadliate_buckets() is
+> called, after allocator_wait() returns the mutex lock bucket_lock is held again. 
+
+I see what you mean.  Maybe the bucket lock is already held; if so then I 
+don't need to grab it again. For now I've pulled the mutex_lock lines for 
+discussion.
+
+We only use for_each_bucket() to get a "fuzzy" count of `available` 
+buckets (pseudo code updated below). It doesn't need to be exact.
+
+Here is some cleaned up and concise pseudo code for discussion (I've not 
+yet compile tested):
+
++	int available = 0;
++
++	//mutex_lock(&ca->set->bucket_lock);
++	for_each_bucket(b, ca) {
++		if (GC_MARK(b) == GC_MARK_RECLAIMABLE)
++			available++;
++	}
++	//mutex_unlock(&ca->set->bucket_lock);
++
+-	while (!fifo_full(&ca->free_inc)) {
++	while (!fifo_full(&ca->free_inc) || available < TARGET_AVAIL_BUCKETS) {
+		...
+ 		bch_invalidate_one_bucket(ca, b);  <<<< this does the work
++               available++;
+	}
+
+Changes from previous post:
+
+  - `available` was not incremented, now it is , so now the loop can 
+    terminate.
+  - Removed the other counters for clarity, we only care about 
+    GC_MARK_RECLAIMABLE for this discussion.
+  - Ignore locking for now
+  
+(TARGET_AVAIL_BUCKETS is a placeholder, ultimately it would be a sysfs 
+setting, probably a percentage.)
+ 
+> If ca->free_inc is full, and you still try to invalidate more candidate 
+> buckets, the following selected bucket (by the heap_pop) will be 
+> invalidate in bch_invalidate_one_bucket() and pushed into ca->free_inc. 
+> But now ca->free_inc is full, so next time when invalidate_buckets_lru() 
+> is called again, this already invalidated bucket will be accessed and 
+> checked again in for_each_bucket(). This is just a waste of CPU cycles.
+
+True. I was aware of this performance issue when I wrote that; bcache 
+takes ~1s to iterate for_each_bucket() on my system.  Right now we just 
+want to keep ~20% of buckets completely unused and verify 
+correctness...and then I can work on hiding the bucket counting overhead 
+caused by for_each_bucket().
+
+> Further more, __bch_invalidate_one_bucket() will include the bucket's gen number and
+> its pin counter. Doing this without pushing the bucket into ca->free_inc, makes me
+> feel uncomfortable.
+
+Questions for my understanding: 
+
+- Is free_inc just a reserve list such that most buckets are in the heap 
+  after a fresh `make-bcache -C <cdev>`?
+
+- What is the difference between buckets in free_inc and buckets in the 
+  heap? Do they overlap?
+
+I assume you mean this:
+
+	void __bch_invalidate_one_bucket(...) { 
+		...
+		bch_inc_gen(ca, b);
+		b->prio = INITIAL_PRIO;
+		atomic_inc(&b->pin);
+
+If I understand the internals of bcache, the `gen` is just a counter that 
+increments to make the bucket "newer" than another referenced version.  
+Incrementing the `gen` on an unused bucket should be safe, but please 
+correct me if I'm wrong here.
+
+I'm not familiar with b->pin, it doesn't appear to be commented in `struct 
+bucket` and I didn't see it used in bch_allocator_push().  
+
+What is b->pin used for?
+
+> > Coly, would this work?
+> 
+> It should work on some kind of workloads, but will introduce complains for other kind of workloads.
+
+As this is written above, I agree.  Right now I'm just trying to 
+understand the code well enough to free buckets preemptively so allocation 
+doesn't happen during IO.  For now please ignore the cost of 
+for_each_bucket().
+
+> > Can you think of any serious issues with this (besides the fact that 
+> > for_each_bucket is slow)?
+> > 
+> 
+> I don't feel this change may help to make bcache invalidate the clean 
+> buckets without extra cost.
+
+For the example pseudo code above that is true, and for now I am _not_ 
+trying to address performance.
+ 
+> It is not simple for me to tell a solution without careful thought, this 
+> is a tradeoff of gain and pay...
+
+Certainly that is the end goal, but first I need to understand the code 
+well enough to invalidate buckets down to 20% free and still maintain 
+correctness.
+
+Thanks for your help understaing this.
+
+-Eric
+
+> 
+> Thanks.
+> 
+> [snipped]
+> 
+> -- 
+> Coly Li
+> 
+--8323328-1248967855-1684011012=:22690--
