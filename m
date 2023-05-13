@@ -2,245 +2,167 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66CF67019F8
-	for <lists+linux-bcache@lfdr.de>; Sat, 13 May 2023 23:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A586701A0C
+	for <lists+linux-bcache@lfdr.de>; Sat, 13 May 2023 23:30:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbjEMVFd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sat, 13 May 2023 17:05:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47118 "EHLO
+        id S229715AbjEMVaN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 13 May 2023 17:30:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230041AbjEMVFd (ORCPT
+        with ESMTP id S229704AbjEMVaM (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sat, 13 May 2023 17:05:33 -0400
+        Sat, 13 May 2023 17:30:12 -0400
 Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E1F1FDE
-        for <linux-bcache@vger.kernel.org>; Sat, 13 May 2023 14:05:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E89170A
+        for <linux-bcache@vger.kernel.org>; Sat, 13 May 2023 14:30:10 -0700 (PDT)
 Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id E48A545;
-        Sat, 13 May 2023 14:05:30 -0700 (PDT)
+        by mx.ewheeler.net (Postfix) with ESMTP id 5187045;
+        Sat, 13 May 2023 14:30:10 -0700 (PDT)
 X-Virus-Scanned: amavisd-new at ewheeler.net
 Received: from mx.ewheeler.net ([127.0.0.1])
         by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id F0bhVnGT7RQr; Sat, 13 May 2023 14:05:26 -0700 (PDT)
+        with LMTP id u5fNxizfx0s0; Sat, 13 May 2023 14:30:06 -0700 (PDT)
 Received: from localhost (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 6ED8E40;
-        Sat, 13 May 2023 14:05:26 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 6ED8E40
-Date:   Sat, 13 May 2023 14:05:26 -0700 (PDT)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id CDEAE40;
+        Sat, 13 May 2023 14:30:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net CDEAE40
+Date:   Sat, 13 May 2023 14:30:05 -0700 (PDT)
 From:   Eric Wheeler <bcache@lists.ewheeler.net>
-To:     Coly Li <colyli@suse.de>
-cc:     Adriano Silva <adriano_da_silva@yahoo.com.br>,
-        Bcache Linux <linux-bcache@vger.kernel.org>,
-        Martin McClure <martin.mcclure@gemtalksystems.com>
-Subject: Re: Writeback cache all used.
-In-Reply-To: <pcwgnlftmhdpqt7byqfinxrjif7laqchpkhv2a4kae46u2mbrf@7eqa2sq6xbzx>
-Message-ID: <b33952ec-da5d-ad1-c710-ac374955215@ewheeler.net>
-References: <2054791833.3229438.1680723106142@mail.yahoo.com> <6726BA46-A908-4EA5-BDD0-7FA13ADD384F@suse.de> <1806824772.518963.1681071297025@mail.yahoo.com> <125091407.524221.1681074461490@mail.yahoo.com> <1399491299.3275222.1681990558684@mail.yahoo.com>
- <98d8ab2f-93ff-4df9-a91a-d0fb65bf675@ewheeler.net> <95701AD2-A13A-4E79-AE27-AAEFF6AA87D3@suse.de> <29836c81-3388-cf59-99b1-15bbf0eaac@ewheeler.net> <2050992229.3201284.1683598895474@mail.yahoo.com> <938a1b-c126-6962-ab3c-64e94fa08bcd@ewheeler.net>
- <pcwgnlftmhdpqt7byqfinxrjif7laqchpkhv2a4kae46u2mbrf@7eqa2sq6xbzx>
+To:     Chaitanya Kulkarni <kch@nvidia.com>
+cc:     colyli@suse.de, kent.overstreet@gmail.com,
+        linux-bcache@vger.kernel.org
+Subject: Re: [PATCH 1/1] bcache: allow user to set QUEUE_FLAG_NOWAIT
+In-Reply-To: <20230512095420.12578-2-kch@nvidia.com>
+Message-ID: <31bfee17-47f0-b1ca-eb0-baf0762b41e8@ewheeler.net>
+References: <20230512095420.12578-1-kch@nvidia.com> <20230512095420.12578-2-kch@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1248967855-1684011012=:22690"
+Content-Type: text/plain; charset=US-ASCII
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, 12 May 2023, Chaitanya Kulkarni wrote:
 
---8323328-1248967855-1684011012=:22690
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-On Fri, 12 May 2023, Coly Li wrote:
-> On Thu, May 11, 2023 at 04:10:51PM -0700, Eric Wheeler wrote:
-> > On Tue, 9 May 2023, Adriano Silva wrote:
-> > > I got the parameters with this script, although I also checked / sys, doing the math everything is right.
-> > > 
-> > > https://gist.github.com/damoxc/6267899
-> > 
-> > Thanks.  prio_stats gives me what I'm looking for.  More below.
-> >  
-> > > Em segunda-feira, 8 de maio de 2023 às 21:42:26 BRT, Eric Wheeler <bcache@lists.ewheeler.net> escreveu: 
-> > > On Thu, 4 May 2023, Coly Li wrote:
-> > > > > 2023年5月3日 04:34，Eric Wheeler <bcache@lists.ewheeler.net> 写道：
-> > > > > 
-> > > > > On Thu, 20 Apr 2023, Adriano Silva wrote:
-> > > > >> I continue to investigate the situation. There is actually a performance 
-> > > > >> gain when the bcache device is only half filled versus full. There is a 
-> > > > >> reduction and greater stability in the latency of direct writes and this 
-> > > > >> improves my scenario.
-> > > > > 
-> > > > > Hi Coly, have you been able to look at this?
-> > > > > 
-> > > > > This sounds like a great optimization and Adriano is in a place to test 
-> > > > > this now and report his findings.
-> > > > > 
-> > > > > I think you said this should be a simple hack to add early reclaim, so 
-> > > > > maybe you can throw a quick patch together (even a rough first-pass with 
-> > > > > hard-coded reclaim values)
-> > > > > 
-> > > > > If we can get back to Adriano quickly then he can test while he has an 
-> > > > > easy-to-reproduce environment.  Indeed, this could benefit all bcache 
-> > > > > users.
-> > > > 
-> > > > My current to-do list on hand is a little bit long. Yes I’d like and 
-> > > > plan to do it, but the response time cannot be estimated.
-> > > 
-> > > I understand.  Maybe I can put something together if you can provide some 
-> > > pointers since you are _the_ expert on bcache these days.  Here are a few 
-> > > questions:
-> > > 
-> > > Q's for Coly:
-> > 
-> > 
-> > It _looks_ like bcache frees buckets while the `ca->free_inc` list is 
-> > full, but it could go further.  Consider this hypothetical:
-> > 
+> Allow user to set the QUEUE_FLAG_NOWAIT optionally using module
+> parameter to retain the default behaviour. Also, update respective
+> allocation flags in the write path. Following are the performance
+> numbers with io_uring fio engine for random read, note that device has
+> been populated fully with randwrite workload before taking these
+> numbers :-
 > 
-> Hi Eric,
+> * linux-block (for-next) # grep IOPS  bc-*fio | column -t
 > 
-> Bcache starts to invalidate bucket when ca->free_inc is full, and selects some
-> buckets to be invalidate by the replacement policy. Then continues to call
-> bch_invalidate_one_bucket() and pushes the invalidated bucket into ca->free_inc
-> until this list is full or no more candidate bucket to invalidate.
-
-Understood.  The goal:  In an attempt to work around Adriano's performance 
-issue, we wish to invalidate buckets even after free_inc is full.  If we 
-can keep ~20% of buckets unused (ie, !GC_SECTORS_USED(b) ) then I think it 
-will fix his issue.  That is the theory we wish to test and validate.
-
-> > https://elixir.bootlin.com/linux/v6.4-rc1/source/drivers/md/bcache/alloc.c#L179
-> > 
-> > 	static void invalidate_buckets_lru(struct cache *ca)
-> > 	{
-> > 	...
+> nowait-off-1.fio:  read:  IOPS=482k,  BW=1885MiB/s
+> nowait-off-2.fio:  read:  IOPS=484k,  BW=1889MiB/s
+> nowait-off-3.fio:  read:  IOPS=483k,  BW=1886MiB/s
 > 
-> the mutex_lock()/unlock may introduce deadlock. Before invadliate_buckets() is
-> called, after allocator_wait() returns the mutex lock bucket_lock is held again. 
-
-I see what you mean.  Maybe the bucket lock is already held; if so then I 
-don't need to grab it again. For now I've pulled the mutex_lock lines for 
-discussion.
-
-We only use for_each_bucket() to get a "fuzzy" count of `available` 
-buckets (pseudo code updated below). It doesn't need to be exact.
-
-Here is some cleaned up and concise pseudo code for discussion (I've not 
-yet compile tested):
-
-+	int available = 0;
-+
-+	//mutex_lock(&ca->set->bucket_lock);
-+	for_each_bucket(b, ca) {
-+		if (GC_MARK(b) == GC_MARK_RECLAIMABLE)
-+			available++;
-+	}
-+	//mutex_unlock(&ca->set->bucket_lock);
-+
--	while (!fifo_full(&ca->free_inc)) {
-+	while (!fifo_full(&ca->free_inc) || available < TARGET_AVAIL_BUCKETS) {
-		...
- 		bch_invalidate_one_bucket(ca, b);  <<<< this does the work
-+               available++;
-	}
-
-Changes from previous post:
-
-  - `available` was not incremented, now it is , so now the loop can 
-    terminate.
-  - Removed the other counters for clarity, we only care about 
-    GC_MARK_RECLAIMABLE for this discussion.
-  - Ignore locking for now
-  
-(TARGET_AVAIL_BUCKETS is a placeholder, ultimately it would be a sysfs 
-setting, probably a percentage.)
- 
-> If ca->free_inc is full, and you still try to invalidate more candidate 
-> buckets, the following selected bucket (by the heap_pop) will be 
-> invalidate in bch_invalidate_one_bucket() and pushed into ca->free_inc. 
-> But now ca->free_inc is full, so next time when invalidate_buckets_lru() 
-> is called again, this already invalidated bucket will be accessed and 
-> checked again in for_each_bucket(). This is just a waste of CPU cycles.
-
-True. I was aware of this performance issue when I wrote that; bcache 
-takes ~1s to iterate for_each_bucket() on my system.  Right now we just 
-want to keep ~20% of buckets completely unused and verify 
-correctness...and then I can work on hiding the bucket counting overhead 
-caused by for_each_bucket().
-
-> Further more, __bch_invalidate_one_bucket() will include the bucket's gen number and
-> its pin counter. Doing this without pushing the bucket into ca->free_inc, makes me
-> feel uncomfortable.
-
-Questions for my understanding: 
-
-- Is free_inc just a reserve list such that most buckets are in the heap 
-  after a fresh `make-bcache -C <cdev>`?
-
-- What is the difference between buckets in free_inc and buckets in the 
-  heap? Do they overlap?
-
-I assume you mean this:
-
-	void __bch_invalidate_one_bucket(...) { 
-		...
-		bch_inc_gen(ca, b);
-		b->prio = INITIAL_PRIO;
-		atomic_inc(&b->pin);
-
-If I understand the internals of bcache, the `gen` is just a counter that 
-increments to make the bucket "newer" than another referenced version.  
-Incrementing the `gen` on an unused bucket should be safe, but please 
-correct me if I'm wrong here.
-
-I'm not familiar with b->pin, it doesn't appear to be commented in `struct 
-bucket` and I didn't see it used in bch_allocator_push().  
-
-What is b->pin used for?
-
-> > Coly, would this work?
+> nowait-on-1.fio:   read:  IOPS=544k,  BW=2125MiB/s
+> nowait-on-2.fio:   read:  IOPS=547k,  BW=2137MiB/s
+> nowait-on-3.fio:   read:  IOPS=546k,  BW=2132MiB/s
 > 
-> It should work on some kind of workloads, but will introduce complains for other kind of workloads.
-
-As this is written above, I agree.  Right now I'm just trying to 
-understand the code well enough to free buckets preemptively so allocation 
-doesn't happen during IO.  For now please ignore the cost of 
-for_each_bucket().
-
-> > Can you think of any serious issues with this (besides the fact that 
-> > for_each_bucket is slow)?
-> > 
+> * linux-block (for-next) # grep slat  bc-*fio | column -t
 > 
-> I don't feel this change may help to make bcache invalidate the clean 
-> buckets without extra cost.
+> nowait-off-1.fio: slat (nsec):  min=430, max=5488.5k, avg=2797.52
+> nowait-off-2.fio: slat (nsec):  min=431, max=8252.4k, avg=2805.33
+> nowait-off-3.fio: slat (nsec):  min=431, max=6846.6k, avg=2814.57
+> 
+> nowait-on-1.fio:  slat (usec):  min=2,   max=39086,   avg=87.48
+> nowait-on-2.fio:  slat (usec):  min=3,   max=39519,   avg=86.98
+> nowait-on-3.fio:  slat (usec):  min=3,   max=38880,   avg=87.17
+> 
+> * linux-block (for-next) # grep cpu  bc-*fio | column -t
+> 
+> nowait-off-1.fio:  cpu  :  usr=2.77%,  sys=6.57%,   ctx=22015526
+> nowait-off-2.fio:  cpu  :  usr=2.75%,  sys=6.59%,   ctx=22003700
+> nowait-off-3.fio:  cpu  :  usr=2.81%,  sys=6.57%,   ctx=21938309
+> 
+> nowait-on-1.fio:   cpu  :  usr=1.08%,  sys=78.39%,  ctx=2744092
+> nowait-on-2.fio:   cpu  :  usr=1.10%,  sys=79.76%,  ctx=2537466
+> nowait-on-3.fio:   cpu  :  usr=1.10%,  sys=79.88%,  ctx=2528092
 
-For the example pseudo code above that is true, and for now I am _not_ 
-trying to address performance.
- 
-> It is not simple for me to tell a solution without careful thought, this 
-> is a tradeoff of gain and pay...
 
-Certainly that is the end goal, but first I need to understand the code 
-well enough to invalidate buckets down to 20% free and still maintain 
-correctness.
+Wow, amazing for such a tiny patch.  Especially the latency numbers! Given 
+this, maybe NOWAIT should be enabled by default.
 
-Thanks for your help understaing this.
+Why would anyone want to use the old NOWAIT=off variant?
+
+Are there benefits to going without NOWAIT that go unnoticed when testing 
+against a ramdisk?
+
+For example, (and this seems unlikely) can NOWAIT affect the IO scheduler 
+in a way that would prevent sorted IOs headed toward a rotational disk?
+
+
+It would be interesting to see two more test classes:
+
+1. Ram disk cache with NVMe backing device.
+
+2. NVMe cache with rotational HDD backing device.
 
 -Eric
 
 > 
-> Thanks.
+> Signed-off-by: Chaitanya Kulkarni <kch@nvidia.com>
+> ---
+>  drivers/md/bcache/request.c | 3 ++-
+>  drivers/md/bcache/super.c   | 6 ++++++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
 > 
-> [snipped]
-> 
+> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+> index 67a2e29e0b40..2055a23eb4b7 100644
+> --- a/drivers/md/bcache/request.c
+> +++ b/drivers/md/bcache/request.c
+> @@ -716,9 +716,10 @@ static inline struct search *search_alloc(struct bio *bio,
+>  		struct bcache_device *d, struct block_device *orig_bdev,
+>  		unsigned long start_time)
+>  {
+> +	gfp_t gfp = bio->bi_opf & REQ_NOWAIT ? GFP_NOWAIT : GFP_NOIO;
+>  	struct search *s;
+>  
+> -	s = mempool_alloc(&d->c->search, GFP_NOIO);
+> +	s = mempool_alloc(&d->c->search, gfp);
+>  
+>  	closure_init(&s->cl, NULL);
+>  	do_bio_hook(s, bio, request_endio);
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index 7e9d19fd21dd..f76822bece26 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -28,6 +28,7 @@
+>  
+>  unsigned int bch_cutoff_writeback;
+>  unsigned int bch_cutoff_writeback_sync;
+> +bool bch_nowait;
+>  
+>  static const char bcache_magic[] = {
+>  	0xc6, 0x85, 0x73, 0xf6, 0x4e, 0x1a, 0x45, 0xca,
+> @@ -971,6 +972,8 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+>  	}
+>  
+>  	blk_queue_flag_set(QUEUE_FLAG_NONROT, d->disk->queue);
+> +	if (bch_nowait)
+> +		blk_queue_flag_set(QUEUE_FLAG_NOWAIT, d->disk->queue);
+>  
+>  	blk_queue_write_cache(q, true, true);
+>  
+> @@ -2933,6 +2936,9 @@ MODULE_PARM_DESC(bch_cutoff_writeback, "threshold to cutoff writeback");
+>  module_param(bch_cutoff_writeback_sync, uint, 0);
+>  MODULE_PARM_DESC(bch_cutoff_writeback_sync, "hard threshold to cutoff writeback");
+>  
+> +module_param(bch_nowait, bool, 0);
+> +MODULE_PARM_DESC(bch_nowait, "set QUEUE_FLAG_NOWAIT");
+> +
+>  MODULE_DESCRIPTION("Bcache: a Linux block layer cache");
+>  MODULE_AUTHOR("Kent Overstreet <kent.overstreet@gmail.com>");
+>  MODULE_LICENSE("GPL");
 > -- 
-> Coly Li
+> 2.40.0
 > 
---8323328-1248967855-1684011012=:22690--
+> 
