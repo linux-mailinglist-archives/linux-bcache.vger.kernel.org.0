@@ -2,102 +2,75 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0107370213F
-	for <lists+linux-bcache@lfdr.de>; Mon, 15 May 2023 03:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E3ED702409
+	for <lists+linux-bcache@lfdr.de>; Mon, 15 May 2023 08:05:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237979AbjEOBnc (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Sun, 14 May 2023 21:43:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45676 "EHLO
+        id S238784AbjEOGFY (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 15 May 2023 02:05:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229708AbjEOBnb (ORCPT
+        with ESMTP id S239400AbjEOGE4 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Sun, 14 May 2023 21:43:31 -0400
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EABA10E9;
-        Sun, 14 May 2023 18:43:30 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.169])
-        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4QKMb13jWdz4f3mJ8;
-        Mon, 15 May 2023 09:43:25 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-        by APP3 (Coremail) with SMTP id _Ch0CgBH9CE9jmFkXtnYIg--.28848S3;
-        Mon, 15 May 2023 09:43:27 +0800 (CST)
-Subject: Re: [RFC PATCH] block: add meaningful macro for flush op flags
-To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "colyli@suse.de" <colyli@suse.de>,
-        "kent.overstreet@gmail.com" <kent.overstreet@gmail.com>,
-        "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@kernel.org" <snitzer@kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "song@kernel.org" <song@kernel.org>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "yukuai (C)" <yukuai3@huawei.com>
-References: <20230512080757.387523-1-kch@nvidia.com>
- <20230512130042.GA29078@lst.de>
- <67376534-ac4a-3cd9-fab6-fd3a062f5e48@nvidia.com>
-From:   Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2ca38f24-6c6f-4975-fcc8-e700c67029ee@huaweicloud.com>
-Date:   Mon, 15 May 2023 09:43:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 15 May 2023 02:04:56 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2646744A0
+        for <linux-bcache@vger.kernel.org>; Sun, 14 May 2023 22:57:33 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4f13a72ff53so14062183e87.0
+        for <linux-bcache@vger.kernel.org>; Sun, 14 May 2023 22:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684130251; x=1686722251;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dQlu0Oc2Q0nPMBCNq5iTPUZpwrRZlsMdPt2zjra8+VI=;
+        b=W9EpnCHn7XS+t3XrjH5a6wO4NydiMvUh5ff4g6Mnmn+BMu1oa0h+/748d54dT5HfJf
+         TD2dDUXaSQzaHKF6vReSJ4GNhja3LYWCfwinp1Hz6cOv8CoewX0vul7pQEL0IcY/VaeT
+         u8UAy5Xpfx/X4EE7m1C1wEOBY9Ojj/I/YhvRxYzns92ntVQwVT46Ouv7g5sTLNpr4HnI
+         9z4OxlT9jxw/GqBhbHXNI6cIKYmwVTWdR4dKKIk9QQmrqV/piMHzedVEKCiuI9qDyfUr
+         2TJ2zaZFnRM/N0HaDqxbqhGBrro9FNaogLuX/qK26sgN6z76LnCOPWm3VHq6EpSrLw0b
+         +6GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684130251; x=1686722251;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dQlu0Oc2Q0nPMBCNq5iTPUZpwrRZlsMdPt2zjra8+VI=;
+        b=AQBVUmxwyDfLpaVnFNIJl3W2p2XhDkdKEpW/pVOjXpRVKsXi7LQn8RUmehuz2MQf80
+         rvGckzPEwHlWLG+WHn3LlK/QZFL7FqXcij052f+0gppOixBtnO7ThGqH91imC7NCH+sk
+         SGNR91rB8XH4kUNOW2EL7P5f2nZ+JkGGX+E0HnvVm5ECrEfAcFwmps7g/QuEzRRInBmm
+         f+1/zp/THZXJc3x2K8D5UurTKdXmQ16vByEI8BJwoe7GHmI9Si72WJmYnepqi0Ai5okM
+         zIa+6x7Z69S3bxqG3BBW/kwMj9bw9xZzQV5eQMcV1Ifqo6/foGKQa+LvP8X1hxRoudWM
+         HPXw==
+X-Gm-Message-State: AC+VfDy6pVb47TFk3qDc01n8MXDzAAMHgP4QYchk/PV0DcFZnuSdNxyK
+        fLV/58Eh42TDR8TImuGNvpYjhO2PtRJJF4lnuAU=
+X-Google-Smtp-Source: ACHHUZ5MY33egORUDg0Avhh0mHUavwP6dkFg3ifWKBgZU8xkdSZbzw/d7hFzGhpdjvGCowiVlgKrXIjnxfw+zgImYdw=
+X-Received: by 2002:a19:550d:0:b0:4ef:d742:4dfe with SMTP id
+ n13-20020a19550d000000b004efd7424dfemr6311390lfe.65.1684130250759; Sun, 14
+ May 2023 22:57:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <67376534-ac4a-3cd9-fab6-fd3a062f5e48@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _Ch0CgBH9CE9jmFkXtnYIg--.28848S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYI7kC6x804xWl14x267AKxVW5JVWrJwAF
-        c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-        0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
-        wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-        x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-        64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-        1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-        c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-        AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-        17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-        IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
-        3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-        nIWIevJa73UjIFyTuYvjxUFDGOUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Received: by 2002:ab2:494a:0:b0:1bf:8bfc:daee with HTTP; Sun, 14 May 2023
+ 22:57:30 -0700 (PDT)
+Reply-To: mariamkouame.info@myself.com
+From:   Mariam Kouame <contact.mariamkouame2@gmail.com>
+Date:   Sun, 14 May 2023 22:57:30 -0700
+Message-ID: <CADfi1WEEq_PwSwEggB58HSobgZm0k1--1HNSqKqjAgdkiomN1g@mail.gmail.com>
+Subject: from mariam kouame
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=4.5 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
         autolearn_force=no version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi,
+Dear,
 
-在 2023/05/13 9:09, Chaitanya Kulkarni 写道:
-> On 5/12/23 06:00, Christoph Hellwig wrote:
->> Hell no.  This is just obsfucation.  We can look into actually exposing
->> REQ_OP_FLUSH at the bio level, but not something like this.
->>
-> 
-> and that's why I made it RFC, thanks for the can you please elaborate
-> on "exposing REQ_OP_FLUSH at the bio level" ?
+Please grant me permission to share a very crucial discussion with
+you. I am looking forward to hearing from you at your earliest
+convenience.
 
-I think Christoph means that use this flag directly for bio, it's only
-used for reqeust for now.
-
-Thanks,
-Kuai
-> 
-> I'd really like work that ...
-> 
-> -ck
-> 
-> 
-
+Mrs. Mariam Kouame
