@@ -2,118 +2,153 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 753C07159B3
-	for <lists+linux-bcache@lfdr.de>; Tue, 30 May 2023 11:17:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7B78715BDB
+	for <lists+linux-bcache@lfdr.de>; Tue, 30 May 2023 12:33:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229578AbjE3JRQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 30 May 2023 05:17:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37432 "EHLO
+        id S231576AbjE3KdN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 30 May 2023 06:33:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbjE3JRP (ORCPT
+        with ESMTP id S231509AbjE3KdL (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 30 May 2023 05:17:15 -0400
-X-Greylist: delayed 303 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 30 May 2023 02:17:12 PDT
-Received: from mail.eclipso.de (mail.eclipso.de [217.69.254.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 864CECD
-        for <linux-bcache@vger.kernel.org>; Tue, 30 May 2023 02:17:12 -0700 (PDT)
-X-ESMTP-Authenticated-User: 000500FD
-Message-ID: <5e538ece-4197-55ad-6631-771b1dab28d9@eclipso.eu>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=eclipso.de; s=mail;
-        t=1685437926; bh=J0ZUCBrNGXIRMqTlebV2FmDGp2LPR+AFXGTyTBIgSFA=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=Ti8Kb2McBvDsKCGegWKD8I0IwCT5qjbvx+Kcx6319x5GohkKMZOmOcb+YnDX2JzXL
-         Oyo+sNtLJajbYbd4ugyo3Eo1NVDuh41eEU82+xBXVUtqZ2K2zi4OLYyMktrwbM+d1x
-         sE6VRPZtKYsdFFrEZbb82Nm+3h7N9njDMZn/ErH6Ccpb03lhrOJykdgU3ILRi89iuW
-         Xzp/IorQj57sTPuOM2NNOIFSoMRokCLax+5PnmCfHvmKHjwdi6c88FMzuER3nWG8Lo
-         5ECUPyEOaRd0u8Gts7N0Ix7H4FH4XHhhHsqWcRsdBEboN2Lh8gKQQpYtsX7IYSJOiL
-         HUB9v3hwDW9Rw==
-Date:   Tue, 30 May 2023 11:12:06 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.1
-Cc:     cedric.dewijs@eclipso.eu, colyli@suse.de,
-        andrea.tomassetti-opensource@devo.com, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, zoumingzhe@qq.com,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>
+        Tue, 30 May 2023 06:33:11 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F9C9F3
+        for <linux-bcache@vger.kernel.org>; Tue, 30 May 2023 03:33:04 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 3D9F521AC8;
+        Tue, 30 May 2023 10:33:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1685442783; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=N+cqxiOrsClnOdEgHEV4y7hVTcBVS1CMBWRvreS/0LI=;
+        b=O7rnGlxPNN+qamtpVK0t+boN9dyklQUiAJ4HyeCAtsxi9WFGnpuHC3vF2QPE51jU/couPQ
+        86xIjbpss0c63iyBLwVa/m0aHFyg8xIgwSEk1aaKhgv+9Jacryn42xJMQeJn6i1GpAOfCN
+        7aqUxZmfCb6pZMEo74bu8i7ZQCI4ras=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1685442783;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=N+cqxiOrsClnOdEgHEV4y7hVTcBVS1CMBWRvreS/0LI=;
+        b=BIe6FnzUSNGVxU8/sLAtjr2EbrexB0ZWQSz8yW9CB7cm5+znj8pzljdCvoAnbDNo7ccxkv
+        jVMTwxGxN+ucqiCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4B31713478;
+        Tue, 30 May 2023 10:33:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 50yJBd3QdWQmWwAAMHmgww
+        (envelope-from <colyli@suse.de>); Tue, 30 May 2023 10:33:01 +0000
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.500.231\))
 Subject: Re: [PATCH 3/3] bcache: support overlay bcache
-To:     mingzhe <mingzhe.zou@easystack.cn>,
-        Eric Wheeler <bcache@lists.ewheeler.net>
+From:   Coly Li <colyli@suse.de>
+In-Reply-To: <5e538ece-4197-55ad-6631-771b1dab28d9@eclipso.eu>
+Date:   Tue, 30 May 2023 18:32:48 +0800
+Cc:     mingzhe <mingzhe.zou@easystack.cn>,
+        Eric Wheeler <bcache@lists.ewheeler.net>,
+        Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Bcache Linux <linux-bcache@vger.kernel.org>, zoumingzhe@qq.com,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E00888E8-64D2-40B3-A4B9-1FC1D0CBB877@suse.de>
 References: <20230201065202.17610-1-mingzhe.zou@easystack.cn>
  <20230201065202.17610-3-mingzhe.zou@easystack.cn>
  <e4a4362e-85d9-285d-726d-3b1df73329f8@ewheeler.net>
  <994cd286-1929-60e2-8be9-71efd825ae84@easystack.cn>
-Content-Language: nl-NL, en-US-large
-From:   Cedric de Wijs <cedric.dewijs@eclipso.eu>
-In-Reply-To: <994cd286-1929-60e2-8be9-71efd825ae84@easystack.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+ <5e538ece-4197-55ad-6631-771b1dab28d9@eclipso.eu>
+To:     Cedric de Wijs <cedric.dewijs@eclipso.eu>
+X-Mailer: Apple Mail (2.3731.500.231)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-<snip>
->>>
->>> Then we can create a cached_dev with bcache1 (flash dev) as backing dev.
->>> $ make-bcache -B /dev/bcache1
->>> $ lsblk
->>> NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
->>> vdf                        252:80   0   50G  0 disk
->>> ├─bcache0                  251:0    0  100G  0 disk
->>> └─bcache1                  251:128  0  100G  0 disk
->>>    └─bcache2                251:256  0  100G  0 disk
->>>
->>> As a result there is a cached device bcache2 with backing device of a 
->>> flash device bcache1.
->>>          ----------------------------
->>>          | bcache2 (cached_dev)     |
->>>          | ------------------------ |
->>>          | |   sdb (cache_dev)    | |
->>>          | ------------------------ |
->>>          | ------------------------ |
->>>          | |   bcache1 (flash_dev)| |
->>>          | ------------------------ |
->>>          ----------------------------
->>
->> Does this allow an arbitrary depth of bcache stacking?
->>
->> -Eric
->>
-> More than 2 layers we did not test, but should be allowed.
-> 
-> mingzhe
->>>
->>> Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
->>> Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
->>> ---
->>>   drivers/md/bcache/super.c | 40 +++++++++++++++++++++++++++++++++++----
->>>   1 file changed, 36 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
->>> index ba3909bb6bea..0ca8c05831c9 100644
->>> --- a/drivers/md/bcache/super.c
->>> +++ b/drivers/md/bcache/super.c
-<snip>
 
-Hi All,
 
-I've not seen this commit appear in the mainline kernel yet. In 2023, 
+> 2023=E5=B9=B45=E6=9C=8830=E6=97=A5 17:12=EF=BC=8CCedric de Wijs =
+<cedric.dewijs@eclipso.eu> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> <snip>
+>>>>=20
+>>>> Then we can create a cached_dev with bcache1 (flash dev) as backing =
+dev.
+>>>> $ make-bcache -B /dev/bcache1
+>>>> $ lsblk
+>>>> NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+>>>> vdf                        252:80   0   50G  0 disk
+>>>> =E2=94=9C=E2=94=80bcache0                  251:0    0  100G  0 disk
+>>>> =E2=94=94=E2=94=80bcache1                  251:128  0  100G  0 disk
+>>>>    =E2=94=94=E2=94=80bcache2                251:256  0  100G  0 =
+disk
+>>>>=20
+>>>> As a result there is a cached device bcache2 with backing device of =
+a flash device bcache1.
+>>>>          ----------------------------
+>>>>          | bcache2 (cached_dev)     |
+>>>>          | ------------------------ |
+>>>>          | |   sdb (cache_dev)    | |
+>>>>          | ------------------------ |
+>>>>          | ------------------------ |
+>>>>          | |   bcache1 (flash_dev)| |
+>>>>          | ------------------------ |
+>>>>          ----------------------------
+>>>=20
+>>> Does this allow an arbitrary depth of bcache stacking?
+>>>=20
+>>> -Eric
+>>>=20
+>> More than 2 layers we did not test, but should be allowed.
+>> mingzhe
+>>>>=20
+>>>> Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+>>>> Signed-off-by: mingzhe <mingzhe.zou@easystack.cn>
+>>>> ---
+>>>>   drivers/md/bcache/super.c | 40 =
++++++++++++++++++++++++++++++++++++----
+>>>>   1 file changed, 36 insertions(+), 4 deletions(-)
+>>>>=20
+>>>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+>>>> index ba3909bb6bea..0ca8c05831c9 100644
+>>>> --- a/drivers/md/bcache/super.c
+>>>> +++ b/drivers/md/bcache/super.c
+> <snip>
+>=20
+> Hi All,
+>=20
+> I've not seen this commit appear in the mainline kernel yet. In 2023, =
 only this commit changed super.c in 2023:
-2023-04-25	block/drivers: remove dead clear of random flag
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/drivers/md/bcache/super.c?h=v6.4-rc4
+> 2023-04-25 block/drivers: remove dead clear of random flag
+> =
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/dri=
+vers/md/bcache/super.c?h=3Dv6.4-rc4
+>=20
+> What's preventing this patch from going into the mainline kernel?
 
-What's preventing this patch from going into the mainline kernel?
+Code reviewer is the bottleneck. This series is in my todo list, but not =
+on it yet. If Junhui Tang, or Guoju Fang may help to review the code, it =
+can be a bit faster.
+Of course if Kent reviews the code and supportive, I will take it =
+immediately.
 
-Cheers,
-Cedric
+Thanks.
 
-_________________________________________________________________
-________________________________________________________
-Your E-Mail. Your Cloud. Your Office. eclipso Mail & Cloud. https://www.eclipso.de
-
+Coly Li
 
