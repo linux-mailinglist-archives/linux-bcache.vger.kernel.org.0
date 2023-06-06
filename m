@@ -2,154 +2,141 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CAF54724035
-	for <lists+linux-bcache@lfdr.de>; Tue,  6 Jun 2023 12:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C69FF72435B
+	for <lists+linux-bcache@lfdr.de>; Tue,  6 Jun 2023 14:58:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236778AbjFFK5F (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 6 Jun 2023 06:57:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37630 "EHLO
+        id S237914AbjFFM6B (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 6 Jun 2023 08:58:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231416AbjFFK4a (ORCPT
+        with ESMTP id S237363AbjFFM5y (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 6 Jun 2023 06:56:30 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 388A2211C
-        for <linux-bcache@vger.kernel.org>; Tue,  6 Jun 2023 03:53:16 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id D8DD81FD67;
-        Tue,  6 Jun 2023 10:53:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1686048794; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=w0VM1SlF9ZYM3ocAYoILa7DZH93wirgdobdI/T9iCrg=;
-        b=EgM6AFyYBplkiDH4Rv4qNtgEayeXeSYhHlHpKR5vo84BTMbblOBmVwdEVTCeJ0rd/ueCav
-        +Wcotrtxx2a3IzxSxpxVqs0vz4gDa18ouGr1uUDsu1LygGgy4/wfo+tXvsS2a37p1WiZ9/
-        F/d2MARcJPQtlxPibK6RqxZ/eNycmNQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1686048794;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=w0VM1SlF9ZYM3ocAYoILa7DZH93wirgdobdI/T9iCrg=;
-        b=uvGSCYk36g5chcHwLUftQV3gzGZpjIPBpzP4ZJQbYQFiU5PTitM7QMbuvEeBVOgBNF6iS0
-        qu1WiqnMZyekgmCg==
-Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id 3C0862C141;
-        Tue,  6 Jun 2023 10:53:13 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     linux-bcache@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>, Mingzhe Zou <mingzhe.zou@easystack.cn>
-Subject: [PATCH] bcache: don't allocate full_dirty_stripes and stripe_sectors_dirty for flash device
-Date:   Tue,  6 Jun 2023 18:52:05 +0800
-Message-Id: <20230606105205.9161-1-colyli@suse.de>
-X-Mailer: git-send-email 2.35.3
+        Tue, 6 Jun 2023 08:57:54 -0400
+X-Greylist: delayed 425 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 06 Jun 2023 05:57:19 PDT
+Received: from mail-m3179.qiye.163.com (mail-m3179.qiye.163.com [103.74.31.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A442F4
+        for <linux-bcache@vger.kernel.org>; Tue,  6 Jun 2023 05:57:18 -0700 (PDT)
+Received: from easystack.cn (unknown [127.0.0.1])
+        by mail-m3179.qiye.163.com (Hmail) with ESMTP id 965907801DD;
+        Tue,  6 Jun 2023 20:50:11 +0800 (CST)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <AAAAmAD8I1z7-L3v5L3yBaoe.3.1686055811606.Hmail.mingzhe.zou@easystack.cn>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org, Coly Li <colyli@suse.de>
+Subject: =?UTF-8?B?UmU6W1BBVENIXSBiY2FjaGU6IGRvbid0IGFsbG9jYXRlIGZ1bGxfZGlydHlfc3RyaXBlcyBhbmQgc3RyaXBlX3NlY3RvcnNfZGlydHkgZm9yIGZsYXNoIGRldmljZQ==?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2015-163.com
+X-Originating-IP: 218.94.118.90
+In-Reply-To: <20230606105205.9161-1-colyli@suse.de>
+References: <20230606105205.9161-1-colyli@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Received: from mingzhe.zou@easystack.cn( [218.94.118.90) ] by ajax-webmail ( [127.0.0.1] ) ; Tue, 6 Jun 2023 20:50:11 +0800 (GMT+08:00)
+From:   =?UTF-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>
+Date:   Tue, 6 Jun 2023 20:50:11 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTx1MVhpLTUxJH0hKGB4fGFUZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpOTElKSVVKS0tVSkJZBg++
+X-HM-Tid: 0a8890ae860500b3kurm188909a7786
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kJHlYWEh9ZQUpOT05MQk5PTkJLTjdXWQweGVlBDwkOHldZEh8eFQ9Z
+        QVlHOjo6OhY6P0MySgFMVjdIDU43SAI5GhQeVUhVSk1DTUtOTkNKSUtIT1UzFhoSF1UWEhUcARMe
+        VQEUDjseGggCCA8aGBBVGBVFWVdZEgtZQVlJSkNVQk9VSkpDVUJLWVdZCAFZQUNMQkw3V1kUCw8S
+        FBUIWUFLNwY+
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        MSGID_FROM_MTA_HEADER,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-The flash device is a special bcache device which doesn't have backing
-device and stores all data on cache set. Although its data is treated
-as dirty data but the writeback to backing device never happens.
-
-Therefore it is unncessary to always allocate memory for counters
-full_dirty_stripes and stripe_sectors_dirty when the bcache device is
-on flash only.
-
-This patch avoids to allocate/free memory for full_dirty_stripes and
-stripe_sectors_dirty in bcache_device_init() and bcache_device_free().
-Also in bcache_dev_sectors_dirty_add(), if the data is written onto
-flash device, avoid to update the counters in full_dirty_stripes and
-stripe_sectors_dirty because they are not used at all.
-
-Signed-off-by: Coly Li <colyli@suse.de>
-Cc: Mingzhe Zou <mingzhe.zou@easystack.cn>
----
- drivers/md/bcache/super.c     | 18 ++++++++++++++----
- drivers/md/bcache/writeback.c |  8 +++++++-
- 2 files changed, 21 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 077149c4050b..00edc093e544 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -887,12 +887,15 @@ static void bcache_device_free(struct bcache_device *d)
- 	}
- 
- 	bioset_exit(&d->bio_split);
--	kvfree(d->full_dirty_stripes);
--	kvfree(d->stripe_sectors_dirty);
-+	if (d->full_dirty_stripes)
-+		kvfree(d->full_dirty_stripes);
-+	if (d->stripe_sectors_dirty)
-+		kvfree(d->stripe_sectors_dirty);
- 
- 	closure_debug_destroy(&d->cl);
- }
- 
-+
- static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
- 		sector_t sectors, struct block_device *cached_bdev,
- 		const struct block_device_operations *ops)
-@@ -914,6 +917,10 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
- 	}
- 	d->nr_stripes = n;
- 
-+	/* Skip allocating stripes counters for flash device */
-+	if (d->c && UUID_FLASH_ONLY(&d->c->uuids[d->id]))
-+		goto get_idx;
-+
- 	n = d->nr_stripes * sizeof(atomic_t);
- 	d->stripe_sectors_dirty = kvzalloc(n, GFP_KERNEL);
- 	if (!d->stripe_sectors_dirty)
-@@ -924,6 +931,7 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
- 	if (!d->full_dirty_stripes)
- 		goto out_free_stripe_sectors_dirty;
- 
-+get_idx:
- 	idx = ida_simple_get(&bcache_device_idx, 0,
- 				BCACHE_DEVICE_IDX_MAX, GFP_KERNEL);
- 	if (idx < 0)
-@@ -981,9 +989,11 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
- out_ida_remove:
- 	ida_simple_remove(&bcache_device_idx, idx);
- out_free_full_dirty_stripes:
--	kvfree(d->full_dirty_stripes);
-+	if (d->full_dirty_stripes)
-+		kvfree(d->full_dirty_stripes);
- out_free_stripe_sectors_dirty:
--	kvfree(d->stripe_sectors_dirty);
-+	if (d->stripe_sectors_dirty)
-+		kvfree(d->stripe_sectors_dirty);
- 	return -ENOMEM;
- 
- }
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 24c049067f61..32a034e74622 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -607,8 +607,14 @@ void bcache_dev_sectors_dirty_add(struct cache_set *c, unsigned int inode,
- 	if (stripe < 0)
- 		return;
- 
--	if (UUID_FLASH_ONLY(&c->uuids[inode]))
-+	/*
-+	 * The flash device doesn't have backing device to writeback,
-+	 * it is unncessary to calculate stripes related stuffs.
-+	 */
-+	if (UUID_FLASH_ONLY(&c->uuids[inode])) {
- 		atomic_long_add(nr_sectors, &c->flash_dev_dirty_sectors);
-+		return;
-+	}
- 
- 	stripe_offset = offset & (d->stripe_size - 1);
- 
--- 
-2.35.3
-
+RnJvbTogQ29seSBMaSA8Y29seWxpQHN1c2UuZGU+CkRhdGU6IDIwMjMtMDYtMDYgMTg6NTI6MDUK
+VG86ICBsaW51eC1iY2FjaGVAdmdlci5rZXJuZWwub3JnCkNjOiAgQ29seSBMaSA8Y29seWxpQHN1
+c2UuZGU+LE1pbmd6aGUgWm91IDxtaW5nemhlLnpvdUBlYXN5c3RhY2suY24+ClN1YmplY3Q6IFtQ
+QVRDSF0gYmNhY2hlOiBkb24ndCBhbGxvY2F0ZSBmdWxsX2RpcnR5X3N0cmlwZXMgYW5kIHN0cmlw
+ZV9zZWN0b3JzX2RpcnR5IGZvciBmbGFzaCBkZXZpY2U+VGhlIGZsYXNoIGRldmljZSBpcyBhIHNw
+ZWNpYWwgYmNhY2hlIGRldmljZSB3aGljaCBkb2Vzbid0IGhhdmUgYmFja2luZwo+ZGV2aWNlIGFu
+ZCBzdG9yZXMgYWxsIGRhdGEgb24gY2FjaGUgc2V0LiBBbHRob3VnaCBpdHMgZGF0YSBpcyB0cmVh
+dGVkCj5hcyBkaXJ0eSBkYXRhIGJ1dCB0aGUgd3JpdGViYWNrIHRvIGJhY2tpbmcgZGV2aWNlIG5l
+dmVyIGhhcHBlbnMuCj4KPlRoZXJlZm9yZSBpdCBpcyB1bm5jZXNzYXJ5IHRvIGFsd2F5cyBhbGxv
+Y2F0ZSBtZW1vcnkgZm9yIGNvdW50ZXJzCj5mdWxsX2RpcnR5X3N0cmlwZXMgYW5kIHN0cmlwZV9z
+ZWN0b3JzX2RpcnR5IHdoZW4gdGhlIGJjYWNoZSBkZXZpY2UgaXMKPm9uIGZsYXNoIG9ubHkuCj4K
+PlRoaXMgcGF0Y2ggYXZvaWRzIHRvIGFsbG9jYXRlL2ZyZWUgbWVtb3J5IGZvciBmdWxsX2RpcnR5
+X3N0cmlwZXMgYW5kCj5zdHJpcGVfc2VjdG9yc19kaXJ0eSBpbiBiY2FjaGVfZGV2aWNlX2luaXQo
+KSBhbmQgYmNhY2hlX2RldmljZV9mcmVlKCkuCj5BbHNvIGluIGJjYWNoZV9kZXZfc2VjdG9yc19k
+aXJ0eV9hZGQoKSwgaWYgdGhlIGRhdGEgaXMgd3JpdHRlbiBvbnRvCj5mbGFzaCBkZXZpY2UsIGF2
+b2lkIHRvIHVwZGF0ZSB0aGUgY291bnRlcnMgaW4gZnVsbF9kaXJ0eV9zdHJpcGVzIGFuZAo+c3Ry
+aXBlX3NlY3RvcnNfZGlydHkgYmVjYXVzZSB0aGV5IGFyZSBub3QgdXNlZCBhdCBhbGwuCj4KPlNp
+Z25lZC1vZmYtYnk6IENvbHkgTGkgPGNvbHlsaUBzdXNlLmRlPgo+Q2M6IE1pbmd6aGUgWm91IDxt
+aW5nemhlLnpvdUBlYXN5c3RhY2suY24+Cj4tLS0KPiBkcml2ZXJzL21kL2JjYWNoZS9zdXBlci5j
+ICAgICB8IDE4ICsrKysrKysrKysrKysrLS0tLQo+IGRyaXZlcnMvbWQvYmNhY2hlL3dyaXRlYmFj
+ay5jIHwgIDggKysrKysrKy0KPiAyIGZpbGVzIGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKyksIDUg
+ZGVsZXRpb25zKC0pCj4KPmRpZmYgLS1naXQgYS9kcml2ZXJzL21kL2JjYWNoZS9zdXBlci5jIGIv
+ZHJpdmVycy9tZC9iY2FjaGUvc3VwZXIuYwo+aW5kZXggMDc3MTQ5YzQwNTBiLi4wMGVkYzA5M2U1
+NDQgMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL21kL2JjYWNoZS9zdXBlci5jCj4rKysgYi9kcml2ZXJz
+L21kL2JjYWNoZS9zdXBlci5jCj5AQCAtODg3LDEyICs4ODcsMTUgQEAgc3RhdGljIHZvaWQgYmNh
+Y2hlX2RldmljZV9mcmVlKHN0cnVjdCBiY2FjaGVfZGV2aWNlICpkKQo+IAl9Cj4gCj4gCWJpb3Nl
+dF9leGl0KCZkLT5iaW9fc3BsaXQpOwo+LQlrdmZyZWUoZC0+ZnVsbF9kaXJ0eV9zdHJpcGVzKTsK
+Pi0Ja3ZmcmVlKGQtPnN0cmlwZV9zZWN0b3JzX2RpcnR5KTsKPisJaWYgKGQtPmZ1bGxfZGlydHlf
+c3RyaXBlcykKPisJCWt2ZnJlZShkLT5mdWxsX2RpcnR5X3N0cmlwZXMpOwo+KwlpZiAoZC0+c3Ry
+aXBlX3NlY3RvcnNfZGlydHkpCj4rCQlrdmZyZWUoZC0+c3RyaXBlX3NlY3RvcnNfZGlydHkpOwo+
+IAo+IAljbG9zdXJlX2RlYnVnX2Rlc3Ryb3koJmQtPmNsKTsKPiB9Cj4gCj4rCj4gc3RhdGljIGlu
+dCBiY2FjaGVfZGV2aWNlX2luaXQoc3RydWN0IGJjYWNoZV9kZXZpY2UgKmQsIHVuc2lnbmVkIGlu
+dCBibG9ja19zaXplLAo+IAkJc2VjdG9yX3Qgc2VjdG9ycywgc3RydWN0IGJsb2NrX2RldmljZSAq
+Y2FjaGVkX2JkZXYsCj4gCQljb25zdCBzdHJ1Y3QgYmxvY2tfZGV2aWNlX29wZXJhdGlvbnMgKm9w
+cykKPkBAIC05MTQsNiArOTE3LDEwIEBAIHN0YXRpYyBpbnQgYmNhY2hlX2RldmljZV9pbml0KHN0
+cnVjdCBiY2FjaGVfZGV2aWNlICpkLCB1bnNpZ25lZCBpbnQgYmxvY2tfc2l6ZSwKPiAJfQo+IAlk
+LT5ucl9zdHJpcGVzID0gbjsKPiAKPisJLyogU2tpcCBhbGxvY2F0aW5nIHN0cmlwZXMgY291bnRl
+cnMgZm9yIGZsYXNoIGRldmljZSAqLwo+KwlpZiAoZC0+YyAmJiBVVUlEX0ZMQVNIX09OTFkoJmQt
+PmMtPnV1aWRzW2QtPmlkXSkpCj4rCQlnb3RvIGdldF9pZHg7Cj4rCj4gCW4gPSBkLT5ucl9zdHJp
+cGVzICogc2l6ZW9mKGF0b21pY190KTsKPiAJZC0+c3RyaXBlX3NlY3RvcnNfZGlydHkgPSBrdnph
+bGxvYyhuLCBHRlBfS0VSTkVMKTsKPiAJaWYgKCFkLT5zdHJpcGVfc2VjdG9yc19kaXJ0eSkKPkBA
+IC05MjQsNiArOTMxLDcgQEAgc3RhdGljIGludCBiY2FjaGVfZGV2aWNlX2luaXQoc3RydWN0IGJj
+YWNoZV9kZXZpY2UgKmQsIHVuc2lnbmVkIGludCBibG9ja19zaXplLAo+IAlpZiAoIWQtPmZ1bGxf
+ZGlydHlfc3RyaXBlcykKPiAJCWdvdG8gb3V0X2ZyZWVfc3RyaXBlX3NlY3RvcnNfZGlydHk7Cj4g
+Cj4rZ2V0X2lkeDoKPiAJaWR4ID0gaWRhX3NpbXBsZV9nZXQoJmJjYWNoZV9kZXZpY2VfaWR4LCAw
+LAo+IAkJCQlCQ0FDSEVfREVWSUNFX0lEWF9NQVgsIEdGUF9LRVJORUwpOwo+IAlpZiAoaWR4IDwg
+MCkKPkBAIC05ODEsOSArOTg5LDExIEBAIHN0YXRpYyBpbnQgYmNhY2hlX2RldmljZV9pbml0KHN0
+cnVjdCBiY2FjaGVfZGV2aWNlICpkLCB1bnNpZ25lZCBpbnQgYmxvY2tfc2l6ZSwKPiBvdXRfaWRh
+X3JlbW92ZToKPiAJaWRhX3NpbXBsZV9yZW1vdmUoJmJjYWNoZV9kZXZpY2VfaWR4LCBpZHgpOwo+
+IG91dF9mcmVlX2Z1bGxfZGlydHlfc3RyaXBlczoKPi0Ja3ZmcmVlKGQtPmZ1bGxfZGlydHlfc3Ry
+aXBlcyk7Cj4rCWlmIChkLT5mdWxsX2RpcnR5X3N0cmlwZXMpCj4rCQlrdmZyZWUoZC0+ZnVsbF9k
+aXJ0eV9zdHJpcGVzKTsKPiBvdXRfZnJlZV9zdHJpcGVfc2VjdG9yc19kaXJ0eToKPi0Ja3ZmcmVl
+KGQtPnN0cmlwZV9zZWN0b3JzX2RpcnR5KTsKPisJaWYgKGQtPnN0cmlwZV9zZWN0b3JzX2RpcnR5
+KQo+KwkJa3ZmcmVlKGQtPnN0cmlwZV9zZWN0b3JzX2RpcnR5KTsKPiAJcmV0dXJuIC1FTk9NRU07
+Cj4gCj4gfQo+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWQvYmNhY2hlL3dyaXRlYmFjay5jIGIvZHJp
+dmVycy9tZC9iY2FjaGUvd3JpdGViYWNrLmMKPmluZGV4IDI0YzA0OTA2N2Y2MS4uMzJhMDM0ZTc0
+NjIyIDEwMDY0NAo+LS0tIGEvZHJpdmVycy9tZC9iY2FjaGUvd3JpdGViYWNrLmMKPisrKyBiL2Ry
+aXZlcnMvbWQvYmNhY2hlL3dyaXRlYmFjay5jCj5AQCAtNjA3LDggKzYwNywxNCBAQCB2b2lkIGJj
+YWNoZV9kZXZfc2VjdG9yc19kaXJ0eV9hZGQoc3RydWN0IGNhY2hlX3NldCAqYywgdW5zaWduZWQg
+aW50IGlub2RlLAo+IAlpZiAoc3RyaXBlIDwgMCkKPiAJCXJldHVybjsKPiAKPi0JaWYgKFVVSURf
+RkxBU0hfT05MWSgmYy0+dXVpZHNbaW5vZGVdKSkKPisJLyoKPisJICogVGhlIGZsYXNoIGRldmlj
+ZSBkb2Vzbid0IGhhdmUgYmFja2luZyBkZXZpY2UgdG8gd3JpdGViYWNrLAo+KwkgKiBpdCBpcyB1
+bm5jZXNzYXJ5IHRvIGNhbGN1bGF0ZSBzdHJpcGVzIHJlbGF0ZWQgc3R1ZmZzLgo+KwkgKi8KPisJ
+aWYgKFVVSURfRkxBU0hfT05MWSgmYy0+dXVpZHNbaW5vZGVdKSkgewo+IAkJYXRvbWljX2xvbmdf
+YWRkKG5yX3NlY3RvcnMsICZjLT5mbGFzaF9kZXZfZGlydHlfc2VjdG9ycyk7Cj4rCQlyZXR1cm47
+Cj4rCX0KPiAKPiAJc3RyaXBlX29mZnNldCA9IG9mZnNldCAmIChkLT5zdHJpcGVfc2l6ZSAtIDEp
+Owo+IAoKbG9vayBnb29kLCB0aGVyZSBtYXkgYmUgYSBwcm9ibGVtLCBkLT5zdHJpcGVfc2VjdG9y
+c19kaXJ0eSB3aWxsIGJlCmEgbnVsbCBwb2ludGVyIGZvciBmbGFzaCBkZXZpY2U6CgpgYGAKc3Rh
+dGljIGlubGluZSB1aW50NjRfdCBiY2FjaGVfZGV2X3NlY3RvcnNfZGlydHkoc3RydWN0IGJjYWNo
+ZV9kZXZpY2UgKmQpCnsKCXVpbnQ2NF90IGksIHJldCA9IDA7CgoJZm9yIChpID0gMDsgaSA8IGQt
+Pm5yX3N0cmlwZXM7IGkrKykKCQlyZXQgKz0gYXRvbWljX3JlYWQoZC0+c3RyaXBlX3NlY3RvcnNf
+ZGlydHkgKyBpKTsKCglyZXR1cm4gcmV0Owp9CgpzdGF0aWMgdm9pZCBmbGFzaF9kZXZfZnJlZShz
+dHJ1Y3QgY2xvc3VyZSAqY2wpCnsKCXN0cnVjdCBiY2FjaGVfZGV2aWNlICpkID0gY29udGFpbmVy
+X29mKGNsLCBzdHJ1Y3QgYmNhY2hlX2RldmljZSwgY2wpOwoKCW11dGV4X2xvY2soJmJjaF9yZWdp
+c3Rlcl9sb2NrKTsKCWF0b21pY19sb25nX3N1YihiY2FjaGVfZGV2X3NlY3RvcnNfZGlydHkoZCks
+CgkJCSZkLT5jLT5mbGFzaF9kZXZfZGlydHlfc2VjdG9ycyk7CglkZWxfZ2VuZGlzayhkLT5kaXNr
+KTsKCWJjYWNoZV9kZXZpY2VfZnJlZShkKTsKCW11dGV4X3VubG9jaygmYmNoX3JlZ2lzdGVyX2xv
+Y2spOwoJa29iamVjdF9wdXQoJmQtPmtvYmopOwp9CmBgYAoKVGhlIG9ubHkgdXNlIG9mIGMtPmZs
+YXNoX2Rldl9kaXJ0eV9zZWN0b3JzaXMgdG8gY2FsY3VsYXRlIGNhY2hlX3NlY3RvcnM6CgpgYGAK
+LyogUmF0ZSBsaW1pdGluZyAqLwpzdGF0aWMgdWludDY0X3QgX19jYWxjX3RhcmdldF9yYXRlKHN0
+cnVjdCBjYWNoZWRfZGV2ICpkYykKewoJc3RydWN0IGNhY2hlX3NldCAqYyA9IGRjLT5kaXNrLmM7
+CgoJLyoKCSAqIFRoaXMgaXMgdGhlIHNpemUgb2YgdGhlIGNhY2hlLCBtaW51cyB0aGUgYW1vdW50
+IHVzZWQgZm9yCgkgKiBmbGFzaC1vbmx5IGRldmljZXMKCSAqLwoJdWludDY0X3QgY2FjaGVfc2Vj
+dG9ycyA9IGMtPm5idWNrZXRzICogYy0+Y2FjaGUtPnNiLmJ1Y2tldF9zaXplIC0KCQkJCWF0b21p
+Y19sb25nX3JlYWQoJmMtPmZsYXNoX2Rldl9kaXJ0eV9zZWN0b3JzKTsKYGBgCgpEbyB3ZSBzdGls
+bCBuZWVkIHRvIHVwZGF0ZSB0aGUgZGlydHlfZGF0YSBvZiBmbGFzaCBkZXZpY2UuIFdoZXRoZXIg
+dG8KZGlyZWN0bHkgdXNlIHRoZSBzaXplIG9mIGZsYXNoIGRldmljZSBhcyBhIGRpcnR5X2RhdGEu
+CgptaW5nemhlCj4tLSAKPjIuMzUuMwo+Cg0KDQo=
