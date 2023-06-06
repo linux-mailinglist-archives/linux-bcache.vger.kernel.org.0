@@ -2,35 +2,35 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D08E5723B3B
-	for <lists+linux-bcache@lfdr.de>; Tue,  6 Jun 2023 10:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C1CB723B6E
+	for <lists+linux-bcache@lfdr.de>; Tue,  6 Jun 2023 10:25:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233118AbjFFIUx convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-bcache@lfdr.de>); Tue, 6 Jun 2023 04:20:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48528 "EHLO
+        id S236937AbjFFIZM convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-bcache@lfdr.de>); Tue, 6 Jun 2023 04:25:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230220AbjFFIUv (ORCPT
+        with ESMTP id S236098AbjFFIYs (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 6 Jun 2023 04:20:51 -0400
+        Tue, 6 Jun 2023 04:24:48 -0400
 Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9299DFA;
-        Tue,  6 Jun 2023 01:20:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AC10E62;
+        Tue,  6 Jun 2023 01:24:41 -0700 (PDT)
 Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 89E7C63CC135;
-        Tue,  6 Jun 2023 10:20:47 +0200 (CEST)
+        by lithops.sigma-star.at (Postfix) with ESMTP id A2DC56081100;
+        Tue,  6 Jun 2023 10:24:39 +0200 (CEST)
 Received: from lithops.sigma-star.at ([127.0.0.1])
         by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id w2bdPD93IvhE; Tue,  6 Jun 2023 10:20:47 +0200 (CEST)
+        with ESMTP id siZzZpJorNJf; Tue,  6 Jun 2023 10:24:39 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 14A1D616B2CD;
-        Tue,  6 Jun 2023 10:20:47 +0200 (CEST)
+        by lithops.sigma-star.at (Postfix) with ESMTP id 34240616B2CF;
+        Tue,  6 Jun 2023 10:24:39 +0200 (CEST)
 Received: from lithops.sigma-star.at ([127.0.0.1])
         by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id X5LSD106M-YC; Tue,  6 Jun 2023 10:20:46 +0200 (CEST)
+        with ESMTP id YeogKuuY1hxw; Tue,  6 Jun 2023 10:24:39 +0200 (CEST)
 Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id D62D563CC135;
-        Tue,  6 Jun 2023 10:20:46 +0200 (CEST)
-Date:   Tue, 6 Jun 2023 10:20:46 +0200 (CEST)
+        by lithops.sigma-star.at (Postfix) with ESMTP id E97466081100;
+        Tue,  6 Jun 2023 10:24:38 +0200 (CEST)
+Date:   Tue, 6 Jun 2023 10:24:38 +0200 (CEST)
 From:   Richard Weinberger <richard@nod.at>
 To:     hch <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
@@ -48,25 +48,27 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
         Pavel Machek <pavel@ucw.cz>, dm-devel <dm-devel@redhat.com>,
         linux-block <linux-block@vger.kernel.org>,
         linux-um <linux-um@lists.infradead.org>,
-        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-bcache <linux-bcache@vger.kernel.org>,
         linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-nvme@lists.infradead.org,
+        linux-nvme <linux-nvme@lists.infradead.org>,
         linux-btrfs <linux-btrfs@vger.kernel.org>,
         linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>,
-        linux-nilfs@vger.kernel.org,
+        linux-nilfs <linux-nilfs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-pm <linux-pm@vger.kernel.org>
-Message-ID: <766259639.3687124.1686039646763.JavaMail.zimbra@nod.at>
-In-Reply-To: <20230606073950.225178-26-hch@lst.de>
-References: <20230606073950.225178-1-hch@lst.de> <20230606073950.225178-26-hch@lst.de>
-Subject: Re: [PATCH 25/31] ubd: remove commented out code in ubd_open
+Message-ID: <318049918.3687133.1686039878761.JavaMail.zimbra@nod.at>
+In-Reply-To: <20230606073950.225178-24-hch@lst.de>
+References: <20230606073950.225178-1-hch@lst.de> <20230606073950.225178-24-hch@lst.de>
+Subject: Re: [PATCH 23/31] mtd: block: use a simple bool to track open for
+ write
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
 X-Originating-IP: [195.201.40.130]
 X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: remove commented out code in ubd_open
-Thread-Index: XkjrL/wptcQ24bQlPJHDQOJLYTpcmQ==
+Thread-Topic: block: use a simple bool to track open for write
+Thread-Index: X/xlpyhSf8bloXE5HNEoh3ox5Q1J9Q==
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         T_SCC_BODY_TEXT_LINE,T_SPF_PERMERROR autolearn=ham autolearn_force=no
         version=3.4.6
@@ -78,29 +80,53 @@ X-Mailing-List: linux-bcache@vger.kernel.org
 
 ----- Ursprüngliche Mail -----
 > Von: "hch" <hch@lst.de>
-> This code has been dead forever, make sure it doesn't show up in code
-> searches.
+> Instead of propagating the fmode_t, just use a bool to track if a mtd
+> block device was opened for writing.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
-> arch/um/drivers/ubd_kern.c | 7 -------
-> 1 file changed, 7 deletions(-)
+> drivers/mtd/mtd_blkdevs.c    | 2 +-
+> drivers/mtd/mtdblock.c       | 2 +-
+> include/linux/mtd/blktrans.h | 2 +-
+> 3 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
-> index 8b79554968addb..20c1a16199c503 100644
-> --- a/arch/um/drivers/ubd_kern.c
-> +++ b/arch/um/drivers/ubd_kern.c
-> @@ -1170,13 +1170,6 @@ static int ubd_open(struct gendisk *disk, fmode_t mode)
+> diff --git a/drivers/mtd/mtd_blkdevs.c b/drivers/mtd/mtd_blkdevs.c
+> index f0bb09fde95e3a..bd0b7545364349 100644
+> --- a/drivers/mtd/mtd_blkdevs.c
+> +++ b/drivers/mtd/mtd_blkdevs.c
+> @@ -208,7 +208,7 @@ static int blktrans_open(struct gendisk *disk, fmode_t mode)
+> 	ret = __get_mtd_device(dev->mtd);
+> 	if (ret)
+> 		goto error_release;
+> -	dev->file_mode = mode;
+> +	dev->writable = mode & FMODE_WRITE;
+> 
+> unlock:
+> 	dev->open++;
+> diff --git a/drivers/mtd/mtdblock.c b/drivers/mtd/mtdblock.c
+> index a0a1194dc1d902..fa476fb4dffb6c 100644
+> --- a/drivers/mtd/mtdblock.c
+> +++ b/drivers/mtd/mtdblock.c
+> @@ -294,7 +294,7 @@ static void mtdblock_release(struct mtd_blktrans_dev *mbd)
+> 		 * It was the last usage. Free the cache, but only sync if
+> 		 * opened for writing.
+> 		 */
+> -		if (mbd->file_mode & FMODE_WRITE)
+> +		if (mbd->writable)
+> 			mtd_sync(mbd->mtd);
+> 		vfree(mtdblk->cache_data);
 > 	}
-> 	ubd_dev->count++;
-> 	set_disk_ro(disk, !ubd_dev->openflags.w);
-> -
-> -	/* This should no more be needed. And it didn't work anyway to exclude
-> -	 * read-write remounting of filesystems.*/
-> -	/*if((mode & FMODE_WRITE) && !ubd_dev->openflags.w){
-> -	        if(--ubd_dev->count == 0) ubd_close_dev(ubd_dev);
-> -	        err = -EROFS;
-> -	}*/
+> diff --git a/include/linux/mtd/blktrans.h b/include/linux/mtd/blktrans.h
+> index 15cc9b95e32b52..6e471436bba556 100644
+> --- a/include/linux/mtd/blktrans.h
+> +++ b/include/linux/mtd/blktrans.h
+> @@ -34,7 +34,7 @@ struct mtd_blktrans_dev {
+> 	struct blk_mq_tag_set *tag_set;
+> 	spinlock_t queue_lock;
+> 	void *priv;
+> -	fmode_t file_mode;
+> +	bool writable;
+> };
 
 Acked-by: Richard Weinberger <richard@nod.at>
 
