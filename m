@@ -2,237 +2,166 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E80FA724419
-	for <lists+linux-bcache@lfdr.de>; Tue,  6 Jun 2023 15:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6300E72502F
+	for <lists+linux-bcache@lfdr.de>; Wed,  7 Jun 2023 00:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236529AbjFFNPd (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 6 Jun 2023 09:15:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43936 "EHLO
+        id S240100AbjFFWvO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 6 Jun 2023 18:51:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237910AbjFFNPd (ORCPT
+        with ESMTP id S239630AbjFFWvN (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 6 Jun 2023 09:15:33 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06C43F3
-        for <linux-bcache@vger.kernel.org>; Tue,  6 Jun 2023 06:15:32 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id B5CCA1FD6B;
-        Tue,  6 Jun 2023 13:15:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1686057330; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=R0liu47RVFlneuZRSmNb3gMMObt3OxqRgkYuf0XVQ/E=;
-        b=SX0X1JoASrimqPovCaArLh5Ot+Vj60BP4ZFTj5Pe0djRH5VavOBkanaUGlzRqFj6Hn/6i5
-        BN2NaerO50xTIcaC6lC6WL0M1Ro35lzhdlM3SnIHjQs5lLdff+k7bo6RDUjBkT1/SZSauC
-        U+a25EPxf64BROAnKDDTGUlETtRw1Bw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1686057330;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=R0liu47RVFlneuZRSmNb3gMMObt3OxqRgkYuf0XVQ/E=;
-        b=GYXWXpuXkKfR5iOXh3uuDpV/D04nwlr1MxK6jF5V0KQmQ4WFiXzGNrit4Cpv3Zy/KxPwEZ
-        kveDQInH/fE+rPAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D487813776;
-        Tue,  6 Jun 2023 13:15:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id pRTWJ3Exf2RgVQAAMHmgww
-        (envelope-from <colyli@suse.de>); Tue, 06 Jun 2023 13:15:29 +0000
-Date:   Tue, 6 Jun 2023 21:15:27 +0800
-From:   Coly Li <colyli@suse.de>
-To:     =?utf-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>
-Cc:     linux-bcache@vger.kernel.org
-Subject: Re: [PATCH] bcache: don't allocate full_dirty_stripes and
- stripe_sectors_dirty for flash device
-Message-ID: <zrw6lms2lsvsyrdflznbldfnq34czuai4zh4dbc3xrg3rwm4tx@ee5yjaiyjicd>
-References: <20230606105205.9161-1-colyli@suse.de>
- <AAAAmAD8I1z7-L3v5L3yBaoe.3.1686055811606.Hmail.mingzhe.zou@easystack.cn>
+        Tue, 6 Jun 2023 18:51:13 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74BF81726
+        for <linux-bcache@vger.kernel.org>; Tue,  6 Jun 2023 15:50:47 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-30ad458f085so14564f8f.0
+        for <linux-bcache@vger.kernel.org>; Tue, 06 Jun 2023 15:50:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=philpotter-co-uk.20221208.gappssmtp.com; s=20221208; t=1686091846; x=1688683846;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZsgUvAUYrCnrR/1XiT9juxzkogVY5Vs72GapwMni78s=;
+        b=VmbPZldWPYAwRsYyMwk8A03rXJyrpTvXOEYSvwFSEfXYGQ9f0DibZgbOcZv9ahaGKf
+         PI5+OxAdMYvbZGfbUvFF/CsIWyPYoUJBv4adaCgbsLoKZ4qUcAWsIa6Ri3jpTK/bHQrT
+         Ohep93vPQ7ryyJQWAyfDBFxol1ij/mZJMW0A0iwqiwl36LvAZOLX1aeY9L0SpoZCLnJz
+         wVbN864mtnWORoS661vBrZSXNRIiY6AXoBUlqUh/rkIvLh2gwYqiK+WaVFKW8of/Br1s
+         OKeXsZtVkiiCWR6CHlkqhjfmhnyDAQPTMoZhbcUNAf6eh7p56c8hqiOZ1oxWgdRViFlH
+         o2mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686091846; x=1688683846;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZsgUvAUYrCnrR/1XiT9juxzkogVY5Vs72GapwMni78s=;
+        b=HJ8RHkemzvmTbHiafHi3L04jVFs8Fe4XvMJULPTJryvqYoP6MVsH8mcQZBdtkUqJyX
+         DRf22UOGHsjCxk2MCNGMpuokPQrinLlf4NLtBBARu/L8lI2Y05FhgUkS2+Ek3FSwqYiE
+         LP3Y3Bo23n5mrS1gUjSm7TjLxfd1QBnZy9zSYnRRUzsP1cMY4Eikc31PRhyCNDsbdEBY
+         n3icSh8ToqYD5Ijvll4rKlANTiEHzoqdDIv1PsuXtXDNUAjBGZLlg9lkct1k0k0saWjg
+         vdSKZhZ48Vi6QEINYUUM7RQlMS7ylryJ4TNCr+I4KbISLcAwAfuHBcORcf1A9SygJpMy
+         oOTA==
+X-Gm-Message-State: AC+VfDxTp8nFtL6Qg8m39AYG7nAo4dOalPu1YcREsOoQxZhuwP7rwMVe
+        CMMXQTdCSp4//1cZJpjd/Xa58g==
+X-Google-Smtp-Source: ACHHUZ6DIZ/PhyT9JV3FzdchvbYZ3qIwLNNEqf/pmfFBTRfAYv0aDDapWKAK27qD8k0ew1wS3jRAUg==
+X-Received: by 2002:a5d:6b82:0:b0:30e:47e2:7eca with SMTP id n2-20020a5d6b82000000b0030e47e27ecamr4524731wrx.3.1686091845858;
+        Tue, 06 Jun 2023 15:50:45 -0700 (PDT)
+Received: from equinox (2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.a.1.e.e.d.f.d.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:dfde:e1a0::2])
+        by smtp.gmail.com with ESMTPSA id l6-20020a5d4bc6000000b0030ae3a6be5bsm13760443wrt.78.2023.06.06.15.50.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jun 2023 15:50:45 -0700 (PDT)
+Date:   Tue, 6 Jun 2023 23:50:43 +0100
+From:   Phillip Potter <phil@philpotter.co.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        Coly Li <colyli@suse.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-btrfs@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 02/31] cdrom: remove the unused bdev argument to
+ cdrom_open
+Message-ID: <ZH+4QyeJ2WCOaPGO@equinox>
+References: <20230606073950.225178-1-hch@lst.de>
+ <20230606073950.225178-3-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AAAAmAD8I1z7-L3v5L3yBaoe.3.1686055811606.Hmail.mingzhe.zou@easystack.cn>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230606073950.225178-3-hch@lst.de>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 08:50:11PM +0800, 邹明哲 wrote:
-> From: Coly Li <colyli@suse.de>
-> Date: 2023-06-06 18:52:05
-> To:  linux-bcache@vger.kernel.org
-> Cc:  Coly Li <colyli@suse.de>,Mingzhe Zou <mingzhe.zou@easystack.cn>
-> Subject: [PATCH] bcache: don't allocate full_dirty_stripes and stripe_sectors_dirty for flash device>The flash device is a special bcache device which doesn't have backing
-> >device and stores all data on cache set. Although its data is treated
-> >as dirty data but the writeback to backing device never happens.
-> >
-> >Therefore it is unncessary to always allocate memory for counters
-> >full_dirty_stripes and stripe_sectors_dirty when the bcache device is
-> >on flash only.
-> >
-> >This patch avoids to allocate/free memory for full_dirty_stripes and
-> >stripe_sectors_dirty in bcache_device_init() and bcache_device_free().
-> >Also in bcache_dev_sectors_dirty_add(), if the data is written onto
-> >flash device, avoid to update the counters in full_dirty_stripes and
-> >stripe_sectors_dirty because they are not used at all.
-> >
-> >Signed-off-by: Coly Li <colyli@suse.de>
-> >Cc: Mingzhe Zou <mingzhe.zou@easystack.cn>
-> >---
-> > drivers/md/bcache/super.c     | 18 ++++++++++++++----
-> > drivers/md/bcache/writeback.c |  8 +++++++-
-> > 2 files changed, 21 insertions(+), 5 deletions(-)
-> >
-> >diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> >index 077149c4050b..00edc093e544 100644
-> >--- a/drivers/md/bcache/super.c
-> >+++ b/drivers/md/bcache/super.c
-> >@@ -887,12 +887,15 @@ static void bcache_device_free(struct bcache_device *d)
-> > 	}
-> > 
-> > 	bioset_exit(&d->bio_split);
-> >-	kvfree(d->full_dirty_stripes);
-> >-	kvfree(d->stripe_sectors_dirty);
-> >+	if (d->full_dirty_stripes)
-> >+		kvfree(d->full_dirty_stripes);
-> >+	if (d->stripe_sectors_dirty)
-> >+		kvfree(d->stripe_sectors_dirty);
-> > 
-> > 	closure_debug_destroy(&d->cl);
-> > }
-> > 
-> >+
-> > static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
-> > 		sector_t sectors, struct block_device *cached_bdev,
-> > 		const struct block_device_operations *ops)
-> >@@ -914,6 +917,10 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
-> > 	}
-> > 	d->nr_stripes = n;
-> > 
-> >+	/* Skip allocating stripes counters for flash device */
-> >+	if (d->c && UUID_FLASH_ONLY(&d->c->uuids[d->id]))
-> >+		goto get_idx;
-> >+
-> > 	n = d->nr_stripes * sizeof(atomic_t);
-> > 	d->stripe_sectors_dirty = kvzalloc(n, GFP_KERNEL);
-> > 	if (!d->stripe_sectors_dirty)
-> >@@ -924,6 +931,7 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
-> > 	if (!d->full_dirty_stripes)
-> > 		goto out_free_stripe_sectors_dirty;
-> > 
-> >+get_idx:
-> > 	idx = ida_simple_get(&bcache_device_idx, 0,
-> > 				BCACHE_DEVICE_IDX_MAX, GFP_KERNEL);
-> > 	if (idx < 0)
-> >@@ -981,9 +989,11 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
-> > out_ida_remove:
-> > 	ida_simple_remove(&bcache_device_idx, idx);
-> > out_free_full_dirty_stripes:
-> >-	kvfree(d->full_dirty_stripes);
-> >+	if (d->full_dirty_stripes)
-> >+		kvfree(d->full_dirty_stripes);
-> > out_free_stripe_sectors_dirty:
-> >-	kvfree(d->stripe_sectors_dirty);
-> >+	if (d->stripe_sectors_dirty)
-> >+		kvfree(d->stripe_sectors_dirty);
-> > 	return -ENOMEM;
-> > 
-> > }
-> >diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-> >index 24c049067f61..32a034e74622 100644
-> >--- a/drivers/md/bcache/writeback.c
-> >+++ b/drivers/md/bcache/writeback.c
-> >@@ -607,8 +607,14 @@ void bcache_dev_sectors_dirty_add(struct cache_set *c, unsigned int inode,
-> > 	if (stripe < 0)
-> > 		return;
-> > 
-> >-	if (UUID_FLASH_ONLY(&c->uuids[inode]))
-> >+	/*
-> >+	 * The flash device doesn't have backing device to writeback,
-> >+	 * it is unncessary to calculate stripes related stuffs.
-> >+	 */
-> >+	if (UUID_FLASH_ONLY(&c->uuids[inode])) {
-> > 		atomic_long_add(nr_sectors, &c->flash_dev_dirty_sectors);
-> >+		return;
-> >+	}
-> > 
-> > 	stripe_offset = offset & (d->stripe_size - 1);
-> > 
+On Tue, Jun 06, 2023 at 09:39:21AM +0200, Christoph Hellwig wrote:
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/cdrom/cdrom.c | 3 +--
+>  drivers/cdrom/gdrom.c | 2 +-
+>  drivers/scsi/sr.c     | 2 +-
+>  include/linux/cdrom.h | 3 +--
+>  4 files changed, 4 insertions(+), 6 deletions(-)
 > 
-> look good, there may be a problem, d->stripe_sectors_dirty will be
-> a null pointer for flash device:
+> diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
+> index 416f723a2dbb33..e3eab319cb0474 100644
+> --- a/drivers/cdrom/cdrom.c
+> +++ b/drivers/cdrom/cdrom.c
+> @@ -1155,8 +1155,7 @@ int open_for_data(struct cdrom_device_info *cdi)
+>   * is in their own interest: device control becomes a lot easier
+>   * this way.
+>   */
+> -int cdrom_open(struct cdrom_device_info *cdi, struct block_device *bdev,
+> -	       fmode_t mode)
+> +int cdrom_open(struct cdrom_device_info *cdi, fmode_t mode)
+>  {
+>  	int ret;
+>  
+> diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+> index ceded5772aac6d..eaa2d5a90bc82f 100644
+> --- a/drivers/cdrom/gdrom.c
+> +++ b/drivers/cdrom/gdrom.c
+> @@ -481,7 +481,7 @@ static int gdrom_bdops_open(struct block_device *bdev, fmode_t mode)
+>  	bdev_check_media_change(bdev);
+>  
+>  	mutex_lock(&gdrom_mutex);
+> -	ret = cdrom_open(gd.cd_info, bdev, mode);
+> +	ret = cdrom_open(gd.cd_info, mode);
+>  	mutex_unlock(&gdrom_mutex);
+>  	return ret;
+>  }
+> diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+> index 12869e6d4ebda8..61b83880e395a4 100644
+> --- a/drivers/scsi/sr.c
+> +++ b/drivers/scsi/sr.c
+> @@ -498,7 +498,7 @@ static int sr_block_open(struct block_device *bdev, fmode_t mode)
+>  		sr_revalidate_disk(cd);
+>  
+>  	mutex_lock(&cd->lock);
+> -	ret = cdrom_open(&cd->cdi, bdev, mode);
+> +	ret = cdrom_open(&cd->cdi, mode);
+>  	mutex_unlock(&cd->lock);
+>  
+>  	scsi_autopm_put_device(sdev);
+> diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
+> index 67caa909e3e615..cc5717cb0fa8a8 100644
+> --- a/include/linux/cdrom.h
+> +++ b/include/linux/cdrom.h
+> @@ -101,8 +101,7 @@ int cdrom_read_tocentry(struct cdrom_device_info *cdi,
+>  		struct cdrom_tocentry *entry);
+>  
+>  /* the general block_device operations structure: */
+> -extern int cdrom_open(struct cdrom_device_info *cdi, struct block_device *bdev,
+> -			fmode_t mode);
+> +int cdrom_open(struct cdrom_device_info *cdi, fmode_t mode);
+>  extern void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode);
+>  extern int cdrom_ioctl(struct cdrom_device_info *cdi, struct block_device *bdev,
+>  		       fmode_t mode, unsigned int cmd, unsigned long arg);
+> -- 
+> 2.39.2
 > 
-> ```
-> static inline uint64_t bcache_dev_sectors_dirty(struct bcache_device *d)
-> {
-> 	uint64_t i, ret = 0;
-> 
-> 	for (i = 0; i < d->nr_stripes; i++)
-> 		ret += atomic_read(d->stripe_sectors_dirty + i);
-> 
-> 	return ret;
-> }
-> 
-> static void flash_dev_free(struct closure *cl)
-> {
-> 	struct bcache_device *d = container_of(cl, struct bcache_device, cl);
-> 
-> 	mutex_lock(&bch_register_lock);
-> 	atomic_long_sub(bcache_dev_sectors_dirty(d),
-> 			&d->c->flash_dev_dirty_sectors);
-> 	del_gendisk(d->disk);
-> 	bcache_device_free(d);
-> 	mutex_unlock(&bch_register_lock);
-> 	kobject_put(&d->kobj);
-> }
-> ```
 
-You are correct. The above atomic_long_sub() can be avoided, if dirty sectors
-of the flash device are not counted by stripe_sectors_dirty counters. This is
-something might be improved. Let me think about it.
+Thanks for the patch, looks good to me.
 
-> 
-> The only use of c->flash_dev_dirty_sectorsis to calculate cache_sectors:
-> 
-> ```
-> /* Rate limiting */
-> static uint64_t __calc_target_rate(struct cached_dev *dc)
-> {
-> 	struct cache_set *c = dc->disk.c;
-> 
-> 	/*
-> 	 * This is the size of the cache, minus the amount used for
-> 	 * flash-only devices
-> 	 */
-> 	uint64_t cache_sectors = c->nbuckets * c->cache->sb.bucket_size -
-> 				atomic_long_read(&c->flash_dev_dirty_sectors);
-> ```
-> 
-> Do we still need to update the dirty_data of flash device. Whether to
-> directly use the size of flash device as a dirty_data.
+Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
 
-Yes we have to. The flash device is like kind of thin-provision allocation,
-its size is specificed in creation time, but the real occupied space is
-indicated by the dirty sectors. So the flash device size can be much larger
-than its real consumed space.
-
-
-
--- 
-Coly Li
+Regards,
+Phil
