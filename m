@@ -2,37 +2,37 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2B22725A33
-	for <lists+linux-bcache@lfdr.de>; Wed,  7 Jun 2023 11:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89961725A3B
+	for <lists+linux-bcache@lfdr.de>; Wed,  7 Jun 2023 11:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239900AbjFGJX4 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 7 Jun 2023 05:23:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45572 "EHLO
+        id S238972AbjFGJZ3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 7 Jun 2023 05:25:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234349AbjFGJXy (ORCPT
+        with ESMTP id S240036AbjFGJZI (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 7 Jun 2023 05:23:54 -0400
+        Wed, 7 Jun 2023 05:25:08 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2FC31FD8;
-        Wed,  7 Jun 2023 02:23:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179BC1712;
+        Wed,  7 Jun 2023 02:25:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 58095633BD;
-        Wed,  7 Jun 2023 09:23:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B328C433EF;
-        Wed,  7 Jun 2023 09:23:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9FD2363396;
+        Wed,  7 Jun 2023 09:25:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CA78C433EF;
+        Wed,  7 Jun 2023 09:24:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686129819;
-        bh=2dBZxelf4g0w/gdLM0HKDBqAqVXwuGv1PlJcXlPn9lY=;
+        s=k20201202; t=1686129904;
+        bh=PVPEiqQnbOrHGRENvLEdaR/nzeey8b8ZshNSuWbTzrk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FA37ryzewz3+4K4l8Ktr97eYBVVqBLv2pVXW0viLjV+m+r/uNhWaJUioMBllxDrcb
-         m/2rQlbq2vyk3xPBmVzj29M7JVrvLsSMjwUJJkNN8B6XdEYn5s49h4hyw6bLTtoi9p
-         EjTM+zpv2Dhmnnkhitfx/vj2brk5MHkYyJoQRtsq8+0xWW/1nK8yf7e6n1c+pCWVlV
-         C1XYMaOxwobfzPLR8thTUoG0bwIiC1DRhAZeaP57LjbKOs0qtf1boJvs5JbZewwmWa
-         ZNyTmf20EjV9XQz4d8qaTsyPbhurixlhBxn2jxz+gzDDr74A/rLls/VWc0tFau9VX+
-         GD8kCkpo5IuUg==
-Date:   Wed, 7 Jun 2023 11:23:31 +0200
+        b=ALdNOSLUKbyG4MtN9g4NY65h2phNBq7vkw8myPQgpJG2PzaM8f/SVslVCmF/QOc3T
+         Bwp8JuH17KAppuZAf9ArpxZTmb2lgZ7cED8j2ebPZYTj2IOo1Pq/kE6GkpjP2srCxN
+         XuLDkhy5x7omz7gFdxwTAPV7lc6Gdyrkd5NATTyExP7JIaWtEnHvRju/P8W1jwC/ZQ
+         pgr661S3TGnNa0/R8XJs7I9augkFB3fO/k2xICj9Rw66l5DVIPYSNCIJVnNMEfjw+Z
+         gguliFEjC8Gq4dp0LyuKCQZnO9AA7rkPsqLnWoRqyaIZ4YpfwuJwZivsVp2KmUYvZJ
+         O4+xhtnOR9qOw==
+Date:   Wed, 7 Jun 2023 11:24:55 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
@@ -55,15 +55,14 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: Re: [PATCH 29/31] block: always use I_BDEV on file->f_mapping->host
- to find the bdev
-Message-ID: <20230607-thermal-sohlen-1ff852d8a99d@brauner>
+Subject: Re: [PATCH 30/31] block: store the holder in file->private_data
+Message-ID: <20230607-verjagen-weise-4fb3d76a6313@brauner>
 References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-30-hch@lst.de>
+ <20230606073950.225178-31-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230606073950.225178-30-hch@lst.de>
+In-Reply-To: <20230606073950.225178-31-hch@lst.de>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -74,12 +73,13 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 09:39:48AM +0200, Christoph Hellwig wrote:
-> Always use I_BDEV(file->f_mapping->host) to find the bdev for a file to
-> free up file->private_data for other uses.
+On Tue, Jun 06, 2023 at 09:39:49AM +0200, Christoph Hellwig wrote:
+> Store the file struct used as the holder in file->private_data as an
+> indicator that this file descriptor was opened exclusively to  remove
+> the last use of FMODE_EXCL.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
 
-Looks good to me,
+Feels a bit odd to store the object itself but anyway,
 Acked-by: Christian Brauner <brauner@kernel.org>
