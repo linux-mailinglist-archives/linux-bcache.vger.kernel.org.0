@@ -2,69 +2,106 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFEB77318B6
-	for <lists+linux-bcache@lfdr.de>; Thu, 15 Jun 2023 14:16:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC17473183D
+	for <lists+linux-bcache@lfdr.de>; Thu, 15 Jun 2023 14:13:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344846AbjFOMQo (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 15 Jun 2023 08:16:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58954 "EHLO
+        id S238580AbjFOMNg (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 15 Jun 2023 08:13:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344849AbjFOMP7 (ORCPT
+        with ESMTP id S239559AbjFOMNf (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 15 Jun 2023 08:15:59 -0400
-Received: from mail.sitirkam.com (mail.aurorateknoglobal.com [103.126.10.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFF782967;
-        Thu, 15 Jun 2023 05:15:15 -0700 (PDT)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mail.sitirkam.com (Postfix) with ESMTP id CBFD64E7BE89;
-        Thu, 15 Jun 2023 08:32:09 +0700 (WIB)
-Received: from mail.sitirkam.com ([127.0.0.1])
-        by localhost (mail.sitirkam.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 9PEOXuiK4TdS; Thu, 15 Jun 2023 08:32:09 +0700 (WIB)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mail.sitirkam.com (Postfix) with ESMTP id AAB384E7BAAC;
-        Thu, 15 Jun 2023 08:32:00 +0700 (WIB)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.sitirkam.com AAB384E7BAAC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sitirkam.com;
-        s=B8AB377C-ED3B-11EA-8736-9248CAEF674E; t=1686792720;
-        bh=q7vDHy+gLAr4GKZUDI+hjt8I93kvW09nNmGJORUTyfg=;
-        h=MIME-Version:To:From:Date:Message-Id;
-        b=N3NjQucfB1d8dBLppq5WOh9bTmxlsSrZrD1Gp71hr+LTWwbArUSVM7dMpgM62Owhl
-         W7LBChAaU70l8BlUjF4S2JZZJFtwsCOBwua8836eYRoa8Lqqpa2Hw04ZGd/1B/v+a5
-         fzJQU7cq6lc5swJnNLTYAWsmOIHSXKVid9vWBYGNfM538yXPWLew+hTSVQtaFH/o0M
-         nMiRwINVYUTxeSu7wJyzj0uVbDnMICisnE5XL3+d5nhoQOYiunftxFKReM8NRDd5sG
-         yowX8M3Y2OHoU/sj3hD5ZHU9YTzZ6ncO5H4tm5/qRcWb21gS098lmuJcQk7NSpD31f
-         UgRlXu+cxXLwQ==
-X-Virus-Scanned: amavisd-new at mail.sitirkam.com
-Received: from mail.sitirkam.com ([127.0.0.1])
-        by localhost (mail.sitirkam.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id g4cxxQwKGqiU; Thu, 15 Jun 2023 08:32:00 +0700 (WIB)
-Received: from [185.169.4.111] (unknown [185.169.4.111])
-        by mail.sitirkam.com (Postfix) with ESMTPSA id 30EFE4E7BABB;
-        Thu, 15 Jun 2023 08:31:54 +0700 (WIB)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 15 Jun 2023 08:13:35 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D81881BC3;
+        Thu, 15 Jun 2023 05:13:34 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 936FE1FE0C;
+        Thu, 15 Jun 2023 12:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1686831213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=S4EdmZLJruCwHfmNVvX19xwk7LK+x+Z9KMVI+FWJp7w=;
+        b=bh8XRfwtFegWjrPbY969z/AW+zRQsiJwmQqiJ0INKQRpA/gxXhUSOPpKk0g9kzKMImPKjS
+        Bo77JeJdKDemkzRszuhJGIuftZ5WDalHQo8g9fZihYQrg5Qw1uOVgBs4UGtaE9gQG1pmrM
+        nwzcZq4KJ3E8uyHH0NTHqLPpYdMrBlM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1686831213;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=S4EdmZLJruCwHfmNVvX19xwk7LK+x+Z9KMVI+FWJp7w=;
+        b=bGOGjMfZl3/Ots9oL5ejrXkUwX2nAVnvYLFCifdGvo3fdHYNid4cYijfzkyWO0vNSuY/X4
+        crS7v5btuvsNKQDA==
+Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
+        by relay2.suse.de (Postfix) with ESMTP id C6E0C2C141;
+        Thu, 15 Jun 2023 12:13:31 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     axboe@kernel.dk
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Coly Li <colyli@suse.de>
+Subject: [PATCH 0/6] bcache-next 20230615
+Date:   Thu, 15 Jun 2023 20:12:17 +0800
+Message-Id: <20230615121223.22502-1-colyli@suse.de>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Spende
-To:     Recipients <admin@sitirkam.com>
-From:   "Maria-Elisabeth Schaeffler" <admin@sitirkam.com>
-Date:   Wed, 14 Jun 2023 18:34:01 -0700
-Reply-To: schaefflermariaelisabeth1941@gmail.com
-Message-Id: <20230615013155.30EFE4E7BABB@mail.sitirkam.com>
-X-Spam-Status: No, score=2.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,
-        FREEMAIL_REPLYTO_END_DIGIT,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: **
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Your email account has been selected for a donation of =E2=82=AC1,700,000. =
-Please contact me for more information.
+Hi Jens,
 
-Mrs Maria Elisabeth Schaeffler
-CEO SCHAEFFLER.
+I start to follow Song Liu's -next style to submit bcache patches to
+you. This series are minor fixes I tested for a while, and generated
+based on top of the for-6.5/block branch from linux-block tree.
+
+The patch from Mingzhe Zou fixes a race in bcache initializaiton time,
+rested patches from Andrea, Thomas, Zheng and Ye are code cleanup and
+good to have them in.
+
+Please consider taking them, and thank you in advance.
+
+Coly Li 
+---
+
+Andrea Tomassetti (1):
+  bcache: Remove dead references to cache_readaheads
+
+Mingzhe Zou (1):
+  bcache: fixup btree_cache_wait list damage
+
+Thomas Weißschuh (1):
+  bcache: make kobj_type structures constant
+
+Zheng Wang (2):
+  bcache: Remove some unnecessary NULL point check for the return value
+    of __bch_btree_node_alloc-related pointer
+  bcache: Fix __bch_btree_node_alloc to make the failure behavior
+    consistent
+
+ye xingchen (1):
+  bcache: Convert to use sysfs_emit()/sysfs_emit_at() APIs
+
+ Documentation/admin-guide/bcache.rst |  3 ---
+ drivers/md/bcache/bcache.h           | 10 ++++-----
+ drivers/md/bcache/btree.c            | 25 +++++++++++++++-------
+ drivers/md/bcache/btree.h            |  1 +
+ drivers/md/bcache/stats.h            |  1 -
+ drivers/md/bcache/super.c            |  4 ++--
+ drivers/md/bcache/sysfs.c            | 31 ++++++++++++++--------------
+ drivers/md/bcache/sysfs.h            |  2 +-
+ drivers/md/bcache/writeback.c        | 10 +++++++++
+ 9 files changed, 52 insertions(+), 35 deletions(-)
+
+-- 
+2.35.3
+
