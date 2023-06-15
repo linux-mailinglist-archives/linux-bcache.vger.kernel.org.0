@@ -2,59 +2,69 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B9D1873184B
-	for <lists+linux-bcache@lfdr.de>; Thu, 15 Jun 2023 14:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 278D2731A14
+	for <lists+linux-bcache@lfdr.de>; Thu, 15 Jun 2023 15:34:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343855AbjFOMN5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 15 Jun 2023 08:13:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56756 "EHLO
+        id S1344331AbjFONeu (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 15 Jun 2023 09:34:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343674AbjFOMN4 (ORCPT
+        with ESMTP id S1344154AbjFONeO (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 15 Jun 2023 08:13:56 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A8519B5;
-        Thu, 15 Jun 2023 05:13:53 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 0CAEA223DA;
-        Thu, 15 Jun 2023 12:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1686831232; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=s/txWO7dihxN+v9ZTDPm7tmWwWAwkv4+ElJccgrA55U=;
-        b=yiQPkk35PwuwvgupdGTOVqb/baxXGOi7MUnFh9/awyYFIoeXL8UDIRHkwCmarGtj7pw7om
-        dgwIJ97f890Dk8cOS52Qe+IoOzfPAwh+NXTAaufNqsr7/GHnfX4XLalxV/PvSFgOHIhl26
-        ywMRkRMUhRpcXI0UnOZRpNp61DysDw8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1686831232;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=s/txWO7dihxN+v9ZTDPm7tmWwWAwkv4+ElJccgrA55U=;
-        b=q3KKy0t9UoYzqSQa3GQsqMiAdm8Gw0/FBPntFpQuZs+zMCrlJValMXgIO1pYeinNsLvS9N
-        76pRDh9DcnyymsBg==
-Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
-        by relay2.suse.de (Postfix) with ESMTP id 38A1A2C142;
-        Thu, 15 Jun 2023 12:13:46 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     axboe@kernel.dk
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Mingzhe Zou <mingzhe.zou@easystack.cn>, stable@vger.kernel.org,
-        Coly Li <colyli@suse.de>
-Subject: [PATCH 6/6] bcache: fixup btree_cache_wait list damage
-Date:   Thu, 15 Jun 2023 20:12:23 +0800
-Message-Id: <20230615121223.22502-7-colyli@suse.de>
-X-Mailer: git-send-email 2.35.3
+        Thu, 15 Jun 2023 09:34:14 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A75B30FE
+        for <linux-bcache@vger.kernel.org>; Thu, 15 Jun 2023 06:33:47 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-6664ac3be47so396386b3a.0
+        for <linux-bcache@vger.kernel.org>; Thu, 15 Jun 2023 06:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1686836027; x=1689428027;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sVR+vT8DdsvA3Z3S0QOP6jSANdRArM8WL8xik+euJ7U=;
+        b=DEJZBn0jRo+nrmjAYfVbkW/mbWTo9TPUh5Zk5FdEZ9pNqXulFJpZdIL6dCbj+nxtYS
+         zcZv11ORnK6I++2adpuFhjl0ft85vJq3OrXtav0aI4US0+3khl91+a+ZlJDjLB7gWOV3
+         TL/LSTeYzjcZht0650UgDtwxgCQToPTz4Uzvkm/KwSKr+RKEp0szPSV+3yrBpWxmz8aF
+         BGLXUncI1pi+EeL4aNxttKZJn2qmvi5Hv1XuwsJh3/vCgx6DZU8SLeXeo0PgjwCmr6RU
+         lrTtxLpVwmaHEHOVBQTylSMH/9Qk0C2lntzNe91kKp6XtrlCCXay1JBOj9YToZZZ+RIj
+         MWdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686836027; x=1689428027;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sVR+vT8DdsvA3Z3S0QOP6jSANdRArM8WL8xik+euJ7U=;
+        b=PAtoz1Xvf0JPxEw7Yy5hMJ2KSFfJx4lZY8+TeWSg97yDpgPuhqzh+sLf63Qyy/EK4J
+         2j0Re+Cyrfx9L6JnlL9iMaWuzyr9OReacwssXMsIkuuXAm7i8lOrWv51eJ8bVO2CQrU0
+         4nKyhSBoaBJ5a0YBgARvBtx2E8gzEVbrNJFWZx1EeLpg2elgLCszM1VkwNFrRXJy3JGh
+         90QmM8v59bA8SG/6VEoOCX17f2AhiTIiRe843Agv11v0gCp+orunItwx//vlH3FFVEmH
+         QygRe6CQjcdfMs/IuIeP4KO0lTmMU2eZIeSAxggK114B6//1fNbm0iClS8CFURcGGcOe
+         XFeA==
+X-Gm-Message-State: AC+VfDx8ndHZtKiCPohrx9ASwOdvsxoqf8Zdpq+sPQMDalbpy1umWhJr
+        76jGmZb0cHnxxsNvLqRnqj/KWPCHZn1jicVIGCI=
+X-Google-Smtp-Source: ACHHUZ4hYDWKSnGc0F3oLOsil5ywgqcuGr7h8N6KfecEA3vYODtqH0U/YpLcDAf/Ug39JuiuTrNGXw==
+X-Received: by 2002:a05:6a20:8e19:b0:11a:efaa:eb88 with SMTP id y25-20020a056a208e1900b0011aefaaeb88mr15781079pzj.3.1686836026892;
+        Thu, 15 Jun 2023 06:33:46 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id x17-20020aa793b1000000b00640dbf177b8sm12062928pff.37.2023.06.15.06.33.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jun 2023 06:33:45 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
 In-Reply-To: <20230615121223.22502-1-colyli@suse.de>
 References: <20230615121223.22502-1-colyli@suse.de>
+Subject: Re: [PATCH 0/6] bcache-next 20230615
+Message-Id: <168683602549.2139966.16055841086380737489.b4-ty@kernel.dk>
+Date:   Thu, 15 Jun 2023 07:33:45 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-c6835
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,122 +72,36 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Mingzhe Zou <mingzhe.zou@easystack.cn>
 
-We get a kernel crash about "list_add corruption. next->prev should be
-prev (ffff9c801bc01210), but was ffff9c77b688237c.
-(next=ffffae586d8afe68)."
+On Thu, 15 Jun 2023 20:12:17 +0800, Coly Li wrote:
+> I start to follow Song Liu's -next style to submit bcache patches to
+> you. This series are minor fixes I tested for a while, and generated
+> based on top of the for-6.5/block branch from linux-block tree.
+> 
+> The patch from Mingzhe Zou fixes a race in bcache initializaiton time,
+> rested patches from Andrea, Thomas, Zheng and Ye are code cleanup and
+> good to have them in.
+> 
+> [...]
 
-crash> struct list_head 0xffff9c801bc01210
-struct list_head {
-  next = 0xffffae586d8afe68,
-  prev = 0xffffae586d8afe68
-}
-crash> struct list_head 0xffff9c77b688237c
-struct list_head {
-  next = 0x0,
-  prev = 0x0
-}
-crash> struct list_head 0xffffae586d8afe68
-struct list_head struct: invalid kernel virtual address: ffffae586d8afe68  type: "gdb_readmem_callback"
-Cannot access memory at address 0xffffae586d8afe68
+Applied, thanks!
 
-[230469.019492] Call Trace:
-[230469.032041]  prepare_to_wait+0x8a/0xb0
-[230469.044363]  ? bch_btree_keys_free+0x6c/0xc0 [escache]
-[230469.056533]  mca_cannibalize_lock+0x72/0x90 [escache]
-[230469.068788]  mca_alloc+0x2ae/0x450 [escache]
-[230469.080790]  bch_btree_node_get+0x136/0x2d0 [escache]
-[230469.092681]  bch_btree_check_thread+0x1e1/0x260 [escache]
-[230469.104382]  ? finish_wait+0x80/0x80
-[230469.115884]  ? bch_btree_check_recurse+0x1a0/0x1a0 [escache]
-[230469.127259]  kthread+0x112/0x130
-[230469.138448]  ? kthread_flush_work_fn+0x10/0x10
-[230469.149477]  ret_from_fork+0x35/0x40
+[1/6] bcache: Convert to use sysfs_emit()/sysfs_emit_at() APIs
+      commit: a301b2deb66cd93bae0f676702356273ebf8abb6
+[2/6] bcache: make kobj_type structures constant
+      commit: b98dd0b0a596fdeaca68396ce8f782883ed253a9
+[3/6] bcache: Remove dead references to cache_readaheads
+      commit: ccb8c3bd6d93e7986b702d1f66d5d56d08abc59f
+[4/6] bcache: Remove some unnecessary NULL point check for the return value of __bch_btree_node_alloc-related pointer
+      commit: 028ddcac477b691dd9205c92f991cc15259d033e
+[5/6] bcache: Fix __bch_btree_node_alloc to make the failure behavior consistent
+      commit: 80fca8a10b604afad6c14213fdfd816c4eda3ee4
+[6/6] bcache: fixup btree_cache_wait list damage
+      commit: f0854489fc07d2456f7cc71a63f4faf9c716ffbe
 
-bch_btree_check_thread() and bch_dirty_init_thread() maybe call
-mca_cannibalize() to cannibalize other cached btree nodes. Only
-one thread can do it at a time, so the op of other threads will
-be added to the btree_cache_wait list.
-
-We must call finish_wait() to remove op from btree_cache_wait
-before free it's memory address. Otherwise, the list will be
-damaged. Also should call bch_cannibalize_unlock() to release
-the btree_cache_alloc_lock and wake_up other waiters.
-
-Fixes: 8e7102273f59 ("bcache: make bch_btree_check() to be multithreaded")
-Fixes: b144e45fc576 ("bcache: make bch_sectors_dirty_init() to be multithreaded")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
-Signed-off-by: Coly Li <colyli@suse.de>
----
- drivers/md/bcache/btree.c     | 11 ++++++++++-
- drivers/md/bcache/btree.h     |  1 +
- drivers/md/bcache/writeback.c | 10 ++++++++++
- 3 files changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 0ddf91204782..68b9d7ca864e 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -885,7 +885,7 @@ static struct btree *mca_cannibalize(struct cache_set *c, struct btree_op *op,
-  * cannibalize_bucket() will take. This means every time we unlock the root of
-  * the btree, we need to release this lock if we have it held.
-  */
--static void bch_cannibalize_unlock(struct cache_set *c)
-+void bch_cannibalize_unlock(struct cache_set *c)
- {
- 	spin_lock(&c->btree_cannibalize_lock);
- 	if (c->btree_cache_alloc_lock == current) {
-@@ -1970,6 +1970,15 @@ static int bch_btree_check_thread(void *arg)
- 			c->gc_stats.nodes++;
- 			bch_btree_op_init(&op, 0);
- 			ret = bcache_btree(check_recurse, p, c->root, &op);
-+			/*
-+			 * The op may be added to cache_set's btree_cache_wait
-+			 * in mca_cannibalize(), must ensure it is removed from
-+			 * the list and release btree_cache_alloc_lock before
-+			 * free op memory.
-+			 * Otherwise, the btree_cache_wait will be damaged.
-+			 */
-+			bch_cannibalize_unlock(c);
-+			finish_wait(&c->btree_cache_wait, &(&op)->wait);
- 			if (ret)
- 				goto out;
- 		}
-diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
-index 1b5fdbc0d83e..a2920bbfcad5 100644
---- a/drivers/md/bcache/btree.h
-+++ b/drivers/md/bcache/btree.h
-@@ -282,6 +282,7 @@ void bch_initial_gc_finish(struct cache_set *c);
- void bch_moving_gc(struct cache_set *c);
- int bch_btree_check(struct cache_set *c);
- void bch_initial_mark_key(struct cache_set *c, int level, struct bkey *k);
-+void bch_cannibalize_unlock(struct cache_set *c);
- 
- static inline void wake_up_gc(struct cache_set *c)
- {
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index d4a5fc0650bb..24c049067f61 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -890,6 +890,16 @@ static int bch_root_node_dirty_init(struct cache_set *c,
- 	if (ret < 0)
- 		pr_warn("sectors dirty init failed, ret=%d!\n", ret);
- 
-+	/*
-+	 * The op may be added to cache_set's btree_cache_wait
-+	 * in mca_cannibalize(), must ensure it is removed from
-+	 * the list and release btree_cache_alloc_lock before
-+	 * free op memory.
-+	 * Otherwise, the btree_cache_wait will be damaged.
-+	 */
-+	bch_cannibalize_unlock(c);
-+	finish_wait(&c->btree_cache_wait, &(&op.op)->wait);
-+
- 	return ret;
- }
- 
+Best regards,
 -- 
-2.35.3
+Jens Axboe
+
+
 
