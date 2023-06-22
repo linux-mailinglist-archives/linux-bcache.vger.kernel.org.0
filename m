@@ -2,47 +2,50 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE8DC73A47D
-	for <lists+linux-bcache@lfdr.de>; Thu, 22 Jun 2023 17:12:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AB5C73A489
+	for <lists+linux-bcache@lfdr.de>; Thu, 22 Jun 2023 17:14:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232144AbjFVPM4 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 22 Jun 2023 11:12:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48310 "EHLO
+        id S231338AbjFVPOe (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 22 Jun 2023 11:14:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232186AbjFVPMr (ORCPT
+        with ESMTP id S231523AbjFVPOd (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 22 Jun 2023 11:12:47 -0400
+        Thu, 22 Jun 2023 11:14:33 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A71C9199F;
-        Thu, 22 Jun 2023 08:12:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B618C2;
+        Thu, 22 Jun 2023 08:14:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=iYO/2fIAfCy2gY0BGu2rVTSyHy9PvUmyfq9b+CT/AHE=; b=ufx4co6UqJ99ag8XLsIR4ALPKw
-        fTDJdNZ+76a3Cw+T38oD5j4wq9z6MWzqKvkqlbJ39z0fQTCJ5NJ0HRAtwxB6KH9dA9uvH0fKINzP7
-        wzMq3+wLFGhMkIxXcxOiNrr1+ImYYh0M09O9KAjJpEw7parxNZx31xjUcYCz0YI1UD20vJqwerzkB
-        Bxx12GvD+gO7G/HmDGts1cQhNwCi53idiZ/qLnCfiNPtavbxTFWC2VMoJ76fzQmCkp1i1XflVAW2x
-        xBNKPcTnzu/Qvhho7WwB5HUV+oYEDzlo6vt5cKYVnNd3sX1BBxR7i9+VoPe5dvsLUKohZILrNvInx
-        7H6X9Bfg==;
+        bh=cRVe19OrsPWSomnH8wVHd4nTHq+B5UjIJzhCq40eL2E=; b=j2F+KQnmX6+hrMuGQfZ0+DjThA
+        IMfLXYrngdmvP4JvJ5Y2JrP7Vg43RfvZGqjpW12S4yPUldnwChi+8YCAL4QA2UoR/esO9V2Yum8Iq
+        P3K8u3Gi/II/5d4YuMPpZtc0jdJMO0GI87Sa4IIbN7dS68xKLw72ZvM10jqitNX2p6uyzNNH3I4zh
+        pMKPZzCPftm4CsKCudfwWTPXvH+jcubkmdCxDVfE/ov665wm1PnyRSqI9+hxTq5EIzB9enNUmG9R1
+        ATFynZXO+n+wEdI0p8sxw+HF0BbrpxOQOI8XBuP7RBj8jl3enl0t5NyQOL0Q1mVPaY/VbkMl8k++4
+        ehMRtEvQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qCLz3-0015xg-2L;
-        Thu, 22 Jun 2023 15:12:29 +0000
-Date:   Thu, 22 Jun 2023 08:12:29 -0700
+        id 1qCM0x-0016DH-0j;
+        Thu, 22 Jun 2023 15:14:27 +0000
+Date:   Thu, 22 Jun 2023 08:14:27 -0700
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jens Axboe <axboe@kernel.dk>,
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         linux-block@vger.kernel.org, Coly Li <colyli@suse.de>,
         linux-bcache@vger.kernel.org
-Subject: Re: [PATCH 2/2] bcache: Fix bcache device claiming
-Message-ID: <ZJRk3Y8LjGhEKqK6@infradead.org>
+Subject: Re: [PATCH 1/2] bcache: Alloc holder object before async registration
+Message-ID: <ZJRlU1/7mchdZyPF@infradead.org>
 References: <20230621162024.29310-1-jack@suse.cz>
- <20230621162333.30027-2-jack@suse.cz>
+ <20230621162333.30027-1-jack@suse.cz>
+ <20230621175659.ugkaawkuanlzt736@moria.home.lan>
+ <20230622100954.6vx7725huqngbubb@quack3>
+ <20230622120548.molmqze2whj7ykj5@moria.home.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230621162333.30027-2-jack@suse.cz>
+In-Reply-To: <20230622120548.molmqze2whj7ykj5@moria.home.lan>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -54,26 +57,10 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, Jun 21, 2023 at 06:23:27PM +0200, Jan Kara wrote:
-> Commit 2736e8eeb0cc ("block: use the holder as indication for exclusive
-> opens") introduced a change that blkdev_put() has to get exclusive
-> holder of the bdev as an argument. However it overlooked that
-> register_bdev() and register_cache() overwrite the bdev->bd_holder field
-> in the block device to point to the real owning object which was not
-> available at the time we called blkdev_get_by_path(). Messing with bdev
-> internals like this is a layering violation and it also causes
-> blkdev_put() to issue warning about mismatching holders.
+On Thu, Jun 22, 2023 at 08:05:48AM -0400, Kent Overstreet wrote:
+> Christoph - you really gotta start CCing people properly, the patch that
+> broke this didn't even it linux-bcache. No bueno.
 
-Ugg, yes.
+The series did absolutely go out to linux-bcache.  See here for v2:
 
-> Fix bcache to reopen the block device with appropriate holder once it is
-> available which also restores the behavior that multiple bcache caches
-> cannot claim the same device which was also broken by commit
-> 2736e8eeb0cc.
-
-That was actually an intentional and documented change in commit
-29499ab060fe ("bcache: don't pass a stack address to
-blkdev_get_by_path") because the old behavior was broken already in
-addition to the changing of the block stuff underneath.  Not that I'm
-arguing against your changes here, but the commit log probably needs a
-bit of tweaking.
+https://lore.kernel.org/linux-bcache/20230608110258.189493-13-hch@lst.de/T/#u
