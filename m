@@ -2,35 +2,65 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F2A67399F1
-	for <lists+linux-bcache@lfdr.de>; Thu, 22 Jun 2023 10:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB64C7399D4
+	for <lists+linux-bcache@lfdr.de>; Thu, 22 Jun 2023 10:32:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230451AbjFVIfb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 22 Jun 2023 04:35:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52634 "EHLO
+        id S230417AbjFVIc0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 22 Jun 2023 04:32:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230392AbjFVIf1 (ORCPT
+        with ESMTP id S230467AbjFVIcR (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 22 Jun 2023 04:35:27 -0400
-X-Greylist: delayed 566 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 22 Jun 2023 01:35:21 PDT
-Received: from out-39.mta0.migadu.com (out-39.mta0.migadu.com [91.218.175.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FC8E10F4;
-        Thu, 22 Jun 2023 01:35:20 -0700 (PDT)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1687422388;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oQpOCkSVz0jjdFm4oEP2NJJ+zKFOVCxqbVN/b6qKeiM=;
-        b=Vou+QBcBsFfrycM2PkKySs/6vc7t4z2y+ESRPtdGGBu1nh2ELX2n3XwLyStu2J7FwIsey0
-        GRSdEt3Uk6O3X+qjfRuw6k2zIEyamPbwTm+TOHkS5CEaR6KvBgQJdhpJF9uZHGex1bKqla
-        yWmLNi3h067slmAnbRZ3GfDMps2hTHE=
-From:   Qi Zheng <qi.zheng@linux.dev>
-To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
-        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu
+        Thu, 22 Jun 2023 04:32:17 -0400
+Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823D31FEC
+        for <linux-bcache@vger.kernel.org>; Thu, 22 Jun 2023 01:31:43 -0700 (PDT)
+Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-1a2dd615ddcso1805968fac.0
+        for <linux-bcache@vger.kernel.org>; Thu, 22 Jun 2023 01:31:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1687422703; x=1690014703;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jRx5u0dIx9qFXm7I93dXe9q/QmQ9W+wUToPS3aLpk1M=;
+        b=BLxeO0dy+qXx3mtPibK1S1/Or5zgBKyR+cJ+WdJudKlQtS/Nsabue7QFfygOG9X37C
+         JNC/knOS3tjYOQOseW33zi2F030DsgTWZcCvwE6mko6OoqIenxumjcv5Z8/rnxAjBO3/
+         xtucKEfCtZqg/VNDj8oOitF8gRCgoGC+eaFgizTMA41zH3SGC3RP8SzsV7WNcZX8qR+q
+         6s7WskcQisgXsEcLIkuFshZF5uF8hpqRK404CDzKPS3hFNRImlWGDWKvxDEmNrhw0M34
+         cglWSueSHGyZNjK3S6DZy/VJBgyCTc7gX8Qm2fkIbSjNxChukxDTKOPYSzno2UgfFI9l
+         y7Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687422703; x=1690014703;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jRx5u0dIx9qFXm7I93dXe9q/QmQ9W+wUToPS3aLpk1M=;
+        b=TjvJWdzTelXm5WTQ+nT/bCLkk5eRJMBfP0XmytwAmT60wTW8c15FAZTbH5tbrrgrHz
+         7bvXE56cTBFf6aCBdxU+eWJJFHHDverW7LexNHHuU/UQgIkEMNY/X9kj7RxHbrYm6uSa
+         or/BOpHbTiUM9HfCBMnd4QwzaVKAfKSPnIrmQzQXpV/Rj281gjPymv9Vl/xpVJa0twh5
+         eAGFpwzwjb5+cjfsoHt9kPU2mzmB2mAdP9hf6e1jJklIr60ZyUHUkBIy3rLwOCWqZ9Dz
+         RmpqICHj9o4v55i7MzHN7yHZazU1P5DRP1+ORv0/Z/KN/weV6s4M/zm7k11ovpygluWH
+         cqeQ==
+X-Gm-Message-State: AC+VfDz0OhT3mRiz26dctO2IDGrySMTbQTvsYFSoAszTOF5mwtPllPp8
+        28zf3J/BP86mWJs4igiBQwdmIg==
+X-Google-Smtp-Source: ACHHUZ4rJo+IPtTRaPya+U1JdMgc+u3gA3krnJKF3F08hxGt0uoHrxZAqg1izlNZ+SOIkOa4AMphOQ==
+X-Received: by 2002:a05:6830:19c1:b0:6b1:6db4:556f with SMTP id p1-20020a05683019c100b006b16db4556fmr10609999otp.3.1687422702698;
+        Thu, 22 Jun 2023 01:31:42 -0700 (PDT)
+Received: from [10.4.168.167] ([139.177.225.254])
+        by smtp.gmail.com with ESMTPSA id y17-20020a63e251000000b0050a0227a4bcsm4369684pgj.57.2023.06.22.01.31.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Jun 2023 01:31:42 -0700 (PDT)
+Message-ID: <52bf599c-3c3a-7dfc-30b3-f3a2af5f29a8@bytedance.com>
+Date:   Thu, 22 Jun 2023 16:31:22 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
+Subject: Re: [External] [PATCH 00/29] use refcount+RCU method to implement
+ lockless slab shrink
+To:     Qi Zheng <qi.zheng@linux.dev>, akpm@linux-foundation.org,
+        david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
+        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
+        paulmck@kernel.org, tytso@mit.edu
 Cc:     airlied@gmail.com, daniel@ffwll.ch, robdclark@gmail.com,
         quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org,
         sean@poorly.run, marijn.suijten@somainline.org, robh@kernel.org,
@@ -52,121 +82,23 @@ Cc:     airlied@gmail.com, daniel@ffwll.ch, robdclark@gmail.com,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH 02/29] mm: vmscan: introduce some helpers for dynamically allocating shrinker
-Date:   Thu, 22 Jun 2023 08:24:27 +0000
-Message-Id: <20230622082454.4090236-3-qi.zheng@linux.dev>
-In-Reply-To: <20230622082454.4090236-1-qi.zheng@linux.dev>
+        linux-btrfs@vger.kernel.org
 References: <20230622082454.4090236-1-qi.zheng@linux.dev>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Language: en-US
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <20230622082454.4090236-1-qi.zheng@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Qi Zheng <zhengqi.arch@bytedance.com>
+This patch set failed to send due to the following reasons, please ignore.
 
-Introduce some helpers for dynamically allocating shrinker instance,
-and their uses are as follows:
-
-1. shrinker_alloc_and_init()
-
-Used to allocate and initialize a shrinker instance, the priv_data
-parameter is used to pass the pointer of the previously embedded
-structure of the shrinker instance.
-
-2. shrinker_free()
-
-Used to free the shrinker instance when the registration of shrinker
-fails.
-
-3. unregister_and_free_shrinker()
-
-Used to unregister and free the shrinker instance, and the kfree()
-will be changed to kfree_rcu() later.
-
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
----
- include/linux/shrinker.h | 12 ++++++++++++
- mm/vmscan.c              | 35 +++++++++++++++++++++++++++++++++++
- 2 files changed, 47 insertions(+)
-
-diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-index 43e6fcabbf51..8e9ba6fa3fcc 100644
---- a/include/linux/shrinker.h
-+++ b/include/linux/shrinker.h
-@@ -107,6 +107,18 @@ extern void unregister_shrinker(struct shrinker *shrinker);
- extern void free_prealloced_shrinker(struct shrinker *shrinker);
- extern void synchronize_shrinkers(void);
- 
-+typedef unsigned long (*count_objects_cb)(struct shrinker *s,
-+					  struct shrink_control *sc);
-+typedef unsigned long (*scan_objects_cb)(struct shrinker *s,
-+					 struct shrink_control *sc);
-+
-+struct shrinker *shrinker_alloc_and_init(count_objects_cb count,
-+					 scan_objects_cb scan, long batch,
-+					 int seeks, unsigned flags,
-+					 void *priv_data);
-+void shrinker_free(struct shrinker *shrinker);
-+void unregister_and_free_shrinker(struct shrinker *shrinker);
-+
- #ifdef CONFIG_SHRINKER_DEBUG
- extern int shrinker_debugfs_add(struct shrinker *shrinker);
- extern struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 45d17c7cc555..64ff598fbad9 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -809,6 +809,41 @@ void unregister_shrinker(struct shrinker *shrinker)
- }
- EXPORT_SYMBOL(unregister_shrinker);
- 
-+struct shrinker *shrinker_alloc_and_init(count_objects_cb count,
-+					 scan_objects_cb scan, long batch,
-+					 int seeks, unsigned flags,
-+					 void *priv_data)
-+{
-+	struct shrinker *shrinker;
-+
-+	shrinker = kzalloc(sizeof(struct shrinker), GFP_KERNEL);
-+	if (!shrinker)
-+		return NULL;
-+
-+	shrinker->count_objects = count;
-+	shrinker->scan_objects = scan;
-+	shrinker->batch = batch;
-+	shrinker->seeks = seeks;
-+	shrinker->flags = flags;
-+	shrinker->private_data = priv_data;
-+
-+	return shrinker;
-+}
-+EXPORT_SYMBOL(shrinker_alloc_and_init);
-+
-+void shrinker_free(struct shrinker *shrinker)
-+{
-+	kfree(shrinker);
-+}
-+EXPORT_SYMBOL(shrinker_free);
-+
-+void unregister_and_free_shrinker(struct shrinker *shrinker)
-+{
-+	unregister_shrinker(shrinker);
-+	kfree(shrinker);
-+}
-+EXPORT_SYMBOL(unregister_and_free_shrinker);
-+
- /**
-  * synchronize_shrinkers - Wait for all running shrinkers to complete.
-  *
--- 
-2.30.2
-
+	4.7.1 Error: too many recipients from 49.7.199.65
