@@ -2,210 +2,221 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA45E73B44C
-	for <lists+linux-bcache@lfdr.de>; Fri, 23 Jun 2023 12:01:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0229273B811
+	for <lists+linux-bcache@lfdr.de>; Fri, 23 Jun 2023 14:49:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231266AbjFWKBX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 23 Jun 2023 06:01:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43210 "EHLO
+        id S229705AbjFWMtc (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 23 Jun 2023 08:49:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbjFWKBV (ORCPT
+        with ESMTP id S229989AbjFWMta (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 23 Jun 2023 06:01:21 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EC52D189;
-        Fri, 23 Jun 2023 03:01:18 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61950C14;
-        Fri, 23 Jun 2023 03:02:02 -0700 (PDT)
-Received: from [10.1.30.17] (e122027.cambridge.arm.com [10.1.30.17])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E25C23F64C;
-        Fri, 23 Jun 2023 03:01:13 -0700 (PDT)
-Message-ID: <35f80572-0ba2-be54-c947-fcbe2d71ed5e@arm.com>
-Date:   Fri, 23 Jun 2023 11:01:11 +0100
+        Fri, 23 Jun 2023 08:49:30 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549CB2695
+        for <linux-bcache@vger.kernel.org>; Fri, 23 Jun 2023 05:49:16 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id 98e67ed59e1d1-25e934f1e6cso131107a91.0
+        for <linux-bcache@vger.kernel.org>; Fri, 23 Jun 2023 05:49:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1687524556; x=1690116556;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N8pNNe3/2YXc1UbpwIO0yIQjjCMHlVzYoQIGO6mvjFk=;
+        b=QGBZmpep2cOxIyWlosUFsMcpQ9kg5K87eUwaCkoJh4THNNRNLwHsme8TdeLzEMWIeP
+         VdLJNjtWaWRTs1BgqyEhXBtiEVFykoOa991SQObW/BJT+zi5DexUk11xpe7roRZxmWon
+         2pGVoZYSHZZ/jcf4PvMYbIbG4+IvNv5UsypZ1n69fFVKkkIf9VFUIy36CCJ41i5gEjmj
+         pEUDPSL4513Qlt5OfOQBEaAkajaH6+U57PEpyNffGcW5GRaJN9aybo3oePHHyCF2AmXB
+         fAsbevik08duVzt2PX0xDdykhFrKiqCqdIA2Nyt6p8FSXga6r8QFK1BCiiTQLBdQZfhD
+         b2Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687524556; x=1690116556;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N8pNNe3/2YXc1UbpwIO0yIQjjCMHlVzYoQIGO6mvjFk=;
+        b=bUq/XpARKI4Yc7jYHuKIgtlYou8ksMWX/GGsylzgD+QeyjTkwgT/qUahV/wl6XIeLn
+         gPwXvtfldiOylMpDgWc13ucjWVzr4EcP++SOcUNDh7xUYYec3s5qk1QxWAi81U2zcaUS
+         0lZfBE6zL2785vhkThGZT4fkX1yBNUWxlrjkoVGjSev22ZBH9lMrqjOSq59WeYvKvmbC
+         qCn+M2w8Hm6SUBbIPl66N25vlo9y5nvebCPj/8L3YzXDGRUyq4rWb4sr68CxCWcIo6HY
+         ZpgljfzovfRTfP/K8Smz8eX9G9Vxf8TN5Vpyrt38O5nE783iecs5mCLTj9zNHwriIF+/
+         m4YA==
+X-Gm-Message-State: AC+VfDyGRC3jjzVTf5qmMlm5xGDojUpulnl4P3G94HnsmrJ83UoW3O7f
+        i3jRo1S+mEcuF66B37IZ9iZA7g==
+X-Google-Smtp-Source: ACHHUZ6eQKAAK+mFZK9b/rl5yBeScp7LGUAVTtY7Qwt+jrMMbGjG/tQ037wkOBUmA1P5xX8mDtOLpg==
+X-Received: by 2002:a17:90b:350f:b0:258:d367:63c with SMTP id ls15-20020a17090b350f00b00258d367063cmr24920553pjb.1.1687524555690;
+        Fri, 23 Jun 2023 05:49:15 -0700 (PDT)
+Received: from [10.4.168.167] ([139.177.225.254])
+        by smtp.gmail.com with ESMTPSA id 30-20020a17090a001e00b0026135208e97sm1471795pja.19.2023.06.23.05.49.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Jun 2023 05:49:15 -0700 (PDT)
+Message-ID: <d8632edc-5021-4dc8-b75a-3995a710f196@bytedance.com>
+Date:   Fri, 23 Jun 2023 20:49:05 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 05/29] drm/panfrost: dynamically allocate the drm-panfrost
- shrinker
-To:     Qi Zheng <qi.zheng@linux.dev>, akpm@linux-foundation.org,
-        david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
+Subject: Re: [PATCH 02/29] mm: vmscan: introduce some helpers for dynamically
+ allocating shrinker
+Content-Language: en-US
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     akpm@linux-foundation.org, tkhai@ya.ru, vbabka@suse.cz,
         roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
-        paulmck@kernel.org, tytso@mit.edu
-Cc:     linux-bcache@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
+        paulmck@kernel.org, tytso@mit.edu, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        dm-devel@redhat.com, linux-raid@vger.kernel.org,
+        linux-bcache@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
-        linux-raid@vger.kernel.org, linux-mm@kvack.org,
-        dm-devel@redhat.com, Qi Zheng <zhengqi.arch@bytedance.com>,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-btrfs@vger.kernel.org
-References: <20230622083932.4090339-1-qi.zheng@linux.dev>
- <20230622083932.4090339-6-qi.zheng@linux.dev>
-Content-Language: en-GB
-From:   Steven Price <steven.price@arm.com>
-In-Reply-To: <20230622083932.4090339-6-qi.zheng@linux.dev>
-Content-Type: text/plain; charset=UTF-8
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+References: <20230622085335.77010-1-zhengqi.arch@bytedance.com>
+ <20230622085335.77010-3-zhengqi.arch@bytedance.com>
+ <ZJU3s8tyGsYTVS8f@dread.disaster.area>
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <ZJU3s8tyGsYTVS8f@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 22/06/2023 09:39, Qi Zheng wrote:
-> From: Qi Zheng <zhengqi.arch@bytedance.com>
+Hi Dave,
+
+On 2023/6/23 14:12, Dave Chinner wrote:
+> On Thu, Jun 22, 2023 at 04:53:08PM +0800, Qi Zheng wrote:
+>> Introduce some helpers for dynamically allocating shrinker instance,
+>> and their uses are as follows:
+>>
+>> 1. shrinker_alloc_and_init()
+>>
+>> Used to allocate and initialize a shrinker instance, the priv_data
+>> parameter is used to pass the pointer of the previously embedded
+>> structure of the shrinker instance.
+>>
+>> 2. shrinker_free()
+>>
+>> Used to free the shrinker instance when the registration of shrinker
+>> fails.
+>>
+>> 3. unregister_and_free_shrinker()
+>>
+>> Used to unregister and free the shrinker instance, and the kfree()
+>> will be changed to kfree_rcu() later.
+>>
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> ---
+>>   include/linux/shrinker.h | 12 ++++++++++++
+>>   mm/vmscan.c              | 35 +++++++++++++++++++++++++++++++++++
+>>   2 files changed, 47 insertions(+)
+>>
+>> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+>> index 43e6fcabbf51..8e9ba6fa3fcc 100644
+>> --- a/include/linux/shrinker.h
+>> +++ b/include/linux/shrinker.h
+>> @@ -107,6 +107,18 @@ extern void unregister_shrinker(struct shrinker *shrinker);
+>>   extern void free_prealloced_shrinker(struct shrinker *shrinker);
+>>   extern void synchronize_shrinkers(void);
+>>   
+>> +typedef unsigned long (*count_objects_cb)(struct shrinker *s,
+>> +					  struct shrink_control *sc);
+>> +typedef unsigned long (*scan_objects_cb)(struct shrinker *s,
+>> +					 struct shrink_control *sc);
+>> +
+>> +struct shrinker *shrinker_alloc_and_init(count_objects_cb count,
+>> +					 scan_objects_cb scan, long batch,
+>> +					 int seeks, unsigned flags,
+>> +					 void *priv_data);
+>> +void shrinker_free(struct shrinker *shrinker);
+>> +void unregister_and_free_shrinker(struct shrinker *shrinker);
 > 
-> In preparation for implementing lockless slab shrink,
-> we need to dynamically allocate the drm-panfrost shrinker,
-> so that it can be freed asynchronously using kfree_rcu().
-> Then it doesn't need to wait for RCU read-side critical
-> section when releasing the struct panfrost_device.
+> Hmmmm. Not exactly how I envisioned this to be done.
 > 
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> ---
->  drivers/gpu/drm/panfrost/panfrost_device.h    |  2 +-
->  .../gpu/drm/panfrost/panfrost_gem_shrinker.c  | 24 ++++++++++---------
->  2 files changed, 14 insertions(+), 12 deletions(-)
+> Ok, this will definitely work, but I don't think it is an
+> improvement. It's certainly not what I was thinking of when I
+> suggested dynamically allocating shrinkers.
 > 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
-> index b0126b9fbadc..e667e5689353 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
-> @@ -118,7 +118,7 @@ struct panfrost_device {
->  
->  	struct mutex shrinker_lock;
->  	struct list_head shrinker_list;
-> -	struct shrinker shrinker;
-> +	struct shrinker *shrinker;
->  
->  	struct panfrost_devfreq pfdevfreq;
->  };
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-> index bf0170782f25..2a5513eb9e1f 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-> @@ -18,8 +18,7 @@
->  static unsigned long
->  panfrost_gem_shrinker_count(struct shrinker *shrinker, struct shrink_control *sc)
->  {
-> -	struct panfrost_device *pfdev =
-> -		container_of(shrinker, struct panfrost_device, shrinker);
-> +	struct panfrost_device *pfdev = shrinker->private_data;
->  	struct drm_gem_shmem_object *shmem;
->  	unsigned long count = 0;
->  
-> @@ -65,8 +64,7 @@ static bool panfrost_gem_purge(struct drm_gem_object *obj)
->  static unsigned long
->  panfrost_gem_shrinker_scan(struct shrinker *shrinker, struct shrink_control *sc)
->  {
-> -	struct panfrost_device *pfdev =
-> -		container_of(shrinker, struct panfrost_device, shrinker);
-> +	struct panfrost_device *pfdev = shrinker->private_data;
->  	struct drm_gem_shmem_object *shmem, *tmp;
->  	unsigned long freed = 0;
->  
-> @@ -100,10 +98,15 @@ panfrost_gem_shrinker_scan(struct shrinker *shrinker, struct shrink_control *sc)
->  void panfrost_gem_shrinker_init(struct drm_device *dev)
->  {
->  	struct panfrost_device *pfdev = dev->dev_private;
-> -	pfdev->shrinker.count_objects = panfrost_gem_shrinker_count;
-> -	pfdev->shrinker.scan_objects = panfrost_gem_shrinker_scan;
-> -	pfdev->shrinker.seeks = DEFAULT_SEEKS;
-> -	WARN_ON(register_shrinker(&pfdev->shrinker, "drm-panfrost"));
-> +
-> +	pfdev->shrinker = shrinker_alloc_and_init(panfrost_gem_shrinker_count,
-> +						  panfrost_gem_shrinker_scan, 0,
-> +						  DEFAULT_SEEKS, 0, pfdev);
-> +	if (pfdev->shrinker &&
-> +	    register_shrinker(pfdev->shrinker, "drm-panfrost")) {
-> +		shrinker_free(pfdev->shrinker);
-> +		WARN_ON(1);
-> +	}
+> The main issue is that this doesn't simplify the API - it expands it
+> and creates a minefield of old and new functions that have to be
+> used in exactly the right order for the right things to happen.
+> 
+> What I was thinking of was moving the entire shrinker setup code
+> over to the prealloc/register_prepared() algorithm, where the setup
+> is already separated from the activation of the shrinker.
+> 
+> That is, we start by renaming prealloc_shrinker() to
+> shrinker_alloc(), adding a flags field to tell it everything that it
+> needs to alloc (i.e. the NUMA/MEMCG_AWARE flags) and having it
+> returned a fully allocated shrinker ready to register. Initially
+> this also contains an internal flag to say the shrinker was
+> allocated so that unregister_shrinker() knows to free it.
+> 
+> The caller then fills out the shrinker functions, seeks, etc. just
+> like the do now, and then calls register_shrinker_prepared() to make
+> the shrinker active when it wants to turn it on.
+> 
+> When it is time to tear down the shrinker, no API needs to change.
+> unregister_shrinker() does all the shutdown and frees all the
+> internal memory like it does now. If the shrinker is also marked as
+> allocated, it frees the shrinker via RCU, too.
+> 
+> Once everything is converted to this API, we then remove
+> register_shrinker(), rename register_shrinker_prepared() to
+> shrinker_register(), rename unregister_shrinker to
+> shrinker_unregister(), get rid of the internal "allocated" flag
+> and always free the shrinker.
 
-So we didn't have good error handling here before, but this is
-significantly worse. Previously if register_shrinker() failed then the
-driver could safely continue without a shrinker - it would waste memory
-but still function.
+IIUC, you mean that we also need to convert the original statically
+defined shrinker instances to dynamically allocated.
 
-However we now have two failure conditions:
- * shrinker_alloc_init() returns NULL. No warning and NULL deferences
-   will happen later.
+I think this is a good idea, it helps to simplify the APIs and also
+remove special handling for case a and b (mentioned in cover letter).
 
- * register_shrinker() fails, shrinker_free() will free pdev->shrinker
-   we get a warning, but followed by a use-after-free later.
+> 
+> At the end of the patchset, every shrinker should be set
+> up in a manner like this:
+> 
+> 
+> 	sb->shrinker = shrinker_alloc(SHRINKER_MEMCG_AWARE|SHRINKER_NUMA_AWARE,
+> 				"sb-%s", type->name);
+> 	if (!sb->shrinker)
+> 		return -ENOMEM;
+> 
+> 	sb->shrinker->count_objects = super_cache_count;
+> 	sb->shrinker->scan_objects = super_cache_scan;
+> 	sb->shrinker->batch = 1024;
+> 	sb->shrinker->private = sb;
+> 
+> 	.....
+> 
+> 	shrinker_register(sb->shrinker);
+> 
+> And teardown is just a call to shrinker_unregister(sb->shrinker)
+> as it is now.
+> 
+> i.e. the entire shrinker regsitration API is now just three
+> functions, down from the current four, and much simpler than the
+> the seven functions this patch set results in...
+> 
+> The other advantage of this is that it will break all the existing
+> out of tree code and third party modules using the old API and will
+> no longer work with a kernel using lockless slab shrinkers. They
+> need to break (both at the source and binary levels) to stop bad
+> things from happening due to using uncoverted shrinkers in the new
+> setup.
 
-I think we need to modify panfrost_gem_shrinker_init() to be able to
-return an error, so a change something like the below (untested) before
-your change.
+Got it. And totally agree.
 
-Steve
+I will do it in the v2.
 
-----8<---
-diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c
-b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index bbada731bbbd..f705bbdea360 100644
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -598,10 +598,14 @@ static int panfrost_probe(struct platform_device
-*pdev)
- 	if (err < 0)
- 		goto err_out1;
+Thanks,
+Qi
 
--	panfrost_gem_shrinker_init(ddev);
-+	err = panfrost_gem_shrinker_init(ddev);
-+	if (err)
-+		goto err_out2;
-
- 	return 0;
-
-+err_out2:
-+	drm_dev_unregister(ddev);
- err_out1:
- 	pm_runtime_disable(pfdev->dev);
- 	panfrost_device_fini(pfdev);
-diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.h
-b/drivers/gpu/drm/panfrost/panfrost_gem.h
-index ad2877eeeccd..863d2ec8d4f0 100644
---- a/drivers/gpu/drm/panfrost/panfrost_gem.h
-+++ b/drivers/gpu/drm/panfrost/panfrost_gem.h
-@@ -81,7 +81,7 @@ panfrost_gem_mapping_get(struct panfrost_gem_object *bo,
- void panfrost_gem_mapping_put(struct panfrost_gem_mapping *mapping);
- void panfrost_gem_teardown_mappings_locked(struct panfrost_gem_object *bo);
-
--void panfrost_gem_shrinker_init(struct drm_device *dev);
-+int panfrost_gem_shrinker_init(struct drm_device *dev);
- void panfrost_gem_shrinker_cleanup(struct drm_device *dev);
-
- #endif /* __PANFROST_GEM_H__ */
-diff --git a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-index bf0170782f25..90265b37636f 100644
---- a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-@@ -97,13 +97,17 @@ panfrost_gem_shrinker_scan(struct shrinker
-*shrinker, struct shrink_control *sc)
-  *
-  * This function registers and sets up the panfrost shrinker.
-  */
--void panfrost_gem_shrinker_init(struct drm_device *dev)
-+int panfrost_gem_shrinker_init(struct drm_device *dev)
- {
- 	struct panfrost_device *pfdev = dev->dev_private;
-+	int ret;
-+
- 	pfdev->shrinker.count_objects = panfrost_gem_shrinker_count;
- 	pfdev->shrinker.scan_objects = panfrost_gem_shrinker_scan;
- 	pfdev->shrinker.seeks = DEFAULT_SEEKS;
--	WARN_ON(register_shrinker(&pfdev->shrinker, "drm-panfrost"));
-+	ret = register_shrinker(&pfdev->shrinker, "drm-panfrost");
-+
-+	return ret;
- }
-
- /**
-
+> 
+> -Dave.
