@@ -2,124 +2,168 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE8D273C3F1
-	for <lists+linux-bcache@lfdr.de>; Sat, 24 Jun 2023 00:19:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B54A73CA84
+	for <lists+linux-bcache@lfdr.de>; Sat, 24 Jun 2023 13:08:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232384AbjFWWT1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 23 Jun 2023 18:19:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51298 "EHLO
+        id S232629AbjFXLIb (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Sat, 24 Jun 2023 07:08:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232343AbjFWWTX (ORCPT
+        with ESMTP id S230019AbjFXLIb (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 23 Jun 2023 18:19:23 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94589272A
-        for <linux-bcache@vger.kernel.org>; Fri, 23 Jun 2023 15:19:20 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-668723729c5so780045b3a.3
-        for <linux-bcache@vger.kernel.org>; Fri, 23 Jun 2023 15:19:20 -0700 (PDT)
+        Sat, 24 Jun 2023 07:08:31 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DA821FCE
+        for <linux-bcache@vger.kernel.org>; Sat, 24 Jun 2023 04:08:29 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1b693afe799so2529925ad.1
+        for <linux-bcache@vger.kernel.org>; Sat, 24 Jun 2023 04:08:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1687558760; x=1690150760;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mD+HWl2aEG73j6Ak2J3eZjmDfUV1ZAzR4FiFGaQDP6g=;
-        b=lhK6GKfDyI3S2QEkidlKI9Ek7fIdf8s37/5sqH0oYikZjcY7jput4UDyCpFr2NTdT8
-         zVyRwANCpkSqZtLXi737KASfNRL8jzfb+T40RkB84q+J2KMVe792KQuGyG75zUe1uU9/
-         y8KvlnU3EwX/2kXOOlbwtshnDERQlNsq270xMVedNytpu7Z+d6cUbBidgJ6X6DjHIzPN
-         7j8fd31lnOvF/aMkMY7bUu4o0IY8LUCtjYfDI1XbfU7cyMWriXOuApAvFBa9TAUUYDHZ
-         fQEMipnVJ6GJpcYxmPtjY5bvv9Ob+7MwsmiucWVnjVO5xA+M617znVGuQZS0X5eWOQ0u
-         zyUQ==
+        d=bytedance.com; s=google; t=1687604909; x=1690196909;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7tnz7s8ew6fhhs0dR9M9QnK0rlCy7+XAhEAWksz3vrg=;
+        b=UmCBKPF4sv1MHFXsiXJ20hfDGRh4FqZyWNYAXvwJ4aTGGxIidAh9WvDmw+TkimJm1h
+         mWSpmHZ6C1d0YyoGyiszU38sSq69kPhXPhm56U4+6FVITcJ1CEZHjLEmCAtp6wktOCK/
+         DxOdRsySk1sXqY68RWF0JOe4/zeVPJtvQ9lHfsJ6x6SdMyQcNVrIa4NXa7fRi6mlad+o
+         t//wFgxPhT7EPECahYPUyLpil8jkwMy0/+XEXxUh0Le8+U2ufonOfsscVTgC+SrRoDCH
+         iM7noG8OLDFE0tdGr8824/JUhvbwrqjbGrrMdkGxtRD/cnqrUyFsNqPJcdX8JFikXXu+
+         BdTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687558760; x=1690150760;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mD+HWl2aEG73j6Ak2J3eZjmDfUV1ZAzR4FiFGaQDP6g=;
-        b=UjI/S5f8JvCAd5VzYxDPyC9AotpUuY/33qTh5GRy7kp2LonRGqkfvo5GvRNiuPp1xq
-         D9OPcNW7gv6WGIlXxHfgVtV+/ZCYzfLQztha0EZk1WCHVcCDv7G++iAyShmfmOLQHoVL
-         BjDlJG/PdhZovPrRo8wW7NCq0NRARRdDXUdBLm0QvdWrAmeM81f0VmvHeaiM6N7vST5Y
-         TlA1km8mXcm/m+DSavGqw+0US/OuCtYBSavpVWjxzpYSHRfyE7yTMjejYv8DWPdYN11o
-         Hp87V89NKu8mNrrboE3P5UnYSLfhXmoc28cGp1UO9qybMb/8JibtbuM7x+LOchWCYBqI
-         xRfg==
-X-Gm-Message-State: AC+VfDyq2cZ0x9xBFUD/uIxpeZ/Op+W4QA4OJs7tYPxqh3DesPR6C0o5
-        QHSqk6sbnCIVaz/IGir0bVWHJQ==
-X-Google-Smtp-Source: ACHHUZ6Wu9ky21UYgtgHUmTHayjznwHVfcTzLH8QgkKVoWewOSRi12/4tLQSsphqEkidSt1h32qo3g==
-X-Received: by 2002:a05:6a20:4410:b0:121:7454:be2a with SMTP id ce16-20020a056a20441000b001217454be2amr17133223pzb.45.1687558759759;
-        Fri, 23 Jun 2023 15:19:19 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-94-37.pa.vic.optusnet.com.au. [49.186.94.37])
-        by smtp.gmail.com with ESMTPSA id b17-20020a170902b61100b001ab0672fc1fsm58552pls.105.2023.06.23.15.19.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Jun 2023 15:19:19 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qCp7a-00FP7U-2k;
-        Sat, 24 Jun 2023 08:19:14 +1000
-Date:   Sat, 24 Jun 2023 08:19:14 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Qi Zheng <zhengqi.arch@bytedance.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, paulmck@kernel.org,
-        akpm@linux-foundation.org, tkhai@ya.ru, roman.gushchin@linux.dev,
-        djwong@kernel.org, brauner@kernel.org, tytso@mit.edu,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, dm-devel@redhat.com,
-        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
+        d=1e100.net; s=20221208; t=1687604909; x=1690196909;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7tnz7s8ew6fhhs0dR9M9QnK0rlCy7+XAhEAWksz3vrg=;
+        b=WnOWOU+zuXfccZrRrpizpkVjRnnPC8Ej/EBMPPugcbxzGlXtOJV89Y8EClwvqDgRzz
+         30MxuZyzT1eQFramrdEQz6VBICd/L6WP5MYNLmEg5Zl0qUJVjUoLiJi38Dr89Whl7d3r
+         J6BV32Gn/pr/ZnmtTHOz+WAKEdptVWPEQOUWW31tOyRCyQEcR8AZndn33W0zRAuihVLY
+         P372bxUHa2TeN45APwx8qxCgIBYDFJngLKlPgAl5M9sLCl8tJAIhGEWg7wNrPxjytTbw
+         vQloGUieHay3817IOkmV40SQ5qGLn0q+2DXEu7m8TMWnoh5lmIz/RM3Ygfp4I7iVloBM
+         vVyQ==
+X-Gm-Message-State: AC+VfDy5zKONxuaXO7ClhRxzQHvm3IdFT3fo3JSTFrFVV+y08XtccloS
+        SDFRJ27TGISV9/fO+9B/DwYkTA==
+X-Google-Smtp-Source: ACHHUZ48xugwBy1Yb59MA7iADNA4mtjxjJVDK/TEG1GiFnnp8kgPq3uDjFXVnvd+Ayx9tItAR27KLA==
+X-Received: by 2002:a17:903:32c4:b0:1b3:e352:6d88 with SMTP id i4-20020a17090332c400b001b3e3526d88mr29305254plr.6.1687604908733;
+        Sat, 24 Jun 2023 04:08:28 -0700 (PDT)
+Received: from [10.4.162.153] ([139.177.225.251])
+        by smtp.gmail.com with ESMTPSA id bg6-20020a1709028e8600b001b3d0aff88fsm1021644plb.109.2023.06.24.04.08.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Jun 2023 04:08:28 -0700 (PDT)
+Message-ID: <a7baf44a-1eb8-d4e1-d112-93cf9cdb7beb@bytedance.com>
+Date:   Sat, 24 Jun 2023 19:08:18 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
+Subject: Re: [PATCH 24/29] mm: vmscan: make global slab shrink lockless
+To:     Dave Chinner <david@fromorbit.com>, paulmck@kernel.org
+Cc:     Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org,
+        tkhai@ya.ru, roman.gushchin@linux.dev, djwong@kernel.org,
+        brauner@kernel.org, tytso@mit.edu, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        dm-devel@redhat.com, linux-raid@vger.kernel.org,
+        linux-bcache@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 24/29] mm: vmscan: make global slab shrink lockless
-Message-ID: <ZJYaYv4pACmCaBoT@dread.disaster.area>
 References: <20230622085335.77010-1-zhengqi.arch@bytedance.com>
  <20230622085335.77010-25-zhengqi.arch@bytedance.com>
  <cf0d9b12-6491-bf23-b464-9d01e5781203@suse.cz>
  <ZJU708VIyJ/3StAX@dread.disaster.area>
  <a21047bb-3b87-a50a-94a7-f3fa4847bc08@bytedance.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a21047bb-3b87-a50a-94a7-f3fa4847bc08@bytedance.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+ <ZJYaYv4pACmCaBoT@dread.disaster.area>
+Content-Language: en-US
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <ZJYaYv4pACmCaBoT@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Fri, Jun 23, 2023 at 09:10:57PM +0800, Qi Zheng wrote:
-> On 2023/6/23 14:29, Dave Chinner wrote:
-> > On Thu, Jun 22, 2023 at 05:12:02PM +0200, Vlastimil Babka wrote:
-> > > On 6/22/23 10:53, Qi Zheng wrote:
-> > Yes, I suggested the IDR route because radix tree lookups under RCU
-> > with reference counted objects are a known safe pattern that we can
-> > easily confirm is correct or not.  Hence I suggested the unification
-> > + IDR route because it makes the life of reviewers so, so much
-> > easier...
+Hi Dave,
+
+On 2023/6/24 06:19, Dave Chinner wrote:
+> On Fri, Jun 23, 2023 at 09:10:57PM +0800, Qi Zheng wrote:
+>> On 2023/6/23 14:29, Dave Chinner wrote:
+>>> On Thu, Jun 22, 2023 at 05:12:02PM +0200, Vlastimil Babka wrote:
+>>>> On 6/22/23 10:53, Qi Zheng wrote:
+>>> Yes, I suggested the IDR route because radix tree lookups under RCU
+>>> with reference counted objects are a known safe pattern that we can
+>>> easily confirm is correct or not.  Hence I suggested the unification
+>>> + IDR route because it makes the life of reviewers so, so much
+>>> easier...
+>>
+>> In fact, I originally planned to try the unification + IDR method you
+>> suggested at the beginning. But in the case of CONFIG_MEMCG disabled,
+>> the struct mem_cgroup is not even defined, and root_mem_cgroup and
+>> shrinker_info will not be allocated.  This required more code changes, so
+>> I ended up keeping the shrinker_list and implementing the above pattern.
 > 
-> In fact, I originally planned to try the unification + IDR method you
-> suggested at the beginning. But in the case of CONFIG_MEMCG disabled,
-> the struct mem_cgroup is not even defined, and root_mem_cgroup and
-> shrinker_info will not be allocated.  This required more code changes, so
-> I ended up keeping the shrinker_list and implementing the above pattern.
+> Yes. Go back and read what I originally said needed to be done
+> first. In the case of CONFIG_MEMCG=n, a dummy root memcg still needs
+> to exist that holds all of the global shrinkers. Then shrink_slab()
+> is only ever passed a memcg that should be iterated.
+> 
+> Yes, it needs changes external to the shrinker code itself to be
+> made to work. And even if memcg's are not enabled, we can still use
+> the memcg structures to ensure a common abstraction is used for the
+> shrinker tracking infrastructure....
 
-Yes. Go back and read what I originally said needed to be done
-first. In the case of CONFIG_MEMCG=n, a dummy root memcg still needs
-to exist that holds all of the global shrinkers. Then shrink_slab()
-is only ever passed a memcg that should be iterated.
+Yeah, what I imagined before was to define a more concise struct
+mem_cgroup in the case of CONFIG_MEMCG=n, then allocate a dummy root
+memcg on system boot:
 
-Yes, it needs changes external to the shrinker code itself to be
-made to work. And even if memcg's are not enabled, we can still use
-the memcg structures to ensure a common abstraction is used for the
-shrinker tracking infrastructure....
+#ifdef !CONFIG_MEMCG
 
-> If the above pattern is not safe, I will go back to the unification +
-> IDR method.
+struct shrinker_info {
+	struct rcu_head rcu;
+	atomic_long_t *nr_deferred;
+	unsigned long *map;
+	int map_nr_max;
+};
 
-And that is exactly how we got into this mess in the first place....
+struct mem_cgroup_per_node {
+	struct shrinker_info __rcu	*shrinker_info;
+};
 
--Dave
--- 
-Dave Chinner
-david@fromorbit.com
+struct mem_cgroup {
+	struct mem_cgroup_per_node *nodeinfo[];
+};
+
+#endif
+
+But I have a concern: if all global shrinkers are tracking with the
+info->map of root memcg, a shrinker->id needs to be assigned to them,
+which will cause info->map_nr_max to become larger than before, then
+making the traversal of info->map slower.
+
+> 
+>> If the above pattern is not safe, I will go back to the unification +
+>> IDR method.
+> 
+> And that is exactly how we got into this mess in the first place....
+
+I only found one similar pattern in the kernel:
+
+fs/smb/server/oplock.c:find_same_lease_key/smb_break_all_levII_oplock/lookup_lease_in_table
+
+But IIUC, the refcount here needs to be decremented after holding
+rcu lock as I did above.
+
+So regardless of whether we choose unification + IDR in the end, I still
+want to confirm whether the pattern I implemented above is safe. :)
+
+Thanks,
+Qi
+
+> 
+> -Dave
