@@ -2,39 +2,70 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7C5273F89B
-	for <lists+linux-bcache@lfdr.de>; Tue, 27 Jun 2023 11:21:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 692FF73FC41
+	for <lists+linux-bcache@lfdr.de>; Tue, 27 Jun 2023 14:55:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231646AbjF0JVf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 27 Jun 2023 05:21:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41030 "EHLO
+        id S230210AbjF0MzV (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 27 Jun 2023 08:55:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231222AbjF0JVe (ORCPT
+        with ESMTP id S229740AbjF0MzU (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 27 Jun 2023 05:21:34 -0400
-Received: from mail-m3174.qiye.163.com (mail-m3174.qiye.163.com [103.74.31.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83733F5
-        for <linux-bcache@vger.kernel.org>; Tue, 27 Jun 2023 02:21:32 -0700 (PDT)
-Received: from localhost.localdomain (unknown [218.94.118.90])
-        by mail-m3174.qiye.163.com (Hmail) with ESMTPA id B5A8240280;
-        Tue, 27 Jun 2023 17:21:26 +0800 (CST)
-From:   Mingzhe Zou <mingzhe.zou@easystack.cn>
-To:     colyli@suse.de, linux-bcache@vger.kernel.org
-Cc:     bcache@lists.ewheeler.net, zoumingzhe@qq.com
-Subject: [PATCH] Separate bch_moving_gc() from bch_btree_gc()
-Date:   Tue, 27 Jun 2023 17:21:22 +0800
-Message-Id: <20230627092122.197-1-mingzhe.zou@easystack.cn>
-X-Mailer: git-send-email 2.17.1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDS0tJVk8YQklMQ04ZHUJLGVUZERMWGhIXJBQOD1
-        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
-X-HM-Tid: 0a88fc28696600aekurmb5a8240280
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NRg6HSo6CTE2SSMSHTxKAUIP
-        KggaCglVSlVKTUNMQ05MTUNMT0hIVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTkhLSDcG
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        Tue, 27 Jun 2023 08:55:20 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2C3C2952
+        for <linux-bcache@vger.kernel.org>; Tue, 27 Jun 2023 05:55:11 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 878181F749;
+        Tue, 27 Jun 2023 12:55:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1687870510; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IiIbWX/rZZbc3Ta/ax0yoYwEvp1X/UlN7aEimNCA17o=;
+        b=DDbO57OCnON2zYiWsOZ0s1tC7opGuBrNp2YdTSz4ltvYCWV+y7Tca5zBXI+NBS+oN4HsN7
+        QnlBlGSvDlLABb3W0o5ZcG2jPhM5SX7pdUikr+L3kUpqJ1Z9M9a2oxNrnErMXZjeP4H4bx
+        QPXre2MBjiLiXZoVLelT1HK0G1v/Smc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1687870510;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IiIbWX/rZZbc3Ta/ax0yoYwEvp1X/UlN7aEimNCA17o=;
+        b=LNQh7b6qTIZAo2so/kaQcl9fce0+IuVtZQ/5bH/D1Fp3uEeD/Af19XeFRcpfe2IaZ9fhgp
+        6vceccesl77prdDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F08A813276;
+        Tue, 27 Jun 2023 12:55:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 4fDWLy3cmmTDWAAAMHmgww
+        (envelope-from <colyli@suse.de>); Tue, 27 Jun 2023 12:55:09 +0000
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.600.7\))
+Subject: Re: bcache: Possible deadlock between write_dirty_finish and
+ bch_data_insert_keys
+From:   Coly Li <colyli@suse.de>
+In-Reply-To: <83ac53d0-9ad6-9043-a1ba-7ddaa2a92bc0@ewheeler.net>
+Date:   Tue, 27 Jun 2023 20:54:57 +0800
+Cc:     Bcache Linux <linux-bcache@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DC0AB1EF-5911-4B1D-940C-D91DC22EE650@suse.de>
+References: <83ac53d0-9ad6-9043-a1ba-7ddaa2a92bc0@ewheeler.net>
+To:     Eric Wheeler <bcache@lists.ewheeler.net>
+X-Mailer: Apple Mail (2.3731.600.7)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -42,163 +73,234 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-From: Mingzhe Zou <zoumingzhe@qq.com>
 
-Moving gc uses cache->heap to defragment disk. Unlike btree gc,
-moving gc only takes up part of the disk bandwidth.
 
-The number of heap is constant. However, the buckets released by
-each moving gc is limited. So bch_moving_gc() needs to be called
-multiple times.
+> 2023=E5=B9=B46=E6=9C=8827=E6=97=A5 11:19=EF=BC=8CEric Wheeler =
+<bcache@lists.ewheeler.net> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> Hello all,
+>=20
+> We have a system running a 5.15 kernel with the following errors in =
+dmesg=20
+> displaying repeatedly.  Ultimately the system crashed so I'll reset=20
+> it---but I was able to get some good information out of it before it =
+died=20
+> so maybe we can pin it down. This happened under high CPU and disk =
+load:
+>=20
+> [Jun26 19:24] BUG: workqueue lockup - pool cpus=3D0 node=3D0 flags=3D0x0=
+ nice=3D0 stuck for 1382s!
+> [  +0.001211] BUG: workqueue lockup - pool cpus=3D0 node=3D0 flags=3D0x0=
+ nice=3D-20 stuck for 1381s!
+> [  +0.001117] Showing busy workqueues and worker pools:
+> [  +0.001081] workqueue events: flags=3D0x0
+> [  +0.000007]   pwq 0: cpus=3D0 node=3D0 flags=3D0x0 nice=3D0 =
+active=3D9/256 refcnt=3D10
+> [  +0.000005]     pending: vmstat_shepherd, kfree_rcu_monitor, =
+drm_fb_helper_damage_work [drm_kms_helper], kfree_rcu_monitor, =
+mlx5_timestamp_overflow [mlx5_core], mlx5_timestamp_overflow =
+[mlx5_core], kfree_rcu_monitor, mlx5e_tx_dim_work [mlx5_core], =
+mlx5e_rx_dim_work [mlx5_core]
+> [  +0.000301] workqueue events_highpri: flags=3D0x10
+> [  +0.000002]   pwq 59: cpus=3D29 node=3D6 flags=3D0x0 nice=3D-20 =
+active=3D1/256 refcnt=3D2
+> [  +0.000004]     pending: mix_interrupt_randomness
+> [  +0.000006]   pwq 29: cpus=3D14 node=3D7 flags=3D0x0 nice=3D-20 =
+active=3D1/256 refcnt=3D2
+> [  +0.000003]     pending: mix_interrupt_randomness
+> [  +0.000005]   pwq 1: cpus=3D0 node=3D0 flags=3D0x0 nice=3D-20 =
+active=3D1/256 refcnt=3D2
+> [  +0.000002]     pending: mix_interrupt_randomness
+> [  +0.000007] workqueue events_long: flags=3D0x0
+> [  +0.000003]   pwq 0: cpus=3D0 node=3D0 flags=3D0x0 nice=3D0 =
+active=3D1/256 refcnt=3D2
+> [  +0.000002]     pending: br_fdb_cleanup
+> [  +0.000014] workqueue events_power_efficient: flags=3D0x80
+> [  +0.000004]   pwq 0: cpus=3D0 node=3D0 flags=3D0x0 nice=3D0 =
+active=3D1/256 refcnt=3D2
+> [  +0.000002]     pending: fb_flashcursor
+> [  +0.000008] workqueue events_freezable_power_: flags=3D0x84
+> [  +0.000003]   pwq 8: cpus=3D4 node=3D2 flags=3D0x0 nice=3D0 =
+active=3D1/256 refcnt=3D2
+> [  +0.000002]     pending: disk_events_workfn
+> [  +0.000019] workqueue mm_percpu_wq: flags=3D0x8
+> [  +0.000004]   pwq 0: cpus=3D0 node=3D0 flags=3D0x0 nice=3D0 =
+active=3D1/256 refcnt=3D3
+> [  +0.000002]     pending: lru_add_drain_per_cpu BAR(212)
+> [  +0.000036] workqueue kblockd: flags=3D0x18
+> [  +0.000005]   pwq 9: cpus=3D4 node=3D2 flags=3D0x0 nice=3D-20 =
+active=3D1/256 refcnt=3D2
+> [  +0.000003]     pending: blk_mq_timeout_work
+> [  +0.000005]   pwq 1: cpus=3D0 node=3D0 flags=3D0x0 nice=3D-20 =
+active=3D3/256 refcnt=3D4
+> [  +0.000003]     pending: blk_mq_timeout_work, blk_mq_run_work_fn, =
+blk_mq_run_work_fn
+> [  +0.000044] workqueue bch_btree_io: flags=3D0x8
+> [  +0.000001]   pwq 62: cpus=3D31 node=3D7 flags=3D0x0 nice=3D0 =
+active=3D1/256 refcnt=3D2
+> [  +0.000004]     in-flight: 3331:btree_node_write_work
+> [  +0.000006]   pwq 38: cpus=3D19 node=3D1 flags=3D0x0 nice=3D0 =
+active=3D1/256 refcnt=3D2
+> [  +0.000003]     in-flight: 4829:btree_node_write_work
+> [  +0.000005]   pwq 0: cpus=3D0 node=3D0 flags=3D0x0 nice=3D0 =
+active=3D7/256 refcnt=3D8
+> [  +0.000002]     pending: btree_node_write_work, =
+btree_node_write_work, btree_node_write_work, btree_node_write_work, =
+btree_node_write_work, btree_node_write_work, btree_node_write_work
+> [  +0.000011] workqueue bcache: flags=3D0x8
+> [  +0.000002]   pwq 6: cpus=3D3 node=3D1 flags=3D0x0 nice=3D0 =
+active=3D1/256 refcnt=3D2
+> [  +0.000003]     in-flight: 6295:bch_data_insert_keys
+> [  +0.000073] workqueue bcache_writeback_wq: flags=3D0x8
+> [  +0.000002]   pwq 62: cpus=3D31 node=3D7 flags=3D0x0 nice=3D0 =
+active=3D64/256 refcnt=3D65
+> [  +0.000002]     in-flight: 10178:write_dirty_finish, =
+10067:write_dirty_finish, 3302:write_dirty_finish, =
+10184:write_dirty_finish, 10181:write_dirty_finish, =
+10066:write_dirty_finish, 10105:write_dirty_finish, =
+10195:write_dirty_finish, 980:write_dirty_finish, =
+10141:write_dirty_finish, 10139:write_dirty_finish, =
+10098:write_dirty_finish, 10008:write_dirty_finish, =
+10180:write_dirty_finish, 20178:write_dirty_finish, =
+3252:write_dirty_finish, 10007:write_dirty_finish, =
+10279:write_dirty_finish, 10142:write_dirty_finish, =
+10223:write_dirty_finish, 10097:write_dirty_finish, =
+7311:write_dirty_finish, 10234:write_dirty_finish, =
+10196:write_dirty_finish, 10280:write_dirty_finish, =
+10063:write_dirty_finish, 10064:write_dirty_finish, =
+10188:write_dirty_finish, 10043:write_dirty_finish, =
+10101:write_dirty_finish, 10185:write_dirty_finish, =
+10103:write_dirty_finish, 10102:write_dirty_finish, =
+10224:write_dirty_finish, 10186:write_dirty_finish, =
+10114:write_dirty_finish, 10011:write_dirty_finish
+> [  +0.000083] , 3253:write_dirty_finish, 10112:write_dirty_finish, =
+10187:write_dirty_finish, 10009:write_dirty_finish, =
+10138:write_dirty_finish, 10104:write_dirty_finish, =
+10140:write_dirty_finish, 10065:write_dirty_finish, =
+10193:write_dirty_finish, 10095:write_dirty_finish, =
+10041:write_dirty_finish, 10010:write_dirty_finish, =
+10115:write_dirty_finish, 10094:write_dirty_finish, =
+10113:write_dirty_finish, 10194:write_dirty_finish, =
+10177:write_dirty_finish, 10042:write_dirty_finish, =
+10226:write_dirty_finish, 10179:write_dirty_finish, =
+10096:write_dirty_finish, 10192:write_dirty_finish, =
+10222:write_dirty_finish, 10045:write_dirty_finish, =
+10116:write_dirty_finish, 10044:write_dirty_finish, =
+10225:write_dirty_finish
+> [  +0.000133] workqueue kcopyd: flags=3D0x8
+> [  +0.000004]   pwq 2: cpus=3D1 node=3D0 flags=3D0x0 nice=3D0 =
+active=3D2/256 refcnt=3D3
+> [  +0.000003]     in-flight: 3424:do_work [dm_mod] do_work [dm_mod]
+> [  +0.000520] pool 2: cpus=3D1 node=3D0 flags=3D0x0 nice=3D0 hung=3D14s =
+workers=3D3 idle: 21748 21749
+> [  +0.000006] pool 6: cpus=3D3 node=3D1 flags=3D0x0 nice=3D0 hung=3D43s =
+workers=3D3 idle: 11428 25181
+> [  +0.000006] pool 38: cpus=3D19 node=3D1 flags=3D0x0 nice=3D0 =
+hung=3D34s workers=3D3 idle: 22403 25014
+> [  +0.000006] pool 62: cpus=3D31 node=3D7 flags=3D0x0 nice=3D0 hung=3D2s=
+ workers=3D68 idle: 10281 23228 10286
+>=20
+> Clearly there are many write_dirty_finish() calls stuck, here are some=20=
 
-If bch_gc_thread() always calls bch_btree_gc(), it will block
-the IO request.This patch allows bch_gc_thread() to only call
-bch_moving_gc() when there are many fragments.
+> traces:
+>=20
+> I did `cat /proc/<pid>/stack` for each bcache workqueue PID and these
+> are the unique stacks:
+>=20
+> dmesg | grep in-flight | \
+> perl -lne 'while(/(\d+):((write_dirty|bch|btree)\S+)/g) { print "$1 =
+$2" }' | \
+> sort -u | \
+> while read a b; do echo =3D=3D=3D $a $b ; cat /proc/$a/stack; done
+>=20
+> Which prints lots of these:
+>=20
+> =3D=3D=3D 3253: write_dirty_finish=20
+> [<0>] rwsem_down_write_slowpath+0x27b/0x4bd
+> [<0>] bch_btree_node_get.part.0+0x7e/0x2d7  <<<, _probably_ called =
+with write=3Dtrue
+> [<0>] bch_btree_map_nodes_recurse+0xed/0x1a7   | since this is an =
+insert
+> [<0>] __bch_btree_map_nodes+0x17c/0x1c4
+> [<0>] bch_btree_insert+0x102/0x188     <<<<< race?
+> [<0>] write_dirty_finish+0x122/0x1d3   <<<<< entry
+> [<0>] process_one_work+0x1f1/0x3c6
+> [<0>] worker_thread+0x53/0x3e4
+> [<0>] kthread+0x127/0x144
+> [<0>] ret_from_fork+0x22/0x2d
+>=20
+> and one of these:
+> =3D=3D=3D 6295 bch_data_insert_keys
+> [<0>] bch_btree_insert_node+0x6b/0x287
+> [<0>] btree_insert_fn+0x20/0x48       =20
+> [<0>] bch_btree_map_nodes_recurse+0x111/0x1a7
+> [<0>] __bch_btree_map_nodes+0x17c/0x1c4
+> [<0>] bch_btree_insert+0x102/0x188     <<<<< race?
+> [<0>] bch_data_insert_keys+0x30/0xba   <<<<< entry
+> [<0>] process_one_work+0x1f1/0x3c6
+> [<0>] worker_thread+0x53/0x3e4
+> [<0>] kthread+0x127/0x144
+> [<0>] ret_from_fork+0x22/0x2d
+>=20
+> Note that above, both threads (workqueues) are similar until they call
+> bch_btree_map_nodes_recurse(), then they diverge where one is doing
+> bch_btree_insert_node(), which holds b->write_lock:
+>=20
+> bch_btree_insert_node
+>  =
+https://elixir.bootlin.com/linux/latest/source/drivers/md/bcache/btree.c#L=
+2322
+>=20
+> and the other is trying bch_btree_node_get().  While I don't have =
+debug
+> data about the arguments, I am guessing that bch_btree_node_get is
+> called with `write=3Dtrue` since the caller is bch_btree_insert:
+>=20
+> /* bch_btree_node_get - find a btree node in the cache and lock it, =
+reading it
+> * in from disk if necessary. */
+> =
+https://elixir.bootlin.com/linux/v6.4/source/drivers/md/bcache/btree.c#L96=
+9
+>=20
+> The call to bch_btree_node_get() does quite a bit of =
+rw_lock/rw_unlock/mutex work.
+>=20
+> There are also two of the traces below which are waiting on a down():
+> =
+https://elixir.bootlin.com/linux/latest/source/drivers/md/bcache/btree.c#L=
+420
+>=20
+> These could be relevant since __bch_btree_node_write() does call=20
+> `lockdep_assert_held(&b->write_lock)` and b->write_lock is held above =
+by=20
+> bch_btree_insert_node:
+>=20
+> =3D=3D=3D 3331 btree_node_write_work
+> [<0>] down+0x43/0x54
+> [<0>] __bch_btree_node_write+0xa3/0x220
+> [<0>] btree_node_write_work+0x43/0x4f
+> [<0>] process_one_work+0x1f1/0x3c6
+> [<0>] worker_thread+0x53/0x3e4
+> [<0>] kthread+0x127/0x144
+> [<0>] ret_from_fork+0x22/0x2d
+>=20
+> =3D=3D=3D 4829 btree_node_write_work
+> [<0>] down+0x43/0x54
+> [<0>] __bch_btree_node_write+0xa3/0x220
+> [<0>] btree_node_write_work+0x43/0x4f
+> [<0>] process_one_work+0x1f1/0x3c6
+> [<0>] worker_thread+0x53/0x3e4
+> [<0>] kthread+0x127/0x144
+> [<0>] ret_from_fork+0x22/0x2d
+>=20
+> Thanks for your help!
 
-Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
----
- drivers/md/bcache/bcache.h   |  4 ++-
- drivers/md/bcache/btree.c    | 62 ++++++++++++++++++++++++++++++++++--
- drivers/md/bcache/movinggc.c |  2 ++
- 3 files changed, 64 insertions(+), 4 deletions(-)
+When does this lockup happen? Is it in initialization or bootup time ?
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 5a79bb3c272f..155deff0ce05 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -461,7 +461,8 @@ struct cache {
- 	 * until a gc finishes - otherwise we could pointlessly burn a ton of
- 	 * cpu
- 	 */
--	unsigned int		invalidate_needs_gc;
-+	unsigned int		invalidate_needs_gc:1;
-+	unsigned int		only_moving_gc:1;
- 
- 	bool			discard; /* Get rid of? */
- 
-@@ -629,6 +630,7 @@ struct cache_set {
- 	struct gc_stat		gc_stats;
- 	size_t			nbuckets;
- 	size_t			avail_nbuckets;
-+	size_t			fragment_nbuckets;
- 
- 	struct task_struct	*gc_thread;
- 	/* Where in the btree gc currently is */
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 68b9d7ca864e..de28d5c991a1 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -88,6 +88,7 @@
-  * Test module load/unload
-  */
- 
-+#define COPY_GC_PERCENT		5
- #define MAX_NEED_GC		64
- #define MAX_SAVE_PRIO		72
- #define MAX_GC_TIMES		100
-@@ -1705,6 +1706,7 @@ static void btree_gc_start(struct cache_set *c)
- 
- 	mutex_lock(&c->bucket_lock);
- 
-+	set_gc_sectors(c);
- 	c->gc_mark_valid = 0;
- 	c->gc_done = ZERO_KEY;
- 
-@@ -1825,8 +1827,47 @@ static void bch_btree_gc(struct cache_set *c)
- 	memcpy(&c->gc_stats, &stats, sizeof(struct gc_stat));
- 
- 	trace_bcache_gc_end(c);
-+}
-+
-+static bool moving_gc_should_run(struct cache_set *c)
-+{
-+	struct cache *ca = c->cache;
-+	size_t moving_gc_threshold = ca->sb.bucket_size >> 2, frag_percent;
-+	unsigned long used_buckets = 0, frag_buckets = 0, move_buckets = 0;
-+	unsigned long dirty_sectors = 0, frag_sectors, used_sectors;
-+
-+	if (c->gc_stats.in_use > bch_cutoff_writeback_sync)
-+		return true;
- 
--	bch_moving_gc(c);
-+	mutex_lock(&c->bucket_lock);
-+	for_each_bucket(b, ca) {
-+		if (GC_MARK(b) != GC_MARK_DIRTY)
-+			continue;
-+
-+		used_buckets++;
-+
-+		used_sectors = GC_SECTORS_USED(b);
-+		dirty_sectors += used_sectors;
-+
-+		if (used_sectors < ca->sb.bucket_size)
-+			frag_buckets++;
-+
-+		if (used_sectors <= moving_gc_threshold)
-+			move_buckets++;
-+	}
-+	mutex_unlock(&c->bucket_lock);
-+
-+	c->fragment_nbuckets = frag_buckets;
-+	frag_sectors = used_buckets * ca->sb.bucket_size - dirty_sectors;
-+	frag_percent = div_u64(frag_sectors * 100, ca->sb.bucket_size * c->nbuckets)
-+
-+	if (move_buckets > ca->heap.size)
-+		return true;
-+
-+	if (frag_percent >= COPY_GC_PERCENT)
-+		return true;
-+
-+	return false;
- }
- 
- static bool gc_should_run(struct cache_set *c)
-@@ -1839,6 +1880,19 @@ static bool gc_should_run(struct cache_set *c)
- 	if (atomic_read(&c->sectors_to_gc) < 0)
- 		return true;
- 
-+	/*
-+	 * Moving gc uses cache->heap to defragment disk. Unlike btree gc,
-+	 * moving gc only takes up part of the disk bandwidth.
-+	 * The number of heap is constant. However, the buckets released by
-+	 * each moving gc is limited. So bch_moving_gc() needs to be called
-+	 * multiple times. If bch_gc_thread() always calls bch_btree_gc(),
-+	 * it will block the IO request.
-+	 */
-+	if (c->copy_gc_enabled && moving_gc_should_run(c)) {
-+		ca->only_moving_gc = 1;
-+		return true;
-+	}
-+
- 	return false;
- }
- 
-@@ -1856,8 +1910,10 @@ static int bch_gc_thread(void *arg)
- 		    test_bit(CACHE_SET_IO_DISABLE, &c->flags))
- 			break;
- 
--		set_gc_sectors(c);
--		bch_btree_gc(c);
-+		if (!c->cache->only_moving_gc)
-+			bch_btree_gc(c);
-+
-+		bch_moving_gc(c);
- 	}
- 
- 	wait_for_kthread_stop();
-diff --git a/drivers/md/bcache/movinggc.c b/drivers/md/bcache/movinggc.c
-index 9f32901fdad1..04da088cefe8 100644
---- a/drivers/md/bcache/movinggc.c
-+++ b/drivers/md/bcache/movinggc.c
-@@ -200,6 +200,8 @@ void bch_moving_gc(struct cache_set *c)
- 	struct bucket *b;
- 	unsigned long sectors_to_move, reserve_sectors;
- 
-+	c->cache->only_moving_gc = 0;
-+
- 	if (!c->copy_gc_enabled)
- 		return;
- 
--- 
-2.17.1.windows.2
+Thank.
+
+Coly Li
+
+
 
