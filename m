@@ -2,192 +2,203 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2334373F3FA
-	for <lists+linux-bcache@lfdr.de>; Tue, 27 Jun 2023 07:41:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7C5273F89B
+	for <lists+linux-bcache@lfdr.de>; Tue, 27 Jun 2023 11:21:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229750AbjF0FlN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 27 Jun 2023 01:41:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49574 "EHLO
+        id S231646AbjF0JVf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 27 Jun 2023 05:21:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbjF0FlM (ORCPT
+        with ESMTP id S231222AbjF0JVe (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 27 Jun 2023 01:41:12 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A5F173B;
-        Mon, 26 Jun 2023 22:41:10 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1b7f2239bfdso22579405ad.1;
-        Mon, 26 Jun 2023 22:41:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687844470; x=1690436470;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eUHv1b8aqLsb4R7LditAal7kNTag6lxKqXAOQ2qujCU=;
-        b=fG/WGax37UoauKBSyv6kej64LdcGJrv6k66h8NGOsMv9uaUsNclSu7DiDyHvg7N0+H
-         TpLbLvnFmTkLJuRzyFn0V5R9/xG3MBNfmS6gpoZxFQmbIvFJa8XU1iIC6Fyl95ACCFHi
-         Ys+3TEnr35uP041kETcaQnaFL3Zzmuv0Ara4RUBuuI4A1DlyY37o026XtSt1PCG00d7o
-         R82xvUrMlfJH4JujFDKNZYqLCuYZs3onB7GlXFtQZdgcqNFnR06TCpWzVOviTJnvGG64
-         v3WIIO+Pf3siD1OxDgXeCgfd8ad+rtq0TuDOYOoPNLLpd/YOKy903+fL59/xrY4ynCa9
-         WP/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687844470; x=1690436470;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eUHv1b8aqLsb4R7LditAal7kNTag6lxKqXAOQ2qujCU=;
-        b=du9CZbEIY3iks5eVJgPE5NhzfXvDFcVsZcOB1xr4m2W1GIycHe7Iyggp1lBugeqql1
-         YEAV8L4wzKe2RLBmU7YHtBhSYMW3R7c/oJQvf/rvRNjVPf0Xx4e2qpwW/ED5eD596s/B
-         QzztS9wnezPyTT0Tu6cw6eSJMHvSmnPqKwjOGKYzdtRLzhzy7wrjD0RUtyRjNHWO/5wS
-         viGzBozIh/5VvtzM/v6k5L1TjNMXZ7pDfz2CQTBFCdBwS6OWdLmgWz8GvkA8olJRzSO4
-         WuN49jDu3lF4V8MaWFkisoTwCeaMO8kN738KUjIBKdzjCuQFTxaKUc84cmwXhdn2q/9z
-         8C5g==
-X-Gm-Message-State: AC+VfDz9mQ4v+z/lN1O+GFOSNl1V3Fg7ygkfUs+n3LjHS0YO7IurhqUC
-        HkoNqpbjyn60vSDLykeiOEs=
-X-Google-Smtp-Source: ACHHUZ4Aj+CfQoLGg0YEyBUDipJUlv6nej6ije3P7CId9SMSoIBcFwHmOjcIwHyQMLpCclEzduuKWQ==
-X-Received: by 2002:a17:902:f54b:b0:1b6:b805:5ae3 with SMTP id h11-20020a170902f54b00b001b6b8055ae3mr10571515plf.3.1687844469519;
-        Mon, 26 Jun 2023 22:41:09 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id n9-20020a1709026a8900b001b80d411e5bsm2144863plk.253.2023.06.26.22.41.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 22:41:09 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Mon, 26 Jun 2023 22:41:07 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Phillip Potter <phil@philpotter.co.uk>,
-        Coly Li <colyli@suse.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-btrfs@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH 06/31] cdrom: remove the unused mode argument to
- cdrom_release
-Message-ID: <fb21bb8b-958a-4238-aab8-c2720ac519ad@roeck-us.net>
-References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-7-hch@lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230606073950.225178-7-hch@lst.de>
-X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+        Tue, 27 Jun 2023 05:21:34 -0400
+Received: from mail-m3174.qiye.163.com (mail-m3174.qiye.163.com [103.74.31.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83733F5
+        for <linux-bcache@vger.kernel.org>; Tue, 27 Jun 2023 02:21:32 -0700 (PDT)
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m3174.qiye.163.com (Hmail) with ESMTPA id B5A8240280;
+        Tue, 27 Jun 2023 17:21:26 +0800 (CST)
+From:   Mingzhe Zou <mingzhe.zou@easystack.cn>
+To:     colyli@suse.de, linux-bcache@vger.kernel.org
+Cc:     bcache@lists.ewheeler.net, zoumingzhe@qq.com
+Subject: [PATCH] Separate bch_moving_gc() from bch_btree_gc()
+Date:   Tue, 27 Jun 2023 17:21:22 +0800
+Message-Id: <20230627092122.197-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDS0tJVk8YQklMQ04ZHUJLGVUZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
+X-HM-Tid: 0a88fc28696600aekurmb5a8240280
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NRg6HSo6CTE2SSMSHTxKAUIP
+        KggaCglVSlVKTUNMQ05MTUNMT0hIVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTkhLSDcG
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 09:39:25AM +0200, Christoph Hellwig wrote:
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
+From: Mingzhe Zou <zoumingzhe@qq.com>
 
-$ git grep cdrom_release
-Documentation/cdrom/cdrom-standard.rst:         cdrom_release,          /* release */
-Documentation/cdrom/cdrom-standard.rst:the door, should be left over to the general routine *cdrom_release()*.
-Documentation/cdrom/cdrom-standard.rst: void cdrom_release(struct inode *ip, struct file *fp)
-                                                                           ^^^^^^^^^^^^^^^^^
-drivers/cdrom/cdrom.c:void cdrom_release(struct cdrom_device_info *cdi)
-drivers/cdrom/cdrom.c:  cd_dbg(CD_CLOSE, "entering cdrom_release\n");
-drivers/cdrom/cdrom.c:EXPORT_SYMBOL(cdrom_release);
-drivers/cdrom/gdrom.c:  cdrom_release(gd.cd_info, mode);
-                                                ^^^^^^
-drivers/scsi/sr.c:      cdrom_release(&cd->cdi);
-include/linux/cdrom.h:void cdrom_release(struct cdrom_device_info *cdi);
+Moving gc uses cache->heap to defragment disk. Unlike btree gc,
+moving gc only takes up part of the disk bandwidth.
 
-$ git grep cdrom_open
-Documentation/cdrom/cdrom-standard.rst:         cdrom_open,             /* open */
-Documentation/cdrom/cdrom-standard.rst: int cdrom_open(struct inode * ip, struct file * fp)
-Documentation/cdrom/cdrom-standard.rst:This function implements the reverse-logic of *cdrom_open()*, and then
-drivers/cdrom/cdrom.c:static int cdrom_open_write(struct cdrom_device_info *cdi)
-drivers/cdrom/cdrom.c:int cdrom_open(struct cdrom_device_info *cdi, blk_mode_t mode)
-drivers/cdrom/cdrom.c:  cd_dbg(CD_OPEN, "entering cdrom_open\n");
-drivers/cdrom/cdrom.c:                  if (cdrom_open_write(cdi))
-drivers/cdrom/cdrom.c:EXPORT_SYMBOL(cdrom_open);
-drivers/cdrom/gdrom.c:  ret = cdrom_open(gd.cd_info);
-                                         ^^^^^^^^^^
-drivers/scsi/sr.c:      ret = cdrom_open(&cd->cdi, mode);
-include/linux/cdrom.h:int cdrom_open(struct cdrom_device_info *cdi, blk_mode_t mode);
+The number of heap is constant. However, the buckets released by
+each moving gc is limited. So bch_moving_gc() needs to be called
+multiple times.
 
->  drivers/cdrom/cdrom.c | 2 +-
->  drivers/cdrom/gdrom.c | 2 +-
->  drivers/scsi/sr.c     | 2 +-
->  include/linux/cdrom.h | 2 +-
->  4 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-> index adebac1bd210d9..998b03fe976e22 100644
-> --- a/drivers/cdrom/cdrom.c
-> +++ b/drivers/cdrom/cdrom.c
-> @@ -1250,7 +1250,7 @@ static int check_for_audio_disc(struct cdrom_device_info *cdi,
->  	return 0;
->  }
->  
-> -void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode)
-> +void cdrom_release(struct cdrom_device_info *cdi)
->  {
->  	const struct cdrom_device_ops *cdo = cdi->ops;
->  
-> diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-> index 14922403983e9e..a401dc4218a998 100644
-> --- a/drivers/cdrom/gdrom.c
-> +++ b/drivers/cdrom/gdrom.c
-> @@ -481,7 +481,7 @@ static int gdrom_bdops_open(struct block_device *bdev, fmode_t mode)
->  	bdev_check_media_change(bdev);
->  
->  	mutex_lock(&gdrom_mutex);
-> -	ret = cdrom_open(gd.cd_info, mode);
-> +	ret = cdrom_open(gd.cd_info);
->  	mutex_unlock(&gdrom_mutex);
->  	return ret;
->  }
-> diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-> index 444c7efc14cba7..6d33120ee5ba85 100644
-> --- a/drivers/scsi/sr.c
-> +++ b/drivers/scsi/sr.c
-> @@ -512,7 +512,7 @@ static void sr_block_release(struct gendisk *disk, fmode_t mode)
->  	struct scsi_cd *cd = scsi_cd(disk);
->  
->  	mutex_lock(&cd->lock);
-> -	cdrom_release(&cd->cdi, mode);
-> +	cdrom_release(&cd->cdi);
->  	mutex_unlock(&cd->lock);
->  
->  	scsi_device_put(cd->device);
-> diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
-> index 385e94732b2cf1..3f23d5239de254 100644
-> --- a/include/linux/cdrom.h
-> +++ b/include/linux/cdrom.h
-> @@ -102,7 +102,7 @@ int cdrom_read_tocentry(struct cdrom_device_info *cdi,
->  
->  /* the general block_device operations structure: */
->  int cdrom_open(struct cdrom_device_info *cdi, fmode_t mode);
-> -extern void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode);
-> +void cdrom_release(struct cdrom_device_info *cdi);
->  int cdrom_ioctl(struct cdrom_device_info *cdi, struct block_device *bdev,
->  		unsigned int cmd, unsigned long arg);
->  extern unsigned int cdrom_check_events(struct cdrom_device_info *cdi,
-> -- 
-> 2.39.2
-> 
-> 
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+If bch_gc_thread() always calls bch_btree_gc(), it will block
+the IO request.This patch allows bch_gc_thread() to only call
+bch_moving_gc() when there are many fragments.
+
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/bcache.h   |  4 ++-
+ drivers/md/bcache/btree.c    | 62 ++++++++++++++++++++++++++++++++++--
+ drivers/md/bcache/movinggc.c |  2 ++
+ 3 files changed, 64 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 5a79bb3c272f..155deff0ce05 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -461,7 +461,8 @@ struct cache {
+ 	 * until a gc finishes - otherwise we could pointlessly burn a ton of
+ 	 * cpu
+ 	 */
+-	unsigned int		invalidate_needs_gc;
++	unsigned int		invalidate_needs_gc:1;
++	unsigned int		only_moving_gc:1;
+ 
+ 	bool			discard; /* Get rid of? */
+ 
+@@ -629,6 +630,7 @@ struct cache_set {
+ 	struct gc_stat		gc_stats;
+ 	size_t			nbuckets;
+ 	size_t			avail_nbuckets;
++	size_t			fragment_nbuckets;
+ 
+ 	struct task_struct	*gc_thread;
+ 	/* Where in the btree gc currently is */
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 68b9d7ca864e..de28d5c991a1 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -88,6 +88,7 @@
+  * Test module load/unload
+  */
+ 
++#define COPY_GC_PERCENT		5
+ #define MAX_NEED_GC		64
+ #define MAX_SAVE_PRIO		72
+ #define MAX_GC_TIMES		100
+@@ -1705,6 +1706,7 @@ static void btree_gc_start(struct cache_set *c)
+ 
+ 	mutex_lock(&c->bucket_lock);
+ 
++	set_gc_sectors(c);
+ 	c->gc_mark_valid = 0;
+ 	c->gc_done = ZERO_KEY;
+ 
+@@ -1825,8 +1827,47 @@ static void bch_btree_gc(struct cache_set *c)
+ 	memcpy(&c->gc_stats, &stats, sizeof(struct gc_stat));
+ 
+ 	trace_bcache_gc_end(c);
++}
++
++static bool moving_gc_should_run(struct cache_set *c)
++{
++	struct cache *ca = c->cache;
++	size_t moving_gc_threshold = ca->sb.bucket_size >> 2, frag_percent;
++	unsigned long used_buckets = 0, frag_buckets = 0, move_buckets = 0;
++	unsigned long dirty_sectors = 0, frag_sectors, used_sectors;
++
++	if (c->gc_stats.in_use > bch_cutoff_writeback_sync)
++		return true;
+ 
+-	bch_moving_gc(c);
++	mutex_lock(&c->bucket_lock);
++	for_each_bucket(b, ca) {
++		if (GC_MARK(b) != GC_MARK_DIRTY)
++			continue;
++
++		used_buckets++;
++
++		used_sectors = GC_SECTORS_USED(b);
++		dirty_sectors += used_sectors;
++
++		if (used_sectors < ca->sb.bucket_size)
++			frag_buckets++;
++
++		if (used_sectors <= moving_gc_threshold)
++			move_buckets++;
++	}
++	mutex_unlock(&c->bucket_lock);
++
++	c->fragment_nbuckets = frag_buckets;
++	frag_sectors = used_buckets * ca->sb.bucket_size - dirty_sectors;
++	frag_percent = div_u64(frag_sectors * 100, ca->sb.bucket_size * c->nbuckets)
++
++	if (move_buckets > ca->heap.size)
++		return true;
++
++	if (frag_percent >= COPY_GC_PERCENT)
++		return true;
++
++	return false;
+ }
+ 
+ static bool gc_should_run(struct cache_set *c)
+@@ -1839,6 +1880,19 @@ static bool gc_should_run(struct cache_set *c)
+ 	if (atomic_read(&c->sectors_to_gc) < 0)
+ 		return true;
+ 
++	/*
++	 * Moving gc uses cache->heap to defragment disk. Unlike btree gc,
++	 * moving gc only takes up part of the disk bandwidth.
++	 * The number of heap is constant. However, the buckets released by
++	 * each moving gc is limited. So bch_moving_gc() needs to be called
++	 * multiple times. If bch_gc_thread() always calls bch_btree_gc(),
++	 * it will block the IO request.
++	 */
++	if (c->copy_gc_enabled && moving_gc_should_run(c)) {
++		ca->only_moving_gc = 1;
++		return true;
++	}
++
+ 	return false;
+ }
+ 
+@@ -1856,8 +1910,10 @@ static int bch_gc_thread(void *arg)
+ 		    test_bit(CACHE_SET_IO_DISABLE, &c->flags))
+ 			break;
+ 
+-		set_gc_sectors(c);
+-		bch_btree_gc(c);
++		if (!c->cache->only_moving_gc)
++			bch_btree_gc(c);
++
++		bch_moving_gc(c);
+ 	}
+ 
+ 	wait_for_kthread_stop();
+diff --git a/drivers/md/bcache/movinggc.c b/drivers/md/bcache/movinggc.c
+index 9f32901fdad1..04da088cefe8 100644
+--- a/drivers/md/bcache/movinggc.c
++++ b/drivers/md/bcache/movinggc.c
+@@ -200,6 +200,8 @@ void bch_moving_gc(struct cache_set *c)
+ 	struct bucket *b;
+ 	unsigned long sectors_to_move, reserve_sectors;
+ 
++	c->cache->only_moving_gc = 0;
++
+ 	if (!c->copy_gc_enabled)
+ 		return;
+ 
+-- 
+2.17.1.windows.2
+
