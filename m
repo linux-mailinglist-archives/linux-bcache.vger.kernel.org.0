@@ -2,55 +2,55 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B10E73FE93
-	for <lists+linux-bcache@lfdr.de>; Tue, 27 Jun 2023 16:43:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD72E740242
+	for <lists+linux-bcache@lfdr.de>; Tue, 27 Jun 2023 19:35:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231669AbjF0Onr (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 27 Jun 2023 10:43:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43874 "EHLO
+        id S231418AbjF0RfV (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 27 Jun 2023 13:35:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231828AbjF0Ona (ORCPT
+        with ESMTP id S231317AbjF0RfT (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 27 Jun 2023 10:43:30 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3644030E5
-        for <linux-bcache@vger.kernel.org>; Tue, 27 Jun 2023 07:42:59 -0700 (PDT)
+        Tue, 27 Jun 2023 13:35:19 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57326268C
+        for <linux-bcache@vger.kernel.org>; Tue, 27 Jun 2023 10:35:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687876979; x=1719412979;
+  t=1687887318; x=1719423318;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=AuLDT/dz2aZd+pHPOoxb2U0yPepdHkz8HU8ac7HnCgU=;
-  b=O4FdaKjlOGnXw7WoUcHoEFvJEz+Tov8gBZxJYMTGDfvzi/8Dxz0ypXhg
-   NL25k3Q6LykJ4T9MRO8ZiBvPuG25LETtXLeeiHUxW7JgG7jwOUYu1Vr1+
-   TXmVExWoCrVHGlRuUEFqFUtLppveaNWkE/6f9zmXMu0f6cuI4zgFx3UAp
-   OXQEj2VMr+bymjY/wBkacLCbe//JzbHFYEn+8yoYd/BQcTDmwXYRoQuMB
-   VxQOwdsnhuHYLCdTtZ6N+tulXNSTURzT46C8MI31xfmShTW47rep/Fexu
-   DV/niw7cCNJuOmxYNhQF6mtK3yEJ5V0xl15ddRZSDk68lQA1mkFSROEe5
+  bh=U+N7Ibz3Z+yfeA6mFst4GebSrrDDzlhu8gVVBJjGI+w=;
+  b=TmUSZOhh8nm4cQowaizC2m1QlLvSeGkHoTkrw6+AKh8rWtnkcVEwdVtC
+   cjH6L3JKk91h3oinbLIRV7+3B8nY2aVjBrSDUaflwX5x4dfRF1aZk/H9H
+   SVAS4PAu9LGMjuJFHgKOgyC5jW99C4JqjPI0MQAqxSEPX6fSWKakleMPM
+   1huva2AzRnWKQfmSEFCpDhT3Fp8KwyrVViZLXlBCNlNphZJNx5qBuIoMm
+   1eYlzSo0SehfOwUNRsAfR1hLZSSg3hDEGKI8Fg0fGmb/3vMvaeKHQ5NVs
+   xdjbwVLUJ/5RZ2ILbOzvRrQkRWtVVYdyXpcOUrQBATAYUutgH3Wx7Aqdy
    g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10754"; a="427588453"
-X-IronPort-AV: E=Sophos;i="6.01,162,1684825200"; 
-   d="scan'208";a="427588453"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 07:42:11 -0700
+X-IronPort-AV: E=McAfee;i="6600,9927,10754"; a="364185988"
+X-IronPort-AV: E=Sophos;i="6.01,163,1684825200"; 
+   d="scan'208";a="364185988"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 10:35:17 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10754"; a="693901337"
-X-IronPort-AV: E=Sophos;i="6.01,162,1684825200"; 
-   d="scan'208";a="693901337"
+X-IronPort-AV: E=McAfee;i="6600,9927,10754"; a="786703745"
+X-IronPort-AV: E=Sophos;i="6.01,163,1684825200"; 
+   d="scan'208";a="786703745"
 Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 27 Jun 2023 07:42:08 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 27 Jun 2023 10:35:14 -0700
 Received: from kbuild by 783282924a45 with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1qE9tP-000Byx-2n;
-        Tue, 27 Jun 2023 14:42:07 +0000
-Date:   Tue, 27 Jun 2023 22:41:27 +0800
+        id 1qECav-000C6J-1R;
+        Tue, 27 Jun 2023 17:35:13 +0000
+Date:   Wed, 28 Jun 2023 01:34:57 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Mingzhe Zou <mingzhe.zou@easystack.cn>, colyli@suse.de,
         linux-bcache@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        bcache@lists.ewheeler.net, zoumingzhe@qq.com
+Cc:     oe-kbuild-all@lists.linux.dev, bcache@lists.ewheeler.net,
+        zoumingzhe@qq.com
 Subject: Re: [PATCH] Separate bch_moving_gc() from bch_btree_gc()
-Message-ID: <202306272212.276Fkm0f-lkp@intel.com>
+Message-ID: <202306280137.Dirtk7fY-lkp@intel.com>
 References: <20230627092122.197-1-mingzhe.zou@easystack.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -58,8 +58,9 @@ Content-Disposition: inline
 In-Reply-To: <20230627092122.197-1-mingzhe.zou@easystack.cn>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -80,36 +81,36 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Mingzhe-Zou/Separate-bch_
 base:   linus/master
 patch link:    https://lore.kernel.org/r/20230627092122.197-1-mingzhe.zou%40easystack.cn
 patch subject: [PATCH] Separate bch_moving_gc() from bch_btree_gc()
-config: powerpc-randconfig-r012-20230627 (https://download.01.org/0day-ci/archive/20230627/202306272212.276Fkm0f-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
-reproduce: (https://download.01.org/0day-ci/archive/20230627/202306272212.276Fkm0f-lkp@intel.com/reproduce)
+config: arc-randconfig-r043-20230627 (https://download.01.org/0day-ci/archive/20230628/202306280137.Dirtk7fY-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 12.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20230628/202306280137.Dirtk7fY-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306272212.276Fkm0f-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202306280137.Dirtk7fY-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
->> drivers/md/bcache/btree.c:1839:27: error: use of undeclared identifier 'bch_cutoff_writeback_sync'
+   drivers/md/bcache/btree.c: In function 'moving_gc_should_run':
+>> drivers/md/bcache/btree.c:1839:34: error: 'bch_cutoff_writeback_sync' undeclared (first use in this function)
     1839 |         if (c->gc_stats.in_use > bch_cutoff_writeback_sync)
-         |                                  ^
->> drivers/md/bcache/btree.c:1843:18: error: use of undeclared identifier 'b'
+         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/md/bcache/btree.c:1839:34: note: each undeclared identifier is reported only once for each function it appears in
+   In file included from drivers/md/bcache/btree.c:24:
+>> drivers/md/bcache/btree.c:1843:25: error: 'b' undeclared (first use in this function)
     1843 |         for_each_bucket(b, ca) {
          |                         ^
->> drivers/md/bcache/btree.c:1843:18: error: use of undeclared identifier 'b'
->> drivers/md/bcache/btree.c:1843:18: error: use of undeclared identifier 'b'
-   drivers/md/bcache/btree.c:1844:15: error: use of undeclared identifier 'b'
-    1844 |                 if (GC_MARK(b) != GC_MARK_DIRTY)
-         |                             ^
-   drivers/md/bcache/btree.c:1849:34: error: use of undeclared identifier 'b'
-    1849 |                 used_sectors = GC_SECTORS_USED(b);
-         |                                                ^
->> drivers/md/bcache/btree.c:1862:78: error: expected ';' after expression
+   drivers/md/bcache/bcache.h:890:14: note: in definition of macro 'for_each_bucket'
+     890 |         for (b = (ca)->buckets + (ca)->sb.first_bucket;                 \
+         |              ^
+>> drivers/md/bcache/btree.c:1862:85: error: expected ';' before 'if'
     1862 |         frag_percent = div_u64(frag_sectors * 100, ca->sb.bucket_size * c->nbuckets)
          |                                                                                     ^
          |                                                                                     ;
-   7 errors generated.
+    1863 | 
+    1864 |         if (move_buckets > ca->heap.size)
+         |         ~~                                                                           
 
 
 vim +/bch_cutoff_writeback_sync +1839 drivers/md/bcache/btree.c
