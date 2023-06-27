@@ -2,190 +2,192 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C05C73F29B
-	for <lists+linux-bcache@lfdr.de>; Tue, 27 Jun 2023 05:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2334373F3FA
+	for <lists+linux-bcache@lfdr.de>; Tue, 27 Jun 2023 07:41:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbjF0D0Y (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 26 Jun 2023 23:26:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40896 "EHLO
+        id S229750AbjF0FlN (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 27 Jun 2023 01:41:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230164AbjF0DYn (ORCPT
+        with ESMTP id S229689AbjF0FlM (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 26 Jun 2023 23:24:43 -0400
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8358E1708
-        for <linux-bcache@vger.kernel.org>; Mon, 26 Jun 2023 20:19:58 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id 26BB249
-        for <linux-bcache@vger.kernel.org>; Mon, 26 Jun 2023 20:19:58 -0700 (PDT)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id TGGhUkLyTe2E for <linux-bcache@vger.kernel.org>;
-        Mon, 26 Jun 2023 20:19:53 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 7FACC47
-        for <linux-bcache@vger.kernel.org>; Mon, 26 Jun 2023 20:19:53 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 7FACC47
-Date:   Mon, 26 Jun 2023 20:19:51 -0700 (PDT)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-To:     linux-bcache@vger.kernel.org
-Subject: bcache: Possible deadlock between write_dirty_finish and
- bch_data_insert_keys
-Message-ID: <83ac53d0-9ad6-9043-a1ba-7ddaa2a92bc0@ewheeler.net>
+        Tue, 27 Jun 2023 01:41:12 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A5F173B;
+        Mon, 26 Jun 2023 22:41:10 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1b7f2239bfdso22579405ad.1;
+        Mon, 26 Jun 2023 22:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687844470; x=1690436470;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eUHv1b8aqLsb4R7LditAal7kNTag6lxKqXAOQ2qujCU=;
+        b=fG/WGax37UoauKBSyv6kej64LdcGJrv6k66h8NGOsMv9uaUsNclSu7DiDyHvg7N0+H
+         TpLbLvnFmTkLJuRzyFn0V5R9/xG3MBNfmS6gpoZxFQmbIvFJa8XU1iIC6Fyl95ACCFHi
+         Ys+3TEnr35uP041kETcaQnaFL3Zzmuv0Ara4RUBuuI4A1DlyY37o026XtSt1PCG00d7o
+         R82xvUrMlfJH4JujFDKNZYqLCuYZs3onB7GlXFtQZdgcqNFnR06TCpWzVOviTJnvGG64
+         v3WIIO+Pf3siD1OxDgXeCgfd8ad+rtq0TuDOYOoPNLLpd/YOKy903+fL59/xrY4ynCa9
+         WP/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687844470; x=1690436470;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eUHv1b8aqLsb4R7LditAal7kNTag6lxKqXAOQ2qujCU=;
+        b=du9CZbEIY3iks5eVJgPE5NhzfXvDFcVsZcOB1xr4m2W1GIycHe7Iyggp1lBugeqql1
+         YEAV8L4wzKe2RLBmU7YHtBhSYMW3R7c/oJQvf/rvRNjVPf0Xx4e2qpwW/ED5eD596s/B
+         QzztS9wnezPyTT0Tu6cw6eSJMHvSmnPqKwjOGKYzdtRLzhzy7wrjD0RUtyRjNHWO/5wS
+         viGzBozIh/5VvtzM/v6k5L1TjNMXZ7pDfz2CQTBFCdBwS6OWdLmgWz8GvkA8olJRzSO4
+         WuN49jDu3lF4V8MaWFkisoTwCeaMO8kN738KUjIBKdzjCuQFTxaKUc84cmwXhdn2q/9z
+         8C5g==
+X-Gm-Message-State: AC+VfDz9mQ4v+z/lN1O+GFOSNl1V3Fg7ygkfUs+n3LjHS0YO7IurhqUC
+        HkoNqpbjyn60vSDLykeiOEs=
+X-Google-Smtp-Source: ACHHUZ4Aj+CfQoLGg0YEyBUDipJUlv6nej6ije3P7CId9SMSoIBcFwHmOjcIwHyQMLpCclEzduuKWQ==
+X-Received: by 2002:a17:902:f54b:b0:1b6:b805:5ae3 with SMTP id h11-20020a170902f54b00b001b6b8055ae3mr10571515plf.3.1687844469519;
+        Mon, 26 Jun 2023 22:41:09 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id n9-20020a1709026a8900b001b80d411e5bsm2144863plk.253.2023.06.26.22.41.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jun 2023 22:41:09 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Mon, 26 Jun 2023 22:41:07 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        Coly Li <colyli@suse.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-btrfs@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 06/31] cdrom: remove the unused mode argument to
+ cdrom_release
+Message-ID: <fb21bb8b-958a-4238-aab8-c2720ac519ad@roeck-us.net>
+References: <20230606073950.225178-1-hch@lst.de>
+ <20230606073950.225178-7-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230606073950.225178-7-hch@lst.de>
+X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hello all,
+On Tue, Jun 06, 2023 at 09:39:25AM +0200, Christoph Hellwig wrote:
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-We have a system running a 5.15 kernel with the following errors in dmesg 
-displaying repeatedly.  Ultimately the system crashed so I'll reset 
-it---but I was able to get some good information out of it before it died 
-so maybe we can pin it down. This happened under high CPU and disk load:
+$ git grep cdrom_release
+Documentation/cdrom/cdrom-standard.rst:         cdrom_release,          /* release */
+Documentation/cdrom/cdrom-standard.rst:the door, should be left over to the general routine *cdrom_release()*.
+Documentation/cdrom/cdrom-standard.rst: void cdrom_release(struct inode *ip, struct file *fp)
+                                                                           ^^^^^^^^^^^^^^^^^
+drivers/cdrom/cdrom.c:void cdrom_release(struct cdrom_device_info *cdi)
+drivers/cdrom/cdrom.c:  cd_dbg(CD_CLOSE, "entering cdrom_release\n");
+drivers/cdrom/cdrom.c:EXPORT_SYMBOL(cdrom_release);
+drivers/cdrom/gdrom.c:  cdrom_release(gd.cd_info, mode);
+                                                ^^^^^^
+drivers/scsi/sr.c:      cdrom_release(&cd->cdi);
+include/linux/cdrom.h:void cdrom_release(struct cdrom_device_info *cdi);
 
-[Jun26 19:24] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 1382s!
-[  +0.001211] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=-20 stuck for 1381s!
-[  +0.001117] Showing busy workqueues and worker pools:
-[  +0.001081] workqueue events: flags=0x0
-[  +0.000007]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=9/256 refcnt=10
-[  +0.000005]     pending: vmstat_shepherd, kfree_rcu_monitor, drm_fb_helper_damage_work [drm_kms_helper], kfree_rcu_monitor, mlx5_timestamp_overflow [mlx5_core], mlx5_timestamp_overflow [mlx5_core], kfree_rcu_monitor, mlx5e_tx_dim_work [mlx5_core], mlx5e_rx_dim_work [mlx5_core]
-[  +0.000301] workqueue events_highpri: flags=0x10
-[  +0.000002]   pwq 59: cpus=29 node=6 flags=0x0 nice=-20 active=1/256 refcnt=2
-[  +0.000004]     pending: mix_interrupt_randomness
-[  +0.000006]   pwq 29: cpus=14 node=7 flags=0x0 nice=-20 active=1/256 refcnt=2
-[  +0.000003]     pending: mix_interrupt_randomness
-[  +0.000005]   pwq 1: cpus=0 node=0 flags=0x0 nice=-20 active=1/256 refcnt=2
-[  +0.000002]     pending: mix_interrupt_randomness
-[  +0.000007] workqueue events_long: flags=0x0
-[  +0.000003]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256 refcnt=2
-[  +0.000002]     pending: br_fdb_cleanup
-[  +0.000014] workqueue events_power_efficient: flags=0x80
-[  +0.000004]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256 refcnt=2
-[  +0.000002]     pending: fb_flashcursor
-[  +0.000008] workqueue events_freezable_power_: flags=0x84
-[  +0.000003]   pwq 8: cpus=4 node=2 flags=0x0 nice=0 active=1/256 refcnt=2
-[  +0.000002]     pending: disk_events_workfn
-[  +0.000019] workqueue mm_percpu_wq: flags=0x8
-[  +0.000004]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256 refcnt=3
-[  +0.000002]     pending: lru_add_drain_per_cpu BAR(212)
-[  +0.000036] workqueue kblockd: flags=0x18
-[  +0.000005]   pwq 9: cpus=4 node=2 flags=0x0 nice=-20 active=1/256 refcnt=2
-[  +0.000003]     pending: blk_mq_timeout_work
-[  +0.000005]   pwq 1: cpus=0 node=0 flags=0x0 nice=-20 active=3/256 refcnt=4
-[  +0.000003]     pending: blk_mq_timeout_work, blk_mq_run_work_fn, blk_mq_run_work_fn
-[  +0.000044] workqueue bch_btree_io: flags=0x8
-[  +0.000001]   pwq 62: cpus=31 node=7 flags=0x0 nice=0 active=1/256 refcnt=2
-[  +0.000004]     in-flight: 3331:btree_node_write_work
-[  +0.000006]   pwq 38: cpus=19 node=1 flags=0x0 nice=0 active=1/256 refcnt=2
-[  +0.000003]     in-flight: 4829:btree_node_write_work
-[  +0.000005]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=7/256 refcnt=8
-[  +0.000002]     pending: btree_node_write_work, btree_node_write_work, btree_node_write_work, btree_node_write_work, btree_node_write_work, btree_node_write_work, btree_node_write_work
-[  +0.000011] workqueue bcache: flags=0x8
-[  +0.000002]   pwq 6: cpus=3 node=1 flags=0x0 nice=0 active=1/256 refcnt=2
-[  +0.000003]     in-flight: 6295:bch_data_insert_keys
-[  +0.000073] workqueue bcache_writeback_wq: flags=0x8
-[  +0.000002]   pwq 62: cpus=31 node=7 flags=0x0 nice=0 active=64/256 refcnt=65
-[  +0.000002]     in-flight: 10178:write_dirty_finish, 10067:write_dirty_finish, 3302:write_dirty_finish, 10184:write_dirty_finish, 10181:write_dirty_finish, 10066:write_dirty_finish, 10105:write_dirty_finish, 10195:write_dirty_finish, 980:write_dirty_finish, 10141:write_dirty_finish, 10139:write_dirty_finish, 10098:write_dirty_finish, 10008:write_dirty_finish, 10180:write_dirty_finish, 20178:write_dirty_finish, 3252:write_dirty_finish, 10007:write_dirty_finish, 10279:write_dirty_finish, 10142:write_dirty_finish, 10223:write_dirty_finish, 10097:write_dirty_finish, 7311:write_dirty_finish, 10234:write_dirty_finish, 10196:write_dirty_finish, 10280:write_dirty_finish, 10063:write_dirty_finish, 10064:write_dirty_finish, 10188:write_dirty_finish, 10043:write_dirty_finish, 10101:write_dirty_finish, 10185:write_dirty_finish, 10103:write_dirty_finish, 10102:write_dirty_finish, 10224:write_dirty_finish, 10186:write_dirty_finish, 10114:write_dirty_finish, 10011:write_dirty_finish
-[  +0.000083] , 3253:write_dirty_finish, 10112:write_dirty_finish, 10187:write_dirty_finish, 10009:write_dirty_finish, 10138:write_dirty_finish, 10104:write_dirty_finish, 10140:write_dirty_finish, 10065:write_dirty_finish, 10193:write_dirty_finish, 10095:write_dirty_finish, 10041:write_dirty_finish, 10010:write_dirty_finish, 10115:write_dirty_finish, 10094:write_dirty_finish, 10113:write_dirty_finish, 10194:write_dirty_finish, 10177:write_dirty_finish, 10042:write_dirty_finish, 10226:write_dirty_finish, 10179:write_dirty_finish, 10096:write_dirty_finish, 10192:write_dirty_finish, 10222:write_dirty_finish, 10045:write_dirty_finish, 10116:write_dirty_finish, 10044:write_dirty_finish, 10225:write_dirty_finish
-[  +0.000133] workqueue kcopyd: flags=0x8
-[  +0.000004]   pwq 2: cpus=1 node=0 flags=0x0 nice=0 active=2/256 refcnt=3
-[  +0.000003]     in-flight: 3424:do_work [dm_mod] do_work [dm_mod]
-[  +0.000520] pool 2: cpus=1 node=0 flags=0x0 nice=0 hung=14s workers=3 idle: 21748 21749
-[  +0.000006] pool 6: cpus=3 node=1 flags=0x0 nice=0 hung=43s workers=3 idle: 11428 25181
-[  +0.000006] pool 38: cpus=19 node=1 flags=0x0 nice=0 hung=34s workers=3 idle: 22403 25014
-[  +0.000006] pool 62: cpus=31 node=7 flags=0x0 nice=0 hung=2s workers=68 idle: 10281 23228 10286
+$ git grep cdrom_open
+Documentation/cdrom/cdrom-standard.rst:         cdrom_open,             /* open */
+Documentation/cdrom/cdrom-standard.rst: int cdrom_open(struct inode * ip, struct file * fp)
+Documentation/cdrom/cdrom-standard.rst:This function implements the reverse-logic of *cdrom_open()*, and then
+drivers/cdrom/cdrom.c:static int cdrom_open_write(struct cdrom_device_info *cdi)
+drivers/cdrom/cdrom.c:int cdrom_open(struct cdrom_device_info *cdi, blk_mode_t mode)
+drivers/cdrom/cdrom.c:  cd_dbg(CD_OPEN, "entering cdrom_open\n");
+drivers/cdrom/cdrom.c:                  if (cdrom_open_write(cdi))
+drivers/cdrom/cdrom.c:EXPORT_SYMBOL(cdrom_open);
+drivers/cdrom/gdrom.c:  ret = cdrom_open(gd.cd_info);
+                                         ^^^^^^^^^^
+drivers/scsi/sr.c:      ret = cdrom_open(&cd->cdi, mode);
+include/linux/cdrom.h:int cdrom_open(struct cdrom_device_info *cdi, blk_mode_t mode);
 
-Clearly there are many write_dirty_finish() calls stuck, here are some 
-traces:
-
-I did `cat /proc/<pid>/stack` for each bcache workqueue PID and these
-are the unique stacks:
-
-	dmesg | grep in-flight | \
-		perl -lne 'while(/(\d+):((write_dirty|bch|btree)\S+)/g) { print "$1 $2" }' | \
-		sort -u | \
-		while read a b; do echo === $a $b ; cat /proc/$a/stack; done
-
-Which prints lots of these:
-
-	=== 3253: write_dirty_finish 
-	[<0>] rwsem_down_write_slowpath+0x27b/0x4bd
-	[<0>] bch_btree_node_get.part.0+0x7e/0x2d7  <<<, _probably_ called with write=true
-	[<0>] bch_btree_map_nodes_recurse+0xed/0x1a7   | since this is an insert
-	[<0>] __bch_btree_map_nodes+0x17c/0x1c4
-	[<0>] bch_btree_insert+0x102/0x188     <<<<< race?
-	[<0>] write_dirty_finish+0x122/0x1d3   <<<<< entry
-	[<0>] process_one_work+0x1f1/0x3c6
-	[<0>] worker_thread+0x53/0x3e4
-	[<0>] kthread+0x127/0x144
-	[<0>] ret_from_fork+0x22/0x2d
-
-and one of these:
-	=== 6295 bch_data_insert_keys
-	[<0>] bch_btree_insert_node+0x6b/0x287
-	[<0>] btree_insert_fn+0x20/0x48        
-	[<0>] bch_btree_map_nodes_recurse+0x111/0x1a7
-	[<0>] __bch_btree_map_nodes+0x17c/0x1c4
-	[<0>] bch_btree_insert+0x102/0x188     <<<<< race?
-	[<0>] bch_data_insert_keys+0x30/0xba   <<<<< entry
-	[<0>] process_one_work+0x1f1/0x3c6
-	[<0>] worker_thread+0x53/0x3e4
-	[<0>] kthread+0x127/0x144
-	[<0>] ret_from_fork+0x22/0x2d
-
-Note that above, both threads (workqueues) are similar until they call
-bch_btree_map_nodes_recurse(), then they diverge where one is doing
-bch_btree_insert_node(), which holds b->write_lock:
-
-	bch_btree_insert_node
-	  https://elixir.bootlin.com/linux/latest/source/drivers/md/bcache/btree.c#L2322
-
-and the other is trying bch_btree_node_get().  While I don't have debug
-data about the arguments, I am guessing that bch_btree_node_get is
-called with `write=true` since the caller is bch_btree_insert:
-
-	/* bch_btree_node_get - find a btree node in the cache and lock it, reading it
-	 * in from disk if necessary. */
-	https://elixir.bootlin.com/linux/v6.4/source/drivers/md/bcache/btree.c#L969
-
-The call to bch_btree_node_get() does quite a bit of rw_lock/rw_unlock/mutex work.
-
-There are also two of the traces below which are waiting on a down():
-	https://elixir.bootlin.com/linux/latest/source/drivers/md/bcache/btree.c#L420
-
-These could be relevant since __bch_btree_node_write() does call 
-`lockdep_assert_held(&b->write_lock)` and b->write_lock is held above by 
-bch_btree_insert_node:
-
-	=== 3331 btree_node_write_work
-	[<0>] down+0x43/0x54
-	[<0>] __bch_btree_node_write+0xa3/0x220
-	[<0>] btree_node_write_work+0x43/0x4f
-	[<0>] process_one_work+0x1f1/0x3c6
-	[<0>] worker_thread+0x53/0x3e4
-	[<0>] kthread+0x127/0x144
-	[<0>] ret_from_fork+0x22/0x2d
-
-	=== 4829 btree_node_write_work
-	[<0>] down+0x43/0x54
-	[<0>] __bch_btree_node_write+0xa3/0x220
-	[<0>] btree_node_write_work+0x43/0x4f
-	[<0>] process_one_work+0x1f1/0x3c6
-	[<0>] worker_thread+0x53/0x3e4
-	[<0>] kthread+0x127/0x144
-	[<0>] ret_from_fork+0x22/0x2d
-
-Thanks for your help!
-
---
-Eric Wheeler
+>  drivers/cdrom/cdrom.c | 2 +-
+>  drivers/cdrom/gdrom.c | 2 +-
+>  drivers/scsi/sr.c     | 2 +-
+>  include/linux/cdrom.h | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
+> index adebac1bd210d9..998b03fe976e22 100644
+> --- a/drivers/cdrom/cdrom.c
+> +++ b/drivers/cdrom/cdrom.c
+> @@ -1250,7 +1250,7 @@ static int check_for_audio_disc(struct cdrom_device_info *cdi,
+>  	return 0;
+>  }
+>  
+> -void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode)
+> +void cdrom_release(struct cdrom_device_info *cdi)
+>  {
+>  	const struct cdrom_device_ops *cdo = cdi->ops;
+>  
+> diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+> index 14922403983e9e..a401dc4218a998 100644
+> --- a/drivers/cdrom/gdrom.c
+> +++ b/drivers/cdrom/gdrom.c
+> @@ -481,7 +481,7 @@ static int gdrom_bdops_open(struct block_device *bdev, fmode_t mode)
+>  	bdev_check_media_change(bdev);
+>  
+>  	mutex_lock(&gdrom_mutex);
+> -	ret = cdrom_open(gd.cd_info, mode);
+> +	ret = cdrom_open(gd.cd_info);
+>  	mutex_unlock(&gdrom_mutex);
+>  	return ret;
+>  }
+> diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+> index 444c7efc14cba7..6d33120ee5ba85 100644
+> --- a/drivers/scsi/sr.c
+> +++ b/drivers/scsi/sr.c
+> @@ -512,7 +512,7 @@ static void sr_block_release(struct gendisk *disk, fmode_t mode)
+>  	struct scsi_cd *cd = scsi_cd(disk);
+>  
+>  	mutex_lock(&cd->lock);
+> -	cdrom_release(&cd->cdi, mode);
+> +	cdrom_release(&cd->cdi);
+>  	mutex_unlock(&cd->lock);
+>  
+>  	scsi_device_put(cd->device);
+> diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
+> index 385e94732b2cf1..3f23d5239de254 100644
+> --- a/include/linux/cdrom.h
+> +++ b/include/linux/cdrom.h
+> @@ -102,7 +102,7 @@ int cdrom_read_tocentry(struct cdrom_device_info *cdi,
+>  
+>  /* the general block_device operations structure: */
+>  int cdrom_open(struct cdrom_device_info *cdi, fmode_t mode);
+> -extern void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode);
+> +void cdrom_release(struct cdrom_device_info *cdi);
+>  int cdrom_ioctl(struct cdrom_device_info *cdi, struct block_device *bdev,
+>  		unsigned int cmd, unsigned long arg);
+>  extern unsigned int cdrom_check_events(struct cdrom_device_info *cdi,
+> -- 
+> 2.39.2
+> 
+> 
+> ______________________________________________________
+> Linux MTD discussion mailing list
+> http://lists.infradead.org/mailman/listinfo/linux-mtd/
