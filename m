@@ -2,162 +2,199 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD72E740242
-	for <lists+linux-bcache@lfdr.de>; Tue, 27 Jun 2023 19:35:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89ACC740D32
+	for <lists+linux-bcache@lfdr.de>; Wed, 28 Jun 2023 11:39:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231418AbjF0RfV (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 27 Jun 2023 13:35:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53286 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231317AbjF0RfT (ORCPT
+        id S232519AbjF1JiV (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 28 Jun 2023 05:38:21 -0400
+Received: from mail-m3174.qiye.163.com ([103.74.31.74]:14368 "EHLO
+        mail-m3174.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233911AbjF1JaW (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 27 Jun 2023 13:35:19 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57326268C
-        for <linux-bcache@vger.kernel.org>; Tue, 27 Jun 2023 10:35:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687887318; x=1719423318;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=U+N7Ibz3Z+yfeA6mFst4GebSrrDDzlhu8gVVBJjGI+w=;
-  b=TmUSZOhh8nm4cQowaizC2m1QlLvSeGkHoTkrw6+AKh8rWtnkcVEwdVtC
-   cjH6L3JKk91h3oinbLIRV7+3B8nY2aVjBrSDUaflwX5x4dfRF1aZk/H9H
-   SVAS4PAu9LGMjuJFHgKOgyC5jW99C4JqjPI0MQAqxSEPX6fSWKakleMPM
-   1huva2AzRnWKQfmSEFCpDhT3Fp8KwyrVViZLXlBCNlNphZJNx5qBuIoMm
-   1eYlzSo0SehfOwUNRsAfR1hLZSSg3hDEGKI8Fg0fGmb/3vMvaeKHQ5NVs
-   xdjbwVLUJ/5RZ2ILbOzvRrQkRWtVVYdyXpcOUrQBATAYUutgH3Wx7Aqdy
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10754"; a="364185988"
-X-IronPort-AV: E=Sophos;i="6.01,163,1684825200"; 
-   d="scan'208";a="364185988"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2023 10:35:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10754"; a="786703745"
-X-IronPort-AV: E=Sophos;i="6.01,163,1684825200"; 
-   d="scan'208";a="786703745"
-Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Jun 2023 10:35:14 -0700
-Received: from kbuild by 783282924a45 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qECav-000C6J-1R;
-        Tue, 27 Jun 2023 17:35:13 +0000
-Date:   Wed, 28 Jun 2023 01:34:57 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Mingzhe Zou <mingzhe.zou@easystack.cn>, colyli@suse.de,
-        linux-bcache@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, bcache@lists.ewheeler.net,
-        zoumingzhe@qq.com
-Subject: Re: [PATCH] Separate bch_moving_gc() from bch_btree_gc()
-Message-ID: <202306280137.Dirtk7fY-lkp@intel.com>
-References: <20230627092122.197-1-mingzhe.zou@easystack.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230627092122.197-1-mingzhe.zou@easystack.cn>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
+        Wed, 28 Jun 2023 05:30:22 -0400
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m3174.qiye.163.com (Hmail) with ESMTPA id EB8064022E;
+        Wed, 28 Jun 2023 13:52:38 +0800 (CST)
+From:   Mingzhe Zou <mingzhe.zou@easystack.cn>
+To:     colyli@suse.de, linux-bcache@vger.kernel.org
+Cc:     bcache@lists.ewheeler.net, zoumingzhe@qq.com
+Subject: [PATCH v2] Separate bch_moving_gc() from bch_btree_gc()
+Date:   Wed, 28 Jun 2023 13:52:35 +0800
+Message-Id: <20230628055235.255-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSk8YVktDHR9PTUNPGRoeQ1UZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
+X-HM-Tid: 0a89008f9cbd00aekurmeb8064022e
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PiI6PTo5CjE#CCE9KRkuCRJK
+        GjcKCk1VSlVKTUNMQkhKTk5CTk1LVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTk9JTDcG
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Mingzhe,
+From: Mingzhe Zou <zoumingzhe@qq.com>
 
-kernel test robot noticed the following build errors:
+Moving gc uses cache->heap to defragment disk. Unlike btree gc,
+moving gc only takes up part of the disk bandwidth.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.4 next-20230627]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The number of heap is constant. However, the buckets released by
+each moving gc is limited. So bch_moving_gc() needs to be called
+multiple times.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mingzhe-Zou/Separate-bch_moving_gc-from-bch_btree_gc/20230627-172221
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20230627092122.197-1-mingzhe.zou%40easystack.cn
-patch subject: [PATCH] Separate bch_moving_gc() from bch_btree_gc()
-config: arc-randconfig-r043-20230627 (https://download.01.org/0day-ci/archive/20230628/202306280137.Dirtk7fY-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 12.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20230628/202306280137.Dirtk7fY-lkp@intel.com/reproduce)
+If bch_gc_thread() always calls bch_btree_gc(), it will block
+the IO request.This patch allows bch_gc_thread() to only call
+bch_moving_gc() when there are many fragments.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306280137.Dirtk7fY-lkp@intel.com/
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/bcache.h   |  4 ++-
+ drivers/md/bcache/btree.c    | 66 ++++++++++++++++++++++++++++++++++--
+ drivers/md/bcache/movinggc.c |  2 ++
+ 3 files changed, 68 insertions(+), 4 deletions(-)
 
-All errors (new ones prefixed by >>):
-
-   drivers/md/bcache/btree.c: In function 'moving_gc_should_run':
->> drivers/md/bcache/btree.c:1839:34: error: 'bch_cutoff_writeback_sync' undeclared (first use in this function)
-    1839 |         if (c->gc_stats.in_use > bch_cutoff_writeback_sync)
-         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/md/bcache/btree.c:1839:34: note: each undeclared identifier is reported only once for each function it appears in
-   In file included from drivers/md/bcache/btree.c:24:
->> drivers/md/bcache/btree.c:1843:25: error: 'b' undeclared (first use in this function)
-    1843 |         for_each_bucket(b, ca) {
-         |                         ^
-   drivers/md/bcache/bcache.h:890:14: note: in definition of macro 'for_each_bucket'
-     890 |         for (b = (ca)->buckets + (ca)->sb.first_bucket;                 \
-         |              ^
->> drivers/md/bcache/btree.c:1862:85: error: expected ';' before 'if'
-    1862 |         frag_percent = div_u64(frag_sectors * 100, ca->sb.bucket_size * c->nbuckets)
-         |                                                                                     ^
-         |                                                                                     ;
-    1863 | 
-    1864 |         if (move_buckets > ca->heap.size)
-         |         ~~                                                                           
-
-
-vim +/bch_cutoff_writeback_sync +1839 drivers/md/bcache/btree.c
-
-  1831	
-  1832	static bool moving_gc_should_run(struct cache_set *c)
-  1833	{
-  1834		struct cache *ca = c->cache;
-  1835		size_t moving_gc_threshold = ca->sb.bucket_size >> 2, frag_percent;
-  1836		unsigned long used_buckets = 0, frag_buckets = 0, move_buckets = 0;
-  1837		unsigned long dirty_sectors = 0, frag_sectors, used_sectors;
-  1838	
-> 1839		if (c->gc_stats.in_use > bch_cutoff_writeback_sync)
-  1840			return true;
-  1841	
-  1842		mutex_lock(&c->bucket_lock);
-> 1843		for_each_bucket(b, ca) {
-  1844			if (GC_MARK(b) != GC_MARK_DIRTY)
-  1845				continue;
-  1846	
-  1847			used_buckets++;
-  1848	
-  1849			used_sectors = GC_SECTORS_USED(b);
-  1850			dirty_sectors += used_sectors;
-  1851	
-  1852			if (used_sectors < ca->sb.bucket_size)
-  1853				frag_buckets++;
-  1854	
-  1855			if (used_sectors <= moving_gc_threshold)
-  1856				move_buckets++;
-  1857		}
-  1858		mutex_unlock(&c->bucket_lock);
-  1859	
-  1860		c->fragment_nbuckets = frag_buckets;
-  1861		frag_sectors = used_buckets * ca->sb.bucket_size - dirty_sectors;
-> 1862		frag_percent = div_u64(frag_sectors * 100, ca->sb.bucket_size * c->nbuckets)
-  1863	
-  1864		if (move_buckets > ca->heap.size)
-  1865			return true;
-  1866	
-  1867		if (frag_percent >= COPY_GC_PERCENT)
-  1868			return true;
-  1869	
-  1870		return false;
-  1871	}
-  1872	
-
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 5a79bb3c272f..155deff0ce05 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -461,7 +461,8 @@ struct cache {
+ 	 * until a gc finishes - otherwise we could pointlessly burn a ton of
+ 	 * cpu
+ 	 */
+-	unsigned int		invalidate_needs_gc;
++	unsigned int		invalidate_needs_gc:1;
++	unsigned int		only_moving_gc:1;
+ 
+ 	bool			discard; /* Get rid of? */
+ 
+@@ -629,6 +630,7 @@ struct cache_set {
+ 	struct gc_stat		gc_stats;
+ 	size_t			nbuckets;
+ 	size_t			avail_nbuckets;
++	size_t			fragment_nbuckets;
+ 
+ 	struct task_struct	*gc_thread;
+ 	/* Where in the btree gc currently is */
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 68b9d7ca864e..6698a4480e05 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -88,6 +88,7 @@
+  * Test module load/unload
+  */
+ 
++#define COPY_GC_PERCENT		5
+ #define MAX_NEED_GC		64
+ #define MAX_SAVE_PRIO		72
+ #define MAX_GC_TIMES		100
+@@ -1705,6 +1706,7 @@ static void btree_gc_start(struct cache_set *c)
+ 
+ 	mutex_lock(&c->bucket_lock);
+ 
++	set_gc_sectors(c);
+ 	c->gc_mark_valid = 0;
+ 	c->gc_done = ZERO_KEY;
+ 
+@@ -1825,8 +1827,51 @@ static void bch_btree_gc(struct cache_set *c)
+ 	memcpy(&c->gc_stats, &stats, sizeof(struct gc_stat));
+ 
+ 	trace_bcache_gc_end(c);
++}
++
++extern unsigned int bch_cutoff_writeback;
++extern unsigned int bch_cutoff_writeback_sync;
++
++static bool moving_gc_should_run(struct cache_set *c)
++{
++	struct bucket *b;
++	struct cache *ca = c->cache;
++	size_t moving_gc_threshold = ca->sb.bucket_size >> 2, frag_percent;
++	unsigned long used_buckets = 0, frag_buckets = 0, move_buckets = 0;
++	unsigned long dirty_sectors = 0, frag_sectors, used_sectors;
++
++	if (c->gc_stats.in_use > bch_cutoff_writeback_sync)
++		return true;
++
++	mutex_lock(&c->bucket_lock);
++	for_each_bucket(b, ca) {
++		if (GC_MARK(b) != GC_MARK_DIRTY)
++			continue;
++
++		used_buckets++;
++
++		used_sectors = GC_SECTORS_USED(b);
++		dirty_sectors += used_sectors;
++
++		if (used_sectors < ca->sb.bucket_size)
++			frag_buckets++;
+ 
+-	bch_moving_gc(c);
++		if (used_sectors <= moving_gc_threshold)
++			move_buckets++;
++	}
++	mutex_unlock(&c->bucket_lock);
++
++	c->fragment_nbuckets = frag_buckets;
++	frag_sectors = used_buckets * ca->sb.bucket_size - dirty_sectors;
++	frag_percent = div_u64(frag_sectors * 100, ca->sb.bucket_size * c->nbuckets);
++
++	if (move_buckets > ca->heap.size)
++		return true;
++
++	if (frag_percent >= COPY_GC_PERCENT)
++		return true;
++
++	return false;
+ }
+ 
+ static bool gc_should_run(struct cache_set *c)
+@@ -1839,6 +1884,19 @@ static bool gc_should_run(struct cache_set *c)
+ 	if (atomic_read(&c->sectors_to_gc) < 0)
+ 		return true;
+ 
++	/*
++	 * Moving gc uses cache->heap to defragment disk. Unlike btree gc,
++	 * moving gc only takes up part of the disk bandwidth.
++	 * The number of heap is constant. However, the buckets released by
++	 * each moving gc is limited. So bch_moving_gc() needs to be called
++	 * multiple times. If bch_gc_thread() always calls bch_btree_gc(),
++	 * it will block the IO request.
++	 */
++	if (c->copy_gc_enabled && moving_gc_should_run(c)) {
++		ca->only_moving_gc = 1;
++		return true;
++	}
++
+ 	return false;
+ }
+ 
+@@ -1856,8 +1914,10 @@ static int bch_gc_thread(void *arg)
+ 		    test_bit(CACHE_SET_IO_DISABLE, &c->flags))
+ 			break;
+ 
+-		set_gc_sectors(c);
+-		bch_btree_gc(c);
++		if (!c->cache->only_moving_gc)
++			bch_btree_gc(c);
++
++		bch_moving_gc(c);
+ 	}
+ 
+ 	wait_for_kthread_stop();
+diff --git a/drivers/md/bcache/movinggc.c b/drivers/md/bcache/movinggc.c
+index 9f32901fdad1..04da088cefe8 100644
+--- a/drivers/md/bcache/movinggc.c
++++ b/drivers/md/bcache/movinggc.c
+@@ -200,6 +200,8 @@ void bch_moving_gc(struct cache_set *c)
+ 	struct bucket *b;
+ 	unsigned long sectors_to_move, reserve_sectors;
+ 
++	c->cache->only_moving_gc = 0;
++
+ 	if (!c->copy_gc_enabled)
+ 		return;
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.17.1.windows.2
+
