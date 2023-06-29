@@ -2,344 +2,166 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 595DB741F47
-	for <lists+linux-bcache@lfdr.de>; Thu, 29 Jun 2023 06:34:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D2C4742065
+	for <lists+linux-bcache@lfdr.de>; Thu, 29 Jun 2023 08:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231453AbjF2EeR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 29 Jun 2023 00:34:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50330 "EHLO
+        id S231303AbjF2GbO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 29 Jun 2023 02:31:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231422AbjF2EeI (ORCPT
+        with ESMTP id S230353AbjF2GbN (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 29 Jun 2023 00:34:08 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4045213D
-        for <linux-bcache@vger.kernel.org>; Wed, 28 Jun 2023 21:34:06 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id DFFAE1F74A;
-        Thu, 29 Jun 2023 04:34:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1688013244; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/t7ivZPC7L5goC7zhx29jo4sw5Yar52UdrAAQe+f1xA=;
-        b=jHY9MA39tClOgGmV21JX3zUpbgsYSR3rvpA7EFYc1feZG3YKkVFeYi75k+yz6YfoYwgCSj
-        4NI0mLb9z7h6DGEnxZPLQmQ3Bev83diW6zMrUPBYgWiyHEv8w8xIu0stuO0ptB5W7wn21k
-        B14yGarWF9zPiwKyoZu0vSqWiFsRi8s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1688013244;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/t7ivZPC7L5goC7zhx29jo4sw5Yar52UdrAAQe+f1xA=;
-        b=ITgtBJEPXpnpdYrkvcCqBbzHX787JFTEYdW+c6NtY5+fCzZyvC/buE6vspSF616qhmz30x
-        QzcaUXxWmvWqG0DA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5201C1348C;
-        Thu, 29 Jun 2023 04:34:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id IQ+mCLwJnWQVdQAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 29 Jun 2023 04:34:04 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.600.7\))
-Subject: Re: bcache: Possible deadlock between write_dirty_finish and
- bch_data_insert_keys
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <cc68eb14-6926-562d-951b-36f1aacb72da@ewheeler.net>
-Date:   Thu, 29 Jun 2023 12:33:51 +0800
-Cc:     Bcache Linux <linux-bcache@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A84B2587-6FEF-4B47-AE52-40EA06DE8AC1@suse.de>
-References: <83ac53d0-9ad6-9043-a1ba-7ddaa2a92bc0@ewheeler.net>
- <DC0AB1EF-5911-4B1D-940C-D91DC22EE650@suse.de>
- <11494BB4-8FCD-4193-9310-296E4025ED44@suse.de>
- <3e38f9ce-574d-688e-8981-b9474737d6a7@ewheeler.net>
- <cc68eb14-6926-562d-951b-36f1aacb72da@ewheeler.net>
+        Thu, 29 Jun 2023 02:31:13 -0400
+Received: from mail-m3179.qiye.163.com (mail-m3179.qiye.163.com [103.74.31.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2183A102
+        for <linux-bcache@vger.kernel.org>; Wed, 28 Jun 2023 23:31:10 -0700 (PDT)
+Received: from easystack.cn (unknown [127.0.0.1])
+        by mail-m3179.qiye.163.com (Hmail) with ESMTP id EBEB37801DA;
+        Thu, 29 Jun 2023 14:30:57 +0800 (CST)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <ABwAJgA-JJcaO5i7GWFIgKok.3.1688020257957.Hmail.mingzhe.zou@easystack.cn>
 To:     Eric Wheeler <bcache@lists.ewheeler.net>
-X-Mailer: Apple Mail (2.3731.600.7)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Cc:     colyli@suse.de, linux-bcache@vger.kernel.org, zoumingzhe@qq.com
+Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSCB2Ml0gU2VwYXJhdGUgYmNoX21vdmluZ19nYygpIGZyb20gYmNoX2J0cmVlX2djKCk=?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2015-163.com
+X-Originating-IP: 218.94.118.90
+In-Reply-To: <4dac5ba5-fac3-3383-45ed-ca8c24a033b0@ewheeler.net>
+References: <4dac5ba5-fac3-3383-45ed-ca8c24a033b0@ewheeler.net>
+MIME-Version: 1.0
+Received: from mingzhe.zou@easystack.cn( [218.94.118.90) ] by ajax-webmail ( [127.0.0.1] ) ; Thu, 29 Jun 2023 14:30:57 +0800 (GMT+08:00)
+From:   =?UTF-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>
+Date:   Thu, 29 Jun 2023 14:30:57 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTkseVh9KTBhKSE5NS0xJGVUZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
+X-HM-Tid: 0a8905c1951300b3kurm188dcdf702e
+X-HM-MType: 1
+X-HM-NTES-SC: AL0_4z5B86Wr4Tz9jdMF+bhXMV0DBsZGvN9IjLbwwNC/7OljLpuv4boOMwoFIj
+        1eYTmzRdJEw3t2ZnYd4ih3pj0QTMFJSGOg8Oi3OmV2FJ4153g1UnQVtiJ2LMEtDei7/EsnbUKA4C
+        R4coHqLjRcBhBwGg6/sk78zSlTZRq9wiCbTCA=
+X-HM-Sender-Digest: e1kJHlYWEh9ZQUpOTktOTk1MTk9KSzdXWQweGVlBDwkOHldZEh8eFQ9Z
+        QVlHOjkMOjEcOlYxMRgaNE4STDwsPTIcMBQQVUhVSk1DQ0tJS0lOQ09NSFUzFhoSF1UWEhUcARMe
+        VQEUDjseGggCCA8aGBBVGBVFWVdZEgtZQVlJSkNVQk9VSkpDVUJLWVdZCAFZQUpLQk1CN1dZFAsP
+        EhQVCFlBSzcG
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        MSGID_FROM_MTA_HEADER,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-
-
-> 2023=E5=B9=B46=E6=9C=8829=E6=97=A5 08:46=EF=BC=8CEric Wheeler =
-<bcache@lists.ewheeler.net> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Wed, 28 Jun 2023, Eric Wheeler wrote:
->> On Tue, 27 Jun 2023, Coly Li wrote:
->>>> 2023=E5=B9=B46=E6=9C=8827=E6=97=A5 20:54=EF=BC=8CColy Li =
-<colyli@suse.de> =E5=86=99=E9=81=93=EF=BC=9A
->>>>> 2023=E5=B9=B46=E6=9C=8827=E6=97=A5 11:19=EF=BC=8CEric Wheeler =
-<bcache@lists.ewheeler.net> =E5=86=99=E9=81=93=EF=BC=9A
->>>>> We have a system running a 5.15 kernel with the following errors =
-in dmesg=20
->>>>> displaying repeatedly.  Ultimately the system crashed so I'll =
-reset=20
->>>>> it---but I was able to get some good information out of it before =
-it died=20
->>>>> so maybe we can pin it down. This happened under high CPU and disk =
-load:
->>>>>=20
->>>>> [Jun26 19:24] BUG: workqueue lockup - pool cpus=3D0 node=3D0 =
-flags=3D0x0 nice=3D0 stuck for 1382s!
->>>>> [  +0.001211] BUG: workqueue lockup - pool cpus=3D0 node=3D0 =
-flags=3D0x0 nice=3D-20 stuck for 1381s!
->>>>> [  +0.001117] Showing busy workqueues and worker pools:
->>>>> [  +0.001081] workqueue events: flags=3D0x0
->>>>> [  +0.000007]   pwq 0: cpus=3D0 node=3D0 flags=3D0x0 nice=3D0 =
-active=3D9/256 refcnt=3D10
->>>>> [  +0.000005]     pending: vmstat_shepherd, kfree_rcu_monitor, =
-drm_fb_helper_damage_work [drm_kms_helper], kfree_rcu_monitor, =
-mlx5_timestamp_overflow [mlx5_core], mlx5_timestamp_overflow =
-[mlx5_core], kfree_rcu_monitor, mlx5e_tx_dim_work [mlx5_core], =
-mlx5e_rx_dim_work [mlx5_core]
->>>>> [  +0.000301] workqueue events_highpri: flags=3D0x10
->>>>> [  +0.000002]   pwq 59: cpus=3D29 node=3D6 flags=3D0x0 nice=3D-20 =
-active=3D1/256 refcnt=3D2
->>>>> [  +0.000004]     pending: mix_interrupt_randomness
->>>>> [  +0.000006]   pwq 29: cpus=3D14 node=3D7 flags=3D0x0 nice=3D-20 =
-active=3D1/256 refcnt=3D2
->>>>> [  +0.000003]     pending: mix_interrupt_randomness
->>>>> [  +0.000005]   pwq 1: cpus=3D0 node=3D0 flags=3D0x0 nice=3D-20 =
-active=3D1/256 refcnt=3D2
->>>>> [  +0.000002]     pending: mix_interrupt_randomness
->>>>> [  +0.000007] workqueue events_long: flags=3D0x0
->>>>> [  +0.000003]   pwq 0: cpus=3D0 node=3D0 flags=3D0x0 nice=3D0 =
-active=3D1/256 refcnt=3D2
->>>>> [  +0.000002]     pending: br_fdb_cleanup
->>>>> [  +0.000014] workqueue events_power_efficient: flags=3D0x80
->>>>> [  +0.000004]   pwq 0: cpus=3D0 node=3D0 flags=3D0x0 nice=3D0 =
-active=3D1/256 refcnt=3D2
->>>>> [  +0.000002]     pending: fb_flashcursor
->>>>> [  +0.000008] workqueue events_freezable_power_: flags=3D0x84
->>>>> [  +0.000003]   pwq 8: cpus=3D4 node=3D2 flags=3D0x0 nice=3D0 =
-active=3D1/256 refcnt=3D2
->>>>> [  +0.000002]     pending: disk_events_workfn
->>>>> [  +0.000019] workqueue mm_percpu_wq: flags=3D0x8
->>>>> [  +0.000004]   pwq 0: cpus=3D0 node=3D0 flags=3D0x0 nice=3D0 =
-active=3D1/256 refcnt=3D3
->>>>> [  +0.000002]     pending: lru_add_drain_per_cpu BAR(212)
->>>>> [  +0.000036] workqueue kblockd: flags=3D0x18
->>>>> [  +0.000005]   pwq 9: cpus=3D4 node=3D2 flags=3D0x0 nice=3D-20 =
-active=3D1/256 refcnt=3D2
->>>>> [  +0.000003]     pending: blk_mq_timeout_work
->>>>> [  +0.000005]   pwq 1: cpus=3D0 node=3D0 flags=3D0x0 nice=3D-20 =
-active=3D3/256 refcnt=3D4
->>>>> [  +0.000003]     pending: blk_mq_timeout_work, =
-blk_mq_run_work_fn, blk_mq_run_work_fn
->>>>> [  +0.000044] workqueue bch_btree_io: flags=3D0x8
->>>>> [  +0.000001]   pwq 62: cpus=3D31 node=3D7 flags=3D0x0 nice=3D0 =
-active=3D1/256 refcnt=3D2
->>>>> [  +0.000004]     in-flight: 3331:btree_node_write_work
->>>>> [  +0.000006]   pwq 38: cpus=3D19 node=3D1 flags=3D0x0 nice=3D0 =
-active=3D1/256 refcnt=3D2
->>>>> [  +0.000003]     in-flight: 4829:btree_node_write_work
->>>>> [  +0.000005]   pwq 0: cpus=3D0 node=3D0 flags=3D0x0 nice=3D0 =
-active=3D7/256 refcnt=3D8
->>>>> [  +0.000002]     pending: btree_node_write_work, =
-btree_node_write_work, btree_node_write_work, btree_node_write_work, =
-btree_node_write_work, btree_node_write_work, btree_node_write_work
->>>>> [  +0.000011] workqueue bcache: flags=3D0x8
->>>>> [  +0.000002]   pwq 6: cpus=3D3 node=3D1 flags=3D0x0 nice=3D0 =
-active=3D1/256 refcnt=3D2
->>>>> [  +0.000003]     in-flight: 6295:bch_data_insert_keys
->>>>> [  +0.000073] workqueue bcache_writeback_wq: flags=3D0x8
->>>>> [  +0.000002]   pwq 62: cpus=3D31 node=3D7 flags=3D0x0 nice=3D0 =
-active=3D64/256 refcnt=3D65
->>>>> [  +0.000002]     in-flight: 10178:write_dirty_finish, =
-10067:write_dirty_finish, 3302:write_dirty_finish, =
-10184:write_dirty_finish, 10181:write_dirty_finish, =
-10066:write_dirty_finish, 10105:write_dirty_finish, =
-10195:write_dirty_finish, 980:write_dirty_finish, =
-10141:write_dirty_finish, 10139:write_dirty_finish, =
-10098:write_dirty_finish, 10008:write_dirty_finish, =
-10180:write_dirty_finish, 20178:write_dirty_finish, =
-3252:write_dirty_finish, 10007:write_dirty_finish, =
-10279:write_dirty_finish, 10142:write_dirty_finish, =
-10223:write_dirty_finish, 10097:write_dirty_finish, =
-7311:write_dirty_finish, 10234:write_dirty_finish, =
-10196:write_dirty_finish, 10280:write_dirty_finish, =
-10063:write_dirty_finish, 10064:write_dirty_finish, =
-10188:write_dirty_finish, 10043:write_dirty_finish, =
-10101:write_dirty_finish, 10185:write_dirty_finish, =
-10103:write_dirty_finish, 10102:write_dirty_finish, =
-10224:write_dirty_finish, 10186:write_dirty_finish, =
-10114:write_dirty_finish, 10011:write_dirty_finish
->>>>> [  +0.000083] , 3253:write_dirty_finish, 10112:write_dirty_finish, =
-10187:write_dirty_finish, 10009:write_dirty_finish, =
-10138:write_dirty_finish, 10104:write_dirty_finish, =
-10140:write_dirty_finish, 10065:write_dirty_finish, =
-10193:write_dirty_finish, 10095:write_dirty_finish, =
-10041:write_dirty_finish, 10010:write_dirty_finish, =
-10115:write_dirty_finish, 10094:write_dirty_finish, =
-10113:write_dirty_finish, 10194:write_dirty_finish, =
-10177:write_dirty_finish, 10042:write_dirty_finish, =
-10226:write_dirty_finish, 10179:write_dirty_finish, =
-10096:write_dirty_finish, 10192:write_dirty_finish, =
-10222:write_dirty_finish, 10045:write_dirty_finish, =
-10116:write_dirty_finish, 10044:write_dirty_finish, =
-10225:write_dirty_finish
->>>>> [  +0.000133] workqueue kcopyd: flags=3D0x8
->>>>> [  +0.000004]   pwq 2: cpus=3D1 node=3D0 flags=3D0x0 nice=3D0 =
-active=3D2/256 refcnt=3D3
->>>>> [  +0.000003]     in-flight: 3424:do_work [dm_mod] do_work =
-[dm_mod]
->>>>> [  +0.000520] pool 2: cpus=3D1 node=3D0 flags=3D0x0 nice=3D0 =
-hung=3D14s workers=3D3 idle: 21748 21749
->>>>> [  +0.000006] pool 6: cpus=3D3 node=3D1 flags=3D0x0 nice=3D0 =
-hung=3D43s workers=3D3 idle: 11428 25181
->>>>> [  +0.000006] pool 38: cpus=3D19 node=3D1 flags=3D0x0 nice=3D0 =
-hung=3D34s workers=3D3 idle: 22403 25014
->>>>> [  +0.000006] pool 62: cpus=3D31 node=3D7 flags=3D0x0 nice=3D0 =
-hung=3D2s workers=3D68 idle: 10281 23228 10286
->>>>>=20
->>>>> Clearly there are many write_dirty_finish() calls stuck, here are =
-some=20
->>>>> traces:
->>>>>=20
->>>>> I did `cat /proc/<pid>/stack` for each bcache workqueue PID and =
-these
->>>>> are the unique stacks:
->>>>>=20
->>>>> dmesg | grep in-flight | \
->>>>> perl -lne 'while(/(\d+):((write_dirty|bch|btree)\S+)/g) { print =
-"$1 $2" }' | \
->>>>> sort -u | \
->>>>> while read a b; do echo =3D=3D=3D $a $b ; cat /proc/$a/stack; done
->>>>>=20
->>>>> Which prints lots of these:
->>>>>=20
->>>>> =3D=3D=3D 3253: write_dirty_finish=20
->>>>> [<0>] rwsem_down_write_slowpath+0x27b/0x4bd
->>>>> [<0>] bch_btree_node_get.part.0+0x7e/0x2d7  <<<, _probably_ called =
-with write=3Dtrue
->>>>> [<0>] bch_btree_map_nodes_recurse+0xed/0x1a7   | since this is an =
-insert
->>>>> [<0>] __bch_btree_map_nodes+0x17c/0x1c4
->>>>> [<0>] bch_btree_insert+0x102/0x188     <<<<< race?
->>>>> [<0>] write_dirty_finish+0x122/0x1d3   <<<<< entry
->>>>> [<0>] process_one_work+0x1f1/0x3c6
->>>>> [<0>] worker_thread+0x53/0x3e4
->>>>> [<0>] kthread+0x127/0x144
->>>>> [<0>] ret_from_fork+0x22/0x2d
->>>>>=20
->>>>> and one of these:
->>>>> =3D=3D=3D 6295 bch_data_insert_keys
->>>>> [<0>] bch_btree_insert_node+0x6b/0x287
->>>>> [<0>] btree_insert_fn+0x20/0x48       =20
->>>>> [<0>] bch_btree_map_nodes_recurse+0x111/0x1a7
->>>>> [<0>] __bch_btree_map_nodes+0x17c/0x1c4
->>>>> [<0>] bch_btree_insert+0x102/0x188     <<<<< race?
->>>>> [<0>] bch_data_insert_keys+0x30/0xba   <<<<< entry
->>>>> [<0>] process_one_work+0x1f1/0x3c6
->>>>> [<0>] worker_thread+0x53/0x3e4
->>>>> [<0>] kthread+0x127/0x144
->>>>> [<0>] ret_from_fork+0x22/0x2d
->>>>>=20
->>>>> Note that above, both threads (workqueues) are similar until they =
-call
->>>>> bch_btree_map_nodes_recurse(), then they diverge where one is =
-doing
->>>>> bch_btree_insert_node(), which holds b->write_lock:
->>>>>=20
->>>>> bch_btree_insert_node
->>>>> =
-https://elixir.bootlin.com/linux/latest/source/drivers/md/bcache/btree.c#L=
-2322
->>>>>=20
->>>>> and the other is trying bch_btree_node_get().  While I don't have =
-debug
->>>>> data about the arguments, I am guessing that bch_btree_node_get is
->>>>> called with `write=3Dtrue` since the caller is bch_btree_insert:
->>>>>=20
->>>>> /* bch_btree_node_get - find a btree node in the cache and lock =
-it, reading it
->>>>> * in from disk if necessary. */
->>>>> =
-https://elixir.bootlin.com/linux/v6.4/source/drivers/md/bcache/btree.c#L96=
-9
->>>>>=20
->>>>> The call to bch_btree_node_get() does quite a bit of =
-rw_lock/rw_unlock/mutex work.
->>>>>=20
->>>>> There are also two of the traces below which are waiting on a =
-down():
->>>>> =
-https://elixir.bootlin.com/linux/latest/source/drivers/md/bcache/btree.c#L=
-420
->>>>>=20
->>>>> These could be relevant since __bch_btree_node_write() does call=20=
-
->>>>> `lockdep_assert_held(&b->write_lock)` and b->write_lock is held =
-above by=20
->>>>> bch_btree_insert_node:
->>>>>=20
->>>>> =3D=3D=3D 3331 btree_node_write_work
->>>>> [<0>] down+0x43/0x54
->>>>> [<0>] __bch_btree_node_write+0xa3/0x220
->>>>> [<0>] btree_node_write_work+0x43/0x4f
->>>>> [<0>] process_one_work+0x1f1/0x3c6
->>>>> [<0>] worker_thread+0x53/0x3e4
->>>>> [<0>] kthread+0x127/0x144
->>>>> [<0>] ret_from_fork+0x22/0x2d
->>>>>=20
->>>>> =3D=3D=3D 4829 btree_node_write_work
->>>>> [<0>] down+0x43/0x54
->>>>> [<0>] __bch_btree_node_write+0xa3/0x220
->>>>> [<0>] btree_node_write_work+0x43/0x4f
->>>>> [<0>] process_one_work+0x1f1/0x3c6
->>>>> [<0>] worker_thread+0x53/0x3e4
->>>>> [<0>] kthread+0x127/0x144
->>>>> [<0>] ret_from_fork+0x22/0x2d
->>>>>=20
->>>>> Thanks for your help!
->>>>=20
->>>> When does this lockup happen? Is it in initialization or bootup =
-time ?
->>=20
->> After its been running for a few days and always under heavy CPU and =
-disk=20
->> IO.
->>=20
->> I'll check the patches below and see if we are missing any. =20
->=20
->=20
-> These were missing, so I'm cherry-picking and rebuilding:
->=20
->    bcache: fixup btree_cache_wait list damage
->    bcache: remove unnecessary flush_workqueue
->    bcache: avoid unnecessary soft lockup in kworker =
-update_writeback_rate()
->    bcache: fixup bcache_dev_sectors_dirty_add() multithreaded CPU =
-false sharing
->    bcache: fix NULL pointer reference in cached_dev_detach_finish
->    bcache: move calc_cached_dev_sectors to proper place on backing =
-device detach
->=20
-> This one fails to build, unsafe_memcpy is missing, but I don't think =
-we=20
-> need it:
->    bcache: Silence memcpy() run-time false positive warnings
->=20
-
-Yes the above patch can be ignored.
-
-Coly Li
-
+RnJvbTogRXJpYyBXaGVlbGVyIDxiY2FjaGVAbGlzdHMuZXdoZWVsZXIubmV0PgpEYXRlOiAyMDIz
+LTA2LTI5IDA3OjM3OjU3ClRvOiAgTWluZ3poZSBab3UgPG1pbmd6aGUuem91QGVhc3lzdGFjay5j
+bj4KQ2M6ICBjb2x5bGlAc3VzZS5kZSxsaW51eC1iY2FjaGVAdmdlci5rZXJuZWwub3JnLHpvdW1p
+bmd6aGVAcXEuY29tClN1YmplY3Q6IFJlOiBbUEFUQ0ggdjJdIFNlcGFyYXRlIGJjaF9tb3Zpbmdf
+Z2MoKSBmcm9tIGJjaF9idHJlZV9nYygpPk9uIFdlZCwgMjggSnVuIDIwMjMsIE1pbmd6aGUgWm91
+IHdyb3RlOgo+Cj4+IEZyb206IE1pbmd6aGUgWm91IDx6b3VtaW5nemhlQHFxLmNvbT4KPj4gCj4+
+IE1vdmluZyBnYyB1c2VzIGNhY2hlLT5oZWFwIHRvIGRlZnJhZ21lbnQgZGlzay4gVW5saWtlIGJ0
+cmVlIGdjLAo+PiBtb3ZpbmcgZ2Mgb25seSB0YWtlcyB1cCBwYXJ0IG9mIHRoZSBkaXNrIGJhbmR3
+aWR0aC4KPj4gCj4+IFRoZSBudW1iZXIgb2YgaGVhcCBpcyBjb25zdGFudC4gSG93ZXZlciwgdGhl
+IGJ1Y2tldHMgcmVsZWFzZWQgYnkKPj4gZWFjaCBtb3ZpbmcgZ2MgaXMgbGltaXRlZC4gU28gYmNo
+X21vdmluZ19nYygpIG5lZWRzIHRvIGJlIGNhbGxlZAo+PiBtdWx0aXBsZSB0aW1lcy4KPj4gCj4+
+IElmIGJjaF9nY190aHJlYWQoKSBhbHdheXMgY2FsbHMgYmNoX2J0cmVlX2djKCksIGl0IHdpbGwg
+YmxvY2sKPj4gdGhlIElPIHJlcXVlc3QuVGhpcyBwYXRjaCBhbGxvd3MgYmNoX2djX3RocmVhZCgp
+IHRvIG9ubHkgY2FsbAo+PiBiY2hfbW92aW5nX2djKCkgd2hlbiB0aGVyZSBhcmUgbWFueSBmcmFn
+bWVudHMuCj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBNaW5nemhlIFpvdSA8bWluZ3poZS56b3VAZWFz
+eXN0YWNrLmNuPgo+Cj4KPkhpIE1pbmd6aGUsCj4KPkNvdWxkIHRoaXMgYmUgdXNlZCB0byBmcmVl
+IGJ1Y2tldHMgZG93biB0byBhIG1pbmltdW0gYnVja2V0IGNvdW50PwpIaSBFcmljLAoKSSBhbSB0
+cnlpbmcgdG8gc29sdmUgdGhlIGZyYWdtZW50YXRpb24gcHJvYmxlbSBieSBtb3ZpbmcgZ2MsIHdo
+aWNoIHJlbGVhc2VzCnNvbWUgYnVja2V0cy4gSXQgbWF5YmUgYSBtaW5pbXVtIGJ1Y2tldCBjb3Vu
+dC4gSG93ZXZlciwgaWYgdGhlIG51bWJlciBvZgpidWNrZXRzIGNhbiBzdGlsbCBzdXBwb3J0IHRo
+ZSBjb250aW51ZWQgd29yayBpbiB3cml0ZWJhY2sgbW9kZSwgbW92aW5nIGdjCm1heSBub3Qgd29y
+ay4gCj4KPlNlZSBtb3JlIGJlbG93Ogo+Cj4KPgo+PiAtLS0KPj4gIGRyaXZlcnMvbWQvYmNhY2hl
+L2JjYWNoZS5oICAgfCAgNCArKy0KPj4gIGRyaXZlcnMvbWQvYmNhY2hlL2J0cmVlLmMgICAgfCA2
+NiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0KPj4gIGRyaXZlcnMvbWQvYmNh
+Y2hlL21vdmluZ2djLmMgfCAgMiArKwo+PiAgMyBmaWxlcyBjaGFuZ2VkLCA2OCBpbnNlcnRpb25z
+KCspLCA0IGRlbGV0aW9ucygtKQo+PiAKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWQvYmNhY2hl
+L2JjYWNoZS5oIGIvZHJpdmVycy9tZC9iY2FjaGUvYmNhY2hlLmgKPj4gaW5kZXggNWE3OWJiM2My
+NzJmLi4xNTVkZWZmMGNlMDUgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvbWQvYmNhY2hlL2JjYWNo
+ZS5oCj4+ICsrKyBiL2RyaXZlcnMvbWQvYmNhY2hlL2JjYWNoZS5oCj4+IEBAIC00NjEsNyArNDYx
+LDggQEAgc3RydWN0IGNhY2hlIHsKPj4gIAkgKiB1bnRpbCBhIGdjIGZpbmlzaGVzIC0gb3RoZXJ3
+aXNlIHdlIGNvdWxkIHBvaW50bGVzc2x5IGJ1cm4gYSB0b24gb2YKPj4gIAkgKiBjcHUKPj4gIAkg
+Ki8KPj4gLQl1bnNpZ25lZCBpbnQJCWludmFsaWRhdGVfbmVlZHNfZ2M7Cj4+ICsJdW5zaWduZWQg
+aW50CQlpbnZhbGlkYXRlX25lZWRzX2djOjE7Cj4+ICsJdW5zaWduZWQgaW50CQlvbmx5X21vdmlu
+Z19nYzoxOwo+PiAgCj4+ICAJYm9vbAkJCWRpc2NhcmQ7IC8qIEdldCByaWQgb2Y/ICovCj4+ICAK
+Pj4gQEAgLTYyOSw2ICs2MzAsNyBAQCBzdHJ1Y3QgY2FjaGVfc2V0IHsKPj4gIAlzdHJ1Y3QgZ2Nf
+c3RhdAkJZ2Nfc3RhdHM7Cj4+ICAJc2l6ZV90CQkJbmJ1Y2tldHM7Cj4+ICAJc2l6ZV90CQkJYXZh
+aWxfbmJ1Y2tldHM7Cj4+ICsJc2l6ZV90CQkJZnJhZ21lbnRfbmJ1Y2tldHM7Cj4+ICAKPj4gIAlz
+dHJ1Y3QgdGFza19zdHJ1Y3QJKmdjX3RocmVhZDsKPj4gIAkvKiBXaGVyZSBpbiB0aGUgYnRyZWUg
+Z2MgY3VycmVudGx5IGlzICovCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21kL2JjYWNoZS9idHJl
+ZS5jIGIvZHJpdmVycy9tZC9iY2FjaGUvYnRyZWUuYwo+PiBpbmRleCA2OGI5ZDdjYTg2NGUuLjY2
+OThhNDQ4MGUwNSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9tZC9iY2FjaGUvYnRyZWUuYwo+PiAr
+KysgYi9kcml2ZXJzL21kL2JjYWNoZS9idHJlZS5jCj4+IEBAIC04OCw2ICs4OCw3IEBACj4+ICAg
+KiBUZXN0IG1vZHVsZSBsb2FkL3VubG9hZAo+PiAgICovCj4+ICAKPj4gKyNkZWZpbmUgQ09QWV9H
+Q19QRVJDRU5UCQk1Cj4+ICAjZGVmaW5lIE1BWF9ORUVEX0dDCQk2NAo+PiAgI2RlZmluZSBNQVhf
+U0FWRV9QUklPCQk3Mgo+PiAgI2RlZmluZSBNQVhfR0NfVElNRVMJCTEwMAo+PiBAQCAtMTcwNSw2
+ICsxNzA2LDcgQEAgc3RhdGljIHZvaWQgYnRyZWVfZ2Nfc3RhcnQoc3RydWN0IGNhY2hlX3NldCAq
+YykKPj4gIAo+PiAgCW11dGV4X2xvY2soJmMtPmJ1Y2tldF9sb2NrKTsKPj4gIAo+PiArCXNldF9n
+Y19zZWN0b3JzKGMpOwo+PiAgCWMtPmdjX21hcmtfdmFsaWQgPSAwOwo+PiAgCWMtPmdjX2RvbmUg
+PSBaRVJPX0tFWTsKPj4gIAo+PiBAQCAtMTgyNSw4ICsxODI3LDUxIEBAIHN0YXRpYyB2b2lkIGJj
+aF9idHJlZV9nYyhzdHJ1Y3QgY2FjaGVfc2V0ICpjKQo+PiAgCW1lbWNweSgmYy0+Z2Nfc3RhdHMs
+ICZzdGF0cywgc2l6ZW9mKHN0cnVjdCBnY19zdGF0KSk7Cj4+ICAKPj4gIAl0cmFjZV9iY2FjaGVf
+Z2NfZW5kKGMpOwo+PiArfQo+PiArCj4+ICtleHRlcm4gdW5zaWduZWQgaW50IGJjaF9jdXRvZmZf
+d3JpdGViYWNrOwo+PiArZXh0ZXJuIHVuc2lnbmVkIGludCBiY2hfY3V0b2ZmX3dyaXRlYmFja19z
+eW5jOwo+PiArCj4+ICtzdGF0aWMgYm9vbCBtb3ZpbmdfZ2Nfc2hvdWxkX3J1bihzdHJ1Y3QgY2Fj
+aGVfc2V0ICpjKQo+PiArewo+PiArCXN0cnVjdCBidWNrZXQgKmI7Cj4+ICsJc3RydWN0IGNhY2hl
+ICpjYSA9IGMtPmNhY2hlOwo+PiArCXNpemVfdCBtb3ZpbmdfZ2NfdGhyZXNob2xkID0gY2EtPnNi
+LmJ1Y2tldF9zaXplID4+IDIsIGZyYWdfcGVyY2VudDsKPj4gKwl1bnNpZ25lZCBsb25nIHVzZWRf
+YnVja2V0cyA9IDAsIGZyYWdfYnVja2V0cyA9IDAsIG1vdmVfYnVja2V0cyA9IDA7Cj4+ICsJdW5z
+aWduZWQgbG9uZyBkaXJ0eV9zZWN0b3JzID0gMCwgZnJhZ19zZWN0b3JzLCB1c2VkX3NlY3RvcnM7
+Cj4+ICsKPj4gKwlpZiAoYy0+Z2Nfc3RhdHMuaW5fdXNlID4gYmNoX2N1dG9mZl93cml0ZWJhY2tf
+c3luYykKPj4gKwkJcmV0dXJuIHRydWU7Cj4+ICsKPj4gKwltdXRleF9sb2NrKCZjLT5idWNrZXRf
+bG9jayk7Cj4+ICsJZm9yX2VhY2hfYnVja2V0KGIsIGNhKSB7Cj4+ICsJCWlmIChHQ19NQVJLKGIp
+ICE9IEdDX01BUktfRElSVFkpCj4+ICsJCQljb250aW51ZTsKPj4gKwo+PiArCQl1c2VkX2J1Y2tl
+dHMrKzsKPj4gKwo+PiArCQl1c2VkX3NlY3RvcnMgPSBHQ19TRUNUT1JTX1VTRUQoYik7Cj4+ICsJ
+CWRpcnR5X3NlY3RvcnMgKz0gdXNlZF9zZWN0b3JzOwo+PiArCj4+ICsJCWlmICh1c2VkX3NlY3Rv
+cnMgPCBjYS0+c2IuYnVja2V0X3NpemUpCj4+ICsJCQlmcmFnX2J1Y2tldHMrKzsKPj4gIAo+PiAt
+CWJjaF9tb3ZpbmdfZ2MoYyk7Cj4+ICsJCWlmICh1c2VkX3NlY3RvcnMgPD0gbW92aW5nX2djX3Ro
+cmVzaG9sZCkKPj4gKwkJCW1vdmVfYnVja2V0cysrOwo+PiArCX0KPj4gKwltdXRleF91bmxvY2so
+JmMtPmJ1Y2tldF9sb2NrKTsKPj4gKwo+PiArCWMtPmZyYWdtZW50X25idWNrZXRzID0gZnJhZ19i
+dWNrZXRzOwo+PiArCWZyYWdfc2VjdG9ycyA9IHVzZWRfYnVja2V0cyAqIGNhLT5zYi5idWNrZXRf
+c2l6ZSAtIGRpcnR5X3NlY3RvcnM7Cj4+ICsJZnJhZ19wZXJjZW50ID0gZGl2X3U2NChmcmFnX3Nl
+Y3RvcnMgKiAxMDAsIGNhLT5zYi5idWNrZXRfc2l6ZSAqIGMtPm5idWNrZXRzKTsKPj4gKwo+PiAr
+CWlmIChtb3ZlX2J1Y2tldHMgPiBjYS0+aGVhcC5zaXplKQo+PiArCQlyZXR1cm4gdHJ1ZTsKPj4g
+Kwo+PiArCWlmIChmcmFnX3BlcmNlbnQgPj0gQ09QWV9HQ19QRVJDRU5UKQo+PiArCQlyZXR1cm4g
+dHJ1ZTsKPgo+Rm9yIGV4YW1wbGUsIGNvdWxkIHdlIGFkZCB0aGlzIHRvIGBtb3ZpbmdfZ2Nfc2hv
+dWxkX3J1bmA6Cj4KPisJaWYgKHVzZWRfYnVja2V0cyA+PSBNQVhfVVNFRF9CVUNLRVRTKQo+KwkJ
+cmV0dXJuIHRydWU7Cj4KPnRvIHNvbHZlIHRoZSBpc3N1ZSBpbiB0aGlzIHRocmVhZDoKPglodHRw
+czovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1iY2FjaGUvbXNnMTE3NDYuaHRtbAo+Cj53
+aGVyZSBNQVhfVVNFRF9CVUNLRVRTIGlzIGEgcGxhY2Vob2xkZXIgZm9yIGEgc3lzZnMgdHVuYWJs
+ZSBsaWtlIAo+YGNhY2hlX21heF91c2VkX3BlcmNlbnRgID8KPgpJIHRoaW5rIHdlIGNhbiByZXVz
+ZSBiY2hfY3V0b2ZmX3dyaXRlYmFjayBhbmQgYmNoX2N1dG9mZl93cml0ZWJhY2tfc3luYywKYmVj
+YXVzZSBtb3ZpbmcgZ2MgaXMgdG8gc29sdmUgdGhlIGZyYWdtZW50YXRpb24gcHJvYmxlbSBpbiB3
+cml0ZWJhY2sgbW9kZS4KCkkgd2lsbCBzZW5kIHYzIHNvb24uCgptaW5nemhlCj4tRXJpYwo+Cj4K
+Pj4gKwo+PiArCXJldHVybiBmYWxzZTsKPj4gIH0KPj4gIAo+PiAgc3RhdGljIGJvb2wgZ2Nfc2hv
+dWxkX3J1bihzdHJ1Y3QgY2FjaGVfc2V0ICpjKQo+PiBAQCAtMTgzOSw2ICsxODg0LDE5IEBAIHN0
+YXRpYyBib29sIGdjX3Nob3VsZF9ydW4oc3RydWN0IGNhY2hlX3NldCAqYykKPj4gIAlpZiAoYXRv
+bWljX3JlYWQoJmMtPnNlY3RvcnNfdG9fZ2MpIDwgMCkKPj4gIAkJcmV0dXJuIHRydWU7Cj4+ICAK
+Pj4gKwkvKgo+PiArCSAqIE1vdmluZyBnYyB1c2VzIGNhY2hlLT5oZWFwIHRvIGRlZnJhZ21lbnQg
+ZGlzay4gVW5saWtlIGJ0cmVlIGdjLAo+PiArCSAqIG1vdmluZyBnYyBvbmx5IHRha2VzIHVwIHBh
+cnQgb2YgdGhlIGRpc2sgYmFuZHdpZHRoLgo+PiArCSAqIFRoZSBudW1iZXIgb2YgaGVhcCBpcyBj
+b25zdGFudC4gSG93ZXZlciwgdGhlIGJ1Y2tldHMgcmVsZWFzZWQgYnkKPj4gKwkgKiBlYWNoIG1v
+dmluZyBnYyBpcyBsaW1pdGVkLiBTbyBiY2hfbW92aW5nX2djKCkgbmVlZHMgdG8gYmUgY2FsbGVk
+Cj4+ICsJICogbXVsdGlwbGUgdGltZXMuIElmIGJjaF9nY190aHJlYWQoKSBhbHdheXMgY2FsbHMg
+YmNoX2J0cmVlX2djKCksCj4+ICsJICogaXQgd2lsbCBibG9jayB0aGUgSU8gcmVxdWVzdC4KPj4g
+KwkgKi8KPj4gKwlpZiAoYy0+Y29weV9nY19lbmFibGVkICYmIG1vdmluZ19nY19zaG91bGRfcnVu
+KGMpKSB7Cj4+ICsJCWNhLT5vbmx5X21vdmluZ19nYyA9IDE7Cj4+ICsJCXJldHVybiB0cnVlOwo+
+PiArCX0KPj4gKwo+PiAgCXJldHVybiBmYWxzZTsKPj4gIH0KPj4gIAo+PiBAQCAtMTg1Niw4ICsx
+OTE0LDEwIEBAIHN0YXRpYyBpbnQgYmNoX2djX3RocmVhZCh2b2lkICphcmcpCj4+ICAJCSAgICB0
+ZXN0X2JpdChDQUNIRV9TRVRfSU9fRElTQUJMRSwgJmMtPmZsYWdzKSkKPj4gIAkJCWJyZWFrOwo+
+PiAgCj4+IC0JCXNldF9nY19zZWN0b3JzKGMpOwo+PiAtCQliY2hfYnRyZWVfZ2MoYyk7Cj4+ICsJ
+CWlmICghYy0+Y2FjaGUtPm9ubHlfbW92aW5nX2djKQo+PiArCQkJYmNoX2J0cmVlX2djKGMpOwo+
+PiArCj4+ICsJCWJjaF9tb3ZpbmdfZ2MoYyk7Cj4+ICAJfQo+PiAgCj4+ICAJd2FpdF9mb3Jfa3Ro
+cmVhZF9zdG9wKCk7Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21kL2JjYWNoZS9tb3ZpbmdnYy5j
+IGIvZHJpdmVycy9tZC9iY2FjaGUvbW92aW5nZ2MuYwo+PiBpbmRleCA5ZjMyOTAxZmRhZDEuLjA0
+ZGEwODhjZWZlOCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9tZC9iY2FjaGUvbW92aW5nZ2MuYwo+
+PiArKysgYi9kcml2ZXJzL21kL2JjYWNoZS9tb3ZpbmdnYy5jCj4+IEBAIC0yMDAsNiArMjAwLDgg
+QEAgdm9pZCBiY2hfbW92aW5nX2djKHN0cnVjdCBjYWNoZV9zZXQgKmMpCj4+ICAJc3RydWN0IGJ1
+Y2tldCAqYjsKPj4gIAl1bnNpZ25lZCBsb25nIHNlY3RvcnNfdG9fbW92ZSwgcmVzZXJ2ZV9zZWN0
+b3JzOwo+PiAgCj4+ICsJYy0+Y2FjaGUtPm9ubHlfbW92aW5nX2djID0gMDsKPj4gKwo+PiAgCWlm
+ICghYy0+Y29weV9nY19lbmFibGVkKQo+PiAgCQlyZXR1cm47Cj4+ICAKPj4gLS0gCj4+IDIuMTcu
+MS53aW5kb3dzLjIKPj4gCj4+IAoNCg0K
