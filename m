@@ -2,51 +2,39 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D2C4742065
-	for <lists+linux-bcache@lfdr.de>; Thu, 29 Jun 2023 08:31:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A907C742524
+	for <lists+linux-bcache@lfdr.de>; Thu, 29 Jun 2023 13:48:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231303AbjF2GbO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 29 Jun 2023 02:31:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40998 "EHLO
+        id S231494AbjF2LsE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 29 Jun 2023 07:48:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230353AbjF2GbN (ORCPT
+        with ESMTP id S230456AbjF2LsD (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 29 Jun 2023 02:31:13 -0400
-Received: from mail-m3179.qiye.163.com (mail-m3179.qiye.163.com [103.74.31.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2183A102
-        for <linux-bcache@vger.kernel.org>; Wed, 28 Jun 2023 23:31:10 -0700 (PDT)
-Received: from easystack.cn (unknown [127.0.0.1])
-        by mail-m3179.qiye.163.com (Hmail) with ESMTP id EBEB37801DA;
-        Thu, 29 Jun 2023 14:30:57 +0800 (CST)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Message-ID: <ABwAJgA-JJcaO5i7GWFIgKok.3.1688020257957.Hmail.mingzhe.zou@easystack.cn>
-To:     Eric Wheeler <bcache@lists.ewheeler.net>
-Cc:     colyli@suse.de, linux-bcache@vger.kernel.org, zoumingzhe@qq.com
-Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSCB2Ml0gU2VwYXJhdGUgYmNoX21vdmluZ19nYygpIGZyb20gYmNoX2J0cmVlX2djKCk=?=
-X-Priority: 3
-X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2015-163.com
-X-Originating-IP: 218.94.118.90
-In-Reply-To: <4dac5ba5-fac3-3383-45ed-ca8c24a033b0@ewheeler.net>
-References: <4dac5ba5-fac3-3383-45ed-ca8c24a033b0@ewheeler.net>
-MIME-Version: 1.0
-Received: from mingzhe.zou@easystack.cn( [218.94.118.90) ] by ajax-webmail ( [127.0.0.1] ) ; Thu, 29 Jun 2023 14:30:57 +0800 (GMT+08:00)
-From:   =?UTF-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>
-Date:   Thu, 29 Jun 2023 14:30:57 +0800 (GMT+08:00)
+        Thu, 29 Jun 2023 07:48:03 -0400
+Received: from mail-m3174.qiye.163.com (mail-m3174.qiye.163.com [103.74.31.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCBE2E4B
+        for <linux-bcache@vger.kernel.org>; Thu, 29 Jun 2023 04:48:00 -0700 (PDT)
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m3174.qiye.163.com (Hmail) with ESMTPA id 5BD524040A;
+        Thu, 29 Jun 2023 19:47:55 +0800 (CST)
+From:   Mingzhe Zou <mingzhe.zou@easystack.cn>
+To:     colyli@suse.de, linux-bcache@vger.kernel.org
+Cc:     bcache@lists.ewheeler.net, zoumingzhe@qq.com
+Subject: [PATCH v3] bcache: Separate bch_moving_gc() from bch_btree_gc()
+Date:   Thu, 29 Jun 2023 19:47:40 +0800
+Message-Id: <20230629114740.311-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.17.1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTkseVh9KTBhKSE5NS0xJGVUZERMWGhIXJBQOD1
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTktJVkNPSUtLGEJMHkpNGFUZERMWGhIXJBQOD1
         lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
-X-HM-Tid: 0a8905c1951300b3kurm188dcdf702e
+X-HM-Tid: 0a8906fb3bfa00aekurm5bd524040a
 X-HM-MType: 1
-X-HM-NTES-SC: AL0_4z5B86Wr4Tz9jdMF+bhXMV0DBsZGvN9IjLbwwNC/7OljLpuv4boOMwoFIj
-        1eYTmzRdJEw3t2ZnYd4ih3pj0QTMFJSGOg8Oi3OmV2FJ4153g1UnQVtiJ2LMEtDei7/EsnbUKA4C
-        R4coHqLjRcBhBwGg6/sk78zSlTZRq9wiCbTCA=
-X-HM-Sender-Digest: e1kJHlYWEh9ZQUpOTktOTk1MTk9KSzdXWQweGVlBDwkOHldZEh8eFQ9Z
-        QVlHOjkMOjEcOlYxMRgaNE4STDwsPTIcMBQQVUhVSk1DQ0tJS0lOQ09NSFUzFhoSF1UWEhUcARMe
-        VQEUDjseGggCCA8aGBBVGBVFWVdZEgtZQVlJSkNVQk9VSkpDVUJLWVdZCAFZQUpLQk1CN1dZFAsP
-        EhQVCFlBSzcG
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        MSGID_FROM_MTA_HEADER,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Oio6Ohw*DjEzMhlNLTEQSCss
+        OFEwCypVSlVKTUNDS0hCSUxNS0pIVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTk1KQzcG
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,114 +42,174 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-RnJvbTogRXJpYyBXaGVlbGVyIDxiY2FjaGVAbGlzdHMuZXdoZWVsZXIubmV0PgpEYXRlOiAyMDIz
-LTA2LTI5IDA3OjM3OjU3ClRvOiAgTWluZ3poZSBab3UgPG1pbmd6aGUuem91QGVhc3lzdGFjay5j
-bj4KQ2M6ICBjb2x5bGlAc3VzZS5kZSxsaW51eC1iY2FjaGVAdmdlci5rZXJuZWwub3JnLHpvdW1p
-bmd6aGVAcXEuY29tClN1YmplY3Q6IFJlOiBbUEFUQ0ggdjJdIFNlcGFyYXRlIGJjaF9tb3Zpbmdf
-Z2MoKSBmcm9tIGJjaF9idHJlZV9nYygpPk9uIFdlZCwgMjggSnVuIDIwMjMsIE1pbmd6aGUgWm91
-IHdyb3RlOgo+Cj4+IEZyb206IE1pbmd6aGUgWm91IDx6b3VtaW5nemhlQHFxLmNvbT4KPj4gCj4+
-IE1vdmluZyBnYyB1c2VzIGNhY2hlLT5oZWFwIHRvIGRlZnJhZ21lbnQgZGlzay4gVW5saWtlIGJ0
-cmVlIGdjLAo+PiBtb3ZpbmcgZ2Mgb25seSB0YWtlcyB1cCBwYXJ0IG9mIHRoZSBkaXNrIGJhbmR3
-aWR0aC4KPj4gCj4+IFRoZSBudW1iZXIgb2YgaGVhcCBpcyBjb25zdGFudC4gSG93ZXZlciwgdGhl
-IGJ1Y2tldHMgcmVsZWFzZWQgYnkKPj4gZWFjaCBtb3ZpbmcgZ2MgaXMgbGltaXRlZC4gU28gYmNo
-X21vdmluZ19nYygpIG5lZWRzIHRvIGJlIGNhbGxlZAo+PiBtdWx0aXBsZSB0aW1lcy4KPj4gCj4+
-IElmIGJjaF9nY190aHJlYWQoKSBhbHdheXMgY2FsbHMgYmNoX2J0cmVlX2djKCksIGl0IHdpbGwg
-YmxvY2sKPj4gdGhlIElPIHJlcXVlc3QuVGhpcyBwYXRjaCBhbGxvd3MgYmNoX2djX3RocmVhZCgp
-IHRvIG9ubHkgY2FsbAo+PiBiY2hfbW92aW5nX2djKCkgd2hlbiB0aGVyZSBhcmUgbWFueSBmcmFn
-bWVudHMuCj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBNaW5nemhlIFpvdSA8bWluZ3poZS56b3VAZWFz
-eXN0YWNrLmNuPgo+Cj4KPkhpIE1pbmd6aGUsCj4KPkNvdWxkIHRoaXMgYmUgdXNlZCB0byBmcmVl
-IGJ1Y2tldHMgZG93biB0byBhIG1pbmltdW0gYnVja2V0IGNvdW50PwpIaSBFcmljLAoKSSBhbSB0
-cnlpbmcgdG8gc29sdmUgdGhlIGZyYWdtZW50YXRpb24gcHJvYmxlbSBieSBtb3ZpbmcgZ2MsIHdo
-aWNoIHJlbGVhc2VzCnNvbWUgYnVja2V0cy4gSXQgbWF5YmUgYSBtaW5pbXVtIGJ1Y2tldCBjb3Vu
-dC4gSG93ZXZlciwgaWYgdGhlIG51bWJlciBvZgpidWNrZXRzIGNhbiBzdGlsbCBzdXBwb3J0IHRo
-ZSBjb250aW51ZWQgd29yayBpbiB3cml0ZWJhY2sgbW9kZSwgbW92aW5nIGdjCm1heSBub3Qgd29y
-ay4gCj4KPlNlZSBtb3JlIGJlbG93Ogo+Cj4KPgo+PiAtLS0KPj4gIGRyaXZlcnMvbWQvYmNhY2hl
-L2JjYWNoZS5oICAgfCAgNCArKy0KPj4gIGRyaXZlcnMvbWQvYmNhY2hlL2J0cmVlLmMgICAgfCA2
-NiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0KPj4gIGRyaXZlcnMvbWQvYmNh
-Y2hlL21vdmluZ2djLmMgfCAgMiArKwo+PiAgMyBmaWxlcyBjaGFuZ2VkLCA2OCBpbnNlcnRpb25z
-KCspLCA0IGRlbGV0aW9ucygtKQo+PiAKPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWQvYmNhY2hl
-L2JjYWNoZS5oIGIvZHJpdmVycy9tZC9iY2FjaGUvYmNhY2hlLmgKPj4gaW5kZXggNWE3OWJiM2My
-NzJmLi4xNTVkZWZmMGNlMDUgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvbWQvYmNhY2hlL2JjYWNo
-ZS5oCj4+ICsrKyBiL2RyaXZlcnMvbWQvYmNhY2hlL2JjYWNoZS5oCj4+IEBAIC00NjEsNyArNDYx
-LDggQEAgc3RydWN0IGNhY2hlIHsKPj4gIAkgKiB1bnRpbCBhIGdjIGZpbmlzaGVzIC0gb3RoZXJ3
-aXNlIHdlIGNvdWxkIHBvaW50bGVzc2x5IGJ1cm4gYSB0b24gb2YKPj4gIAkgKiBjcHUKPj4gIAkg
-Ki8KPj4gLQl1bnNpZ25lZCBpbnQJCWludmFsaWRhdGVfbmVlZHNfZ2M7Cj4+ICsJdW5zaWduZWQg
-aW50CQlpbnZhbGlkYXRlX25lZWRzX2djOjE7Cj4+ICsJdW5zaWduZWQgaW50CQlvbmx5X21vdmlu
-Z19nYzoxOwo+PiAgCj4+ICAJYm9vbAkJCWRpc2NhcmQ7IC8qIEdldCByaWQgb2Y/ICovCj4+ICAK
-Pj4gQEAgLTYyOSw2ICs2MzAsNyBAQCBzdHJ1Y3QgY2FjaGVfc2V0IHsKPj4gIAlzdHJ1Y3QgZ2Nf
-c3RhdAkJZ2Nfc3RhdHM7Cj4+ICAJc2l6ZV90CQkJbmJ1Y2tldHM7Cj4+ICAJc2l6ZV90CQkJYXZh
-aWxfbmJ1Y2tldHM7Cj4+ICsJc2l6ZV90CQkJZnJhZ21lbnRfbmJ1Y2tldHM7Cj4+ICAKPj4gIAlz
-dHJ1Y3QgdGFza19zdHJ1Y3QJKmdjX3RocmVhZDsKPj4gIAkvKiBXaGVyZSBpbiB0aGUgYnRyZWUg
-Z2MgY3VycmVudGx5IGlzICovCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21kL2JjYWNoZS9idHJl
-ZS5jIGIvZHJpdmVycy9tZC9iY2FjaGUvYnRyZWUuYwo+PiBpbmRleCA2OGI5ZDdjYTg2NGUuLjY2
-OThhNDQ4MGUwNSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9tZC9iY2FjaGUvYnRyZWUuYwo+PiAr
-KysgYi9kcml2ZXJzL21kL2JjYWNoZS9idHJlZS5jCj4+IEBAIC04OCw2ICs4OCw3IEBACj4+ICAg
-KiBUZXN0IG1vZHVsZSBsb2FkL3VubG9hZAo+PiAgICovCj4+ICAKPj4gKyNkZWZpbmUgQ09QWV9H
-Q19QRVJDRU5UCQk1Cj4+ICAjZGVmaW5lIE1BWF9ORUVEX0dDCQk2NAo+PiAgI2RlZmluZSBNQVhf
-U0FWRV9QUklPCQk3Mgo+PiAgI2RlZmluZSBNQVhfR0NfVElNRVMJCTEwMAo+PiBAQCAtMTcwNSw2
-ICsxNzA2LDcgQEAgc3RhdGljIHZvaWQgYnRyZWVfZ2Nfc3RhcnQoc3RydWN0IGNhY2hlX3NldCAq
-YykKPj4gIAo+PiAgCW11dGV4X2xvY2soJmMtPmJ1Y2tldF9sb2NrKTsKPj4gIAo+PiArCXNldF9n
-Y19zZWN0b3JzKGMpOwo+PiAgCWMtPmdjX21hcmtfdmFsaWQgPSAwOwo+PiAgCWMtPmdjX2RvbmUg
-PSBaRVJPX0tFWTsKPj4gIAo+PiBAQCAtMTgyNSw4ICsxODI3LDUxIEBAIHN0YXRpYyB2b2lkIGJj
-aF9idHJlZV9nYyhzdHJ1Y3QgY2FjaGVfc2V0ICpjKQo+PiAgCW1lbWNweSgmYy0+Z2Nfc3RhdHMs
-ICZzdGF0cywgc2l6ZW9mKHN0cnVjdCBnY19zdGF0KSk7Cj4+ICAKPj4gIAl0cmFjZV9iY2FjaGVf
-Z2NfZW5kKGMpOwo+PiArfQo+PiArCj4+ICtleHRlcm4gdW5zaWduZWQgaW50IGJjaF9jdXRvZmZf
-d3JpdGViYWNrOwo+PiArZXh0ZXJuIHVuc2lnbmVkIGludCBiY2hfY3V0b2ZmX3dyaXRlYmFja19z
-eW5jOwo+PiArCj4+ICtzdGF0aWMgYm9vbCBtb3ZpbmdfZ2Nfc2hvdWxkX3J1bihzdHJ1Y3QgY2Fj
-aGVfc2V0ICpjKQo+PiArewo+PiArCXN0cnVjdCBidWNrZXQgKmI7Cj4+ICsJc3RydWN0IGNhY2hl
-ICpjYSA9IGMtPmNhY2hlOwo+PiArCXNpemVfdCBtb3ZpbmdfZ2NfdGhyZXNob2xkID0gY2EtPnNi
-LmJ1Y2tldF9zaXplID4+IDIsIGZyYWdfcGVyY2VudDsKPj4gKwl1bnNpZ25lZCBsb25nIHVzZWRf
-YnVja2V0cyA9IDAsIGZyYWdfYnVja2V0cyA9IDAsIG1vdmVfYnVja2V0cyA9IDA7Cj4+ICsJdW5z
-aWduZWQgbG9uZyBkaXJ0eV9zZWN0b3JzID0gMCwgZnJhZ19zZWN0b3JzLCB1c2VkX3NlY3RvcnM7
-Cj4+ICsKPj4gKwlpZiAoYy0+Z2Nfc3RhdHMuaW5fdXNlID4gYmNoX2N1dG9mZl93cml0ZWJhY2tf
-c3luYykKPj4gKwkJcmV0dXJuIHRydWU7Cj4+ICsKPj4gKwltdXRleF9sb2NrKCZjLT5idWNrZXRf
-bG9jayk7Cj4+ICsJZm9yX2VhY2hfYnVja2V0KGIsIGNhKSB7Cj4+ICsJCWlmIChHQ19NQVJLKGIp
-ICE9IEdDX01BUktfRElSVFkpCj4+ICsJCQljb250aW51ZTsKPj4gKwo+PiArCQl1c2VkX2J1Y2tl
-dHMrKzsKPj4gKwo+PiArCQl1c2VkX3NlY3RvcnMgPSBHQ19TRUNUT1JTX1VTRUQoYik7Cj4+ICsJ
-CWRpcnR5X3NlY3RvcnMgKz0gdXNlZF9zZWN0b3JzOwo+PiArCj4+ICsJCWlmICh1c2VkX3NlY3Rv
-cnMgPCBjYS0+c2IuYnVja2V0X3NpemUpCj4+ICsJCQlmcmFnX2J1Y2tldHMrKzsKPj4gIAo+PiAt
-CWJjaF9tb3ZpbmdfZ2MoYyk7Cj4+ICsJCWlmICh1c2VkX3NlY3RvcnMgPD0gbW92aW5nX2djX3Ro
-cmVzaG9sZCkKPj4gKwkJCW1vdmVfYnVja2V0cysrOwo+PiArCX0KPj4gKwltdXRleF91bmxvY2so
-JmMtPmJ1Y2tldF9sb2NrKTsKPj4gKwo+PiArCWMtPmZyYWdtZW50X25idWNrZXRzID0gZnJhZ19i
-dWNrZXRzOwo+PiArCWZyYWdfc2VjdG9ycyA9IHVzZWRfYnVja2V0cyAqIGNhLT5zYi5idWNrZXRf
-c2l6ZSAtIGRpcnR5X3NlY3RvcnM7Cj4+ICsJZnJhZ19wZXJjZW50ID0gZGl2X3U2NChmcmFnX3Nl
-Y3RvcnMgKiAxMDAsIGNhLT5zYi5idWNrZXRfc2l6ZSAqIGMtPm5idWNrZXRzKTsKPj4gKwo+PiAr
-CWlmIChtb3ZlX2J1Y2tldHMgPiBjYS0+aGVhcC5zaXplKQo+PiArCQlyZXR1cm4gdHJ1ZTsKPj4g
-Kwo+PiArCWlmIChmcmFnX3BlcmNlbnQgPj0gQ09QWV9HQ19QRVJDRU5UKQo+PiArCQlyZXR1cm4g
-dHJ1ZTsKPgo+Rm9yIGV4YW1wbGUsIGNvdWxkIHdlIGFkZCB0aGlzIHRvIGBtb3ZpbmdfZ2Nfc2hv
-dWxkX3J1bmA6Cj4KPisJaWYgKHVzZWRfYnVja2V0cyA+PSBNQVhfVVNFRF9CVUNLRVRTKQo+KwkJ
-cmV0dXJuIHRydWU7Cj4KPnRvIHNvbHZlIHRoZSBpc3N1ZSBpbiB0aGlzIHRocmVhZDoKPglodHRw
-czovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51eC1iY2FjaGUvbXNnMTE3NDYuaHRtbAo+Cj53
-aGVyZSBNQVhfVVNFRF9CVUNLRVRTIGlzIGEgcGxhY2Vob2xkZXIgZm9yIGEgc3lzZnMgdHVuYWJs
-ZSBsaWtlIAo+YGNhY2hlX21heF91c2VkX3BlcmNlbnRgID8KPgpJIHRoaW5rIHdlIGNhbiByZXVz
-ZSBiY2hfY3V0b2ZmX3dyaXRlYmFjayBhbmQgYmNoX2N1dG9mZl93cml0ZWJhY2tfc3luYywKYmVj
-YXVzZSBtb3ZpbmcgZ2MgaXMgdG8gc29sdmUgdGhlIGZyYWdtZW50YXRpb24gcHJvYmxlbSBpbiB3
-cml0ZWJhY2sgbW9kZS4KCkkgd2lsbCBzZW5kIHYzIHNvb24uCgptaW5nemhlCj4tRXJpYwo+Cj4K
-Pj4gKwo+PiArCXJldHVybiBmYWxzZTsKPj4gIH0KPj4gIAo+PiAgc3RhdGljIGJvb2wgZ2Nfc2hv
-dWxkX3J1bihzdHJ1Y3QgY2FjaGVfc2V0ICpjKQo+PiBAQCAtMTgzOSw2ICsxODg0LDE5IEBAIHN0
-YXRpYyBib29sIGdjX3Nob3VsZF9ydW4oc3RydWN0IGNhY2hlX3NldCAqYykKPj4gIAlpZiAoYXRv
-bWljX3JlYWQoJmMtPnNlY3RvcnNfdG9fZ2MpIDwgMCkKPj4gIAkJcmV0dXJuIHRydWU7Cj4+ICAK
-Pj4gKwkvKgo+PiArCSAqIE1vdmluZyBnYyB1c2VzIGNhY2hlLT5oZWFwIHRvIGRlZnJhZ21lbnQg
-ZGlzay4gVW5saWtlIGJ0cmVlIGdjLAo+PiArCSAqIG1vdmluZyBnYyBvbmx5IHRha2VzIHVwIHBh
-cnQgb2YgdGhlIGRpc2sgYmFuZHdpZHRoLgo+PiArCSAqIFRoZSBudW1iZXIgb2YgaGVhcCBpcyBj
-b25zdGFudC4gSG93ZXZlciwgdGhlIGJ1Y2tldHMgcmVsZWFzZWQgYnkKPj4gKwkgKiBlYWNoIG1v
-dmluZyBnYyBpcyBsaW1pdGVkLiBTbyBiY2hfbW92aW5nX2djKCkgbmVlZHMgdG8gYmUgY2FsbGVk
-Cj4+ICsJICogbXVsdGlwbGUgdGltZXMuIElmIGJjaF9nY190aHJlYWQoKSBhbHdheXMgY2FsbHMg
-YmNoX2J0cmVlX2djKCksCj4+ICsJICogaXQgd2lsbCBibG9jayB0aGUgSU8gcmVxdWVzdC4KPj4g
-KwkgKi8KPj4gKwlpZiAoYy0+Y29weV9nY19lbmFibGVkICYmIG1vdmluZ19nY19zaG91bGRfcnVu
-KGMpKSB7Cj4+ICsJCWNhLT5vbmx5X21vdmluZ19nYyA9IDE7Cj4+ICsJCXJldHVybiB0cnVlOwo+
-PiArCX0KPj4gKwo+PiAgCXJldHVybiBmYWxzZTsKPj4gIH0KPj4gIAo+PiBAQCAtMTg1Niw4ICsx
-OTE0LDEwIEBAIHN0YXRpYyBpbnQgYmNoX2djX3RocmVhZCh2b2lkICphcmcpCj4+ICAJCSAgICB0
-ZXN0X2JpdChDQUNIRV9TRVRfSU9fRElTQUJMRSwgJmMtPmZsYWdzKSkKPj4gIAkJCWJyZWFrOwo+
-PiAgCj4+IC0JCXNldF9nY19zZWN0b3JzKGMpOwo+PiAtCQliY2hfYnRyZWVfZ2MoYyk7Cj4+ICsJ
-CWlmICghYy0+Y2FjaGUtPm9ubHlfbW92aW5nX2djKQo+PiArCQkJYmNoX2J0cmVlX2djKGMpOwo+
-PiArCj4+ICsJCWJjaF9tb3ZpbmdfZ2MoYyk7Cj4+ICAJfQo+PiAgCj4+ICAJd2FpdF9mb3Jfa3Ro
-cmVhZF9zdG9wKCk7Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21kL2JjYWNoZS9tb3ZpbmdnYy5j
-IGIvZHJpdmVycy9tZC9iY2FjaGUvbW92aW5nZ2MuYwo+PiBpbmRleCA5ZjMyOTAxZmRhZDEuLjA0
-ZGEwODhjZWZlOCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9tZC9iY2FjaGUvbW92aW5nZ2MuYwo+
-PiArKysgYi9kcml2ZXJzL21kL2JjYWNoZS9tb3ZpbmdnYy5jCj4+IEBAIC0yMDAsNiArMjAwLDgg
-QEAgdm9pZCBiY2hfbW92aW5nX2djKHN0cnVjdCBjYWNoZV9zZXQgKmMpCj4+ICAJc3RydWN0IGJ1
-Y2tldCAqYjsKPj4gIAl1bnNpZ25lZCBsb25nIHNlY3RvcnNfdG9fbW92ZSwgcmVzZXJ2ZV9zZWN0
-b3JzOwo+PiAgCj4+ICsJYy0+Y2FjaGUtPm9ubHlfbW92aW5nX2djID0gMDsKPj4gKwo+PiAgCWlm
-ICghYy0+Y29weV9nY19lbmFibGVkKQo+PiAgCQlyZXR1cm47Cj4+ICAKPj4gLS0gCj4+IDIuMTcu
-MS53aW5kb3dzLjIKPj4gCj4+IAoNCg0K
+From: Mingzhe Zou <zoumingzhe@qq.com>
+
+Moving gc uses cache->heap to defragment disk. Unlike btree gc,
+moving gc only takes up part of the disk bandwidth.
+
+The number of heap is constant. However, the buckets released by
+each moving gc is limited. So bch_moving_gc() needs to be called
+multiple times.
+
+If bch_gc_thread() always calls bch_btree_gc(), it will block
+the IO request.This patch allows bch_gc_thread() to only call
+bch_moving_gc() when there are many fragments.
+
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/bcache.h   |  4 +-
+ drivers/md/bcache/btree.c    | 73 ++++++++++++++++++++++++++++++++++--
+ drivers/md/bcache/movinggc.c |  2 +
+ 3 files changed, 75 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 5a79bb3c272f..155deff0ce05 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -461,7 +461,8 @@ struct cache {
+ 	 * until a gc finishes - otherwise we could pointlessly burn a ton of
+ 	 * cpu
+ 	 */
+-	unsigned int		invalidate_needs_gc;
++	unsigned int		invalidate_needs_gc:1;
++	unsigned int		only_moving_gc:1;
+ 
+ 	bool			discard; /* Get rid of? */
+ 
+@@ -629,6 +630,7 @@ struct cache_set {
+ 	struct gc_stat		gc_stats;
+ 	size_t			nbuckets;
+ 	size_t			avail_nbuckets;
++	size_t			fragment_nbuckets;
+ 
+ 	struct task_struct	*gc_thread;
+ 	/* Where in the btree gc currently is */
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index fd121a61f17c..b21192a47a57 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -88,6 +88,7 @@
+  * Test module load/unload
+  */
+ 
++#define COPY_GC_PERCENT		5
+ #define MAX_NEED_GC		64
+ #define MAX_SAVE_PRIO		72
+ #define MAX_GC_TIMES		100
+@@ -1726,6 +1727,7 @@ static void btree_gc_start(struct cache_set *c)
+ 
+ 	mutex_lock(&c->bucket_lock);
+ 
++	set_gc_sectors(c);
+ 	c->gc_mark_valid = 0;
+ 	c->gc_done = ZERO_KEY;
+ 
+@@ -1846,8 +1848,58 @@ static void bch_btree_gc(struct cache_set *c)
+ 	memcpy(&c->gc_stats, &stats, sizeof(struct gc_stat));
+ 
+ 	trace_bcache_gc_end(c);
++}
++
++extern unsigned int bch_cutoff_writeback;
++extern unsigned int bch_cutoff_writeback_sync;
++
++static bool moving_gc_should_run(struct cache_set *c)
++{
++	struct bucket *b;
++	struct cache *ca = c->cache;
++	size_t moving_gc_threshold = ca->sb.bucket_size >> 2, frag_percent;
++	unsigned long used_buckets = 0, frag_buckets = 0, move_buckets = 0;
++	unsigned long dirty_sectors = 0, frag_sectors, used_sectors;
++
++	if (c->gc_stats.in_use > bch_cutoff_writeback_sync)
++		return true;
++
++	mutex_lock(&c->bucket_lock);
++	for_each_bucket(b, ca) {
++		if (GC_MARK(b) != GC_MARK_DIRTY)
++			continue;
++
++		used_buckets++;
++
++		used_sectors = GC_SECTORS_USED(b);
++		dirty_sectors += used_sectors;
++
++		if (used_sectors < ca->sb.bucket_size)
++			frag_buckets++;
++
++		if (used_sectors <= moving_gc_threshold)
++			move_buckets++;
++	}
++	mutex_unlock(&c->bucket_lock);
++
++	c->fragment_nbuckets = frag_buckets;
++
++	if (used_sectors < c->nbuckets * bch_cutoff_writeback / 100)
++		return false;
++
++	if (move_buckets > ca->heap.size)
++		return true;
++
++	frag_sectors = used_buckets * ca->sb.bucket_size - dirty_sectors;
++	frag_percent = div_u64(frag_sectors * 100, ca->sb.bucket_size * c->nbuckets);
++
++	if (frag_percent >= COPY_GC_PERCENT)
++		return true;
+ 
+-	bch_moving_gc(c);
++	if (used_sectors > c->nbuckets * bch_cutoff_writeback_sync / 100)
++		return true;
++
++	return false;
+ }
+ 
+ static bool gc_should_run(struct cache_set *c)
+@@ -1860,6 +1912,19 @@ static bool gc_should_run(struct cache_set *c)
+ 	if (atomic_read(&c->sectors_to_gc) < 0)
+ 		return true;
+ 
++	/*
++	 * Moving gc uses cache->heap to defragment disk. Unlike btree gc,
++	 * moving gc only takes up part of the disk bandwidth.
++	 * The number of heap is constant. However, the buckets released by
++	 * each moving gc is limited. So bch_moving_gc() needs to be called
++	 * multiple times. If bch_gc_thread() always calls bch_btree_gc(),
++	 * it will block the IO request.
++	 */
++	if (c->copy_gc_enabled && moving_gc_should_run(c)) {
++		ca->only_moving_gc = 1;
++		return true;
++	}
++
+ 	return false;
+ }
+ 
+@@ -1877,8 +1942,10 @@ static int bch_gc_thread(void *arg)
+ 		    test_bit(CACHE_SET_IO_DISABLE, &c->flags))
+ 			break;
+ 
+-		set_gc_sectors(c);
+-		bch_btree_gc(c);
++		if (!c->cache->only_moving_gc)
++			bch_btree_gc(c);
++
++		bch_moving_gc(c);
+ 	}
+ 
+ 	wait_for_kthread_stop();
+diff --git a/drivers/md/bcache/movinggc.c b/drivers/md/bcache/movinggc.c
+index 9f32901fdad1..04da088cefe8 100644
+--- a/drivers/md/bcache/movinggc.c
++++ b/drivers/md/bcache/movinggc.c
+@@ -200,6 +200,8 @@ void bch_moving_gc(struct cache_set *c)
+ 	struct bucket *b;
+ 	unsigned long sectors_to_move, reserve_sectors;
+ 
++	c->cache->only_moving_gc = 0;
++
+ 	if (!c->copy_gc_enabled)
+ 		return;
+ 
+-- 
+2.17.1.windows.2
+
