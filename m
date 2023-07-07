@@ -2,36 +2,57 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD41374AFBB
-	for <lists+linux-bcache@lfdr.de>; Fri,  7 Jul 2023 13:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EDC674B09A
+	for <lists+linux-bcache@lfdr.de>; Fri,  7 Jul 2023 14:24:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232655AbjGGL3Q (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Fri, 7 Jul 2023 07:29:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40752 "EHLO
+        id S231522AbjGGMYk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 7 Jul 2023 08:24:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbjGGL2r (ORCPT
+        with ESMTP id S229556AbjGGMYj (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Fri, 7 Jul 2023 07:28:47 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 317AC9E;
-        Fri,  7 Jul 2023 04:28:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=RUfYUy8/J6JDn9FoGNDP036sYhvQ7qr7NPrif4Grdk0=; b=W8BupQP6fTnw1maVtPw7n0FTsE
-        YYE/luqofOMT0IhbP2TwnItjey780Gaej+IMiW55ud+2XaULxiO0l44TVjXxHDze0xRAuH+mluyhr
-        7ui49FHiGFXBu/ov7yuPVdyKZ6eJKL+3QsdTV3Gb1KlNN/rv7nlB69UacHrPvm/XuXzbJNEgBM50m
-        lj+5xIDBkcqtRkKNokX0ONlo/QTCRQkdYA2xSwzuGzgo4ax7OTAfgkKR0gXaMSjd0fblhIFZkcy3O
-        uLWO9DupcrKt+pDlGpSx+Miz6qpzw/HtoMbVHr58WOYYIaYLstJnc/oPaBlHCJkaDsT5H35KaxEXD
-        vOIi6ADg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qHjdh-004Vpz-0w;
-        Fri, 07 Jul 2023 11:28:41 +0000
-Date:   Fri, 7 Jul 2023 04:28:41 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
+        Fri, 7 Jul 2023 08:24:39 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A53051FE6;
+        Fri,  7 Jul 2023 05:24:36 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id F0C8D1FDB5;
+        Fri,  7 Jul 2023 12:24:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1688732675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=v97Z4h87RrabL7WLNBXHFysNCdL5KIt8mtxxyrwI0lE=;
+        b=LqFRs1c1G67BsNNDLuNq3gTOMo8UAqFT+ZgX0/ce2GYyjoNTkNY3JvymPyQUIIgvdCfdfA
+        wvYabjfbqON86k1PsUxAyhGKf+BANbZ0orxg0fUOS7bjyZ5ddpTiVyICESJEtA4U8iKIIb
+        0Zu9Qq9rWpT0jHo3EjIE5diazY1476M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1688732675;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=v97Z4h87RrabL7WLNBXHFysNCdL5KIt8mtxxyrwI0lE=;
+        b=WsVzOxtNAjI8cmGR5IMHwFDPJM5ZBawTTSTtFHjjnpb4nomNuwaP8lcoennzww9M9DfIc5
+        k35MoJGFDmLh3vBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D97F7139E0;
+        Fri,  7 Jul 2023 12:24:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id rMQMNQIEqGT9NgAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 07 Jul 2023 12:24:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 6AC15A0717; Fri,  7 Jul 2023 14:24:34 +0200 (CEST)
+Date:   Fri, 7 Jul 2023 14:24:34 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Alasdair Kergon <agk@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -66,19 +87,19 @@ Cc:     Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         xen-devel@lists.xenproject.org
 Subject: Re: [PATCH 01/32] block: Provide blkdev_get_handle_* functions
-Message-ID: <ZKf26fYMDHnTCb29@infradead.org>
+Message-ID: <20230707122434.s46ytxpne42hecni@quack3>
 References: <20230629165206.383-1-jack@suse.cz>
  <20230704122224.16257-1-jack@suse.cz>
  <ZKbgAG5OoHVyUKOG@infradead.org>
  <20230706161433.lj4apushiwguzvdd@quack3>
+ <ZKf26fYMDHnTCb29@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230706161433.lj4apushiwguzvdd@quack3>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <ZKf26fYMDHnTCb29@infradead.org>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -86,13 +107,25 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Thu, Jul 06, 2023 at 06:14:33PM +0200, Jan Kara wrote:
-> > struct bdev_handle *bdev_open_by_path(dev_t dev, blk_mode_t mode,
-> > 		void *holder, const struct blk_holder_ops *hops);
-> > void bdev_release(struct bdev_handle *handle);
+On Fri 07-07-23 04:28:41, Christoph Hellwig wrote:
+> On Thu, Jul 06, 2023 at 06:14:33PM +0200, Jan Kara wrote:
+> > > struct bdev_handle *bdev_open_by_path(dev_t dev, blk_mode_t mode,
+> > > 		void *holder, const struct blk_holder_ops *hops);
+> > > void bdev_release(struct bdev_handle *handle);
+> > 
+> > I'd maybe use bdev_close() instead of bdev_release() but otherwise I like
+> > the new naming.
 > 
-> I'd maybe use bdev_close() instead of bdev_release() but otherwise I like
-> the new naming.
+> We're using release everywhese else, but if Jens is fine with that I
+> can live with close.
 
-We're using release everywhese else, but if Jens is fine with that I
-can live with close.
+Dunno, to me words pair like open-close, get-put, acquire-release.
+Furthermore e.g. ->release() (and thus blkdev_release()) is called only
+when the last file reference is dropped, not when each reference is
+dropped, so that's why bdev_release() seems a bit confusing to me.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
