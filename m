@@ -2,68 +2,40 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A38DF755B0B
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jul 2023 07:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99A147562F6
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jul 2023 14:42:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231214AbjGQF7O (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 17 Jul 2023 01:59:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46044 "EHLO
+        id S230424AbjGQMmX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 17 Jul 2023 08:42:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231349AbjGQF7N (ORCPT
+        with ESMTP id S231250AbjGQMl7 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 17 Jul 2023 01:59:13 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A305FE64
-        for <linux-bcache@vger.kernel.org>; Sun, 16 Jul 2023 22:59:10 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-316feb137a7so941813f8f.1
-        for <linux-bcache@vger.kernel.org>; Sun, 16 Jul 2023 22:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689573549; x=1692165549;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XpZ7hzVo6aNRf/h0hvR1mJB9+o96DCCB7QWW+ufx0pU=;
-        b=gsqGpIKM9mPZMzA3LvCcDIfoN8H/I4Adtj3sPVDR0Qugu4fhofW09QVzj5xI2qbeli
-         7z55hpCnuiekEYgeca3V5kND/jzJWvFjnYqtczmny22VjIqTff/DsFaO8dNjDi+x7gUu
-         oMz3GifjMJ/pZrCiO8dYBWgAs2gG084ucLef+mUtQoBlo/zRBH28cQ1puIgmpdw1BQqr
-         KzmJaU9HF9GGC43sUviMKUAwFx+jX6qEGK9expFsrA7U7V8OYuusZ9hICQZomrtlFkGk
-         yuJdWwv1K+0nnSE4dgrpe49yImRCpvM9TIZdqcoZ+6LivSzUV0kwEP/dztk9zHYiUDeT
-         mt9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689573549; x=1692165549;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XpZ7hzVo6aNRf/h0hvR1mJB9+o96DCCB7QWW+ufx0pU=;
-        b=DOxO43eKb+YBTV7qdkJn3Pg5OTaNSkyQRnrqNtkZ8SJ418cxatAXmVu21sargzYlDe
-         FEidgGNqpMpZplsI0uN4ntMI6wrBE7RmhBnRdJAi1aLqrauQFBkA1fmkZ3E5mishNigC
-         3O+VhjDOEWu/fjpD9VVS3ze1B1/51Wtnzb7aPA7Be8XKlamDyUpEAXN2c6BYfJ9a8n7A
-         IOn8WQ2qjnwLC+ollrlUXVSW5yS1MC1Anmo9VQ9F/Bh+2VF0d0BMfpT9a/4ZB4p6ZMTk
-         9v3N/KrFbhhKawhDkSatYp8awdBD13nAXgRTzIog8ga+9mdl2Q1ARP7a2Zg8+MEfdMD+
-         YMhQ==
-X-Gm-Message-State: ABy/qLY87w7MvnEXrJKzc4oS3J4S7rNi8YbH6uewtfLaEjHxjftqt05H
-        MB/KafM0tzUms5I0mP+wpPztSA==
-X-Google-Smtp-Source: APBJJlFAOsPnYfrYraYLXRFFOsywGCy5jChWoIeEJmfmfkbwoichwi2xYwRd3KwR3od1Luku3gg3ng==
-X-Received: by 2002:a05:6000:18cf:b0:315:a32d:311f with SMTP id w15-20020a05600018cf00b00315a32d311fmr9388489wrq.14.1689573548858;
-        Sun, 16 Jul 2023 22:59:08 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id h7-20020a5d5487000000b0030ae901bc54sm18071409wrv.62.2023.07.16.22.59.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jul 2023 22:59:06 -0700 (PDT)
-Date:   Mon, 17 Jul 2023 08:59:03 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     oe-kbuild@lists.linux.dev, Mingzhe Zou <mingzhe.zou@easystack.cn>,
-        colyli@suse.de, linux-bcache@vger.kernel.org
-Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-        bcache@lists.ewheeler.net, zoumingzhe@qq.com
-Subject: Re: [PATCH v3] bcache: Separate bch_moving_gc() from bch_btree_gc()
-Message-ID: <83e846fd-a4e5-4b89-8a22-ec4189335379@kadam.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230629114740.311-1-mingzhe.zou@easystack.cn>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        Mon, 17 Jul 2023 08:41:59 -0400
+Received: from mail-m2835.qiye.163.com (mail-m2835.qiye.163.com [103.74.28.35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A809A10DA
+        for <linux-bcache@vger.kernel.org>; Mon, 17 Jul 2023 05:41:55 -0700 (PDT)
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m2835.qiye.163.com (Hmail) with ESMTPA id DC3F88A000B;
+        Mon, 17 Jul 2023 20:41:49 +0800 (CST)
+From:   Mingzhe Zou <mingzhe.zou@easystack.cn>
+To:     colyli@suse.de, linux-bcache@vger.kernel.org
+Cc:     bcache@lists.ewheeler.net, zoumingzhe@qq.com
+Subject: [PATCH 1/3] bcache: the gc_sectors_used size matches the bucket size
+Date:   Mon, 17 Jul 2023 20:41:41 +0800
+Message-Id: <20230717124143.171-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTU1IVkofQ0tPHh0dT0pNTFUZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hOSFVKS0tVS1kG
+X-HM-Tid: 0a8963df0ed9841dkuqwdc3f88a000b
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6N0k6Djo6MzE4LgI8ASs#Pz8h
+        LTEwCRlVSlVKTUNCTkJMTEpLTkJNVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBQ0pNSDcG
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,93 +43,222 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Mingzhe,
+From: Mingzhe Zou <zoumingzhe@qq.com>
 
-kernel test robot noticed the following build warnings:
+The bucket size in the superblock is defined as uint16_t.
+But, GC_SECTORS_USED is only 13 bits. If the bucket size
+is 4M (8192 sectors), GC_SECTORS_USED will be truncated
+to MAX_GC_SECTORS_USED.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+GC_SECTORS_USED is the moving gc sorting condition, we
+should try our best to ensure it is correct.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mingzhe-Zou/bcache-Separate-bch_moving_gc-from-bch_btree_gc/20230629-194834
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20230629114740.311-1-mingzhe.zou%40easystack.cn
-patch subject: [PATCH v3] bcache: Separate bch_moving_gc() from bch_btree_gc()
-config: x86_64-randconfig-m001-20230710 (https://download.01.org/0day-ci/archive/20230716/202307160359.0vHG3r40-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20230716/202307160359.0vHG3r40-lkp@intel.com/reproduce)
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/alloc.c    | 12 ++++++++----
+ drivers/md/bcache/bcache.h   | 12 ++++++------
+ drivers/md/bcache/btree.c    | 18 ++++++++++++------
+ drivers/md/bcache/movinggc.c | 14 +++++++-------
+ drivers/md/bcache/sysfs.c    |  2 +-
+ 5 files changed, 34 insertions(+), 24 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202307160359.0vHG3r40-lkp@intel.com/
-
-New smatch warnings:
-drivers/md/bcache/btree.c:1887 moving_gc_should_run() error: uninitialized symbol 'used_sectors'.
-
-Old smatch warnings:
-drivers/md/bcache/btree.c:1535 btree_gc_rewrite_node() error: 'n' dereferencing possible ERR_PTR()
-drivers/md/bcache/btree.c:1551 btree_gc_rewrite_node() error: 'n' dereferencing possible ERR_PTR()
-
-vim +/used_sectors +1887 drivers/md/bcache/btree.c
-
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1856  static bool moving_gc_should_run(struct cache_set *c)
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1857  {
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1858  	struct bucket *b;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1859  	struct cache *ca = c->cache;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1860  	size_t moving_gc_threshold = ca->sb.bucket_size >> 2, frag_percent;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1861  	unsigned long used_buckets = 0, frag_buckets = 0, move_buckets = 0;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1862  	unsigned long dirty_sectors = 0, frag_sectors, used_sectors;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1863  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1864  	if (c->gc_stats.in_use > bch_cutoff_writeback_sync)
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1865  		return true;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1866  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1867  	mutex_lock(&c->bucket_lock);
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1868  	for_each_bucket(b, ca) {
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1869  		if (GC_MARK(b) != GC_MARK_DIRTY)
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1870  			continue;
-
-Smatch is complaining that we might not enter the loop or there could be
-no GC_MARK_DIRTY entries.
-
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1871  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1872  		used_buckets++;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1873  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1874  		used_sectors = GC_SECTORS_USED(b);
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1875  		dirty_sectors += used_sectors;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1876  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1877  		if (used_sectors < ca->sb.bucket_size)
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1878  			frag_buckets++;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1879  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1880  		if (used_sectors <= moving_gc_threshold)
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1881  			move_buckets++;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1882  	}
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1883  	mutex_unlock(&c->bucket_lock);
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1884  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1885  	c->fragment_nbuckets = frag_buckets;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1886  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29 @1887  	if (used_sectors < c->nbuckets * bch_cutoff_writeback / 100)
-
-It's sort of weird that we are using the used_sectors value from the
-last MARK_DIRTY iteration through the loop.  Should it be used_buckets?
-
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1888  		return false;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1889  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1890  	if (move_buckets > ca->heap.size)
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1891  		return true;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1892  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1893  	frag_sectors = used_buckets * ca->sb.bucket_size - dirty_sectors;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1894  	frag_percent = div_u64(frag_sectors * 100, ca->sb.bucket_size * c->nbuckets);
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1895  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1896  	if (frag_percent >= COPY_GC_PERCENT)
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1897  		return true;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1898  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1899  	if (used_sectors > c->nbuckets * bch_cutoff_writeback_sync / 100)
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1900  		return true;
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1901  
-4b0cf76f1e36e7 Mingzhe Zou     2023-06-29  1902  	return false;
-cafe563591446c Kent Overstreet 2013-03-23  1903  }
-
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index ce13c272c387..4ae1018bf029 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -142,7 +142,7 @@ void __bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
+ 	lockdep_assert_held(&ca->set->bucket_lock);
+ 	BUG_ON(GC_MARK(b) && GC_MARK(b) != GC_MARK_RECLAIMABLE);
+ 
+-	if (GC_SECTORS_USED(b))
++	if (b->gc_sectors_used)
+ 		trace_bcache_invalidate(ca, b - ca->buckets);
+ 
+ 	bch_inc_gen(ca, b);
+@@ -170,7 +170,7 @@ static void bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
+ ({									\
+ 	unsigned int min_prio = (INITIAL_PRIO - ca->set->min_prio) / 8;	\
+ 									\
+-	(b->prio - ca->set->min_prio + min_prio) * GC_SECTORS_USED(b);	\
++	(b->prio - ca->set->min_prio + min_prio) * b->gc_sectors_used;	\
+ })
+ 
+ #define bucket_max_cmp(l, r)	(bucket_prio(l) < bucket_prio(r))
+@@ -446,7 +446,11 @@ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
+ 
+ 	BUG_ON(atomic_read(&b->pin) != 1);
+ 
+-	SET_GC_SECTORS_USED(b, ca->sb.bucket_size);
++	/*
++	 * If gc_sectors_used is 0, moving gc is preferred. But the new bucket
++	 * should not do moving gc. So we set gc_sectors_used to the maximum.
++	 */
++	b->gc_sectors_used = ca->sb.bucket_size;
+ 
+ 	if (reserve <= RESERVE_PRIO) {
+ 		SET_GC_MARK(b, GC_MARK_METADATA);
+@@ -469,7 +473,7 @@ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
+ void __bch_bucket_free(struct cache *ca, struct bucket *b)
+ {
+ 	SET_GC_MARK(b, 0);
+-	SET_GC_SECTORS_USED(b, 0);
++	b->gc_sectors_used = 0;
+ 
+ 	if (ca->set->avail_nbuckets < ca->set->nbuckets) {
+ 		ca->set->avail_nbuckets++;
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 5a79bb3c272f..582df3c9dc1b 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -197,9 +197,10 @@
+ struct bucket {
+ 	atomic_t	pin;
+ 	uint16_t	prio;
++	uint16_t	flag;
+ 	uint8_t		gen;
+ 	uint8_t		last_gc; /* Most out of date gen in the btree */
+-	uint16_t	gc_mark; /* Bitfield used by GC. See below for field */
++	uint16_t	gc_sectors_used;
+ };
+ 
+ /*
+@@ -207,14 +208,11 @@ struct bucket {
+  * as multiple threads touch struct bucket without locking
+  */
+ 
+-BITMASK(GC_MARK,	 struct bucket, gc_mark, 0, 2);
+ #define GC_MARK_RECLAIMABLE	1
+ #define GC_MARK_DIRTY		2
+ #define GC_MARK_METADATA	3
+-#define GC_SECTORS_USED_SIZE	13
+-#define MAX_GC_SECTORS_USED	(~(~0ULL << GC_SECTORS_USED_SIZE))
+-BITMASK(GC_SECTORS_USED, struct bucket, gc_mark, 2, GC_SECTORS_USED_SIZE);
+-BITMASK(GC_MOVE, struct bucket, gc_mark, 15, 1);
++BITMASK(GC_MARK, struct bucket, flag, 0, 2);
++BITMASK(GC_MOVE, struct bucket, flag, 2, 1);
+ 
+ #include "journal.h"
+ #include "stats.h"
+@@ -764,6 +762,8 @@ struct bbio {
+ #define bucket_bytes(ca)	((ca)->sb.bucket_size << 9)
+ #define block_bytes(ca)		((ca)->sb.block_size << 9)
+ 
++#define MAX_BUCKET_SIZE		(~(~0ULL << 16)) /* sectors */
++
+ static inline unsigned int meta_bucket_pages(struct cache_sb *sb)
+ {
+ 	unsigned int n, max_pages;
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index fd121a61f17c..ca962f329977 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -1255,11 +1255,11 @@ static uint8_t __bch_btree_mark_key(struct cache_set *c, int level,
+ 			SET_GC_MARK(g, GC_MARK_RECLAIMABLE);
+ 
+ 		/* guard against overflow */
+-		SET_GC_SECTORS_USED(g, min_t(unsigned int,
+-					     GC_SECTORS_USED(g) + KEY_SIZE(k),
+-					     MAX_GC_SECTORS_USED));
++		g->gc_sectors_used = min_t(uint16_t, c->cache->sb.bucket_size,
++					   g->gc_sectors_used + KEY_SIZE(k));
+ 
+-		BUG_ON(!GC_SECTORS_USED(g));
++		BUG_ON(g->gc_sectors_used < KEY_SIZE(k) ||
++		       g->gc_sectors_used > c->cache->sb.bucket_size);
+ 	}
+ 
+ 	return stale;
+@@ -1732,9 +1732,15 @@ static void btree_gc_start(struct cache_set *c)
+ 	ca = c->cache;
+ 	for_each_bucket(b, ca) {
+ 		b->last_gc = b->gen;
++
++		/*
++		 * If the bucket is still in use, mark is not necessary.
++		 * In bch_bucket_alloc(), we set the gc_sectors_used to
++		 * cache bucket size, just keep the maximum.
++		 */
+ 		if (!atomic_read(&b->pin)) {
+ 			SET_GC_MARK(b, 0);
+-			SET_GC_SECTORS_USED(b, 0);
++			b->gc_sectors_used = 0;
+ 		}
+ 	}
+ 
+@@ -1797,7 +1803,7 @@ static void bch_btree_gc_finish(struct cache_set *c)
+ 		if (atomic_read(&b->pin))
+ 			continue;
+ 
+-		BUG_ON(!GC_MARK(b) && GC_SECTORS_USED(b));
++		BUG_ON(!GC_MARK(b) && b->gc_sectors_used);
+ 
+ 		if (!GC_MARK(b) || GC_MARK(b) == GC_MARK_RECLAIMABLE)
+ 			c->avail_nbuckets++;
+diff --git a/drivers/md/bcache/movinggc.c b/drivers/md/bcache/movinggc.c
+index 9f32901fdad1..e4182c3ba9f8 100644
+--- a/drivers/md/bcache/movinggc.c
++++ b/drivers/md/bcache/movinggc.c
+@@ -184,14 +184,14 @@ err:		if (!IS_ERR_OR_NULL(w->private))
+ 
+ static bool bucket_cmp(struct bucket *l, struct bucket *r)
+ {
+-	return GC_SECTORS_USED(l) < GC_SECTORS_USED(r);
++	return l->gc_sectors_used < r->gc_sectors_used;
+ }
+ 
+ static unsigned int bucket_heap_top(struct cache *ca)
+ {
+ 	struct bucket *b;
+ 
+-	return (b = heap_peek(&ca->heap)) ? GC_SECTORS_USED(b) : 0;
++	return (b = heap_peek(&ca->heap)) ? b->gc_sectors_used : 0;
+ }
+ 
+ void bch_moving_gc(struct cache_set *c)
+@@ -213,17 +213,17 @@ void bch_moving_gc(struct cache_set *c)
+ 
+ 	for_each_bucket(b, ca) {
+ 		if (GC_MARK(b) == GC_MARK_METADATA ||
+-		    !GC_SECTORS_USED(b) ||
+-		    GC_SECTORS_USED(b) == ca->sb.bucket_size ||
++		    !b->gc_sectors_used ||
++		    b->gc_sectors_used == ca->sb.bucket_size ||
+ 		    atomic_read(&b->pin))
+ 			continue;
+ 
+ 		if (!heap_full(&ca->heap)) {
+-			sectors_to_move += GC_SECTORS_USED(b);
++			sectors_to_move += b->gc_sectors_used;
+ 			heap_add(&ca->heap, b, bucket_cmp);
+ 		} else if (bucket_cmp(b, heap_peek(&ca->heap))) {
+ 			sectors_to_move -= bucket_heap_top(ca);
+-			sectors_to_move += GC_SECTORS_USED(b);
++			sectors_to_move += b->gc_sectors_used;
+ 
+ 			ca->heap.data[0] = b;
+ 			heap_sift(&ca->heap, 0, bucket_cmp);
+@@ -232,7 +232,7 @@ void bch_moving_gc(struct cache_set *c)
+ 
+ 	while (sectors_to_move > reserve_sectors) {
+ 		heap_pop(&ca->heap, b, bucket_cmp);
+-		sectors_to_move -= GC_SECTORS_USED(b);
++		sectors_to_move -= b->gc_sectors_used;
+ 	}
+ 
+ 	while (heap_pop(&ca->heap, b, bucket_cmp))
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 0e2c1880f60b..3b859954b8c5 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -1073,7 +1073,7 @@ SHOW(__bch_cache)
+ 
+ 		mutex_lock(&ca->set->bucket_lock);
+ 		for_each_bucket(b, ca) {
+-			if (!GC_SECTORS_USED(b))
++			if (!b->gc_sectors_used)
+ 				unused++;
+ 			if (GC_MARK(b) == GC_MARK_RECLAIMABLE)
+ 				available++;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.17.1.windows.2
 
