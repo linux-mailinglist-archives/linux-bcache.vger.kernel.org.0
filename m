@@ -2,248 +2,277 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B3A74758E43
-	for <lists+linux-bcache@lfdr.de>; Wed, 19 Jul 2023 09:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7A3A758EFA
+	for <lists+linux-bcache@lfdr.de>; Wed, 19 Jul 2023 09:28:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231317AbjGSHB2 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 19 Jul 2023 03:01:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42976 "EHLO
+        id S229946AbjGSH2O (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 19 Jul 2023 03:28:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231339AbjGSHBO (ORCPT
+        with ESMTP id S230156AbjGSH2I (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 19 Jul 2023 03:01:14 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 311431B9
-        for <linux-bcache@vger.kernel.org>; Wed, 19 Jul 2023 00:01:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689750071; x=1721286071;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=b18vK8nkvvWK30Is/f9qiIIs5rPzl+cfPCvrd2745w0=;
-  b=YRikQ9OqIQkaiyyc5Q4m0Zu4f08ogobQMZtXp185iGYb+Uj0mYB8jzAU
-   aAxdJPjT/xBb/WqTFpBgCQu9DKOanUMcAQrcBifSXv2Ce79W/ynIBtYBh
-   cbdbLNexd2fn9Q6srJ3Ng2fyzYYqIUc063jF9Qsdq95JF3KxIWjURlsS0
-   yx7ySdYnqPy+k5kP/KsJPjH2EK5sMR3Kr9DogCaFv9obhtDuUAK9dRLgK
-   7XrlHT12NaHRzx6gM877GMRFxwrCa9aUTTho1D6qmPgwmSn2R+pmuf+ag
-   5bKH3ljpHaqglob/FwZqBumpDB2BmxWAYK18jWGQ6tkyoPhQFp4RRnwR2
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="432572272"
-X-IronPort-AV: E=Sophos;i="6.01,216,1684825200"; 
-   d="scan'208";a="432572272"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2023 00:01:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="717878642"
-X-IronPort-AV: E=Sophos;i="6.01,216,1684825200"; 
-   d="scan'208";a="717878642"
-Received: from lkp-server02.sh.intel.com (HELO 36946fcf73d7) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 19 Jul 2023 00:01:09 -0700
-Received: from kbuild by 36946fcf73d7 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qM1BM-0004Eb-0c;
-        Wed, 19 Jul 2023 07:01:08 +0000
-Date:   Wed, 19 Jul 2023 15:00:34 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Mingzhe Zou <mingzhe.zou@easystack.cn>, colyli@suse.de,
-        linux-bcache@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        bcache@lists.ewheeler.net, zoumingzhe@qq.com
-Subject: Re: [PATCH v2 1/3] bcache: the gc_sectors_used size matches the
- bucket size
-Message-ID: <202307191421.MARPn86g-lkp@intel.com>
-References: <20230719024709.287-1-mingzhe.zou@easystack.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230719024709.287-1-mingzhe.zou@easystack.cn>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 19 Jul 2023 03:28:08 -0400
+Received: from mail-m2835.qiye.163.com (mail-m2835.qiye.163.com [103.74.28.35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CFFDE47
+        for <linux-bcache@vger.kernel.org>; Wed, 19 Jul 2023 00:28:06 -0700 (PDT)
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m2835.qiye.163.com (Hmail) with ESMTPA id 25A0B8A006B;
+        Wed, 19 Jul 2023 15:27:59 +0800 (CST)
+From:   Mingzhe Zou <mingzhe.zou@easystack.cn>
+To:     colyli@suse.de, linux-bcache@vger.kernel.org
+Cc:     bcache@lists.ewheeler.net, zoumingzhe@qq.com
+Subject: [PATCH v3 1/3] bcache: the gc_sectors_used size matches the bucket size
+Date:   Wed, 19 Jul 2023 15:27:51 +0800
+Message-Id: <20230719072753.366-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTEtKVkseQhoaTU4fTx4dQ1UZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKTFVKS0tVS1kG
+X-HM-Tid: 0a896d0c7135841dkuqw25a0b8a006b
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PQg6GDo5KDE0HFYiIkIvNwE5
+        SQkKFD5VSlVKTUNCTE5KTUxCQk9MVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBQ0xNSzcG
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Mingzhe,
+From: Mingzhe Zou <zoumingzhe@qq.com>
 
-kernel test robot noticed the following build errors:
+The bucket size in the superblock is defined as uint16_t.
+But, GC_SECTORS_USED is only 13 bits. If the bucket size
+is 4M (8192 sectors), GC_SECTORS_USED will be truncated
+to MAX_GC_SECTORS_USED.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.5-rc2 next-20230719]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+GC_SECTORS_USED is the moving gc sorting condition, we
+should try our best to ensure it is correct.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mingzhe-Zou/bcache-Separate-bch_moving_gc-from-bch_btree_gc/20230719-105019
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20230719024709.287-1-mingzhe.zou%40easystack.cn
-patch subject: [PATCH v2 1/3] bcache: the gc_sectors_used size matches the bucket size
-config: hexagon-randconfig-r025-20230718 (https://download.01.org/0day-ci/archive/20230719/202307191421.MARPn86g-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
-reproduce: (https://download.01.org/0day-ci/archive/20230719/202307191421.MARPn86g-lkp@intel.com/reproduce)
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/alloc.c     | 12 ++++++++----
+ drivers/md/bcache/bcache.h    | 12 ++++++------
+ drivers/md/bcache/btree.c     | 18 ++++++++++++------
+ drivers/md/bcache/movinggc.c  | 14 +++++++-------
+ drivers/md/bcache/sysfs.c     |  2 +-
+ include/trace/events/bcache.h |  2 +-
+ 6 files changed, 35 insertions(+), 25 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202307191421.MARPn86g-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/md/bcache/trace.c:2:
-   In file included from drivers/md/bcache/bcache.h:181:
-   In file included from include/linux/bio.h:10:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:334:
-   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     547 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/md/bcache/trace.c:2:
-   In file included from drivers/md/bcache/bcache.h:181:
-   In file included from include/linux/bio.h:10:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:334:
-   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/md/bcache/trace.c:2:
-   In file included from drivers/md/bcache/bcache.h:181:
-   In file included from include/linux/bio.h:10:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:13:
-   In file included from arch/hexagon/include/asm/io.h:334:
-   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     584 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   In file included from drivers/md/bcache/trace.c:9:
-   In file included from include/trace/events/bcache.h:505:
-   In file included from include/trace/define_trace.h:102:
-   In file included from include/trace/trace_events.h:419:
->> include/trace/events/bcache.h:441:22: error: call to undeclared function 'GC_SECTORS_USED'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     441 |                 __entry->sectors        = GC_SECTORS_USED(&ca->buckets[bucket]);
-         |                                           ^
-   6 warnings and 1 error generated.
-
-
-vim +/GC_SECTORS_USED +441 include/trace/events/bcache.h
-
-cafe563591446cf Kent Overstreet 2013-03-23  427  
-7159b1ad3dded9d Kent Overstreet 2014-02-12  428  TRACE_EVENT(bcache_invalidate,
-7159b1ad3dded9d Kent Overstreet 2014-02-12  429  	TP_PROTO(struct cache *ca, size_t bucket),
-7159b1ad3dded9d Kent Overstreet 2014-02-12  430  	TP_ARGS(ca, bucket),
-cafe563591446cf Kent Overstreet 2013-03-23  431  
-cafe563591446cf Kent Overstreet 2013-03-23  432  	TP_STRUCT__entry(
-7159b1ad3dded9d Kent Overstreet 2014-02-12  433  		__field(unsigned,	sectors			)
-7159b1ad3dded9d Kent Overstreet 2014-02-12  434  		__field(dev_t,		dev			)
-7159b1ad3dded9d Kent Overstreet 2014-02-12  435  		__field(__u64,		offset			)
-cafe563591446cf Kent Overstreet 2013-03-23  436  	),
-cafe563591446cf Kent Overstreet 2013-03-23  437  
-cafe563591446cf Kent Overstreet 2013-03-23  438  	TP_fast_assign(
-7159b1ad3dded9d Kent Overstreet 2014-02-12  439  		__entry->dev		= ca->bdev->bd_dev;
-7159b1ad3dded9d Kent Overstreet 2014-02-12  440  		__entry->offset		= bucket << ca->set->bucket_bits;
-7159b1ad3dded9d Kent Overstreet 2014-02-12 @441  		__entry->sectors	= GC_SECTORS_USED(&ca->buckets[bucket]);
-cafe563591446cf Kent Overstreet 2013-03-23  442  	),
-cafe563591446cf Kent Overstreet 2013-03-23  443  
-7159b1ad3dded9d Kent Overstreet 2014-02-12  444  	TP_printk("invalidated %u sectors at %d,%d sector=%llu",
-7159b1ad3dded9d Kent Overstreet 2014-02-12  445  		  __entry->sectors, MAJOR(__entry->dev),
-7159b1ad3dded9d Kent Overstreet 2014-02-12  446  		  MINOR(__entry->dev), __entry->offset)
-7159b1ad3dded9d Kent Overstreet 2014-02-12  447  );
-7159b1ad3dded9d Kent Overstreet 2014-02-12  448  
-7159b1ad3dded9d Kent Overstreet 2014-02-12  449  TRACE_EVENT(bcache_alloc,
-7159b1ad3dded9d Kent Overstreet 2014-02-12  450  	TP_PROTO(struct cache *ca, size_t bucket),
-7159b1ad3dded9d Kent Overstreet 2014-02-12  451  	TP_ARGS(ca, bucket),
-7159b1ad3dded9d Kent Overstreet 2014-02-12  452  
-7159b1ad3dded9d Kent Overstreet 2014-02-12  453  	TP_STRUCT__entry(
-7159b1ad3dded9d Kent Overstreet 2014-02-12  454  		__field(dev_t,		dev			)
-7159b1ad3dded9d Kent Overstreet 2014-02-12  455  		__field(__u64,		offset			)
-7159b1ad3dded9d Kent Overstreet 2014-02-12  456  	),
-7159b1ad3dded9d Kent Overstreet 2014-02-12  457  
-7159b1ad3dded9d Kent Overstreet 2014-02-12  458  	TP_fast_assign(
-7159b1ad3dded9d Kent Overstreet 2014-02-12  459  		__entry->dev		= ca->bdev->bd_dev;
-7159b1ad3dded9d Kent Overstreet 2014-02-12  460  		__entry->offset		= bucket << ca->set->bucket_bits;
-7159b1ad3dded9d Kent Overstreet 2014-02-12  461  	),
-7159b1ad3dded9d Kent Overstreet 2014-02-12  462  
-7159b1ad3dded9d Kent Overstreet 2014-02-12  463  	TP_printk("allocated %d,%d sector=%llu", MAJOR(__entry->dev),
-7159b1ad3dded9d Kent Overstreet 2014-02-12  464  		  MINOR(__entry->dev), __entry->offset)
-cafe563591446cf Kent Overstreet 2013-03-23  465  );
-cafe563591446cf Kent Overstreet 2013-03-23  466  
-c37511b863f36c1 Kent Overstreet 2013-04-26  467  TRACE_EVENT(bcache_alloc_fail,
-78365411b344df3 Kent Overstreet 2013-12-17  468  	TP_PROTO(struct cache *ca, unsigned reserve),
-78365411b344df3 Kent Overstreet 2013-12-17  469  	TP_ARGS(ca, reserve),
-cafe563591446cf Kent Overstreet 2013-03-23  470  
-c37511b863f36c1 Kent Overstreet 2013-04-26  471  	TP_STRUCT__entry(
-7159b1ad3dded9d Kent Overstreet 2014-02-12  472  		__field(dev_t,		dev			)
-c37511b863f36c1 Kent Overstreet 2013-04-26  473  		__field(unsigned,	free			)
-c37511b863f36c1 Kent Overstreet 2013-04-26  474  		__field(unsigned,	free_inc		)
-c37511b863f36c1 Kent Overstreet 2013-04-26  475  		__field(unsigned,	blocked			)
-c37511b863f36c1 Kent Overstreet 2013-04-26  476  	),
-cafe563591446cf Kent Overstreet 2013-03-23  477  
-c37511b863f36c1 Kent Overstreet 2013-04-26  478  	TP_fast_assign(
-7159b1ad3dded9d Kent Overstreet 2014-02-12  479  		__entry->dev		= ca->bdev->bd_dev;
-78365411b344df3 Kent Overstreet 2013-12-17  480  		__entry->free		= fifo_used(&ca->free[reserve]);
-c37511b863f36c1 Kent Overstreet 2013-04-26  481  		__entry->free_inc	= fifo_used(&ca->free_inc);
-c37511b863f36c1 Kent Overstreet 2013-04-26  482  		__entry->blocked	= atomic_read(&ca->set->prio_blocked);
-c37511b863f36c1 Kent Overstreet 2013-04-26  483  	),
-cafe563591446cf Kent Overstreet 2013-03-23  484  
-2531d9ee61fa08a Kent Overstreet 2014-03-17  485  	TP_printk("alloc fail %d,%d free %u free_inc %u blocked %u",
-7159b1ad3dded9d Kent Overstreet 2014-02-12  486  		  MAJOR(__entry->dev), MINOR(__entry->dev), __entry->free,
-2531d9ee61fa08a Kent Overstreet 2014-03-17  487  		  __entry->free_inc, __entry->blocked)
-cafe563591446cf Kent Overstreet 2013-03-23  488  );
-cafe563591446cf Kent Overstreet 2013-03-23  489  
-c37511b863f36c1 Kent Overstreet 2013-04-26  490  /* Background writeback */
-cafe563591446cf Kent Overstreet 2013-03-23  491  
-c37511b863f36c1 Kent Overstreet 2013-04-26  492  DEFINE_EVENT(bkey, bcache_writeback,
-c37511b863f36c1 Kent Overstreet 2013-04-26  493  	TP_PROTO(struct bkey *k),
-c37511b863f36c1 Kent Overstreet 2013-04-26  494  	TP_ARGS(k)
-c37511b863f36c1 Kent Overstreet 2013-04-26  495  );
-cafe563591446cf Kent Overstreet 2013-03-23  496  
-c37511b863f36c1 Kent Overstreet 2013-04-26  497  DEFINE_EVENT(bkey, bcache_writeback_collision,
-c37511b863f36c1 Kent Overstreet 2013-04-26  498  	TP_PROTO(struct bkey *k),
-c37511b863f36c1 Kent Overstreet 2013-04-26  499  	TP_ARGS(k)
-cafe563591446cf Kent Overstreet 2013-03-23  500  );
-cafe563591446cf Kent Overstreet 2013-03-23  501  
-cafe563591446cf Kent Overstreet 2013-03-23  502  #endif /* _TRACE_BCACHE_H */
-cafe563591446cf Kent Overstreet 2013-03-23  503  
-cafe563591446cf Kent Overstreet 2013-03-23  504  /* This part must be outside protection */
-cafe563591446cf Kent Overstreet 2013-03-23 @505  #include <trace/define_trace.h>
-
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index ce13c272c387..4ae1018bf029 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -142,7 +142,7 @@ void __bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
+ 	lockdep_assert_held(&ca->set->bucket_lock);
+ 	BUG_ON(GC_MARK(b) && GC_MARK(b) != GC_MARK_RECLAIMABLE);
+ 
+-	if (GC_SECTORS_USED(b))
++	if (b->gc_sectors_used)
+ 		trace_bcache_invalidate(ca, b - ca->buckets);
+ 
+ 	bch_inc_gen(ca, b);
+@@ -170,7 +170,7 @@ static void bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
+ ({									\
+ 	unsigned int min_prio = (INITIAL_PRIO - ca->set->min_prio) / 8;	\
+ 									\
+-	(b->prio - ca->set->min_prio + min_prio) * GC_SECTORS_USED(b);	\
++	(b->prio - ca->set->min_prio + min_prio) * b->gc_sectors_used;	\
+ })
+ 
+ #define bucket_max_cmp(l, r)	(bucket_prio(l) < bucket_prio(r))
+@@ -446,7 +446,11 @@ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
+ 
+ 	BUG_ON(atomic_read(&b->pin) != 1);
+ 
+-	SET_GC_SECTORS_USED(b, ca->sb.bucket_size);
++	/*
++	 * If gc_sectors_used is 0, moving gc is preferred. But the new bucket
++	 * should not do moving gc. So we set gc_sectors_used to the maximum.
++	 */
++	b->gc_sectors_used = ca->sb.bucket_size;
+ 
+ 	if (reserve <= RESERVE_PRIO) {
+ 		SET_GC_MARK(b, GC_MARK_METADATA);
+@@ -469,7 +473,7 @@ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
+ void __bch_bucket_free(struct cache *ca, struct bucket *b)
+ {
+ 	SET_GC_MARK(b, 0);
+-	SET_GC_SECTORS_USED(b, 0);
++	b->gc_sectors_used = 0;
+ 
+ 	if (ca->set->avail_nbuckets < ca->set->nbuckets) {
+ 		ca->set->avail_nbuckets++;
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 5a79bb3c272f..582df3c9dc1b 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -197,9 +197,10 @@
+ struct bucket {
+ 	atomic_t	pin;
+ 	uint16_t	prio;
++	uint16_t	flag;
+ 	uint8_t		gen;
+ 	uint8_t		last_gc; /* Most out of date gen in the btree */
+-	uint16_t	gc_mark; /* Bitfield used by GC. See below for field */
++	uint16_t	gc_sectors_used;
+ };
+ 
+ /*
+@@ -207,14 +208,11 @@ struct bucket {
+  * as multiple threads touch struct bucket without locking
+  */
+ 
+-BITMASK(GC_MARK,	 struct bucket, gc_mark, 0, 2);
+ #define GC_MARK_RECLAIMABLE	1
+ #define GC_MARK_DIRTY		2
+ #define GC_MARK_METADATA	3
+-#define GC_SECTORS_USED_SIZE	13
+-#define MAX_GC_SECTORS_USED	(~(~0ULL << GC_SECTORS_USED_SIZE))
+-BITMASK(GC_SECTORS_USED, struct bucket, gc_mark, 2, GC_SECTORS_USED_SIZE);
+-BITMASK(GC_MOVE, struct bucket, gc_mark, 15, 1);
++BITMASK(GC_MARK, struct bucket, flag, 0, 2);
++BITMASK(GC_MOVE, struct bucket, flag, 2, 1);
+ 
+ #include "journal.h"
+ #include "stats.h"
+@@ -764,6 +762,8 @@ struct bbio {
+ #define bucket_bytes(ca)	((ca)->sb.bucket_size << 9)
+ #define block_bytes(ca)		((ca)->sb.block_size << 9)
+ 
++#define MAX_BUCKET_SIZE		(~(~0ULL << 16)) /* sectors */
++
+ static inline unsigned int meta_bucket_pages(struct cache_sb *sb)
+ {
+ 	unsigned int n, max_pages;
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index fd121a61f17c..ca962f329977 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -1255,11 +1255,11 @@ static uint8_t __bch_btree_mark_key(struct cache_set *c, int level,
+ 			SET_GC_MARK(g, GC_MARK_RECLAIMABLE);
+ 
+ 		/* guard against overflow */
+-		SET_GC_SECTORS_USED(g, min_t(unsigned int,
+-					     GC_SECTORS_USED(g) + KEY_SIZE(k),
+-					     MAX_GC_SECTORS_USED));
++		g->gc_sectors_used = min_t(uint16_t, c->cache->sb.bucket_size,
++					   g->gc_sectors_used + KEY_SIZE(k));
+ 
+-		BUG_ON(!GC_SECTORS_USED(g));
++		BUG_ON(g->gc_sectors_used < KEY_SIZE(k) ||
++		       g->gc_sectors_used > c->cache->sb.bucket_size);
+ 	}
+ 
+ 	return stale;
+@@ -1732,9 +1732,15 @@ static void btree_gc_start(struct cache_set *c)
+ 	ca = c->cache;
+ 	for_each_bucket(b, ca) {
+ 		b->last_gc = b->gen;
++
++		/*
++		 * If the bucket is still in use, mark is not necessary.
++		 * In bch_bucket_alloc(), we set the gc_sectors_used to
++		 * cache bucket size, just keep the maximum.
++		 */
+ 		if (!atomic_read(&b->pin)) {
+ 			SET_GC_MARK(b, 0);
+-			SET_GC_SECTORS_USED(b, 0);
++			b->gc_sectors_used = 0;
+ 		}
+ 	}
+ 
+@@ -1797,7 +1803,7 @@ static void bch_btree_gc_finish(struct cache_set *c)
+ 		if (atomic_read(&b->pin))
+ 			continue;
+ 
+-		BUG_ON(!GC_MARK(b) && GC_SECTORS_USED(b));
++		BUG_ON(!GC_MARK(b) && b->gc_sectors_used);
+ 
+ 		if (!GC_MARK(b) || GC_MARK(b) == GC_MARK_RECLAIMABLE)
+ 			c->avail_nbuckets++;
+diff --git a/drivers/md/bcache/movinggc.c b/drivers/md/bcache/movinggc.c
+index 9f32901fdad1..e4182c3ba9f8 100644
+--- a/drivers/md/bcache/movinggc.c
++++ b/drivers/md/bcache/movinggc.c
+@@ -184,14 +184,14 @@ err:		if (!IS_ERR_OR_NULL(w->private))
+ 
+ static bool bucket_cmp(struct bucket *l, struct bucket *r)
+ {
+-	return GC_SECTORS_USED(l) < GC_SECTORS_USED(r);
++	return l->gc_sectors_used < r->gc_sectors_used;
+ }
+ 
+ static unsigned int bucket_heap_top(struct cache *ca)
+ {
+ 	struct bucket *b;
+ 
+-	return (b = heap_peek(&ca->heap)) ? GC_SECTORS_USED(b) : 0;
++	return (b = heap_peek(&ca->heap)) ? b->gc_sectors_used : 0;
+ }
+ 
+ void bch_moving_gc(struct cache_set *c)
+@@ -213,17 +213,17 @@ void bch_moving_gc(struct cache_set *c)
+ 
+ 	for_each_bucket(b, ca) {
+ 		if (GC_MARK(b) == GC_MARK_METADATA ||
+-		    !GC_SECTORS_USED(b) ||
+-		    GC_SECTORS_USED(b) == ca->sb.bucket_size ||
++		    !b->gc_sectors_used ||
++		    b->gc_sectors_used == ca->sb.bucket_size ||
+ 		    atomic_read(&b->pin))
+ 			continue;
+ 
+ 		if (!heap_full(&ca->heap)) {
+-			sectors_to_move += GC_SECTORS_USED(b);
++			sectors_to_move += b->gc_sectors_used;
+ 			heap_add(&ca->heap, b, bucket_cmp);
+ 		} else if (bucket_cmp(b, heap_peek(&ca->heap))) {
+ 			sectors_to_move -= bucket_heap_top(ca);
+-			sectors_to_move += GC_SECTORS_USED(b);
++			sectors_to_move += b->gc_sectors_used;
+ 
+ 			ca->heap.data[0] = b;
+ 			heap_sift(&ca->heap, 0, bucket_cmp);
+@@ -232,7 +232,7 @@ void bch_moving_gc(struct cache_set *c)
+ 
+ 	while (sectors_to_move > reserve_sectors) {
+ 		heap_pop(&ca->heap, b, bucket_cmp);
+-		sectors_to_move -= GC_SECTORS_USED(b);
++		sectors_to_move -= b->gc_sectors_used;
+ 	}
+ 
+ 	while (heap_pop(&ca->heap, b, bucket_cmp))
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 0e2c1880f60b..3b859954b8c5 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -1073,7 +1073,7 @@ SHOW(__bch_cache)
+ 
+ 		mutex_lock(&ca->set->bucket_lock);
+ 		for_each_bucket(b, ca) {
+-			if (!GC_SECTORS_USED(b))
++			if (!b->gc_sectors_used)
+ 				unused++;
+ 			if (GC_MARK(b) == GC_MARK_RECLAIMABLE)
+ 				available++;
+diff --git a/include/trace/events/bcache.h b/include/trace/events/bcache.h
+index 899fdacf57b9..b9d63e18c453 100644
+--- a/include/trace/events/bcache.h
++++ b/include/trace/events/bcache.h
+@@ -438,7 +438,7 @@ TRACE_EVENT(bcache_invalidate,
+ 	TP_fast_assign(
+ 		__entry->dev		= ca->bdev->bd_dev;
+ 		__entry->offset		= bucket << ca->set->bucket_bits;
+-		__entry->sectors	= GC_SECTORS_USED(&ca->buckets[bucket]);
++		__entry->sectors	= ca->buckets[bucket].gc_sectors_used;
+ 	),
+ 
+ 	TP_printk("invalidated %u sectors at %d,%d sector=%llu",
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.17.1.windows.2
+
