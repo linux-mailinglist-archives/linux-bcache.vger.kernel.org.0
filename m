@@ -2,72 +2,69 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E924675F638
-	for <lists+linux-bcache@lfdr.de>; Mon, 24 Jul 2023 14:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3DE0760605
+	for <lists+linux-bcache@lfdr.de>; Tue, 25 Jul 2023 04:49:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229843AbjGXM1K (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 24 Jul 2023 08:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54142 "EHLO
+        id S229566AbjGYCt4 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 24 Jul 2023 22:49:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbjGXM1J (ORCPT
+        with ESMTP id S231404AbjGYCtu (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 24 Jul 2023 08:27:09 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86DB419B;
-        Mon, 24 Jul 2023 05:27:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=FgtQe2iC/0NBUdTIYwU6FvaIC/2mZu3i/WpphGYT+1k=; b=ZIw/NB6uEo0641+Wq8EzNrbHBV
-        rrdS2AkdlanLUW4jtuNV7YJmE8dx65rhuqNN6d+O2A+YB9l53nFIBcRLIER24dz2SZGSbQpUdfRFt
-        O+SQB8u46jmJ0V3lkB2dv55l0XkOFJ2vLXAjC15/xKJogcvcsepgRzVe5Zf2VfboPt9BBV/mRWBu/
-        r1HeDooSZKO8KrM91YanEuhJbHVgQEIeOAYvY50OE9Oa0XF31R7B/jnZvsmScHku30xY6VnjseHTr
-        PXjdkkROSxxW+REohqgqj+xc5EAtZBuKqFbmv/xo9QoVvk4ORWEH1k1N/to1rfbfNrbjLNy69S5M/
-        AYY+hq7g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qNudM-004Ned-Mr; Mon, 24 Jul 2023 12:25:53 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id B0440300195;
-        Mon, 24 Jul 2023 14:25:49 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5C178266885CD; Mon, 24 Jul 2023 14:25:49 +0200 (CEST)
-Date:   Mon, 24 Jul 2023 14:25:49 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Qi Zheng <zhengqi.arch@bytedance.com>
-Cc:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
-        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
-        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
-        yujie.liu@intel.com, gregkh@linuxfoundation.org,
-        muchun.song@linux.dev, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, x86@kernel.org, kvm@vger.kernel.org,
+        Mon, 24 Jul 2023 22:49:50 -0400
+X-Greylist: delayed 294 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 24 Jul 2023 19:49:24 PDT
+Received: from out-40.mta1.migadu.com (out-40.mta1.migadu.com [IPv6:2001:41d0:203:375::28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E9419BF
+        for <linux-bcache@vger.kernel.org>; Mon, 24 Jul 2023 19:49:24 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1690252555;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0+VnVPZa4UeOCG7Yrfiew8gKr6k3ViuPV5Oe7aKEwA0=;
+        b=OouSnERnVUq8t87+qMJi+ElF1O+pkB5HJ/XjlEV4XPIdaL5qKz/r9JLMMUeUfOnb3ZMOdj
+        khOpzTQ2idnb6S4y6b+9cHD3wy9I4UTOUPXGpsseW4bB+Gm8jsDjdu3ImL8BlNp++kk+K8
+        DDellGRauVWKhKhaf7FrGB51gwHD7wU=
+MIME-Version: 1.0
+Subject: Re: [PATCH v2 01/47] mm: vmscan: move shrinker-related code into a
+ separate file
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <20230724094354.90817-2-zhengqi.arch@bytedance.com>
+Date:   Tue, 25 Jul 2023 10:35:01 +0800
+Cc:     Andrew Morton <akpm@linux-foundation.org>, david@fromorbit.com,
+        tkhai@ya.ru, Vlastimil Babka <vbabka@suse.cz>,
+        Roman Gushchin <roman.gushchin@linux.dev>, djwong@kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>, tytso@mit.edu,
+        steven.price@arm.com, cel@kernel.org,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        yujie.liu@intel.com, Greg KH <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        x86@kernel.org, kvm@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-erofs@lists.ozlabs.org,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         linux-nfs@vger.kernel.org, linux-mtd@lists.infradead.org,
-        rcu@vger.kernel.org, netdev@vger.kernel.org,
+        rcu@vger.kernel.org, netdev <netdev@vger.kernel.org>,
         dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         dm-devel@redhat.com, linux-raid@vger.kernel.org,
         linux-bcache@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v2 03/47] mm: shrinker: add infrastructure for
- dynamically allocating shrinker
-Message-ID: <20230724122549.GA3731903@hirez.programming.kicks-ass.net>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <97E80C37-8872-4C5A-A027-A0B35F39152A@linux.dev>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
- <20230724094354.90817-4-zhengqi.arch@bytedance.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230724094354.90817-4-zhengqi.arch@bytedance.com>
+ <20230724094354.90817-2-zhengqi.arch@bytedance.com>
+To:     Qi Zheng <zhengqi.arch@bytedance.com>
+X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,33 +72,40 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Mon, Jul 24, 2023 at 05:43:10PM +0800, Qi Zheng wrote:
 
-> +void shrinker_unregister(struct shrinker *shrinker)
-> +{
-> +	struct dentry *debugfs_entry;
-> +	int debugfs_id;
-> +
-> +	if (!shrinker || !(shrinker->flags & SHRINKER_REGISTERED))
-> +		return;
-> +
-> +	down_write(&shrinker_rwsem);
-> +	list_del(&shrinker->list);
-> +	shrinker->flags &= ~SHRINKER_REGISTERED;
-> +	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> +		unregister_memcg_shrinker(shrinker);
-> +	debugfs_entry = shrinker_debugfs_detach(shrinker, &debugfs_id);
-> +	up_write(&shrinker_rwsem);
-> +
-> +	shrinker_debugfs_remove(debugfs_entry, debugfs_id);
 
-Should there not be an rcu_barrier() right about here?
+> On Jul 24, 2023, at 17:43, Qi Zheng <zhengqi.arch@bytedance.com> =
+wrote:
+>=20
+> The mm/vmscan.c file is too large, so separate the shrinker-related
+> code from it into a separate file. No functional changes.
+>=20
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> ---
+> include/linux/shrinker.h |   3 +
+> mm/Makefile              |   4 +-
+> mm/shrinker.c            | 707 +++++++++++++++++++++++++++++++++++++++
+> mm/vmscan.c              | 701 --------------------------------------
+> 4 files changed, 712 insertions(+), 703 deletions(-)
+> create mode 100644 mm/shrinker.c
+>=20
+> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+> index 224293b2dd06..961cb84e51f5 100644
+> --- a/include/linux/shrinker.h
+> +++ b/include/linux/shrinker.h
+> @@ -96,6 +96,9 @@ struct shrinker {
+>  */
+> #define SHRINKER_NONSLAB (1 << 3)
+>=20
+> +unsigned long shrink_slab(gfp_t gfp_mask, int nid, struct mem_cgroup =
+*memcg,
+> +			   int priority);
 
-> +
-> +	kfree(shrinker->nr_deferred);
-> +	shrinker->nr_deferred = NULL;
-> +
-> +	kfree(shrinker);
-> +}
-> +EXPORT_SYMBOL(shrinker_unregister);
+A good cleanup, vmscan.c is so huge.
+
+I'd like to introduce a new header in mm/ directory and contains those
+declarations of functions (like this and other debug function in
+shrinker_debug.c) since they are used internally across mm.
+
+Thanks.
 
