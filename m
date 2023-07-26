@@ -2,38 +2,38 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B626762E12
-	for <lists+linux-bcache@lfdr.de>; Wed, 26 Jul 2023 09:41:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 718AD762E56
+	for <lists+linux-bcache@lfdr.de>; Wed, 26 Jul 2023 09:45:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232222AbjGZHl3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 26 Jul 2023 03:41:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36920 "EHLO
+        id S232840AbjGZHo5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 26 Jul 2023 03:44:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232327AbjGZHkq (ORCPT
+        with ESMTP id S231821AbjGZHoM (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 26 Jul 2023 03:40:46 -0400
-Received: from out-9.mta0.migadu.com (out-9.mta0.migadu.com [IPv6:2001:41d0:1004:224b::9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2DF524C
-        for <linux-bcache@vger.kernel.org>; Wed, 26 Jul 2023 00:37:26 -0700 (PDT)
+        Wed, 26 Jul 2023 03:44:12 -0400
+Received: from out-25.mta1.migadu.com (out-25.mta1.migadu.com [95.215.58.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E815469C
+        for <linux-bcache@vger.kernel.org>; Wed, 26 Jul 2023 00:39:55 -0700 (PDT)
 Content-Type: text/plain;
         charset=us-ascii
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1690357041;
+        t=1690357193;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FH3LyfLyqkvA0uofohdpfMljRn5zgQbiJWs64hRJpqc=;
-        b=COPHaz+wHjiUlAHsjP58xdsSSXA6rPPl39Mqp3hq6OVH+Fq0km6xEhEcWCRhxhX26w/v20
-        C9+jDmrUpEHzECadLd9w01EIqvkiKvcuovvFjSED4El7k+dj7Pu3N2tGkGTqTXRyLg+bIG
-        Dtp5bL/dBJohTZeYRyhYg3+TCZ3pysU=
+        bh=l8aJXSNw5+elc1iE01vL5l3NT4M+siQK80IPjT8jgIg=;
+        b=eGqsf3Kk+wnqjw4p+oAcS2NZWo54D2sWzelRyzyU4NPUv0q8nn2S8BOMGAPnmnxcfiOTkk
+        SKKt5tpkWGMdRMREQoEzpDPmf2FxPGibaSJmfDS71vzjSCkQXyzoliP1NPeTVqbA/vFWi5
+        npjPE4PA44NIs8OFJIOh1TEq9vI5PX4=
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 30/47] virtio_balloon: dynamically allocate the
- virtio-balloon shrinker
+Subject: Re: [PATCH v2 31/47] mbcache: dynamically allocate the mbcache
+ shrinker
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From:   Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <20230724094354.90817-31-zhengqi.arch@bytedance.com>
-Date:   Wed, 26 Jul 2023 15:36:34 +0800
+In-Reply-To: <20230724094354.90817-32-zhengqi.arch@bytedance.com>
+Date:   Wed, 26 Jul 2023 15:39:06 +0800
 Cc:     Andrew Morton <akpm@linux-foundation.org>, david@fromorbit.com,
         tkhai@ya.ru, Vlastimil Babka <vbabka@suse.cz>,
         Roman Gushchin <roman.gushchin@linux.dev>, djwong@kernel.org,
@@ -55,9 +55,9 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>, david@fromorbit.com,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Transfer-Encoding: 7bit
-Message-Id: <1934CDDA-BE23-4048-B924-2C954817F1A1@linux.dev>
+Message-Id: <9A3DA627-8ADC-429E-B751-C1BD6362967A@linux.dev>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
- <20230724094354.90817-31-zhengqi.arch@bytedance.com>
+ <20230724094354.90817-32-zhengqi.arch@bytedance.com>
 To:     Qi Zheng <zhengqi.arch@bytedance.com>
 X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -75,9 +75,9 @@ X-Mailing-List: linux-bcache@vger.kernel.org
 > On Jul 24, 2023, at 17:43, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
 > 
 > In preparation for implementing lockless slab shrink, use new APIs to
-> dynamically allocate the virtio-balloon shrinker, so that it can be freed
+> dynamically allocate the mbcache shrinker, so that it can be freed
 > asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
-> read-side critical section when releasing the struct virtio_balloon.
+> read-side critical section when releasing the struct mb_cache.
 > 
 > Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
