@@ -2,67 +2,46 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1961B764FC4
-	for <lists+linux-bcache@lfdr.de>; Thu, 27 Jul 2023 11:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9BDD7650D9
+	for <lists+linux-bcache@lfdr.de>; Thu, 27 Jul 2023 12:20:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234472AbjG0JaP (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 27 Jul 2023 05:30:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51800 "EHLO
+        id S232432AbjG0KU4 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 27 Jul 2023 06:20:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234126AbjG0J3t (ORCPT
+        with ESMTP id S233571AbjG0KUy (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 27 Jul 2023 05:29:49 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48BA19AA8
-        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 02:20:07 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-682b1768a0bso187073b3a.0
-        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 02:20:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1690449603; x=1691054403;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cb79b5va6gFfSJneJi5lY4rGeRwgOukMupryAUVW6kI=;
-        b=YCWSTu9U7oWMIxlz666y2QG523oA3QX5qQv7ZytrRVu6fJw8dRHyUfgDIT1gU69FG8
-         THUguZfsi1KeJApNPmw0jxmv7f8KFlV4UTxlH9XbeulHxoa/ldWA269gxLsqPd7fsDUL
-         3wrs7fjkTjLEvVIuFKVgIWoEr+OE7ZGV4f2QptD03saCT0x1g+4lQFRHQ9ruqft2Rhft
-         lQsKff8YPeqYMpcr6auHVhvyZ4A0b6O2v3t87pxn8FkR9lCy8v/ntqGuUNKm9Zf3rtD1
-         Pt/WGCyBPHzJX+fw7G8Ac9jWyGkR4LQhg8QoLvoZwbFMr8CqGaDCh/cUGTEJkXif0gLU
-         NqYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690449603; x=1691054403;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cb79b5va6gFfSJneJi5lY4rGeRwgOukMupryAUVW6kI=;
-        b=MQ7lv6END0ckSN1qHnNecDVHKiswtje3iY9GR580JoBPVnLfKp+l+Vuy0DZ5v5XNOr
-         j5WeQIqdNrtlDsdBNBER6EFOm5lgvgzG7vuONTpaXxR2Sp+0Pnw6L6zMaz+0zKrWKoa0
-         hudjtdFF42h5jdlYMO2AstJAEIrJc+VA2LeFZVzFA0lXP6RU/rJ1cQhFg4F4SrbTSO+c
-         MPSirgOcBR/uNZGYEtoGymcMPEtS1hwvicKex028TOv6VxPiqs6L+y0i19Ni/hjsfGMJ
-         6Z1NLjarlpTQFsr+R4yLxc4oEtUOGXhzplsDro3G0oB2L/Xp9MlgoOBTS4pOTAOvzSN3
-         xSKg==
-X-Gm-Message-State: ABy/qLYbUE7zW2fvqUW/rBXtkZ9wbzQgXJRlcYg/NGDp8i0atXlkzP77
-        S32WKStyeO12pbXvqDmLRLNaEg==
-X-Google-Smtp-Source: APBJJlH+dm0mCsob/js+yZXnXAfwEH4KDToex0aS0MQ56gbjyJxo+xxDZzOa2lZ9gy3mjvwdmWQa2g==
-X-Received: by 2002:a17:902:da82:b0:1b8:811:b079 with SMTP id j2-20020a170902da8200b001b80811b079mr5785873plx.0.1690449602958;
-        Thu, 27 Jul 2023 02:20:02 -0700 (PDT)
-Received: from [10.70.252.135] ([203.208.167.147])
-        by smtp.gmail.com with ESMTPSA id 5-20020a170902c24500b001bbb7d8fff2sm1109046plg.116.2023.07.27.02.19.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jul 2023 02:20:02 -0700 (PDT)
-Message-ID: <5f1b85b8-3655-1700-4d16-fa056b31ceeb@bytedance.com>
-Date:   Thu, 27 Jul 2023 17:19:49 +0800
+        Thu, 27 Jul 2023 06:20:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A385619AF;
+        Thu, 27 Jul 2023 03:20:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 38C6E61DED;
+        Thu, 27 Jul 2023 10:20:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9266C433C8;
+        Thu, 27 Jul 2023 10:20:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690453251;
+        bh=Uv0jglg4XDxm5uiOcl1Fs0VDdmS3vnj5J06IHksC3j0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=VjGCTE5fXWQGMkstr5mWfG/olGcukHbx9MJ5gIHM1kJfwo/BiFcjiuEaiA2TxQad6
+         b/CL9D78jYHhDiLBxLD9gCBB6CtR9Pngnq1E4RM+cWQl1ITCzXzhPBEMorh0UStJGb
+         V5QypMia7H1mT7Yv9W7oIRfkDRB1G3xJIxfo7Y/Lymzj+mXx3lcBAFmRFbWxhh8lk9
+         h4N9LjcMkMC3/ZfJEah0qCVly/fWQ4ostsbFgLI1m7GG/WQbkHJ87BAgn9cUsNUERW
+         XrnUyEDaK9+tFU+Iukly/qv+tfC9IZiVkgJJJYsmEkH+2gmJEivzAz4IAcCpkEsNUW
+         WY8rxT9ubVHrA==
+Message-ID: <ba0868b2-9f90-3d81-1c91-8810057fb3ce@kernel.org>
+Date:   Thu, 27 Jul 2023 19:20:46 +0900
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.12.0
-Subject: Re: [PATCH v3 40/49] xfs: dynamically allocate the xfs-qm shrinker
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v3 28/49] dm zoned: dynamically allocate the dm-zoned-meta
+ shrinker
 Content-Language: en-US
-To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
-        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
-        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
-        yujie.liu@intel.com, gregkh@linuxfoundation.org,
-        muchun.song@linux.dev
+To:     Qi Zheng <zhengqi.arch@bytedance.com>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
         kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-erofs@lists.ozlabs.org,
@@ -75,111 +54,58 @@ Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>
+        Muchun Song <songmuchun@bytedance.com>,
+        akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
+        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
+        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
+        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
+        yujie.liu@intel.com, gregkh@linuxfoundation.org,
+        muchun.song@linux.dev
 References: <20230727080502.77895-1-zhengqi.arch@bytedance.com>
- <20230727080502.77895-41-zhengqi.arch@bytedance.com>
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20230727080502.77895-41-zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+ <20230727080502.77895-29-zhengqi.arch@bytedance.com>
+ <baaf7de4-9a0e-b953-2b6a-46e60c415614@kernel.org>
+ <56ee1d92-28ee-81cb-9c41-6ca7ea6556b0@bytedance.com>
+From:   Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <56ee1d92-28ee-81cb-9c41-6ca7ea6556b0@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-
-
-On 2023/7/27 16:04, Qi Zheng wrote:
-> In preparation for implementing lockless slab shrink, use new APIs to
-> dynamically allocate the xfs-qm shrinker, so that it can be freed
-> asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
-> read-side critical section when releasing the struct xfs_quotainfo.
+On 7/27/23 17:55, Qi Zheng wrote:
+>>>           goto err;
+>>>       }
+>>>   +    zmd->mblk_shrinker->count_objects = dmz_mblock_shrinker_count;
+>>> +    zmd->mblk_shrinker->scan_objects = dmz_mblock_shrinker_scan;
+>>> +    zmd->mblk_shrinker->seeks = DEFAULT_SEEKS;
+>>> +    zmd->mblk_shrinker->private_data = zmd;
+>>> +
+>>> +    shrinker_register(zmd->mblk_shrinker);
+>>
+>> I fail to see how this new shrinker API is better... Why isn't there a
+>> shrinker_alloc_and_register() function ? That would avoid adding all this code
+>> all over the place as the new API call would be very similar to the current
+>> shrinker_register() call with static allocation.
 > 
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> Reviewed-by: Muchun Song <songmuchun@bytedance.com>
-> ---
->   fs/xfs/xfs_qm.c | 26 +++++++++++++-------------
->   fs/xfs/xfs_qm.h |  2 +-
->   2 files changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_qm.c b/fs/xfs/xfs_qm.c
-> index 6abcc34fafd8..032f0a208bd2 100644
-> --- a/fs/xfs/xfs_qm.c
-> +++ b/fs/xfs/xfs_qm.c
-> @@ -504,8 +504,7 @@ xfs_qm_shrink_scan(
->   	struct shrinker		*shrink,
->   	struct shrink_control	*sc)
->   {
-> -	struct xfs_quotainfo	*qi = container_of(shrink,
-> -					struct xfs_quotainfo, qi_shrinker);
-> +	struct xfs_quotainfo	*qi = shrink->private_data;
->   	struct xfs_qm_isolate	isol;
->   	unsigned long		freed;
->   	int			error;
-> @@ -539,8 +538,7 @@ xfs_qm_shrink_count(
->   	struct shrinker		*shrink,
->   	struct shrink_control	*sc)
->   {
-> -	struct xfs_quotainfo	*qi = container_of(shrink,
-> -					struct xfs_quotainfo, qi_shrinker);
-> +	struct xfs_quotainfo	*qi = shrink->private_data;
->   
->   	return list_lru_shrink_count(&qi->qi_lru, sc);
->   }
-> @@ -680,16 +678,18 @@ xfs_qm_init_quotainfo(
->   	if (XFS_IS_PQUOTA_ON(mp))
->   		xfs_qm_set_defquota(mp, XFS_DQTYPE_PROJ, qinf);
->   
-> -	qinf->qi_shrinker.count_objects = xfs_qm_shrink_count;
-> -	qinf->qi_shrinker.scan_objects = xfs_qm_shrink_scan;
-> -	qinf->qi_shrinker.seeks = DEFAULT_SEEKS;
-> -	qinf->qi_shrinker.flags = SHRINKER_NUMA_AWARE;
-> -
-> -	error = register_shrinker(&qinf->qi_shrinker, "xfs-qm:%s",
-> -				  mp->m_super->s_id);
-> -	if (error)
-> +	qinf->qi_shrinker = shrinker_alloc(SHRINKER_NUMA_AWARE, "xfs-qm:%s",
-> +					   mp->m_super->s_id);
-> +	if (!qinf->qi_shrinker)
+> In some registration scenarios, memory needs to be allocated in advance.
+> So we continue to use the previous prealloc/register_prepared()
+> algorithm. The shrinker_alloc_and_register() is just a helper function
+> that combines the two, and this increases the number of APIs that
+> shrinker exposes to the outside, so I choose not to add this helper.
 
-Here should set error to -ENOMEM, will fix.
+And that results in more code in many places instead of less code + a simple
+inline helper in the shrinker header file... So not adding that super simple
+helper is not exactly the best choice in my opinion.
 
->   		goto out_free_inos;
->   
-> +	qinf->qi_shrinker->count_objects = xfs_qm_shrink_count;
-> +	qinf->qi_shrinker->scan_objects = xfs_qm_shrink_scan;
-> +	qinf->qi_shrinker->seeks = DEFAULT_SEEKS;
-> +	qinf->qi_shrinker->private_data = qinf;
-> +
-> +	shrinker_register(qinf->qi_shrinker);
-> +
->   	return 0;
->   
->   out_free_inos:
-> @@ -718,7 +718,7 @@ xfs_qm_destroy_quotainfo(
->   	qi = mp->m_quotainfo;
->   	ASSERT(qi != NULL);
->   
-> -	unregister_shrinker(&qi->qi_shrinker);
-> +	shrinker_free(qi->qi_shrinker);
->   	list_lru_destroy(&qi->qi_lru);
->   	xfs_qm_destroy_quotainos(qi);
->   	mutex_destroy(&qi->qi_tree_lock);
-> diff --git a/fs/xfs/xfs_qm.h b/fs/xfs/xfs_qm.h
-> index 9683f0457d19..d5c9fc4ba591 100644
-> --- a/fs/xfs/xfs_qm.h
-> +++ b/fs/xfs/xfs_qm.h
-> @@ -63,7 +63,7 @@ struct xfs_quotainfo {
->   	struct xfs_def_quota	qi_usr_default;
->   	struct xfs_def_quota	qi_grp_default;
->   	struct xfs_def_quota	qi_prj_default;
-> -	struct shrinker		qi_shrinker;
-> +	struct shrinker		*qi_shrinker;
->   
->   	/* Minimum and maximum quota expiration timestamp values. */
->   	time64_t		qi_expiry_min;
+-- 
+Damien Le Moal
+Western Digital Research
+
