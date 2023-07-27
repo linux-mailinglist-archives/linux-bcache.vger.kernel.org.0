@@ -2,63 +2,67 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D9E66764ED6
-	for <lists+linux-bcache@lfdr.de>; Thu, 27 Jul 2023 11:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D85C764F24
+	for <lists+linux-bcache@lfdr.de>; Thu, 27 Jul 2023 11:16:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232233AbjG0JLE (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 27 Jul 2023 05:11:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39192 "EHLO
+        id S232739AbjG0JQ2 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 27 Jul 2023 05:16:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233669AbjG0JKs (ORCPT
+        with ESMTP id S233161AbjG0JQI (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 27 Jul 2023 05:10:48 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53F0A49E5
-        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 01:55:42 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-6748a616e17so192439b3a.1
-        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 01:55:42 -0700 (PDT)
+        Thu, 27 Jul 2023 05:16:08 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76DB27EC9
+        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 02:07:13 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id 41be03b00d2f7-56366112d64so75529a12.0
+        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 02:07:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1690448142; x=1691052942;
+        d=bytedance.com; s=google; t=1690448833; x=1691053633;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=WiPjRg1/kjwO6K5zl232SDHPqYtmZOtFvHbsJXMq+7g=;
-        b=Umb+YV+a9lWFhAL8II9iFkMStUOOBYcco6VfVBA99lXKZrqzVwUjfYjnKm4Dm0LFjT
-         qdoJauj14z5/Q/ALZNZe4hty9eUQzFUzAPUNYhh89WT1GQpVMRyZmNBBpLKeWi1ZbclH
-         LZhMvQeV3S/E/ICy+9O5ITOO1Phn4D+1/k/6DGPG+fLuYZVwP+5BQnq4IpnQhN9xTXZe
-         rfTcvD1n0zxeVBrWB1YcR+3kK3++SSPnDRJs7hwNhsakSHiwU6PBsTieOJN2pDWuMDWg
-         xnIMDcCLv5tsUy7qwBc5TOF+eIq3rIHBy6gcXooMjKSZ0a9wuV4u6V1UPp0vjKeCWB6q
-         aakQ==
+        bh=UKiGuCYavgdrONYSlKU+hjlx/AzCB2LKMORbFgw7HEo=;
+        b=DjrROq91sf6Va+7++jhnZLLfMfZ3NpR+vs103Gffs3+O08HW6byjEgnIqMIjx7XVVU
+         6Esw8LCCRNx5FIzgZD2yLlNtiJ3fWUXbMzLdc62rKZLebfjHSG7L7jgEMl0D1hE7ZoNg
+         HZ2c9Q9i+LL0tt0iImhvHFOK+Hduw2G0dP+6wK+guSG8W2Nz3BegBODQY1lmNQJ14Dz4
+         uuXi2h/k5/64PvGOHou6Defqpklm1cGUHs8RqpArf+xI1YmvbpRswY34ry3JAORO90Jx
+         4NSzh0j5w+vqWxK/Ia35MiibA4wNxyya8QHOgB3QIdRRJ50Wt48gZu09EVgownqRkh1E
+         f6DQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690448142; x=1691052942;
+        d=1e100.net; s=20221208; t=1690448833; x=1691053633;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WiPjRg1/kjwO6K5zl232SDHPqYtmZOtFvHbsJXMq+7g=;
-        b=h3gj0b9SiVOm/9VaY4f735MwA+KPtW7gxUHDMSH++mV9WAYEtFeghKajinPmcZxV8d
-         d06iIIlAuoSsoS0BJWIOtm048DFeDB0HOteez0rodBdZCXFeKJovf1B+ImZZOFCDZ1vP
-         p2g/QcvnrTG2ogXpNi9fmABdznsCBMKX/++hxYyhrgHT5E3KCfB/PUpXlPQ96jXPEDMG
-         3sMg1G+xdc8U4qGb7xgJaM8b+0c72sDXK+8ps0n+6R8s0Z+Gpwe1CkcTtpi/1ZUTlrB8
-         luoEpBYJNHxtWYm/H9bxQfVURxovhvvdBO5l7KLiyu5xxrprU9UNuQvKVqhm4aiJLMcW
-         k4mw==
-X-Gm-Message-State: ABy/qLaLEHAwWCMjnRvQrKx0PhKcbEhqUUxHrNdYrPfkVYCJrTwgvyeC
-        AhcozS/WTNCN03oYTqpkYTPYVg==
-X-Google-Smtp-Source: APBJJlGwmdjot/rbtwF9nTotnOmqaOAtVmCVUqRrFxhkDx7eGx5gFUYRsJSjv9frk6zdjI0egP1lkA==
-X-Received: by 2002:a17:902:e891:b0:1b3:d4bb:3515 with SMTP id w17-20020a170902e89100b001b3d4bb3515mr5854967plg.0.1690448141745;
-        Thu, 27 Jul 2023 01:55:41 -0700 (PDT)
+        bh=UKiGuCYavgdrONYSlKU+hjlx/AzCB2LKMORbFgw7HEo=;
+        b=PeodfOHqXCzNRYCsgnymMH/LsyNviRuiKGtf0tzdYJwUEbiG753pdLrG4P8lZ0S5vF
+         9GrogAVw+WY8Er3hzBU6Cr5ivBfTNkJK5zChA2SeH+iST5rLLa4cwifW8+PTYnObjPl7
+         kDqpELdMj+lTu6iTmbBV3M/TyIc84pxQmfOo4shDKZx00hhaBTU/7RHbJBgo54MNMUcl
+         dKqELwbTErvtEfQ1gBsYvsDwgyTMwSZlZeT1yf3Q07B6lGuIoDUii1FHEenJ5ViMhJLh
+         oRKMZiNF2u90fsYHKzHn2Absrka+Grlr/39HSr/uhOHhMAtXx5eQ/fyg8JvxjsoJ3tS8
+         Cfkg==
+X-Gm-Message-State: ABy/qLZaLjQ3DaEW1Y0qpKnlDJ8SUd2MjrRih+aN7JMjd4dTJxtT/QNL
+        rrWQuL9ZANw1BAn25ZHvcxFa3A==
+X-Google-Smtp-Source: APBJJlEquEzidizjgrmS1e55j2UU3CMKKyxPnlaVqAXQYQ+ePfvdxx8A4f9JU/BbmCjGKzVhoGuchQ==
+X-Received: by 2002:a17:90a:128e:b0:263:25f9:65b2 with SMTP id g14-20020a17090a128e00b0026325f965b2mr4139877pja.4.1690448832920;
+        Thu, 27 Jul 2023 02:07:12 -0700 (PDT)
 Received: from [10.70.252.135] ([203.208.167.147])
-        by smtp.gmail.com with ESMTPSA id iy15-20020a170903130f00b001bbb1eec92esm1023927plb.281.2023.07.27.01.55.30
+        by smtp.gmail.com with ESMTPSA id a11-20020a170902ee8b00b001b7e63cfa19sm1063627pld.234.2023.07.27.02.07.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jul 2023 01:55:41 -0700 (PDT)
-Message-ID: <56ee1d92-28ee-81cb-9c41-6ca7ea6556b0@bytedance.com>
-Date:   Thu, 27 Jul 2023 16:55:27 +0800
+        Thu, 27 Jul 2023 02:07:12 -0700 (PDT)
+Message-ID: <19461737-db63-2ab5-110b-e65035881ae2@bytedance.com>
+Date:   Thu, 27 Jul 2023 17:06:57 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
  Gecko/20100101 Thunderbird/102.12.0
-Subject: Re: [PATCH v3 28/49] dm zoned: dynamically allocate the dm-zoned-meta
- shrinker
+Subject: Re: [PATCH v3 15/49] nfs: dynamically allocate the nfs-acl shrinker
 Content-Language: en-US
-To:     Damien Le Moal <dlemoal@kernel.org>
+To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
+        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
+        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
+        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
+        yujie.liu@intel.com, gregkh@linuxfoundation.org,
+        muchun.song@linux.dev
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
         kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-erofs@lists.ozlabs.org,
@@ -71,18 +75,11 @@ Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>,
-        akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
-        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
-        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
-        yujie.liu@intel.com, gregkh@linuxfoundation.org,
-        muchun.song@linux.dev
+        Muchun Song <songmuchun@bytedance.com>
 References: <20230727080502.77895-1-zhengqi.arch@bytedance.com>
- <20230727080502.77895-29-zhengqi.arch@bytedance.com>
- <baaf7de4-9a0e-b953-2b6a-46e60c415614@kernel.org>
+ <20230727080502.77895-16-zhengqi.arch@bytedance.com>
 From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <baaf7de4-9a0e-b953-2b6a-46e60c415614@kernel.org>
+In-Reply-To: <20230727080502.77895-16-zhengqi.arch@bytedance.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -95,114 +92,63 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi,
 
-On 2023/7/27 16:30, Damien Le Moal wrote:
-> On 7/27/23 17:04, Qi Zheng wrote:
->> In preparation for implementing lockless slab shrink, use new APIs to
->> dynamically allocate the dm-zoned-meta shrinker, so that it can be freed
->> asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
->> read-side critical section when releasing the struct dmz_metadata.
->>
->> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->> Reviewed-by: Muchun Song <songmuchun@bytedance.com>
->> ---
->>   drivers/md/dm-zoned-metadata.c | 28 ++++++++++++++++------------
->>   1 file changed, 16 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/md/dm-zoned-metadata.c b/drivers/md/dm-zoned-metadata.c
->> index 9d3cca8e3dc9..0bcb26a43578 100644
->> --- a/drivers/md/dm-zoned-metadata.c
->> +++ b/drivers/md/dm-zoned-metadata.c
->> @@ -187,7 +187,7 @@ struct dmz_metadata {
->>   	struct rb_root		mblk_rbtree;
->>   	struct list_head	mblk_lru_list;
->>   	struct list_head	mblk_dirty_list;
->> -	struct shrinker		mblk_shrinker;
->> +	struct shrinker		*mblk_shrinker;
->>   
->>   	/* Zone allocation management */
->>   	struct mutex		map_lock;
->> @@ -615,7 +615,7 @@ static unsigned long dmz_shrink_mblock_cache(struct dmz_metadata *zmd,
->>   static unsigned long dmz_mblock_shrinker_count(struct shrinker *shrink,
->>   					       struct shrink_control *sc)
->>   {
->> -	struct dmz_metadata *zmd = container_of(shrink, struct dmz_metadata, mblk_shrinker);
->> +	struct dmz_metadata *zmd = shrink->private_data;
->>   
->>   	return atomic_read(&zmd->nr_mblks);
->>   }
->> @@ -626,7 +626,7 @@ static unsigned long dmz_mblock_shrinker_count(struct shrinker *shrink,
->>   static unsigned long dmz_mblock_shrinker_scan(struct shrinker *shrink,
->>   					      struct shrink_control *sc)
->>   {
->> -	struct dmz_metadata *zmd = container_of(shrink, struct dmz_metadata, mblk_shrinker);
->> +	struct dmz_metadata *zmd = shrink->private_data;
->>   	unsigned long count;
->>   
->>   	spin_lock(&zmd->mblk_lock);
->> @@ -2936,19 +2936,23 @@ int dmz_ctr_metadata(struct dmz_dev *dev, int num_dev,
->>   	 */
->>   	zmd->min_nr_mblks = 2 + zmd->nr_map_blocks + zmd->zone_nr_bitmap_blocks * 16;
->>   	zmd->max_nr_mblks = zmd->min_nr_mblks + 512;
->> -	zmd->mblk_shrinker.count_objects = dmz_mblock_shrinker_count;
->> -	zmd->mblk_shrinker.scan_objects = dmz_mblock_shrinker_scan;
->> -	zmd->mblk_shrinker.seeks = DEFAULT_SEEKS;
->>   
->>   	/* Metadata cache shrinker */
->> -	ret = register_shrinker(&zmd->mblk_shrinker, "dm-zoned-meta:(%u:%u)",
->> -				MAJOR(dev->bdev->bd_dev),
->> -				MINOR(dev->bdev->bd_dev));
->> -	if (ret) {
->> -		dmz_zmd_err(zmd, "Register metadata cache shrinker failed");
->> +	zmd->mblk_shrinker = shrinker_alloc(0,  "dm-zoned-meta:(%u:%u)",
->> +					    MAJOR(dev->bdev->bd_dev),
->> +					    MINOR(dev->bdev->bd_dev));
->> +	if (!zmd->mblk_shrinker) {
->> +		dmz_zmd_err(zmd, "Allocate metadata cache shrinker failed");
+
+On 2023/7/27 16:04, Qi Zheng wrote:
+> Use new APIs to dynamically allocate the nfs-acl shrinker.
 > 
-> ret is not set here, so dmz_ctr_metadata() will return success. You need to add:
-> 		ret = -ENOMEM;
-> or something.
-
-Indeed, will fix.
-
->>   		goto err;
->>   	}
->>   
->> +	zmd->mblk_shrinker->count_objects = dmz_mblock_shrinker_count;
->> +	zmd->mblk_shrinker->scan_objects = dmz_mblock_shrinker_scan;
->> +	zmd->mblk_shrinker->seeks = DEFAULT_SEEKS;
->> +	zmd->mblk_shrinker->private_data = zmd;
->> +
->> +	shrinker_register(zmd->mblk_shrinker);
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+> ---
+>   fs/nfs/super.c | 20 ++++++++++++--------
+>   1 file changed, 12 insertions(+), 8 deletions(-)
 > 
-> I fail to see how this new shrinker API is better... Why isn't there a
-> shrinker_alloc_and_register() function ? That would avoid adding all this code
-> all over the place as the new API call would be very similar to the current
-> shrinker_register() call with static allocation.
+> diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+> index 2284f749d892..072d82e1be06 100644
+> --- a/fs/nfs/super.c
+> +++ b/fs/nfs/super.c
+> @@ -129,11 +129,7 @@ static void nfs_ssc_unregister_ops(void)
+>   }
+>   #endif /* CONFIG_NFS_V4_2 */
+>   
+> -static struct shrinker acl_shrinker = {
+> -	.count_objects	= nfs_access_cache_count,
+> -	.scan_objects	= nfs_access_cache_scan,
+> -	.seeks		= DEFAULT_SEEKS,
+> -};
+> +static struct shrinker *acl_shrinker;
+>   
+>   /*
+>    * Register the NFS filesystems
+> @@ -153,9 +149,17 @@ int __init register_nfs_fs(void)
+>   	ret = nfs_register_sysctl();
+>   	if (ret < 0)
+>   		goto error_2;
+> -	ret = register_shrinker(&acl_shrinker, "nfs-acl");
+> -	if (ret < 0)
+> +
+> +	acl_shrinker = shrinker_alloc(0, "nfs-acl");
+> +	if (!acl_shrinker)
+>   		goto error_3;
 
-In some registration scenarios, memory needs to be allocated in advance.
-So we continue to use the previous prealloc/register_prepared()
-algorithm. The shrinker_alloc_and_register() is just a helper function
-that combines the two, and this increases the number of APIs that
-shrinker exposes to the outside, so I choose not to add this helper.
+Here should set ret to -ENOMEM, will fix.
 
-Thanks,
-Qi
-
-> 
->> +
->>   	dmz_zmd_info(zmd, "DM-Zoned metadata version %d", zmd->sb_version);
->>   	for (i = 0; i < zmd->nr_devs; i++)
->>   		dmz_print_dev(zmd, i);
->> @@ -2995,7 +2999,7 @@ int dmz_ctr_metadata(struct dmz_dev *dev, int num_dev,
->>    */
->>   void dmz_dtr_metadata(struct dmz_metadata *zmd)
->>   {
->> -	unregister_shrinker(&zmd->mblk_shrinker);
->> +	shrinker_free(zmd->mblk_shrinker);
->>   	dmz_cleanup_metadata(zmd);
->>   	kfree(zmd);
->>   }
-> 
+> +
+> +	acl_shrinker->count_objects = nfs_access_cache_count;
+> +	acl_shrinker->scan_objects = nfs_access_cache_scan;
+> +	acl_shrinker->seeks = DEFAULT_SEEKS;
+> +
+> +	shrinker_register(acl_shrinker);
+> +
+>   #ifdef CONFIG_NFS_V4_2
+>   	nfs_ssc_register_ops();
+>   #endif
+> @@ -175,7 +179,7 @@ int __init register_nfs_fs(void)
+>    */
+>   void __exit unregister_nfs_fs(void)
+>   {
+> -	unregister_shrinker(&acl_shrinker);
+> +	shrinker_free(acl_shrinker);
+>   	nfs_unregister_sysctl();
+>   	unregister_nfs4_fs();
+>   #ifdef CONFIG_NFS_V4_2
