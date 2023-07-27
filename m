@@ -2,61 +2,60 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 760AD764FAA
-	for <lists+linux-bcache@lfdr.de>; Thu, 27 Jul 2023 11:27:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9385764FBE
+	for <lists+linux-bcache@lfdr.de>; Thu, 27 Jul 2023 11:29:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234388AbjG0J1Q (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 27 Jul 2023 05:27:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51376 "EHLO
+        id S234476AbjG0J3L (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 27 Jul 2023 05:29:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231403AbjG0J0s (ORCPT
+        with ESMTP id S231954AbjG0J2X (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 27 Jul 2023 05:26:48 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D8165278
-        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 02:15:59 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id 98e67ed59e1d1-2659b1113c2so146149a91.1
-        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 02:15:59 -0700 (PDT)
+        Thu, 27 Jul 2023 05:28:23 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FBF783F2
+        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 02:17:50 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1bb91c20602so949235ad.0
+        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 02:17:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1690449359; x=1691054159;
+        d=bytedance.com; s=google; t=1690449470; x=1691054270;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pSf6nVkdhsvxhtXxVh7cgsa4dxLg7VE+dk8AIIS4uIA=;
-        b=gs/PU4tG46kQg+lGivKEpQm67BWRBr/3B5K5J0ZjcDJiH4VmN/xAYLr567/KvCeKyO
-         Sxv9KoDe1Fgjt2T5xGL5ntjIo2URj6N4iyAFFdnIg9R3abku7q3pHpjtx5uyfVGaAvYO
-         XtiYYOqXBfNiFu1rjUbVMMYVt5QxVT4/F43UKIFaCuAs9bCstLLngxCL3ODWliEci9Sz
-         ElL4V2hOOxLgo9+060cMLFPSS0lDlqR1ZhVgYCnGDkIpUHSxXftLLIhthhd9SgFzYboG
-         fvp5YOTqEFeGRzV75GGLb7yIHnFGlXJ5ArnypIHw3PlhSwR6sQo5O1DaMDPfX3YeBn9C
-         fAww==
+        bh=zDAeke9dPI5F1DLlt143+V+9EjjOTI/Ym3kFZW9NJks=;
+        b=GMz7Ro63z/YezVqKkIH1jrxAzOT75QcUy09pRQPD7AgfWuYvUeuW5VEqNC1XIv9vFN
+         mRwt8c6aGV8kgK9lP5FEKupjXOG/bSxCUR1Wt+sQMg8uYMaVdTfESuVXyke/16/L/yN6
+         lgXVNg46bwMvdgDL/au4WPig1MVEHeG5wVY0ujpNjiLSHIkveiLIrECL7sZMPk2KN/og
+         cOXK7BC9rcgfo0JQrpwRHwvNtz6wdTJySW4bqDUFHi4zdm4Oj9K7/OLBxIv3WQBH67f1
+         OvlGd9tRajLpgSW70SF8ktMkDj4Bt1BHUDLO+7r2qg+4O9VtPvpOqNWx1A6uYkZBjzBr
+         UEhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690449359; x=1691054159;
+        d=1e100.net; s=20221208; t=1690449470; x=1691054270;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pSf6nVkdhsvxhtXxVh7cgsa4dxLg7VE+dk8AIIS4uIA=;
-        b=O5AW0B5oP9/bGYLHEFl0dArNRi43snpgx28kMlQG53bjnH4YNVWgl9TTWVXe8cYkI4
-         r/yv2R/M9vIZc69H/9PJWUXcoJsTBiLyMIdY+YtDq2PsmBb1cZfUmBbu5tUON212++ul
-         JVSLGLGJ8LNghG2WOlQYBDMtqg660NhEtDpXL4HZz1Xctm8YcmZ2KHk+cHn9Bs2gJ/ko
-         MOsNrQfKY39K/3dzLIIKT1/e/1nj6PZ5q3nxbffNQlvVqLFJtc6dEESzpo1nSTCa7H/3
-         v6WfDvwghUP2fjpdM07IdFZsiqW6y9ONAoEzF82ck8aaQl70kAGL+agtVPwjOex1pPP4
-         Us6w==
-X-Gm-Message-State: ABy/qLYHfrod3cn6EvmlQW43rxoU84WnBs/XQg+8oHgkJmuj2NEN2ZxZ
-        AeSIP3Gg09cXJdpSzHYib+0T2Q==
-X-Google-Smtp-Source: APBJJlFWNasuQyGNPy0hcIGkgu46yCpujoddgwDeBo2nmYNJTDqcdO/STO03uju2nKSJGm9+FY3b7g==
-X-Received: by 2002:a17:90a:7c48:b0:268:38a7:842e with SMTP id e8-20020a17090a7c4800b0026838a7842emr4155117pjl.2.1690449358970;
-        Thu, 27 Jul 2023 02:15:58 -0700 (PDT)
+        bh=zDAeke9dPI5F1DLlt143+V+9EjjOTI/Ym3kFZW9NJks=;
+        b=bYsBLgHqtk4pZBfQd8d4Sah3wYu8L+zb/8weAQ1CaooMgwdV/VUqUpJh1smUpWIQhA
+         zMtq3aMtYr2x9qyFgieyCF3MSvfcYy0X6XNJtoKKWx+ZXIdsb7hBtpnsEtW94D6M7Qoa
+         5EHqr2ix3YosClQNr+i+/KxJOWGH9cgX3l8SOY6kzbIodcftubMYxZzMvj0G9CHndx02
+         +9ICwMqlWi11jhMKurXkiG4wog0LPi3xVJM7t6ip/VVizXZY/QEZEhnE1Emhf+7WgXQW
+         sc/srMLW7eXYsnxb2bhMcSwR3fMRhBd7+SPLWUX8h0ozKpbWI7Umggrn5BoFlIxW75Zu
+         yZcA==
+X-Gm-Message-State: ABy/qLZKeV/+XOvQVucrhQ6lSMdtyDCFnK2pMx6Lu+qcvHuYQgdNoYb4
+        Iiygch8MjMqgvsYHyFI7LJ5hIA==
+X-Google-Smtp-Source: APBJJlEO2aWJnLprK4RcTuXXptsAhhV2CWniExK2SV0FTWirST2PpjxVowXAUeeRM51pJjQHZWKeBg==
+X-Received: by 2002:a17:902:dac6:b0:1b8:9fc4:2733 with SMTP id q6-20020a170902dac600b001b89fc42733mr5853252plx.3.1690449469696;
+        Thu, 27 Jul 2023 02:17:49 -0700 (PDT)
 Received: from [10.70.252.135] ([203.208.167.147])
-        by smtp.gmail.com with ESMTPSA id bv21-20020a17090af19500b0026596b8f33asm2403500pjb.40.2023.07.27.02.15.47
+        by smtp.gmail.com with ESMTPSA id x3-20020a170902ea8300b001b8c3c7b102sm1099792plb.127.2023.07.27.02.17.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jul 2023 02:15:58 -0700 (PDT)
-Message-ID: <8f8aa0d6-8f5c-958d-096d-d4c6d3e71e7a@bytedance.com>
-Date:   Thu, 27 Jul 2023 17:15:44 +0800
+        Thu, 27 Jul 2023 02:17:49 -0700 (PDT)
+Message-ID: <df02ac8e-b9b3-1582-7d11-fb5ab54f2e64@bytedance.com>
+Date:   Thu, 27 Jul 2023 17:17:36 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
  Gecko/20100101 Thunderbird/102.12.0
-Subject: Re: [PATCH v3 29/49] md/raid5: dynamically allocate the md-raid5
- shrinker
+Subject: Re: [PATCH v3 34/49] ext4: dynamically allocate the ext4-es shrinker
 Content-Language: en-US
 To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
         vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
@@ -78,9 +77,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
         linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Muchun Song <songmuchun@bytedance.com>
 References: <20230727080502.77895-1-zhengqi.arch@bytedance.com>
- <20230727080502.77895-30-zhengqi.arch@bytedance.com>
+ <20230727080502.77895-35-zhengqi.arch@bytedance.com>
 From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20230727080502.77895-30-zhengqi.arch@bytedance.com>
+In-Reply-To: <20230727080502.77895-35-zhengqi.arch@bytedance.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -97,91 +96,86 @@ X-Mailing-List: linux-bcache@vger.kernel.org
 
 On 2023/7/27 16:04, Qi Zheng wrote:
 > In preparation for implementing lockless slab shrink, use new APIs to
-> dynamically allocate the md-raid5 shrinker, so that it can be freed
+> dynamically allocate the ext4-es shrinker, so that it can be freed
 > asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
-> read-side critical section when releasing the struct r5conf.
+> read-side critical section when releasing the struct ext4_sb_info.
 > 
 > Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 > Reviewed-by: Muchun Song <songmuchun@bytedance.com>
 > ---
->   drivers/md/raid5.c | 25 ++++++++++++++-----------
->   drivers/md/raid5.h |  2 +-
->   2 files changed, 15 insertions(+), 12 deletions(-)
+>   fs/ext4/ext4.h           |  2 +-
+>   fs/ext4/extents_status.c | 22 ++++++++++++----------
+>   2 files changed, 13 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-> index 85b3004594e0..fbb4e6f5ff43 100644
-> --- a/drivers/md/raid5.c
-> +++ b/drivers/md/raid5.c
-> @@ -7414,7 +7414,7 @@ static void free_conf(struct r5conf *conf)
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 1e2259d9967d..82397bf0b33e 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1657,7 +1657,7 @@ struct ext4_sb_info {
+>   	__u32 s_csum_seed;
 >   
->   	log_exit(conf);
+>   	/* Reclaim extents from extent status tree */
+> -	struct shrinker s_es_shrinker;
+> +	struct shrinker *s_es_shrinker;
+>   	struct list_head s_es_list;	/* List of inodes with reclaimable extents */
+>   	long s_es_nr_inode;
+>   	struct ext4_es_stats s_es_stats;
+> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
+> index 9b5b8951afb4..74bb64fadbc4 100644
+> --- a/fs/ext4/extents_status.c
+> +++ b/fs/ext4/extents_status.c
+> @@ -1596,7 +1596,7 @@ static unsigned long ext4_es_count(struct shrinker *shrink,
+>   	unsigned long nr;
+>   	struct ext4_sb_info *sbi;
 >   
-> -	unregister_shrinker(&conf->shrinker);
-> +	shrinker_free(conf->shrinker);
->   	free_thread_groups(conf);
->   	shrink_stripes(conf);
->   	raid5_free_percpu(conf);
-> @@ -7462,7 +7462,7 @@ static int raid5_alloc_percpu(struct r5conf *conf)
->   static unsigned long raid5_cache_scan(struct shrinker *shrink,
->   				      struct shrink_control *sc)
+> -	sbi = container_of(shrink, struct ext4_sb_info, s_es_shrinker);
+> +	sbi = shrink->private_data;
+>   	nr = percpu_counter_read_positive(&sbi->s_es_stats.es_stats_shk_cnt);
+>   	trace_ext4_es_shrink_count(sbi->s_sb, sc->nr_to_scan, nr);
+>   	return nr;
+> @@ -1605,8 +1605,7 @@ static unsigned long ext4_es_count(struct shrinker *shrink,
+>   static unsigned long ext4_es_scan(struct shrinker *shrink,
+>   				  struct shrink_control *sc)
 >   {
-> -	struct r5conf *conf = container_of(shrink, struct r5conf, shrinker);
-> +	struct r5conf *conf = shrink->private_data;
->   	unsigned long ret = SHRINK_STOP;
+> -	struct ext4_sb_info *sbi = container_of(shrink,
+> -					struct ext4_sb_info, s_es_shrinker);
+> +	struct ext4_sb_info *sbi = shrink->private_data;
+>   	int nr_to_scan = sc->nr_to_scan;
+>   	int ret, nr_shrunk;
 >   
->   	if (mutex_trylock(&conf->cache_size_mutex)) {
-> @@ -7483,7 +7483,7 @@ static unsigned long raid5_cache_scan(struct shrinker *shrink,
->   static unsigned long raid5_cache_count(struct shrinker *shrink,
->   				       struct shrink_control *sc)
->   {
-> -	struct r5conf *conf = container_of(shrink, struct r5conf, shrinker);
-> +	struct r5conf *conf = shrink->private_data;
+> @@ -1690,14 +1689,17 @@ int ext4_es_register_shrinker(struct ext4_sb_info *sbi)
+>   	if (err)
+>   		goto err3;
 >   
->   	if (conf->max_nr_stripes < conf->min_nr_stripes)
->   		/* unlikely, but not impossible */
-> @@ -7718,18 +7718,21 @@ static struct r5conf *setup_conf(struct mddev *mddev)
->   	 * it reduces the queue depth and so can hurt throughput.
->   	 * So set it rather large, scaled by number of devices.
->   	 */
-> -	conf->shrinker.seeks = DEFAULT_SEEKS * conf->raid_disks * 4;
-> -	conf->shrinker.scan_objects = raid5_cache_scan;
-> -	conf->shrinker.count_objects = raid5_cache_count;
-> -	conf->shrinker.batch = 128;
-> -	conf->shrinker.flags = 0;
-> -	ret = register_shrinker(&conf->shrinker, "md-raid5:%s", mdname(mddev));
-> -	if (ret) {
-> -		pr_warn("md/raid:%s: couldn't register shrinker.\n",
-> +	conf->shrinker = shrinker_alloc(0, "md-raid5:%s", mdname(mddev));
-> +	if (!conf->shrinker) {
+> -	sbi->s_es_shrinker.scan_objects = ext4_es_scan;
+> -	sbi->s_es_shrinker.count_objects = ext4_es_count;
+> -	sbi->s_es_shrinker.seeks = DEFAULT_SEEKS;
+> -	err = register_shrinker(&sbi->s_es_shrinker, "ext4-es:%s",
+> -				sbi->s_sb->s_id);
+> -	if (err)
+> +	sbi->s_es_shrinker = shrinker_alloc(0, "ext4-es:%s", sbi->s_sb->s_id);
+> +	if (!sbi->s_es_shrinker)
 
-Here should set ret to -ENOMEM, will fix.
+Here should set err to -ENOMEM, will fix.
 
-> +		pr_warn("md/raid:%s: couldn't allocate shrinker.\n",
->   			mdname(mddev));
->   		goto abort;
->   	}
+>   		goto err4;
 >   
-> +	conf->shrinker->seeks = DEFAULT_SEEKS * conf->raid_disks * 4;
-> +	conf->shrinker->scan_objects = raid5_cache_scan;
-> +	conf->shrinker->count_objects = raid5_cache_count;
-> +	conf->shrinker->batch = 128;
-> +	conf->shrinker->private_data = conf;
+> +	sbi->s_es_shrinker->scan_objects = ext4_es_scan;
+> +	sbi->s_es_shrinker->count_objects = ext4_es_count;
+> +	sbi->s_es_shrinker->seeks = DEFAULT_SEEKS;
+> +	sbi->s_es_shrinker->private_data = sbi;
 > +
-> +	shrinker_register(conf->shrinker);
+> +	shrinker_register(sbi->s_es_shrinker);
 > +
->   	sprintf(pers_name, "raid%d", mddev->new_level);
->   	rcu_assign_pointer(conf->thread,
->   			   md_register_thread(raid5d, mddev, pers_name));
-> diff --git a/drivers/md/raid5.h b/drivers/md/raid5.h
-> index 97a795979a35..22bea20eccbd 100644
-> --- a/drivers/md/raid5.h
-> +++ b/drivers/md/raid5.h
-> @@ -670,7 +670,7 @@ struct r5conf {
->   	wait_queue_head_t	wait_for_stripe;
->   	wait_queue_head_t	wait_for_overlap;
->   	unsigned long		cache_state;
-> -	struct shrinker		shrinker;
-> +	struct shrinker		*shrinker;
->   	int			pool_size; /* number of disks in stripeheads in pool */
->   	spinlock_t		device_lock;
->   	struct disk_info	*disks;
+>   	return 0;
+>   err4:
+>   	percpu_counter_destroy(&sbi->s_es_stats.es_stats_shk_cnt);
+> @@ -1716,7 +1718,7 @@ void ext4_es_unregister_shrinker(struct ext4_sb_info *sbi)
+>   	percpu_counter_destroy(&sbi->s_es_stats.es_stats_cache_misses);
+>   	percpu_counter_destroy(&sbi->s_es_stats.es_stats_all_cnt);
+>   	percpu_counter_destroy(&sbi->s_es_stats.es_stats_shk_cnt);
+> -	unregister_shrinker(&sbi->s_es_shrinker);
+> +	shrinker_free(sbi->s_es_shrinker);
+>   }
+>   
+>   /*
