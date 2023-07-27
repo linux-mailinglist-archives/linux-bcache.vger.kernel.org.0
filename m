@@ -2,46 +2,63 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B9BDD7650D9
-	for <lists+linux-bcache@lfdr.de>; Thu, 27 Jul 2023 12:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8EE8765147
+	for <lists+linux-bcache@lfdr.de>; Thu, 27 Jul 2023 12:33:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232432AbjG0KU4 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 27 Jul 2023 06:20:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52318 "EHLO
+        id S233998AbjG0KdT (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 27 Jul 2023 06:33:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233571AbjG0KUy (ORCPT
+        with ESMTP id S234106AbjG0Kcw (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 27 Jul 2023 06:20:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A385619AF;
-        Thu, 27 Jul 2023 03:20:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 38C6E61DED;
-        Thu, 27 Jul 2023 10:20:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9266C433C8;
-        Thu, 27 Jul 2023 10:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690453251;
-        bh=Uv0jglg4XDxm5uiOcl1Fs0VDdmS3vnj5J06IHksC3j0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=VjGCTE5fXWQGMkstr5mWfG/olGcukHbx9MJ5gIHM1kJfwo/BiFcjiuEaiA2TxQad6
-         b/CL9D78jYHhDiLBxLD9gCBB6CtR9Pngnq1E4RM+cWQl1ITCzXzhPBEMorh0UStJGb
-         V5QypMia7H1mT7Yv9W7oIRfkDRB1G3xJIxfo7Y/Lymzj+mXx3lcBAFmRFbWxhh8lk9
-         h4N9LjcMkMC3/ZfJEah0qCVly/fWQ4ostsbFgLI1m7GG/WQbkHJ87BAgn9cUsNUERW
-         XrnUyEDaK9+tFU+Iukly/qv+tfC9IZiVkgJJJYsmEkH+2gmJEivzAz4IAcCpkEsNUW
-         WY8rxT9ubVHrA==
-Message-ID: <ba0868b2-9f90-3d81-1c91-8810057fb3ce@kernel.org>
-Date:   Thu, 27 Jul 2023 19:20:46 +0900
+        Thu, 27 Jul 2023 06:32:52 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 308AE173F
+        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 03:32:26 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id 98e67ed59e1d1-2680edb9767so163336a91.0
+        for <linux-bcache@vger.kernel.org>; Thu, 27 Jul 2023 03:32:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1690453945; x=1691058745;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4VsKgOIlO7JTMbURB3u+V7Qr/QzOpc+0Bt56AjhAYAM=;
+        b=Zr/NhsMbDbdIdSqoueTQTw00LusmUmyLrdR7MeDx+ZO5Q+75jdmzv373GL0Ee5CtKr
+         W6fluKiuFJCg5ZU3kW0Km101UvphMU1vBCY7hDEO6TFqab4XzqrIV8fVDPR2Owpqim7U
+         N3OX4eAxVQVjc5z6Zvv7YweV9TAIgzv2mVUZoaytYD45Z4tHHiC7Kn023GaYmi5v6RKy
+         g9n+r/2KPb5qfD2ZK/MDUQIwCLsfUVl7c4q/2XRu1uefpNinWMEwlZLohyik+zojbFUF
+         urJtl81vW3ulTBjRT5ht+WLfC03kh8PaMNuzZ2kESl6uu5dT49u0KrVoAN4kKuQ8SPSD
+         k2iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690453945; x=1691058745;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4VsKgOIlO7JTMbURB3u+V7Qr/QzOpc+0Bt56AjhAYAM=;
+        b=Ojwwy/sLupTtal1KX6GSeM9s6NID3LAcP3hz8g4CjVVoq0qIoX/O6dzWOAP9Sp1+C/
+         pXuVSqXAgsBGZrS9EUE9ahRZ9LepZEHxnYQ6CgaylFOD5M1QKCJTAOgGmE4f0pPfGv7D
+         Nc3+xEL07LGZ799J7KQ/gHVuuUTTcW+A2nYAswBVooBpOcyjmBns0v0EoK0wYZY07+HS
+         r7nkkv8M55y03uwOKFcD1ylrVf5W2uAGqRifGBfrfEU+yM0Ct5IQhDaMgCl04HElfPoM
+         P8J4jkgQWxHKETLMi6TqFQDk6qpWbwVwOIayibFc0S8hmrFD2JuQFpl6mojd0v6uObro
+         mh+Q==
+X-Gm-Message-State: ABy/qLYq0kUa9N9knAT1YWH9XoDaKSHHVakEfJTfBRiVdxdqcSL8fcTL
+        0SdHpgjmQdgs2UMBpY95FtQBuA==
+X-Google-Smtp-Source: APBJJlGmzPZn88CMJAqpsojyTb97uikW28yo5O3pi8rH8SDlSH8BwjASuoOudfeGFyxgCSRxAf0mLA==
+X-Received: by 2002:a17:90a:1b06:b0:263:2312:60c2 with SMTP id q6-20020a17090a1b0600b00263231260c2mr4299433pjq.3.1690453945653;
+        Thu, 27 Jul 2023 03:32:25 -0700 (PDT)
+Received: from [10.70.252.135] ([203.208.167.147])
+        by smtp.gmail.com with ESMTPSA id 8-20020a17090a018800b0026309d57724sm2755058pjc.39.2023.07.27.03.32.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jul 2023 03:32:25 -0700 (PDT)
+Message-ID: <cc819e13-cb25-ddaa-e0e3-7328f5ea3a4f@bytedance.com>
+Date:   Thu, 27 Jul 2023 18:32:10 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
 Subject: Re: [PATCH v3 28/49] dm zoned: dynamically allocate the dm-zoned-meta
  shrinker
 Content-Language: en-US
-To:     Qi Zheng <zhengqi.arch@bytedance.com>
+To:     Damien Le Moal <dlemoal@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
         kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-erofs@lists.ozlabs.org,
@@ -65,47 +82,53 @@ References: <20230727080502.77895-1-zhengqi.arch@bytedance.com>
  <20230727080502.77895-29-zhengqi.arch@bytedance.com>
  <baaf7de4-9a0e-b953-2b6a-46e60c415614@kernel.org>
  <56ee1d92-28ee-81cb-9c41-6ca7ea6556b0@bytedance.com>
-From:   Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <56ee1d92-28ee-81cb-9c41-6ca7ea6556b0@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
+ <ba0868b2-9f90-3d81-1c91-8810057fb3ce@kernel.org>
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <ba0868b2-9f90-3d81-1c91-8810057fb3ce@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On 7/27/23 17:55, Qi Zheng wrote:
->>>           goto err;
->>>       }
->>>   +    zmd->mblk_shrinker->count_objects = dmz_mblock_shrinker_count;
->>> +    zmd->mblk_shrinker->scan_objects = dmz_mblock_shrinker_scan;
->>> +    zmd->mblk_shrinker->seeks = DEFAULT_SEEKS;
->>> +    zmd->mblk_shrinker->private_data = zmd;
->>> +
->>> +    shrinker_register(zmd->mblk_shrinker);
+
+
+On 2023/7/27 18:20, Damien Le Moal wrote:
+> On 7/27/23 17:55, Qi Zheng wrote:
+>>>>            goto err;
+>>>>        }
+>>>>    +    zmd->mblk_shrinker->count_objects = dmz_mblock_shrinker_count;
+>>>> +    zmd->mblk_shrinker->scan_objects = dmz_mblock_shrinker_scan;
+>>>> +    zmd->mblk_shrinker->seeks = DEFAULT_SEEKS;
+>>>> +    zmd->mblk_shrinker->private_data = zmd;
+>>>> +
+>>>> +    shrinker_register(zmd->mblk_shrinker);
+>>>
+>>> I fail to see how this new shrinker API is better... Why isn't there a
+>>> shrinker_alloc_and_register() function ? That would avoid adding all this code
+>>> all over the place as the new API call would be very similar to the current
+>>> shrinker_register() call with static allocation.
 >>
->> I fail to see how this new shrinker API is better... Why isn't there a
->> shrinker_alloc_and_register() function ? That would avoid adding all this code
->> all over the place as the new API call would be very similar to the current
->> shrinker_register() call with static allocation.
+>> In some registration scenarios, memory needs to be allocated in advance.
+>> So we continue to use the previous prealloc/register_prepared()
+>> algorithm. The shrinker_alloc_and_register() is just a helper function
+>> that combines the two, and this increases the number of APIs that
+>> shrinker exposes to the outside, so I choose not to add this helper.
 > 
-> In some registration scenarios, memory needs to be allocated in advance.
-> So we continue to use the previous prealloc/register_prepared()
-> algorithm. The shrinker_alloc_and_register() is just a helper function
-> that combines the two, and this increases the number of APIs that
-> shrinker exposes to the outside, so I choose not to add this helper.
+> And that results in more code in many places instead of less code + a simple
+> inline helper in the shrinker header file... So not adding that super simple
 
-And that results in more code in many places instead of less code + a simple
-inline helper in the shrinker header file... So not adding that super simple
-helper is not exactly the best choice in my opinion.
+It also needs to be exported to the driver for use.
 
--- 
-Damien Le Moal
-Western Digital Research
+> helper is not exactly the best choice in my opinion.
 
+Hm, either one is fine for me. If no one else objects, I can add this
+helper. ;)
+
+> 
