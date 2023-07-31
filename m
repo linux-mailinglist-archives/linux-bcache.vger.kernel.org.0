@@ -2,59 +2,37 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BDA076938F
-	for <lists+linux-bcache@lfdr.de>; Mon, 31 Jul 2023 12:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4294A76944E
+	for <lists+linux-bcache@lfdr.de>; Mon, 31 Jul 2023 13:13:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231967AbjGaKw3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 31 Jul 2023 06:52:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40198 "EHLO
+        id S229861AbjGaLNZ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 31 Jul 2023 07:13:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231432AbjGaKwL (ORCPT
+        with ESMTP id S229649AbjGaLNY (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 31 Jul 2023 06:52:11 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBE41BFD;
-        Mon, 31 Jul 2023 03:51:17 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id ED50E22197;
-        Mon, 31 Jul 2023 10:50:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1690800635; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PJDu3H9G0xjlLFp1Wxvq9yQHkB2Q9jBIbPsGkP5jLhY=;
-        b=LfsIvVgX25rf01P6sVcmZRL3nPMT3sPJRPMrpOspwMqpMg9mmQx6AkDi/eF6WU32a2Vp6x
-        /7YLD1OJK0u+bqfGa4P87gaOpA6/QZlHA1eZkenSQs1V9CjuRPICqxTQ9KdHYFZ84hOqsV
-        4L46K3Rf4+bEtg2brIa/aboXrQrqviE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1690800635;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PJDu3H9G0xjlLFp1Wxvq9yQHkB2Q9jBIbPsGkP5jLhY=;
-        b=X5g/KyOpcE2CiMGegP9N6Ypxz5sWUyAuayNnMILk5q3XabEg0BuGZ7c8jHqKycooaqKD7s
-        Ajq9KEorZZBfWcDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D6932133F7;
-        Mon, 31 Jul 2023 10:50:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id ovhUNPqRx2R2ZgAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 31 Jul 2023 10:50:34 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 457F5A0767; Mon, 31 Jul 2023 12:50:34 +0200 (CEST)
-Date:   Mon, 31 Jul 2023 12:50:34 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Haris Iqbal <haris.iqbal@ionos.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        Mon, 31 Jul 2023 07:13:24 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCACFE52;
+        Mon, 31 Jul 2023 04:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=0eXexdRtzvf9o3AbbzOynMU9Oogrhvp6ybx0nEPZW1E=; b=vK1v9C4DYLEBKbiWf/PpEfbUOr
+        ea0tKbtUfw+UjBx/HoPf26wPnlNR3k7A4MsVaVkdar3OIBATfQ3zHFcbH8P9ZuG4qU9LC9N5j1WXI
+        1jFOwZPN5LFjM5C6XYSxyg6PIhoZ/4h6jEiKtDOt40sVd4EspDmE/0Bc3dDQT8tEqCoRhRKLz9maX
+        raBlJVeHQO4UUZTV20wa+PJqkvDnQQ8hd7GU+O68QfUa/DM2K0gl+HVXCe6+FZ5xjes5Du5sz8UQy
+        x/J/fQpupjKK/pfw7RVGPayWpw0xq+T79S7uS7ZMWJxaSbk7Su09Zyo3FaLXxQsJmvK1X6hzoRb5N
+        /XYneCLA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qQQpx-00FIz8-1F;
+        Mon, 31 Jul 2023 11:13:17 +0000
+Date:   Mon, 31 Jul 2023 04:13:17 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Haris Iqbal <haris.iqbal@ionos.com>,
+        Christoph Hellwig <hch@infradead.org>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>, Alasdair Kergon <agk@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -87,19 +65,20 @@ Cc:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         xen-devel@lists.xenproject.org
 Subject: Re: [PATCH 01/32] block: Provide blkdev_get_handle_* functions
-Message-ID: <20230731105034.43skhi5ubze563c3@quack3>
+Message-ID: <ZMeXTUUyrOnaxGNG@infradead.org>
 References: <20230629165206.383-1-jack@suse.cz>
  <20230704122224.16257-1-jack@suse.cz>
  <ZKbgAG5OoHVyUKOG@infradead.org>
  <CAJpMwyiUcw+mH0sZa8f8UJsaSZ7NSE65s2gZDEia+pASyP_gJQ@mail.gmail.com>
+ <20230731105034.43skhi5ubze563c3@quack3>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJpMwyiUcw+mH0sZa8f8UJsaSZ7NSE65s2gZDEia+pASyP_gJQ@mail.gmail.com>
+In-Reply-To: <20230731105034.43skhi5ubze563c3@quack3>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -107,38 +86,9 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed 12-07-23 18:06:35, Haris Iqbal wrote:
-> On Thu, Jul 6, 2023 at 5:38 PM Christoph Hellwig <hch@infradead.org> wrote:
-> >
-> > On Tue, Jul 04, 2023 at 02:21:28PM +0200, Jan Kara wrote:
-> > > Create struct bdev_handle that contains all parameters that need to be
-> > > passed to blkdev_put() and provide blkdev_get_handle_* functions that
-> > > return this structure instead of plain bdev pointer. This will
-> > > eventually allow us to pass one more argument to blkdev_put() without
-> > > too much hassle.
-> >
-> > Can we use the opportunity to come up with better names?  blkdev_get_*
-> > was always a rather horrible naming convention for something that
-> > ends up calling into ->open.
-> >
-> > What about:
-> >
-> > struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
-> >                 const struct blk_holder_ops *hops);
-> > struct bdev_handle *bdev_open_by_path(dev_t dev, blk_mode_t mode,
-> >                 void *holder, const struct blk_holder_ops *hops);
-> > void bdev_release(struct bdev_handle *handle);
-> 
-> +1 to this.
-> Also, if we are removing "handle" from the function, should the name
-> of the structure it returns also change? Would something like bdev_ctx
-> be better?
+On Mon, Jul 31, 2023 at 12:50:34PM +0200, Jan Kara wrote:
+> I think the bdev_handle name is fine for the struct. After all it is
+> equivalent of an open handle for the block device so IMHO bdev_handle
+> captures that better than bdev_ctx.
 
-I think the bdev_handle name is fine for the struct. After all it is
-equivalent of an open handle for the block device so IMHO bdev_handle
-captures that better than bdev_ctx.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Agreed.
