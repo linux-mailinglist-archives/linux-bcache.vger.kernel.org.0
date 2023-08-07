@@ -2,65 +2,69 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D1BE77274D
-	for <lists+linux-bcache@lfdr.de>; Mon,  7 Aug 2023 16:16:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A11587734F6
+	for <lists+linux-bcache@lfdr.de>; Tue,  8 Aug 2023 01:28:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231720AbjHGOQO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 7 Aug 2023 10:16:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33796 "EHLO
+        id S229843AbjHGX2w (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 7 Aug 2023 19:28:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232344AbjHGOQN (ORCPT
+        with ESMTP id S230188AbjHGX2v (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 7 Aug 2023 10:16:13 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FA0310DB
-        for <linux-bcache@vger.kernel.org>; Mon,  7 Aug 2023 07:16:10 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2b9338e4695so73297561fa.2
-        for <linux-bcache@vger.kernel.org>; Mon, 07 Aug 2023 07:16:10 -0700 (PDT)
+        Mon, 7 Aug 2023 19:28:51 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD30172C
+        for <linux-bcache@vger.kernel.org>; Mon,  7 Aug 2023 16:28:49 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-686e0213c0bso3592053b3a.1
+        for <linux-bcache@vger.kernel.org>; Mon, 07 Aug 2023 16:28:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google; t=1691417769; x=1692022569;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mVE/GJTe1IuiufpABjiYZn1olHI1ifx/I1TivYEBHQg=;
-        b=KDeUHSfDD3L4EI9ZDbXXnOCIgf36k4kTiyHRIIffaGRG3HCFl39GcfvKDi2APyBxt9
-         uIkOV41JjBWzvcfkl4hWbMoMF6B7yW2N6o4toZetNa+16q9cwIbk8dhp8WLMlbMnqtzs
-         lrCcsJN2ho/fqPCpmMmUqd/p18Lc2P1XhR9Zc=
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1691450928; x=1692055728;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0xqamAux0UTVG6klbJHwJNM84FqVsjBhqmY+h06Y7S4=;
+        b=adlg0mZ+HbNffKaKec2p7cVEI4EUlpFfVSVpmG5fvHzHnQEOdBYZjEy4QnkJtTu7lu
+         YmN6EGaH1vJkJ2ZOmqiBcV/yaN6Y4JVna47CjKD7nPXpOiMzYNw9UySGma80pWoaj7Dk
+         jUxXtUXqouB4bUXn3WeUBdMeMQNzv8NtKVfvER+m7KEKe99ZrQWUTG4Y9TUCDw4Kbcew
+         TFF8/aAopaaIk2YO3rVVNpTSZmvFLss5lfJ8bn13k+LTkCPg51SMuEfV97r2Zvr+7s3C
+         AcdJXj3qJcnQFWBnyvELMIWQLaBKzEk7yCwrvdFLv4Z0y5aFUIdjan9j2uUGZT7xZ3GX
+         Ib8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691417769; x=1692022569;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mVE/GJTe1IuiufpABjiYZn1olHI1ifx/I1TivYEBHQg=;
-        b=NEBGboqrlvNdmJbyvqn2DJtSPJ9ToWzOfqG+gmbn8jMRUjBMSva5snsJuDeJRu0f56
-         QgtjF9n4f7DOkkyPuGPMV7Xz8IxoNzanQm0YEz4MIIvH2vBqJRuuJ+LdMhac7evSu7kO
-         Q95jKsKFjMAeSankHwYPvAtZAqrsjPCXR0x8sAqpPYfPq+6oMl5xJe340AwwP2Rz4Xg0
-         GcLjz/bLfu6BnyJOQ7bG6hWqsgJR2ydNzOgi6zzbGMhQL9zlniKDpdMRfoxU5gLdnjXH
-         JJ6usqvz84+9O7ynbS/fug8HiDWaB3274MHJ0RSZSSlRxkZchKAOvFRF1qXY/0gG8R7r
-         na9g==
-X-Gm-Message-State: AOJu0YxoJ91F+KnhtZHK4ChBaTf30DOF8kLnpAM+f763VwUa5vPHtxUF
-        tTJU+bdmwmnsiONR60rv9v5Ki1PlQrWEy0cT3Zaumg==
-X-Google-Smtp-Source: AGHT+IGOrJUhdG+ahMA8bObfIwJouhmkY47ZzUfvTwinDgzhZuBpH+4Q7OaueJuZRAHK8xn8XVlTzjWWvAUYbt+ovvQ=
-X-Received: by 2002:a2e:b166:0:b0:2b9:dd3b:cf43 with SMTP id
- a6-20020a2eb166000000b002b9dd3bcf43mr6572529ljm.13.1691417768626; Mon, 07 Aug
- 2023 07:16:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230807110936.21819-1-zhengqi.arch@bytedance.com> <20230807110936.21819-19-zhengqi.arch@bytedance.com>
-In-Reply-To: <20230807110936.21819-19-zhengqi.arch@bytedance.com>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Mon, 7 Aug 2023 10:16:03 -0400
-Message-ID: <CAEXW_YTKHUeZHWtzeSG5Tt7MscNKjVTScBWkVDkC4Orisa7w=Q@mail.gmail.com>
-Subject: Re: [PATCH v4 18/48] rcu: dynamically allocate the rcu-lazy shrinker
+        d=1e100.net; s=20221208; t=1691450928; x=1692055728;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0xqamAux0UTVG6klbJHwJNM84FqVsjBhqmY+h06Y7S4=;
+        b=JQCm+rcgSaVHVzl24Qba1CtVeO0vPIowC1fdxoWQw/0gk4Q8LSOnw0anxw6kWbMn1E
+         cS6hXR2H7crcjJCUwmpY5NxHA2USqj1UwkkLzlZRMspqPi97UqWzuQIhl+wt3HuyIKb0
+         ykjfIlEsrQ/EXjldLalHKD2K/fD7xSImy9Wyw5eMIGpg1p2narwGBGkVxfoKZkBU4uvE
+         E9vmiIlag2/hecM8WKpteIPohds4CiHf2qXwaQZ/KOvVxRtbV4q9Qr2N9wEtMMgoW8pq
+         nCFeNLNKx+m/NUu5eW+2t7QTfYXx2H6QFb7S5kwE0BDUBSVxmaG6Ra3OnazFJrRD2uCd
+         jnrQ==
+X-Gm-Message-State: AOJu0Yy/BAmmjsjPuhIiQq3E5zgRFtZHEoOtqC1vIJ1TUeJ0sJvEJZbD
+        uKXFNbA2bnfBG5YLx+QJHb6pXA==
+X-Google-Smtp-Source: AGHT+IHWcHOenJQfOaWa9c7YDyMdy3l3j1H0rEzsEcwqog5HJ9HhPve3KCBNDXb4QQT+YEAg/cljWw==
+X-Received: by 2002:a05:6a20:8e04:b0:13c:8e50:34b8 with SMTP id y4-20020a056a208e0400b0013c8e5034b8mr12892217pzj.35.1691450928413;
+        Mon, 07 Aug 2023 16:28:48 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-166-213.pa.nsw.optusnet.com.au. [49.180.166.213])
+        by smtp.gmail.com with ESMTPSA id e18-20020aa78c52000000b0068620bee456sm6663729pfd.209.2023.08.07.16.28.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Aug 2023 16:28:47 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qT9eW-002TeM-1d;
+        Tue, 08 Aug 2023 09:28:44 +1000
+Date:   Tue, 8 Aug 2023 09:28:44 +1000
+From:   Dave Chinner <david@fromorbit.com>
 To:     Qi Zheng <zhengqi.arch@bytedance.com>
-Cc:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
-        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
-        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
-        yujie.liu@intel.com, gregkh@linuxfoundation.org,
-        muchun.song@linux.dev, simon.horman@corigine.com,
-        dlemoal@kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, x86@kernel.org, kvm@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-erofs@lists.ozlabs.org,
+Cc:     akpm@linux-foundation.org, tkhai@ya.ru, vbabka@suse.cz,
+        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
+        paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
+        cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
+        gregkh@linuxfoundation.org, muchun.song@linux.dev,
+        simon.horman@corigine.com, dlemoal@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-erofs@lists.ozlabs.org,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         linux-nfs@vger.kernel.org, linux-mtd@lists.infradead.org,
         rcu@vger.kernel.org, netdev@vger.kernel.org,
@@ -70,85 +74,154 @@ Cc:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Subject: Re: [PATCH v4 45/48] mm: shrinker: make global slab shrink lockless
+Message-ID: <ZNF+LLUpKWHDEG1u@dread.disaster.area>
+References: <20230807110936.21819-1-zhengqi.arch@bytedance.com>
+ <20230807110936.21819-46-zhengqi.arch@bytedance.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230807110936.21819-46-zhengqi.arch@bytedance.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Mon, Aug 7, 2023 at 7:36=E2=80=AFAM Qi Zheng <zhengqi.arch@bytedance.com=
-> wrote:
->
-> Use new APIs to dynamically allocate the rcu-lazy shrinker.
->
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-
-For RCU:
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-
-thanks,
-
-- Joel
-
-
+On Mon, Aug 07, 2023 at 07:09:33PM +0800, Qi Zheng wrote:
+> The shrinker_rwsem is a global read-write lock in shrinkers subsystem,
+> which protects most operations such as slab shrink, registration and
+> unregistration of shrinkers, etc. This can easily cause problems in the
+> following cases.
+....
+> This commit uses the refcount+RCU method [5] proposed by Dave Chinner
+> to re-implement the lockless global slab shrink. The memcg slab shrink is
+> handled in the subsequent patch.
+....
 > ---
->  kernel/rcu/tree_nocb.h | 20 +++++++++++---------
->  1 file changed, 11 insertions(+), 9 deletions(-)
->
-> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-> index 5598212d1f27..e1c59c33738a 100644
-> --- a/kernel/rcu/tree_nocb.h
-> +++ b/kernel/rcu/tree_nocb.h
-> @@ -1396,13 +1396,6 @@ lazy_rcu_shrink_scan(struct shrinker *shrink, stru=
-ct shrink_control *sc)
->
->         return count ? count : SHRINK_STOP;
->  }
-> -
-> -static struct shrinker lazy_rcu_shrinker =3D {
-> -       .count_objects =3D lazy_rcu_shrink_count,
-> -       .scan_objects =3D lazy_rcu_shrink_scan,
-> -       .batch =3D 0,
-> -       .seeks =3D DEFAULT_SEEKS,
-> -};
->  #endif // #ifdef CONFIG_RCU_LAZY
->
->  void __init rcu_init_nohz(void)
-> @@ -1410,6 +1403,7 @@ void __init rcu_init_nohz(void)
->         int cpu;
->         struct rcu_data *rdp;
->         const struct cpumask *cpumask =3D NULL;
-> +       struct shrinker * __maybe_unused lazy_rcu_shrinker;
->
->  #if defined(CONFIG_NO_HZ_FULL)
->         if (tick_nohz_full_running && !cpumask_empty(tick_nohz_full_mask)=
-)
-> @@ -1436,8 +1430,16 @@ void __init rcu_init_nohz(void)
->                 return;
->
->  #ifdef CONFIG_RCU_LAZY
-> -       if (register_shrinker(&lazy_rcu_shrinker, "rcu-lazy"))
-> -               pr_err("Failed to register lazy_rcu shrinker!\n");
-> +       lazy_rcu_shrinker =3D shrinker_alloc(0, "rcu-lazy");
-> +       if (!lazy_rcu_shrinker) {
-> +               pr_err("Failed to allocate lazy_rcu shrinker!\n");
-> +       } else {
-> +               lazy_rcu_shrinker->count_objects =3D lazy_rcu_shrink_coun=
-t;
-> +               lazy_rcu_shrinker->scan_objects =3D lazy_rcu_shrink_scan;
-> +               lazy_rcu_shrinker->seeks =3D DEFAULT_SEEKS;
+>  include/linux/shrinker.h | 17 ++++++++++
+>  mm/shrinker.c            | 70 +++++++++++++++++++++++++++++-----------
+>  2 files changed, 68 insertions(+), 19 deletions(-)
+
+There's no documentation in the code explaining how the lockless
+shrinker algorithm works. It's left to the reader to work out how
+this all goes together....
+
+> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+> index eb342994675a..f06225f18531 100644
+> --- a/include/linux/shrinker.h
+> +++ b/include/linux/shrinker.h
+> @@ -4,6 +4,8 @@
+>  
+>  #include <linux/atomic.h>
+>  #include <linux/types.h>
+> +#include <linux/refcount.h>
+> +#include <linux/completion.h>
+>  
+>  #define SHRINKER_UNIT_BITS	BITS_PER_LONG
+>  
+> @@ -87,6 +89,10 @@ struct shrinker {
+>  	int seeks;	/* seeks to recreate an obj */
+>  	unsigned flags;
+>  
+> +	refcount_t refcount;
+> +	struct completion done;
+> +	struct rcu_head rcu;
+
+What does the refcount protect, why do we need the completion, etc?
+
 > +
-> +               shrinker_register(lazy_rcu_shrinker);
-> +       }
->  #endif // #ifdef CONFIG_RCU_LAZY
->
->         if (!cpumask_subset(rcu_nocb_mask, cpu_possible_mask)) {
-> --
-> 2.30.2
->
+>  	void *private_data;
+>  
+>  	/* These are for internal use */
+> @@ -120,6 +126,17 @@ struct shrinker *shrinker_alloc(unsigned int flags, const char *fmt, ...);
+>  void shrinker_register(struct shrinker *shrinker);
+>  void shrinker_free(struct shrinker *shrinker);
+>  
+> +static inline bool shrinker_try_get(struct shrinker *shrinker)
+> +{
+> +	return refcount_inc_not_zero(&shrinker->refcount);
+> +}
+> +
+> +static inline void shrinker_put(struct shrinker *shrinker)
+> +{
+> +	if (refcount_dec_and_test(&shrinker->refcount))
+> +		complete(&shrinker->done);
+> +}
+> +
+>  #ifdef CONFIG_SHRINKER_DEBUG
+>  extern int __printf(2, 3) shrinker_debugfs_rename(struct shrinker *shrinker,
+>  						  const char *fmt, ...);
+> diff --git a/mm/shrinker.c b/mm/shrinker.c
+> index 1911c06b8af5..d318f5621862 100644
+> --- a/mm/shrinker.c
+> +++ b/mm/shrinker.c
+> @@ -2,6 +2,7 @@
+>  #include <linux/memcontrol.h>
+>  #include <linux/rwsem.h>
+>  #include <linux/shrinker.h>
+> +#include <linux/rculist.h>
+>  #include <trace/events/vmscan.h>
+>  
+>  #include "internal.h"
+> @@ -577,33 +578,42 @@ unsigned long shrink_slab(gfp_t gfp_mask, int nid, struct mem_cgroup *memcg,
+>  	if (!mem_cgroup_disabled() && !mem_cgroup_is_root(memcg))
+>  		return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
+>  
+> -	if (!down_read_trylock(&shrinker_rwsem))
+> -		goto out;
+> -
+> -	list_for_each_entry(shrinker, &shrinker_list, list) {
+> +	rcu_read_lock();
+> +	list_for_each_entry_rcu(shrinker, &shrinker_list, list) {
+>  		struct shrink_control sc = {
+>  			.gfp_mask = gfp_mask,
+>  			.nid = nid,
+>  			.memcg = memcg,
+>  		};
+>  
+> +		if (!shrinker_try_get(shrinker))
+> +			continue;
+> +
+> +		/*
+> +		 * We can safely unlock the RCU lock here since we already
+> +		 * hold the refcount of the shrinker.
+> +		 */
+> +		rcu_read_unlock();
+> +
+>  		ret = do_shrink_slab(&sc, shrinker, priority);
+>  		if (ret == SHRINK_EMPTY)
+>  			ret = 0;
+>  		freed += ret;
+> +
+>  		/*
+> -		 * Bail out if someone want to register a new shrinker to
+> -		 * prevent the registration from being stalled for long periods
+> -		 * by parallel ongoing shrinking.
+> +		 * This shrinker may be deleted from shrinker_list and freed
+> +		 * after the shrinker_put() below, but this shrinker is still
+> +		 * used for the next traversal. So it is necessary to hold the
+> +		 * RCU lock first to prevent this shrinker from being freed,
+> +		 * which also ensures that the next shrinker that is traversed
+> +		 * will not be freed (even if it is deleted from shrinker_list
+> +		 * at the same time).
+>  		 */
+
+This comment really should be at the head of the function,
+describing the algorithm used within the function itself. i.e. how
+reference counts are used w.r.t. the rcu_read_lock() usage to
+guarantee existence of the shrinker and the validity of the list
+walk.
+
+I'm not going to remember all these little details when I look at
+this code in another 6 months time, and having to work it out from
+first principles every time I look at the code will waste of a lot
+of time...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
