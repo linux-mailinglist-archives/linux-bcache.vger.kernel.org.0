@@ -2,293 +2,182 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C47617744B5
-	for <lists+linux-bcache@lfdr.de>; Tue,  8 Aug 2023 20:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 903FC778CBB
+	for <lists+linux-bcache@lfdr.de>; Fri, 11 Aug 2023 13:05:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233986AbjHHS1V (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 8 Aug 2023 14:27:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48226 "EHLO
+        id S235709AbjHKLFL (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 11 Aug 2023 07:05:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235340AbjHHS0r (ORCPT
+        with ESMTP id S235518AbjHKLFJ (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 8 Aug 2023 14:26:47 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DBB020347
-        for <linux-bcache@vger.kernel.org>; Tue,  8 Aug 2023 10:40:57 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1bbb7c3d0f5so11268675ad.1
-        for <linux-bcache@vger.kernel.org>; Tue, 08 Aug 2023 10:40:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1691516457; x=1692121257;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wpg6aIffbYjICJhycB3Bph3fxU0UaKYZ32RPKTrhmtc=;
-        b=dJIeNnpbD3zS+ZDipa16p0nKo6JJGBx5CasNDxxKcVYj540G3QL98XpXZN1/nBfysi
-         n4p6hx7RjUGUeM8lU5Lwfl0042NP7W+DlqIm8b1/7KCrbMa03pFyROUABjMQyCDnANCc
-         ZnDfccEP/6EMQ62MPMJ1kJGbUwzIg28Uaiq6YJvi++9pYtkqJrO9JRVNA316U6RCtN/a
-         fwX1ad/vtdeF4dS0+K3EELlRjhjSym2usWOQzSBQVYO41c/F+nh6sUK2UOFlpAsUE79t
-         WnlPvKTIRO0p0CGXcb+2MZphwxtNvV+VFTXyHcqMD4Q0DRyR1bT1pKGsOiZJFnhRcGa/
-         dQug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691516457; x=1692121257;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wpg6aIffbYjICJhycB3Bph3fxU0UaKYZ32RPKTrhmtc=;
-        b=lhOz+980dPWcOzuGoVzT99p3eahrTkurGtKxL9sTtUQHAJ7aKLEdjC6z9mYTNYszXj
-         kYdBGmB2/JbpmveDnTkbbUD5XqRnKzqiugTTUEaiuAsrGP90+tWWVfY8k1TYfg4OGm0J
-         D4+L3Ytt66CtaScOB0XBfEYeLUDsliBLQntfKdKTLy7YxBM3DgiKzR0q9S8GEgvVTHSI
-         xNX3I09kbWfQWZnP5jZ9h1E/wD2RjSS1IovH5+hmTvQyXivWg4VkCwJXqNqbur+v0/Eh
-         RetpDx6fjfOtcsdWx4cDONGO6kdy2duT53zXrvBGNj0pqlc0XNdKWNrG8Cl/K0NpCvtP
-         avPA==
-X-Gm-Message-State: AOJu0YzQp0vZtJc0lwB0f01SFCjRWQY+Q9XuzRzF1OQES4lvha8OKjEK
-        XDHkvqM54+P8zd41up4CMpRjkfhawwM0F+G+77I=
-X-Google-Smtp-Source: APBJJlEd8UgUmVjTGODajLkItGQ9rG+lZy4ypLT00ATvxhzy6MYHUWJPNACQWVHeXI8Weqa+eylbDA==
-X-Received: by 2002:a17:90a:6c97:b0:263:730b:f568 with SMTP id y23-20020a17090a6c9700b00263730bf568mr25207579pjj.3.1691481032358;
-        Tue, 08 Aug 2023 00:50:32 -0700 (PDT)
-Received: from [10.70.252.135] ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id u4-20020a17090a410400b00263154aab24sm7244870pjf.57.2023.08.08.00.50.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Aug 2023 00:50:31 -0700 (PDT)
-Message-ID: <5757e341-b261-14de-e052-46606d530460@bytedance.com>
-Date:   Tue, 8 Aug 2023 15:50:18 +0800
+        Fri, 11 Aug 2023 07:05:09 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F2210C0;
+        Fri, 11 Aug 2023 04:05:06 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 554E921867;
+        Fri, 11 Aug 2023 11:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1691751905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=5tRGa7YNpy5azfO2DILJGaxnHQqIrHRIuX4HPJpenrQ=;
+        b=nS0o04Ko2eofWDhOvWx6o3T36EV25HqbUFvkN9WMKumyZo3DU5IiWgMskXfjyH4OXEiKYl
+        IITYxvL5Q8pMKkFc8O6biwC3K3TxmcmnzVR3W1NQhsfgztirbY49kzZoor0HytOQKCBlyL
+        GV3cB78+BIPaD5P0M4y2xB0Q495MkAo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1691751905;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=5tRGa7YNpy5azfO2DILJGaxnHQqIrHRIuX4HPJpenrQ=;
+        b=PRu3LFGsOROMaty7jNH51X1wMClD6ZMlY5AdbxYnc0QwtMHxNWZ8s/wVfL1uImLDOQT/Rl
+        cDHfO/YvLXNV1tAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 40B5313592;
+        Fri, 11 Aug 2023 11:05:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id kdy/D+EV1mQuRQAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 11 Aug 2023 11:05:05 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id B94BAA076F; Fri, 11 Aug 2023 13:05:04 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
+To:     <linux-fsdevel@vger.kernel.org>
+Cc:     <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        Alasdair Kergon <agk@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
+        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        jfs-discussion@lists.sourceforge.net,
+        Joern Engel <joern@lazybastard.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-xfs@vger.kernel.org,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
+        reiserfs-devel@vger.kernel.org,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Song Liu <song@kernel.org>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        xen-devel@lists.xenproject.org
+Subject: [PATCH v2 0/29] block: Make blkdev_get_by_*() return handle
+Date:   Fri, 11 Aug 2023 13:04:31 +0200
+Message-Id: <20230810171429.31759-1-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.14.0
-Subject: Re: [PATCH v4 46/48] mm: shrinker: make memcg slab shrink lockless
-Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     akpm@linux-foundation.org, tkhai@ya.ru, vbabka@suse.cz,
-        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
-        paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
-        cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
-        gregkh@linuxfoundation.org, muchun.song@linux.dev,
-        simon.horman@corigine.com, dlemoal@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-erofs@lists.ozlabs.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, linux-mtd@lists.infradead.org,
-        rcu@vger.kernel.org, netdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        dm-devel@redhat.com, linux-raid@vger.kernel.org,
-        linux-bcache@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org
-References: <20230807110936.21819-1-zhengqi.arch@bytedance.com>
- <20230807110936.21819-47-zhengqi.arch@bytedance.com>
- <ZNGr+1orhHaBORJG@dread.disaster.area>
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <ZNGr+1orhHaBORJG@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3218; i=jack@suse.cz; h=from:subject:message-id; bh=8um6o7br1koHMcykRc7ml18Y2BSCm69vwpPmgjRXxkk=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBk1hW86qklK68Z0G139b8b61UzO/oV2Y6qvJg1uvDC +JKlEZuJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZNYVvAAKCRCcnaoHP2RA2epoB/ 9Sgdf//aomv8tBKGEg1kRzItWS+CXbN/cjy5B6uL3IUWhEY6vxFg7DsN+znMmPFPOp7X1w/e2PExiA dGNvKiX2BNUyl6ZLFstCZUiXyzlig8pnDHrmrN4lbx3SIS3BHdNJ8igPArMWVDYXlZuosexzFn3fIW ELsTpVpNLZdp6BAxZg4925E1qscyN11eFDJecvW+IrpMA1nHR12Y/AX4zqXWcBT8MPUEiJD1Cnfxfa Leji+h3vOG0k2IQAyfN6R1cj/0POs0zJWvSVK9bZM8IYFIOHr+jpYHi0KEVh62q6NLoQxbMBVEzn9K JsmkBplP7UobjvtEWvfH0EwVENii9z
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hi Dave,
+Hello,
 
-On 2023/8/8 10:44, Dave Chinner wrote:
-> On Mon, Aug 07, 2023 at 07:09:34PM +0800, Qi Zheng wrote:
->> Like global slab shrink, this commit also uses refcount+RCU method to make
->> memcg slab shrink lockless.
-> 
-> This patch does random code cleanups amongst the actual RCU changes.
-> Can you please move the cleanups to a spearate patch to reduce the
-> noise in this one?
+this is a v2 of the patch series which implements the idea of blkdev_get_by_*()
+calls returning bdev_handle which is then passed to blkdev_put() [1]. This
+makes the get and put calls for bdevs more obviously matching and allows us to
+propagate context from get to put without having to modify all the users
+(again!).  In particular I need to propagate used open flags to blkdev_put() to
+be able count writeable opens and add support for blocking writes to mounted
+block devices. I'll send that series separately.
 
-Sure, will do.
+The series is based on Christian's vfs tree as of yesterday as there is quite
+some overlap. Patches have passed some reasonable testing - I've tested block
+changes, md, dm, bcache, xfs, btrfs, ext4, swap. This obviously doesn't cover
+everything so I'd like to ask respective maintainers to review / test their
+changes. Thanks! I've pushed out the full branch to:
 
-> 
->> diff --git a/mm/shrinker.c b/mm/shrinker.c
->> index d318f5621862..fee6f62904fb 100644
->> --- a/mm/shrinker.c
->> +++ b/mm/shrinker.c
->> @@ -107,6 +107,12 @@ static struct shrinker_info *shrinker_info_protected(struct mem_cgroup *memcg,
->>   					 lockdep_is_held(&shrinker_rwsem));
->>   }
->>   
->> +static struct shrinker_info *shrinker_info_rcu(struct mem_cgroup *memcg,
->> +					       int nid)
->> +{
->> +	return rcu_dereference(memcg->nodeinfo[nid]->shrinker_info);
->> +}
-> 
-> This helper doesn't add value. It doesn't tell me that
-> rcu_read_lock() needs to be held when it is called, for one....
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git bdev_handle
 
-How about adding a comment or an assertion here?
+to ease review / testing.
 
-> 
->>   static int expand_one_shrinker_info(struct mem_cgroup *memcg, int new_size,
->>   				    int old_size, int new_nr_max)
->>   {
->> @@ -198,7 +204,7 @@ void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
->>   		struct shrinker_info_unit *unit;
->>   
->>   		rcu_read_lock();
->> -		info = rcu_dereference(memcg->nodeinfo[nid]->shrinker_info);
->> +		info = shrinker_info_rcu(memcg, nid);
-> 
-> ... whilst the original code here was obviously correct.
-> 
->>   		unit = info->unit[shriner_id_to_index(shrinker_id)];
->>   		if (!WARN_ON_ONCE(shrinker_id >= info->map_nr_max)) {
->>   			/* Pairs with smp mb in shrink_slab() */
->> @@ -211,7 +217,7 @@ void set_shrinker_bit(struct mem_cgroup *memcg, int nid, int shrinker_id)
->>   
->>   static DEFINE_IDR(shrinker_idr);
->>   
->> -static int prealloc_memcg_shrinker(struct shrinker *shrinker)
->> +static int shrinker_memcg_alloc(struct shrinker *shrinker)
-> 
-> Cleanups in a separate patch.
+Changes since v1:
+* Rebased on top of current vfs tree
+* Renamed final functions to bdev_open_by_*() and bdev_release()
+* Fixed detection of exclusive open in blkdev_ioctl() and blkdev_fallocate()
+* Fixed swap conversion to properly reinitialize swap_info->bdev_handle
+* Fixed xfs conversion to not oops with rtdev without logdev
+* Couple other minor fixups
 
-OK.
+								Honza
 
-> 
->> @@ -253,10 +258,15 @@ static long xchg_nr_deferred_memcg(int nid, struct shrinker *shrinker,
->>   {
->>   	struct shrinker_info *info;
->>   	struct shrinker_info_unit *unit;
->> +	long nr_deferred;
->>   
->> -	info = shrinker_info_protected(memcg, nid);
->> +	rcu_read_lock();
->> +	info = shrinker_info_rcu(memcg, nid);
->>   	unit = info->unit[shriner_id_to_index(shrinker->id)];
->> -	return atomic_long_xchg(&unit->nr_deferred[shriner_id_to_offset(shrinker->id)], 0);
->> +	nr_deferred = atomic_long_xchg(&unit->nr_deferred[shriner_id_to_offset(shrinker->id)], 0);
->> +	rcu_read_unlock();
->> +
->> +	return nr_deferred;
->>   }
-> 
-> This adds two rcu_read_lock() sections to every call to
-> do_shrink_slab(). It's not at all clear ifrom any of the other code
-> that do_shrink_slab() now has internal rcu_read_lock() sections....
+[1] https://lore.kernel.org/all/ZJGNsVDhZx0Xgs2H@infradead.org
 
-The xchg_nr_deferred_memcg() will only be called in shrink_slab_memcg(),
-so other code doesn't need to know that information?
+CC: Alasdair Kergon <agk@redhat.com>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Anna Schumaker <anna@kernel.org>
+CC: Chao Yu <chao@kernel.org>
+CC: Christian Borntraeger <borntraeger@linux.ibm.com>
+CC: Coly Li <colyli@suse.de
+CC: "Darrick J. Wong" <djwong@kernel.org>
+CC: Dave Kleikamp <shaggy@kernel.org>
+CC: David Sterba <dsterba@suse.com>
+CC: dm-devel@redhat.com
+CC: drbd-dev@lists.linbit.com
+CC: Gao Xiang <xiang@kernel.org>
+CC: Jack Wang <jinpu.wang@ionos.com>
+CC: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: jfs-discussion@lists.sourceforge.net
+CC: Joern Engel <joern@lazybastard.org>
+CC: Joseph Qi <joseph.qi@linux.alibaba.com>
+CC: Kent Overstreet <kent.overstreet@gmail.com>
+CC: linux-bcache@vger.kernel.org
+CC: linux-btrfs@vger.kernel.org
+CC: linux-erofs@lists.ozlabs.org
+CC: <linux-ext4@vger.kernel.org>
+CC: linux-f2fs-devel@lists.sourceforge.net
+CC: linux-mm@kvack.org
+CC: linux-mtd@lists.infradead.org
+CC: linux-nfs@vger.kernel.org
+CC: linux-nilfs@vger.kernel.org
+CC: linux-nvme@lists.infradead.org
+CC: linux-pm@vger.kernel.org
+CC: linux-raid@vger.kernel.org
+CC: linux-s390@vger.kernel.org
+CC: linux-scsi@vger.kernel.org
+CC: linux-xfs@vger.kernel.org
+CC: "Md. Haris Iqbal" <haris.iqbal@ionos.com>
+CC: Mike Snitzer <snitzer@kernel.org>
+CC: Minchan Kim <minchan@kernel.org>
+CC: ocfs2-devel@oss.oracle.com
+CC: reiserfs-devel@vger.kernel.org
+CC: Sergey Senozhatsky <senozhatsky@chromium.org>
+CC: Song Liu <song@kernel.org>
+CC: Sven Schnelle <svens@linux.ibm.com>
+CC: target-devel@vger.kernel.org
+CC: Ted Tso <tytso@mit.edu>
+CC: Trond Myklebust <trond.myklebust@hammerspace.com>
+CC: xen-devel@lists.xenproject.org
 
-> 
->> @@ -464,18 +480,23 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
->>   	if (!mem_cgroup_online(memcg))
->>   		return 0;
->>   
->> -	if (!down_read_trylock(&shrinker_rwsem))
->> -		return 0;
->> -
->> -	info = shrinker_info_protected(memcg, nid);
->> +again:
->> +	rcu_read_lock();
->> +	info = shrinker_info_rcu(memcg, nid);
->>   	if (unlikely(!info))
->>   		goto unlock;
->>   
->> -	for (; index < shriner_id_to_index(info->map_nr_max); index++) {
->> +	if (index < shriner_id_to_index(info->map_nr_max)) {
->>   		struct shrinker_info_unit *unit;
->>   
->>   		unit = info->unit[index];
->>   
->> +		/*
->> +		 * The shrinker_info_unit will not be freed, so we can
->> +		 * safely release the RCU lock here.
->> +		 */
->> +		rcu_read_unlock();
-> 
-> Why - what guarantees that the shrinker_info_unit exists at this
-> point? We hold no reference to it, we hold no reference to any
-> shrinker, etc. What provides this existence guarantee?
-
-The shrinker_info_unit is never freed unless the memcg is destroyed.
-Here we hold the refcount of this memcg (mem_cgroup_iter() -->
-css_tryget()), so the shrinker_info_unit will not be freed.
-
-> 
->> +
->>   		for_each_set_bit(offset, unit->map, SHRINKER_UNIT_BITS) {
->>   			struct shrink_control sc = {
->>   				.gfp_mask = gfp_mask,
->> @@ -485,12 +506,14 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
->>   			struct shrinker *shrinker;
->>   			int shrinker_id = calc_shrinker_id(index, offset);
->>   
->> +			rcu_read_lock();
->>   			shrinker = idr_find(&shrinker_idr, shrinker_id);
->> -			if (unlikely(!shrinker || !(shrinker->flags & SHRINKER_REGISTERED))) {
->> -				if (!shrinker)
->> -					clear_bit(offset, unit->map);
->> +			if (unlikely(!shrinker || !shrinker_try_get(shrinker))) {
->> +				clear_bit(offset, unit->map);
->> +				rcu_read_unlock();
->>   				continue;
->>   			}
->> +			rcu_read_unlock();
->>   
->>   			/* Call non-slab shrinkers even though kmem is disabled */
->>   			if (!memcg_kmem_online() &&
->> @@ -523,15 +546,20 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
->>   					set_shrinker_bit(memcg, nid, shrinker_id);
->>   			}
->>   			freed += ret;
->> -
->> -			if (rwsem_is_contended(&shrinker_rwsem)) {
->> -				freed = freed ? : 1;
->> -				goto unlock;
->> -			}
->> +			shrinker_put(shrinker);
-> 
-> Ok, so why is this safe to call without holding the rcu read lock?
-> The global shrinker has to hold the rcu_read_lock() whilst calling
-> shrinker_put() to guarantee the validity of the list next pointer,
-> but we don't hold off RCU here so what guarantees a racing global
-> shrinker walk doesn't trip over this shrinker_put() call dropping
-> the refcount to zero and freeing occuring in a different context...
-
-This will not be a problem, even if shrinker::refcount is reduced to
-0 here, the racing global shrinker walk already holds the rcu lock.
-
-         shrink_slab            shrink_slab_memcg
-         ===========            =================
-
-         rcu_read_lock()
-         shrinker_put()
-                                shrinker_put()
-
-And in shrink_slab_memcg(), the shrinker is not required to traverse the
-next bit in the shrinker_info_unit::map, so there is no need to hold the
-rcu lock to ensure the existence of this shrinker.
-
-> 
-> 
->> +		/*
->> +		 * We have already exited the read-side of rcu critical section
->> +		 * before calling do_shrink_slab(), the shrinker_info may be
->> +		 * released in expand_one_shrinker_info(), so reacquire the
->> +		 * shrinker_info.
->> +		 */
->> +		index++;
->> +		goto again;
-> 
-> With that, what makes the use of shrinker_info in
-> xchg_nr_deferred_memcg() in do_shrink_slab() coherent and valid?
-
-Holding rcu lock can ensure that the old shrinker_info will not be
-freed, and the shrinker_info_unit::nr_deferred can also be indexed from
-the old shrinker_info::unit[x], so the updated nr_deferred will not be
-lost.
-
-Thanks,
-Qi
-
-> 
-> -Dave.
+Previous versions:
+Link: http://lore.kernel.org/r/20230629165206.383-1-jack@suse.cz # v1
