@@ -2,66 +2,63 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 231E07848AD
-	for <lists+linux-bcache@lfdr.de>; Tue, 22 Aug 2023 19:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF6D27849D6
+	for <lists+linux-bcache@lfdr.de>; Tue, 22 Aug 2023 21:02:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229490AbjHVRt5 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 22 Aug 2023 13:49:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47340 "EHLO
+        id S229560AbjHVTCx (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 22 Aug 2023 15:02:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjHVRt4 (ORCPT
+        with ESMTP id S229985AbjHVTCw (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 22 Aug 2023 13:49:56 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1262E1FFC
-        for <linux-bcache@vger.kernel.org>; Tue, 22 Aug 2023 10:49:36 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 8089722C12;
-        Tue, 22 Aug 2023 17:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1692726575; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HMBdUg6WaSd3yu39ohwJ2cTcY79JwJS3/G9Zsw3XhMI=;
-        b=OslmxPOgeNSZtUo7cS5V5Pt40X5Kgcu2cQBSTUMqStR7zDAk4r2Ddw1PEUz9Zx3apAOqtH
-        kukcMbvd3ebon/nuIFvkw8F+S51TJryQ2/5DMDGMX7pXSB9oG30Yd5TgOZrgcooFYNv9RY
-        kCX6sJZsT2bNuoH2vcpxVoMoJD4yE/8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1692726575;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HMBdUg6WaSd3yu39ohwJ2cTcY79JwJS3/G9Zsw3XhMI=;
-        b=aTyaw3BUG4FnyVch6tKYrrI7GIYAucbSoqw+j2/gNkhAyKq/fDkukeU0bQ3Y5Dl220Ge1c
-        iT/iMJ7ifC7ySLBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 86170132B9;
-        Tue, 22 Aug 2023 17:49:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id du5tFS715GRNfwAAMHmgww
-        (envelope-from <colyli@suse.de>); Tue, 22 Aug 2023 17:49:34 +0000
-Date:   Wed, 23 Aug 2023 01:49:32 +0800
-From:   Coly Li <colyli@suse.de>
-To:     Mingzhe Zou <mingzhe.zou@easystack.cn>
-Cc:     bcache@lists.ewheeler.net, linux-bcache@vger.kernel.org,
-        zoumingzhe@qq.com
+        Tue, 22 Aug 2023 15:02:52 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2182CD1
+        for <linux-bcache@vger.kernel.org>; Tue, 22 Aug 2023 12:02:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692730970; x=1724266970;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uVLAhj0UhmbKCgn+Pgu3pY5P57ykNVgGm8FHRmlLeVw=;
+  b=BlhoTRdHo4npQ8XTkZ9znBSMO4Wjq9Tip9Mpqut9ccF/mt/wYKMwGdPI
+   5idrOfj5GR8B8uQ5Hc+qpJhEIwYfisQaFG/NK1UikJm1OqycZlDS7Rmpl
+   /6AEkz5JfSu8G32+8SaUoe7HNSemzrCns3abXv0V9d8aQkrmC2FdfYT4J
+   vU7cqSk8lTI85KSLKD6g5o88x7mhGelaoj5BDNRz79mJxw6OORM4JErBf
+   4Ofr1IIkuclfc/EbXW0JeuwnYRRTGRCbjRjxFxTat4DZTK/hQHGt0X5B9
+   Z+dAonL+fV/011Px4CmS0wiuBfNDmjC6WsMepz1MrxvNXo57n9SQpOApR
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="353527883"
+X-IronPort-AV: E=Sophos;i="6.01,194,1684825200"; 
+   d="scan'208";a="353527883"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2023 12:02:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10809"; a="739444342"
+X-IronPort-AV: E=Sophos;i="6.01,194,1684825200"; 
+   d="scan'208";a="739444342"
+Received: from lkp-server02.sh.intel.com (HELO daf8bb0a381d) ([10.239.97.151])
+  by fmsmga007.fm.intel.com with ESMTP; 22 Aug 2023 12:02:48 -0700
+Received: from kbuild by daf8bb0a381d with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qYWeN-0000Su-2k;
+        Tue, 22 Aug 2023 19:02:47 +0000
+Date:   Wed, 23 Aug 2023 03:02:21 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Mingzhe Zou <mingzhe.zou@easystack.cn>, colyli@suse.de,
+        bcache@lists.ewheeler.net, linux-bcache@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, zoumingzhe@qq.com,
+        Mingzhe Zou <mingzhe.zou@easystack.cn>
 Subject: Re: [PATCH] bcache: fixup init dirty data errors
-Message-ID: <dzhok3pe53usq5qc4emosxesmimwvhxoi663hxqpigvzejmppm@2fj6swqu2j7a>
+Message-ID: <202308230238.6Oed7zAt-lkp@intel.com>
 References: <20230822101958.2577-1-mingzhe.zou@easystack.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20230822101958.2577-1-mingzhe.zou@easystack.cn>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,71 +68,103 @@ X-Mailing-List: linux-bcache@vger.kernel.org
 
 Hi Mingzhe,
 
-On Tue, Aug 22, 2023 at 06:19:58PM +0800, Mingzhe Zou wrote:
-> We found that after long run, the dirty_data of the bcache device
-> will have errors. This error cannot be eliminated unless re-register.
+kernel test robot noticed the following build errors:
 
-Could you explain what the error was?
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.5-rc7 next-20230822]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
-> We also found that reattach after detach, this error can accumulate.
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Mingzhe-Zou/bcache-fixup-init-dirty-data-errors/20230822-182044
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20230822101958.2577-1-mingzhe.zou%40easystack.cn
+patch subject: [PATCH] bcache: fixup init dirty data errors
+config: openrisc-randconfig-r011-20230822 (https://download.01.org/0day-ci/archive/20230823/202308230238.6Oed7zAt-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20230823/202308230238.6Oed7zAt-lkp@intel.com/reproduce)
 
-Could you elaborate how the error can accumulate?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202308230238.6Oed7zAt-lkp@intel.com/
 
- 
-> In bch_sectors_dirty_init(), all inode <= d->id keys will be recounted
-> again. This is wrong, we only need to count the keys of the current
-> device.
-> 
-> Fixes: b144e45fc576 ("bcache: make bch_sectors_dirty_init() to be multithreaded")
-> Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
-> ---
->  drivers/md/bcache/writeback.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-> index 24c049067f61..71d0dabcbf9d 100644
-> --- a/drivers/md/bcache/writeback.c
-> +++ b/drivers/md/bcache/writeback.c
-> @@ -983,6 +983,8 @@ void bch_sectors_dirty_init(struct bcache_device *d)
->  	struct cache_set *c = d->c;
->  	struct bch_dirty_init_state state;
->  
-> +	atomic_long_set(&d->dirty_sectors, 0);
-> +
+All errors (new ones prefixed by >>):
 
-The above change is not upstreamed yet, if you are fixing upstream code please
-avoid to use d->dirty_sectors here.
+   drivers/md/bcache/writeback.c: In function 'bch_sectors_dirty_init':
+>> drivers/md/bcache/writeback.c:986:27: error: 'struct bcache_device' has no member named 'dirty_sectors'
+     986 |         atomic_long_set(&d->dirty_sectors, 0);
+         |                           ^~
 
 
+vim +986 drivers/md/bcache/writeback.c
 
->  	/* Just count root keys if no leaf node */
->  	rw_lock(0, c->root, c->root->level);
->  	if (c->root->level == 0) {
-> @@ -991,8 +993,11 @@ void bch_sectors_dirty_init(struct bcache_device *d)
->  		op.count = 0;
->  
->  		for_each_key_filter(&c->root->keys,
-> -				    k, &iter, bch_ptr_invalid)
-> +				    k, &iter, bch_ptr_invalid) {
-> +			if (KEY_INODE(k) != op.inode)
-> +				continue;
->  			sectors_dirty_init_fn(&op.op, c->root, k);
-> +		}
->  
-
-Nice catch! IMHO if I take the above change, setting d->dirty_sectors by 0
-might be unncessary in ideal condition, am I right?
-
-Thanks for the fixup.
-
-
->  		rw_unlock(0, c->root);
->  		return;
-> -- 
-> 2.17.1.windows.2
-> 
+   976	
+   977	void bch_sectors_dirty_init(struct bcache_device *d)
+   978	{
+   979		int i;
+   980		struct bkey *k = NULL;
+   981		struct btree_iter iter;
+   982		struct sectors_dirty_init op;
+   983		struct cache_set *c = d->c;
+   984		struct bch_dirty_init_state state;
+   985	
+ > 986		atomic_long_set(&d->dirty_sectors, 0);
+   987	
+   988		/* Just count root keys if no leaf node */
+   989		rw_lock(0, c->root, c->root->level);
+   990		if (c->root->level == 0) {
+   991			bch_btree_op_init(&op.op, -1);
+   992			op.inode = d->id;
+   993			op.count = 0;
+   994	
+   995			for_each_key_filter(&c->root->keys,
+   996					    k, &iter, bch_ptr_invalid) {
+   997				if (KEY_INODE(k) != op.inode)
+   998					continue;
+   999				sectors_dirty_init_fn(&op.op, c->root, k);
+  1000			}
+  1001	
+  1002			rw_unlock(0, c->root);
+  1003			return;
+  1004		}
+  1005	
+  1006		memset(&state, 0, sizeof(struct bch_dirty_init_state));
+  1007		state.c = c;
+  1008		state.d = d;
+  1009		state.total_threads = bch_btre_dirty_init_thread_nr();
+  1010		state.key_idx = 0;
+  1011		spin_lock_init(&state.idx_lock);
+  1012		atomic_set(&state.started, 0);
+  1013		atomic_set(&state.enough, 0);
+  1014		init_waitqueue_head(&state.wait);
+  1015	
+  1016		for (i = 0; i < state.total_threads; i++) {
+  1017			/* Fetch latest state.enough earlier */
+  1018			smp_mb__before_atomic();
+  1019			if (atomic_read(&state.enough))
+  1020				break;
+  1021	
+  1022			state.infos[i].state = &state;
+  1023			state.infos[i].thread =
+  1024				kthread_run(bch_dirty_init_thread, &state.infos[i],
+  1025					    "bch_dirtcnt[%d]", i);
+  1026			if (IS_ERR(state.infos[i].thread)) {
+  1027				pr_err("fails to run thread bch_dirty_init[%d]\n", i);
+  1028				for (--i; i >= 0; i--)
+  1029					kthread_stop(state.infos[i].thread);
+  1030				goto out;
+  1031			}
+  1032			atomic_inc(&state.started);
+  1033		}
+  1034	
+  1035	out:
+  1036		/* Must wait for all threads to stop. */
+  1037		wait_event(state.wait, atomic_read(&state.started) == 0);
+  1038		rw_unlock(0, c->root);
+  1039	}
+  1040	
 
 -- 
-Coly Li
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
