@@ -2,109 +2,169 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E8B5784E59
-	for <lists+linux-bcache@lfdr.de>; Wed, 23 Aug 2023 03:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3801F784EAB
+	for <lists+linux-bcache@lfdr.de>; Wed, 23 Aug 2023 04:22:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232079AbjHWBne (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 22 Aug 2023 21:43:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34616 "EHLO
+        id S231936AbjHWCWx (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 22 Aug 2023 22:22:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232075AbjHWBn2 (ORCPT
+        with ESMTP id S232003AbjHWCWw (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 22 Aug 2023 21:43:28 -0400
-X-Greylist: delayed 919 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 22 Aug 2023 18:43:26 PDT
-Received: from symantec4.comsats.net.pk (symantec4.comsats.net.pk [203.124.41.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88B1510D
-        for <linux-bcache@vger.kernel.org>; Tue, 22 Aug 2023 18:43:26 -0700 (PDT)
-X-AuditID: cb7c291e-06dff70000002aeb-4f-64e54bbca6c3
-Received: from iesco.comsatshosting.com (iesco.comsatshosting.com [210.56.28.11])
-        (using TLS with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        by symantec4.comsats.net.pk (Symantec Messaging Gateway) with SMTP id 2B.FB.10987.CBB45E46; Wed, 23 Aug 2023 04:58:52 +0500 (PKT)
-DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns;
-        d=iesco.com.pk; s=default;
-        h=received:content-type:mime-version:content-transfer-encoding
-          :content-description:subject:to:from:date:reply-to;
-        b=hz55lQmDwARG+MMadiCGMAN5xFNmK6pAuE51cVFp9t4eLwf7OgfOgm+I9fP0oZk02
-          9FYKVSgZ0CsZMqww2UpvK4eW04sQ94/4JcZrUQ4r92BFeCbuBLCXO74xiHhM4G3oh
-          vlqPS+tVxo1o7qGeg7PzcEhrvF2qUbngZ721tVgFI=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=iesco.com.pk; s=default;
-        h=reply-to:date:from:to:subject:content-description
-          :content-transfer-encoding:mime-version:content-type;
-        bh=GMzYzcyTxDsE6wX/XHG6MHqAdAiHrhqbmmLQ/TZ1QnQ=;
-        b=DDk6PfLJwbV+lZttbK0vV00a7+6f6M39/A48Sjp4HaocZ/3couUnZDAHpkrqQrB5H
-          vmHoMgmiJIEIsxwtU0K0Ot0K4z76IFv7R8boFErjT6pZ4ehT968epVdpVLCI1l52G
-          fEL7IQd04cPN5V1f8C4GI5fXf7Hx/HBloQ5+5FNPw=
-Received: from [94.156.6.90] (UnknownHost [94.156.6.90]) by iesco.comsatshosting.com with SMTP;
-   Wed, 23 Aug 2023 04:30:58 +0500
-Message-ID: <2B.FB.10987.CBB45E46@symantec4.comsats.net.pk>
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 22 Aug 2023 22:22:52 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FC05D3
+        for <linux-bcache@vger.kernel.org>; Tue, 22 Aug 2023 19:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692757370; x=1724293370;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X1+p1qTbbZMS50dAfz80v7sLu2asHhLYb8sDoJXRM/k=;
+  b=MTobl5pnoqjElLMvsXAC8koI2vzuYCi0Hk1dV8Wav6QnxsXUufknn7Mq
+   lI82u2QoXNQ8gr/DDClH6J4t96P+ETtA/QWgnPU9BVgZcbHKJAdtEEAdn
+   It7zwROkp0fP1whbqnzm83RgafWodWyY90A6xgZTUfhDaQOfx09ecr00H
+   iRY80eMZxu4RI+rUuO5ZQ4/oj/60lAF17MerovUf2gOrc72HUwggxJk7S
+   wwa2SVf3W7Nh+BtWc+cHnh2qx/k9NKv+YQPccQDhsDq/4A1xGHQf2EtNX
+   puUo2GOU6Fz9DfYRhMF2eD5ciecbtvbDNQBqGBrVwQPYlaohC1VtPlidJ
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10810"; a="353600321"
+X-IronPort-AV: E=Sophos;i="6.01,194,1684825200"; 
+   d="scan'208";a="353600321"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2023 19:22:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10810"; a="736463527"
+X-IronPort-AV: E=Sophos;i="6.01,194,1684825200"; 
+   d="scan'208";a="736463527"
+Received: from lkp-server02.sh.intel.com (HELO daf8bb0a381d) ([10.239.97.151])
+  by orsmga002.jf.intel.com with ESMTP; 22 Aug 2023 19:22:46 -0700
+Received: from kbuild by daf8bb0a381d with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qYdWA-0000ky-0s;
+        Wed, 23 Aug 2023 02:22:46 +0000
+Date:   Wed, 23 Aug 2023 10:22:30 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Mingzhe Zou <mingzhe.zou@easystack.cn>, colyli@suse.de,
+        bcache@lists.ewheeler.net, linux-bcache@vger.kernel.org
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        zoumingzhe@qq.com, Mingzhe Zou <mingzhe.zou@easystack.cn>
+Subject: Re: [PATCH] bcache: fixup init dirty data errors
+Message-ID: <202308231002.XWYzjVgk-lkp@intel.com>
+References: <20230822101958.2577-1-mingzhe.zou@easystack.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Re; Interest,
-To:     linux-bcache@vger.kernel.org
-From:   "Chen Yun" <pso.chairmanbod@iesco.com.pk>
-Date:   Tue, 22 Aug 2023 16:31:12 -0700
-Reply-To: chnyne@gmail.com
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDLMWRmVeSWpSXmKPExsVyyUKGW3eP99MUg4VnjCyObbvG5MDo8XmT
-        XABjFJdNSmpOZllqkb5dAlfGknUXWAp2M1e09S9iaWB8zNTFyMkhIWAisefIEsYuRi4OIYE9
-        TBLXTxxnBnFYBFYzS+xc+58dwnnILLH36h02iLJmRonffb/YQPp5BawlJn5azAhiMwvoSdyY
-        OgUqLihxcuYTFoi4tsSyha+BxnIA2WoSX7tKQMLCAmISn6YtYwcJiwgoSDxaWA8SZhPQl1jx
-        tRlsIouAqsSBG/NYQWwhASmJjVfWs01g5J+FZNksJMtmIVk2C2HZAkaWVYwSxZW5icBQSzbR
-        S87PLU4sKdbLSy3RK8jexAgMw9M1mnI7GJdeSjzEKMDBqMTD+3PdkxQh1sQyoK5DjBIczEoi
-        vNLfH6YI8aYkVlalFuXHF5XmpBYfYpTmYFES57UVepYsJJCeWJKanZpakFoEk2Xi4JRqYIyS
-        y3+/Pztm5+HzzrdvbU1bYhf+LPxfqoNr59FSg9wEhwMX5eP3fzFQ28/52WNjJOOHmgjNB9GH
-        Hn64+S6A8d3UT3eq7zrYPTyw3bai7RCnXlV0ivi1K9e/7P7xMPDS3u8iFyxbuZwauc7snMBZ
-        +qHinElCwLfAg82Kirxeiy7mcsaxOfDxVCqxFGckGmoxFxUnAgC0r5J7PwIAAA==
-X-Spam-Status: Yes, score=5.5 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_SBL,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: *  0.0 URIBL_BLOCKED ADMINISTRATOR NOTICE: The query to URIBL was
-        *      blocked.  See
-        *      http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
-        *      for more information.
-        *      [URIs: iesco.com.pk]
-        *  3.3 RCVD_IN_SBL_CSS RBL: Received via a relay in Spamhaus SBL-CSS
-        *      [94.156.6.90 listed in zen.spamhaus.org]
-        *  0.1 RCVD_IN_SBL RBL: Received via a relay in Spamhaus SBL
-        * -0.7 RCVD_IN_DNSWL_LOW RBL: Sender listed at https://www.dnswl.org/,
-        *       low trust
-        *      [203.124.41.30 listed in list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  2.1 FREEMAIL_FORGED_REPLYTO Freemail in Reply-To, but not From
-X-Spam-Level: *****
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230822101958.2577-1-mingzhe.zou@easystack.cn>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Re; Interest,
+Hi Mingzhe,
 
-I am interested in discussing the Investment proposal as I explained
-in my previous mail. May you let me know your interest and the
-possibility of a cooperation aimed for mutual interest.
+kernel test robot noticed the following build errors:
 
-Looking forward to your mail for further discussion.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.5-rc7 next-20230822]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Regards
+url:    https://github.com/intel-lab-lkp/linux/commits/Mingzhe-Zou/bcache-fixup-init-dirty-data-errors/20230822-182044
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20230822101958.2577-1-mingzhe.zou%40easystack.cn
+patch subject: [PATCH] bcache: fixup init dirty data errors
+config: i386-randconfig-011-20230822 (https://download.01.org/0day-ci/archive/20230823/202308231002.XWYzjVgk-lkp@intel.com/config)
+compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
+reproduce: (https://download.01.org/0day-ci/archive/20230823/202308231002.XWYzjVgk-lkp@intel.com/reproduce)
 
-------
-Chen Yun - Chairman of CREC
-China Railway Engineering Corporation - CRECG
-China Railway Plaza, No.69 Fuxing Road, Haidian District, Beijing, P.R.
-China
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202308231002.XWYzjVgk-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+>> drivers/md/bcache/writeback.c:986:22: error: no member named 'dirty_sectors' in 'struct bcache_device'
+           atomic_long_set(&d->dirty_sectors, 0);
+                            ~  ^
+   1 error generated.
+
+
+vim +986 drivers/md/bcache/writeback.c
+
+   976	
+   977	void bch_sectors_dirty_init(struct bcache_device *d)
+   978	{
+   979		int i;
+   980		struct bkey *k = NULL;
+   981		struct btree_iter iter;
+   982		struct sectors_dirty_init op;
+   983		struct cache_set *c = d->c;
+   984		struct bch_dirty_init_state state;
+   985	
+ > 986		atomic_long_set(&d->dirty_sectors, 0);
+   987	
+   988		/* Just count root keys if no leaf node */
+   989		rw_lock(0, c->root, c->root->level);
+   990		if (c->root->level == 0) {
+   991			bch_btree_op_init(&op.op, -1);
+   992			op.inode = d->id;
+   993			op.count = 0;
+   994	
+   995			for_each_key_filter(&c->root->keys,
+   996					    k, &iter, bch_ptr_invalid) {
+   997				if (KEY_INODE(k) != op.inode)
+   998					continue;
+   999				sectors_dirty_init_fn(&op.op, c->root, k);
+  1000			}
+  1001	
+  1002			rw_unlock(0, c->root);
+  1003			return;
+  1004		}
+  1005	
+  1006		memset(&state, 0, sizeof(struct bch_dirty_init_state));
+  1007		state.c = c;
+  1008		state.d = d;
+  1009		state.total_threads = bch_btre_dirty_init_thread_nr();
+  1010		state.key_idx = 0;
+  1011		spin_lock_init(&state.idx_lock);
+  1012		atomic_set(&state.started, 0);
+  1013		atomic_set(&state.enough, 0);
+  1014		init_waitqueue_head(&state.wait);
+  1015	
+  1016		for (i = 0; i < state.total_threads; i++) {
+  1017			/* Fetch latest state.enough earlier */
+  1018			smp_mb__before_atomic();
+  1019			if (atomic_read(&state.enough))
+  1020				break;
+  1021	
+  1022			state.infos[i].state = &state;
+  1023			state.infos[i].thread =
+  1024				kthread_run(bch_dirty_init_thread, &state.infos[i],
+  1025					    "bch_dirtcnt[%d]", i);
+  1026			if (IS_ERR(state.infos[i].thread)) {
+  1027				pr_err("fails to run thread bch_dirty_init[%d]\n", i);
+  1028				for (--i; i >= 0; i--)
+  1029					kthread_stop(state.infos[i].thread);
+  1030				goto out;
+  1031			}
+  1032			atomic_inc(&state.started);
+  1033		}
+  1034	
+  1035	out:
+  1036		/* Must wait for all threads to stop. */
+  1037		wait_event(state.wait, atomic_read(&state.started) == 0);
+  1038		rw_unlock(0, c->root);
+  1039	}
+  1040	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
