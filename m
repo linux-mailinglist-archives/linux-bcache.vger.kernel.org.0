@@ -2,186 +2,128 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD398786632
-	for <lists+linux-bcache@lfdr.de>; Thu, 24 Aug 2023 05:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29DE2786FC7
+	for <lists+linux-bcache@lfdr.de>; Thu, 24 Aug 2023 14:58:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234354AbjHXDtn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 23 Aug 2023 23:49:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58388 "EHLO
+        id S240616AbjHXM5r (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 24 Aug 2023 08:57:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236657AbjHXDsd (ORCPT
+        with ESMTP id S237167AbjHXM5h (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 23 Aug 2023 23:48:33 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4CAF173C
-        for <linux-bcache@vger.kernel.org>; Wed, 23 Aug 2023 20:47:42 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id 41be03b00d2f7-5657ca46a56so833099a12.0
-        for <linux-bcache@vger.kernel.org>; Wed, 23 Aug 2023 20:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1692848859; x=1693453659;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fa4A7mARo9UASqTNF5nYV+l5Qm4MYZjHRGtSJYP4Y4U=;
-        b=d1wXSjPKCFEr8z/p/byM5kRgXe8PbCA56N3zhbP1G8RyclSiP3MfoWO1VjUBFEfLu8
-         Jv8srfHUD4wK1EF90VWGYzVLQFM3cgUH6eOrKYXPD/cVeTsc5WoF/vQIJUe26UY/Ow3z
-         ENqa6anDehpg55dE40ykBpXSJ3cGdh/QxK3Pyn1kpms/fmsU04YXRAopjkNGU4+76Pq8
-         3Y9zyUnnRNr/yzJsGa3A3VHXMPXaHq1XkZzHyi87cd+Y6LY4TdHFbhSuzevUvRulOVyP
-         sd5aajfZ70TnWEP93V/mOvFrzj1icTTQnnd4xRKj7zmyKuiZMzeQiMH8vplG2YqtFRs+
-         1NdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692848859; x=1693453659;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fa4A7mARo9UASqTNF5nYV+l5Qm4MYZjHRGtSJYP4Y4U=;
-        b=JeijgKYKhA0Snw957+TWSQPL0XfkJuLCgij9XkFRabOksHYtNVLSf1qCZBpug7sz5z
-         6ZYjwmh46vZwjIuMAQX4oHBrj1cZbWUXl/wmOKRDNYuco2bFSowB+kqpHWaJF08vhPw+
-         3Q5GrnijCcSGJ6X4VNJeFO2TM2ae+JY2rJ9HB0rOPtlZgJDxaJfjxCqqOGAWAEA43ucm
-         WANdeKYMziWYG0/tSI1bdHaQD4xDs0BHGDCR6gmnmOi1CG5UCO8RERYrGSFab725jLWH
-         Ali7pYispv0CGscDUDOOFHLIkhSuig5RSIEmlUpIk0I7VOxO9x6RAAmQ0ni+ldKyrb1g
-         th7w==
-X-Gm-Message-State: AOJu0YyTF+bbk6n4i2eWGvaMqwecon1+l5kyz1LfKI8BCJkIeXJpuA0C
-        jq76lTYK5GDRM8i53Tb9WhXaCg==
-X-Google-Smtp-Source: AGHT+IF3djZSCs4jg/UQUu42D+/WSQ6VNsO0pvWsZu5aji18gl8AMoEFfV4hmz2xAgIkNtsfI3eNSg==
-X-Received: by 2002:a05:6a20:3941:b0:111:a0e5:d2b7 with SMTP id r1-20020a056a20394100b00111a0e5d2b7mr16582686pzg.4.1692848858975;
-        Wed, 23 Aug 2023 20:47:38 -0700 (PDT)
-Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id t6-20020a63b246000000b005579f12a238sm10533157pgo.86.2023.08.23.20.47.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Aug 2023 20:47:38 -0700 (PDT)
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
-        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
-        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
-        yujie.liu@intel.com, gregkh@linuxfoundation.org,
-        muchun.song@linux.dev
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        Coly Li <colyli@suse.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org
-Subject: [PATCH v5 26/45] bcache: dynamically allocate the md-bcache shrinker
-Date:   Thu, 24 Aug 2023 11:42:45 +0800
-Message-Id: <20230824034304.37411-27-zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <20230824034304.37411-1-zhengqi.arch@bytedance.com>
-References: <20230824034304.37411-1-zhengqi.arch@bytedance.com>
+        Thu, 24 Aug 2023 08:57:37 -0400
+X-Greylist: delayed 452 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 24 Aug 2023 05:57:34 PDT
+Received: from mail-m3179.qiye.163.com (mail-m3179.qiye.163.com [103.74.31.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9118811F
+        for <linux-bcache@vger.kernel.org>; Thu, 24 Aug 2023 05:57:34 -0700 (PDT)
+Received: from easystack.cn (unknown [127.0.0.1])
+        by mail-m3179.qiye.163.com (Hmail) with ESMTP id 2095378022D;
+        Thu, 24 Aug 2023 20:49:56 +0800 (CST)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <AAwAcABgJMxjBt4aQEsLQqpi.3.1692881396125.Hmail.mingzhe.zou@easystack.cn>
+To:     Coly Li <colyli@suse.de>
+Cc:     bcache@lists.ewheeler.net, linux-bcache@vger.kernel.org,
+        zoumingzhe@qq.com
+Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSF0gYmNhY2hlOiBmaXh1cCBpbml0IGRpcnR5IGRhdGEgZXJyb3Jz?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2015-163.com
+X-Originating-IP: 218.94.118.90
+In-Reply-To: <dzhok3pe53usq5qc4emosxesmimwvhxoi663hxqpigvzejmppm@2fj6swqu2j7a>
+References: <dzhok3pe53usq5qc4emosxesmimwvhxoi663hxqpigvzejmppm@2fj6swqu2j7a>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Received: from mingzhe.zou@easystack.cn( [218.94.118.90) ] by ajax-webmail ( [127.0.0.1] ) ; Thu, 24 Aug 2023 20:49:56 +0800 (GMT+08:00)
+From:   =?UTF-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>
+Date:   Thu, 24 Aug 2023 20:49:56 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSRpKVhpKSh9LGE4YTktOGFUZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpNT0lMTlVKS0tVSkJLS1kG
+X-HM-Tid: 0a8a2768b33f00b3kurm18a2226bbe3
+X-HM-MType: 1
+X-HM-NTES-SC: AL0_4z5B86Wr4Tz9jdMF+bhXMV0DBsZGvN9IjLbwwNC/7OljLpuv4boOMwoFIj
+        1eYTmzRdJEw3t2ZnYd4ih3pj0QTJcPW2Z66Ra9aNcOEEVZcSE7ISoiWOGHv7YFIOHSGRiSoDVyxw
+        S+IrSQgK9f6khkTO2IYWrxjEPsnVXeTW3CL/0=
+X-HM-Sender-Digest: e1kJHlYWEh9ZQUpOTUlPSEJKQ0pLTzdXWQweGVlBDwkOHldZEh8eFQ9Z
+        QVlHOjoMOhg6ORwxNgMROQ9PGio#CDcqCgsSVUhVSk1CSUNDSkhCTUxLQlUzFhoSF1UWEhUcARMe
+        VQEUDjseGggCCA8aGBBVGBVFWVdZEgtZQVlJSkNVQk9VSkpDVUJLWVdZCAFZQUxDTUg3V1kUCw8S
+        FBUIWUFLNwY+
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        MSGID_FROM_MTA_HEADER,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In preparation for implementing lockless slab shrink, use new APIs to
-dynamically allocate the md-bcache shrinker, so that it can be freed
-asynchronously via RCU. Then it doesn't need to wait for RCU read-side
-critical section when releasing the struct cache_set.
-
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-CC: Coly Li <colyli@suse.de>
-CC: Kent Overstreet <kent.overstreet@gmail.com>
-CC: linux-bcache@vger.kernel.org
----
- drivers/md/bcache/bcache.h |  2 +-
- drivers/md/bcache/btree.c  | 27 ++++++++++++++++-----------
- drivers/md/bcache/sysfs.c  |  3 ++-
- 3 files changed, 19 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 5a79bb3c272f..c622bc50f81b 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -541,7 +541,7 @@ struct cache_set {
- 	struct bio_set		bio_split;
- 
- 	/* For the btree cache */
--	struct shrinker		shrink;
-+	struct shrinker		*shrink;
- 
- 	/* For the btree cache and anything allocation related */
- 	struct mutex		bucket_lock;
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index fd121a61f17c..ae5cbb55861f 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -667,7 +667,7 @@ static int mca_reap(struct btree *b, unsigned int min_order, bool flush)
- static unsigned long bch_mca_scan(struct shrinker *shrink,
- 				  struct shrink_control *sc)
- {
--	struct cache_set *c = container_of(shrink, struct cache_set, shrink);
-+	struct cache_set *c = shrink->private_data;
- 	struct btree *b, *t;
- 	unsigned long i, nr = sc->nr_to_scan;
- 	unsigned long freed = 0;
-@@ -734,7 +734,7 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
- static unsigned long bch_mca_count(struct shrinker *shrink,
- 				   struct shrink_control *sc)
- {
--	struct cache_set *c = container_of(shrink, struct cache_set, shrink);
-+	struct cache_set *c = shrink->private_data;
- 
- 	if (c->shrinker_disabled)
- 		return 0;
-@@ -752,8 +752,8 @@ void bch_btree_cache_free(struct cache_set *c)
- 
- 	closure_init_stack(&cl);
- 
--	if (c->shrink.list.next)
--		unregister_shrinker(&c->shrink);
-+	if (c->shrink)
-+		shrinker_free(c->shrink);
- 
- 	mutex_lock(&c->bucket_lock);
- 
-@@ -828,14 +828,19 @@ int bch_btree_cache_alloc(struct cache_set *c)
- 		c->verify_data = NULL;
- #endif
- 
--	c->shrink.count_objects = bch_mca_count;
--	c->shrink.scan_objects = bch_mca_scan;
--	c->shrink.seeks = 4;
--	c->shrink.batch = c->btree_pages * 2;
-+	c->shrink = shrinker_alloc(0, "md-bcache:%pU", c->set_uuid);
-+	if (!c->shrink) {
-+		pr_warn("bcache: %s: could not allocate shrinker\n", __func__);
-+		return 0;
-+	}
-+
-+	c->shrink->count_objects = bch_mca_count;
-+	c->shrink->scan_objects = bch_mca_scan;
-+	c->shrink->seeks = 4;
-+	c->shrink->batch = c->btree_pages * 2;
-+	c->shrink->private_data = c;
- 
--	if (register_shrinker(&c->shrink, "md-bcache:%pU", c->set_uuid))
--		pr_warn("bcache: %s: could not register shrinker\n",
--				__func__);
-+	shrinker_register(c->shrink);
- 
- 	return 0;
- }
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index 0e2c1880f60b..45d8af755de6 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -866,7 +866,8 @@ STORE(__bch_cache_set)
- 
- 		sc.gfp_mask = GFP_KERNEL;
- 		sc.nr_to_scan = strtoul_or_return(buf);
--		c->shrink.scan_objects(&c->shrink, &sc);
-+		if (c->shrink)
-+			c->shrink->scan_objects(c->shrink, &sc);
- 	}
- 
- 	sysfs_strtoul_clamp(congested_read_threshold_us,
--- 
-2.30.2
-
+RnJvbTogQ29seSBMaSA8Y29seWxpQHN1c2UuZGU+CkRhdGU6IDIwMjMtMDgtMjMgMDE6NDk6MzIK
+VG86ICBNaW5nemhlIFpvdSA8bWluZ3poZS56b3VAZWFzeXN0YWNrLmNuPgpDYzogIGJjYWNoZUBs
+aXN0cy5ld2hlZWxlci5uZXQsbGludXgtYmNhY2hlQHZnZXIua2VybmVsLm9yZyx6b3VtaW5nemhl
+QHFxLmNvbQpTdWJqZWN0OiBSZTogW1BBVENIXSBiY2FjaGU6IGZpeHVwIGluaXQgZGlydHkgZGF0
+YSBlcnJvcnM+SGkgTWluZ3poZSwKPgo+T24gVHVlLCBBdWcgMjIsIDIwMjMgYXQgMDY6MTk6NThQ
+TSArMDgwMCwgTWluZ3poZSBab3Ugd3JvdGU6Cj4+IFdlIGZvdW5kIHRoYXQgYWZ0ZXIgbG9uZyBy
+dW4sIHRoZSBkaXJ0eV9kYXRhIG9mIHRoZSBiY2FjaGUgZGV2aWNlCj4+IHdpbGwgaGF2ZSBlcnJv
+cnMuIFRoaXMgZXJyb3IgY2Fubm90IGJlIGVsaW1pbmF0ZWQgdW5sZXNzIHJlLXJlZ2lzdGVyLgo+
+Cj5Db3VsZCB5b3UgZXhwbGFpbiB3aGF0IHRoZSBlcnJvciB3YXM/Cj4KSGksIENvbHkKCldlIGRp
+c2NvdmVyZWQgZGlydHlfZGF0YSB3YXMgaW5hY2N1cmF0ZSBhIGxvbmcgdGltZSBhZ28uIApXaGVu
+IHdyaXRlYmFjayB0aHJlYWQgZmx1c2hlcyBhbGwgZGlydHkgZGF0YSwgZGlydHlfZGF0YSB2aWEg
+c3lzZnMgc2hvd3MgdGhhdAp0aGVyZSBhcmUgc3RpbGwgc2V2ZXJhbCBLIHRvIHRlbnMgb2YgTSBv
+ZiBkaXJ0eSBkYXRhLiAKCkF0IHRoYXQgdGltZSwgSSB0aG91Z2h0IGl0IG1pZ2h0IGJlIGEgY2Fs
+Y3VsYXRpb24gZXJyb3IgYXQgcnVudGltZSwgYnV0IGFmdGVyCnJldmlld2luZyB0aGUgcmVsZXZh
+bnQgY29kZSwgbm8gZXJyb3Igd2FzIGZvdW5kLgoKTGFzdCBtb250aCwgb3VyIG9ubGluZSBlbnZp
+cm9ubWVudCBmb3VuZCB0aGF0IGEgY2VydGFpbiBkZXZpY2UgaGFkIG1vcmUgdGhhbgoyMDBHIG9m
+IGRpcnR5X2RhdGEuIFRoaXMgYnJpbmdzIHVzIGJhY2sgdG8gdGhlIHF1ZXN0aW9uLgoKPj4gCj4+
+IFdlIGFsc28gZm91bmQgdGhhdCByZWF0dGFjaCBhZnRlciBkZXRhY2gsIHRoaXMgZXJyb3IgY2Fu
+IGFjY3VtdWxhdGUuCj4+Cj4KPkNvdWxkIHlvdSBlbGFib3JhdGUgaG93IHRoZSBlcnJvciBjYW4g
+YWNjdW11bGF0ZT8KPgpJIGZvdW5kIHRoYXQgd2hlbiBkaXJ0eV9kYXRhLCBlcnJvciwgZGV0YWNo
+IGFuZCB0aGVuIHJlLWF0dGFjaCBjYW4gbm90CmVsaW1pbmF0ZSB0aGUgZXJyb3IsIHRoZSBlcnJv
+ciB3aWxsIGNvbnRpbnVlLgoKSW4gYmNoX2NhY2hlZF9kZXZfYXR0YWNoKCksIGFmdGVyIGJjaF9z
+ZWN0b3JzX2RpcnR5X2luaXQoKSwgYXR0YWNoIG1heSBzdGlsbCBmYWlsLApidXQgZGlydHlfZGF0
+YSBpcyBub3QgY2xlYXJlZCB3aGVuIGl0IGZhaWxzCmBgYAoJYmNoX3NlY3RvcnNfZGlydHlfaW5p
+dCgmZGMtPmRpc2spOwoKCXJldCA9IGJjaF9jYWNoZWRfZGV2X3J1bihkYyk7CglpZiAocmV0ICYm
+IChyZXQgIT0gLUVCVVNZKSkgewoJCXVwX3dyaXRlKCZkYy0+d3JpdGViYWNrX2xvY2spOwoJCS8q
+CgkJICogYmNoX3JlZ2lzdGVyX2xvY2sgaXMgaGVsZCwgYmNhY2hlX2RldmljZV9zdG9wKCkgaXMg
+bm90CgkJICogYWJsZSB0byBiZSBkaXJlY3RseSBjYWxsZWQuIFRoZSBrdGhyZWFkIGFuZCBrd29y
+a2VyCgkJICogY3JlYXRlZCBwcmV2aW91c2x5IGluIGJjaF9jYWNoZWRfZGV2X3dyaXRlYmFja19z
+dGFydCgpCgkJICogaGF2ZSB0byBiZSBzdG9wcGVkIG1hbnVhbGx5IGhlcmUuCgkJICovCgkJa3Ro
+cmVhZF9zdG9wKGRjLT53cml0ZWJhY2tfdGhyZWFkKTsKCQlkYy0+d3JpdGViYWNrX3RocmVhZCA9
+IE5VTEw7CgkJY2FuY2VsX3dyaXRlYmFja19yYXRlX3VwZGF0ZV9kd29yayhkYyk7CgkJcHJfZXJy
+KCJDb3VsZG4ndCBydW4gY2FjaGVkIGRldmljZSAlcyIsCgkJICAgICAgIGRjLT5iYWNraW5nX2Rl
+dl9uYW1lKTsKCQlyZXR1cm4gcmV0OwoJfQpgYGAKCj4gCj4+IEluIGJjaF9zZWN0b3JzX2RpcnR5
+X2luaXQoKSwgYWxsIGlub2RlIDw9IGQtPmlkIGtleXMgd2lsbCBiZSByZWNvdW50ZWQKPj4gYWdh
+aW4uIFRoaXMgaXMgd3JvbmcsIHdlIG9ubHkgbmVlZCB0byBjb3VudCB0aGUga2V5cyBvZiB0aGUg
+Y3VycmVudAo+PiBkZXZpY2UuCj4+IAo+PiBGaXhlczogYjE0NGU0NWZjNTc2ICgiYmNhY2hlOiBt
+YWtlIGJjaF9zZWN0b3JzX2RpcnR5X2luaXQoKSB0byBiZSBtdWx0aXRocmVhZGVkIikKPj4gU2ln
+bmVkLW9mZi1ieTogTWluZ3poZSBab3UgPG1pbmd6aGUuem91QGVhc3lzdGFjay5jbj4KPj4gLS0t
+Cj4+ICBkcml2ZXJzL21kL2JjYWNoZS93cml0ZWJhY2suYyB8IDcgKysrKysrLQo+PiAgMSBmaWxl
+IGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+PiAKPj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvbWQvYmNhY2hlL3dyaXRlYmFjay5jIGIvZHJpdmVycy9tZC9iY2FjaGUvd3Jp
+dGViYWNrLmMKPj4gaW5kZXggMjRjMDQ5MDY3ZjYxLi43MWQwZGFiY2JmOWQgMTAwNjQ0Cj4+IC0t
+LSBhL2RyaXZlcnMvbWQvYmNhY2hlL3dyaXRlYmFjay5jCj4+ICsrKyBiL2RyaXZlcnMvbWQvYmNh
+Y2hlL3dyaXRlYmFjay5jCj4+IEBAIC05ODMsNiArOTgzLDggQEAgdm9pZCBiY2hfc2VjdG9yc19k
+aXJ0eV9pbml0KHN0cnVjdCBiY2FjaGVfZGV2aWNlICpkKQo+PiAgCXN0cnVjdCBjYWNoZV9zZXQg
+KmMgPSBkLT5jOwo+PiAgCXN0cnVjdCBiY2hfZGlydHlfaW5pdF9zdGF0ZSBzdGF0ZTsKPj4gIAo+
+PiArCWF0b21pY19sb25nX3NldCgmZC0+ZGlydHlfc2VjdG9ycywgMCk7Cj4+ICsKPgo+VGhlIGFi
+b3ZlIGNoYW5nZSBpcyBub3QgdXBzdHJlYW1lZCB5ZXQsIGlmIHlvdSBhcmUgZml4aW5nIHVwc3Ry
+ZWFtIGNvZGUgcGxlYXNlCj5hdm9pZCB0byB1c2UgZC0+ZGlydHlfc2VjdG9ycyBoZXJlLgo+CgpZ
+ZXMsIGRpcnR5X3NlY3RvcnMgaXMgYSBzZXQgb2YgcmVzaXplIHBhdGNoZXMgc3VibWl0dGVkIHRv
+IHRoZSBjb21tdW5pdHkgYmVmb3JlLAp0aGVzZSBwYXRjaGVzIGhhdmUgbm90IGJlZW4gbWVyZ2Vk
+IGludG8gdXBzdHJlYW0sIEkgd2lsbCByZW1vdmUgdGhpcyBsaW5lIGluIHYyLgoKSW4gZmFjdCwg
+dGhlIGNoYW5nZSBhYm91dCBkaXJ0eV9zZWN0b3JzIGlzIG9ubHkgYSBwcmVyZXF1aXNpdGUgZm9y
+IHJlc2l6ZSwgYW5kIGl0IGNhbgpiZSBwcm9tb3RlZCBmaXJzdC4gSXQgd2lsbCBncmVhdGx5IHJl
+ZHVjZSB0aGUgbWVtb3J5IHJlcXVpcmVtZW50cyBvZiBoaWdoLWNhcGFjaXR5CmRldmljZXMuCgo+
+Cj4KPj4gIAkvKiBKdXN0IGNvdW50IHJvb3Qga2V5cyBpZiBubyBsZWFmIG5vZGUgKi8KPj4gIAly
+d19sb2NrKDAsIGMtPnJvb3QsIGMtPnJvb3QtPmxldmVsKTsKPj4gIAlpZiAoYy0+cm9vdC0+bGV2
+ZWwgPT0gMCkgewo+PiBAQCAtOTkxLDggKzk5MywxMSBAQCB2b2lkIGJjaF9zZWN0b3JzX2RpcnR5
+X2luaXQoc3RydWN0IGJjYWNoZV9kZXZpY2UgKmQpCj4+ICAJCW9wLmNvdW50ID0gMDsKPj4gIAo+
+PiAgCQlmb3JfZWFjaF9rZXlfZmlsdGVyKCZjLT5yb290LT5rZXlzLAo+PiAtCQkJCSAgICBrLCAm
+aXRlciwgYmNoX3B0cl9pbnZhbGlkKQo+PiArCQkJCSAgICBrLCAmaXRlciwgYmNoX3B0cl9pbnZh
+bGlkKSB7Cj4+ICsJCQlpZiAoS0VZX0lOT0RFKGspICE9IG9wLmlub2RlKQo+PiArCQkJCWNvbnRp
+bnVlOwo+PiAgCQkJc2VjdG9yc19kaXJ0eV9pbml0X2ZuKCZvcC5vcCwgYy0+cm9vdCwgayk7Cj4+
+ICsJCX0KPj4gIAo+Cj5OaWNlIGNhdGNoISBJTUhPIGlmIEkgdGFrZSB0aGUgYWJvdmUgY2hhbmdl
+LCBzZXR0aW5nIGQtPmRpcnR5X3NlY3RvcnMgYnkgMAo+bWlnaHQgYmUgdW5uY2Vzc2FyeSBpbiBp
+ZGVhbCBjb25kaXRpb24sIGFtIEkgcmlnaHQ/Cj4KCkluIGJjaF9jYWNoZWRfZGV2X2F0dGFjaCAo
+KSBtYXkgc3RpbGwgZmFpbCBhbmQgZXhpdCwgSSB0aGluayBpdCBpcyBuZWNlc3NhcnkgdG8gY2xl
+YXIgMC4KCm1pbmd6aGUKCj5UaGFua3MgZm9yIHRoZSBmaXh1cC4KPgo+Cj4+ICAJCXJ3X3VubG9j
+aygwLCBjLT5yb290KTsKPj4gIAkJcmV0dXJuOwo+PiAtLSAKPj4gMi4xNy4xLndpbmRvd3MuMgo+
+PiAKPgo+LS0gCj5Db2x5IExpCg0KDQo=
