@@ -2,110 +2,81 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A260787DE5
-	for <lists+linux-bcache@lfdr.de>; Fri, 25 Aug 2023 04:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58DCF78869E
+	for <lists+linux-bcache@lfdr.de>; Fri, 25 Aug 2023 14:08:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229609AbjHYCpf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 24 Aug 2023 22:45:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50908 "EHLO
+        id S244399AbjHYMHk (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Fri, 25 Aug 2023 08:07:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230510AbjHYCpV (ORCPT
+        with ESMTP id S244541AbjHYMHH (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 24 Aug 2023 22:45:21 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E167133;
-        Thu, 24 Aug 2023 19:45:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BAs3vHnqB82jyF9T0JKZy08jGuQDnnwXLjj44ySrvFg=; b=qG/yF0qNQFz1HErcIOwDpMsE95
-        yvpWaJiccPJne5E6IKKdLk49il4mSFXaxO10+cPRq4RqC2mgW99o+1yf2c4bs81MOg47gz2QA9ZFT
-        aLJydE8tWV8lzCMv2+NeX7mQCMknUB5EhVQiqQN5lBaCEsUTiWdC5wvrGaIvwhXVRrB8AFK90tiyv
-        FLjfEbnlTWQpGxkRRGa9YbyGmW5wSGD0SSIG8KNS+lDxJs8er6W0jn8lCxtIFwizoom7apeGKhs9v
-        c0WlIDcCZSTbrPU9y3Jy4WWr/hC4ZjXs2RvO1eOF4P2UntF/l1INZ+xsvc1Hck8kt4ukocelH0IdQ
-        bSBNV7lw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qZMoj-000edp-26;
-        Fri, 25 Aug 2023 02:44:57 +0000
-Date:   Fri, 25 Aug 2023 03:44:57 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Phillip Potter <phil@philpotter.co.uk>,
-        Coly Li <colyli@suse.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-        Christian Brauner <brauner@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-btrfs@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH 01/30] block: also call ->open for incremental partition
- opens
-Message-ID: <20230825024457.GD95084@ZenIV>
-References: <20230608110258.189493-1-hch@lst.de>
- <20230608110258.189493-2-hch@lst.de>
+        Fri, 25 Aug 2023 08:07:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 215341FD7;
+        Fri, 25 Aug 2023 05:07:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AAB4C62FBA;
+        Fri, 25 Aug 2023 12:07:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 136F5C433C7;
+        Fri, 25 Aug 2023 12:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692965224;
+        bh=lBJl7Ltd3m1Yv7N4J9TTCb6VH0fGt8rWbL3lAxnOiyk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KWbxapWzHPrm6RblL8OQ2SsVuXgYG9X4O3seFQaXlAKDyCP8BhPZQ6cPyh2IO/mg6
+         K3OVCgqGdbPijf5yNNlu0trRD9RvHEGFd9jFO+Zaz/vlYFHxrj2FJeO88pxCDXXyFI
+         +gLvq7VKNfdnvnqAsN/JYFEVzk0GZ0Sx8WXrO3WdkLuiz6ZjzSup3aOD7OHiqFG5rK
+         qI4Cg/X3ukfDVW91q4gTHWjq2+uF/edM2c84s7e8sNO7/qgHOJbqBGiyQDZA2ZZPmQ
+         j8JBN8N373mVl0MLoqr+qQqLVOsN42EHvlYz62i4J/CH8gEtRuDlUuoM00SYQT0R6t
+         1f7qgn/GS9jng==
+Date:   Fri, 25 Aug 2023 14:06:59 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        linux-bcache@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Christoph Hellwig <hch@lst.de>, Coly Li <colyli@suse.de>
+Subject: Re: [PATCH 09/29] bcache: Convert to bdev_open_by_path()
+Message-ID: <20230825-galionsfigur-habgier-841bc680f59e@brauner>
+References: <20230818123232.2269-1-jack@suse.cz>
+ <20230823104857.11437-9-jack@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230608110258.189493-2-hch@lst.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230823104857.11437-9-jack@suse.cz>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Thu, Jun 08, 2023 at 01:02:29PM +0200, Christoph Hellwig wrote:
+On Wed, Aug 23, 2023 at 12:48:20PM +0200, Jan Kara wrote:
+> Convert bcache to use bdev_open_by_path() and pass the handle around.
+> 
+> CC: linux-bcache@vger.kernel.org
+> CC: Coly Li <colyli@suse.de
+> CC: Kent Overstreet <kent.overstreet@gmail.com>
+> Acked-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Coly Li <colyli@suse.de>
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
 
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -683,9 +683,6 @@ static int blkdev_get_part(struct block_device *part, fmode_t mode)
->  	struct gendisk *disk = part->bd_disk;
->  	int ret;
->  
-> -	if (atomic_read(&part->bd_openers))
-> -		goto done;
-> -
->  	ret = blkdev_get_whole(bdev_whole(part), mode);
->  	if (ret)
->  		return ret;
-> @@ -694,9 +691,10 @@ static int blkdev_get_part(struct block_device *part, fmode_t mode)
->  	if (!bdev_nr_sectors(part))
->  		goto out_blkdev_put;
->  
-> -	disk->open_partitions++;
-> -	set_init_blocksize(part);
-> -done:
-> +	if (!atomic_read(&part->bd_openers)) {
-> +		disk->open_partitions++;
-> +		set_init_blocksize(part);
-> +	}
+Looks good to me,
+Acked-by: Christian Brauner <brauner@kernel.org>
 
-[with apologies for very late (and tangential) reply]
+> -	if (!IS_ERR_OR_NULL(dc->bdev))
+> -		blkdev_put(dc->bdev, dc);
+> +	if (dc->bdev_handle)
+> +		bdev_release(dc->bdev_handle);
 
-That got me curious about the ->bd_openers - do we need it atomic?
-Most of the users (and all places that do modifications) are
-under ->open_mutex; the only exceptions are
-	* early sync logics in blkdev_put(); it's explicitly racy -
-see the comment there.
-	* callers of disk_openers() in loop and nbd (the ones in
-zram are under ->open_mutex).  There's driver-private exclusion
-around those, but in any case - READ_ONCE() is no worse than
-atomic_read() in those cases.
-
-Is there something subtle I'm missing here?
+Fwiw, these conversions confused me a little as the old check gave the
+impression that this could be set to an error pointer somehow.
