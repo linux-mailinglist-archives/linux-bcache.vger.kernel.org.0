@@ -2,214 +2,122 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F772787582
-	for <lists+linux-bcache@lfdr.de>; Thu, 24 Aug 2023 18:37:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7AC4787D6A
+	for <lists+linux-bcache@lfdr.de>; Fri, 25 Aug 2023 03:59:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242281AbjHXQhB (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 24 Aug 2023 12:37:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38486 "EHLO
+        id S239983AbjHYB71 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 24 Aug 2023 21:59:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242622AbjHXQgb (ORCPT
+        with ESMTP id S229797AbjHYB6z (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 24 Aug 2023 12:36:31 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB2B4E6A
-        for <linux-bcache@vger.kernel.org>; Thu, 24 Aug 2023 09:36:28 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 6C0CB1F388;
-        Thu, 24 Aug 2023 16:36:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1692894987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=63AFpMhzG983n+NELXwcBusqSL0hGIujbBhbxiOu9a0=;
-        b=VWOnHdcTx4RXlqyc4Y6JavCzGrh+74QxwUP9kKGTJC+hnXkqaJr6QlAzXNmFTlSKoltXe1
-        pilh269sePUcj7HTh9J4/hI1nXs7w5Tjf8OeZ8VD9lVzxAuNN+ElWxkd09gnw3D37djQW4
-        YoPtmNiGXjHde9IeUisa121fq5IJ8r8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1692894987;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=63AFpMhzG983n+NELXwcBusqSL0hGIujbBhbxiOu9a0=;
-        b=S67Fd9AfSQAV5mnz4qHbOkN2/eFPZyYyCBrHIM6nNjGCqM/rObuwUBP9tJN22MrQg++krz
-        3QcDq85OYgdWBjBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4EA00132F2;
-        Thu, 24 Aug 2023 16:36:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id q/ARBgqH52RQYgAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 24 Aug 2023 16:36:26 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.600.7\))
-Subject: Re: [PATCH] bcache: fixup init dirty data errors
-From:   Coly Li <colyli@suse.de>
-X-Priority: 3
-In-Reply-To: <AAwAcABgJMxjBt4aQEsLQqpi.3.1692881396125.Hmail.mingzhe.zou@easystack.cn>
-Date:   Fri, 25 Aug 2023 00:36:13 +0800
-Cc:     Eric Wheeler <bcache@lists.ewheeler.net>,
-        linux-bcache@vger.kernel.org, zoumingzhe@qq.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <81A90714-59BC-47F6-BFD5-26A8B90A7326@suse.de>
-References: <dzhok3pe53usq5qc4emosxesmimwvhxoi663hxqpigvzejmppm@2fj6swqu2j7a>
- <AAwAcABgJMxjBt4aQEsLQqpi.3.1692881396125.Hmail.mingzhe.zou@easystack.cn>
-To:     =?utf-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>
-X-Mailer: Apple Mail (2.3731.600.7)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 24 Aug 2023 21:58:55 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A012B1BD1;
+        Thu, 24 Aug 2023 18:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=GqmLor0hgV4H3x7IuvuyaB/m3hDiUm8Yzrd7b9keFg8=; b=bxxlNJ96rsx4L2kKszQ8LF6ai5
+        iNtBNOQ6lzvCMPjrA8d2B5SKpMA8ehWy3QlKX8FPouK+kPzVIEZKx+nUetaQRW5JSdDZgZ40B7sUp
+        hz637OO4Su1eEUgn8Gl/dIA4NQM5w6cHamU5x0h4uc+j+8uZ5OMjiX5dOjWaEByfsbwcty7NjoKFy
+        3XYbSKjy+5wYC+oyCRnyAV7fQupk+8Mu6cgtvaubPBjXdneuinMhpNkKRGbKhUYZMh2pnc+qlSq3t
+        /phSE0e2tky2IO5H3c5MgeU2/J9SsgCPwQOsXy7U4/wxiV2850iLaIsQdHEKmyDTGxCmoecJk/YQG
+        iXEtALAQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qZM5z-000dvR-0M;
+        Fri, 25 Aug 2023 01:58:43 +0000
+Date:   Fri, 25 Aug 2023 02:58:43 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Alasdair Kergon <agk@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
+        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        jfs-discussion@lists.sourceforge.net,
+        Joern Engel <joern@lazybastard.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-xfs@vger.kernel.org,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
+        reiserfs-devel@vger.kernel.org,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Song Liu <song@kernel.org>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 0/29] block: Make blkdev_get_by_*() return handle
+Message-ID: <20230825015843.GB95084@ZenIV>
+References: <20230810171429.31759-1-jack@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230810171429.31759-1-jack@suse.cz>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+On Fri, Aug 11, 2023 at 01:04:31PM +0200, Jan Kara wrote:
+> Hello,
+> 
+> this is a v2 of the patch series which implements the idea of blkdev_get_by_*()
+> calls returning bdev_handle which is then passed to blkdev_put() [1]. This
+> makes the get and put calls for bdevs more obviously matching and allows us to
+> propagate context from get to put without having to modify all the users
+> (again!).  In particular I need to propagate used open flags to blkdev_put() to
+> be able count writeable opens and add support for blocking writes to mounted
+> block devices. I'll send that series separately.
+> 
+> The series is based on Christian's vfs tree as of yesterday as there is quite
+> some overlap. Patches have passed some reasonable testing - I've tested block
+> changes, md, dm, bcache, xfs, btrfs, ext4, swap. This obviously doesn't cover
+> everything so I'd like to ask respective maintainers to review / test their
+> changes. Thanks! I've pushed out the full branch to:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git bdev_handle
+> 
+> to ease review / testing.
 
+Hmm...  Completely Insane Idea(tm): how about turning that thing inside out and
+having your bdev_open_by... return an actual opened struct file?
 
-> 2023=E5=B9=B48=E6=9C=8824=E6=97=A5 20:49=EF=BC=8C=E9=82=B9=E6=98=8E=E5=93=
-=B2 <mingzhe.zou@easystack.cn> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> From: Coly Li <colyli@suse.de>
-> Date: 2023-08-23 01:49:32
-> To:  Mingzhe Zou <mingzhe.zou@easystack.cn>
-> Cc:  =
-bcache@lists.ewheeler.net,linux-bcache@vger.kernel.org,zoumingzhe@qq.com
-> Subject: Re: [PATCH] bcache: fixup init dirty data errors>Hi Mingzhe,
->>=20
->> On Tue, Aug 22, 2023 at 06:19:58PM +0800, Mingzhe Zou wrote:
->>> We found that after long run, the dirty_data of the bcache device
->>> will have errors. This error cannot be eliminated unless =
-re-register.
->>=20
->> Could you explain what the error was?
->>=20
-> Hi, Coly
->=20
-> We discovered dirty_data was inaccurate a long time ago.=20
-> When writeback thread flushes all dirty data, dirty_data via sysfs =
-shows that
-> there are still several K to tens of M of dirty data.=20
->=20
-> At that time, I thought it might be a calculation error at runtime, =
-but after
-> reviewing the relevant code, no error was found.
->=20
-> Last month, our online environment found that a certain device had =
-more than
-> 200G of dirty_data. This brings us back to the question.
->=20
->>>=20
->>> We also found that reattach after detach, this error can accumulate.
->>>=20
->>=20
->> Could you elaborate how the error can accumulate?
->>=20
-> I found that when dirty_data, error, detach and then re-attach can not
-> eliminate the error, the error will continue.
->=20
-> In bch_cached_dev_attach(), after bch_sectors_dirty_init(), attach may =
-still fail,
-> but dirty_data is not cleared when it fails
-> ```
-> bch_sectors_dirty_init(&dc->disk);
->=20
-> ret =3D bch_cached_dev_run(dc);
-> if (ret && (ret !=3D -EBUSY)) {
-> up_write(&dc->writeback_lock);
-> /*
->  * bch_register_lock is held, bcache_device_stop() is not
->  * able to be directly called. The kthread and kworker
->  * created previously in bch_cached_dev_writeback_start()
->  * have to be stopped manually here.
->  */
-> kthread_stop(dc->writeback_thread);
-> dc->writeback_thread =3D NULL;
-> cancel_writeback_rate_update_dwork(dc);
-> pr_err("Couldn't run cached device %s",
->        dc->backing_dev_name);
-> return ret;
-> }
-> ```
->=20
->>=20
->>> In bch_sectors_dirty_init(), all inode <=3D d->id keys will be =
-recounted
->>> again. This is wrong, we only need to count the keys of the current
->>> device.
->>>=20
->>> Fixes: b144e45fc576 ("bcache: make bch_sectors_dirty_init() to be =
-multithreaded")
->>> Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
->>> ---
->>> drivers/md/bcache/writeback.c | 7 ++++++-
->>> 1 file changed, 6 insertions(+), 1 deletion(-)
->>>=20
->>> diff --git a/drivers/md/bcache/writeback.c =
-b/drivers/md/bcache/writeback.c
->>> index 24c049067f61..71d0dabcbf9d 100644
->>> --- a/drivers/md/bcache/writeback.c
->>> +++ b/drivers/md/bcache/writeback.c
->>> @@ -983,6 +983,8 @@ void bch_sectors_dirty_init(struct bcache_device =
-*d)
->>> struct cache_set *c =3D d->c;
->>> struct bch_dirty_init_state state;
->>>=20
->>> + atomic_long_set(&d->dirty_sectors, 0);
->>> +
->>=20
->> The above change is not upstreamed yet, if you are fixing upstream =
-code please
->> avoid to use d->dirty_sectors here.
->>=20
->=20
-> Yes, dirty_sectors is a set of resize patches submitted to the =
-community before,
-> these patches have not been merged into upstream, I will remove this =
-line in v2.
->=20
-> In fact, the change about dirty_sectors is only a prerequisite for =
-resize, and it can
-> be promoted first. It will greatly reduce the memory requirements of =
-high-capacity
-> devices.
->=20
->>=20
->>=20
->>> /* Just count root keys if no leaf node */
->>> rw_lock(0, c->root, c->root->level);
->>> if (c->root->level =3D=3D 0) {
->>> @@ -991,8 +993,11 @@ void bch_sectors_dirty_init(struct =
-bcache_device *d)
->>> op.count =3D 0;
->>>=20
->>> for_each_key_filter(&c->root->keys,
->>> -     k, &iter, bch_ptr_invalid)
->>> +     k, &iter, bch_ptr_invalid) {
->>> + if (KEY_INODE(k) !=3D op.inode)
->>> + continue;
->>> sectors_dirty_init_fn(&op.op, c->root, k);
->>> + }
->>>=20
->>=20
->> Nice catch! IMHO if I take the above change, setting d->dirty_sectors =
-by 0
->> might be unncessary in ideal condition, am I right?
->>=20
->=20
-> In bch_cached_dev_attach () may still fail and exit, I think it is =
-necessary to clear 0.
+After all, we do that for sockets and pipes just fine and that's a whole lot
+hotter area.
 
-Copied. Thanks for the information, I will take the v2 patch.
+Suppose we leave blkdev_open()/blkdev_release() as-is.  No need to mess with
+what we have for normal opened files for block devices.  And have block_open_by_dev()
+that would find bdev, etc., same yours does and shove it into anon file.
 
-Coly Li
+Paired with plain fput() - no need to bother with new primitives for closing.
+With a helper returning I_BDEV(bdev_file_inode(file)) to get from those to bdev.
 
+NOTE: I'm not suggesting replacing ->s_bdev with struct file * if we do that -
+we want that value cached, obviously.  Just store both...
+
+Not saying it's a good idea, but... might be interesting to look into.
+Comments?
