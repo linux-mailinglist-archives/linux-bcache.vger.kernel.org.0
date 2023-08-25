@@ -2,76 +2,64 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7AC4787D6A
-	for <lists+linux-bcache@lfdr.de>; Fri, 25 Aug 2023 03:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A260787DE5
+	for <lists+linux-bcache@lfdr.de>; Fri, 25 Aug 2023 04:46:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239983AbjHYB71 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Thu, 24 Aug 2023 21:59:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43294 "EHLO
+        id S229609AbjHYCpf (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Thu, 24 Aug 2023 22:45:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229797AbjHYB6z (ORCPT
+        with ESMTP id S230510AbjHYCpV (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Thu, 24 Aug 2023 21:58:55 -0400
+        Thu, 24 Aug 2023 22:45:21 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A012B1BD1;
-        Thu, 24 Aug 2023 18:58:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E167133;
+        Thu, 24 Aug 2023 19:45:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GqmLor0hgV4H3x7IuvuyaB/m3hDiUm8Yzrd7b9keFg8=; b=bxxlNJ96rsx4L2kKszQ8LF6ai5
-        iNtBNOQ6lzvCMPjrA8d2B5SKpMA8ehWy3QlKX8FPouK+kPzVIEZKx+nUetaQRW5JSdDZgZ40B7sUp
-        hz637OO4Su1eEUgn8Gl/dIA4NQM5w6cHamU5x0h4uc+j+8uZ5OMjiX5dOjWaEByfsbwcty7NjoKFy
-        3XYbSKjy+5wYC+oyCRnyAV7fQupk+8Mu6cgtvaubPBjXdneuinMhpNkKRGbKhUYZMh2pnc+qlSq3t
-        /phSE0e2tky2IO5H3c5MgeU2/J9SsgCPwQOsXy7U4/wxiV2850iLaIsQdHEKmyDTGxCmoecJk/YQG
-        iXEtALAQ==;
+        bh=BAs3vHnqB82jyF9T0JKZy08jGuQDnnwXLjj44ySrvFg=; b=qG/yF0qNQFz1HErcIOwDpMsE95
+        yvpWaJiccPJne5E6IKKdLk49il4mSFXaxO10+cPRq4RqC2mgW99o+1yf2c4bs81MOg47gz2QA9ZFT
+        aLJydE8tWV8lzCMv2+NeX7mQCMknUB5EhVQiqQN5lBaCEsUTiWdC5wvrGaIvwhXVRrB8AFK90tiyv
+        FLjfEbnlTWQpGxkRRGa9YbyGmW5wSGD0SSIG8KNS+lDxJs8er6W0jn8lCxtIFwizoom7apeGKhs9v
+        c0WlIDcCZSTbrPU9y3Jy4WWr/hC4ZjXs2RvO1eOF4P2UntF/l1INZ+xsvc1Hck8kt4ukocelH0IdQ
+        bSBNV7lw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qZM5z-000dvR-0M;
-        Fri, 25 Aug 2023 01:58:43 +0000
-Date:   Fri, 25 Aug 2023 02:58:43 +0100
+        id 1qZMoj-000edp-26;
+        Fri, 25 Aug 2023 02:44:57 +0000
+Date:   Fri, 25 Aug 2023 03:44:57 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
-        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        jfs-discussion@lists.sourceforge.net,
-        Joern Engel <joern@lazybastard.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org,
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
+        Josef Bacik <josef@toxicpanda.com>,
         "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Song Liu <song@kernel.org>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 0/29] block: Make blkdev_get_by_*() return handle
-Message-ID: <20230825015843.GB95084@ZenIV>
-References: <20230810171429.31759-1-jack@suse.cz>
+        Jack Wang <jinpu.wang@ionos.com>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        Coly Li <colyli@suse.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Christian Brauner <brauner@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-btrfs@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH 01/30] block: also call ->open for incremental partition
+ opens
+Message-ID: <20230825024457.GD95084@ZenIV>
+References: <20230608110258.189493-1-hch@lst.de>
+ <20230608110258.189493-2-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230810171429.31759-1-jack@suse.cz>
+In-Reply-To: <20230608110258.189493-2-hch@lst.de>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
@@ -82,42 +70,42 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Fri, Aug 11, 2023 at 01:04:31PM +0200, Jan Kara wrote:
-> Hello,
-> 
-> this is a v2 of the patch series which implements the idea of blkdev_get_by_*()
-> calls returning bdev_handle which is then passed to blkdev_put() [1]. This
-> makes the get and put calls for bdevs more obviously matching and allows us to
-> propagate context from get to put without having to modify all the users
-> (again!).  In particular I need to propagate used open flags to blkdev_put() to
-> be able count writeable opens and add support for blocking writes to mounted
-> block devices. I'll send that series separately.
-> 
-> The series is based on Christian's vfs tree as of yesterday as there is quite
-> some overlap. Patches have passed some reasonable testing - I've tested block
-> changes, md, dm, bcache, xfs, btrfs, ext4, swap. This obviously doesn't cover
-> everything so I'd like to ask respective maintainers to review / test their
-> changes. Thanks! I've pushed out the full branch to:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git bdev_handle
-> 
-> to ease review / testing.
+On Thu, Jun 08, 2023 at 01:02:29PM +0200, Christoph Hellwig wrote:
 
-Hmm...  Completely Insane Idea(tm): how about turning that thing inside out and
-having your bdev_open_by... return an actual opened struct file?
+> --- a/block/bdev.c
+> +++ b/block/bdev.c
+> @@ -683,9 +683,6 @@ static int blkdev_get_part(struct block_device *part, fmode_t mode)
+>  	struct gendisk *disk = part->bd_disk;
+>  	int ret;
+>  
+> -	if (atomic_read(&part->bd_openers))
+> -		goto done;
+> -
+>  	ret = blkdev_get_whole(bdev_whole(part), mode);
+>  	if (ret)
+>  		return ret;
+> @@ -694,9 +691,10 @@ static int blkdev_get_part(struct block_device *part, fmode_t mode)
+>  	if (!bdev_nr_sectors(part))
+>  		goto out_blkdev_put;
+>  
+> -	disk->open_partitions++;
+> -	set_init_blocksize(part);
+> -done:
+> +	if (!atomic_read(&part->bd_openers)) {
+> +		disk->open_partitions++;
+> +		set_init_blocksize(part);
+> +	}
 
-After all, we do that for sockets and pipes just fine and that's a whole lot
-hotter area.
+[with apologies for very late (and tangential) reply]
 
-Suppose we leave blkdev_open()/blkdev_release() as-is.  No need to mess with
-what we have for normal opened files for block devices.  And have block_open_by_dev()
-that would find bdev, etc., same yours does and shove it into anon file.
+That got me curious about the ->bd_openers - do we need it atomic?
+Most of the users (and all places that do modifications) are
+under ->open_mutex; the only exceptions are
+	* early sync logics in blkdev_put(); it's explicitly racy -
+see the comment there.
+	* callers of disk_openers() in loop and nbd (the ones in
+zram are under ->open_mutex).  There's driver-private exclusion
+around those, but in any case - READ_ONCE() is no worse than
+atomic_read() in those cases.
 
-Paired with plain fput() - no need to bother with new primitives for closing.
-With a helper returning I_BDEV(bdev_file_inode(file)) to get from those to bdev.
-
-NOTE: I'm not suggesting replacing ->s_bdev with struct file * if we do that -
-we want that value cached, obviously.  Just store both...
-
-Not saying it's a good idea, but... might be interesting to look into.
-Comments?
+Is there something subtle I'm missing here?
