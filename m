@@ -2,39 +2,34 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B63878B18C
-	for <lists+linux-bcache@lfdr.de>; Mon, 28 Aug 2023 15:22:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BC0978B2F8
+	for <lists+linux-bcache@lfdr.de>; Mon, 28 Aug 2023 16:23:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230304AbjH1NVa (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 28 Aug 2023 09:21:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55170 "EHLO
+        id S231267AbjH1OWn (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Mon, 28 Aug 2023 10:22:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230254AbjH1NVH (ORCPT
+        with ESMTP id S231808AbjH1OWb (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 28 Aug 2023 09:21:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95217122;
-        Mon, 28 Aug 2023 06:21:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 26B0562964;
-        Mon, 28 Aug 2023 13:21:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6569C433C8;
-        Mon, 28 Aug 2023 13:20:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693228864;
-        bh=QtirhpZ6M4wRBs0PcZuQKaZInNnIQCord7zI9oR3eYc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dGzUUvJG87+eWzsz6xzROYCBNDl7W5LTOJNZSdrdj6kC4UZhu/D9tYCBTY1kzrQPe
-         x7WILXB1VLYusnI7i57xbkDNp7AlezoIITxDEYtPZbpKeaRaDjmpnSpx19pqxTzCO1
-         eHWv5jG6Kk405k0HzfGlQ5FnGrphH6RQF/qbsChQZpHtUi1E5k/RJY2W8E0veW1Pw4
-         WmlHIAC8kSpEcFeEGWLjHX2ee4G742ubGUZGwha6A7RHD325wN5SUYbEQ3omUMFDG/
-         CM1aA/cNlMXqkEYlHa/Phek8pvPKy4SQPmUA3IhuobWAQwG6yFUbEhG6jgGYrQO+H2
-         J9dq9/E4F2ZeQ==
-Date:   Mon, 28 Aug 2023 15:20:47 +0200
-From:   Christian Brauner <brauner@kernel.org>
+        Mon, 28 Aug 2023 10:22:31 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E341C7;
+        Mon, 28 Aug 2023 07:22:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=9E44iiUNdZH1ZPxuMNvAhOTWH2tumtFNFWSYch117Sg=; b=nSz5L3dUuVsvh674z9OKAS8bJp
+        zYSu+GQXXg9k+ExZpIBbHRWqabXZwd02n9vS97tlwdx5M9rbbC+J+KEnpZl7StHzVI1lt44f9QJWZ
+        RhCLKSbzGCi4P76AWaT4yrVyFudAE8f1mHvZ/9LKJK5CDCAoQ07psSi8X80pfTQ2D+AXZbR9MC8+S
+        wR1nAR5ReTWrG92vtaPega/Mum3q/1hkkMbL2GzcSxnC+t33sPMa720/D25kUK/+Hg62OBp9KLF6I
+        aTXMdhkDY6yJQndP4Hyxm4zXDD+MmNGYu1+zD8ZvsnvzkuVZZ62wZGz7/VRA0T/x0Dhn8TItnvE/O
+        R0TRfFaA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qad8H-009hsP-1H;
+        Mon, 28 Aug 2023 14:22:21 +0000
+Date:   Mon, 28 Aug 2023 07:22:21 -0700
+From:   Christoph Hellwig <hch@infradead.org>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
@@ -69,31 +64,43 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
         Sven Schnelle <svens@linux.ibm.com>,
         target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
-        xen-devel@lists.xenproject.org, Jens Axboe <axboe@kernel.dk>
+        xen-devel@lists.xenproject.org, Jens Axboe <axboe@kernel.dk>,
+        Christian Brauner <brauner@kernel.org>
 Subject: Re: [PATCH v2 0/29] block: Make blkdev_get_by_*() return handle
-Message-ID: <20230828-durften-hauswand-67319ee0c17c@brauner>
+Message-ID: <ZOytnQV0CH+vEIrr@infradead.org>
 References: <20230810171429.31759-1-jack@suse.cz>
  <20230825015843.GB95084@ZenIV>
  <20230825134756.o3wpq6bogndukn53@quack3>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20230825134756.o3wpq6bogndukn53@quack3>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+On Fri, Aug 25, 2023 at 03:47:56PM +0200, Jan Kara wrote:
+> I can see the appeal of not having to introduce the new bdev_handle type
+> and just using struct file which unifies in-kernel and userspace block
+> device opens. But I can see downsides too - the last fput() happening from
+> task work makes me a bit nervous whether it will not break something
+> somewhere with exclusive bdev opens. Getting from struct file to bdev is
+> somewhat harder but I guess a helper like F_BDEV() would solve that just
+> fine.
+> 
 > So besides my last fput() worry about I think this could work and would be
 > probably a bit nicer than what I have. But before going and redoing the whole
 > series let me gather some more feedback so that we don't go back and forth.
 > Christoph, Christian, Jens, any opinion?
 
-I'll be a bit under water for the next few days, I expect but I'll get
-back to this. I think not making you redo this whole thing from scratch
-is what I'd prefer unless there's really clear advantages. But I don't
-want to offer a haphazard opinion in the middle of the merge window.
+I did think about the file a bit.  The fact that we'd need something
+like an anon_file for the by_dev open was always a huge turn off for
+me, but maybe my concern is overblown.  Having a struct file would
+actually be really useful for a bunch of users.
+
