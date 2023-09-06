@@ -2,117 +2,132 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B39AD793354
-	for <lists+linux-bcache@lfdr.de>; Wed,  6 Sep 2023 03:23:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FDF879342C
+	for <lists+linux-bcache@lfdr.de>; Wed,  6 Sep 2023 05:40:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233357AbjIFBX3 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 5 Sep 2023 21:23:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51236 "EHLO
+        id S233507AbjIFDkX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 5 Sep 2023 23:40:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjIFBX2 (ORCPT
+        with ESMTP id S236931AbjIFDkV (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 5 Sep 2023 21:23:28 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A26197;
-        Tue,  5 Sep 2023 18:23:25 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-50079d148aeso5261940e87.3;
-        Tue, 05 Sep 2023 18:23:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693963403; x=1694568203; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DAb5a/5vJWZRPKyeLyQVVrkpU2e0KdMpe+sJbTW5hw0=;
-        b=cn1skmShno3tKyxph3fPzEiZIHNMuPBSncMZYRqcCg2yYlZ7w3jVD9cXvlaIN3Z/tV
-         zQJpKZmJVAfBFjvYtNyGpDIfF7xtlRpCd6yTyhNFZiHJATVWMnj7zbzl10LaLbWqOGDd
-         DaQv3l5FVEazyQmq/KIEDHSbMRNrSvYU94gmQ7LH8Owu5rfTDyw+jUqZbltf8AV+6tDA
-         sOuPflEV8sPu5VW4jPCy6YLqWdDcdu79VXO9BIf3dB/ZlT5BgPrXIiF5p21faRAb5rnz
-         2ctLeWe5Q0j1+fG4C8aIDZ6tiK9fqmlBZg2i0RC4Vg4Z5aDSJsZJnHSIk/AyMnIMP87R
-         ZjnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693963403; x=1694568203;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DAb5a/5vJWZRPKyeLyQVVrkpU2e0KdMpe+sJbTW5hw0=;
-        b=hyRLnAMCZGkUjy5kLuOUshcqjtvf9LodO/XGCTB1n3plVdIMIEFoukRbQXB5zxYdjW
-         wQLTdnyueDE0OJiJ4BpcZeGdnzDWVh1BrZ8knU2zD6cibVG5O4t6eMSByVNPaZomQx5a
-         l0cAzl2eKyb5dOXC8ULaA+IUg6f6aBeMKtahNk/m4jei45eq5BQRRmb5/s4QETfHAtPQ
-         CxRdMgSvdapl5z/5hrqrSpAgj2KsfR6fmBCd+ziGPv02iQ+OiYFLhLDTo1i5p6P5qZ/d
-         +wW/0ttup/VKT0CmlL2wyT5/4WlFshH8RRcZjgYzA6e1P5ifgvHopJcdYVrLBauf3nnE
-         8eGQ==
-X-Gm-Message-State: AOJu0Yyi6YrlM4Bs209fPFvBJbGe6lN/rZl/kz6KMms4nUEY5WxZYIOa
-        yZqYkCoAa1VB8UffmsQ+qA3yV+4VTkTViNz9NtI=
-X-Google-Smtp-Source: AGHT+IG+1c84SvdH98L4G+HexRK1iQEBBz8QbtxAxgBQfuA/uLAYgCUVKoxR4Uv9Gs07Wt+7pG9tmA==
-X-Received: by 2002:a19:380f:0:b0:4fb:889c:c53d with SMTP id f15-20020a19380f000000b004fb889cc53dmr849032lfa.10.1693963403210;
-        Tue, 05 Sep 2023 18:23:23 -0700 (PDT)
-Received: from rand-ubuntu-development.dl.local (mail.confident.ru. [85.114.29.218])
-        by smtp.gmail.com with ESMTPSA id r21-20020ac252b5000000b004ffa08e1a4asm2538485lfm.198.2023.09.05.18.23.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Sep 2023 18:23:22 -0700 (PDT)
-From:   Rand Deeb <rand.sec96@gmail.com>
-To:     Coly Li <colyli@suse.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     deeb.rand@confident.ru, lvc-project@linuxtesting.org,
-        voskresenski.stanislav@confident.ru,
-        Rand Deeb <rand.sec96@gmail.com>
-Subject: [PATCH] bcache: prevent potential division by zero error
-Date:   Wed,  6 Sep 2023 04:22:49 +0300
-Message-Id: <20230906012249.49203-1-rand.sec96@gmail.com>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 5 Sep 2023 23:40:21 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37499E4D;
+        Tue,  5 Sep 2023 20:40:15 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 1E5C020290;
+        Wed,  6 Sep 2023 03:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1693971613; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7xis7xzf+MVEaW/J7IjaVMaZEMI+aE1E/xv5ZFYMwsU=;
+        b=bp9RLPiL+8jv5gUhapq7sDDEtGMf8TJnIwizNw9BLD5DeHgI83pL7GZ8tcZX2ZKob9m69M
+        WxVTAC4nz11rO57uRM4Y11LWlAWw3bqXZ6WzzTcQuGjC7o6j4eX3v3kVy2jeMt7KHNsOMA
+        h0bX0H96w4oiDLK5M2Dgr4Ms+jlaY1c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1693971613;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7xis7xzf+MVEaW/J7IjaVMaZEMI+aE1E/xv5ZFYMwsU=;
+        b=FOSh83YPUAqr95CHWYDzc5yaDjlQByAITNAlCneRPczwvSA+u1i6+btuzHP85JWwHrR4EZ
+        YD+NGv0ymiz1wxAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 93BCD13585;
+        Wed,  6 Sep 2023 03:40:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 5AwrGZv092RqXAAAMHmgww
+        (envelope-from <colyli@suse.de>); Wed, 06 Sep 2023 03:40:11 +0000
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
+Subject: Re: [PATCH] bcache: prevent potential division by zero error
+From:   Coly Li <colyli@suse.de>
+In-Reply-To: <20230906012249.49203-1-rand.sec96@gmail.com>
+Date:   Wed, 6 Sep 2023 11:39:59 +0800
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Bcache Linux <linux-bcache@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, deeb.rand@confident.ru,
+        lvc-project@linuxtesting.org, voskresenski.stanislav@confident.ru
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <12DB1EC7-28CA-4792-B411-E09918B9C828@suse.de>
+References: <20230906012249.49203-1-rand.sec96@gmail.com>
+To:     Rand Deeb <rand.sec96@gmail.com>
+X-Mailer: Apple Mail (2.3731.700.6)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-In SHOW(), the variable 'n' is of type 'size_t.' While there is a
-conditional check to verify that 'n' is not equal to zero before
-executing the 'do_div' macro, concerns arise regarding potential
-division by zero error in 64-bit environments.
 
-The concern arises when 'n' is 64 bits in size, greater than zero, and
-the lower 32 bits of it are zeros. In such cases, the conditional check
-passes because 'n' is non-zero, but the 'do_div' macro casts 'n' to
-'uint32_t,' effectively truncating it to its lower 32 bits.
-Consequently, the 'n' value becomes zero.
 
-To fix this potential division by zero error and ensure precise
-division handling, this commit replaces the 'do_div' macro with
-div64_u64(). div64_u64() is designed to work with 64-bit operands,
-guaranteeing that division is performed correctly.
+> 2023=E5=B9=B49=E6=9C=886=E6=97=A5 09:22=EF=BC=8CRand Deeb =
+<rand.sec96@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> In SHOW(), the variable 'n' is of type 'size_t.' While there is a
+> conditional check to verify that 'n' is not equal to zero before
+> executing the 'do_div' macro, concerns arise regarding potential
+> division by zero error in 64-bit environments.
+>=20
+> The concern arises when 'n' is 64 bits in size, greater than zero, and
+> the lower 32 bits of it are zeros. In such cases, the conditional =
+check
+> passes because 'n' is non-zero, but the 'do_div' macro casts 'n' to
+> 'uint32_t,' effectively truncating it to its lower 32 bits.
+> Consequently, the 'n' value becomes zero.
+>=20
+> To fix this potential division by zero error and ensure precise
+> division handling, this commit replaces the 'do_div' macro with
+> div64_u64(). div64_u64() is designed to work with 64-bit operands,
+> guaranteeing that division is performed correctly.
+>=20
+> This change enhances the robustness of the code, ensuring that =
+division
+> operations yield accurate results in all scenarios, eliminating the
+> possibility of division by zero, and improving compatibility across
+> different 64-bit environments.
+>=20
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>=20
+> Signed-off-by: Rand Deeb <rand.sec96@gmail.com>
 
-This change enhances the robustness of the code, ensuring that division
-operations yield accurate results in all scenarios, eliminating the
-possibility of division by zero, and improving compatibility across
-different 64-bit environments.
+Thanks, added into my for-next queue.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Coly Li
 
-Signed-off-by: Rand Deeb <rand.sec96@gmail.com>
----
- drivers/md/bcache/sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index 554e3afc9b68..ca3e2f000cd4 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -1078,7 +1078,7 @@ SHOW(__bch_cache)
- 			sum += INITIAL_PRIO - cached[i];
- 
- 		if (n)
--			do_div(sum, n);
-+			sum = div64_u64(sum, n);
- 
- 		for (i = 0; i < ARRAY_SIZE(q); i++)
- 			q[i] = INITIAL_PRIO - cached[n * (i + 1) /
--- 
-2.34.1
+> ---
+> drivers/md/bcache/sysfs.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+> index 554e3afc9b68..ca3e2f000cd4 100644
+> --- a/drivers/md/bcache/sysfs.c
+> +++ b/drivers/md/bcache/sysfs.c
+> @@ -1078,7 +1078,7 @@ SHOW(__bch_cache)
+> sum +=3D INITIAL_PRIO - cached[i];
+>=20
+> if (n)
+> - do_div(sum, n);
+> + sum =3D div64_u64(sum, n);
+>=20
+> for (i =3D 0; i < ARRAY_SIZE(q); i++)
+> q[i] =3D INITIAL_PRIO - cached[n * (i + 1) /
+> --=20
+> 2.34.1
+>=20
 
