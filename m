@@ -2,132 +2,215 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FDF879342C
-	for <lists+linux-bcache@lfdr.de>; Wed,  6 Sep 2023 05:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63DEC7935EC
+	for <lists+linux-bcache@lfdr.de>; Wed,  6 Sep 2023 09:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233507AbjIFDkX (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 5 Sep 2023 23:40:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39748 "EHLO
+        id S229820AbjIFHJ1 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 6 Sep 2023 03:09:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236931AbjIFDkV (ORCPT
+        with ESMTP id S229641AbjIFHJ0 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 5 Sep 2023 23:40:21 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37499E4D;
-        Tue,  5 Sep 2023 20:40:15 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 1E5C020290;
-        Wed,  6 Sep 2023 03:40:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1693971613; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7xis7xzf+MVEaW/J7IjaVMaZEMI+aE1E/xv5ZFYMwsU=;
-        b=bp9RLPiL+8jv5gUhapq7sDDEtGMf8TJnIwizNw9BLD5DeHgI83pL7GZ8tcZX2ZKob9m69M
-        WxVTAC4nz11rO57uRM4Y11LWlAWw3bqXZ6WzzTcQuGjC7o6j4eX3v3kVy2jeMt7KHNsOMA
-        h0bX0H96w4oiDLK5M2Dgr4Ms+jlaY1c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1693971613;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7xis7xzf+MVEaW/J7IjaVMaZEMI+aE1E/xv5ZFYMwsU=;
-        b=FOSh83YPUAqr95CHWYDzc5yaDjlQByAITNAlCneRPczwvSA+u1i6+btuzHP85JWwHrR4EZ
-        YD+NGv0ymiz1wxAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 93BCD13585;
-        Wed,  6 Sep 2023 03:40:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 5AwrGZv092RqXAAAMHmgww
-        (envelope-from <colyli@suse.de>); Wed, 06 Sep 2023 03:40:11 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.700.6\))
-Subject: Re: [PATCH] bcache: prevent potential division by zero error
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20230906012249.49203-1-rand.sec96@gmail.com>
-Date:   Wed, 6 Sep 2023 11:39:59 +0800
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Bcache Linux <linux-bcache@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, deeb.rand@confident.ru,
-        lvc-project@linuxtesting.org, voskresenski.stanislav@confident.ru
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <12DB1EC7-28CA-4792-B411-E09918B9C828@suse.de>
-References: <20230906012249.49203-1-rand.sec96@gmail.com>
-To:     Rand Deeb <rand.sec96@gmail.com>
-X-Mailer: Apple Mail (2.3731.700.6)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 6 Sep 2023 03:09:26 -0400
+Received: from mail-m3111.qiye.163.com (mail-m3111.qiye.163.com [103.74.31.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D101983
+        for <linux-bcache@vger.kernel.org>; Wed,  6 Sep 2023 00:09:21 -0700 (PDT)
+Received: from localhost.localdomain (unknown [218.94.118.90])
+        by mail-m3174.qiye.163.com (Hmail) with ESMTPA id BA5CE40371;
+        Wed,  6 Sep 2023 14:52:01 +0800 (CST)
+From:   Mingzhe Zou <mingzhe.zou@easystack.cn>
+To:     colyli@suse.de, bcache@lists.ewheeler.net,
+        linux-bcache@vger.kernel.org
+Cc:     zoumingzhe@qq.com, Mingzhe Zou <mingzhe.zou@easystack.cn>
+Subject: [PATCH] bcache: fixup lock c->root error
+Date:   Wed,  6 Sep 2023 14:51:48 +0800
+Message-Id: <20230906065148.7108-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCQhlKVkNJTE5JTUoaTx1JHlUZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpKS0hKQ1VKS0tVS1kG
+X-HM-Tid: 0a8a6943221600aekurmba5ce40371
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ODY6Nhw4FjEzLQEOAgIOElZL
+        KQwwCSNVSlVKTUJIQkNISklJT0hPVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+        C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTU9CTzcG
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+We had a problem with io hung because it was waiting for c->root to
+release the lock.
 
+crash> cache_set.root -l cache_set.list ffffa03fde4c0050
+  root = 0xffff802ef454c800
+crash> btree -o 0xffff802ef454c800 | grep rw_semaphore
+  [ffff802ef454c858] struct rw_semaphore lock;
+crash> struct rw_semaphore ffff802ef454c858
+struct rw_semaphore {
+  count = {
+    counter = -4294967297
+  },
+  wait_list = {
+    next = 0xffff00006786fc28,
+    prev = 0xffff00005d0efac8
+  },
+  wait_lock = {
+    raw_lock = {
+      {
+        val = {
+          counter = 0
+        },
+        {
+          locked = 0 '\000',
+          pending = 0 '\000'
+        },
+        {
+          locked_pending = 0,
+          tail = 0
+        }
+      }
+    }
+  },
+  osq = {
+    tail = {
+      counter = 0
+    }
+  },
+  owner = 0xffffa03fdc586603
+}
 
-> 2023=E5=B9=B49=E6=9C=886=E6=97=A5 09:22=EF=BC=8CRand Deeb =
-<rand.sec96@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> In SHOW(), the variable 'n' is of type 'size_t.' While there is a
-> conditional check to verify that 'n' is not equal to zero before
-> executing the 'do_div' macro, concerns arise regarding potential
-> division by zero error in 64-bit environments.
->=20
-> The concern arises when 'n' is 64 bits in size, greater than zero, and
-> the lower 32 bits of it are zeros. In such cases, the conditional =
-check
-> passes because 'n' is non-zero, but the 'do_div' macro casts 'n' to
-> 'uint32_t,' effectively truncating it to its lower 32 bits.
-> Consequently, the 'n' value becomes zero.
->=20
-> To fix this potential division by zero error and ensure precise
-> division handling, this commit replaces the 'do_div' macro with
-> div64_u64(). div64_u64() is designed to work with 64-bit operands,
-> guaranteeing that division is performed correctly.
->=20
-> This change enhances the robustness of the code, ensuring that =
-division
-> operations yield accurate results in all scenarios, eliminating the
-> possibility of division by zero, and improving compatibility across
-> different 64-bit environments.
->=20
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->=20
-> Signed-off-by: Rand Deeb <rand.sec96@gmail.com>
+The "counter = -4294967297" means that lock count is -1 and a write lock
+is being attempted. Then, we found that there is a btree with a counter
+of 1 in btree_cache_freeable.
 
-Thanks, added into my for-next queue.
+crash> cache_set -l cache_set.list ffffa03fde4c0050 -o|grep btree_cache
+  [ffffa03fde4c1140] struct list_head btree_cache;
+  [ffffa03fde4c1150] struct list_head btree_cache_freeable;
+  [ffffa03fde4c1160] struct list_head btree_cache_freed;
+  [ffffa03fde4c1170] unsigned int btree_cache_used;
+  [ffffa03fde4c1178] wait_queue_head_t btree_cache_wait;
+  [ffffa03fde4c1190] struct task_struct *btree_cache_alloc_lock;
+crash> list -H ffffa03fde4c1140|wc -l
+973
+crash> list -H ffffa03fde4c1150|wc -l
+1123
+crash> cache_set.btree_cache_used -l cache_set.list ffffa03fde4c0050
+  btree_cache_used = 2097
+crash> list -s btree -l btree.list -H ffffa03fde4c1140|grep -E -A2 "^  lock = {" > btree_cache.txt
+crash> list -s btree -l btree.list -H ffffa03fde4c1150|grep -E -A2 "^  lock = {" > btree_cache_freeable.txt
+[root@node-3 127.0.0.1-2023-08-04-16:40:28]# pwd
+/var/crash/127.0.0.1-2023-08-04-16:40:28
+[root@node-3 127.0.0.1-2023-08-04-16:40:28]# cat btree_cache.txt|grep counter|grep -v "counter = 0"
+[root@node-3 127.0.0.1-2023-08-04-16:40:28]# cat btree_cache_freeable.txt|grep counter|grep -v "counter = 0"
+      counter = 1
 
-Coly Li
+We found that this is a bug in bch_sectors_dirty_init() when locking c->root:
+    (1). Thread X has locked c->root(A) write.
+    (2). Thread Y failed to lock c->root(A), waiting for the lock(c->root A).
+    (3). Thread X bch_btree_set_root() changes c->root from A to B.
+    (4). Thread X releases the lock(c->root A).
+    (5). Thread Y successfully locks c->root(A).
+    (6). Thread Y releases the lock(c->root B).
 
-> ---
-> drivers/md/bcache/sysfs.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> index 554e3afc9b68..ca3e2f000cd4 100644
-> --- a/drivers/md/bcache/sysfs.c
-> +++ b/drivers/md/bcache/sysfs.c
-> @@ -1078,7 +1078,7 @@ SHOW(__bch_cache)
-> sum +=3D INITIAL_PRIO - cached[i];
->=20
-> if (n)
-> - do_div(sum, n);
-> + sum =3D div64_u64(sum, n);
->=20
-> for (i =3D 0; i < ARRAY_SIZE(q); i++)
-> q[i] =3D INITIAL_PRIO - cached[n * (i + 1) /
-> --=20
-> 2.34.1
->=20
+        down_write locked ---(1)----------------------┐
+                |                                     |
+                |   down_read waiting ---(2)----┐     |
+                |           |               ┌-------------┐ ┌-------------┐
+        bch_btree_set_root ===(3)========>> | c->root   A | | c->root   B |
+                |           |               └-------------┘ └-------------┘
+            up_write ---(4)---------------------┘     |            |
+                            |                         |            |
+                    down_read locked ---(5)-----------┘            |
+                            |                                      |
+                        up_read ---(6)-----------------------------┘
+
+Since c->root may change, the correct steps to lock c->root should be
+the same as bch_root_usage(), compare after locking.
+
+static unsigned int bch_root_usage(struct cache_set *c)
+{
+        unsigned int bytes = 0;
+        struct bkey *k;
+        struct btree *b;
+        struct btree_iter iter;
+
+        goto lock_root;
+
+        do {
+                rw_unlock(false, b);
+lock_root:
+                b = c->root;
+                rw_lock(false, b, b->level);
+        } while (b != c->root);
+
+        for_each_key_filter(&b->keys, k, &iter, bch_ptr_bad)
+                bytes += bkey_bytes(k);
+
+        rw_unlock(false, b);
+
+        return (bytes * 100) / btree_bytes(c);
+}
+
+Fixes: b144e45fc576 ("bcache: make bch_sectors_dirty_init() to be multithreaded")
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/writeback.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index 24c049067f61..bac916ba08c8 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -977,14 +977,22 @@ static int bch_btre_dirty_init_thread_nr(void)
+ void bch_sectors_dirty_init(struct bcache_device *d)
+ {
+ 	int i;
++	struct btree *b = NULL;
+ 	struct bkey *k = NULL;
+ 	struct btree_iter iter;
+ 	struct sectors_dirty_init op;
+ 	struct cache_set *c = d->c;
+ 	struct bch_dirty_init_state state;
+ 
++retry_lock:
++	b = c->root;
++	rw_lock(0, b, b->level);
++	if (b != c->root) {
++		rw_unlock(0, b);
++		goto retry_lock;
++	}
++
+ 	/* Just count root keys if no leaf node */
+-	rw_lock(0, c->root, c->root->level);
+ 	if (c->root->level == 0) {
+ 		bch_btree_op_init(&op.op, -1);
+ 		op.inode = d->id;
+@@ -994,7 +1002,7 @@ void bch_sectors_dirty_init(struct bcache_device *d)
+ 				    k, &iter, bch_ptr_invalid)
+ 			sectors_dirty_init_fn(&op.op, c->root, k);
+ 
+-		rw_unlock(0, c->root);
++		rw_unlock(0, b);
+ 		return;
+ 	}
+ 
+@@ -1030,7 +1038,7 @@ void bch_sectors_dirty_init(struct bcache_device *d)
+ out:
+ 	/* Must wait for all threads to stop. */
+ 	wait_event(state.wait, atomic_read(&state.started) == 0);
+-	rw_unlock(0, c->root);
++	rw_unlock(0, b);
+ }
+ 
+ void bch_cached_dev_writeback_init(struct cached_dev *dc)
+-- 
+2.25.1
 
