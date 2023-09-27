@@ -2,215 +2,194 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 353FE7AF591
-	for <lists+linux-bcache@lfdr.de>; Tue, 26 Sep 2023 22:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50B927B0037
+	for <lists+linux-bcache@lfdr.de>; Wed, 27 Sep 2023 11:34:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235926AbjIZUyC (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Tue, 26 Sep 2023 16:54:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49340 "EHLO
+        id S230506AbjI0Jev (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 27 Sep 2023 05:34:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232698AbjIZUyA (ORCPT
+        with ESMTP id S230448AbjI0Jes (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Tue, 26 Sep 2023 16:54:00 -0400
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42073126
-        for <linux-bcache@vger.kernel.org>; Tue, 26 Sep 2023 13:53:53 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id E145184;
-        Tue, 26 Sep 2023 13:53:52 -0700 (PDT)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id rhWflZVIm-RJ; Tue, 26 Sep 2023 13:53:48 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 27 Sep 2023 05:34:48 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9157A193;
+        Wed, 27 Sep 2023 02:34:45 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 6FF6D45;
-        Tue, 26 Sep 2023 13:53:48 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 6FF6D45
-Date:   Tue, 26 Sep 2023 13:53:48 -0700 (PDT)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-To:     Coly Li <colyli@suse.de>
-cc:     Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>,
-        Bcache Linux <linux-bcache@vger.kernel.org>
-Subject: Re: Unusual value of optimal_io_size prevents bcache
- initialization
-In-Reply-To: <C02D29AF-02FB-4814-A387-E78E2CB52872@suse.de>
-Message-ID: <cfaa794e-e1b4-b014-c018-4e72457f554f@ewheeler.net>
-References: <4fd61b55-195f-8dc5-598e-835bd03a00ec@devo.com> <iymfluasxp5webd4hbgxqsuzq6jbeojti7lfue5e4wd3xcdn4x@fcpmy7uxgsie> <f3bbd0b9-1783-e924-4b8c-c825d8eb2ede@devo.com> <7BFB15E2-7FC6-40F8-8E26-8F23D12F2CD2@suse.de>
- <C02D29AF-02FB-4814-A387-E78E2CB52872@suse.de>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 967601FD5E;
+        Wed, 27 Sep 2023 09:34:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1695807283; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=8yq/EWr5xgyIq2expGTOm/a8E50tdoL6jyUvlCURtkA=;
+        b=AFBlD5DhZEt1NESHiYyz8SkegLzofp7eJ1WULrYqvNawr6FwYRs8YvfnxMMuueLH4oaPAr
+        4/E8CfUtgD9JCSYdgqDNPTGf3WDqWggCkDqswdM4bg88sfMPDeWHH5NIlB2Bfj+JpMt9FG
+        ZcOWlzLEUXG/bpJ8Kbaqy4vRi+qRmpA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1695807283;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=8yq/EWr5xgyIq2expGTOm/a8E50tdoL6jyUvlCURtkA=;
+        b=mg4W9cwL1b35dhDAXFy+IpXoqDtwwHWZKy46oqV5YDeY2A866tqG4ZHrqCDezVtTxVLjRN
+        B2SqzI+xFxiJavDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 779CF13A74;
+        Wed, 27 Sep 2023 09:34:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id YqW3HDP3E2X+EgAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 27 Sep 2023 09:34:43 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id DAA33A07C9; Wed, 27 Sep 2023 11:34:42 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        Alasdair Kergon <agk@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
+        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        jfs-discussion@lists.sourceforge.net,
+        Joern Engel <joern@lazybastard.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-xfs@vger.kernel.org,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
+        reiserfs-devel@vger.kernel.org,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Song Liu <song@kernel.org>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        xen-devel@lists.xenproject.org
+Subject: [PATCH v4 0/29] block: Make blkdev_get_by_*() return handle
+Date:   Wed, 27 Sep 2023 11:34:06 +0200
+Message-Id: <20230818123232.2269-1-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-800823963-1695761628=:31246"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3761; i=jack@suse.cz; h=from:subject:message-id; bh=szriGynEGZ/XhMNms+k06ASpRGig2ulDzrbrydRWx/Q=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBlE/cIrHCVKGuvNFZzgT9xiRfuRKr6Es2Qs4om7G7p jp8k2rmJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZRP3CAAKCRCcnaoHP2RA2XGWB/ 4+O+K19fPnUyIouL+A+izJvDBxQbTCWLdn5TEMu5YdIMbi0dvnwAfknt+NWIhJaTQX2oqlgt3Z+UIT peMYb+jQZabj8X4xHMMy3Sfq64tRwodJHlZby5Ux9AfTZe49zDp4M4B3yxQqarEhmz6e4FJUGDaSej vcJmLz6AuSnYuAh4QK/3jCXQrEElZRTjarZjfbunWocM/2dQ7CB+rOSwKJcRMoDpqntU8QyArxca4l q6I2pBMNjnYMgjtG+ABGSBtTrj87TuJSTB3V8qtI38sfCYjMVVEoQiJKuUm1GMh2sPOFelwVMXMCJH mKs8UbSjcFd3wsbJXc8EOKLxzYparl
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello,
 
---8323328-800823963-1695761628=:31246
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+this is a v3 of the patch series which implements the idea of blkdev_get_by_*()
+calls returning bdev_handle which is then passed to blkdev_put() [1]. This
+makes the get and put calls for bdevs more obviously matching and allows us to
+propagate context from get to put without having to modify all the users
+(again!). In particular I need to propagate used open flags to blkdev_put() to
+be able count writeable opens and add support for blocking writes to mounted
+block devices. I'll send that series separately.
 
-On Tue, 26 Sep 2023, Coly Li wrote:
-> > 2023年9月24日 22:06，Coly Li <colyli@suse.de> 写道：
-> > 
-> 
-> [snipped]
-> 
-> >>> Maybe bcache should not directly use q->limits.io_opt as d->stripe_size,
-> >>> it should be some value less than 1<<31 and aligned to optimal_io_size.
-> >>> After the code got merged into kernel for 10+ years, it is time to improve
-> >>> this calculation :-) >
-> >> Yeah, one of the other doubts I had was exactly regarding this value and if it is still "actual" to calculate it that way. Unfortunately, I don't have the expertise to have an opinion on it. Would you be so kind to share your knowledge and let me understand why it is calculated this way and why is it using the optimal io size? Is it using it to "writeback" optimal-sized blokes?
-> >> 
-> > 
-> > Most of the conditions when underlying hardware doesn’t declare its optimal io size, bcache uses 1<<31 as a default stripe size. It works fine for decade, so I will use it and make sure it is aligned to value of optimal io size. It should work fine. And I will compose a simple patch for this fix.
-> > 
-> >>>> Another consideration, stripe_sectors_dirty and full_dirty_stripes, the two
-> >>>> arrays allocated using n, are being used just in writeback mode, is this
-> >>>> correct? In my specific case, I'm not planning to use writeback mode so I
-> >>>> would expect bcache to not even try to create those arrays. Or, at least, to
-> >>>> not create them during initialization but just in case of a change in the
-> >>>> working mode (i.e. write-through -> writeback).
-> >>> Indeed, Mingzhe Zou (if I remember correctly) submitted a patch for this
-> >>> idea, but it is blocked by other depending patches which are not finished
-> >>> by me. Yes I like the idea to dynamically allocate/free d->stripe_sectors_dirty
-> >>> and d->full_dirty_stripes when they are necessary. I hope I may help to make
-> >>> the change go into upstream sooner.
-> >>> I will post a patch for your testing.
-> >> This would be great! Thank you very much! On the other side, if there's anything I can do to help I would be glad to contribute.
-> > 
-> > I will post a simple patch for the reported memory allocation failure for you to test soon.
-> 
-> 
-> Hi Andrea,
-> 
-> Could you please try the attached patch and see whether it makes some difference? Thank you in advance.
+The series is based on Btrfs tree's for-next branch [2] as of today as the
+series depends on Christoph's changes to btrfs device handling.  Patches have
+passed some reasonable testing - I've tested block changes, md, dm, bcache,
+xfs, btrfs, ext4, swap. More testing or review is always welcome. Thanks! I've
+pushed out the full branch to:
 
-> From: Coly Li <colyli@suse.de>
-> Date: Tue, 26 Sep 2023 20:13:19 +0800
-> Subject: [PATCH] bcache: avoid oversize memory allocation by small stripe_size
-> 
-> Arraies bcache->stripe_sectors_dirty and bcache->full_dirty_stripes are
-> used for dirty data writeback, their sizes are decided by backing device
-> capacity and stripe size. Larger backing device capacity or smaller
-> stripe size make these two arraies occupies more dynamic memory space.
-> 
-> Currently bcache->stripe_size is directly inherited from
-> queue->limits.io_opt of underlying storage device. For normal hard
-> drives, its limits.io_opt is 0, and bcache sets the corresponding
-> stripe_size to 1TB (1<<31 sectors), it works fine 10+ years. But for
-> devices do declare value for queue->limits.io_opt, small stripe_size
-> (comparing to 1TB) becomes an issue for oversize memory allocations of
-> bcache->stripe_sectors_dirty and bcache->full_dirty_stripes, while the
-> capacity of hard drives gets much larger in recent decade.
-> 
-> For example a raid5 array assembled by three 20TB hardrives, the raid
-> device capacity is 40TB with typical 512KB limits.io_opt. After the math
-> calculation in bcache code, these two arraies will occupy 400MB dynamic
-> memory. Even worse Andrea Tomassetti reports that a 4KB limits.io_opt is
-> declared on a new 2TB hard drive, then these two arraies request 2GB and
-> 512MB dynamic memory from kzalloc(). The result is that bcache device
-> always fails to initialize on his system.
-> 
-> To avoid the oversize memory allocation, bcache->stripe_size should not
-> directly inherited by queue->limits.io_opt from the underlying device.
-> This patch defines BCH_MIN_STRIPE_SZ (4MB) as minimal bcache stripe size
-> and set bcache device's stripe size against the declared limits.io_opt
-> value from the underlying storage device,
-> - If the declared limits.io_opt > BCH_MIN_STRIPE_SZ, bcache device will
->   set its stripe size directly by this limits.io_opt value.
-> - If the declared limits.io_opt < BCH_MIN_STRIPE_SZ, bcache device will
->   set its stripe size by a value multiplying limits.io_opt and euqal or
->   large than BCH_MIN_STRIPE_SZ.
-> 
-> Then the minimal stripe size of a bcache device will always be >= 4MB.
-> For a 40TB raid5 device with 512KB limits.io_opt, memory occupied by
-> bcache->stripe_sectors_dirty and bcache->full_dirty_stripes will be 50MB
-> in total. For a 2TB hard drive with 4KB limits.io_opt, memory occupied
-> by these two arraies will be 2.5MB in total.
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git bdev_handle
 
-This will create expensive unaligned writes on RAID5/6 arrays for most
-cases.  For example, if the stripe size of 6 disks with 64 k chunks has
-a size of 384 k, then when you round up to an even value of 4MB
-you will introduce a read-copy-write behavior since 384KB
-does not divide evenly into 4MB (4MB/384KB =~ 10.667).
+to ease review / testing. Christian, can you pull the patches to your tree
+to get some exposure in linux-next as well? Thanks!
 
-The best way to handle this would be to Use 4 megabytes as a minimum,
-but round up to a multiple of the value in limits.io_opt.
+Changes since v3:
+* Rebased on top on btrfs tree
 
-Here is a real-world example of a non-power-of-2 io_opt value:
+Changes since v2:
+* Rebased on top of current vfs tree
+* Added some acks
+* Reflected minor nits from Christoph
+* Added missing conversion of blkdev_put() calls in cramfs and erofs
+* Fixed possible leak of bdev handle in xfs if logdev is the same as fs dev
 
-	]# cat /sys/block/sdc/queue/optimal_io_size 
-	196608
+Changes since v1:
+* Rebased on top of current vfs tree
+* Renamed final functions to bdev_open_by_*() and bdev_release()
+* Fixed detection of exclusive open in blkdev_ioctl() and blkdev_fallocate()
+* Fixed swap conversion to properly reinitialize swap_info->bdev_handle
+* Fixed xfs conversion to not oops with rtdev without logdev
+* Couple other minor fixups
 
-More below:
+								Honza
 
-> Such mount of memory allocated for bcache->stripe_sectors_dirty and
-> bcache->full_dirty_stripes is reasonable for most of storage devices.
-> 
-> Reported-by: Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
-> Signed-off-by: Coly Li <colyli@suse.de>
-> Cc: Eric Wheeler <bcache@lists.ewheeler.net>
-> ---
->  drivers/md/bcache/bcache.h | 1 +
->  drivers/md/bcache/super.c  | 2 ++
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 5a79bb3c272f..83eb7f27db3d 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -265,6 +265,7 @@ struct bcache_device {
->  #define BCACHE_DEV_WB_RUNNING		3
->  #define BCACHE_DEV_RATE_DW_RUNNING	4
->  	int			nr_stripes;
-> +#define BCH_MIN_STRIPE_SZ		((4 << 20) >> SECTOR_SHIFT)
->  	unsigned int		stripe_size;
->  	atomic_t		*stripe_sectors_dirty;
->  	unsigned long		*full_dirty_stripes;
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 0ae2b3676293..0eb71543d773 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -905,6 +905,8 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
->  
->  	if (!d->stripe_size)
->  		d->stripe_size = 1 << 31;
-> +	else if (d->stripe_size < BCH_MIN_STRIPE_SZ)
-> +		d->stripe_size = round_up(BCH_MIN_STRIPE_SZ, d->stripe_size);
+[1] https://lore.kernel.org/all/ZJGNsVDhZx0Xgs2H@infradead.org
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
 
-I think you want "roundup" (not "round_up") to solve alignment problem:
+CC: Alasdair Kergon <agk@redhat.com>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Anna Schumaker <anna@kernel.org>
+CC: Chao Yu <chao@kernel.org>
+CC: Christian Borntraeger <borntraeger@linux.ibm.com>
+CC: Coly Li <colyli@suse.de
+CC: "Darrick J. Wong" <djwong@kernel.org>
+CC: Dave Kleikamp <shaggy@kernel.org>
+CC: David Sterba <dsterba@suse.com>
+CC: dm-devel@redhat.com
+CC: drbd-dev@lists.linbit.com
+CC: Gao Xiang <xiang@kernel.org>
+CC: Jack Wang <jinpu.wang@ionos.com>
+CC: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: jfs-discussion@lists.sourceforge.net
+CC: Joern Engel <joern@lazybastard.org>
+CC: Joseph Qi <joseph.qi@linux.alibaba.com>
+CC: Kent Overstreet <kent.overstreet@gmail.com>
+CC: linux-bcache@vger.kernel.org
+CC: linux-btrfs@vger.kernel.org
+CC: linux-erofs@lists.ozlabs.org
+CC: <linux-ext4@vger.kernel.org>
+CC: linux-f2fs-devel@lists.sourceforge.net
+CC: linux-mm@kvack.org
+CC: linux-mtd@lists.infradead.org
+CC: linux-nfs@vger.kernel.org
+CC: linux-nilfs@vger.kernel.org
+CC: linux-nvme@lists.infradead.org
+CC: linux-pm@vger.kernel.org
+CC: linux-raid@vger.kernel.org
+CC: linux-s390@vger.kernel.org
+CC: linux-scsi@vger.kernel.org
+CC: linux-xfs@vger.kernel.org
+CC: "Md. Haris Iqbal" <haris.iqbal@ionos.com>
+CC: Mike Snitzer <snitzer@kernel.org>
+CC: Minchan Kim <minchan@kernel.org>
+CC: ocfs2-devel@oss.oracle.com
+CC: reiserfs-devel@vger.kernel.org
+CC: Sergey Senozhatsky <senozhatsky@chromium.org>
+CC: Song Liu <song@kernel.org>
+CC: Sven Schnelle <svens@linux.ibm.com>
+CC: target-devel@vger.kernel.org
+CC: Ted Tso <tytso@mit.edu>
+CC: Trond Myklebust <trond.myklebust@hammerspace.com>
+CC: xen-devel@lists.xenproject.org
 
-+		d->stripe_size = roundup(BCH_MIN_STRIPE_SZ, d->stripe_size);
-  
-Both roundup() and round_up() are defined in math.h:
-
-  * round_up - round up to next specified power of 2
-  * roundup - round up to the next specified multiple 
-
-	https://elixir.bootlin.com/linux/v6.0/source/include/linux/math.h#L17
-
--Eric
-
->  	n = DIV_ROUND_UP_ULL(sectors, d->stripe_size);
->  	if (!n || n > max_stripes) {
-> -- 
-> 2.35.3
-> 
-
---
-Eric Wheeler
-
-
-> 
-> Coly Li
-> 
-> 
---8323328-800823963-1695761628=:31246--
+Previous versions:
+Link: http://lore.kernel.org/r/20230629165206.383-1-jack@suse.cz # v1
+Link: http://lore.kernel.org/r/20230810171429.31759-1-jack@suse.cz # v2
