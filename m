@@ -2,140 +2,138 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16B807B069A
-	for <lists+linux-bcache@lfdr.de>; Wed, 27 Sep 2023 16:20:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9B1F7B097B
+	for <lists+linux-bcache@lfdr.de>; Wed, 27 Sep 2023 18:01:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232192AbjI0OUV (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 27 Sep 2023 10:20:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53066 "EHLO
+        id S232151AbjI0QBR (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 27 Sep 2023 12:01:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232214AbjI0OTp (ORCPT
+        with ESMTP id S231974AbjI0QBO (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 27 Sep 2023 10:19:45 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0CBCCD0
-        for <linux-bcache@vger.kernel.org>; Wed, 27 Sep 2023 07:19:40 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2bfe9447645so40486341fa.0
-        for <linux-bcache@vger.kernel.org>; Wed, 27 Sep 2023 07:19:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1695824379; x=1696429179; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Wwk46okUDVQfnnelgDDAXJI2PyNHcNwKe3ka13udWbU=;
-        b=DeI+ndmzygXiV26g14+sM5/i8LsgL9CgDy9VB19Br8mLYRZAuIXT5fRRQQG6dlR8uL
-         ZHHEpTz9ZokFgwqp34n75yS1PY5jIPS2kExh12XhknOQ2eKCYOv28dsCXeJAXJsi1HEl
-         F2Zx2jmfkSiekVnLkJ+WFP/RjHCF0P4hSSv/TEmiFoZUevCIhKJiTrNv3PuTvlSLSujz
-         Wf0VyalzJuC9m/i5NNQ2Jq1nDpP2QrA8a1dJThFB6+d4PeMeHZ2KUcdfKMEpuuI5ak06
-         ZG9/SXQPZ7P5UXbdQF7zqfmdxHWvYx4R5uZ/etWrlX8CR5WPQ2foeStaY5DOJOnP6vcl
-         LLCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695824379; x=1696429179;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wwk46okUDVQfnnelgDDAXJI2PyNHcNwKe3ka13udWbU=;
-        b=Msyr5wQ3YK2PQ/FSW5mS7Y0f90co0hI41Ot/kVe43ZSHUJ29XOxlJboy8EuZZi2S5f
-         m8Dw2V2dftNuc+9NQE5MqXr8MiuMTishGeVtk6gUy/HdW6ToFDPy4QQ1WF8HmenGBvB7
-         P5uvACQ9+aj/raxrxOgERV9DbWr7IYw8MFqdApStr4hsYqxwgBm/1N5WiYFgbAEafws/
-         +2QOBAxe1IA1hqGLYGby0yEX7nSOyqvR/GFzaDstwn5W+0vLNDFcr2ocbqRht6qY7Pwz
-         yJp/Oc9zBDvyST3YrEZ04qLD0W/Tl6I7vixWsW+RWaKGSooarykWk9+uqGJMXBzs40z4
-         ZWyQ==
-X-Gm-Message-State: AOJu0Yx85WdPFVmgFohVzjDDpx3wrphkvMwBtaxvqyD3cHmYxUUSSNMS
-        AVvpTzDlIjSrXIae/RVyVri+PA==
-X-Google-Smtp-Source: AGHT+IExVCqrFIxKzo43T8FMa/9T5rz6/xdccYRyI4cqxFk27k3RqgKqbk6x0v1Y5TMyg8NtKFdEkg==
-X-Received: by 2002:a05:651c:3cf:b0:2b6:cd7f:5ea8 with SMTP id f15-20020a05651c03cf00b002b6cd7f5ea8mr1801740ljp.1.1695824378667;
-        Wed, 27 Sep 2023 07:19:38 -0700 (PDT)
-Received: from [172.20.13.88] ([45.147.210.162])
-        by smtp.gmail.com with ESMTPSA id mh2-20020a170906eb8200b00992b2c55c67sm9370253ejb.156.2023.09.27.07.19.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Sep 2023 07:19:37 -0700 (PDT)
-Message-ID: <9cc59d88-4b77-4e56-ae54-737baca1d435@kernel.dk>
-Date:   Wed, 27 Sep 2023 08:19:36 -0600
+        Wed, 27 Sep 2023 12:01:14 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB5A6136
+        for <linux-bcache@vger.kernel.org>; Wed, 27 Sep 2023 09:01:12 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 593B01F88F;
+        Wed, 27 Sep 2023 16:01:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1695830471; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=SThcEHKdJv4ISnTQ6+WuTbhXxByp14363LOsCn75Qtc=;
+        b=RCw2mgsRjau4mr0xQtvi9p7CwJ1PxgXeEODCxfcNlc4L+hyQDWGEMcPXIQoI28BjxP9Fed
+        qcgkIl4kV4/mj5Ei7kcNAkdzOKQSJtsXjkIHkqrEc1SdjyTMi6dZzhpTykB8QkTYBlSspT
+        61fYwziJy6ANN7jbi7urMVXEqlttmas=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1695830471;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=SThcEHKdJv4ISnTQ6+WuTbhXxByp14363LOsCn75Qtc=;
+        b=PYUUt00GOWDgiuG8SQY4146AqL1dpGG/Z9Z0AZtmb6wueX55AW3Q4HzzjqcFskLT2pewCT
+        +jDXbhuaVYe/CBDg==
+Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
+        by relay2.suse.de (Postfix) with ESMTP id AC0872C145;
+        Wed, 27 Sep 2023 16:01:09 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     linux-bcache@vger.kernel.org
+Cc:     Coly Li <colyli@suse.de>,
+        Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>,
+        Eric Wheeler <bcache@lists.ewheeler.net>
+Subject: [PATCH v2] bcache: avoid oversize memory allocation by small stripe_size
+Date:   Thu, 28 Sep 2023 00:00:00 +0800
+Message-Id: <20230927160000.28388-1-colyli@suse.de>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v4 0/29] block: Make blkdev_get_by_*() return handle
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        Alasdair Kergon <agk@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
-        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        jfs-discussion@lists.sourceforge.net,
-        Joern Engel <joern@lazybastard.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Song Liu <song@kernel.org>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        xen-devel@lists.xenproject.org
-References: <20230818123232.2269-1-jack@suse.cz>
-Content-Language: en-US
-In-Reply-To: <20230818123232.2269-1-jack@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 3:34?AM Jan Kara <jack@suse.cz> wrote:
->
-> Hello,
->
-> this is a v3 of the patch series which implements the idea of blkdev_get_by_*()
+Arraies bcache->stripe_sectors_dirty and bcache->full_dirty_stripes are
+used for dirty data writeback, their sizes are decided by backing device
+capacity and stripe size. Larger backing device capacity or smaller
+stripe size make these two arraies occupies more dynamic memory space.
 
-v4?
+Currently bcache->stripe_size is directly inherited from
+queue->limits.io_opt of underlying storage device. For normal hard
+drives, its limits.io_opt is 0, and bcache sets the corresponding
+stripe_size to 1TB (1<<31 sectors), it works fine 10+ years. But for
+devices do declare value for queue->limits.io_opt, small stripe_size
+(comparing to 1TB) becomes an issue for oversize memory allocations of
+bcache->stripe_sectors_dirty and bcache->full_dirty_stripes, while the
+capacity of hard drives gets much larger in recent decade.
 
-> calls returning bdev_handle which is then passed to blkdev_put() [1]. This
-> makes the get and put calls for bdevs more obviously matching and allows us to
-> propagate context from get to put without having to modify all the users
-> (again!). In particular I need to propagate used open flags to blkdev_put() to
-> be able count writeable opens and add support for blocking writes to mounted
-> block devices. I'll send that series separately.
->
-> The series is based on Btrfs tree's for-next branch [2] as of today as the
-> series depends on Christoph's changes to btrfs device handling.  Patches have
-> passed some reasonable testing - I've tested block changes, md, dm, bcache,
-> xfs, btrfs, ext4, swap. More testing or review is always welcome. Thanks! I've
-> pushed out the full branch to:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git bdev_handle
->
-> to ease review / testing. Christian, can you pull the patches to your tree
-> to get some exposure in linux-next as well? Thanks!
+For example a raid5 array assembled by three 20TB hardrives, the raid
+device capacity is 40TB with typical 512KB limits.io_opt. After the math
+calculation in bcache code, these two arraies will occupy 400MB dynamic
+memory. Even worse Andrea Tomassetti reports that a 4KB limits.io_opt is
+declared on a new 2TB hard drive, then these two arraies request 2GB and
+512MB dynamic memory from kzalloc(). The result is that bcache device
+always fails to initialize on his system.
 
-For the block bits:
+To avoid the oversize memory allocation, bcache->stripe_size should not
+directly inherited by queue->limits.io_opt from the underlying device.
+This patch defines BCH_MIN_STRIPE_SZ (4MB) as minimal bcache stripe size
+and set bcache device's stripe size against the declared limits.io_opt
+value from the underlying storage device,
+- If the declared limits.io_opt > BCH_MIN_STRIPE_SZ, bcache device will
+  set its stripe size directly by this limits.io_opt value.
+- If the declared limits.io_opt < BCH_MIN_STRIPE_SZ, bcache device will
+  set its stripe size by a value multiplying limits.io_opt and euqal or
+  large than BCH_MIN_STRIPE_SZ.
 
-Acked-by: Jens Axboe <axboe@kernel.dk>
+Then the minimal stripe size of a bcache device will always be >= 4MB.
+For a 40TB raid5 device with 512KB limits.io_opt, memory occupied by
+bcache->stripe_sectors_dirty and bcache->full_dirty_stripes will be 50MB
+in total. For a 2TB hard drive with 4KB limits.io_opt, memory occupied
+by these two arraies will be 2.5MB in total.
 
+Such mount of memory allocated for bcache->stripe_sectors_dirty and
+bcache->full_dirty_stripes is reasonable for most of storage devices.
+
+Reported-by: Andrea Tomassetti <andrea.tomassetti-opensource@devo.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Cc: Eric Wheeler <bcache@lists.ewheeler.net>
+---
+Changelog:
+v2: use roundup() to replace round_up() as Eric Wheeler suggested.
+v1: the initial version.
+
+ drivers/md/bcache/bcache.h | 1 +
+ drivers/md/bcache/super.c  | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 5a79bb3c272f..83eb7f27db3d 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -265,6 +265,7 @@ struct bcache_device {
+ #define BCACHE_DEV_WB_RUNNING		3
+ #define BCACHE_DEV_RATE_DW_RUNNING	4
+ 	int			nr_stripes;
++#define BCH_MIN_STRIPE_SZ		((4 << 20) >> SECTOR_SHIFT)
+ 	unsigned int		stripe_size;
+ 	atomic_t		*stripe_sectors_dirty;
+ 	unsigned long		*full_dirty_stripes;
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 0ae2b3676293..0eb71543d773 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -905,6 +905,8 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+ 
+ 	if (!d->stripe_size)
+ 		d->stripe_size = 1 << 31;
++	else if (d->stripe_size < BCH_MIN_STRIPE_SZ)
++		d->stripe_size = roundup(BCH_MIN_STRIPE_SZ, d->stripe_size);
+ 
+ 	n = DIV_ROUND_UP_ULL(sectors, d->stripe_size);
+ 	if (!n || n > max_stripes) {
 -- 
-Jens Axboe
+2.35.3
 
