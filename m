@@ -2,101 +2,67 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D8CD7B4CEA
-	for <lists+linux-bcache@lfdr.de>; Mon,  2 Oct 2023 09:57:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B4967B7C59
+	for <lists+linux-bcache@lfdr.de>; Wed,  4 Oct 2023 11:38:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235776AbjJBH5j (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 2 Oct 2023 03:57:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42866 "EHLO
+        id S241990AbjJDJiH (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 4 Oct 2023 05:38:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229712AbjJBH5h (ORCPT
+        with ESMTP id S242018AbjJDJiH (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 2 Oct 2023 03:57:37 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E755BC;
-        Mon,  2 Oct 2023 00:57:34 -0700 (PDT)
+        Wed, 4 Oct 2023 05:38:07 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECA43B8
+        for <linux-bcache@vger.kernel.org>; Wed,  4 Oct 2023 02:38:03 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id AB8121F459;
-        Mon,  2 Oct 2023 07:57:32 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 9D8FD1F45B;
+        Wed,  4 Oct 2023 09:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1696233452; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HRtvvsbDRmaIGA2qlEwuFNnN4SG9to1RwhMyTnDS1Ek=;
-        b=AelUG9FSlQyUcQTA9I9qRJmPzMA6mvk2OLx4Qv2PacqmgU2FkeI54uQfwuwk8GDISDrHf1
-        K6okkr5Yua+jK8r2TTOukY7745vay4e4z1caiTsHAigkH18O5VWdMY9s+0PKMe8/Ta1ITc
-        H4lySULw9TgNQsjwAFd513U/tj8Iifc=
+        t=1696412282; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=shAJIvDm92gxG8/1fIa5UyMlxVsDe6+BAjWqKxA7x00=;
+        b=LZS+OaEUfmkjdpdhOdVE1y6af89Zy1+D2SyqQFHFSo5hnIoa0rq4DDYATN+QLRgC6XnZ8r
+        PnLAiMciA5XIUhwZJmA7fS/6d+7l17VIpghF6ekkUBzeuHXM1JuIYuMn6exVGMxiBxJp1Y
+        G2xItF6HzrDXMtJmi0w9rx+KX4XU95s=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1696233452;
+        s=susede2_ed25519; t=1696412282;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HRtvvsbDRmaIGA2qlEwuFNnN4SG9to1RwhMyTnDS1Ek=;
-        b=4yX5F6ZD5YaXQ1SgLuHClpbWfxc1xKg7esoSW59wSh/oO7HSeTROmd590v4TgEevJu81R5
-        RAceDQWhH8NjA0AQ==
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=shAJIvDm92gxG8/1fIa5UyMlxVsDe6+BAjWqKxA7x00=;
+        b=WZrVnFMiK/SDCZ0AH6DNXAmOxW6SdwpyIWAcgNpDIFoMwtlG05vD5893kalPIgtF8ZnesN
+        atyFMPxZ34yFdNBQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 83FA513434;
-        Mon,  2 Oct 2023 07:57:32 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8F686139F9;
+        Wed,  4 Oct 2023 09:38:02 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id JLsgIOx3GmUuEgAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 02 Oct 2023 07:57:32 +0000
+        id JhD5InoyHWXoSgAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 04 Oct 2023 09:38:02 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 27D44A07C9; Mon,  2 Oct 2023 09:57:32 +0200 (CEST)
-Date:   Mon, 2 Oct 2023 09:57:32 +0200
+        id F2E8AA07CF; Wed,  4 Oct 2023 11:38:01 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
-        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        jfs-discussion@lists.sourceforge.net,
-        Joern Engel <joern@lazybastard.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
+Cc:     Coly Li <colyli@suse.de>,
         Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Song Liu <song@kernel.org>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v4 0/29] block: Make blkdev_get_by_*() return handle
-Message-ID: <20231002075732.4c5oslpabrmw3niz@quack3>
-References: <20230818123232.2269-1-jack@suse.cz>
- <20230927-prahlen-reintreten-93706074e58d@brauner>
+        linux-bcache@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: [PATCH] bcache: Fixup error handling in register_cache()
+Date:   Wed,  4 Oct 2023 11:37:57 +0200
+Message-Id: <20231004093757.11560-1-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230927-prahlen-reintreten-93706074e58d@brauner>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2602; i=jack@suse.cz; h=from:subject; bh=CVMiJNGm56lvleawpuekUOjtYIs6Dqk6EegL8BcFCK0=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBlHTJuKD8bHXnNfefO+Y2RTpt9QA1yE3BDTybG9PsK 1+wrXtmJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZR0ybgAKCRCcnaoHP2RA2RZ+B/ 9tZAydEiyxy/cOsbr79KQQWOg7c2xaokmKeVtsaJrtNiIfmAf3FojVQdLB4JVo7DTeOVG0ApJMl7Fw PsiKoYa/sqVbek2FQDHgSvfiONI4+Vt8rK7DzVcTz1vrvBXDH0Jzo9MHKtwwZ6ZNUCukBiEttpb+7+ 8XYT304Hl77Q8LkRYqYvUP9kaGwTVP6qZ/exzoye2DNqWzlPFTnhtq3Y30gb0uE009BwbozHo1zuTp 8OcTUHDqnowtbwgUCA/HOvybCNQzauyy8xiJir4z4mY1AjlBJ3GL1B65vfKkKA5kbZQG3NMtG4VbYi ZzDh98fLHMMnClNQTVLiv4cR46cXGY
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -104,105 +70,79 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-On Wed 27-09-23 18:21:19, Christian Brauner wrote:
-> On Wed, 27 Sep 2023 11:34:07 +0200, Jan Kara wrote:
-> > Create struct bdev_handle that contains all parameters that need to be
-> > passed to blkdev_put() and provide bdev_open_* functions that return
-> > this structure instead of plain bdev pointer. This will eventually allow
-> > us to pass one more argument to blkdev_put() (renamed to bdev_release())
-> > without too much hassle.
-> > 
-> > 
-> > [...]
-> 
-> > to ease review / testing. Christian, can you pull the patches to your tree
-> > to get some exposure in linux-next as well? Thanks!
-> 
-> Yep. So I did it slighly differently. I pulled in the btrfs prereqs and
-> then applied your series on top of it so we get all the Link: tags right.
-> I'm running tests right now. Please double-check.
+Coverity has noticed that the printing of error message in
+register_cache() uses already freed bdev_handle to get to bdev. In fact
+the problem has been there even before commit "bcache: Convert to
+bdev_open_by_path()" just a bit more subtle one - cache object itself
+could have been freed by the time we looked at ca->bdev and we don't
+hold any reference to bdev either so even that could in principle go
+away (due to device unplug or similar). Fix all these problems by
+printing the error message before closing the bdev.
 
-Thanks for picking patches up! I've checked the branch and it looks good to
-me. 
+Fixes: dc893f51d24a ("bcache: Convert to bdev_open_by_path()")
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ drivers/md/bcache/super.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
-								Honza
+Hello Christian!
 
-> 
-> ---
-> 
-> Applied to the vfs.super branch of the vfs/vfs.git tree.
-> Patches in the vfs.super branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.super
-> 
-> [01/29] block: Provide bdev_open_* functions
->        https://git.kernel.org/vfs/vfs/c/b7c828aa0b3c
-> [02/29] block: Use bdev_open_by_dev() in blkdev_open()
->         https://git.kernel.org/vfs/vfs/c/d4e36f27b45a
-> [03/29] block: Use bdev_open_by_dev() in disk_scan_partitions() and blkdev_bszset()
->         https://git.kernel.org/vfs/vfs/c/5f9bd6764c7a
-> [04/29] drdb: Convert to use bdev_open_by_path()
->         https://git.kernel.org/vfs/vfs/c/0220ca8e443d
-> [05/29] pktcdvd: Convert to bdev_open_by_dev()
->         https://git.kernel.org/vfs/vfs/c/7af10b889789
-> [06/29] rnbd-srv: Convert to use bdev_open_by_path()
->         https://git.kernel.org/vfs/vfs/c/3d27892a4be7
-> [07/29] xen/blkback: Convert to bdev_open_by_dev()
->         https://git.kernel.org/vfs/vfs/c/26afb0ed10b3
-> [08/29] zram: Convert to use bdev_open_by_dev()
->         https://git.kernel.org/vfs/vfs/c/efc8e3f4c6dc
-> [09/29] bcache: Convert to bdev_open_by_path()
->         https://git.kernel.org/vfs/vfs/c/dc893f51d24a
-> [10/29] dm: Convert to bdev_open_by_dev()
->         https://git.kernel.org/vfs/vfs/c/80c2267c6d07
-> [11/29] md: Convert to bdev_open_by_dev()
->         https://git.kernel.org/vfs/vfs/c/15db36126ca6
-> [12/29] mtd: block2mtd: Convert to bdev_open_by_dev/path()
->         https://git.kernel.org/vfs/vfs/c/4c27234bf3ce
-> [13/29] nvmet: Convert to bdev_open_by_path()
->         https://git.kernel.org/vfs/vfs/c/70cffddcc300
-> [14/29] s390/dasd: Convert to bdev_open_by_path()
->         https://git.kernel.org/vfs/vfs/c/5581d03457f8
-> [15/29] scsi: target: Convert to bdev_open_by_path()
->         https://git.kernel.org/vfs/vfs/c/43de7d844d47
-> [16/29] PM: hibernate: Convert to bdev_open_by_dev()
->         https://git.kernel.org/vfs/vfs/c/105ea4a2fd18
-> [17/29] PM: hibernate: Drop unused snapshot_test argument
->         https://git.kernel.org/vfs/vfs/c/b589a66e3688
-> [18/29] mm/swap: Convert to use bdev_open_by_dev()
->         https://git.kernel.org/vfs/vfs/c/615af8e29233
-> [19/29] fs: Convert to bdev_open_by_dev()
->         https://git.kernel.org/vfs/vfs/c/5173192bcfe6
-> [20/29] btrfs: Convert to bdev_open_by_path()
->         https://git.kernel.org/vfs/vfs/c/8cf64782764f
-> [21/29] erofs: Convert to use bdev_open_by_path()
->         https://git.kernel.org/vfs/vfs/c/4d41880bf249
-> [22/29] ext4: Convert to bdev_open_by_dev()
->         https://git.kernel.org/vfs/vfs/c/f7507612395e
-> [23/29] f2fs: Convert to bdev_open_by_dev/path()
->         https://git.kernel.org/vfs/vfs/c/d9ff8e3b6498
-> [24/29] jfs: Convert to bdev_open_by_dev()
->         https://git.kernel.org/vfs/vfs/c/459dc6376338
-> [25/29] nfs/blocklayout: Convert to use bdev_open_by_dev/path()
->         https://git.kernel.org/vfs/vfs/c/5b1df9a40929
-> [26/29] ocfs2: Convert to use bdev_open_by_dev()
->         https://git.kernel.org/vfs/vfs/c/b6b95acbd943
-> [27/29] reiserfs: Convert to bdev_open_by_dev/path()
->         https://git.kernel.org/vfs/vfs/c/7e3615ff6119
-> [28/29] xfs: Convert to bdev_open_by_path()
->         https://git.kernel.org/vfs/vfs/c/176ccb99e207
-> [29/29] block: Remove blkdev_get_by_*() functions
->         https://git.kernel.org/vfs/vfs/c/953863a5a2ff
+Can you please add this to patch to the bdev_handle conversion series? Either
+append it at the end of the series or just fold it into the bcache conversion.
+Whatever looks better for you.
+
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index c11ac86be72b..a30c8d4f2ac8 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2354,6 +2354,13 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+ 
+ 	ret = cache_alloc(ca);
+ 	if (ret != 0) {
++		if (ret == -ENOMEM)
++			err = "cache_alloc(): -ENOMEM";
++		else if (ret == -EPERM)
++			err = "cache_alloc(): cache device is too small";
++		else
++			err = "cache_alloc(): unknown error";
++		pr_notice("error %pg: %s\n", bdev_handle->bdev, err);
+ 		/*
+ 		 * If we failed here, it means ca->kobj is not initialized yet,
+ 		 * kobject_put() won't be called and there is no chance to
+@@ -2361,17 +2368,12 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+ 		 * we explicitly call bdev_release() here.
+ 		 */
+ 		bdev_release(bdev_handle);
+-		if (ret == -ENOMEM)
+-			err = "cache_alloc(): -ENOMEM";
+-		else if (ret == -EPERM)
+-			err = "cache_alloc(): cache device is too small";
+-		else
+-			err = "cache_alloc(): unknown error";
+-		goto err;
++		return ret;
+ 	}
+ 
+ 	if (kobject_add(&ca->kobj, bdev_kobj(bdev_handle->bdev), "bcache")) {
+-		err = "error calling kobject_add";
++		pr_notice("error %pg: error calling kobject_add\n",
++			  bdev_handle->bdev);
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+@@ -2389,11 +2391,6 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+ 
+ out:
+ 	kobject_put(&ca->kobj);
+-
+-err:
+-	if (err)
+-		pr_notice("error %pg: %s\n", ca->bdev_handle->bdev, err);
+-
+ 	return ret;
+ }
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.35.3
+
