@@ -2,55 +2,55 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F8C47C5900
-	for <lists+linux-bcache@lfdr.de>; Wed, 11 Oct 2023 18:20:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D207C5921
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 Oct 2023 18:30:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230101AbjJKQUA (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Wed, 11 Oct 2023 12:20:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39770 "EHLO
+        id S230271AbjJKQaD (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 Oct 2023 12:30:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbjJKQUA (ORCPT
+        with ESMTP id S235013AbjJKQaA (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Wed, 11 Oct 2023 12:20:00 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC8E9D
-        for <linux-bcache@vger.kernel.org>; Wed, 11 Oct 2023 09:19:56 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5a7a77e736dso114567b3.1
-        for <linux-bcache@vger.kernel.org>; Wed, 11 Oct 2023 09:19:56 -0700 (PDT)
+        Wed, 11 Oct 2023 12:30:00 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CEB093
+        for <linux-bcache@vger.kernel.org>; Wed, 11 Oct 2023 09:29:57 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-d81adf0d57fso7442338276.1
+        for <linux-bcache@vger.kernel.org>; Wed, 11 Oct 2023 09:29:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kaishome.de; s=google; t=1697041196; x=1697645996; darn=vger.kernel.org;
+        d=kaishome.de; s=google; t=1697041796; x=1697646596; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9qrQ6cl+EE5E1HNJm2qD50b5lKdGk1kP7mhFAwvQC8s=;
-        b=Xdd3E281i/P3yYiXmb2UgoFYZIRlequYTews4hLc2910wj1KLKhAdyac2DfEhaWmLk
-         CUX1Fg7++8YdGzXkU/B87hbzB9/OhdnC/KOmTGkRWbeRdyq0hHF5HQH1Ec76NMaj8eOt
-         +LlBs95T5AuDxtXJxiCyAXqJBcpvEmR8Tz6vA=
+        bh=OFgIhO5/guD7Q7+QqibN5/fGctdmkXz9PeIns8Jpf2s=;
+        b=f1XcpwkeohScZg9zcv9JadRr4llekA3nU9grmiO2V/IdeKcpWjS54Q5UR0/BHUNdRj
+         6yk6cHmT7DLbIRM0cX5k0B6a7wvKW5wznEdNjbEgQwYhVmzixeyWvb3cQebGo23TofVD
+         RG9Nly2DbUkdngLt36Ftia2SF2IqffyutKWPY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697041196; x=1697645996;
+        d=1e100.net; s=20230601; t=1697041796; x=1697646596;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9qrQ6cl+EE5E1HNJm2qD50b5lKdGk1kP7mhFAwvQC8s=;
-        b=gi1x5OXQW2jd29Fn12OMqCZztBoFNsB+16j8WZUVYeULZWlmVwR7SzV2uMWuryLByL
-         l2mm6MhsCB1GVa+oFstRdI81Lj87cDVbAGSP3L1WqviEfIZJxs9uXDoetyJmhEh991tI
-         09aMnI2+8+giVWV9b7migRPT5Esv0i6G4IMwnj718syS+Oy/N5fHRu8T3FnbLr5XBESx
-         eHoJ8Y2pymi3GuOzHc4uPOvH/EkIOqX5U2yFJ3vgalYGKFhR9vlUKUWO25eXaiMREcWY
-         3b4dHl7zide2x6rHN0TDlI7KOrPiMO2O2s9llFAox/HmrzZ/7FNkHxC9vWYre1zvs0ZS
-         rmZQ==
-X-Gm-Message-State: AOJu0YzBulp9rDnh8yxL8nRc/tzxLX6tljo20q/OBNyWsDw2d0EduBcE
-        huRmVahNULSuVHPU3OqSqL+EbC08ROPGz0kM6Hn0CQutiQ1Q9+FLPNo=
-X-Google-Smtp-Source: AGHT+IEN1iLTDgIfv/MNN4jPIUBBa45DOL4/rJk/qP6bHOtmriKqUixF+PX/Yi97LzHJgQmweh6KXNJhnfm9Pzz5QJU=
-X-Received: by 2002:a25:a52a:0:b0:d06:f99e:6345 with SMTP id
- h39-20020a25a52a000000b00d06f99e6345mr19827387ybi.22.1697041195988; Wed, 11
- Oct 2023 09:19:55 -0700 (PDT)
+        bh=OFgIhO5/guD7Q7+QqibN5/fGctdmkXz9PeIns8Jpf2s=;
+        b=olmNsXv2MoDU/eIkUM/ue4gbDOGTMhPSgDMmOf2UbdhU9lWesanhk4yoy9WpFIoJOe
+         iXSzID/cKo4pFg75skknDDGEUiTnQL02wphiZtyibN7CBYIPHRrVvtlnkvNqRyBhdB0S
+         UVfzgMkn5rZrikk1TPOebJlqMK9mfZ+4k4B265IwsYW+dG6slpROjuX9AfeYugzIAGQO
+         4ppoW5G31/SvMsTBDxQ2fMo54gCjLBEZh+UQxZNRdnh8MZ1WUpZC3+t7DRjGlj8bl1/M
+         wUm3IR9bQzGKc+RyhH69ztee+f8pa+IM55mN8k6akEKCUG/UP8Gs7Mp4IARQsyAAy51o
+         S/Og==
+X-Gm-Message-State: AOJu0YxI/8DeOHERJGy4ag6yu2TXosKFRgoqI9F+SwG1PbfFix0u4Uez
+        9Mz+3K3NXNf5i88MjS2WtwKjvVS5SdQG1YoJ0ODVB1cEr8yii7tBK10=
+X-Google-Smtp-Source: AGHT+IE/SLhNSIWIrzIH+tLoSa51/Q+hQHRs4wWoh+fsHczFoysr2hStVj3yWipf62nbg4GHNDRTFM/RBoY9b65Prk4=
+X-Received: by 2002:a05:6902:188e:b0:d78:be:6f02 with SMTP id
+ cj14-20020a056902188e00b00d7800be6f02mr22147060ybb.11.1697041796630; Wed, 11
+ Oct 2023 09:29:56 -0700 (PDT)
 MIME-Version: 1.0
 References: <7cadf9ff-b496-5567-9d60-f0af48122595@ewheeler.net>
  <AJUA3AAkJBN4GUdLmkiuQ4qP.3.1694501683518.Hmail.mingzhe.zou@easystack.cn> <f2fcf354-29ec-e2f7-b251-fb9b7d36f4@ewheeler.net>
 In-Reply-To: <f2fcf354-29ec-e2f7-b251-fb9b7d36f4@ewheeler.net>
 From:   Kai Krakow <kai@kaishome.de>
-Date:   Wed, 11 Oct 2023 18:19:44 +0200
-Message-ID: <CAC2ZOYti00duQqPJJqGm=GZRmH+X_uZW+V-WitvwP2s_12JGWA@mail.gmail.com>
+Date:   Wed, 11 Oct 2023 18:29:45 +0200
+Message-ID: <CAC2ZOYux_CJ=+qVsiGmpKnH-fdA7-kJm5Z2MPomiv9P50R993A@mail.gmail.com>
 Subject: Re: Re: Dirty data loss after cache disk error recovery
 To:     Eric Wheeler <lists@bcache.ewheeler.net>
 Cc:     =?UTF-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>,
@@ -70,75 +70,15 @@ Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Hello!
+Eric,
 
-Sorry for the top-posting. I just want to share my story without
-removing all of the context:
+your "from" mail (lists@bcache.ewheeler.net) does not exist:
+> DNS Error: DNS type 'mx' lookup of bcache.ewheeler.net responded with cod=
+e NXDOMAIN Domain name not found: bcache.ewheeler.net
 
-I've now faced a similar issue where one of my HDDs spontaneously
-decided to have a series of bad blocks. It looks like it has 26145
-failed writes due to how bcache handles writeback. It had 5275 failed
-reads with btrfs loudly complaining about it. The system also became
-really slow to respond until it eventually froze.
+Or is something messed up on my side?
 
-After a reboot it worked again but of course there were still bad
-blocks because bcache did writeback, so no blocks have been replaced
-with btrfs auto-repair on read feature. This time, the system handled
-the situation a bit better but files became inaccessible in the middle
-of writing them which destroyed my Plasma desktop configuration and
-Chrome profile (I restored them from the last snapper snapshot
-successfully). Essentially, the file system was in a readonly-like
-state: most requests failed with IO errors despite the btrfs didn't
-switch to read-only. Something messed up in the error path of
-userspace -> bcache -> btrfs -> device. Also, btrfs was seeing the
-device somewhere in the limbo of not existing and not working - it
-still tried to access it while bcache claimed the backend device would
-be missing. To me this looks like bcache error handling may need some
-fine tuning - it should not fail in that way, especially not with
-btrfs-raid, but still the system was seeing IO errors and broken files
-in the middle of writes.
-
-"bcache show" showed the backend device missing while "btrfs dev show"
-was still seeing the attached bcache device, and the system threw IO
-errors to user-space despite btrfs still having a valid copy of the
-blocks.
-
-I've rebooted and now switched the bad device from bcache writeback to
-bcache none - and guess what: The system runs stable now, btrfs
-auto-repair does its thing. The above mentioned behavior does not
-occur (IO errors in user-space). A final scrub across the bad devices
-repaired the bad blocks, I currently do not see any more problems.
-
-It's probably better to replace that device but this also shows that
-switching bcache to "none" (if the backing device fails) or "write
-through" at least may be a better choice than doing some other error
-handling. Or bcache should have been able to make btrfs see the device
-as missing (which obviously did not happen).
-
-Of course, if the cache device fails we have a completely different
-situation. I'm not sure which situation Eric was seeing (I think the
-caching device failed) but for me, the backing device failed - and
-with bcache involved, the result was very unexpected.
-
-So we probably need at least two error handlers: Handling caching
-device errors, and handling backing device errors (for which bcache
-doesn't currently seem to have a setting).
-
-Except for the strange IO errors and resulting incomplete writes (and
-I really don't know why that happened), btrfs survived this perfectly
-well - and somehow bcache did a good enough job. This has been
-different in the past. So this is already a great achievement. Thank
-you.
-
-BTW: This probably only worked for me because I split btrfs metadata
-and data to different devices
-(https://github.com/kakra/linux/pull/26), and metadata does not pass
-through bcache at all but natively to SSD. Otherwise I fear btrfs may
-have seen partial metadata writes on different RAID members.
-
-Regards,
-Kai
-
+All others, please ignore. Doesn't add to the conversation. Thanks. :-)
 
 Am Di., 12. Sept. 2023 um 22:02 Uhr schrieb Eric Wheeler
 <lists@bcache.ewheeler.net>:
