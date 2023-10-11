@@ -2,586 +2,557 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 89E827BEF4B
-	for <lists+linux-bcache@lfdr.de>; Tue, 10 Oct 2023 01:44:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F8C47C5900
+	for <lists+linux-bcache@lfdr.de>; Wed, 11 Oct 2023 18:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377588AbjJIXoQ (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 9 Oct 2023 19:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57000 "EHLO
+        id S230101AbjJKQUA (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Wed, 11 Oct 2023 12:20:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377918AbjJIXoP (ORCPT
+        with ESMTP id S229853AbjJKQUA (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 9 Oct 2023 19:44:15 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 040E8AC
-        for <linux-bcache@vger.kernel.org>; Mon,  9 Oct 2023 16:44:12 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-534659061afso8413735a12.3
-        for <linux-bcache@vger.kernel.org>; Mon, 09 Oct 2023 16:44:11 -0700 (PDT)
+        Wed, 11 Oct 2023 12:20:00 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC8E9D
+        for <linux-bcache@vger.kernel.org>; Wed, 11 Oct 2023 09:19:56 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5a7a77e736dso114567b3.1
+        for <linux-bcache@vger.kernel.org>; Wed, 11 Oct 2023 09:19:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=quora.org; s=google; t=1696895050; x=1697499850; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=S1Sf9TKUT2/NlM+VJDRsKY9XdVMM2olJd2mdJBg22ic=;
-        b=PW/SYy14F2ou9XuO5ricqymxN8TtaMGyjnkHBRQFFF0I9oyi9Rr9e+W+DmbOqWrYg/
-         lrDTkJq75mjAGBOu4dbynIHgq4BwlV2nOOwbMJDpRAGlJ4XeVfNgKB3AzhFyHzpLn785
-         QgPx97DLDUPkHQAHkejqFAHARDUJZZ5+lPejU=
+        d=kaishome.de; s=google; t=1697041196; x=1697645996; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9qrQ6cl+EE5E1HNJm2qD50b5lKdGk1kP7mhFAwvQC8s=;
+        b=Xdd3E281i/P3yYiXmb2UgoFYZIRlequYTews4hLc2910wj1KLKhAdyac2DfEhaWmLk
+         CUX1Fg7++8YdGzXkU/B87hbzB9/OhdnC/KOmTGkRWbeRdyq0hHF5HQH1Ec76NMaj8eOt
+         +LlBs95T5AuDxtXJxiCyAXqJBcpvEmR8Tz6vA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696895050; x=1697499850;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S1Sf9TKUT2/NlM+VJDRsKY9XdVMM2olJd2mdJBg22ic=;
-        b=L3lQFxHXDKJPOuJQnG33uMDnWKZexih7a8J/P3SvM5cYF3Wv6L0NT6yEThtjJVeOEK
-         nHTsTFXVKoU40GXug7joURF8bHQk+SPtjHKuwcYSieeFVDsNTE2YClryUS1wqJlOyGgb
-         W9L8oidCmAHI8F2nOMl72oQpBIjpewO3O+zkCKGAUP+Q1ccj8GfBzmuK5Fei47SFg51a
-         N6COSYcxP3Zq8e6FgHKgryvMWsvP1AHxATXX6kq13Y0xlWtDL6Ea7OpuIl0cOKqZsW8k
-         EE4rHFQ/7TLrOvz7BADJ+3p7gNMOvD+6H2o9uIWQlUtSl16HgbPaOG3atvh0VJH2Dz0r
-         Oqww==
-X-Gm-Message-State: AOJu0YwsWFMEMPmindVQ5E+sw25HzKP7kpHUBqlHF+bmqVksmbU3P9t1
-        s6U+UHjvEsqKtk9HmlW/4GKGpzsRLkCoAFT7bg3ueFgR2WHRhkAEOlTpOQ==
-X-Google-Smtp-Source: AGHT+IHfK/vH2j3nAF2ARhOjZFSPqGcVYOTkeq9DT7sPPAqrA7gjQdBKq5sY/SL+pR6lrke7FBd0NbzdcHxtKPDBQXw=
-X-Received: by 2002:a05:6402:14c7:b0:51d:f5bd:5a88 with SMTP id
- f7-20020a05640214c700b0051df5bd5a88mr14859855edx.38.1696895049713; Mon, 09
- Oct 2023 16:44:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1697041196; x=1697645996;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9qrQ6cl+EE5E1HNJm2qD50b5lKdGk1kP7mhFAwvQC8s=;
+        b=gi1x5OXQW2jd29Fn12OMqCZztBoFNsB+16j8WZUVYeULZWlmVwR7SzV2uMWuryLByL
+         l2mm6MhsCB1GVa+oFstRdI81Lj87cDVbAGSP3L1WqviEfIZJxs9uXDoetyJmhEh991tI
+         09aMnI2+8+giVWV9b7migRPT5Esv0i6G4IMwnj718syS+Oy/N5fHRu8T3FnbLr5XBESx
+         eHoJ8Y2pymi3GuOzHc4uPOvH/EkIOqX5U2yFJ3vgalYGKFhR9vlUKUWO25eXaiMREcWY
+         3b4dHl7zide2x6rHN0TDlI7KOrPiMO2O2s9llFAox/HmrzZ/7FNkHxC9vWYre1zvs0ZS
+         rmZQ==
+X-Gm-Message-State: AOJu0YzBulp9rDnh8yxL8nRc/tzxLX6tljo20q/OBNyWsDw2d0EduBcE
+        huRmVahNULSuVHPU3OqSqL+EbC08ROPGz0kM6Hn0CQutiQ1Q9+FLPNo=
+X-Google-Smtp-Source: AGHT+IEN1iLTDgIfv/MNN4jPIUBBa45DOL4/rJk/qP6bHOtmriKqUixF+PX/Yi97LzHJgQmweh6KXNJhnfm9Pzz5QJU=
+X-Received: by 2002:a25:a52a:0:b0:d06:f99e:6345 with SMTP id
+ h39-20020a25a52a000000b00d06f99e6345mr19827387ybi.22.1697041195988; Wed, 11
+ Oct 2023 09:19:55 -0700 (PDT)
 MIME-Version: 1.0
-From:   Daniel J Blueman <daniel@quora.org>
-Date:   Tue, 10 Oct 2023 07:43:58 +0800
-Message-ID: <CAMVG2sun2sqFXt=H-0cVWnATGMMFpe-0ksRWy3uhUZXbA5m1qA@mail.gmail.com>
-Subject: trans path overflow during metadata replication with lockdep
-To:     linux-bcache@vger.kernel.org
+References: <7cadf9ff-b496-5567-9d60-f0af48122595@ewheeler.net>
+ <AJUA3AAkJBN4GUdLmkiuQ4qP.3.1694501683518.Hmail.mingzhe.zou@easystack.cn> <f2fcf354-29ec-e2f7-b251-fb9b7d36f4@ewheeler.net>
+In-Reply-To: <f2fcf354-29ec-e2f7-b251-fb9b7d36f4@ewheeler.net>
+From:   Kai Krakow <kai@kaishome.de>
+Date:   Wed, 11 Oct 2023 18:19:44 +0200
+Message-ID: <CAC2ZOYti00duQqPJJqGm=GZRmH+X_uZW+V-WitvwP2s_12JGWA@mail.gmail.com>
+Subject: Re: Re: Dirty data loss after cache disk error recovery
+To:     Eric Wheeler <lists@bcache.ewheeler.net>
+Cc:     =?UTF-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>,
+        Coly Li <colyli@suse.de>,
+        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+        =?UTF-8?B?5ZC05pys5Y2/KOS6keahjOmdoiDnpo/lt54p?= 
+        <wubenqing@ruijie.com.cn>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
-Firstly, bcachefs introduces a new era of in-tree filesystems with
-some monumental features (sorry, ZFS); hats off to Kent for landing
-this!
+Hello!
 
-My testing finds it is in great shape; far better than BTRFS was when
-it landed. Testing on linux next-20231005 with additional debug checks
-atop the Ubuntu 23.04 kernel generic config [1], I was able to provoke
-a btree trans path overflow cornercase [2].
+Sorry for the top-posting. I just want to share my story without
+removing all of the context:
 
-The minimal reproducer is:
-# modprobe brd rd_nr=2 rd_size=1048576
-# bcachefs format --metadata_replicas=2 --label=tier1.1 /dev/ram0
---label=tier1.2 /dev/ram1
-# mount -t bcachefs /dev/ram0:/dev/ram1 /mnt
-# dd if=/dev/zero of=/mnt/test bs=128M
+I've now faced a similar issue where one of my HDDs spontaneously
+decided to have a series of bad blocks. It looks like it has 26145
+failed writes due to how bcache handles writeback. It had 5275 failed
+reads with btrfs loudly complaining about it. The system also became
+really slow to respond until it eventually froze.
 
-The issue doesn't reproduce with metadata_replicas=1 or a single block device.
+After a reboot it worked again but of course there were still bad
+blocks because bcache did writeback, so no blocks have been replaced
+with btrfs auto-repair on read feature. This time, the system handled
+the situation a bit better but files became inaccessible in the middle
+of writing them which destroyed my Plasma desktop configuration and
+Chrome profile (I restored them from the last snapper snapshot
+successfully). Essentially, the file system was in a readonly-like
+state: most requests failed with IO errors despite the btrfs didn't
+switch to read-only. Something messed up in the error path of
+userspace -> bcache -> btrfs -> device. Also, btrfs was seeing the
+device somewhere in the limbo of not existing and not working - it
+still tried to access it while bcache claimed the backend device would
+be missing. To me this looks like bcache error handling may need some
+fine tuning - it should not fail in that way, especially not with
+btrfs-raid, but still the system was seeing IO errors and broken files
+in the middle of writes.
 
-At debug entry, I couldn't determine why BTREE_ITER_MAX must be 64
-rather than 32 when CONFIG_LOCKDEP is set, however the panic doesn't
-occur without CONFIG_LOCKDEP, so it appears related; keeping it at
-value 32 with CONFIG_LOCKDEP doesn't prevent the panic also.
+"bcache show" showed the backend device missing while "btrfs dev show"
+was still seeing the attached bcache device, and the system threw IO
+errors to user-space despite btrfs still having a valid copy of the
+blocks.
 
-@Kent/anyone?
+I've rebooted and now switched the bad device from bcache writeback to
+bcache none - and guess what: The system runs stable now, btrfs
+auto-repair does its thing. The above mentioned behavior does not
+occur (IO errors in user-space). A final scrub across the bad devices
+repaired the bad blocks, I currently do not see any more problems.
 
-Thanks,
-  Daniel
+It's probably better to replace that device but this also shows that
+switching bcache to "none" (if the backing device fails) or "write
+through" at least may be a better choice than doing some other error
+handling. Or bcache should have been able to make btrfs see the device
+as missing (which obviously did not happen).
 
--- [1] https://quora.org/linux-next-20231005.config
+Of course, if the cache device fails we have a completely different
+situation. I'm not sure which situation Eric was seeing (I think the
+caching device failed) but for me, the backing device failed - and
+with bcache involved, the result was very unexpected.
 
--- [2]
+So we probably need at least two error handlers: Handling caching
+device errors, and handling backing device errors (for which bcache
+doesn't currently seem to have a setting).
 
-[  493.761988] path: idx  4 ref 1:1 P S btree=alloc l=0 pos 0:98:0
-locks 2 flush_new_cached_update+0x9f/0x390
-[  493.762036] path: idx  7 ref 1:1 P S btree=alloc l=0 pos 0:300:0
-locks 2 flush_new_cached_update+0x9f/0x390
-[  493.762049] path: idx 11 ref 1:1 P S btree=alloc l=0 pos 0:581:0
-locks 2 flush_new_cached_update+0x9f/0x390
-[  493.762062] path: idx  5 ref 1:1 P S btree=alloc l=0 pos 1:98:0
-locks 2 flush_new_cached_update+0x9f/0x390
-[  493.762075] path: idx  9 ref 1:1 P S btree=alloc l=0 pos 1:300:0
-locks 2 flush_new_cached_update+0x9f/0x390
-[  493.762087] path: idx 13 ref 1:1 P S bt] path: idx  3 ref 1:1 P S
-btree=alloc l=0 pos 0:98:0 locks 2
-bch2_trans_start_alloc_update+0xf2/0x320
-[  493.762125] path: idx  6 ref 1:1 P S btree=alloc l=0 pos 0:300:0
-locks 2 bch2_trans_start_alloc_update+0xf2/0x320
-[  493.762138] path: idx 10 ref 1:1 P S btree=alloc l=0 pos 0:581:0
-locks 2 bch2_trans_start_alloc_update+0xf2/0x320
-[  493.762151] path: idx  2 ref 1:1 P S btree=alloc l=0 pos 1:96:0
-locks 2 bch2_trans_start_alloc_update+0xf2/0x320
-[  493.762163] path: idx  1 ref 1:1 P S btree=alloc l=0 pos 1:98:0
-locks 2 bch2_trans_start_alloc_update+0xf2/0x320
-[  493.762176] path: idx  8 ref 1:1 P S btree=alloc l=0 pos 1:300:0
-locks 2 bch2_trans_start_alloc_update+0xf2/0x320
-[  493.762189] path: idx 12 ref 1:1 P S btree=alloc l=0 pos 1:581:0
-locks 2 bch2_trans_start_alloc_update+0xf2/0x320
-[  493.762201] path: idx 18 ref 0:0 P S btree=freespace l=0 pos 0:98:0
-locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762214] path: idx 31 ref 1:1   S btree=freespace l=0 pos 0:99:0
-locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762227] path: idx 19 ref 0:0     btree=freespace l=0 pos 0:99:0
-locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762239] path: idx 20 ref 0:0     btree=freespace l=0 pos
-0:300:0 locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762252] path: idx 21 ref 0:0     btree=freespace l=0 pos
-0:301:0 locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762264] path: idx 22 ref 0:0     btree=freespace l=0 pos
-0:581:0 locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762277] path: idx 24 ref 0:0     btree=freespace l=0 pos
-0:582:0 locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762290] path: idx 29 ref 0:0     btree=freespace l=0 pos
-0:589:0 locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762302] path: idx 23 ref 0:0     btree=freespace l=0 pos 1:98:0
-locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762315] path: idx 25 ref 0:0     btree=freespace l=0 pos 1:99:0
-locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762328] path: idx 26 ref 0:0     btree=freespace l=0 pos
-1:300:0 locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762340] path: idx 27 ref 0:0     btree=freespace l=0 pos
-1:301:0 locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762353] path: idx 28 ref 0:0     btree=freespace l=0 pos
-1:581:0 locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762365] path: idx 30 ref 0:0     btree=freespace l=0 pos
-1:582:0 locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762378] path: idx 14 ref 1:1 P S btree=need_discard l=0 pos
-0:96:0 locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762391] path: idx 16 ref 1:1 P S btree=need_discard l=0 pos
-1:96:0 locks 2 bch2_bucket_do_index+0x429/0x770
-[  493.762403] path: idx 15 ref 1:1 P S btree=bucket_gens l=0 pos
-POS_MIN locks 2 bch2_bucket_gen_update+0x19e/0x540
-[  493.762416] path: idx 17 ref 1:1 P S btree=bucket_gens l=0 pos
-1:0:0 locks 2 bch2_bucket_gen_update+0x19e/0x540
-[  493.762429] transaction updates for btree_update_nodes_written journal seq 0
-[  493.762441]   update: btree=alloc cached=0
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.762453]     old u64s 5 type deleted 0:98:0 len 0 ver 0
-[  493.762464]     new u64s 12 type alloc_v4 0:98:0 len 0 ver 0:
-[  493.762476]     gen 0 oldest_gen 0 data_type btree
-[  493.762487]     journal_seq       0
-[  493.762498]     need_discard      1
-[  493.762509]     need_inc_gen      1
-[  493.762521]     dirty_sectors     256
-[  493.762532]     cached_sectors    0
-[  493.762543]     stripe            0
-[  493.762554]     stripe_redundancy 0
-[  493.762565]     io_time[READ]     1
-[  493.762576]     io_time[WRITE]    259160
-[  493.762587]     fragmentation     0
-[  493.762598]     bp_start          7
-[  493.762609]
-[  493.762619]   update: btree=alloc cached=0
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.762632]     old u64s 5 type deleted 0:300:0 len 0 ver 0
-[  493.762643]     new u64s 12 type alloc_v4 0:300:0 len 0 ver 0:
-[  493.762655]     gen 0 oldest_gen 0 data_type btree
-[  493.762666]     journal_seq       0
-[  493.762677]     need_discard      0
-[  493.762688]     need_inc_gen      0
-[  493.762699]     dirty_sectors     256
-[  493.762710]     cached_sectors    0
-[  493.762721]     stripe            0
-[  493.762733]     stripe_redundancy 0
-[  493.762744]     io_time[READ]     0
-[  493.762755]     io_time[WRITE]    0
-[  493.762766]     fragmentation     0
-[  493.762777]     bp_start          7
-[  493.762788]
-[  493.762798]   update: btree=alloc cached=0
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.762810]     old u64s 5 type deleted 0:581:0 len 0 ver 0
-[  493.762822]     new u64s 12 type alloc_v4 0:581:0 len 0 ver 0:
-[  493.762834]     gen 0 oldest_gen 0 data_type btree
-[  493.762845]     journal_seq       0
-[  493.762856]     need_discard      0
-[  493.762867]     need_inc_gen      0
-[  493.762878]     dirty_sectors     256
-[  493.762889]     cached_sectors    0
-[  493.762900]     stripe            0
-[  493.762911]     stripe_redundancy 0
-[  493.762922]     io_time[READ]     0
-[  493.762933]     io_time[WRITE]    0
-[  493.762944]     fragmentation     0
-[  493.762955]     bp_start          7
-[  493.762966]
-[  493.762977]   update: btree=alloc cached=0
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.762989]     old u64s 5 type deleted 1:98:0 len 0 ver 0
-[  493.763001]     new u64s 12 type alloc_v4 1:98:0 len 0 ver 0:
-[  493.763012]     gen 0 oldest_gen 0 data_type btree
-[  493.763024]     journal_seq       0
-[  493.763035]     need_discard      0
-[  493.763046]     need_inc_gen      0
-[  493.763057]     dirty_sectors     256
-[  493.763068]     cached_sectors    0
-[  493.763079]     stripe            0
-[  493.763090]     stripe_redundancy 0
-[  493.763101]     io_time[READ]     0
-[  493.763112]     io_time[WRITE]    0
-[  493.763123]     fragmentation     0
-[  493.763134]     bp_start          7
-[  493.763145]
-[  493.763156]   update: btree=alloc cached=0
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.763168]     old u64s 5 type deleted 1:300:0 len 0 ver 0
-[  493.763179]     new u64s 12 type alloc_v4 1:300:0 len 0 ver 0:
-[  493.763191]     gen 0 oldest_gen 0 data_type btree
-[  493.763202]     journal_seq       0
-[  493.763214]     need_discard      0
-[  493.763225]     need_inc_gen      0
-[  493.763236]     dirty_sectors     256
-[  493.763247]     cached_sectors    0
-[  493.763258]     stripe            0
-[  493.763269]     stripe_redundancy 0
-[  493.763280]     io_time[READ]     0
-[  493.763291]     io_time[WRITE]    0
-[  493.763302]     fragmentation     0
-[  493.763313]     bp_start          7
-[  493.763324]
-[  493.763334]   update: btree=alloc cached=0
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.763347]     old u64s 5 type deleted 1:581:0 len 0 ver 0
-[  493.763358]     new u64s 12 type alloc_v4 1:581:0 len 0 ver 0:
-[  493.763370]     gen 0 oldest_gen 0 data_type btree
-[  493.763381]     journal_seq       0
-[  493.763392]     need_discard      0
-[  493.763403]     need_inc_gen      0
-[  493.763414]     dirty_sectors     256
-[  493.763425]     cached_sectors    0
-[  493.763436]     stripe            0
-[  493.763447]     stripe_redundancy 0
-[  493.763458]     io_time[READ]     0
-[  493.763469]     io_time[WRITE]    0
-[  493.763480]     fragmentation     0
-[  493.763492]     bp_start          7
-[  493.763503]
-[  493.763513]   update: btree=alloc cached=1
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.763525]     old u64s 12 type alloc_v4 0:96:0 len 0 ver 0:
-[  493.763537]     gen 0 oldest_gen 0 data_type btree
-[  493.763548]     journal_seq       5
-[  493.763559]     need_discard      1
-[  493.763570]     need_inc_gen      1
-[  493.763581]     dirty_sectors     256
-[  493.763593]     cached_sectors    0
-[  493.763604]     stripe            0
-[  493.763615]     stripe_redundancy 0
-[  493.763626]     io_time[READ]     1
-[  493.763637]     io_time[WRITE]    8424
-[  493.763648]     fragmentation     0
-[  493.763659]     bp_start          7
-[  493.763670]
-[  493.763680]     new u64s 12 type alloc_v4 0:96:0 len 0 ver 0:
-[  493.763692]     gen 1 oldest_gen 0 data_type need_discard
-[  493.763703]     journal_seq       5
-[  493.763714]     need_discard      1
-[  493.763726]     need_inc_gen      0
-[  493.763737]     dirty_sectors     0
-[  493.763748]     cached_sectors    0
-[  493.763759]     stripe            0
-[  493.763770]     stripe_redundancy 0
-[  493.763781]     io_time[READ]     1
-[  493.763792]     io_time[WRITE]    8424
-[  493.763803]     fragmentation     0
-[  493.763814]     bp_start          7
-[  493.763825]
-[  493.763835]   update: btree=alloc cached=1
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.763848]     old u64s 5 type deleted 0:98:0 len 0 ver 0
-[  493.763859]     new u64s 12 type alloc_v4 0:98:0 len 0 ver 0:
-[  493.763871]     gen 0 oldest_gen 0 data_type btree
-[  493.763882]     journal_seq       0
-[  493.763893]     need_discard      1
-[  493.763904]     need_inc_gen      1
-[  493.763915]     dirty_sectors     256
-[  493.763926]     cached_sectors    0
-[  493.763937]     stripe            0
-[  493.763948]     stripe_redundancy 0
-[  493.763959]     io_time[READ]     1
-[  493.763970]     io_time[WRITE]    259160
-[  493.763982]     fragmentation     0
-[  493.763993]     bp_start          7
-[  493.764004]
-[  493.764014]   update: btree=alloc cached=1
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.764026]     old u64s 5 type deleted 0:300:0 len 0 ver 0
-[  493.764038]     new u64s 12 type alloc_v4 0:300:0 len 0 ver 0:
-[  493.764050]     gen 0 oldest_gen 0 data_type btree
-[  493.764061]     journal_seq       0
-[  493.764072]     need_discard      0
-[  493.764083]     need_inc_gen      0
-[  493.764094]     dirty_sectors     256
-[  493.764105]     cached_sectors    0
-[  493.764116]     stripe            0
-[  493.764127]     stripe_redundancy 0
-[  493.764138]     io_time[READ]     0
-[  493.764149]     io_time[WRITE]    0
-[  493.764160]     fragmentation     0
-[  493.764171]     bp_start          7
-[  493.764182]
-[  493.764193]   update: btree=alloc cached=1
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.764205]     old u64s 5 type deleted 0:581:0 len 0 ver 0
-[  493.764217]     new u64s 12 type alloc_v4 0:581:0 len 0 ver 0:
-[  493.764228]     gen 0 oldest_gen 0 data_type btree
-[  493.764240]     journal_seq       0
-[  493.764251]     need_discard      0
-[  493.764262]     need_inc_gen      0
-[  493.764273]     dirty_sectors     256
-[  493.764284]     cached_sectors    0
-[  493.764295]     stripe            0
-[  493.764306]     stripe_redundancy 0
-[  493.764317]     io_time[READ]     0
-[  493.764328]     io_time[WRITE]    0
-[  493.764339]     fragmentation     0
-[  493.764350]     bp_start          7
-[  493.764361]
-[  493.764371]   update: btree=alloc cached=1
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.764384]     old u64s 12 type alloc_v4 1:96:0 len 0 ver 0:
-[  493.764395]     gen 0 oldest_gen 0 data_type btree
-[  493.764407]     journal_seq       5
-[  493.764418]     need_discard      1
-[  493.764429]     need_inc_gen      1
-[  493.764440]     dirty_sectors     256
-[  493.764451]     cached_sectors    0
-[  493.764462]     stripe            0
-[  493.764473]     stripe_redundancy 0
-[  493.764484]     io_time[READ]     1
-[  493.764495]     io_time[WRITE]    8424
-[  493.764506]     fragmentation     0
-[  493.764517]     bp_start          7
-[  493.764528]
-[  493.764539]     new u64s 12 type alloc_v4 1:96:0 len 0 ver 0:
-[  493.764550]     gen 1 oldest_gen 0 data_type need_discard
-[  493.764562]     journal_seq       5
-[  493.764573]     need_discard      1
-[  493.764584]     need_inc_gen      0
-[  493.764595]     dirty_sectors     0
-[  493.764606]     cached_sectors    0
-[  493.764617]     stripe            0
-[  493.764628]     stripe_redundancy 0
-[  493.764639]     io_time[READ]     1
-[  493.764650]     io_time[WRITE]    8424
-[  493.764661]     fragmentation     0
-[  493.764672]     bp_start          7
-[  493.764683]
-[  493.764694]   update: btree=alloc cached=1
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.764706]     old u64s 5 type deleted 1:98:0 len 0 ver 0
-[  493.764717]     new u64s 12 type alloc_v4 1:98:0 len 0 ver 0:
-[  493.764729]     gen 0 oldest_gen 0 data_type btree
-[  493.764740]     journal_seq       0
-[  493.764804]     need_discard      0
-[  493.764815]     need_inc_gen      0
-[  493.764827]     dirty_sectors     256
-[  493.764838]     cached_sectors    0
-[  493.764849]     stripe            0
-[  493.764860]     stripe_redundancy 0
-[  493.764871]     io_time[READ]     0
-[  493.764882]     io_time[WRITE]    0
-[  493.764893]     fragmentation     0
-[  493.764904]     bp_start          7
-[  493.764915]
-[  493.764925]   update: btree=alloc cached=1
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.764938]     old u64s 5 type deleted 1:300:0 len 0 ver 0
-[  493.764949]     new u64s 12 type alloc_v4 1:300:0 len 0 ver 0:
-[  493.764961]     gen 0 oldest_gen 0 data_type btree
-[  493.764972]     journal_seq       0
-[  493.764983]     need_discard      0
-[  493.764994]     need_inc_gen      0
-[  493.765005]     dirty_sectors     256
-[  493.765016]     cached_sectors    0
-[  493.765027]     stripe            0
-[  493.765038]     stripe_redundancy 0
-[  493.765049]     io_time[READ]     0
-[  493.765060]     io_time[WRITE]    0
-[  493.765071]     fragmentation     0
-[  493.765082]     bp_start          7
-[  493.765093]
-[  493.765104]   update: btree=alloc cached=1
-bch2_trans_mark_pointer.constprop.0+0x532/0xbf0
-[  493.765116]     old u64s 5 type deleted 1:581:0 len 0 ver 0
-[  493.765128]     new u64s 12 type alloc_v4 1:581:0 len 0 ver 0:
-[  493.765139]     gen 0 oldest_gen 0 data_type btree
-[  493.765151]     journal_seq       0
-[  493.765162]     need_discard      0
-[  493.765173]     need_inc_gen      0
-[  493.765184]     dirty_sectors     256
-[  493.765195]     cached_sectors    0
-[  493.765206]     stripe            0
-[  493.765217]     stripe_redundancy 0
-[  493.765228]     io_time[READ]     0
-[  493.765239]     io_time[WRITE]    0
-[  493.765250]     fragmentation     0
-[  493.765261]     bp_start          7
-[  493.765272]
-[  493.765283]   update: btree=need_discard cached=0
-bch2_bucket_do_index+0x4ba/0x770
-[  493.765295]     old u64s 5 type deleted 0:96:0 len 0 ver 0
-[  493.765307]     new u64s 5 type set 0:96:0 len 0 ver 0
-[  493.765318]   update: btree=need_discard cached=0
-bch2_bucket_do_index+0x4ba/0x770
-[  493.765330]     old u64s 5 type deleted 1:96:0 len 0 ver 0
-[  493.765342]     new u64s 5 type set 1:96:0 len 0 ver 0
-[  493.765353]   update: btree=bucket_gens cached=0
-bch2_bucket_gen_update+0x3ce/0x540
-[  493.765365]     old u64s 5 type deleted POS_MIN len 0 ver 0
-[  493.765377]     new u64s 37 type bucket_gens POS_MIN len 0 ver 0: 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-[  493.765399]   update: btree=bucket_gens cached=0
-bch2_bucket_gen_update+0x3ce/0x540
-[  493.765412]     old u64s 5 type deleted 1:0:0 len 0 ver 0
-[  493.765423]     new u64s 37 type bucket_gens 1:0:0 len 0 ver 0: 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0
-[  493.765446]   update: btree=backpointers wb=1
-bch2_btree_insert_nonextent+0x164/0x170
-[  493.765458]     new u64s 5 type deleted 0:25165824:0 len 0 ver 0
-[  493.765470]   update: btree=backpointers wb=1
-bch2_btree_insert_nonextent+0x164/0x170
-[  493.765482]     new u64s 5 type deleted 1:25165824:0 len 0 ver 0
-[  493.765494]   update: btree=backpointers wb=1
-bch2_btree_insert_nonextent+0x164/0x170
-[  493.765506]     new u64s 9 type backpointer 0:25690112:0 len 0 ver
-0: bucket=0:98:0 btree=extents l=1 offset=0:0 len=256
-pos=671088640:149504:U32_MAX
-[  493.765519]   update: btree=backpointers wb=1
-bch2_btree_insert_nonextent+0x164/0x170
-[  493.765531]     new u64s 9 type backpointer 1:25690112:0 len 0 ver
-0: bucket=1:98:0 btree=extents l=1 offset=0:0 len=256
-pos=671088640:149504:U32_MAX
-[  493.765545]   update: btree=backpointers wb=1
-bch2_btree_insert_nonextent+0x164/0x170
-[  493.765557]     new u64s 9 type backpointer 0:78643200:0 len 0 ver
-0: bucket=0:300:0 btree=extents l=1 offset=0:0 len=256 pos=SPOS_MAX
-[  493.765570]   update: btree=backpointers wb=1
-bch2_btree_insert_nonextent+0x164/0x170
-[  493.765582]     new u64s 9 type backpointer 1:78643200:0 len 0 ver
-0: bucket=1:300:0 btree=extents l=1 offset=0:0 len=256 pos=SPOS_MAX
-[  493.765595]   update: btree=backpointers wb=1
-bch2_btree_insert_nonextent+0x164/0x170
-[  493.765608]     new u64s 9 type backpointer 0:152305664:0 len 0 ver
-0: bucket=0:581:0 btree=extents l=2 offset=0:0 len=256 pos=SPOS_MAX
-[  493.765622]   update: btree=backpointers wb=1
-bch2_btree_insert_nonextent+0x164/0x170
-[  493.765634]     new u64s 9 type backpointer 1:152305664:0 len 0 ver
-0: bucket=1:581:0 btree=extents l=2 offset=0:0 len=256 pos=SPOS_MAX
-[  493.765648]
-[  496.612047] Kernel panic - not syncing: trans path overflow
-[  496.626162] CPU: 18 PID: 11 Comm: kworker/u96:0 Not tainted
-6.6.0-rc4-next-20231005 #3
-[  496.642928] Hardware name: Supermicro AS -3014TS-i/H12SSL-i, BIOS
-2.5 09/08/2022
-[  496.659120] Workqueue: btree_update btree_interior_update_work
-[  496.673783] Call Trace:
-[  496.684799]  <TASK>
-[  496.695345]  dump_stack_lvl+0x5f/0xc0
-[  496.707528]  dump_stack+0x10/0x20
-[  496.719236]  panic+0x444/0x4b0
-[  496.730566]  ? kfree+0x12a/0x150
-[  496.742073]  ? __pfx_panic+0x10/0x10
-[  496.753841]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  496.766816]  ? __bch2_dump_trans_paths_updates+0xda/0x120
-[  496.780289]  ? __pfx_bch2_btree_path_verify_level+0x10/0x10
-[  496.793999]  btree_path_overflow+0x1f/0x20
-[  496.806119]  __bch2_btree_path_make_mut+0x6e8/0x840
-[  496.819146]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  496.832005]  ? btree_trans_verify_sorted_refs+0x263/0x340
-[  496.845475]  ? __asan_storeN+0x12/0x30
-[  496.857128]  ? bch2_trans_update_extent.isra.0+0x17a/0x740
-[  496.870432]  __bch2_btree_path_set_pos+0x1dc/0x7e0
-[  496.882969]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  496.895575]  ? bch2_btree_path_verify+0xbd/0x1a0
-[  496.908175]  bch2_btree_iter_peek_upto+0xb14/0x1d00
-[  496.921066]  ? bch2_trans_update_extent.isra.0+0x17a/0x740
-[  496.934381]  ? __pfx_bch2_btree_iter_peek_upto+0x10/0x10
-[  496.947402]  ? bch2_trans_update_extent.isra.0+0x17a/0x740
-[  496.960594]  ? bch2_trans_update_extent.isra.0+0x17a/0x740
-[  496.973626]  ? __pfx_bch2_trans_iter_init_outlined+0x10/0x10
-[  496.986793]  ? bch2_btree_path_verify_locks+0xe7/0x220
-[  496.999311]  bch2_trans_update_extent.isra.0+0x1d3/0x740
-[  497.011773]  ? bch2_trans_update_extent.isra.0+0x1d3/0x740
-[  497.024430]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.036194]  ? __pfx_bch2_trans_update_extent.isra.0+0x10/0x10
-[  497.048854]  ? __pfx_bch2_btree_iter_peek_slot+0x10/0x10
-[  497.061036]  ? bch2_trans_update_extent.isra.0+0x17a/0x740
-[  497.073114]  ? bch2_bucket_do_index+0x429/0x770
-[  497.084016]  bch2_trans_update+0x1bd/0x210
-[  497.094299]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.105155]  ? bch2_trans_update+0x1bd/0x210
-[  497.115346]  bch2_bucket_do_index+0x4ba/0x770
-[  497.125552]  ? __pfx_bch2_bucket_do_index+0x10/0x10
-[  497.136144]  ? __pfx_bch2_bucket_gen_update+0x10/0x10
-[  497.146625]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.156815]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.166824]  ? bch2_bucket_do_index+0x429/0x770
-[  497.176301]  ? __asan_loadN+0xf/0x20
-[  497.184765]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.194463]  ? bch2_btree_path_peek_slot+0x315/0x4a0
-[  497.204342]  bch2_trans_mark_alloc+0x2e2/0x8d0
-[  497.213532]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.223020]  ? bch2_trans_mark_alloc+0x2e2/0x8d0
-[  497.232374]  ? __pfx_bch2_trans_mark_alloc+0x10/0x10
-[  497.242097]  ? __pfx_verify_update_old_key+0x10/0x10
-[  497.251873]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.261420]  ? bch2_btree_path_verify_locks+0xe7/0x220
-[  497.271445]  run_btree_triggers+0x40b/0x7c0
-[  497.280557]  ? __pfx_run_btree_triggers+0x10/0x10
-[  497.290141]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.299876]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.309460]  ? bch2_replicas_entry_sort+0x66/0xd0
-[  497.318999]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.328560]  ? update_replicas_list+0xc5/0xf0
-[  497.337739]  __bch2_trans_commit+0x993/0x4200
-[  497.346872]  ? __pfx_bch2_trans_mark_extent+0x10/0x10
-[  497.356698]  ? __asan_storeN+0x12/0x30
-[  497.365116]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.374735]  ? __pfx___bch2_trans_commit+0x10/0x10
-[  497.384234]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.393722]  ? kasan_save_alloc_info+0x1e/0x40
-[  497.402885]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.412373]  ? __kmalloc_node_track_caller+0x117/0x140
-[  497.422218]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.431691]  ? rcu_is_watching+0x23/0x60
-[  497.440253]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.449863]  btree_interior_update_work+0x1012/0x1460
-[  497.459802]  ? __pfx_btree_interior_update_work+0x10/0x10
-[  497.469986]  ? __pfx_lock_acquire+0x10/0x10
-[  497.478878]  ? __pfx_lock_release+0x10/0x10
-[  497.487667]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.497110]  ? process_one_work+0x3d6/0x950
-[  497.505859]  ? process_one_work+0x3d1/0x950
-[  497.514540]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.523856]  ? _raw_spin_unlock_irq+0x27/0x70
-[  497.532767]  process_one_work+0x470/0x950
-[  497.541347]  ? __pfx_process_one_work+0x10/0x10
-[  497.550360]  ? do_raw_spin_lock+0x115/0x1d0
-[  497.559088]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  497.568360]  ? assign_work+0xec/0x130
-[  497.576490]  worker_thread+0x370/0x680
-[  497.584774]  ? __pfx_worker_thread+0x10/0x10
-[  497.593493]  kthread+0x1b3/0x200
-[  497.601172]  ? kthread+0x103/0x200
-[  497.609008]  ? __pfx_kthread+0x10/0x10
-[  497.617208]  ret_from_fork+0x47/0x80
-[  497.625178]  ? __pfx_kthread+0x10/0x10
-[  497.633322]  ret_from_fork_asm+0x1b/0x30
-[  497.641759]  </TASK>
-[  497.649175] Kernel Offset: disabled
-[  497.855603] ---[ end Kernel panic - not syncing: trans path overflow ]---
--- 
-Daniel J Blueman
+Except for the strange IO errors and resulting incomplete writes (and
+I really don't know why that happened), btrfs survived this perfectly
+well - and somehow bcache did a good enough job. This has been
+different in the past. So this is already a great achievement. Thank
+you.
+
+BTW: This probably only worked for me because I split btrfs metadata
+and data to different devices
+(https://github.com/kakra/linux/pull/26), and metadata does not pass
+through bcache at all but natively to SSD. Otherwise I fear btrfs may
+have seen partial metadata writes on different RAID members.
+
+Regards,
+Kai
+
+
+Am Di., 12. Sept. 2023 um 22:02 Uhr schrieb Eric Wheeler
+<lists@bcache.ewheeler.net>:
+>
+> On Tue, 12 Sep 2023, =E9=82=B9=E6=98=8E=E5=93=B2 wrote:
+> > From: Eric Wheeler <lists@bcache.ewheeler.net>
+> > Date: 2023-09-07 08:42:41
+> > To:  Coly Li <colyli@suse.de>
+> > Cc:  Kai Krakow <kai@kaishome.de>,"linux-bcache@vger.kernel.org" <linux=
+-bcache@vger.kernel.org>,"=E5=90=B4=E6=9C=AC=E5=8D=BF(=E4=BA=91=E6=A1=8C=E9=
+=9D=A2 =E7=A6=8F=E5=B7=9E)" <wubenqing@ruijie.com.cn>,Mingzhe Zou <mingzhe.=
+zou@easystack.cn>
+> > Subject: Re: Dirty data loss after cache disk error recovery
+> > >+Mingzhe, Coly: please comment on the proposed fix below when you have=
+ a
+> > >moment:
+> >
+> > Hi, Eric
+> >
+> > This is an old issue, and it took me a long time to understand what
+> > happened.
+> >
+> > >
+> > >On Thu, 7 Sep 2023, Kai Krakow wrote:
+> > >> Wow!
+> > >>
+> > >> I call that a necro-bump... ;-)
+> > >>
+> > >> Am Mi., 6. Sept. 2023 um 22:33 Uhr schrieb Eric Wheeler
+> > >> <lists@bcache.ewheeler.net>:
+> > >> >
+> > >> > On Fri, 7 May 2021, Kai Krakow wrote:
+> > >> >
+> > >> > > > Adding a new "stop" error action IMHO doesn't make things bett=
+er. When
+> > >> > > > the cache device is disconnected, it is always risky that some=
+ caching
+> > >> > > > data or meta data is not updated onto cache device. Permit the=
+ cache
+> > >> > > > device to be re-attached to the backing device may introduce "=
+silent
+> > >> > > > data loss" which might be worse....  It was the reason why I d=
+idn't add
+> > >> > > > new error action for the device failure handling patch set.
+> > >> > >
+> > >> > > But we are actually now seeing silent data loss: The system f'ed=
+ up
+> > >> > > somehow, needed a hard reset, and after reboot the bcache device=
+ was
+> > >> > > accessible in cache mode "none" (because they have been unregist=
+ered
+> > >> > > before, and because udev just detected it and you can use bcache
+> > >> > > without an attached cache in "none" mode), completely hiding the=
+ fact
+> > >> > > that we lost dirty write-back data, it's even not quite obvious =
+that
+> > >> > > /dev/bcache0 now is detached, cache mode none, but accessible
+> > >> > > nevertheless. To me, this is quite clearly "silent data loss",
+> > >> > > especially since the unregister action threw the dirty data away=
+.
+> > >> > >
+> > >> > > So this:
+> > >> > >
+> > >> > > > Permit the cache
+> > >> > > > device to be re-attached to the backing device may introduce "=
+silent
+> > >> > > > data loss" which might be worse....
+> > >> > >
+> > >> > > is actually the situation we are facing currently: Device has be=
+en
+> > >> > > unregistered, after reboot, udev detects it has clean backing de=
+vice
+> > >> > > without cache association, using cache mode none, and it is read=
+able
+> > >> > > and writable just fine: It essentially permitted access to the s=
+tale
+> > >> > > backing device (tho, it didn't re-attach as you outlined, but th=
+at's
+> > >> > > more or less the same situation).
+> > >> > >
+> > >> > > Maybe devices that become disassociated from a cache due to IO e=
+rrors
+> > >> > > but have dirty data should go to a caching mode "stale", and bca=
+che
+> > >> > > should refuse to access such devices or throw away their dirty d=
+ata
+> > >> > > until I decide to force them back online into the cache set or f=
+orce
+> > >> > > discard the dirty data. Then at least I would discover that some=
+thing
+> > >> > > went badly wrong. Otherwise, I may not detect that dirty data wa=
+sn't
+> > >> > > written. In the best case, that makes my FS unmountable, in the =
+worst
+> > >> > > case, some file data is simply lost (aka silent data loss), besi=
+des
+> > >> > > both situations are the worst-case scenario anyways.
+> > >> > >
+> > >> > > The whole situation probably comes from udev auto-registering bc=
+ache
+> > >> > > backing devices again, and bcache has no record of why the devic=
+e was
+> > >> > > unregistered - it looks clean after such a situation.
+> > >>
+> > >> [...]
+> > >>
+> > >> > I think we hit this same issue from 2021. Here is that original th=
+read from 2021:
+> > >> >         https://lore.kernel.org/all/2662a21d-8f12-186a-e632-964ac7=
+bae72d@suse.de/T/#m5a6cc34a043ecedaeb9469ec9d218e084ffec0de
+> > >> >
+> > >> > Kai, did you end up with a good patch for this? We are running a 5=
+.15
+> > >> > kernel with the many backported bcache commits that Coly suggested=
+ here:
+> > >> >         https://www.spinics.net/lists/linux-bcache/msg12084.html
+> > >>
+> > >> I'm currently running 6.1 with bcache on mdraid1 and device-level
+> > >> write caching disabled. I didn't see this ever occur again.
+> > >
+> > >Awesome, good to know.
+> > >
+> > >> But as written above, I had bad RAM, and meanwhile upgraded to kerne=
+l
+> > >> 6.1, and had no issues since with bcache even on power loss.
+> > >>
+> > >> > Coly, is there already a patch to prevent complete dirty cache los=
+s?
+> > >>
+> > >> This is probably still an issue. The cache attachment MUST NEVER EVE=
+R
+> > >> automatically degrade to "none" which it did for my fail-cases I had
+> > >> back then. I don't know if this has changed meanwhile.
+> > >
+> > >I would rather that bcache went to a read-only mode in failure
+> > >conditions like this.  Maybe write-around would be acceptable since
+> > >bcache returns -EIO for any failed dirty cache reads.  But if the cach=
+e
+> > >is dirty, and it gets an error, it _must_never_ read from the bdev, wh=
+ich
+> > >is what appears to happens now.
+> > >
+> > >Coly, Mingzhe, would this be an easy change?
+> >
+> > First of all, we have never had this problem. We have had an nvme
+> > controller failure, but at this time the cache cannot be read or
+> > written, so even unregister will not succeed.
+> >
+> > Coly once replied like this:
+> >
+> > """
+> > There is an option to panic the system when cache device failed. It
+> > is in errors file with available options as "unregister" and "panic".
+> > This option is default set to "unregister", if you set it to "panic"
+> > then panic() will be called.
+> > """
+> >
+> > I think "panic" is a better way to handle this situation. If cache
+> > returns an error, there may be more unknown errors if the operation
+> > continues.
+>
+> Depending on how the block devices are stacked, the OS can continue if
+> bcache fails (eg, bcache under raid1, drbd, etc).  Returning IO requests
+> with -EIO or setting bcache read-only would be better, because a panic
+> would crash services that could otherwise proceed without noticing the
+> bcache outage.
+>
+> If bcache has a critical failure, I would rather that it fail the IOs so
+> upper-layers in the block stack can compensate.
+>
+> What if we extend /sys/fs/bcache/<uuid>/errors to include a "readonly"
+> option, and make that the default setting?  The gendisk(s) for related
+> /dev/bcacheX devices can be flagged BLKROSET in the error handler:
+>         https://patchwork.kernel.org/project/dm-devel/patch/2020112918192=
+6.897775-2-hch@lst.de/
+>
+> This would protect the data and keep the host online.
+>
+> --
+> Eric Wheeler
+>
+>
+>
+> >
+> > >
+> > >Here are the relevant bits:
+> > >
+> > >The allocator called btree_mergesort which called bch_extent_invalid:
+> > >     https://elixir.bootlin.com/linux/latest/source/drivers/md/bcache/=
+extents.c#L480
+> > >
+> > >Which called the `cache_bug` macro, which triggered bch_cache_set_erro=
+r:
+> > >     https://elixir.bootlin.com/linux/v6.5/source/drivers/md/bcache/su=
+per.c#L1626
+> > >
+> > >It then calls `bch_cache_set_unregister` which shuts down the cache:
+> > >     https://elixir.bootlin.com/linux/v6.5/source/drivers/md/bcache/su=
+per.c#L1845
+> > >
+> > >     bool bch_cache_set_error(struct cache_set *c, const char *fmt, ..=
+.)
+> > >     {
+> > >             ...
+> > >             bch_cache_set_unregister(c);
+> > >             return true;
+> > >     }
+> > >
+> > >Proposed solution:
+> > >
+> > >What if, instead of bch_cache_set_unregister() that this was called in=
+stead:
+> > >     SET_BDEV_CACHE_MODE(&c->cache->sb, CACHE_MODE_WRITEAROUND)
+> >
+> > If cache_mode can be automatically modified, when will it be restored
+> > to writeback? I think we need to be able to enable or disable this.
+> >
+> > >
+> > >This would bypass the cache for future writes, and allow reads to
+> > >proceed if possible, and -EIO otherwise to let upper layers handle the
+> > >failure.
+> > >
+> > >What do you think?
+> >
+> > If we switch to writearound mode, how to ensure that the IO is read-onl=
+y,
+> > because writing IO may require invalidating dirty data. If the backing
+> > write is successful but invalid fails, how should we handle it?
+> >
+> > Maybe "panic" could be the default option. What do you think?
+> >
+> > >
+> > >> But because bcache explicitly does not honor write-barriers from
+> > >> upstream writes for its own writeback (which is okay because it
+> > >> guarantees to write back all data anyways and give a consistent view=
+ to
+> > >> upstream FS - well, unless it has to handle write errors), the backe=
+d
+> > >> filesystem is guaranteed to be effed up in that case, and allowing i=
+t to
+> > >> mount and write because bcache silently has fallen back to "none" wi=
+ll
+> > >> only make the matter worse.
+> > >>
+> > >> (HINT: I never used brbd personally, most of the following is
+> > >> theoretical thinking without real-world experience)
+> > >>
+> > >> I see that you're using drbd? Did it fail due to networking issues?
+> > >> I'm pretty sure it should be robust in that case but maybe bcache
+> > >> cannot handle the situation? Does brbd have a write log to replay
+> > >> writes after network connection loss? It looks like it doesn't and
+> > >> thus bcache exploded.
+> > >
+> > >DRBD is _above_ bcache, not below it.  In this case, DRBD hung because
+> > >bcache hung, not the other way around, so DRBD is not the issue here.
+> > >Here is our stack:
+> > >
+> > >bcache:
+> > >     bdev:     /dev/sda hardware RAID5
+> > >     cachedev: LVM volume from /dev/md0, which is /dev/nvme{0,1} RAID1
+> > >
+> > >And then bcache is stacked like so:
+> > >
+> > >        bcache <- dm-thin <- DRBD <- dm-crypt <- KVM
+> > >                              |
+> > >                              v
+> > >                         [remote host]
+> > >
+> > >> Anyways, since your backing device seems to be on drbd, using metada=
+ta
+> > >> allocation hinting is probably no option. You could of course still =
+use
+> > >> drbd with bcache for metadata hinted partitions, and then use
+> > >> writearound caching only for that. At least, in the fail-case, your
+> > >> btrfs won't be destroyed. But your data chunks may have unreadable f=
+iles
+> > >> then. But it should be easy to select them and restore from backup
+> > >> individually. Btrfs is very robust for that fail case: if metadata i=
+s
+> > >> okay, data errors are properly detected and handled. If you're not u=
+sing
+> > >> btrfs, all of this doesn't apply ofc.
+> > >>
+> > >> I'm not sure if write-back caching for drbd backing is a wise decisi=
+on
+> > >> anyways. drbd is slow for writes, that's part of the design (and no
+> > >> writeback caching could fix that).
+> > >
+> > >Bcache-backed DRBD provides a noticable difference, especially with a
+> > >10GbE link (or faster) and the same disk stack on both sides.
+> > >
+> > >> I would not rely on bcache-writeback to fix that for you because it =
+is
+> > >> not prepared for storage that may be temporarily not available
+> > >
+> > >True, which is why we put drbd /on top/ of bcache, so bcache is unawar=
+e of
+> > >DRBD's existence.
+> > >
+> > >> iow, it would freeze and continue when drbd is available again. I th=
+ink
+> > >> you should really use writearound/writethrough so your FS can be sur=
+e
+> > >> data has been written, replicated and persisted. In case of btrfs, y=
+ou
+> > >> could still split data and metadata as written above, and use writeb=
+ack
+> > >> for data, but reliable writes for metadata.
+> > >>
+> > >> So concluding:
+> > >>
+> > >> 1. I'm now persisting metadata directly to disk with no intermediate
+> > >> layers (no bcache, no md)
+> > >>
+> > >> 2. I'm using allocation-hinted data-only partitions with bcache
+> > >> write-back, with bcache on mdraid1. If anything goes wrong, I have
+> > >> file crc errors in btrfs files only, but the filesystem itself is
+> > >> valid because no metadata is broken or lost. I have snapshots of
+> > >> recently modified files. I have daily backups.
+> > >>
+> > >> 3. Your problem is that bcache can - by design - detect write errors
+> > >> only when it's too late with no chance telling the filesystem. In th=
+at
+> > >> case, writethrough/writearound is the correct choice.
+> > >>
+> > >> 4. Maybe bcache should know if backing is on storage that may be
+> > >> temporarily unavailable and then freeze until the backing storage is
+> > >> back online, similar to how iSCSI handles that.
+> > >
+> > >I don't think "temporarily unavailable" should be bcache's burden, as
+> > >bcache is a local-only solution.  If someone is using iSCSI under bcac=
+he,
+> > >then good luck ;)
+> > >
+> > >> But otoh, maybe drbd should freeze until the replicated storage is
+> > >> available again while writing (from what I've read, it's designed to=
+ not
+> > >> do that but let local storage get ahead of the replica, which is btw
+> > >> incompatible with bcache-writeback assumptions).
+> > >
+> > >N/A for this thread, but FYI: DRBD will wait (hang) if it is disconnec=
+ted
+> > >and has no local copy for some reason.  If local storage is available,=
+ it
+> > >will use that and resync when its peer comes up.
+> > >
+> > >> Or maybe using async mirroring can fix this for you but then, the mi=
+rror
+> > >> will be compromised if a hardware failure immediately follows a prev=
+ious
+> > >> drbd network connection loss. But, it may still be an issue with the
+> > >> local hardware (bit-flips etc) because maybe just bcache internals b=
+roke
+> > >> - Coly may have a better idea of that.
+> > >
+> > >This isn't DRBDs fault since it is above bcache. I wish only address t=
+he
+> > >the bcache cache=3Dnone issue.
+> > >
+> > >-Eric
+> > >
+> > >>
+> > >> I think your main issue here is that bcache decouples writebarriers
+> > >> from the underlying backing storage - and you should just not use
+> > >> writeback, it is incompatible by design with how drbd works: your
+> > >> replica will be broken when you need it.
+> > >
+> > >
+> > >>
+> > >>
+> > >> > Here is our trace:
+> > >> >
+> > >> > [Sep 6 13:01] bcache: bch_cache_set_error() error on
+> > >> > a3292185-39ff-4f67-bec7-0f738d3cc28a: spotted extent
+> > >> > 829560:7447835265109722923 len 26330 -> [0:112365451 gen 48,
+> > >> > 0:1163806048 gen 3: bad, length too big, disabling caching
+> > >>
+> > >> > [  +0.001940] CPU: 12 PID: 2435752 Comm: kworker/12:0 Kdump: loade=
+d Not tainted 5.15.0-7.86.6.1.el9uek.x86_64-TEST+ #7
+> > >> > [  +0.000301] Hardware name: Supermicro Super Server/H11SSL-i, BIO=
+S 2.4 12/27/2021
+> > >> > [  +0.000809] Workqueue: bcache bch_data_insert_keys
+> > >> > [  +0.000826] Call Trace:
+> > >> > [  +0.000797]  <TASK>
+> > >> > [  +0.000006]  dump_stack_lvl+0x57/0x7e
+> > >> > [  +0.000755]  bch_extent_invalid.cold+0x9/0x10
+> > >> > [  +0.000759]  btree_mergesort+0x27e/0x36e
+> > >> > [  +0.000005]  ? bch_cache_allocator_start+0x50/0x50
+> > >> > [  +0.000009]  __btree_sort+0xa4/0x1e9
+> > >> > [  +0.000109]  bch_btree_sort_partial+0xbc/0x14d
+> > >> > [  +0.000836]  bch_btree_init_next+0x39/0xb6
+> > >> > [  +0.000004]  bch_btree_insert_node+0x26e/0x2d3
+> > >> > [  +0.000863]  btree_insert_fn+0x20/0x48
+> > >> > [  +0.000864]  bch_btree_map_nodes_recurse+0x111/0x1a7
+> > >> > [  +0.004270]  ? bch_btree_insert_check_key+0x1f0/0x1e1
+> > >> > [  +0.000850]  __bch_btree_map_nodes+0x1e0/0x1fb
+> > >> > [  +0.000858]  ? bch_btree_insert_check_key+0x1f0/0x1e1
+> > >> > [  +0.000848]  bch_btree_insert+0x102/0x188
+> > >> > [  +0.000844]  ? do_wait_intr_irq+0xb0/0xaf
+> > >> > [  +0.000857]  bch_data_insert_keys+0x39/0xde
+> > >> > [  +0.000845]  process_one_work+0x280/0x5cf
+> > >> > [  +0.000858]  worker_thread+0x52/0x3bd
+> > >> > [  +0.000851]  ? process_one_work.cold+0x52/0x51
+> > >> > [  +0.000877]  kthread+0x13e/0x15b
+> > >> > [  +0.000858]  ? set_kthread_struct+0x60/0x52
+> > >> > [  +0.000855]  ret_from_fork+0x22/0x2d
+> > >> > [  +0.000854]  </TASK>
+> > >>
+> > >>
+> > >> Regards,
+> > >> Kai
+> > >>
+> >
+> >
+> >
+> >
+> >
