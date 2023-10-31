@@ -2,116 +2,62 @@ Return-Path: <linux-bcache-owner@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AA017DB475
-	for <lists+linux-bcache@lfdr.de>; Mon, 30 Oct 2023 08:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 027067DD27D
+	for <lists+linux-bcache@lfdr.de>; Tue, 31 Oct 2023 17:45:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231615AbjJ3Hi0 (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
-        Mon, 30 Oct 2023 03:38:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40032 "EHLO
+        id S1346584AbjJaQpO (ORCPT <rfc822;lists+linux-bcache@lfdr.de>);
+        Tue, 31 Oct 2023 12:45:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbjJ3Hi0 (ORCPT
+        with ESMTP id S1346515AbjJaQo5 (ORCPT
         <rfc822;linux-bcache@vger.kernel.org>);
-        Mon, 30 Oct 2023 03:38:26 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73FF3A7;
-        Mon, 30 Oct 2023 00:38:23 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 1C6791FEDD;
-        Mon, 30 Oct 2023 07:38:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1698651502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=POOUX/d8rILNu4kY0NehNla8wNVcSgPqGmuaJwG6QVM=;
-        b=jUrdh3/4R7K4A92i22xlDUBdw2eLsqEQnrpPTseRqpJcHtqBpx6Pck/IAWiGnRK713jayu
-        lePMtm7c22JlK5ojW/8NP313b+fPW9dwAjvbYCFx/xMPatUT6V4HNNFZ8kZ6Yv8n41FoWP
-        qTLiByj1JVt65kAEkOCkJAi/qsNhwSA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1698651502;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=POOUX/d8rILNu4kY0NehNla8wNVcSgPqGmuaJwG6QVM=;
-        b=sm4XNJ6sypINzyvdn2Ioc9TOg+IS7DwUrvRnGW2T09ld40zitJBgXufO3OpnsawWnwP482
-        m7vS2E8gr3XeaiAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CE169138F8;
-        Mon, 30 Oct 2023 07:38:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id P3wUJmxdP2V+UAAAMHmgww
-        (envelope-from <colyli@suse.de>); Mon, 30 Oct 2023 07:38:20 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.200.91.1.1\))
-Subject: Re: [PATCH] bcache: Optimize sysfs_hprint()
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <9b82413f1ca0b924cc139d945777e32dd22ffe41.1698575385.git.christophe.jaillet@wanadoo.fr>
-Date:   Mon, 30 Oct 2023 15:38:08 +0800
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-bcache@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BF96F92E-B483-4FC7-B4DB-B9D76E44D9A7@suse.de>
-References: <9b82413f1ca0b924cc139d945777e32dd22ffe41.1698575385.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-X-Mailer: Apple Mail (2.3774.200.91.1.1)
+        Tue, 31 Oct 2023 12:44:57 -0400
+X-Greylist: delayed 508 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 31 Oct 2023 09:33:34 PDT
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6981630E1
+        for <linux-bcache@vger.kernel.org>; Tue, 31 Oct 2023 09:33:33 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1698769503;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=2/WqVk2ZLmZJ6bgdjF1aGMs2a9ubs62YR4GPwL+7LDI=;
+        b=Pm0ogUfAr1KunimWLPdFW+wIyni6jlMAfmX2xekYUo2NrYptSIi+SqiGgvUuzeqZ6L/eQC
+        EWpXSR3DIR0CWH+SSPTYkcCyBRKX+AE3tgoLZN2Mi4avD9d9/YU1CA18Nq0ZE0DfkmbJkw
+        q8Fgez5OCtEcFfBHxr8RCgsAV4JOGjI=
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     linux-bcache@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>
+Subject: [PATCH 0/2] Two small closures patches
+Date:   Tue, 31 Oct 2023 12:24:50 -0400
+Message-ID: <20231031162454.3761482-1-kent.overstreet@linux.dev>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-bcache.vger.kernel.org>
 X-Mailing-List: linux-bcache@vger.kernel.org
 
+I'll be sending these to Linus in my next pull request, sending them to
+linux-bcache so Coly gets a chance to see them.
 
+Kent Overstreet (2):
+  closures: Better memory barriers
+  closures: Fix race in closure_sync()
 
-> 2023=E5=B9=B410=E6=9C=8829=E6=97=A5 18:30=EF=BC=8CChristophe JAILLET =
-<christophe.jaillet@wanadoo.fr> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> The size of what is in 'buf' is already computed by bch_hprint(), so =
-skip
-> these bytes when calling strcat().
->=20
-> This easily saves a few cycles. (should it matter)
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+ fs/bcachefs/fs-io-direct.c |  1 +
+ include/linux/closure.h    | 12 +++++++++---
+ lib/closure.c              |  9 +++++++--
+ 3 files changed, 17 insertions(+), 5 deletions(-)
 
-Your change does save several cpu cycles, but hurts the readability. =
-This is not hot code path, just let strcat to do what it was designed =
-for.=20
-
-Thanks.
-
-Coly Li
-
-> ---
-> drivers/md/bcache/sysfs.h | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/md/bcache/sysfs.h b/drivers/md/bcache/sysfs.h
-> index 65b8bd975ab1..798bcbeab0bb 100644
-> --- a/drivers/md/bcache/sysfs.h
-> +++ b/drivers/md/bcache/sysfs.h
-> @@ -78,7 +78,7 @@ do { \
-> do { \
-> if (attr =3D=3D &sysfs_ ## file) { \
-> ssize_t ret =3D bch_hprint(buf, val); \
-> - strcat(buf, "\n"); \
-> + strcat(buf + ret, "\n"); \
-> return ret + 1; \
-> } \
-> } while (0)
-> --=20
-> 2.34.1
->=20
+-- 
+2.42.0
 
