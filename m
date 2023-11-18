@@ -1,51 +1,57 @@
-Return-Path: <linux-bcache+bounces-3-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-4-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751F77F012C
-	for <lists+linux-bcache@lfdr.de>; Sat, 18 Nov 2023 17:41:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B1D7F012D
+	for <lists+linux-bcache@lfdr.de>; Sat, 18 Nov 2023 17:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6C191C20621
-	for <lists+linux-bcache@lfdr.de>; Sat, 18 Nov 2023 16:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39A601C20843
+	for <lists+linux-bcache@lfdr.de>; Sat, 18 Nov 2023 16:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A2E11197;
-	Sat, 18 Nov 2023 16:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384F211CA8;
+	Sat, 18 Nov 2023 16:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ikhSyiry";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YS+NWcxG"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="as2FB6qw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6yAxur9O"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B50D5C1
-	for <linux-bcache@vger.kernel.org>; Sat, 18 Nov 2023 08:41:40 -0800 (PST)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B22F7EA
+	for <linux-bcache@vger.kernel.org>; Sat, 18 Nov 2023 08:41:47 -0800 (PST)
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-	by smtp-out1.suse.de (Postfix) with ESMTP id 6D9AB228E5
-	for <linux-bcache@vger.kernel.org>; Sat, 18 Nov 2023 16:41:39 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTP id 4764B1F381
+	for <linux-bcache@vger.kernel.org>; Sat, 18 Nov 2023 16:41:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1700325699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=d8PBjCJPAkQiQ4CM8s/u0guKu9q2hW8pjd5h1jUbUR0=;
-	b=ikhSyiry7ouBTTdE93/Nyj3gfUByK75IVAMNgCKEZH3b8pCJSrccRCudmgtMqi+jy0jPRj
-	EgzGCXoJfxqSHQyPr2/gGENBz+Xq+R4+GVw5hrhM0CJ0vLPGpSozDXe5VbSJ2OIY/9zlzP
-	TMedHkz7brhAhYncZ4D9Vz91INSSYRE=
+	t=1700325706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8mwAY6+Os3c1dJ5jySPRd9x61Vf/doet5H/qvmK0KsY=;
+	b=as2FB6qw2EaFJfU6cOwQgKMs7wjyXYeOR4qt/UuOVRTk9nvVJ6AMYhaBURuMfwFaYZmUMj
+	o3vCka6sMGFwphLMdPX9hscVY5WT5EEWwKwWLBbPatf46bMxh21ZJZbgN1qfOXHfgphDOK
+	C8aqtDMqr+6bTMSwqMwxJTw33SZOhOY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1700325699;
+	s=susede2_ed25519; t=1700325706;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=d8PBjCJPAkQiQ4CM8s/u0guKu9q2hW8pjd5h1jUbUR0=;
-	b=YS+NWcxGcWEDbyhbT14iwIGSroXnIuYGc05cJ39rS2z/4I23ce76x2jUHEVbmJenbRyNJ6
-	PZJbVqT46WGRmAAA==
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8mwAY6+Os3c1dJ5jySPRd9x61Vf/doet5H/qvmK0KsY=;
+	b=6yAxur9O27jzhpoxveWOrVQep/E0pFCKC54mBfy0oBVyXAawX+Z74ERe2t8npTlpilesgq
+	uOAbD3R1Z28Ux0DA==
 Received: from localhost.localdomain (colyli.tcp.ovpn1.nue.suse.de [10.163.16.22])
-	by relay2.suse.de (Postfix) with ESMTP id EAFAF2C5B7;
-	Sat, 18 Nov 2023 16:41:34 +0000 (UTC)
+	by relay2.suse.de (Postfix) with ESMTP id 91CA12D27D;
+	Sat, 18 Nov 2023 16:41:40 +0000 (UTC)
 From: Coly Li <colyli@suse.de>
 To: linux-bcache@vger.kernel.org
 Cc: Coly Li <colyli@suse.de>
-Subject: [PATCH 01/2] bcache: add code comments for bch_btree_node_get() and __bch_btree_node_alloc()
-Date: Sun, 19 Nov 2023 00:40:28 +0800
-Message-Id: <20231118164029.9723-1-colyli@suse.de>
+Subject: [PATCH 2/2] bcache: avoid NULL checking to c->root in run_cache_set()
+Date: Sun, 19 Nov 2023 00:40:29 +0800
+Message-Id: <20231118164029.9723-2-colyli@suse.de>
 X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20231118164029.9723-1-colyli@suse.de>
+References: <20231118164029.9723-1-colyli@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -54,12 +60,12 @@ List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spamd-Bar: +++++++++++++++++++++
-Authentication-Results: smtp-out1.suse.de;
+Authentication-Results: smtp-out2.suse.de;
 	dkim=none;
 	dmarc=none;
-	spf=softfail (smtp-out1.suse.de: 149.44.160.134 is neither permitted nor denied by domain of colyli@suse.de) smtp.mailfrom=colyli@suse.de
-X-Rspamd-Server: rspamd1
-X-Spamd-Result: default: False [21.95 / 50.00];
+	spf=softfail (smtp-out2.suse.de: 149.44.160.134 is neither permitted nor denied by domain of colyli@suse.de) smtp.mailfrom=colyli@suse.de
+X-Rspamd-Server: rspamd2
+X-Spamd-Result: default: False [21.99 / 50.00];
 	 ARC_NA(0.00)[];
 	 FROM_HAS_DN(0.00)[];
 	 TO_DN_SOME(0.00)[];
@@ -82,45 +88,34 @@ X-Spamd-Result: default: False [21.95 / 50.00];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 R_DKIM_NA(2.20)[];
 	 MIME_TRACE(0.00)[0:+];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 BAYES_HAM(-0.04)[58.16%]
-X-Spam-Score: 21.95
-X-Rspamd-Queue-Id: 6D9AB228E5
+	 RCVD_COUNT_TWO(0.00)[2]
+X-Spam-Score: 21.99
+X-Rspamd-Queue-Id: 4764B1F381
 
-This patch adds code comments to bch_btree_node_get() and
-__bch_btree_node_alloc() that NULL pointer will not be returned and it
-is unnecessary to check NULL pointer by the callers of these routines.
+In run_cache_set() after c->root returned from bch_btree_node_get(), it
+is checked by IS_ERR_OR_NULL(). Indeed it is unncessary to check NULL
+because bch_btree_node_get() will not return NULL pointer to caller.
+
+This patch replaces IS_ERR_OR_NULL() by IS_ERR() for the above reason.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 ---
- drivers/md/bcache/btree.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/md/bcache/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 79f1fa4a0d55..de3019972b35 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -1000,6 +1000,9 @@ static struct btree *mca_alloc(struct cache_set *c, struct btree_op *op,
-  *
-  * The btree node will have either a read or a write lock held, depending on
-  * level and op->lock.
-+ *
-+ * Note: Only error code or btree pointer will be returned, it is unncessary
-+ *       for callers to check NULL pointer.
-  */
- struct btree *bch_btree_node_get(struct cache_set *c, struct btree_op *op,
- 				 struct bkey *k, int level, bool write,
-@@ -1111,6 +1114,10 @@ static void btree_node_free(struct btree *b)
- 	mutex_unlock(&b->c->bucket_lock);
- }
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index c7ecc7058d77..bfe1685dbae5 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2018,7 +2018,7 @@ static int run_cache_set(struct cache_set *c)
+ 		c->root = bch_btree_node_get(c, NULL, k,
+ 					     j->btree_level,
+ 					     true, NULL);
+-		if (IS_ERR_OR_NULL(c->root))
++		if (IS_ERR(c->root))
+ 			goto err;
  
-+/*
-+ * Only error code or btree pointer will be returned, it is unncessary for
-+ * callers to check NULL pointer.
-+ */
- struct btree *__bch_btree_node_alloc(struct cache_set *c, struct btree_op *op,
- 				     int level, bool wait,
- 				     struct btree *parent)
+ 		list_del_init(&c->root->list);
 -- 
 2.35.3
 
