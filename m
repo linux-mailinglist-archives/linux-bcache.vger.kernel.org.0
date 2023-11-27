@@ -1,122 +1,104 @@
-Return-Path: <linux-bcache+bounces-62-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-63-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6927FA5D2
-	for <lists+linux-bcache@lfdr.de>; Mon, 27 Nov 2023 17:12:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB137FA682
+	for <lists+linux-bcache@lfdr.de>; Mon, 27 Nov 2023 17:33:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9986EB21241
-	for <lists+linux-bcache@lfdr.de>; Mon, 27 Nov 2023 16:12:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AA9CB21395
+	for <lists+linux-bcache@lfdr.de>; Mon, 27 Nov 2023 16:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B832358BA;
-	Mon, 27 Nov 2023 16:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE0A36B1A;
+	Mon, 27 Nov 2023 16:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fS/4jveW"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3w8bJekj"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7456CBF
-	for <linux-bcache@vger.kernel.org>; Mon, 27 Nov 2023 08:12:31 -0800 (PST)
-Received: by mail-io1-xd2b.google.com with SMTP id ca18e2360f4ac-7b38ff8a517so15966839f.1
-        for <linux-bcache@vger.kernel.org>; Mon, 27 Nov 2023 08:12:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701101550; x=1701706350; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bvB7rbddcLGLArA7MqLyKH3GIdpZuBsbhH9RHUl0sM8=;
-        b=fS/4jveW7ONuSpqHQD2CZCgNBuOihUISIi92yOFVBkfQWg4XyLhqEUGEOmtLVDiDkg
-         PhRkXqOMAsJHkGqOz9F7S0J7Y9naw24pww2KOSEY3XoMGcmd6CKfoYrP7OmglHxTfLUP
-         kgeE9W4um/AorvcBTB34RZLpEqLSSSiiYJzVcEjymxZHW2zTn1V/cgm1QhaFxjoxXyeG
-         1+h8zUrcgx/3PlFBER3ONH+tu6kBdE8SZDZnV1C8TLQogXmV7rNI2YyePXKOrFHor7HV
-         fcfPVcZpQB0nf8U36QjnyHlZP0ecaDggyGnbSZE6hyCYpBnem7TpK9UrIGPmCyauhtn+
-         ckxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701101550; x=1701706350;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bvB7rbddcLGLArA7MqLyKH3GIdpZuBsbhH9RHUl0sM8=;
-        b=NyEc8hMYV+Z9AZbHhX9POwjaKv9JHw2UjwY6kMDY6+lZ54gag2QRUwwZhTbH+Q4zuU
-         /LC1U+pAssp6ErGGbYQImEMvHUzvtX1s6J3hf2xBfzie3DpalX6lbZ1adtH4+6Jc5Mli
-         ufOIAarWL69j+cygfvJgl0OlZlM1YtGHak33YDmlmcc6gEceFjHdpLMCFgt1u9H0G6TI
-         KrZpTqr27BNOyn9+k9uHCgARRPyAaoO6oF966Q1k82gIUj1ZPAfAktzsRhuzTRb+Vz/D
-         93LHpNircV+PevhQpEd2pQKMBAg8wnmbZoUg6U7HTRxpgNjSwx+jV8VVgutRJZV6+7oJ
-         uH8w==
-X-Gm-Message-State: AOJu0YxkCse/ZrwsJ4WaQsq4rp0eBTMCyxgllXFjch6P6FV1bfG+jBqH
-	NYkFZZrEBDnRUUAMhaVsx3RlxwOJLPhDE+OzH3lVzw==
-X-Google-Smtp-Source: AGHT+IG04eTzzicBywjmAxWaoEJU61uSxMw471TKINu23Lw+T9NqHOZNLbrFo4J4Xa2OGDDQItWp0g==
-X-Received: by 2002:a92:503:0:b0:35c:acbd:3d3e with SMTP id q3-20020a920503000000b0035cacbd3d3emr5168491ile.3.1701101550317;
-        Mon, 27 Nov 2023 08:12:30 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id r15-20020a92c5af000000b0035ca20fc741sm1338589ilt.70.2023.11.27.08.12.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Nov 2023 08:12:29 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Bcache Linux <linux-bcache@vger.kernel.org>, 
- Markus Weippert <markus@gekmihesg.de>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>, 
- Zheng Wang <zyytlz.wz@163.com>, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Stefan_F=C3=B6rster?= <cite@incertum.net>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
- Linux kernel regressions list <regressions@lists.linux.dev>, 
- Coly Li <colyli@suse.de>
-In-Reply-To: <c47d3540ece151a2fb30e1c7b5881cb8922db915.camel@gekmihesg.de>
-References: <ZV9ZSyDLNDlzutgQ@pharmakeia.incertum.net>
- <be371028-efeb-44af-90ea-5c307f27d4c6@leemhuis.info>
- <71576a9ff7398bfa4b8c0a1a1a2523383b056168.camel@gekmihesg.de>
- <989C39B9-A05D-4E4F-A842-A4943A29FFD6@suse.de>
- <1c2a1f362d667d36d83a5ba43218bad199855b11.camel@gekmihesg.de>
- <3DF4A87A-2AC1-4893-AE5F-E921478419A9@suse.de>
- <c47d3540ece151a2fb30e1c7b5881cb8922db915.camel@gekmihesg.de>
-Subject: Re: [PATCH] bcache: revert replacing IS_ERR_OR_NULL with IS_ERR
-Message-Id: <170110154924.44993.12405607589120929041.b4-ty@kernel.dk>
-Date: Mon, 27 Nov 2023 09:12:29 -0700
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80128D4B;
+	Mon, 27 Nov 2023 08:33:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=N2zDXv8N842SdWeP1QfvmzEvIcEsyQplx8msSV1RBzc=; b=3w8bJekjauD14xkhiSXsSeP1yp
+	9N3b2DKZZPdBt27xj1DIEE7RXLXZrvHxDKR2sRYD21pNAAIJ3vl1ZCKZ4NFvv5G6xjzqey6N1n0KK
+	ZrI0nakNUBsMEbW2Q4e4j1NRh5OeO1tyxIFUhlV8EaqwcQbah9MgH17+QPadh0DqL/pm4sqZ5f/vV
+	IH1EMWIP6up9ybGx4dw0MvcLdLRClPIEOMfWizJpOcO8WEMAVnlOuY5kgUVe2HK2Xt75AhDq2qkmf
+	jzAFQBFfr3qP/5tAASIdgOPBH9JmPj2A8s0x9fJ50RYVccYl2K4OsZZ71u82sMqjEZ1B5f5BIa6y8
+	Lia9qiAg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r7eXO-0030D4-22;
+	Mon, 27 Nov 2023 16:32:46 +0000
+Date: Mon, 27 Nov 2023 08:32:46 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Christoph Hellwig <hch@infradead.org>, ming.lei@redhat.com,
+	axboe@kernel.dk, roger.pau@citrix.com, colyli@suse.de,
+	kent.overstreet@gmail.com, joern@lazybastard.org,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
+	gor@linux.ibm.com, agordeev@linux.ibm.com, jejb@linux.ibm.com,
+	martin.petersen@oracle.com, clm@fb.com, josef@toxicpanda.com,
+	dsterba@suse.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	nico@fluxnic.net, xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, agruenba@redhat.com, jack@suse.com,
+	konishi.ryusuke@gmail.com, dchinner@redhat.com,
+	linux@weissschuh.net, min15.li@samsung.com, dlemoal@kernel.org,
+	willy@infradead.org, akpm@linux-foundation.org, hare@suse.de,
+	p.raghav@samsung.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+	linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+	linux-ext4@vger.kernel.org, gfs2@lists.linux.dev,
+	linux-nilfs@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH block/for-next v2 01/16] block: add a new helper to get
+ inode from block_device
+Message-ID: <ZWTErvnMf7HiO1Wj@infradead.org>
+References: <20231127062116.2355129-1-yukuai1@huaweicloud.com>
+ <20231127062116.2355129-2-yukuai1@huaweicloud.com>
+ <ZWRDeQ4K8BiYnV+X@infradead.org>
+ <6acdeece-7163-3219-95e2-827e54eadd0c@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-26615
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6acdeece-7163-3219-95e2-827e54eadd0c@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+
+On Mon, Nov 27, 2023 at 09:07:22PM +0800, Yu Kuai wrote:
+> 1) Is't okay to add a new helper to pass in bdev for following apis?
 
 
-On Fri, 24 Nov 2023 16:14:37 +0100, Markus Weippert wrote:
-> Commit 028ddcac477b ("bcache: Remove unnecessary NULL point check in
-> node allocations") replaced IS_ERR_OR_NULL by IS_ERR. This leads to a
-> NULL pointer dereference.
+For some we already have them (e.g. bdev_nr_bytes to read the bdev)
+size, for some we need to add them.  The big thing that seems to
+stick out is page cache API, and I think that is where we need to
+define maintainable APIs for file systems and others to use the
+block device page cache.  Probably only in folio versions and not
+pages once if we're touching the code anyay
+
+> 2) For the file fs/buffer.c, there are some special usage like
+> following that I don't think it's good to add a helper:
 > 
-> BUG: kernel NULL pointer dereference, address: 0000000000000080
-> Call Trace:
->  ? __die_body.cold+0x1a/0x1f
->  ? page_fault_oops+0xd2/0x2b0
->  ? exc_page_fault+0x70/0x170
->  ? asm_exc_page_fault+0x22/0x30
->  ? btree_node_free+0xf/0x160 [bcache]
->  ? up_write+0x32/0x60
->  btree_gc_coalesce+0x2aa/0x890 [bcache]
->  ? bch_extent_bad+0x70/0x170 [bcache]
->  btree_gc_recurse+0x130/0x390 [bcache]
->  ? btree_gc_mark_node+0x72/0x230 [bcache]
->  bch_btree_gc+0x5da/0x600 [bcache]
->  ? cpuusage_read+0x10/0x10
->  ? bch_btree_gc+0x600/0x600 [bcache]
->  bch_gc_thread+0x135/0x180 [bcache]
+> spin_lock(&bd_inode->i_mapping->private_lock);
 > 
-> [...]
+> Is't okay to move following apis from fs/buffer.c directly to
+> block/bdev.c?
+> 
+> __find_get_block
+> bdev_getblk
 
-Applied, thanks!
-
-[1/1] bcache: revert replacing IS_ERR_OR_NULL with IS_ERR
-      (no commit info)
-
-Best regards,
--- 
-Jens Axboe
-
-
+I'm not sure moving is a good idea, but we might end up the
+some kind of low-level access from buffer.c, be that special
+helpers, a separate header or something else.  Let's sort out
+the rest of the kernel first.
 
 
