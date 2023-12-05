@@ -1,30 +1,30 @@
-Return-Path: <linux-bcache+bounces-96-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-97-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F26280549E
-	for <lists+linux-bcache@lfdr.de>; Tue,  5 Dec 2023 13:39:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218A48054A3
+	for <lists+linux-bcache@lfdr.de>; Tue,  5 Dec 2023 13:39:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BF061F21574
-	for <lists+linux-bcache@lfdr.de>; Tue,  5 Dec 2023 12:39:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83825B20D82
+	for <lists+linux-bcache@lfdr.de>; Tue,  5 Dec 2023 12:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC0D5E0CB;
-	Tue,  5 Dec 2023 12:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B83961673;
+	Tue,  5 Dec 2023 12:38:47 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B26D610F;
-	Tue,  5 Dec 2023 04:38:41 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Sl0Sr6KkZz4f3khR;
-	Tue,  5 Dec 2023 20:38:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 0C88E1A0928;
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 332FEC6;
+	Tue,  5 Dec 2023 04:38:43 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Sl0Sv3sRWz4f3kKd;
 	Tue,  5 Dec 2023 20:38:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 8958F1A0B45;
+	Tue,  5 Dec 2023 20:38:40 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDnNw7GGW9lr8E8Cw--.35507S8;
-	Tue, 05 Dec 2023 20:38:38 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgDnNw7GGW9lr8E8Cw--.35507S9;
+	Tue, 05 Dec 2023 20:38:39 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: axboe@kernel.dk,
 	roger.pau@citrix.com,
@@ -73,9 +73,9 @@ Cc: linux-block@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH -next RFC 04/14] mtd: block2mtd: use bdev apis
-Date: Tue,  5 Dec 2023 20:37:18 +0800
-Message-Id: <20231205123728.1866699-5-yukuai1@huaweicloud.com>
+Subject: [PATCH -next RFC 05/14] s390/dasd: use bdev api in dasd_format()
+Date: Tue,  5 Dec 2023 20:37:19 +0800
+Message-Id: <20231205123728.1866699-6-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231205123728.1866699-1-yukuai1@huaweicloud.com>
 References: <20231205123728.1866699-1-yukuai1@huaweicloud.com>
@@ -86,193 +86,52 @@ List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDnNw7GGW9lr8E8Cw--.35507S8
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jw1DtryDWw17CF45XFyrZwb_yoW7AF15pa
-	y3Ca95Aw4UKrn8ur4xXwn8Zr12g3sFqayUCay7C3yakF93JryIkas7ta45KFyrKry8AFWk
-	XF4DArs5XF40grJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPa14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMI
-	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
-	14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU
-	oxhLUUUUU
+X-CM-TRANSID:cCh0CgDnNw7GGW9lr8E8Cw--.35507S9
+X-Coremail-Antispam: 1UD129KBjvdXoW7XFWrKF1rWw4UAw4kXFWkWFg_yoWfWrg_Zr
+	1fGryxtr1xCr9Ikr1YvF15Zr9Y9F1kWr4Svry3KryfXFnrXFsaq3ykuFW3JrZ7JayUG3s3
+	GF9rXw10yr15WjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbqkFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2
+	IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28E
+	F7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr
+	1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0D
+	M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
+	v20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
+	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2
+	IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr
+	0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUl
+	2NtUUUUU=
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Yu Kuai <yukuai3@huawei.com>
 
-On the one hand covert to use folio while reading bdev inode, on the
-other hand prevent to access bd_inode directly.
+Avoid to access bd_inode directly, prepare to remove bd_inode from
+block_devcie.
 
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- drivers/mtd/devices/block2mtd.c | 80 +++++++++++++++------------------
- 1 file changed, 35 insertions(+), 45 deletions(-)
+ drivers/s390/block/dasd_ioctl.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/devices/block2mtd.c b/drivers/mtd/devices/block2mtd.c
-index aa44a23ec045..927fc9cf0856 100644
---- a/drivers/mtd/devices/block2mtd.c
-+++ b/drivers/mtd/devices/block2mtd.c
-@@ -46,40 +46,34 @@ struct block2mtd_dev {
- /* Static info about the MTD, used in cleanup_module */
- static LIST_HEAD(blkmtd_device_list);
- 
--
--static struct page *page_read(struct address_space *mapping, pgoff_t index)
--{
--	return read_mapping_page(mapping, index, NULL);
--}
--
- /* erase a specified part of the device */
- static int _block2mtd_erase(struct block2mtd_dev *dev, loff_t to, size_t len)
- {
--	struct address_space *mapping =
--				dev->bdev_handle->bdev->bd_inode->i_mapping;
--	struct page *page;
-+	struct block_device *bdev = dev->bdev_handle->bdev;
-+	struct folio *folio;
- 	pgoff_t index = to >> PAGE_SHIFT;	// page index
- 	int pages = len >> PAGE_SHIFT;
- 	u_long *p;
- 	u_long *max;
- 
- 	while (pages) {
--		page = page_read(mapping, index);
--		if (IS_ERR(page))
--			return PTR_ERR(page);
-+		folio = bdev_read_folio(bdev, index);
-+		if (IS_ERR(folio))
-+			return PTR_ERR(folio);
- 
--		max = page_address(page) + PAGE_SIZE;
--		for (p=page_address(page); p<max; p++)
-+		max = folio_address(folio) + folio_size(folio);
-+		for (p = folio_address(folio); p < max; p++)
- 			if (*p != -1UL) {
--				lock_page(page);
--				memset(page_address(page), 0xff, PAGE_SIZE);
--				set_page_dirty(page);
--				unlock_page(page);
--				balance_dirty_pages_ratelimited(mapping);
-+				folio_lock(folio);
-+				memset(folio_address(folio), 0xff,
-+				       folio_size(folio));
-+				folio_mark_dirty(folio);
-+				folio_unlock(folio);
-+				bdev_balance_dirty_pages_ratelimited(bdev);
- 				break;
- 			}
- 
--		put_page(page);
-+		folio_put(folio);
- 		pages--;
- 		index++;
- 	}
-@@ -106,9 +100,7 @@ static int block2mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
- 		size_t *retlen, u_char *buf)
- {
- 	struct block2mtd_dev *dev = mtd->priv;
--	struct address_space *mapping =
--				dev->bdev_handle->bdev->bd_inode->i_mapping;
--	struct page *page;
-+	struct folio *folio;
- 	pgoff_t index = from >> PAGE_SHIFT;
- 	int offset = from & (PAGE_SIZE-1);
- 	int cpylen;
-@@ -120,12 +112,12 @@ static int block2mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
- 			cpylen = len;	// this page
- 		len = len - cpylen;
- 
--		page = page_read(mapping, index);
--		if (IS_ERR(page))
--			return PTR_ERR(page);
-+		folio = bdev_read_folio(dev->bdev_handle->bdev, index);
-+		if (IS_ERR(folio))
-+			return PTR_ERR(folio);
- 
--		memcpy(buf, page_address(page) + offset, cpylen);
--		put_page(page);
-+		memcpy(buf, folio_address(folio) + offset, cpylen);
-+		folio_put(folio);
- 
- 		if (retlen)
- 			*retlen += cpylen;
-@@ -141,9 +133,8 @@ static int block2mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
- static int _block2mtd_write(struct block2mtd_dev *dev, const u_char *buf,
- 		loff_t to, size_t len, size_t *retlen)
- {
--	struct page *page;
--	struct address_space *mapping =
--				dev->bdev_handle->bdev->bd_inode->i_mapping;
-+	struct block_device *bdev = dev->bdev_handle->bdev;
-+	struct folio *folio;
- 	pgoff_t index = to >> PAGE_SHIFT;	// page index
- 	int offset = to & ~PAGE_MASK;	// page offset
- 	int cpylen;
-@@ -155,18 +146,18 @@ static int _block2mtd_write(struct block2mtd_dev *dev, const u_char *buf,
- 			cpylen = len;			// this page
- 		len = len - cpylen;
- 
--		page = page_read(mapping, index);
--		if (IS_ERR(page))
--			return PTR_ERR(page);
-+		folio = bdev_read_folio(bdev, index);
-+		if (IS_ERR(folio))
-+			return PTR_ERR(folio);
- 
--		if (memcmp(page_address(page)+offset, buf, cpylen)) {
--			lock_page(page);
--			memcpy(page_address(page) + offset, buf, cpylen);
--			set_page_dirty(page);
--			unlock_page(page);
--			balance_dirty_pages_ratelimited(mapping);
-+		if (memcmp(folio_address(folio) + offset, buf, cpylen)) {
-+			folio_lock(folio);
-+			memcpy(folio_address(folio) + offset, buf, cpylen);
-+			folio_mark_dirty(folio);
-+			folio_unlock(folio);
-+			bdev_balance_dirty_pages_ratelimited(bdev);
- 		}
--		put_page(page);
-+		folio_put(folio);
- 
- 		if (retlen)
- 			*retlen += cpylen;
-@@ -211,8 +202,7 @@ static void block2mtd_free_device(struct block2mtd_dev *dev)
- 	kfree(dev->mtd.name);
- 
- 	if (dev->bdev_handle) {
--		invalidate_mapping_pages(
--			dev->bdev_handle->bdev->bd_inode->i_mapping, 0, -1);
-+		invalidate_bdev(dev->bdev_handle->bdev);
- 		bdev_release(dev->bdev_handle);
+diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
+index 61b9675e2a67..bbfb958237e6 100644
+--- a/drivers/s390/block/dasd_ioctl.c
++++ b/drivers/s390/block/dasd_ioctl.c
+@@ -221,8 +221,9 @@ dasd_format(struct dasd_block *block, struct format_data_t *fdata)
+ 	 * enabling the device later.
+ 	 */
+ 	if (fdata->start_unit == 0) {
+-		block->gdp->part0->bd_inode->i_blkbits =
+-			blksize_bits(fdata->blksize);
++		rc = set_blocksize(block->gdp->part0, fdata->blksize);
++		if (rc)
++			return rc;
  	}
  
-@@ -295,7 +285,7 @@ static struct block2mtd_dev *add_device(char *devname, int erase_size,
- 		goto err_free_block2mtd;
- 	}
- 
--	if ((long)bdev->bd_inode->i_size % erase_size) {
-+	if ((long)bdev_size(bdev) % erase_size) {
- 		pr_err("erasesize must be a divisor of device size\n");
- 		goto err_free_block2mtd;
- 	}
-@@ -313,7 +303,7 @@ static struct block2mtd_dev *add_device(char *devname, int erase_size,
- 
- 	dev->mtd.name = name;
- 
--	dev->mtd.size = bdev->bd_inode->i_size & PAGE_MASK;
-+	dev->mtd.size = bdev_size(bdev) & PAGE_MASK;
- 	dev->mtd.erasesize = erase_size;
- 	dev->mtd.writesize = 1;
- 	dev->mtd.writebufsize = PAGE_SIZE;
+ 	rc = base->discipline->format_device(base, fdata, 1);
 -- 
 2.39.2
 
