@@ -1,98 +1,158 @@
-Return-Path: <linux-bcache+bounces-91-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-92-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51BB7FE0CF
-	for <lists+linux-bcache@lfdr.de>; Wed, 29 Nov 2023 21:13:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DA1805469
+	for <lists+linux-bcache@lfdr.de>; Tue,  5 Dec 2023 13:38:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FF35281F2E
-	for <lists+linux-bcache@lfdr.de>; Wed, 29 Nov 2023 20:13:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD2A4281935
+	for <lists+linux-bcache@lfdr.de>; Tue,  5 Dec 2023 12:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D945EE95;
-	Wed, 29 Nov 2023 20:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NSwW7BGM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C7B59E54;
+	Tue,  5 Dec 2023 12:38:42 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B429131
-	for <linux-bcache@vger.kernel.org>; Wed, 29 Nov 2023 12:13:18 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-6cdcef8b400so174181b3a.1
-        for <linux-bcache@vger.kernel.org>; Wed, 29 Nov 2023 12:13:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1701288797; x=1701893597; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wGNO/FU6EbIMJxkiiI7PYYT8RbUNVHzpIkE2CHH5mhE=;
-        b=NSwW7BGMjMuVUUuyJsckqVA2ZjLRzOGxhvTnAkQBjucTSPmzM1G4AZOeB/VxQ29MaU
-         ez/ac/su8xhqonQikcx/9eBeGBhX6sCZ7y+leSFyE8aa6vzKYUdat9e7ZZZKd/bAq9sN
-         Mu0G4ArZYrPsxM/EKyDhIdhWaIBtTkbJmHtBI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701288797; x=1701893597;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wGNO/FU6EbIMJxkiiI7PYYT8RbUNVHzpIkE2CHH5mhE=;
-        b=XdNjRVmNSOHi7ri3UOyMv9C3s3RhS563iRdxjTMd1s6LQ+FtIqZQDYlT8Oeq4kljO/
-         EppqDj+96P6pTxIooJ1ps/6GdpPVJg2+RSRENfQk/h/zmcZ1vx716Nwex74K2WQetQn0
-         VBhRyGf3DuyBeqe4D0HZSnvZLIAvNYk7HWzN3qUuNSj6pA0GeDfR1Wte/Ht9ytGj71xD
-         bn1+rGBe3Sa6qA2q322OtE66fzeSWRdGq1dq+Cz0gULInCQuCslMlnT7XvZERXT2tAr1
-         FNm+PgLX/N3jHTCSj/waZtJwjgLIj+U5p5stcqC9AP9tnXhCjLklL7cLx146+affwuaU
-         vVyQ==
-X-Gm-Message-State: AOJu0Yy15ipB5Nhf1u4mXalxUzq6HO2fnkqz6O34nSmwr1f/VpqXweTG
-	bainFssab568s9kJBqH47wuF6Q==
-X-Google-Smtp-Source: AGHT+IGLRLEmidEeUyhKevGVc4UsmZ87Z0IfhEoUik0F4rdAevbEg58uIkhKRgMt0cR609AqHC53bQ==
-X-Received: by 2002:a05:6a00:15cb:b0:6cd:85a4:bbbc with SMTP id o11-20020a056a0015cb00b006cd85a4bbbcmr14837775pfu.9.1701288797589;
-        Wed, 29 Nov 2023 12:13:17 -0800 (PST)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id fi35-20020a056a0039a300b006c2d53e0b5fsm11133448pfb.57.2023.11.29.12.13.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Nov 2023 12:13:17 -0800 (PST)
-Date: Wed, 29 Nov 2023 12:13:16 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-bcache@vger.kernel.org,
-	Coly Li <colyli@suse.de>
-Subject: Re: [PATCH] closures: CLOSURE_CALLBACK() to fix type punning
-Message-ID: <202311291212.7955AF30D1@keescook>
-References: <20231120030729.3285278-1-kent.overstreet@linux.dev>
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35002C6;
+	Tue,  5 Dec 2023 04:38:37 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Sl0Sk6Q5Lz4f3jrm;
+	Tue,  5 Dec 2023 20:38:30 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 0FC731A0902;
+	Tue,  5 Dec 2023 20:38:33 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgDnNw7GGW9lr8E8Cw--.35507S4;
+	Tue, 05 Dec 2023 20:38:32 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	roger.pau@citrix.com,
+	colyli@suse.de,
+	kent.overstreet@gmail.com,
+	joern@lazybastard.org,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	sth@linux.ibm.com,
+	hoeppner@linux.ibm.com,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	nico@fluxnic.net,
+	xiang@kernel.org,
+	chao@kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	agruenba@redhat.com,
+	jack@suse.com,
+	konishi.ryusuke@gmail.com,
+	willy@infradead.org,
+	akpm@linux-foundation.org,
+	hare@suse.de,
+	p.raghav@samsung.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	linux-bcache@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org,
+	linux-ext4@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	linux-nilfs@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH -next RFC 00/14] block: don't access bd_inode directly from other modules
+Date: Tue,  5 Dec 2023 20:37:14 +0800
+Message-Id: <20231205123728.1866699-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231120030729.3285278-1-kent.overstreet@linux.dev>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDnNw7GGW9lr8E8Cw--.35507S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw4Utry8XFW7Zr18Jr43Wrg_yoW8WF1kpr
+	y3KF1fGr1Uu347Zaya9an7tryrJw4kGay7GF17t34rZr13JryfAr4ktrW8Ja48Jr9rXr4k
+	Xw1DtryFgr10gaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	fUoL0eDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Sun, Nov 19, 2023 at 10:07:25PM -0500, Kent Overstreet wrote:
-> Control flow integrity is now checking that type signatures match on
-> indirect function calls. That breaks closures, which embed a work_struct
-> in a closure in such a way that a closure_fn may also be used as a
-> workqueue fn by the underlying closure code.
-> 
-> So we have to change closure fns to take a work_struct as their
-> argument - but that results in a loss of clarity, as closure fns have
-> different semantics from normal workqueue functions (they run owning a
-> ref on the closure, which must be released with continue_at() or
-> closure_return()).
-> 
-> Thus, this patc introduces CLOSURE_CALLBACK() and closure_type() macros
-> as suggested by Kees, to smooth things over a bit.
-> 
-> Suggested-by: Kees Cook <keescook@chromium.org>
-> Cc: Coly Li <colyli@suse.de>
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+From: Yu Kuai <yukuai3@huawei.com>
 
-Thanks for doing this! This looks reasonable to me. I look forward to
-being able to do fancier CFI prototype partitioning in the future...
+Patch 1 add some bdev apis, then follow up patches will use these apis
+to avoid access bd_inode directly, and hopefully the field bd_inode can
+be removed eventually(after figure out a way for fs/buffer.c).
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Yu Kuai (14):
+  block: add some bdev apis
+  xen/blkback: use bdev api in xen_update_blkif_status()
+  bcache: use bdev api in read_super()
+  mtd: block2mtd: use bdev apis
+  s390/dasd: use bdev api in dasd_format()
+  scsicam: use bdev api in scsi_bios_ptable()
+  bcachefs: remove dead function bdev_sectors()
+  btrfs: use bdev apis
+  cramfs: use bdev apis in cramfs_blkdev_read()
+  erofs: use bdev api
+  ext4: use bdev apis
+  jbd2: use bdev apis
+  gfs2: use bdev api
+  nilfs2: use bdev api in nilfs_attach_log_writer()
 
--Kees
+ block/bdev.c                       | 116 +++++++++++++++++++++++++++++
+ block/bio.c                        |   1 +
+ block/blk.h                        |   2 -
+ drivers/block/xen-blkback/xenbus.c |   3 +-
+ drivers/md/bcache/super.c          |  11 ++-
+ drivers/mtd/devices/block2mtd.c    |  80 +++++++++-----------
+ drivers/s390/block/dasd_ioctl.c    |   5 +-
+ drivers/scsi/scsicam.c             |   3 +-
+ fs/bcachefs/util.h                 |   5 --
+ fs/btrfs/disk-io.c                 |  68 ++++++++---------
+ fs/btrfs/volumes.c                 |  17 ++---
+ fs/btrfs/zoned.c                   |  12 ++-
+ fs/cramfs/inode.c                  |  35 +++------
+ fs/erofs/data.c                    |  17 +++--
+ fs/erofs/internal.h                |   1 +
+ fs/ext4/dir.c                      |   6 +-
+ fs/ext4/ext4_jbd2.c                |   6 +-
+ fs/ext4/super.c                    |  27 +------
+ fs/gfs2/glock.c                    |   2 +-
+ fs/gfs2/ops_fstype.c               |   2 +-
+ fs/jbd2/journal.c                  |   3 +-
+ fs/jbd2/recovery.c                 |   6 +-
+ fs/nilfs2/segment.c                |   2 +-
+ include/linux/blkdev.h             |  27 +++++++
+ include/linux/buffer_head.h        |   5 +-
+ 25 files changed, 273 insertions(+), 189 deletions(-)
 
 -- 
-Kees Cook
+2.39.2
+
 
