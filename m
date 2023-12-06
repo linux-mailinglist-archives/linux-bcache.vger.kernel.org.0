@@ -1,89 +1,80 @@
-Return-Path: <linux-bcache+bounces-107-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-108-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE2C805AA6
-	for <lists+linux-bcache@lfdr.de>; Tue,  5 Dec 2023 18:04:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FF18066BA
+	for <lists+linux-bcache@lfdr.de>; Wed,  6 Dec 2023 06:55:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A1C3281D35
-	for <lists+linux-bcache@lfdr.de>; Tue,  5 Dec 2023 17:04:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 332A1B21067
+	for <lists+linux-bcache@lfdr.de>; Wed,  6 Dec 2023 05:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85D165ED5;
-	Tue,  5 Dec 2023 17:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DFB107A4;
+	Wed,  6 Dec 2023 05:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AH1r7Or5"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CBD9A1;
-	Tue,  5 Dec 2023 09:03:55 -0800 (PST)
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-58ceab7daddso2484286eaf.3;
-        Tue, 05 Dec 2023 09:03:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701795835; x=1702400635;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Kxt6CKccKyM2aD5KqaYbJ+5NRAtsSu20TdTe87tfro=;
-        b=gC36X4NARMJFnoLUNZ6eIGcjEc1l5871SjthUiIspKmoaHf1kKjnlSO/V046uFgT2E
-         ANpe+rE5YEEqD2ycQzEEJ2mRgqdkimd665BviZzZGLt00siu1fKb6fMq6SofmFtGR9Px
-         /zZsUIDflXJhqBv7j8JhsaId5oPThrEeECQf5cm+TU/s04ZWVnfKzi3t9ivWG7FV5IV7
-         HAKl0s0DEmaS9cO/6BzT6PWwXhne8jh6A1fDwzLnkdgkZjOzP56x2wDgqZCl+pc1x+lZ
-         w4m5sa7rw0F01s7QLkdN9wIPpD6NKIHh+cJB34LW3DHrhW2juZF4rQu33NAJsvjscxVW
-         LC8Q==
-X-Gm-Message-State: AOJu0YyRYu6XQo6MkLfAFga6iBIY3nm9gjjsFU1upk6OFnZLq5EGsGF2
-	MNkzx2aSUSOJ7Mqx2nFdsWg=
-X-Google-Smtp-Source: AGHT+IHREsBDTR/fguPuUAOPGrQJFqdX7+L934/9nqEfo9v3T6jgbM8x1qOuTAd7fOfx1S8tYfwMzA==
-X-Received: by 2002:a05:6358:6f95:b0:16e:43a1:6881 with SMTP id s21-20020a0563586f9500b0016e43a16881mr2252180rwn.26.1701795834695;
-        Tue, 05 Dec 2023 09:03:54 -0800 (PST)
-Received: from [172.20.2.177] (rrcs-173-197-90-226.west.biz.rr.com. [173.197.90.226])
-        by smtp.gmail.com with ESMTPSA id s25-20020a639259000000b00578afd8e012sm5146562pgn.92.2023.12.05.09.03.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Dec 2023 09:03:54 -0800 (PST)
-Message-ID: <189fa9b2-bcc8-4839-ac04-33a29bba9aaa@acm.org>
-Date: Tue, 5 Dec 2023 09:03:48 -0800
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB78AD46;
+	Tue,  5 Dec 2023 21:54:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Epg/iXYkY+1k3eZKM14iUxoA+UE8xascWdRNU509WEI=; b=AH1r7Or5zoUct39UOS7X8uhjM/
+	ZiUNF74wEtopkSsYjRN4ZiT+Q5RDAfrGjr2SdG2lYRso2gu9KpXtKwk60gz8irSWJAAQdmmFCaTEL
+	SzY/rogxAQvA7E28MbalnxTm3ENVynpcioekCUIHWOMylS+mP3+gVaUE9mTXoi268lvfIjLdzx8gy
+	KJ4Ze8tYIRqVan/Kdng7awTtiEGY+yfEO2mGuyBJruCAYOU4SPpu5BrZ55s3w5ET/sudLHNfZi9Fm
+	RGHdjWS7by3ADPe4JZlkDzpRcg6HmO7sizVltW2W1zG8KT62VV/j/an1o/4xPCND1GnBbvrQyIKqD
+	pYwXk3tQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rAkrP-0098Oa-0t;
+	Wed, 06 Dec 2023 05:54:15 +0000
+Date: Tue, 5 Dec 2023 21:54:15 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, roger.pau@citrix.com, colyli@suse.de,
+	kent.overstreet@gmail.com, joern@lazybastard.org,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
+	gor@linux.ibm.com, agordeev@linux.ibm.com, jejb@linux.ibm.com,
+	martin.petersen@oracle.com, clm@fb.com, josef@toxicpanda.com,
+	dsterba@suse.com, nico@fluxnic.net, xiang@kernel.org,
+	chao@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+	agruenba@redhat.com, jack@suse.com, konishi.ryusuke@gmail.com,
+	willy@infradead.org, akpm@linux-foundation.org, hare@suse.de,
+	p.raghav@samsung.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+	linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+	gfs2@lists.linux.dev, linux-nilfs@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH -next RFC 00/14] block: don't access bd_inode directly
+ from other modules
+Message-ID: <ZXAMh02h4FAwt2FY@infradead.org>
+References: <20231205123728.1866699-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC 01/14] block: add some bdev apis
-Content-Language: en-US
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, roger.pau@citrix.com,
- colyli@suse.de, kent.overstreet@gmail.com, joern@lazybastard.org,
- miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
- sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
- gor@linux.ibm.com, agordeev@linux.ibm.com, jejb@linux.ibm.com,
- martin.petersen@oracle.com, clm@fb.com, josef@toxicpanda.com,
- dsterba@suse.com, nico@fluxnic.net, xiang@kernel.org, chao@kernel.org,
- tytso@mit.edu, adilger.kernel@dilger.ca, agruenba@redhat.com, jack@suse.com,
- konishi.ryusuke@gmail.com, willy@infradead.org, akpm@linux-foundation.org,
- hare@suse.de, p.raghav@samsung.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-bcachefs@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-ext4@vger.kernel.org, gfs2@lists.linux.dev,
- linux-nilfs@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com
-References: <20231205123728.1866699-1-yukuai1@huaweicloud.com>
- <20231205123728.1866699-2-yukuai1@huaweicloud.com>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20231205123728.1866699-2-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231205123728.1866699-1-yukuai1@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 12/5/23 04:37, Yu Kuai wrote:
-> +static inline u8 block_bits(struct block_device *bdev)
-> +{
-> +	return bdev->bd_inode->i_blkbits;
-> +}
+On Tue, Dec 05, 2023 at 08:37:14PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Patch 1 add some bdev apis, then follow up patches will use these apis
+> to avoid access bd_inode directly, and hopefully the field bd_inode can
+> be removed eventually(after figure out a way for fs/buffer.c).
 
-This function needs a name that's more descriptive.
+What tree is this against?  It fails to apply to either Jens'
+for-6.8/block or Linus tree in the very first patch.
 
-Thanks,
-
-Bart.
 
