@@ -1,106 +1,186 @@
-Return-Path: <linux-bcache+bounces-110-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-111-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DDE806715
-	for <lists+linux-bcache@lfdr.de>; Wed,  6 Dec 2023 07:08:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31F0806735
+	for <lists+linux-bcache@lfdr.de>; Wed,  6 Dec 2023 07:14:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3073A1F218D1
-	for <lists+linux-bcache@lfdr.de>; Wed,  6 Dec 2023 06:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77DD9282BD5
+	for <lists+linux-bcache@lfdr.de>; Wed,  6 Dec 2023 06:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BFA13FE1;
-	Wed,  6 Dec 2023 06:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2452110A16;
+	Wed,  6 Dec 2023 06:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZSLgTwnr"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0ADF10D5;
-	Tue,  5 Dec 2023 22:06:41 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4SlRk33yG7z4f3jXd;
-	Wed,  6 Dec 2023 14:06:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B86D91A08D0;
-	Wed,  6 Dec 2023 14:06:37 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgBXWhBpD3BlSn2ACw--.13338S3;
-	Wed, 06 Dec 2023 14:06:36 +0800 (CST)
-Subject: Re: [PATCH -next RFC 00/14] block: don't access bd_inode directly
- from other modules
-To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD9D311F;
+	Tue,  5 Dec 2023 22:14:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4/ZwiAtDqcKncE9Sxs1fDYOC2BzoaQU34ADFgY4TSSs=; b=ZSLgTwnreLOPqcun4IeSE9ItZu
+	PnTWx9UHdSzDOMw03zhM4iJWbD050LQsUFBy4f4oO/I2CEfLxgu6VKI/48QpINdzGnuBN/4jhcnWn
+	T6OU37rwGxHJqPa/Z53FU9Yr3Z/lHh82wcz4yXLaNizP/+ST3MBO3FUnRt49dArLwuH65rXSylY7S
+	NM9uVZ0jYQFEdnnGM7iibI2Uo0n82j5ujsUAs74TacZS+egwtqhpWfEnDXYYMvxse9S8X7lLVbUAE
+	/Uc2UOgBsAQP0Wf1EQ01B4RrecJ+UvN+DuxFci/PVUUXzcCfKe+xsAO/GPTkS0EmtvxKJn5csRJAc
+	38PBAwUg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rAlAW-009B0t-1J;
+	Wed, 06 Dec 2023 06:14:00 +0000
+Date: Tue, 5 Dec 2023 22:14:00 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
 Cc: axboe@kernel.dk, roger.pau@citrix.com, colyli@suse.de,
- kent.overstreet@gmail.com, joern@lazybastard.org, miquel.raynal@bootlin.com,
- richard@nod.at, vigneshr@ti.com, sth@linux.ibm.com, hoeppner@linux.ibm.com,
- hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
- jejb@linux.ibm.com, martin.petersen@oracle.com, clm@fb.com,
- josef@toxicpanda.com, dsterba@suse.com, nico@fluxnic.net, xiang@kernel.org,
- chao@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- agruenba@redhat.com, jack@suse.com, konishi.ryusuke@gmail.com,
- willy@infradead.org, akpm@linux-foundation.org, hare@suse.de,
- p.raghav@samsung.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
- gfs2@lists.linux.dev, linux-nilfs@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+	kent.overstreet@gmail.com, joern@lazybastard.org,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
+	gor@linux.ibm.com, agordeev@linux.ibm.com, jejb@linux.ibm.com,
+	martin.petersen@oracle.com, clm@fb.com, josef@toxicpanda.com,
+	dsterba@suse.com, nico@fluxnic.net, xiang@kernel.org,
+	chao@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+	agruenba@redhat.com, jack@suse.com, konishi.ryusuke@gmail.com,
+	willy@infradead.org, akpm@linux-foundation.org, hare@suse.de,
+	p.raghav@samsung.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+	linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+	gfs2@lists.linux.dev, linux-nilfs@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH -next RFC 01/14] block: add some bdev apis
+Message-ID: <ZXARKD0OmjLrvHmU@infradead.org>
 References: <20231205123728.1866699-1-yukuai1@huaweicloud.com>
- <ZXAMh02h4FAwt2FY@infradead.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <4b11a311-c121-1f44-0ccf-a3966a396994@huaweicloud.com>
-Date: Wed, 6 Dec 2023 14:06:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ <20231205123728.1866699-2-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZXAMh02h4FAwt2FY@infradead.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBXWhBpD3BlSn2ACw--.13338S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7GrW3AFy7uF4rXry3Ary8uFg_yoWxuFc_XF
-	ZYkrW0yw4rJFy0ka1UKF15A3yxCa40gan5ZrW8JFyxXF1rtFs5Ja9rWry5Z3srJrW0krZ7
-	tF92gay7Cr4qvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUba8FF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
-	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUbJ73DUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231205123728.1866699-2-yukuai1@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi,
+> +void invalidate_bdev_range(struct block_device *bdev, pgoff_t start,
+> +			   pgoff_t end)
+> +{
+> +	invalidate_mapping_pages(bdev->bd_inode->i_mapping, start, end);
+> +}
+> +EXPORT_SYMBOL_GPL(invalidate_bdev_range);
 
-ÔÚ 2023/12/06 13:54, Christoph Hellwig Ð´µÀ:
-> On Tue, Dec 05, 2023 at 08:37:14PM +0800, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> Patch 1 add some bdev apis, then follow up patches will use these apis
->> to avoid access bd_inode directly, and hopefully the field bd_inode can
->> be removed eventually(after figure out a way for fs/buffer.c).
-> 
-> What tree is this against?  It fails to apply to either Jens'
-> for-6.8/block or Linus tree in the very first patch.
+All these could probably use kerneldoc comments.
 
-It was against linux-next branch, for the tag next-20231201, because I'm
-not sure yet if this patchset should be applied to Jans' tree. Please
-let me know if I should swith wo Jens' tree for v2.
+For this one I really don't like it existing at all, but we'll have to
+discuss that in the btrfs patch.
 
-Thanks,
-Kuai
-> 
-> .
-> 
+> +loff_t bdev_size(struct block_device *bdev)
+> +{
+> +	loff_t size;
+> +
+> +	spin_lock(&bdev->bd_size_lock);
+> +	size = i_size_read(bdev->bd_inode);
+> +	spin_unlock(&bdev->bd_size_lock);
+> +
+> +	return size;
+> +}
+> +EXPORT_SYMBOL_GPL(bdev_size);
 
+No need for this one.  The callers can simply use bdev_nr_bytes.
+
+> +struct folio *bdev_read_folio(struct block_device *bdev, pgoff_t index)
+> +{
+> +	return read_mapping_folio(bdev->bd_inode->i_mapping, index, NULL);
+> +}
+> +EXPORT_SYMBOL_GPL(bdev_read_folio);
+> +
+> +struct folio *bdev_read_folio_gfp(struct block_device *bdev, pgoff_t index,
+> +				  gfp_t gfp)
+> +{
+> +	return mapping_read_folio_gfp(bdev->bd_inode->i_mapping, index, gfp);
+> +}
+> +EXPORT_SYMBOL_GPL(bdev_read_folio_gfp);
+
+I think we can just drop bdev_read_folio_gfp. Half of the callers simply
+pass GPK_KERNEL, and the other half passes GFP_NOFS and could just use
+memalloc_nofs_save().
+
+> +void bdev_balance_dirty_pages_ratelimited(struct block_device *bdev)
+> +{
+> +	return balance_dirty_pages_ratelimited(bdev->bd_inode->i_mapping);
+> +}
+> +EXPORT_SYMBOL_GPL(bdev_balance_dirty_pages_ratelimited);
+
+Hmm, this is just used for block2mtd, and feels a little too low-level
+to me, as block2mtd really should be using the normal fileread/write
+APIs.  I guess we'll have to live with it for now if we want to expedite
+killing off bd_inode.
+
+> +void bdev_correlate_mapping(struct block_device *bdev,
+> +			    struct address_space *mapping)
+> +{
+> +	mapping->host = bdev->bd_inode;
+> +}
+> +EXPORT_SYMBOL_GPL(bdev_correlate_mapping);
+
+Maybe associated insted of correlate?  Either way this basically
+fully exposes the bdev inode again :(
+
+> +gfp_t bdev_gfp_constraint(struct block_device *bdev, gfp_t gfp)
+> +{
+> +	return mapping_gfp_constraint(bdev->bd_inode->i_mapping, gfp);
+> +}
+> +EXPORT_SYMBOL_GPL(bdev_gfp_constraint);
+
+The right fix here is to:
+
+ - use memalloc_nofs_save in extet instead of using
+   mapping_gfp_constraint to clear it from the mapping flags
+ - remove __ext4_sb_bread_gfp and just have buffer.c helper that does
+   the right thing (either by changing the calling conventions of an
+   existing one, or adding a new one).
+
+> +/*
+> + * The del_gendisk() function uninitializes the disk-specific data
+> + * structures, including the bdi structure, without telling anyone
+> + * else.  Once this happens, any attempt to call mark_buffer_dirty()
+> + * (for example, by ext4_commit_super), will cause a kernel OOPS.
+> + * This is a kludge to prevent these oops until we can put in a proper
+> + * hook in del_gendisk() to inform the VFS and file system layers.
+> + */
+> +int bdev_ejected(struct block_device *bdev)
+> +{
+> +	struct backing_dev_info *bdi = inode_to_bdi(bdev->bd_inode);
+> +
+> +	return bdi->dev == NULL;
+> +}
+> +EXPORT_SYMBOL_GPL(bdev_ejected);
+
+And this code in ext4 should just go away entirely.  The bdi should
+always be valid for a live bdev for years.
+
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -1119,6 +1119,7 @@ void bio_add_folio_nofail(struct bio *bio, struct folio *folio, size_t len,
+>  	WARN_ON_ONCE(off > UINT_MAX);
+>  	__bio_add_page(bio, &folio->page, len, off);
+>  }
+> +EXPORT_SYMBOL_GPL(bio_add_folio_nofail);
+
+How is this realted?  The export is fine, but really should be a
+separate, well-documented commit.
+
+>  
+> +static inline u8 block_bits(struct block_device *bdev)
+> +{
+> +	return bdev->bd_inode->i_blkbits;
+> +}
+
+Not sure we should need this.  i_blkbits comes from the blocksize
+the fs set, so it should have other ways to get at it.
 
