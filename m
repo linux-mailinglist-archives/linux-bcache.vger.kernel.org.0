@@ -1,186 +1,118 @@
-Return-Path: <linux-bcache+bounces-153-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-154-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084AF80EE66
-	for <lists+linux-bcache@lfdr.de>; Tue, 12 Dec 2023 15:11:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C8181074E
+	for <lists+linux-bcache@lfdr.de>; Wed, 13 Dec 2023 02:09:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F2D71F21301
-	for <lists+linux-bcache@lfdr.de>; Tue, 12 Dec 2023 14:11:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D484E281C82
+	for <lists+linux-bcache@lfdr.de>; Wed, 13 Dec 2023 01:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A217316C;
-	Tue, 12 Dec 2023 14:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="B++bEOcu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RYDemGbn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="B++bEOcu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RYDemGbn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3674CA53;
+	Wed, 13 Dec 2023 01:09:25 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E55B6D2;
-	Tue, 12 Dec 2023 06:11:13 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AF1351FB4F;
-	Tue, 12 Dec 2023 14:11:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702390271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f/nbhyN5crR1w3m66kOkHUMah0FU4U4vRvr/vSaOUKo=;
-	b=B++bEOcuECOPLUS6gRl1BadE5Ojhg72LI17/Jf8so38UM+0K3tK3EM18zqdte42Rmdahip
-	pT2NLWONXbbx1wHqSpSUPrJ6SV/khTkKgkoHLhS3Je5qcEna7m+A0ImkydNS5Hp2KL7ol5
-	NGT5IsMbucBv49ZwMiTMIN/MTc8WjGg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702390271;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f/nbhyN5crR1w3m66kOkHUMah0FU4U4vRvr/vSaOUKo=;
-	b=RYDemGbnXZfKi9uzTsokLLJFp3Q2IBX/Y+6xZm0LlYsd4XpI31h6ZqYPNIYrqGTAdxjsbq
-	9DRT+9hTWhL8LpBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702390271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f/nbhyN5crR1w3m66kOkHUMah0FU4U4vRvr/vSaOUKo=;
-	b=B++bEOcuECOPLUS6gRl1BadE5Ojhg72LI17/Jf8so38UM+0K3tK3EM18zqdte42Rmdahip
-	pT2NLWONXbbx1wHqSpSUPrJ6SV/khTkKgkoHLhS3Je5qcEna7m+A0ImkydNS5Hp2KL7ol5
-	NGT5IsMbucBv49ZwMiTMIN/MTc8WjGg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702390271;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f/nbhyN5crR1w3m66kOkHUMah0FU4U4vRvr/vSaOUKo=;
-	b=RYDemGbnXZfKi9uzTsokLLJFp3Q2IBX/Y+6xZm0LlYsd4XpI31h6ZqYPNIYrqGTAdxjsbq
-	9DRT+9hTWhL8LpBQ==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 8B6A8139E9;
-	Tue, 12 Dec 2023 14:11:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id lJX+If9peGUGTgAAn2gu4w
-	(envelope-from <jack@suse.cz>); Tue, 12 Dec 2023 14:11:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E4786A06E5; Tue, 12 Dec 2023 15:11:10 +0100 (CET)
-Date: Tue, 12 Dec 2023 15:11:10 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
-	roger.pau@citrix.com, colyli@suse.de, kent.overstreet@gmail.com,
-	joern@lazybastard.org, miquel.raynal@bootlin.com, richard@nod.at,
-	vigneshr@ti.com, sth@linux.ibm.com, hoeppner@linux.ibm.com,
-	hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, clm@fb.com,
-	josef@toxicpanda.com, dsterba@suse.com, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, nico@fluxnic.net, xiang@kernel.org,
-	chao@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	agruenba@redhat.com, jack@suse.com, konishi.ryusuke@gmail.com,
-	willy@infradead.org, akpm@linux-foundation.org,
-	p.raghav@samsung.com, hare@suse.de, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-	linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-ext4@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-nilfs@vger.kernel.org, yukuai3@huawei.com,
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH RFC v2 for-6.8/block 15/18] buffer: add a new helper to
- read sb block
-Message-ID: <20231212141110.4pcetu5ozp3m33qc@quack3>
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F07FD91;
+	Tue, 12 Dec 2023 17:09:20 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Sqcnm2cdhz4f3jZH;
+	Wed, 13 Dec 2023 09:09:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 86FC11A098C;
+	Wed, 13 Dec 2023 09:09:17 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgBntQs5BHllRkz5DQ--.6696S3;
+	Wed, 13 Dec 2023 09:09:16 +0800 (CST)
+Subject: Re: [PATCH RFC v2 for-6.8/block 01/18] block: add some bdev apis
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, roger.pau@citrix.com, colyli@suse.de,
+ kent.overstreet@gmail.com, joern@lazybastard.org, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com, sth@linux.ibm.com, hoeppner@linux.ibm.com,
+ hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+ jejb@linux.ibm.com, martin.petersen@oracle.com, clm@fb.com,
+ josef@toxicpanda.com, dsterba@suse.com, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, nico@fluxnic.net, xiang@kernel.org, chao@kernel.org,
+ tytso@mit.edu, adilger.kernel@dilger.ca, agruenba@redhat.com, jack@suse.com,
+ konishi.ryusuke@gmail.com, willy@infradead.org, akpm@linux-foundation.org,
+ p.raghav@samsung.com, hare@suse.de, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-ext4@vger.kernel.org, gfs2@lists.linux.dev,
+ linux-nilfs@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
 References: <20231211140552.973290-1-yukuai1@huaweicloud.com>
- <20231211140753.975297-1-yukuai1@huaweicloud.com>
- <ZXhfRdocHfrViOos@infradead.org>
+ <20231211140552.973290-2-yukuai1@huaweicloud.com>
+ <ZXhdRhfr+JoWdhyj@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <893e2764-65a6-ef73-5ddf-95cd9f97cb19@huaweicloud.com>
+Date: Wed, 13 Dec 2023 09:09:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZXhfRdocHfrViOos@infradead.org>
-X-Spam-Score: 1.39
-X-Spamd-Bar: ++++
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=B++bEOcu;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=RYDemGbn;
-	dmarc=none;
-	spf=softfail (smtp-out2.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of jack@suse.cz) smtp.mailfrom=jack@suse.cz
-X-Rspamd-Server: rspamd2
-X-Spamd-Result: default: False [4.79 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 R_SPF_SOFTFAIL(4.60)[~all];
-	 R_RATELIMIT(0.00)[to_ip_from(RLa8hd5fybgmzcyr9mhbq8ey7y)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_GT_50(0.00)[51];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.00)[22.45%];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DMARC_NA(1.20)[suse.cz];
-	 TO_MATCH_ENVRCPT_SOME(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[huaweicloud.com,kernel.dk,citrix.com,suse.de,gmail.com,lazybastard.org,bootlin.com,nod.at,ti.com,linux.ibm.com,oracle.com,fb.com,toxicpanda.com,suse.com,zeniv.linux.org.uk,kernel.org,fluxnic.net,mit.edu,dilger.ca,redhat.com,infradead.org,linux-foundation.org,samsung.com,vger.kernel.org,lists.xenproject.org,lists.infradead.org,lists.ozlabs.org,lists.linux.dev,huawei.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:104:10:150:64:98:from]
-X-Spam-Score: 4.79
-X-Rspamd-Queue-Id: AF1351FB4F
-X-Spam-Flag: NO
+In-Reply-To: <ZXhdRhfr+JoWdhyj@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBntQs5BHllRkz5DQ--.6696S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw4fJw1rAF1UKF4fJrWDJwb_yoWfurcEqr
+	n7Cryv9w1jvws5Wr4UKFy5JrWrJFWYyr43Xay8ta4Iq3s8Xa18Ar92ka48uas8Ww47Z3ZI
+	9FsxuFy8uF4fujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbaxFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j
+	6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x0JUd8n5UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Tue 12-12-23 05:25:25, Christoph Hellwig wrote:
-> On Mon, Dec 11, 2023 at 10:07:53PM +0800, Yu Kuai wrote:
-> > +static __always_inline int buffer_uptodate_or_error(struct buffer_head *bh)
-> > +{
-> > +	/*
-> > +	 * If the buffer has the write error flag, data was failed to write
-> > +	 * out in the block. In this case, set buffer uptodate to prevent
-> > +	 * reading old data.
-> > +	 */
-> > +	if (buffer_write_io_error(bh))
-> > +		set_buffer_uptodate(bh);
-> > +	return buffer_uptodate(bh);
-> > +}
+Hi,
+
+ÔÚ 2023/12/12 21:16, Christoph Hellwig Ð´µÀ:
+>> +void invalidate_bdev_range(struct block_device *bdev, pgoff_t start,
+>> +			   pgoff_t end)
+>> +{
+>> +	invalidate_mapping_pages(bdev->bd_inode->i_mapping, start, end);
+>> +}
+>> +EXPORT_SYMBOL_GPL(invalidate_bdev_range);
 > 
-> So - risking this blows up into a lot of nasty work: Why do we even
-> clear the uptodate flag on write errors?  Doing so makes not sense to
-> me as the data isn't any less uptodate just because we failed to write
-> it..
+> Can we have kerneldoc comments for the new helpers please?
 
-Historic reasons I'd say (buffer_write_io_error isn't *that* old - from
-2003 it seems). And yes, it would make a lot of sense to keep uptodate flag
-set and just rely on buffer_write_io_error() but it also means going
-through all buffer_uptodate() checks in filesystems and determining which
-need changing to buffer_write_io_error() which is something nobody is keen
-on doing ;)
+Of course, will definitely do this in v3.
+> 
+>> +struct folio *__bdev_get_folio(struct block_device *bdev, loff_t pos,
+>> +			       fgf_t fgp_flags, gfp_t gfp)
+>> +{
+>> +	return __filemap_get_folio(bdev->bd_inode->i_mapping, pos >> PAGE_SHIFT,
+>> +				   fgp_flags, gfp);
+>> +}
+>> +EXPORT_SYMBOL_GPL(__bdev_get_folio);
+> 
+> It's a bit silly to have a __-prefixed API without a version that
+> doesn't have the prefix, so I'd prefer to drop it.  Unless willy has
+> a good argument for keeping it the same as the filemap API.
 
-								Honza
+Ok, I'll drop it if willy doesn't against this.
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Kuai
+> 
+> .
+> 
+
 
