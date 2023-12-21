@@ -1,185 +1,124 @@
-Return-Path: <linux-bcache+bounces-176-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-177-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C58981B1AE
-	for <lists+linux-bcache@lfdr.de>; Thu, 21 Dec 2023 10:09:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 717AB81B9E1
+	for <lists+linux-bcache@lfdr.de>; Thu, 21 Dec 2023 15:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EA77B2409A
-	for <lists+linux-bcache@lfdr.de>; Thu, 21 Dec 2023 09:09:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A45761C227FF
+	for <lists+linux-bcache@lfdr.de>; Thu, 21 Dec 2023 14:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECEF4BA81;
-	Thu, 21 Dec 2023 09:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99067360AD;
+	Thu, 21 Dec 2023 14:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fr/DFr0B"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECA652F8F;
-	Thu, 21 Dec 2023 09:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4SwktZ3FrTz4f3kG7;
-	Thu, 21 Dec 2023 17:01:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 34EB21A0920;
-	Thu, 21 Dec 2023 17:01:13 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgCXmhDW_oNlyCPvEA--.34448S4;
-	Thu, 21 Dec 2023 17:01:12 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	roger.pau@citrix.com,
-	colyli@suse.de,
-	kent.overstreet@gmail.com,
-	joern@lazybastard.org,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com,
-	sth@linux.ibm.com,
-	hoeppner@linux.ibm.com,
-	hca@linux.ibm.com,
-	gor@linux.ibm.com,
-	agordeev@linux.ibm.com,
-	jejb@linux.ibm.com,
-	martin.petersen@oracle.com,
-	clm@fb.com,
-	josef@toxicpanda.com,
-	dsterba@suse.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	nico@fluxnic.net,
-	xiang@kernel.org,
-	chao@kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.com,
-	konishi.ryusuke@gmail.com,
-	willy@infradead.org,
-	akpm@linux-foundation.org,
-	hare@suse.de,
-	p.raghav@samsung.com
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	linux-bcache@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org,
-	linux-ext4@vger.kernel.org,
-	linux-nilfs@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH RFC v3 for-6.8/block 17/17] ext4: use bdev apis
-Date: Thu, 21 Dec 2023 16:59:14 +0800
-Message-Id: <20231221085914.1772988-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231221085712.1766333-1-yukuai1@huaweicloud.com>
-References: <20231221085712.1766333-1-yukuai1@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FA36D6D7;
+	Thu, 21 Dec 2023 14:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4669068a20bso188487137.1;
+        Thu, 21 Dec 2023 06:54:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1703170487; x=1703775287; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pURYtu0NLCnQlpjaLQBb3A9CXAcN65Ivjf7L8viYZIQ=;
+        b=fr/DFr0B2e2D5pVAdRa8efpUmsqmuL2g3QPZBhjlG3AKquL6JIi+P/pwiOurUM+Krp
+         E8jOaHtXIoPU+ASnXxD/WU+K/VNMfFPqrfUx6VQ0rRmT8Mr0p+L2bMgQ33KT1YBpanT5
+         7LW+1EkG89UMJ78nqCi0fjvxIugayr3H6l25dY2AWUI32pOCJnGtRXNP8lRmto9u4Cqs
+         aciB5LcgZsEoAN9oMA78JVOUCDvrhJIDbtKIQMEHh50OdbB0R7f2UVJMOOy5PqhCQzsS
+         xE2krxIQmkhbo+7kOqMqYuqO3ztnTdxpCUnTfodfTsslG18eVAluCR+r1lIebDLR/j+b
+         B7PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703170487; x=1703775287;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pURYtu0NLCnQlpjaLQBb3A9CXAcN65Ivjf7L8viYZIQ=;
+        b=lMJq6webPomHaUSuC44KN+Y6mKw9tcqg9I7AXceK4Vfz31mvR/pofNbotUqLArlpJe
+         WSu45gjs9Apoy+Wrnz6g7k5yX93fLOjeAn8ZltZzmHsUG74N+l/q1z7IFVETso8YouHt
+         6Pg45PvHga0trHcwR6fb40c/uPoS/z5VNKUofjaUG8doHHYxriNCqtX+w6eISyhEk4qC
+         6HGl/PYDWD5jvLKUs9nLHf9hJVwTLv1OpJ05StG5XIzt0biLqlDGAtaRFQOmebLWnXS3
+         IpvGlxPQaHgZFNWK0SoJyCuGEFX50Lr44sSIqOph7QLFFytxw910U/L5DjX/Yoq47NuF
+         1Pog==
+X-Gm-Message-State: AOJu0YycRWFzlvy6n8Q6oniyXgpBkR93BXMRVhZsEh/zJqYpttIKdbKn
+	J6XmrZk/cIVA96ISUxyt1zxfHzcAuwXdM2XyVDc=
+X-Google-Smtp-Source: AGHT+IFN1NuYgs8WiPh35+AiECRKwSlqz0ZEDe3FqBLZ5rzeC9cKopqWDVql1xxie4BTiSGNKZ2Qkn8RU8vM8AW8lKI=
+X-Received: by 2002:a05:6102:2c19:b0:466:a0dd:4b2 with SMTP id
+ ie25-20020a0561022c1900b00466a0dd04b2mr1276429vsb.51.1703170487175; Thu, 21
+ Dec 2023 06:54:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgCXmhDW_oNlyCPvEA--.34448S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF47JryfCw48Xw1Duw48JFb_yoW5Xw4Upa
-	43GFyDGr4DZry09anrGFsrZa40kw18Ga43GryfZ3W2qrWaq34SkF95KF1xZF4UXay8Xw18
-	XFyjkryxAr45CrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1U
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_JFI_Gr1lIxAIcVC2z280aVAFwI0_
-	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7VUb
-	YLvtUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20231221085712.1766333-1-yukuai1@huaweicloud.com> <20231221085839.1768763-1-yukuai1@huaweicloud.com>
+In-Reply-To: <20231221085839.1768763-1-yukuai1@huaweicloud.com>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Thu, 21 Dec 2023 23:54:30 +0900
+Message-ID: <CAKFNMo=TuhzyEs_NEOdYgJz+UVizU6Ojx4ZKXowDaux3kKddUQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 for-6.8/block 12/17] nilfs2: use bdev api in nilfs_attach_log_writer()
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, roger.pau@citrix.com, colyli@suse.de, 
+	kent.overstreet@gmail.com, joern@lazybastard.org, miquel.raynal@bootlin.com, 
+	richard@nod.at, vigneshr@ti.com, sth@linux.ibm.com, hoeppner@linux.ibm.com, 
+	hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com, 
+	jejb@linux.ibm.com, martin.petersen@oracle.com, clm@fb.com, 
+	josef@toxicpanda.com, dsterba@suse.com, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, nico@fluxnic.net, xiang@kernel.org, chao@kernel.org, 
+	tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.com, willy@infradead.org, 
+	akpm@linux-foundation.org, hare@suse.de, p.raghav@samsung.com, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
+	linux-nilfs@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com, 
+	yangerkun@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Thu, Dec 21, 2023 at 6:00=E2=80=AFPM Yu Kuai wrote:
+>
+> From: Yu Kuai <yukuai3@huawei.com>
+>
+> Avoid to access bd_inode directly, prepare to remove bd_inode from
+> block_device.
+>
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  fs/nilfs2/segment.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
+> index 55e31cc903d1..a1130e384937 100644
+> --- a/fs/nilfs2/segment.c
+> +++ b/fs/nilfs2/segment.c
+> @@ -2823,7 +2823,7 @@ int nilfs_attach_log_writer(struct super_block *sb,=
+ struct nilfs_root *root)
+>         if (!nilfs->ns_writer)
+>                 return -ENOMEM;
+>
+> -       inode_attach_wb(nilfs->ns_bdev->bd_inode, NULL);
+> +       bdev_attach_wb(nilfs->ns_bdev);
+>
+>         err =3D nilfs_segctor_start_thread(nilfs->ns_writer);
+>         if (unlikely(err))
+> --
+> 2.39.2
+>
 
-Avoid to access bd_inode directly, prepare to remove bd_inode from
-block_device.
+Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- fs/ext4/dir.c       | 6 ++----
- fs/ext4/ext4_jbd2.c | 6 +++---
- fs/ext4/super.c     | 3 +--
- 3 files changed, 6 insertions(+), 9 deletions(-)
-
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index 3985f8c33f95..64e35eb6a324 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -191,10 +191,8 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
- 			pgoff_t index = map.m_pblk >>
- 					(PAGE_SHIFT - inode->i_blkbits);
- 			if (!ra_has_index(&file->f_ra, index))
--				page_cache_sync_readahead(
--					sb->s_bdev->bd_inode->i_mapping,
--					&file->f_ra, file,
--					index, 1);
-+				bdev_sync_readahead(sb->s_bdev, &file->f_ra,
-+						    file, index, 1);
- 			file->f_ra.prev_pos = (loff_t)index << PAGE_SHIFT;
- 			bh = ext4_bread(NULL, inode, map.m_lblk, 0);
- 			if (IS_ERR(bh)) {
-diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
-index d1a2e6624401..c1bf3a00fad9 100644
---- a/fs/ext4/ext4_jbd2.c
-+++ b/fs/ext4/ext4_jbd2.c
-@@ -206,7 +206,6 @@ static void ext4_journal_abort_handle(const char *caller, unsigned int line,
- 
- static void ext4_check_bdev_write_error(struct super_block *sb)
- {
--	struct address_space *mapping = sb->s_bdev->bd_inode->i_mapping;
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	int err;
- 
-@@ -216,9 +215,10 @@ static void ext4_check_bdev_write_error(struct super_block *sb)
- 	 * we could read old data from disk and write it out again, which
- 	 * may lead to on-disk filesystem inconsistency.
- 	 */
--	if (errseq_check(&mapping->wb_err, READ_ONCE(sbi->s_bdev_wb_err))) {
-+	if (bdev_wb_err_check(sb->s_bdev, READ_ONCE(sbi->s_bdev_wb_err))) {
- 		spin_lock(&sbi->s_bdev_wb_lock);
--		err = errseq_check_and_advance(&mapping->wb_err, &sbi->s_bdev_wb_err);
-+		err = bdev_wb_err_check_and_advance(sb->s_bdev,
-+						    &sbi->s_bdev_wb_err);
- 		spin_unlock(&sbi->s_bdev_wb_lock);
- 		if (err)
- 			ext4_error_err(sb, -err,
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index a7935edbd7b1..25c3d2ac8559 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5544,8 +5544,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 	 * used to detect the metadata async write error.
- 	 */
- 	spin_lock_init(&sbi->s_bdev_wb_lock);
--	errseq_check_and_advance(&sb->s_bdev->bd_inode->i_mapping->wb_err,
--				 &sbi->s_bdev_wb_err);
-+	bdev_wb_err_check_and_advance(sb->s_bdev, &sbi->s_bdev_wb_err);
- 	EXT4_SB(sb)->s_mount_state |= EXT4_ORPHAN_FS;
- 	ext4_orphan_cleanup(sb, es);
- 	EXT4_SB(sb)->s_mount_state &= ~EXT4_ORPHAN_FS;
--- 
-2.39.2
-
+Thanks,
+Ryusuke Konishi
 
