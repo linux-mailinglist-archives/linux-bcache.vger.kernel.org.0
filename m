@@ -1,119 +1,100 @@
-Return-Path: <linux-bcache+bounces-215-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-216-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4F182477C
-	for <lists+linux-bcache@lfdr.de>; Thu,  4 Jan 2024 18:31:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D798C824DAE
+	for <lists+linux-bcache@lfdr.de>; Fri,  5 Jan 2024 05:44:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C7B1C241BF
-	for <lists+linux-bcache@lfdr.de>; Thu,  4 Jan 2024 17:31:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 056321C21CDE
+	for <lists+linux-bcache@lfdr.de>; Fri,  5 Jan 2024 04:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9B528699;
-	Thu,  4 Jan 2024 17:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WQr6YuxP"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BD923D2;
+	Fri,  5 Jan 2024 04:44:11 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6D428DB9
-	for <linux-bcache@vger.kernel.org>; Thu,  4 Jan 2024 17:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1d426ad4433so5030155ad.0
-        for <linux-bcache@vger.kernel.org>; Thu, 04 Jan 2024 09:31:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1704389509; x=1704994309; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j2qn6VAQhWQUb4CiHmq8h+Yo362Cgbx3EEBUJCdDtwc=;
-        b=WQr6YuxPgGGirkeMuBYn5m87aN/cWl4KLkdmtHWAe2SMlLpElb62RkJyO5b6q3qD/o
-         4sXA4EgRRRzrB7/2cb3geQBDsRz/nD7ReYUpyYB6QKuQoP6tV9r0A8BQO4vL3Q6NCRLC
-         qsW/ooJr0c10Pp8kq0dWD6aZ1QHk3spJ5lCkvgSpYltKWfwbzQ27Xj1LGlTUIk/n6xPD
-         nkuMM7bsulVLJCSCD3N7KLTkooYvh8EwYwbnRFtUlueEnuJjsrpkJOPtMGNyUY88s7VG
-         YavHcxPLjpDsJpY/jwk78eq3MFEvR/TVt66k81sCJRsowLt8u/QGbbgfpMYKZz+KpT/p
-         E7Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704389509; x=1704994309;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j2qn6VAQhWQUb4CiHmq8h+Yo362Cgbx3EEBUJCdDtwc=;
-        b=MEdUFw7L1cALI289XQvcXuV83u/db02a4pUkIOfC9Qtj/BxzN1UpHv5mEPXZYH4DHl
-         JA+8LGulOczDo0QotBDegbIsMY0eNlCu1b+YA7SMH1l5wuMADTrGd4yiKSGwV5uySMDq
-         GsV3Go9NhPZ/QACqNK5XC5It6kY3wXHWX7G5OfRO/3dBCNMvI5yJseQQbazGBf5SQFQv
-         DFyqtTWRAUkRvlFB7tv+6b9wzgPJuSQGr7WngFQoKhSG+2lP9aGzUDQDELsl+0XLRtzU
-         BxROkQEaNiwAQ426VHiCg/qLr9qAzU/7ey+n6gQzJss647/wJ0xMxJafPjyubUtPG1fF
-         0FGw==
-X-Gm-Message-State: AOJu0YxqjgcAR+XiRAnySku1sAzAKcoQWMAKQrpOrg672zmRsiOFgDDH
-	5imm3rrO3JnWlZFRMlfWTb+LiBSNaMnl
-X-Google-Smtp-Source: AGHT+IHMC5pZFX/0Skg2KosMt2koIMu23ZQakX4wRBOCCZwE0XOW8EMW0XldZ0cn7U85d4bQM0ur4Q==
-X-Received: by 2002:a17:902:f68e:b0:1d4:4483:67d4 with SMTP id l14-20020a170902f68e00b001d4448367d4mr692781plg.89.1704389508707;
-        Thu, 04 Jan 2024 09:31:48 -0800 (PST)
-Received: from google.com (77.62.105.34.bc.googleusercontent.com. [34.105.62.77])
-        by smtp.gmail.com with ESMTPSA id y22-20020a170902b49600b001d4910ff83dsm13256439plr.121.2024.01.04.09.31.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jan 2024 09:31:48 -0800 (PST)
-Date: Thu, 4 Jan 2024 17:31:45 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Pierre Gondois <pierre.gondois@arm.com>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>, Coly Li <colyli@suse.de>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Marco Elver <elver@google.com>, Kees Cook <keescook@chromium.org>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-bcache@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] binder: Use of hlist_count_nodes()
-Message-ID: <ZZbrgYTkhp_EH6Ci@google.com>
-References: <20240104164937.424320-1-pierre.gondois@arm.com>
- <20240104164937.424320-3-pierre.gondois@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CAE5228;
+	Fri,  5 Jan 2024 04:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R881e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046060;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=49;SR=0;TI=SMTPD_---0VzzUQHt_1704429833;
+Received: from 30.222.33.160(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VzzUQHt_1704429833)
+          by smtp.aliyun-inc.com;
+          Fri, 05 Jan 2024 12:43:56 +0800
+Message-ID: <a2c7910c-4c2f-4290-a895-1c4255b2ee62@linux.alibaba.com>
+Date: Fri, 5 Jan 2024 12:43:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240104164937.424320-3-pierre.gondois@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 for-6.8/block 11/17] erofs: use bdev api
+To: Yu Kuai <yukuai1@huaweicloud.com>, Jan Kara <jack@suse.cz>
+Cc: axboe@kernel.dk, roger.pau@citrix.com, colyli@suse.de,
+ kent.overstreet@gmail.com, joern@lazybastard.org, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com, sth@linux.ibm.com, hoeppner@linux.ibm.com,
+ hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+ jejb@linux.ibm.com, martin.petersen@oracle.com, clm@fb.com,
+ josef@toxicpanda.com, dsterba@suse.com, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, nico@fluxnic.net, xiang@kernel.org, chao@kernel.org,
+ tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.com,
+ konishi.ryusuke@gmail.com, willy@infradead.org, akpm@linux-foundation.org,
+ hare@suse.de, p.raghav@samsung.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-ext4@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20231221085712.1766333-1-yukuai1@huaweicloud.com>
+ <20231221085826.1768395-1-yukuai1@huaweicloud.com>
+ <20240104120207.ig7tfc3mgckwkp2n@quack3>
+ <7f868579-f993-aaa1-b7d7-eccbe0b0173c@huaweicloud.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <7f868579-f993-aaa1-b7d7-eccbe0b0173c@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 04, 2024 at 05:49:34PM +0100, Pierre Gondois wrote:
-> Make use of the newly added hlist_count_nodes().
-> 
-> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
-> ---
->  drivers/android/binder.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> index 92128aae2d06..f9ca4d58d825 100644
-> --- a/drivers/android/binder.c
-> +++ b/drivers/android/binder.c
-> @@ -6077,9 +6077,7 @@ static void print_binder_node_nilocked(struct seq_file *m,
->  	struct binder_work *w;
->  	int count;
->  
-> -	count = 0;
-> -	hlist_for_each_entry(ref, &node->refs, node_entry)
-> -		count++;
-> +	count = hlist_count_nodes(&node->refs);
->  
->  	seq_printf(m, "  node %d: u%016llx c%016llx hs %d hw %d ls %d lw %d is %d iw %d tr %d",
->  		   node->debug_id, (u64)node->ptr, (u64)node->cookie,
-> -- 
-> 2.25.1
-> 
 
-Looks good to me!
 
-Acked-by: Carlos Llamas <cmllamas@google.com>
+On 2024/1/4 20:32, Yu Kuai wrote:
+> Hi, Jan!
+> 
+> 在 2024/01/04 20:02, Jan Kara 写道:
+>> On Thu 21-12-23 16:58:26, Yu Kuai wrote:
+>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>
+>>> Avoid to access bd_inode directly, prepare to remove bd_inode from
+>>> block_device.
+>>>
+>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>>
+>> I'm not erofs maintainer but IMO this is quite ugly and grows erofs_buf
+>> unnecessarily. I'd rather store 'sb' pointer in erofs_buf and then do the
+>> right thing in erofs_bread() which is the only place that seems to care
+>> about the erofs_is_fscache_mode() distinction... Also blkszbits is then
+>> trivially sb->s_blocksize_bits so it would all seem much more
+>> straightforward.
+> 
+> Thanks for your suggestion, I'll follow this unless Gao Xiang has other
+> suggestions.
+
+Yes, that would be better, I'm fine with that.  Yet in the future we
+may support a seperate large dirblocksize more than block size, but
+we could revisit later.
+
+Thanks,
+Gao Xiang
+
+> 
+> Kuai
+>>
+>>                                 Honza
+>>
 
