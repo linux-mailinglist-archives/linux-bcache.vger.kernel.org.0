@@ -1,166 +1,113 @@
-Return-Path: <linux-bcache+bounces-221-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-222-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456A5824EE6
-	for <lists+linux-bcache@lfdr.de>; Fri,  5 Jan 2024 08:03:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B068B825201
+	for <lists+linux-bcache@lfdr.de>; Fri,  5 Jan 2024 11:32:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4AA6283901
-	for <lists+linux-bcache@lfdr.de>; Fri,  5 Jan 2024 07:03:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D7A281EA3
+	for <lists+linux-bcache@lfdr.de>; Fri,  5 Jan 2024 10:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD744C67;
-	Fri,  5 Jan 2024 07:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="a+MMZRca";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3mD1IUiz";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="a+MMZRca";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3mD1IUiz"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BC21E495;
+	Fri,  5 Jan 2024 10:32:05 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BAA1DDCA;
-	Fri,  5 Jan 2024 07:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1C30221D33;
-	Fri,  5 Jan 2024 07:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1704438223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Joh97BwP4hkODKw1vNhuky4flqFq1F3bJri6+hBTkDs=;
-	b=a+MMZRcaVUJFcyQjQeZTi2fJEvZrDIhu/NbIcezE7TLkHcKRo55Rn4I1Vf4Ms0kebw0cyf
-	NcUU4UykUDcWv75GWyeifhvC1PTSnAXLjelnb88afXk8O4qhDu4cP71jQ/6LxNBSzfMMH0
-	UbLhyc8E5YqKzEka3o6F0a9iP04/brs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1704438223;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Joh97BwP4hkODKw1vNhuky4flqFq1F3bJri6+hBTkDs=;
-	b=3mD1IUizJRiMr/ngWXhCDkc2dHbfceAWk49XHWOEHmTTYsC+PBoWb5uViUiAE553s9Glwy
-	5SkJv8ZWi3K/tBDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1704438223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Joh97BwP4hkODKw1vNhuky4flqFq1F3bJri6+hBTkDs=;
-	b=a+MMZRcaVUJFcyQjQeZTi2fJEvZrDIhu/NbIcezE7TLkHcKRo55Rn4I1Vf4Ms0kebw0cyf
-	NcUU4UykUDcWv75GWyeifhvC1PTSnAXLjelnb88afXk8O4qhDu4cP71jQ/6LxNBSzfMMH0
-	UbLhyc8E5YqKzEka3o6F0a9iP04/brs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1704438223;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Joh97BwP4hkODKw1vNhuky4flqFq1F3bJri6+hBTkDs=;
-	b=3mD1IUizJRiMr/ngWXhCDkc2dHbfceAWk49XHWOEHmTTYsC+PBoWb5uViUiAE553s9Glwy
-	5SkJv8ZWi3K/tBDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F149F137E8;
-	Fri,  5 Jan 2024 07:03:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qn8uKMmpl2VlKAAAD6G6ig
-	(envelope-from <colyli@suse.de>); Fri, 05 Jan 2024 07:03:37 +0000
-Date: Fri, 5 Jan 2024 15:03:34 +0800
-From: Coly Li <colyli@suse.de>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	linux-um@lists.infradead.org, linux-block@vger.kernel.org, nbd@other.debian.org, 
-	linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 8/9] bcache: use the default discard granularity
-Message-ID: <bgbp5rqbxbghiitjvpkuforocw5ptyuubfwwrwdhqy4orkpggo@fu57au3f2hss>
-References: <20231228075545.362768-1-hch@lst.de>
- <20231228075545.362768-9-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C35250EB;
+	Fri,  5 Jan 2024 10:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T60BJ2M2vz4f3lWH;
+	Fri,  5 Jan 2024 18:31:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 063191A0817;
+	Fri,  5 Jan 2024 18:31:58 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgDX2xGZ2pdlGeddFg--.44050S3;
+	Fri, 05 Jan 2024 18:31:56 +0800 (CST)
+Subject: Re: [PATCH RFC v3 for-6.8/block 04/17] mtd: block2mtd: use bdev apis
+To: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, roger.pau@citrix.com,
+ colyli@suse.de, kent.overstreet@gmail.com, joern@lazybastard.org,
+ miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+ sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
+ gor@linux.ibm.com, agordeev@linux.ibm.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, clm@fb.com, josef@toxicpanda.com,
+ dsterba@suse.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ nico@fluxnic.net, xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
+ adilger.kernel@dilger.ca, jack@suse.com, konishi.ryusuke@gmail.com,
+ willy@infradead.org, akpm@linux-foundation.org, hare@suse.de,
+ p.raghav@samsung.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-ext4@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20231221085712.1766333-1-yukuai1@huaweicloud.com>
+ <20231221085712.1766333-5-yukuai1@huaweicloud.com>
+ <20240104112855.uci45hhqaiitmsir@quack3> <ZZedSYAedA05Oex2@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <28237ec3-c3c1-1f0c-5250-04a88845d4a6@huaweicloud.com>
+Date: Fri, 5 Jan 2024 18:31:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231228075545.362768-9-hch@lst.de>
-X-Spam-Level: 
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=a+MMZRca;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=3mD1IUiz
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.01 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 TO_DN_SOME(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.00)[14.79%];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 URIBL_BLOCKED(0.00)[suse.de:dkim,suse.de:email,lst.de:email];
-	 FROM_HAS_DN(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[14];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Spam-Score: -1.01
-X-Rspamd-Queue-Id: 1C30221D33
-X-Spam-Flag: NO
+In-Reply-To: <ZZedSYAedA05Oex2@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDX2xGZ2pdlGeddFg--.44050S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7XryUXFWDtw1fXr4DKF17Jrb_yoWxuFgEgF
+	yvkFZrKa13JrZ2vFsxKw15tFZ2ya47Zry8JrW0qay7W3s5Xa9rG3WkGr13XF1qqan7WFnI
+	9r9FqayrKay2qjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbaxFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
+	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x0JUd8n5UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, Dec 28, 2023 at 07:55:44AM +0000, Christoph Hellwig wrote:
-> The discard granularity now defaults to a single sector, so don't set
-> that value explicitly.
+Hi,
+
+ÔÚ 2024/01/05 14:10, Christoph Hellwig Ð´µÀ:
+> On Thu, Jan 04, 2024 at 12:28:55PM +0100, Jan Kara wrote:
+>> What do you think? Because when we are working with the folios it is rather
+>> natural to use their mapping for dirty balancing?
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Acked-by: Coly Li <colyli@suse.de>
-
-Thanks.
-
-> ---
->  drivers/md/bcache/super.c | 1 -
->  1 file changed, 1 deletion(-)
+> The real problem is that block2mtd pokes way to deep into block
+> internals.
 > 
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index ecc1447f202a42..39ec95b8613f1f 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -954,7 +954,6 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
->  	q->limits.max_segment_size	= UINT_MAX;
->  	q->limits.max_segments		= BIO_MAX_VECS;
->  	blk_queue_max_discard_sectors(q, UINT_MAX);
-> -	q->limits.discard_granularity	= block_size;
->  	q->limits.io_min		= block_size;
->  	q->limits.logical_block_size	= block_size;
->  	q->limits.physical_block_size	= block_size;
-> -- 
-> 2.39.2
+> I think the saviour here is Christians series to replace the bdev handle
+> with a struct file, which will allow to use the normal file write path
+> here and get rid of the entire layering volation.
+
+Yes, looks like lots of patches from this set is not needed anymore.
+I'll stop sending v4 and just send some patches that is not related to
+'bd_inode' separately.
+
+Thanks,
+Kuai
+
 > 
+> .
 > 
 
--- 
-Coly Li
 
