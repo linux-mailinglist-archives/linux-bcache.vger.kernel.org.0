@@ -1,113 +1,91 @@
-Return-Path: <linux-bcache+bounces-222-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-223-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B068B825201
-	for <lists+linux-bcache@lfdr.de>; Fri,  5 Jan 2024 11:32:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83166825DA9
+	for <lists+linux-bcache@lfdr.de>; Sat,  6 Jan 2024 02:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D7A281EA3
-	for <lists+linux-bcache@lfdr.de>; Fri,  5 Jan 2024 10:32:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9D16B22B0A
+	for <lists+linux-bcache@lfdr.de>; Sat,  6 Jan 2024 01:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BC21E495;
-	Fri,  5 Jan 2024 10:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E548410E6;
+	Sat,  6 Jan 2024 01:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IwnowARm"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C35250EB;
-	Fri,  5 Jan 2024 10:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T60BJ2M2vz4f3lWH;
-	Fri,  5 Jan 2024 18:31:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 063191A0817;
-	Fri,  5 Jan 2024 18:31:58 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgDX2xGZ2pdlGeddFg--.44050S3;
-	Fri, 05 Jan 2024 18:31:56 +0800 (CST)
-Subject: Re: [PATCH RFC v3 for-6.8/block 04/17] mtd: block2mtd: use bdev apis
-To: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, roger.pau@citrix.com,
- colyli@suse.de, kent.overstreet@gmail.com, joern@lazybastard.org,
- miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
- sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
- gor@linux.ibm.com, agordeev@linux.ibm.com, jejb@linux.ibm.com,
- martin.petersen@oracle.com, clm@fb.com, josef@toxicpanda.com,
- dsterba@suse.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- nico@fluxnic.net, xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
- adilger.kernel@dilger.ca, jack@suse.com, konishi.ryusuke@gmail.com,
- willy@infradead.org, akpm@linux-foundation.org, hare@suse.de,
- p.raghav@samsung.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-ext4@vger.kernel.org, linux-nilfs@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20231221085712.1766333-1-yukuai1@huaweicloud.com>
- <20231221085712.1766333-5-yukuai1@huaweicloud.com>
- <20240104112855.uci45hhqaiitmsir@quack3> <ZZedSYAedA05Oex2@infradead.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <28237ec3-c3c1-1f0c-5250-04a88845d4a6@huaweicloud.com>
-Date: Fri, 5 Jan 2024 18:31:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC2B15A0
+	for <linux-bcache@vger.kernel.org>; Sat,  6 Jan 2024 01:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-36066190a99so1016425ab.3
+        for <linux-bcache@vger.kernel.org>; Fri, 05 Jan 2024 17:33:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1704504780; x=1705109580; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qT3oZQlZSl6Q++CcuktscPeZvw2bExX2KYu8x/389yU=;
+        b=IwnowARmTt45mA/6L6GI6k5HX4s9Oqwiv9lk2v45fuES1vcmHHyNJeA11IizwQJIHg
+         fW8P+lHgiJmu6PCEIpX/KdrZk6I0mg5Io12tEYwk4SJVrHU1bjqQEo1LNht/chEBCcsn
+         YloIoGEyzchX+I095hsVKk7wjjWN2D9JbmVw4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704504780; x=1705109580;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qT3oZQlZSl6Q++CcuktscPeZvw2bExX2KYu8x/389yU=;
+        b=ElD5/qIkkWD3ZmTtxAuumH/8raF/rqz+n2XahISk/TCje3orYxg9751kfA2HJAAeL9
+         TjnQGGlOksRHtFPZhj7D32u3h4Vl/Hs7Gp/sxuMPwflo/wk9/yIx01SKflt8ZoExwwKu
+         p1qyUUl98auOceEbzIbBFVESITJQASlxS9rAQjw6RewWZ5GsaKyyBPvi762Q3brkYcn0
+         IgRMprjQiEeBLemI2lsGXRceR2bsZWEGQuv0EMLSdFH/S4KLnPXGjJWRWpAnf+sFnJY7
+         5vCjWU45XmSt+urG43kcoMiDlhbUPjw6kRj+XrVYG4og8ykxqNeTZZSbc/m81eKaGtUw
+         Dl2g==
+X-Gm-Message-State: AOJu0YyQAi1/hQvTy/x5wbzOOpXxfgz0jF1OaZcBMmpWD6jOViVXmqO5
+	vMXMrOdK0cTEYyfA0fccFxYOoencqg8A
+X-Google-Smtp-Source: AGHT+IGbdqkCX01n0F2LxOJc20c51ndSlx6/hfXSdI3NKdAsCGkhvdsG05i+OtNt2Y/UCPH6C9phNg==
+X-Received: by 2002:a05:6e02:1c0b:b0:35d:62f2:1f45 with SMTP id l11-20020a056e021c0b00b0035d62f21f45mr533250ilh.20.1704504780792;
+        Fri, 05 Jan 2024 17:33:00 -0800 (PST)
+Received: from google.com (KD124209171220.ppp-bb.dion.ne.jp. [124.209.171.220])
+        by smtp.gmail.com with ESMTPSA id y17-20020a170902b49100b001cf511aa772sm2017224plr.145.2024.01.05.17.32.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jan 2024 17:33:00 -0800 (PST)
+Date: Sat, 6 Jan 2024 10:32:54 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Coly Li <colyli@suse.de>, Miquel Raynal <miquel.raynal@bootlin.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-um@lists.infradead.org,
+	linux-block@vger.kernel.org, nbd@other.debian.org,
+	linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH 7/9] zram: use the default discard granularity
+Message-ID: <20240106013254.GC123449@google.com>
+References: <20231228075545.362768-1-hch@lst.de>
+ <20231228075545.362768-8-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZZedSYAedA05Oex2@infradead.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDX2xGZ2pdlGeddFg--.44050S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7XryUXFWDtw1fXr4DKF17Jrb_yoWxuFgEgF
-	yvkFZrKa13JrZ2vFsxKw15tFZ2ya47Zry8JrW0qay7W3s5Xa9rG3WkGr13XF1qqan7WFnI
-	9r9FqayrKay2qjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbaxFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
-	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x0JUd8n5UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231228075545.362768-8-hch@lst.de>
 
-Hi,
-
-ÔÚ 2024/01/05 14:10, Christoph Hellwig Ð´µÀ:
-> On Thu, Jan 04, 2024 at 12:28:55PM +0100, Jan Kara wrote:
->> What do you think? Because when we are working with the folios it is rather
->> natural to use their mapping for dirty balancing?
+On (23/12/28 07:55), Christoph Hellwig wrote:
 > 
-> The real problem is that block2mtd pokes way to deep into block
-> internals.
+> The discard granularity now defaults to a single sector, so don't set
+> that value explicitly.
 > 
-> I think the saviour here is Christians series to replace the bdev handle
-> with a struct file, which will allow to use the normal file write path
-> here and get rid of the entire layering volation.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Yes, looks like lots of patches from this set is not needed anymore.
-I'll stop sending v4 and just send some patches that is not related to
-'bd_inode' separately.
-
-Thanks,
-Kuai
-
-> 
-> .
-> 
-
+FWIW,
+Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
