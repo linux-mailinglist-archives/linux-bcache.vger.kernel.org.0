@@ -1,81 +1,82 @@
-Return-Path: <linux-bcache+bounces-237-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-238-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D098356C0
-	for <lists+linux-bcache@lfdr.de>; Sun, 21 Jan 2024 17:56:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 034208356FE
+	for <lists+linux-bcache@lfdr.de>; Sun, 21 Jan 2024 18:05:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91FEEB21952
-	for <lists+linux-bcache@lfdr.de>; Sun, 21 Jan 2024 16:56:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C31EB20D73
+	for <lists+linux-bcache@lfdr.de>; Sun, 21 Jan 2024 17:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79426376F1;
-	Sun, 21 Jan 2024 16:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5F83770F;
+	Sun, 21 Jan 2024 17:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jnz1UWRN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W5Hnq18+"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A18C22069;
-	Sun, 21 Jan 2024 16:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A786312E4C;
+	Sun, 21 Jan 2024 17:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705856157; cv=none; b=dEtPuQkny7HvGvohLd3D3HVQDIVlATGNajj458U3Ge99Xy9Mk+z/CvUT9zuNCJfTvVFwPLgY6s+c9EqKu7AJLFqhxim8X6a3/dHmy2AV3oqXZrkWuDsPPwLC0x9a62MIw2QncGBwy5RzYHm6Slao2fnnqIPR8Y8IiLeVt/DrXZk=
+	t=1705856733; cv=none; b=ftQUBoJWdBmT0snumjRlY9MNLKtVAeQM7jBqUlWd6NNnbg/hVvhny+QcjDkL9aCMIS9GOGr5aT6qwV+YoKa1RerUt5B6soeuehVSYVZMPq0HH/hZBSyUUBqu9MUK60fXkdbFbBaVusI/7Cnt5dcWzXsY1jQeOP+XOxnN/W7dPhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705856157; c=relaxed/simple;
-	bh=kumixTM6360WqBwZFdhho8/NoG8cRtPG/9EeX1y6SAU=;
+	s=arc-20240116; t=1705856733; c=relaxed/simple;
+	bh=/BBQEgsyEX+CgV7C74J42qwIUw91ntDU8ZHez9wNpNQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gk3C3NoNntuG9wUJE6GI3qWczIEmsJiYvIAyaAEjtI8Y/4CK1u0QZW8otsoo2uEBf9abkMYE7QsVdkab/8vZzaeJSmc/Q+P3dQ5wZDpaCxLf4cfN9kGnpT6/Os77aT7j+zOiYmM74EN1ohu6dYeRTJ/aZfw7K6lEbkmvedhSsos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jnz1UWRN; arc=none smtp.client-ip=209.85.210.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=jcOxszMHo8DaVqtiIOUWcSuDDStOiWPvhuB1O7ZxQuAL18r+x+G9tk7EOI5lw1zzpA8mnDd5I7VzCr+sZrwwM5j2uFlt0iyxi7+VB8c3Yjs4iDhh6FxIO+Avi9L79XnkuRoxMzKI8i2BuYCX2Gea2o2Jz8xsPOTsibnjQyn8A64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W5Hnq18+; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6d9b41a3cb7so851332b3a.0;
-        Sun, 21 Jan 2024 08:55:55 -0800 (PST)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-28b93b04446so619959a91.0;
+        Sun, 21 Jan 2024 09:05:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705856155; x=1706460955; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1705856732; x=1706461532; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=D2qDc9wgDSyAGImg6/v/xfY6zLUU7ybAJpIFSFgZNto=;
-        b=Jnz1UWRNnDWt9ZHPRA1ZCruF83SLVlHkXDVDcNEfUNtwRdt6AbpkXfUCIGfWQOj3Xf
-         S0fbhioOmScTvsFZN+GfizXkIM1eDgLo+wTaPOAh7t4aQDbgylxMbCspAspTf2vpEUZQ
-         ugx/vzPPhnPjm9umg5rG+ZJVCSv8i1uXbvsk49szVwynQIMUKYFkSZXrmM5L+5yGD5iw
-         ruTIO8uklEI+qmksl101opV04YNp5xAVakJxfANdFzD3Cw95IIzkOU9TdvCb+dXt37he
-         xEblc7ibEe6VlO12bEmOu/d47eX/vqI1swWq6CBpgvDGA4/KWxpzURWhoPjke072K3yy
-         JiQg==
+        bh=MkbA457M4E440O7ar5sDvfp8xELZCIe8Nky4cfiSYro=;
+        b=W5Hnq18+rvkfFubkWUteg8FMiUK+AyuJMpt8d+s9dAQsoyJvBcYnhge4dbcsvDMLms
+         AAina+JWEPMn+I5RFntkUEW76TMfs8B1153oguJp1X5oIZQES6XoX4hL13e3HnbULqJP
+         KJpvd5O8a9pi9ORdl3S328PXCHRfv4PPX+Rs3+YAk/lji3Uu8iBIyEa3NBlv83KTpZHd
+         AkoSm8btp2CkAk3IDBhGfHsIk+7vwAo+OYGLYKNDZGHzjM7iOsuuKrjKQ0SZRxvuH9BS
+         g4/LC6MIqh2QnRMCdpcIC+H+YumfEjp5ulGlX8EWuUiswgmmLeAW8J0ElF+M4jCldCl3
+         9lbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705856155; x=1706460955;
+        d=1e100.net; s=20230601; t=1705856732; x=1706461532;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D2qDc9wgDSyAGImg6/v/xfY6zLUU7ybAJpIFSFgZNto=;
-        b=W3Qo1lAfll7/rPUcUyyBy1gXfduzs30ERC6V4vrZn+cKeHUVGs9oPD+eavf91twARe
-         9IgeQbDPkPk0FsesleYnIqLIRinpnuHMb5nxe4q7dtjcbNIoVDVdAN4N0D4buSsEcboX
-         0zW7SZUfqS4HivTt/Hj0SY0t3HDpnPAt9I5kyaZpXvMJ+8V9hbe2ZgslttetakNiRfJ8
-         2IDXJ7sgBaX1COg+Gp54db+kO1iV6G2SgiHkr07TrZHbPvb9BeuPvFMLDW/dbKiqRTnH
-         RiBDgFkXrtFc1aEWDXZxqFjIfsNmJV4YtwGWWprc1o2jAPCz/6zQZhwFpTqImBJqPm72
-         VW3Q==
-X-Gm-Message-State: AOJu0YygEIlUuq8dhFLv6bXp60K+Gi2iSNh6v7I3myjD9z86Bc2HN/VA
-	vlRTjg0gs3E5AFEr07CdXMsXZ0D5BeCs+UJHL6MPb56YjhymSASC
-X-Google-Smtp-Source: AGHT+IFRvxoZ5dtEx4AylSL8Ys8d212UfSH7n2aIcy/pCr0Z2W/jVrjwWlL/NcBZRZT4K5V+JU6o0A==
-X-Received: by 2002:a17:902:b097:b0:1d7:51b3:491d with SMTP id p23-20020a170902b09700b001d751b3491dmr1125026plr.2.1705856155291;
-        Sun, 21 Jan 2024 08:55:55 -0800 (PST)
+        bh=MkbA457M4E440O7ar5sDvfp8xELZCIe8Nky4cfiSYro=;
+        b=rH9PP6ZMBmMOYC19hzZhGkMacN1pK2AJ3CYPJfcEQ1NZnOru5NVC32vXN5E3nVhhqN
+         HytftnV8RSpkR2Xgiun12MWtQuJWsjcdBa7pqSt7zt14W6O1wLUbKHyddcDBYRdXMxcT
+         bOn2+yHN+vAg5Ft4M6L1V8+UBatCW0L/kuj5SfjEUKy21tGEuqNwIdkQglXvCM4t/6uY
+         2ZFRBQYMd9NzqaT2hAyMBMbOvnbC6FkN5AZmXANhsPYJ1X7eaiivN8Q6pIhbjRJs1LIU
+         mxMlxRFUVr6xfS+EMvBxSZq0T8A8bQt0us4/3xgXHYAjr+JlikI7f0Rx8Dx5kh2zantb
+         M7Tg==
+X-Gm-Message-State: AOJu0YzZnPJfy3WHCBxb8yR1oOzk/c/An96jxpBzP9P5v9y21O7GDvrH
+	puyWm+mEHz4g3CjGk5TPPC5nv0T/r3wDt7AhQYT5lELKu2WsN3fw
+X-Google-Smtp-Source: AGHT+IG/Nlq04qRAefj6UwiT/yqPb2U5/xdaUXjXAXdLqOty7Btht6NLGyJkf9xdNvEYfJJ0E/3TnQ==
+X-Received: by 2002:a17:90b:46d3:b0:290:65ef:9ba6 with SMTP id jx19-20020a17090b46d300b0029065ef9ba6mr3499077pjb.2.1705856731909;
+        Sun, 21 Jan 2024 09:05:31 -0800 (PST)
 Received: from visitorckw-System-Product-Name (IP-216-168.cs.nctu.edu.tw. [140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id jc9-20020a17090325c900b001d7233f1a92sm3878577plb.221.2024.01.21.08.55.53
+        by smtp.gmail.com with ESMTPSA id w15-20020a17090ad60f00b0028dd42b115bsm7740198pju.5.2024.01.21.09.05.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jan 2024 08:55:54 -0800 (PST)
-Date: Mon, 22 Jan 2024 00:55:51 +0800
+        Sun, 21 Jan 2024 09:05:31 -0800 (PST)
+Date: Mon, 22 Jan 2024 01:05:28 +0800
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
 To: Kent Overstreet <kent.overstreet@linux.dev>
 Cc: colyli@suse.de, bfoster@redhat.com, jserv@ccns.ncku.edu.tw,
 	linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH 0/5] Optimize number of comparisons for heap/heapsort
- implementaion
-Message-ID: <Za1Ml/ZUBXdYXOIt@visitorckw-System-Product-Name>
+Subject: Re: [PATCH 2/5] bcachefs: Introduce parent function for
+ sort_cmp_size()
+Message-ID: <Za1O2JDOnTRL0QvL@visitorckw-System-Product-Name>
 References: <20240121153649.2733274-1-visitorckw@gmail.com>
- <nl6kvjxg4gia5pbfb4jibxusvavmlwumrvy3swfs33ciub32wt@2kmeqnqycxxh>
+ <20240121153649.2733274-3-visitorckw@gmail.com>
+ <vrzgjxym2gnawuds54s4lr4zqbldm6sxp5yksrz5467hcrzjtp@lphbsqbidqdm>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -84,46 +85,67 @@ List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <nl6kvjxg4gia5pbfb4jibxusvavmlwumrvy3swfs33ciub32wt@2kmeqnqycxxh>
+In-Reply-To: <vrzgjxym2gnawuds54s4lr4zqbldm6sxp5yksrz5467hcrzjtp@lphbsqbidqdm>
 
-On Sun, Jan 21, 2024 at 11:21:06AM -0500, Kent Overstreet wrote:
-> On Sun, Jan 21, 2024 at 11:36:44PM +0800, Kuan-Wei Chiu wrote:
-> > Hello,
-> > 
-> > The existing implementations of heap/heapsort follow the conventional
-> > textbook approach, where each heapify operation requires approximately
-> > 2*log2(n) comparisons. In this series, I introduce a bottom-up variant
-> > that reduces the number of comparisons during heapify operations to
-> > approximately log2(n), while maintaining the same number of swap
-> > operations.
-> > 
-> > Thanks,
-> > Kuan-Wei
-> > 
-> > Kuan-Wei Chiu (5):
-> >   bcachefs: Optimize eytzinger0_sort() using bottom-up heapsort
-> >   bcachefs: Introduce parent function for sort_cmp_size()
-> >   bcachefs: Optimize sort_cmp_size() using bottom-up heapsort
-> >   bcachefs: Optimize number of comparisons in heap_sift_down
-> >   bcache: Optimize number of comparisons in heap_sift
-> > 
-> >  drivers/md/bcache/util.h |  23 +++++----
-> >  fs/bcachefs/util.c       | 109 ++++++++++++++++++++++++++-------------
-> >  fs/bcachefs/util.h       |  23 +++++----
-> >  3 files changed, 98 insertions(+), 57 deletions(-)
+On Sun, Jan 21, 2024 at 11:17:30AM -0500, Kent Overstreet wrote:
+> On Sun, Jan 21, 2024 at 11:36:46PM +0800, Kuan-Wei Chiu wrote:
+> > When dealing with array indices, the parent's index can be obtained
+> > using the formula (i - 1) / 2. However, when working with byte offsets,
+> > this approach is not straightforward. To address this, we have
+> > introduced a branch-free parent function that does not require any
+> > division operations to calculate the parent's byte offset.
 > 
-> Good stuff
-> 
-> While we're looking at this code, we should be doing some cleanup too -
-> there's no reason for the heap code to be duplicated in bcache and
-> bcachefs anymore, and it'd also be nice to get fs/bcachefs/eytzinger.h
-> moved to include/linux and bcache converted to use it.
-> 
-> I also would not be surprised if there's another heap implementation in
-> include/linux; we'll want to check for that and if there is decide which
-> is worth keeping.
+> This is a good commit message - but it would be even better if it was a
+> function comment on parent()
 >
-Yes, we have 'min_heap.h' in include/linux.
-
-> Would you or Coli be interested in taking that on as well?
+Sure, however, it seems that sort_cmp_size() can be directly replaced
+with the sort function from include/linux. Once we decide on the
+cleanup tasks, if we still choose to retain this patch, I will make the
+adjustments.
+> > 
+> > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > ---
+> > This patch has undergone unit testing using the following code [1].
+> > 
+> > [1]:
+> > static int test(void)
+> > {
+> >     size_t i, p, size, lsbit;
+> > 
+> >     for (i = 0; i < 10000; i++) {
+> >         size = get_random_u32() % (1U << 10);
+> >         lsbit = size & -size;
+> >         i = get_random_u32() % (1U << 20) * size + size;
+> >         p = parent(i, lsbit, size);
+> >         if (p != (i / size - 1) / 2 * size)
+> >             return -1;
+> >     }
+> > 
+> >     return 0;
+> > }
+> > 
+> >  fs/bcachefs/util.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/fs/bcachefs/util.c b/fs/bcachefs/util.c
+> > index bbc83b43162e..f5bbf96df2ce 100644
+> > --- a/fs/bcachefs/util.c
+> > +++ b/fs/bcachefs/util.c
+> > @@ -907,6 +907,13 @@ static inline void do_swap(void *base, size_t n, size_t size,
+> >  		  size);
+> >  }
+> >  
+> > +static inline size_t parent(size_t i, size_t lsbit, size_t size)
+> > +{
+> > +	i -= size;
+> > +	i -= size & -(i & lsbit);
+> > +	return i >> 1;
+> > +}
+> > +
+> >  void eytzinger0_sort(void *base, size_t n, size_t size,
+> >  		     int (*cmp_func)(const void *, const void *, size_t),
+> >  		     void (*swap_func)(void *, void *, size_t))
+> > -- 
+> > 2.25.1
+> > 
 
