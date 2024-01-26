@@ -1,173 +1,266 @@
-Return-Path: <linux-bcache+bounces-243-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-244-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034A5836D45
-	for <lists+linux-bcache@lfdr.de>; Mon, 22 Jan 2024 18:27:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7C583E4B2
+	for <lists+linux-bcache@lfdr.de>; Fri, 26 Jan 2024 23:09:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 877ADB24F8D
-	for <lists+linux-bcache@lfdr.de>; Mon, 22 Jan 2024 17:21:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C90F1C2333A
+	for <lists+linux-bcache@lfdr.de>; Fri, 26 Jan 2024 22:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013D751013;
-	Mon, 22 Jan 2024 16:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C7245BF5;
+	Fri, 26 Jan 2024 22:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Enx1HGIs"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FTHZZY7n"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7760150279;
-	Mon, 22 Jan 2024 16:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823E9250F1
+	for <linux-bcache@vger.kernel.org>; Fri, 26 Jan 2024 22:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705940629; cv=none; b=AvNKdQGlqOgbps+SJ/pI2JLMdJKoB8g9z41UuPIcRxBe+NDP4sQn6rxjbARe53GCDLLiFMuEOZlSFARfamldkd8s5NOM2X/zV3T7GNUO4tuuawy5RaY18DEN2LX/j+Yuc4+9w9R9CkDh50D/ebGvs1PFzrJ768tZlMfGiY+AlSE=
+	t=1706306826; cv=none; b=V8TWS9kfSci6nkmu3SRRzhFe7//MKc/7MvEvXWlNWpSaInI0bjXsLbNs6ixj/qxFLWfJahGOco98L7XcRswJp6mNxEu1giVh7IFryqAE02S6KLd1AFjpvHxRvlGovC0gRnWavrlj5YwYQwQr2f8oXqehpfvMekkSVtXSv9foLfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705940629; c=relaxed/simple;
-	bh=ctEaKNZFDGbsSXqRw8IOY9JUurhEb6JZdXGmd/zRjxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZwCiCbNHyOaLXoC/fgeUDKZqo4a8ipIgaYXJgHjcWn95mchHynQlYrBfkBFIKmsAiTJOJuGltBr9XwLwjKe4CcRek84rGRLf57uh00AtIytXjVmGvbut91zAv5z6CY+fsbBNSeg65cRwvIy7yPjIZDIcN4oNl1j+/5ggdHmaBUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Enx1HGIs; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-36275c1f11bso116575ab.1;
-        Mon, 22 Jan 2024 08:23:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705940627; x=1706545427; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Mfx2hahF3mSU03cNx8bFJW8kznthWgLM/hhXHRDnxI=;
-        b=Enx1HGIsEfU3DzCHtEYX/zvbJsSrMEkQ1VxmvjeBTVrgPBgP2Vs7YFJ7uD1Q2bMv1Z
-         vXwFnvWXOGGtAy6MYJcEtavb5bGoH7Y6AvAWdR5j9WhuAim12c5qKgyjCvnitn+2AYui
-         zKzi9K7gpKPvU9JpXx8y+bi/YTOXtCpEJP/9UhPbDx9/ywGtAos2+Au1xPYTWNPiWeb5
-         lMgH48nvWQQC1rgZr7Wyxl2sbILZRHI9czlv2nJCIjXGW3WYsKk1xoYQmtYovUXKS7F4
-         M1BQBXbXNyDlCj+a9GNWniPd/xwNklDcQwoOvECIBjDEklZy5DtoEDumyYHGIa+AdOEE
-         p8XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705940627; x=1706545427;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Mfx2hahF3mSU03cNx8bFJW8kznthWgLM/hhXHRDnxI=;
-        b=OqvaX7OYTGA3O2Qb3hIau75Ypcpv/4i1Go6ujGUr8r1l3hkDsIR0fDYZDblWcvsOU5
-         3qPZNXO0mwdWvr9+UgeH50pJPMwIqLpzWvAXFCRIO5ZK3ngtC4+aS2UX4ZrfOHXZ2fGu
-         R+CllSDI5TQ9luC59ACZoZ3LKW2JcMzaU6T4HAwsjVlLqGWtSAOs3JHEgIq1tes8r9nF
-         +AxmqV4vpJOSNOLXHuieGkQN16CStHieUSiwJZg+G258EPbhOfjUEYfZjpG5bYKlSGsb
-         8CMl3dT2HW3GTkCR7g+I7Q3p95gnZXR3ntZteetdZTu2DijmBxduOfuXXSc15F190LpS
-         osNQ==
-X-Gm-Message-State: AOJu0Yzh4faLWc+zQDBBtQnfymcX19SXID7tdMmZAZQdiFA9AzP2k1t0
-	w51BhIjM4knfMxvuRZRSppNhdch2H3UHRzLayhk0ELyV04NbbU6rTwXbbqIy
-X-Google-Smtp-Source: AGHT+IG6BLYd5D1AcOz1m3V0gy6/cTz5Q8nZuwLgDP3aHWZW79Gac93IIbSggDEw97xq9QyE5ZZHMw==
-X-Received: by 2002:a05:6e02:1c2f:b0:35f:f59f:9f4c with SMTP id m15-20020a056e021c2f00b0035ff59f9f4cmr7339058ilh.1.1705940627467;
-        Mon, 22 Jan 2024 08:23:47 -0800 (PST)
-Received: from visitorckw-System-Product-Name (IP-216-168.cs.nctu.edu.tw. [140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id f1-20020a63dc41000000b005c6617b52e6sm8766104pgj.5.2024.01.22.08.23.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 08:23:47 -0800 (PST)
-Date: Tue, 23 Jan 2024 00:23:43 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: colyli@suse.de, bfoster@redhat.com, jserv@ccns.ncku.edu.tw,
-	linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1706306826; c=relaxed/simple;
+	bh=XB4fRjTtTylKsY7YTWjFycmOakQ+8VZzbUngR9Y7Qlw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b2Q+w4uRLrYQBPxbqQWD+7DpdG6d8vX1irwBpdT3IDRDLnT6Oqc52v3YdyruSHdVt1okkov6YKRosE7M2oTA8M2+ao1W7irnGKX3W4LApamFV6K9pTzIg7ta4EmXr4Fz3AjnbIRcbpllk3mDxcr5GxNs8tZqz4q6NraryJ+0bOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FTHZZY7n; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1706306822;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0uDCQI2J2OdCX4BmaIuAGyUG1leeUjTKY0gYVjTj18U=;
+	b=FTHZZY7nMvcAvxX6xS1FLXGkx0hsfKKwXyDXmPmqGDw7kVxMvOHTtXUUdrlLbydUYjkuhm
+	Uil/VEkNUoYYyJkVZfAGojNEY5KD0/t+NYanXQde+kvUBrUdmc3/QPQiSLCi6Vc2xFe2E8
+	y+wyuRqqhiOi81sWmkl7FYrCiJZK1dc=
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-bcache@vger.kernel.org,
 	linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH 0/5] Optimize number of comparisons for heap/heapsort
- implementaion
-Message-ID: <Za6Wj1730cqvoYaQ@visitorckw-System-Product-Name>
-References: <20240121153649.2733274-1-visitorckw@gmail.com>
- <nl6kvjxg4gia5pbfb4jibxusvavmlwumrvy3swfs33ciub32wt@2kmeqnqycxxh>
- <Za1Ml/ZUBXdYXOIt@visitorckw-System-Product-Name>
- <ioyfizrzq7w7mjrqcadtzsfgpuntowtjdw5pgn4qhvsdp4mqqg@nrlek5vmisbu>
- <Za6EjshZWFUPLJef@visitorckw-System-Product-Name>
- <zwcm35flig23fttyybenorsu27ki3dsurqjkjxhrlbnk5zg3n7@vmagssufbuy2>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Daniel Hill <daniel@gluo.nz>,
+	"Darrick J . Wong" <djwong@kernel.org>
+Subject: [PATCH 1/5] mean and variance: Promote to lib/math
+Date: Fri, 26 Jan 2024 17:06:51 -0500
+Message-ID: <20240126220655.395093-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <zwcm35flig23fttyybenorsu27ki3dsurqjkjxhrlbnk5zg3n7@vmagssufbuy2>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jan 22, 2024 at 11:06:39AM -0500, Kent Overstreet wrote:
-> On Mon, Jan 22, 2024 at 11:06:54PM +0800, Kuan-Wei Chiu wrote:
-> > On Sun, Jan 21, 2024 at 12:41:55PM -0500, Kent Overstreet wrote:
-> > > On Mon, Jan 22, 2024 at 12:55:51AM +0800, Kuan-Wei Chiu wrote:
-> > > > On Sun, Jan 21, 2024 at 11:21:06AM -0500, Kent Overstreet wrote:
-> > > > > On Sun, Jan 21, 2024 at 11:36:44PM +0800, Kuan-Wei Chiu wrote:
-> > > > > > Hello,
-> > > > > > 
-> > > > > > The existing implementations of heap/heapsort follow the conventional
-> > > > > > textbook approach, where each heapify operation requires approximately
-> > > > > > 2*log2(n) comparisons. In this series, I introduce a bottom-up variant
-> > > > > > that reduces the number of comparisons during heapify operations to
-> > > > > > approximately log2(n), while maintaining the same number of swap
-> > > > > > operations.
-> > > > > > 
-> > > > > > Thanks,
-> > > > > > Kuan-Wei
-> > > > > > 
-> > > > > > Kuan-Wei Chiu (5):
-> > > > > >   bcachefs: Optimize eytzinger0_sort() using bottom-up heapsort
-> > > > > >   bcachefs: Introduce parent function for sort_cmp_size()
-> > > > > >   bcachefs: Optimize sort_cmp_size() using bottom-up heapsort
-> > > > > >   bcachefs: Optimize number of comparisons in heap_sift_down
-> > > > > >   bcache: Optimize number of comparisons in heap_sift
-> > > > > > 
-> > > > > >  drivers/md/bcache/util.h |  23 +++++----
-> > > > > >  fs/bcachefs/util.c       | 109 ++++++++++++++++++++++++++-------------
-> > > > > >  fs/bcachefs/util.h       |  23 +++++----
-> > > > > >  3 files changed, 98 insertions(+), 57 deletions(-)
-> > > > > 
-> > > > > Good stuff
-> > > > > 
-> > > > > While we're looking at this code, we should be doing some cleanup too -
-> > > > > there's no reason for the heap code to be duplicated in bcache and
-> > > > > bcachefs anymore, and it'd also be nice to get fs/bcachefs/eytzinger.h
-> > > > > moved to include/linux and bcache converted to use it.
-> > > > > 
-> > > > > I also would not be surprised if there's another heap implementation in
-> > > > > include/linux; we'll want to check for that and if there is decide which
-> > > > > is worth keeping.
-> > > > >
-> > > > Yes, we have 'min_heap.h' in include/linux.
-> > > 
-> > > So that has the advantage of more readable code - functions instead of
-> > > macros - whereas my version has the type safe interface.
-> > > 
-> > > We could combine the two approaches, and put a type-safe interface on
-> > > top of the min_heap.h code with some small macro wrappers - see
-> > > generic-radix-tree.h for an example of how that's done.
-> > 
-> > Without modifying the interface provided by min_heap.h, it seems
-> > challenging to implement the functionality of heap_add due to the
-> > relationship with heap_setbackpointer.
-> 
-> min_heap.h has the same functionality, different interface - updating
-> the callers for an interface change is fine.
->
-OK, I'll take some time to do these cleanups.
-> > 
-> > Additionally, when looking into the code in generic-radix-tree.h,
-> > should we replace type[0] with type[]? This is because zero-length
-> > arrays are deprecated language features mentioned in document [1].
-> 
-> Zero length arrays are deprecated as VLAs, but this isn't a VLA - we're
-> not storing anything there, the variable is just so that macros have
-> access to the type.
-> 
-> > Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays [1]
-> > > 
-> > > min_heap.h has only one user though? I don't think I can quite believe
-> > > that's the only other code in the kernel using a heap, there must be
-> > > more open coded out there...
-> > 
-> > I'm not sure why, but it seems that in the kernel, other places using
-> > the heap implement their own subsystem-specific solutions rather than
-> > utilizing a generic heap interface. For instance,
-> > kernel/sched/cpudeadline.c and net/sched/sch_cake.c both have their own
-> > implementations.
-> 
-> Sounds like a fun cleanup project :)
+Small statistics library, for taking in a series of value and computing
+mean, weighted mean, standard deviation and weighted deviation.
+
+The main use case is for statistics on latency measurements.
+
+Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Daniel Hill <daniel@gluo.nz>
+Cc: Darrick J. Wong <djwong@kernel.org>
+---
+ MAINTAINERS                                        |  9 +++++++++
+ fs/bcachefs/Kconfig                                | 10 +---------
+ fs/bcachefs/Makefile                               |  3 ---
+ fs/bcachefs/util.c                                 |  2 +-
+ fs/bcachefs/util.h                                 |  3 +--
+ {fs/bcachefs => include/linux}/mean_and_variance.h |  0
+ lib/Kconfig.debug                                  |  9 +++++++++
+ lib/math/Kconfig                                   |  3 +++
+ lib/math/Makefile                                  |  2 ++
+ {fs/bcachefs => lib/math}/mean_and_variance.c      |  3 +--
+ {fs/bcachefs => lib/math}/mean_and_variance_test.c |  3 +--
+ 11 files changed, 28 insertions(+), 19 deletions(-)
+ rename {fs/bcachefs => include/linux}/mean_and_variance.h (100%)
+ rename {fs/bcachefs => lib/math}/mean_and_variance.c (99%)
+ rename {fs/bcachefs => lib/math}/mean_and_variance_test.c (99%)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8d1052fa6a69..de635cfd354d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13379,6 +13379,15 @@ S:	Maintained
+ F:	drivers/net/mdio/mdio-regmap.c
+ F:	include/linux/mdio/mdio-regmap.h
+ 
++MEAN AND VARIANCE LIBRARY
++M:	Daniel B. Hill <daniel@gluo.nz>
++M:	Kent Overstreet <kent.overstreet@linux.dev>
++S:	Maintained
++T:	git https://github.com/YellowOnion/linux/
++F:	include/linux/mean_and_variance.h
++F:	lib/math/mean_and_variance.c
++F:	lib/math/mean_and_variance_test.c
++
+ MEASUREMENT COMPUTING CIO-DAC IIO DRIVER
+ M:	William Breathitt Gray <william.gray@linaro.org>
+ L:	linux-iio@vger.kernel.org
+diff --git a/fs/bcachefs/Kconfig b/fs/bcachefs/Kconfig
+index 5cdfef3b551a..72d1179262b3 100644
+--- a/fs/bcachefs/Kconfig
++++ b/fs/bcachefs/Kconfig
+@@ -24,6 +24,7 @@ config BCACHEFS_FS
+ 	select XXHASH
+ 	select SRCU
+ 	select SYMBOLIC_ERRNAME
++	select MEAN_AND_VARIANCE
+ 	help
+ 	The bcachefs filesystem - a modern, copy on write filesystem, with
+ 	support for multiple devices, compression, checksumming, etc.
+@@ -86,12 +87,3 @@ config BCACHEFS_SIX_OPTIMISTIC_SPIN
+ 	Instead of immediately sleeping when attempting to take a six lock that
+ 	is held by another thread, spin for a short while, as long as the
+ 	thread owning the lock is running.
+-
+-config MEAN_AND_VARIANCE_UNIT_TEST
+-	tristate "mean_and_variance unit tests" if !KUNIT_ALL_TESTS
+-	depends on KUNIT
+-	depends on BCACHEFS_FS
+-	default KUNIT_ALL_TESTS
+-	help
+-	  This option enables the kunit tests for mean_and_variance module.
+-	  If unsure, say N.
+diff --git a/fs/bcachefs/Makefile b/fs/bcachefs/Makefile
+index 1a05cecda7cc..b11ba74b8ad4 100644
+--- a/fs/bcachefs/Makefile
++++ b/fs/bcachefs/Makefile
+@@ -57,7 +57,6 @@ bcachefs-y		:=	\
+ 	keylist.o		\
+ 	logged_ops.o		\
+ 	lru.o			\
+-	mean_and_variance.o	\
+ 	migrate.o		\
+ 	move.o			\
+ 	movinggc.o		\
+@@ -88,5 +87,3 @@ bcachefs-y		:=	\
+ 	util.o			\
+ 	varint.o		\
+ 	xattr.o
+-
+-obj-$(CONFIG_MEAN_AND_VARIANCE_UNIT_TEST)   += mean_and_variance_test.o
+diff --git a/fs/bcachefs/util.c b/fs/bcachefs/util.c
+index 56b815fd9fc6..d7ea95abb9df 100644
+--- a/fs/bcachefs/util.c
++++ b/fs/bcachefs/util.c
+@@ -22,9 +22,9 @@
+ #include <linux/string.h>
+ #include <linux/types.h>
+ #include <linux/sched/clock.h>
++#include <linux/mean_and_variance.h>
+ 
+ #include "eytzinger.h"
+-#include "mean_and_variance.h"
+ #include "util.h"
+ 
+ static const char si_units[] = "?kMGTPEZY";
+diff --git a/fs/bcachefs/util.h b/fs/bcachefs/util.h
+index b414736d59a5..0059481995ef 100644
+--- a/fs/bcachefs/util.h
++++ b/fs/bcachefs/util.h
+@@ -17,8 +17,7 @@
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+ #include <linux/workqueue.h>
+-
+-#include "mean_and_variance.h"
++#include <linux/mean_and_variance.h>
+ 
+ #include "darray.h"
+ 
+diff --git a/fs/bcachefs/mean_and_variance.h b/include/linux/mean_and_variance.h
+similarity index 100%
+rename from fs/bcachefs/mean_and_variance.h
+rename to include/linux/mean_and_variance.h
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 975a07f9f1cc..817ddfe132cd 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2191,6 +2191,15 @@ config CPUMASK_KUNIT_TEST
+ 
+ 	  If unsure, say N.
+ 
++config MEAN_AND_VARIANCE_UNIT_TEST
++	tristate "mean_and_variance unit tests" if !KUNIT_ALL_TESTS
++	depends on KUNIT
++	select MEAN_AND_VARIANCE
++	default KUNIT_ALL_TESTS
++	help
++	  This option enables the kunit tests for mean_and_variance module.
++	  If unsure, say N.
++
+ config TEST_LIST_SORT
+ 	tristate "Linked list sorting test" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT
+diff --git a/lib/math/Kconfig b/lib/math/Kconfig
+index 0634b428d0cb..7530ae9a3584 100644
+--- a/lib/math/Kconfig
++++ b/lib/math/Kconfig
+@@ -15,3 +15,6 @@ config PRIME_NUMBERS
+ 
+ config RATIONAL
+ 	tristate
++
++config MEAN_AND_VARIANCE
++	tristate
+diff --git a/lib/math/Makefile b/lib/math/Makefile
+index 91fcdb0c9efe..8cdfa13a67ce 100644
+--- a/lib/math/Makefile
++++ b/lib/math/Makefile
+@@ -4,6 +4,8 @@ obj-y += div64.o gcd.o lcm.o int_log.o int_pow.o int_sqrt.o reciprocal_div.o
+ obj-$(CONFIG_CORDIC)		+= cordic.o
+ obj-$(CONFIG_PRIME_NUMBERS)	+= prime_numbers.o
+ obj-$(CONFIG_RATIONAL)		+= rational.o
++obj-$(CONFIG_MEAN_AND_VARIANCE) += mean_and_variance.o
+ 
+ obj-$(CONFIG_TEST_DIV64)	+= test_div64.o
+ obj-$(CONFIG_RATIONAL_KUNIT_TEST) += rational-test.o
++obj-$(CONFIG_MEAN_AND_VARIANCE_UNIT_TEST)   += mean_and_variance_test.o
+diff --git a/fs/bcachefs/mean_and_variance.c b/lib/math/mean_and_variance.c
+similarity index 99%
+rename from fs/bcachefs/mean_and_variance.c
+rename to lib/math/mean_and_variance.c
+index bf0ef668fd38..ba90293204ba 100644
+--- a/fs/bcachefs/mean_and_variance.c
++++ b/lib/math/mean_and_variance.c
+@@ -40,10 +40,9 @@
+ #include <linux/limits.h>
+ #include <linux/math.h>
+ #include <linux/math64.h>
++#include <linux/mean_and_variance.h>
+ #include <linux/module.h>
+ 
+-#include "mean_and_variance.h"
+-
+ u128_u u128_div(u128_u n, u64 d)
+ {
+ 	u128_u r;
+diff --git a/fs/bcachefs/mean_and_variance_test.c b/lib/math/mean_and_variance_test.c
+similarity index 99%
+rename from fs/bcachefs/mean_and_variance_test.c
+rename to lib/math/mean_and_variance_test.c
+index 019583c3ca0e..f45591a169d8 100644
+--- a/fs/bcachefs/mean_and_variance_test.c
++++ b/lib/math/mean_and_variance_test.c
+@@ -1,7 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <kunit/test.h>
+-
+-#include "mean_and_variance.h"
++#include <linux/mean_and_variance.h>
+ 
+ #define MAX_SQR (SQRT_U64_MAX*SQRT_U64_MAX)
+ 
+-- 
+2.43.0
+
 
