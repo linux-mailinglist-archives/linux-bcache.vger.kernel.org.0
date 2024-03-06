@@ -1,158 +1,113 @@
-Return-Path: <linux-bcache+bounces-285-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-286-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031B886F628
-	for <lists+linux-bcache@lfdr.de>; Sun,  3 Mar 2024 17:36:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00B90873AD6
+	for <lists+linux-bcache@lfdr.de>; Wed,  6 Mar 2024 16:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD0892813C2
-	for <lists+linux-bcache@lfdr.de>; Sun,  3 Mar 2024 16:36:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31E6F1C241E9
+	for <lists+linux-bcache@lfdr.de>; Wed,  6 Mar 2024 15:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74D967E66;
-	Sun,  3 Mar 2024 16:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1F5135A40;
+	Wed,  6 Mar 2024 15:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OE8ufo24";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6ARhB7rq";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Qo+L9R0d";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F4jwlyhU"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FpwIAzl7"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A895B66B5F;
-	Sun,  3 Mar 2024 16:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD2E13E7C3
+	for <linux-bcache@vger.kernel.org>; Wed,  6 Mar 2024 15:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709483772; cv=none; b=BP73X0ZB+OJycKgGFs0sxzJMoGhSHW/53JQg/8Nx+1zhk4eZXNUY9gS1oX+1ko7WYEXEoKOXo+bMj/jSFutnslbRCiZWS8gC5fBN6BRJJFuZgQ5kAIWRF+cIvHu0nW18zjhHOkOxnFCvYDQmOTZ6bZaSiQz3w1DIntjBZTnSP/8=
+	t=1709739342; cv=none; b=rr8z+wdtEsMrzgqQJz59/8bzUQaoD5F0DGaeeO8kKvi93jgB7hT5PRizYpjDUaavuO5dNLoAfMfV0xnANOIZbioq0lET3YTV0GLmImPgyruCrbNAoDSJgZbmahpW6CzXS5ci7VT64lt/iu+ZOEyzbUe4vbveWb6OGwzrJU7SW3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709483772; c=relaxed/simple;
-	bh=V1jp6Q0+5Al40sK51AvrrksVYMlerOFrePkzcBGRqvg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=bhMnLqTNN8uJKkeqzXd1n1QRkySnQYmkYgufuS+OXkk6OK1kevo+cmOVM0Q0IIphs/c+mJSnsnb4hHZpExDQ5ZzeMsDo57/MrPLnKO3jX0wvqJNsC/3pZ39NMWM7QNsgcPGiSwxBgNmNTh6FiMSEZr8o9adCTyCIMPIddpAZmdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OE8ufo24; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6ARhB7rq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Qo+L9R0d; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F4jwlyhU; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CAD7B6110D;
-	Sun,  3 Mar 2024 16:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1709483768; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3xRGC/2+ObQWup47//SiF+uS0L5aaXvlCZb7+ZZ9FkA=;
-	b=OE8ufo24GaV4pzdiU7Vpa+qGyHoKF1RB0bQeQW9LKdY/8HX/ROdyuEo5M77a7emM84NLBP
-	F/9/eXWzvm7OxSQkov2gYXUZNrcyVoV1giviF8PmfzwHjOFZzjjnRPXSngIlbbsu8OkpHH
-	JCuhDV+XJv+6UGmyenjovYTjTkM+poo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1709483768;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3xRGC/2+ObQWup47//SiF+uS0L5aaXvlCZb7+ZZ9FkA=;
-	b=6ARhB7rqoUyZUqcqw+RI/QCqnju3NNm9qqHQ2kkFtdLnMOw6l26jiRmJEoDCEepQBcI0jc
-	qfnpyot62t1ALbDQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1709483767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3xRGC/2+ObQWup47//SiF+uS0L5aaXvlCZb7+ZZ9FkA=;
-	b=Qo+L9R0dvmKbczskDm3NnFUXfE5R9s+DSoKUQdKTNVD+iaK3wQLkT+6bD0BRwd4v1Ail3y
-	EOoRXt1N0wXpV/fberC9FB5tMKUVUH60rGSgJ18Upb3JLYgx8DR7D632HHK6c3RyKijPDF
-	jYkNGNoFjcOoarpFifaqfFzWuHZJUgk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1709483767;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3xRGC/2+ObQWup47//SiF+uS0L5aaXvlCZb7+ZZ9FkA=;
-	b=F4jwlyhUJtOGZCJwih7Hok2qd/H7vyLrKuoLfJ8awggXyrg0Snak+QZlLGRF3pS6lEkQQD
-	Kk2UONKzDr9BHcCg==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id DBAD1133B5;
-	Sun,  3 Mar 2024 16:36:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id DatMIvWm5GWpWAAAn2gu4w
-	(envelope-from <colyli@suse.de>); Sun, 03 Mar 2024 16:36:05 +0000
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1709739342; c=relaxed/simple;
+	bh=kBmyubjd7UqX7KtOVqXQPAZbNnvgLHXmvVx4xERaGw0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dHtzgHcRHObw9vBizhmaGm5lIao27KWEV9sIJHz5zeG0Fptz3g5rg7XW32SHXuJXUCIOX6fAfRMV2j4RqIA8jjuQMujnsvpz3yrlDCzJOkPZwFzXnJrkVCr2Kld9yP5VMANCoIOJflt8VH4o9EPxRE+sz9SOrK5r5wwdRrUTJcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FpwIAzl7; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7c495be1924so67154839f.1
+        for <linux-bcache@vger.kernel.org>; Wed, 06 Mar 2024 07:35:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1709739339; x=1710344139; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5EJVyKfo/qJKp/5TYAxUmzDSOM9Yh6oX5oGW77hIJQ0=;
+        b=FpwIAzl73aPw+9keWnzvLKc8W+L/8alNQLOHPbgMMF/ZO6X0TAfuWmq3UD8BkxrjCX
+         sDddZ0i5bEUVefqfzKdb6Uz2b5kgE3fE6xgGYY7jezmCS7mglPAcehheWFdl8u/CkoII
+         9uPcEhNc2U3+2TWFbHOO0RU/HVOlba8LsfTvnYQnXipsGU3/emRmj2LjWWRZTpAeMIGy
+         NXR/afx1qh9TSjqLvywUwr295Rxyeu7YBm7UkPhfN55HmlpdJef0GLbUkfZx6aShaEAk
+         H6aRYCeSqQSc60oiGBPiJqFgGPFg49ZUwa118YAu4n/Z104oOsJMz8iUzeinmbk11bwc
+         7Wcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709739339; x=1710344139;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5EJVyKfo/qJKp/5TYAxUmzDSOM9Yh6oX5oGW77hIJQ0=;
+        b=M5mAPHuza5MnorvwkaQRowkQtRu6tqZrRMvm2HtPWE+0VAXP2jalLr7hG5U2sjjvyP
+         vdnOSLuqbPgXliq152yvaencgrBd8M/xt6PT3t8o18F37NR/kAF5EP5RcO9MMeF9qDKi
+         HzpW5ZOjwK9YeT3tf4v9oN47m7xGXZEJaH21QWuU5dTtwEWW97jTQwSyb1LiZlxaf14q
+         YTPwCfja8GylS8x8g6gMNju8wy1nfNXafXQFIa+ShJ9IT64qPLelnEbMjSSSvqa2a2SL
+         Wi32e/ddeYIMcXodQtp8oD7zqPC8FubLGmJiEaZCw2cKrmXZh5EFBDksq/lEYHsKb4qO
+         QTVw==
+X-Gm-Message-State: AOJu0YxOgkvPdxst6/IVj20BfHMKDu5P3fdiFvgimyeevV1y2+CAb48A
+	IfKl6SyE1iE6ne2QAmmupVPI7qB0ucW98A21yqtwlST1EhgKfIBnUUCb3sVK9R/YAZM7zAhvaTE
+	x
+X-Google-Smtp-Source: AGHT+IExezYwLCdk1ah3myJ1ZnMAxxK9psbgLX+yx/PyyFKASpLqrBrwGzpYSdEwh0JY5dYcBA98SA==
+X-Received: by 2002:a05:6e02:1c46:b0:365:fe09:6431 with SMTP id d6-20020a056e021c4600b00365fe096431mr3733556ilg.3.1709739339446;
+        Wed, 06 Mar 2024 07:35:39 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id t2-20020a92cc42000000b003660612cf73sm324467ilq.49.2024.03.06.07.35.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Mar 2024 07:35:38 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Coly Li <colyli@suse.de>, Kent Overstreet <kent.overstreet@linux.dev>, 
+ Christoph Hellwig <hch@lst.de>
+Cc: linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
+In-Reply-To: <20240226104826.283067-2-hch@lst.de>
+References: <20240226104826.283067-1-hch@lst.de>
+ <20240226104826.283067-2-hch@lst.de>
+Subject: Re: [PATCH] bcache: move calculation of stripe_size and io_opt
+ into bcache_device_init
+Message-Id: <170973933779.23995.9027032366565112081.b4-ty@kernel.dk>
+Date: Wed, 06 Mar 2024 08:35:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.300.61.1.2\))
-Subject: Re: bcache queue limit cleanups
-From: Coly Li <colyli@suse.de>
-In-Reply-To: <20240303151250.GA27512@lst.de>
-Date: Mon, 4 Mar 2024 00:35:48 +0800
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- Jens Axboe <axboe@kernel.dk>,
- Bcache Linux <linux-bcache@vger.kernel.org>,
- Linux Block Devices <linux-block@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <228C3E27-8C94-417F-8269-1D8BA8C2CC8F@suse.de>
-References: <20240226104826.283067-1-hch@lst.de>
- <20240303151250.GA27512@lst.de>
-To: Christoph Hellwig <hch@lst.de>
-X-Mailer: Apple Mail (2.3774.300.61.1.2)
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: ****
-X-Spam-Score: 4.57
-X-Spamd-Result: default: False [4.57 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-0.00)[36.12%];
-	 FROM_HAS_DN(0.00)[];
-	 MV_CASE(0.50)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_SPAM_SHORT(1.16)[0.388];
-	 RCPT_COUNT_FIVE(0.00)[5];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 TO_DN_ALL(0.00)[];
-	 NEURAL_SPAM_LONG(3.01)[0.860];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 MID_RHS_MATCH_FROM(0.00)[]
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
+
+
+On Mon, 26 Feb 2024 11:48:26 +0100, Christoph Hellwig wrote:
+> bcache currently calculates the stripe size for the non-cached_dev
+> case directly in bcache_device_init, but for the cached_dev case it does
+> it in the caller.  Consolidate it in one places, which also enables
+> setting the io_opt queue_limit before allocating the gendisk so that it
+> can be passed in instead of changing the limit just after the allocation.
+> 
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] bcache: move calculation of stripe_size and io_opt into bcache_device_init
+      commit: 34a2cf3fbef17deee2d4d28c41e3cb8ac1929fda
+
+Best regards,
+-- 
+Jens Axboe
 
 
 
-> 2024=E5=B9=B43=E6=9C=883=E6=97=A5 23:12=EF=BC=8CChristoph Hellwig =
-<hch@lst.de> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Mon, Feb 26, 2024 at 11:48:25AM +0100, Christoph Hellwig wrote:
->> this patch against Jens' for-6.9/block tree gets rid of the last
->> queue limit update in bcache by calculation the io_opt ahead of
->> time.
->=20
-> Any chance to get this patch reviewed?  It is one of just two
-> queue limits API parts that still isn't reviewed.
->=20
->=20
-
-Done. Another patch was already in Jens=E2=80=99 tree, I guess it might =
-be late to add my Reviewed-by.
-
-Thanks.
-
-Coly Li=
 
