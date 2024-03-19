@@ -1,244 +1,161 @@
-Return-Path: <linux-bcache+bounces-293-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-294-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA27487E3A1
-	for <lists+linux-bcache@lfdr.de>; Mon, 18 Mar 2024 07:16:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31BF488041F
+	for <lists+linux-bcache@lfdr.de>; Tue, 19 Mar 2024 19:00:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18E19B20E76
-	for <lists+linux-bcache@lfdr.de>; Mon, 18 Mar 2024 06:16:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BEE3283F46
+	for <lists+linux-bcache@lfdr.de>; Tue, 19 Mar 2024 18:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B54321101;
-	Mon, 18 Mar 2024 06:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E8325605;
+	Tue, 19 Mar 2024 18:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zvj8p7NW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P28VbwyB"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6FE22616
-	for <linux-bcache@vger.kernel.org>; Mon, 18 Mar 2024 06:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F0A2C18E;
+	Tue, 19 Mar 2024 18:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710742606; cv=none; b=B3WvYCShkGhR4Sbx911yB5iCpKFSFAp8RpqzbWlmxZXivWQF2ZI30wD0DB6+NIvTCvY9Ly7hgM0fFauRIzq8LEvwrxkROfNerhAcu2X6+dJb5XRo37UfYqiG7XhaBEymEYc6xr/HwJBoaJtB5e5aK5TcGknFes/nTMGDmdyVmjQ=
+	t=1710871216; cv=none; b=s4RyljexK8obcUo7Chjzva1qg3yPhMkJTivzzLepFuxcBOaieQuZf7jBciuIL63dtnpyIOPWiAo5ezNH1w59QdLEF+nO32uiM5xhuyhvi3QrFCE4K+Sq/5wsg9jbuiPCQgZtcrRfHcdrnNDT5HiEp/sILkOGqTCupB0eUFNkjHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710742606; c=relaxed/simple;
-	bh=QPcxTX7ziPMrx+3k5+oVXDfAefrEsNmgWv6DunQjgpo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a71fGQz79h93FjYytCBbFCPs2nRSO3P/Zf3c7gunaj1KjfLbBB5yuIhwOXs0W14Xa3PSoG2cCuKcGEzag6IzlXXi281uf1WEFMfkMNbMcztLa/WSzM9oFnyltpWfIhDmA2V3yqpxndX9etFWsVriod5GUe4i2Da/v3x78edL1Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zvj8p7NW; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-568d160155aso4423a12.1
-        for <linux-bcache@vger.kernel.org>; Sun, 17 Mar 2024 23:16:44 -0700 (PDT)
+	s=arc-20240116; t=1710871216; c=relaxed/simple;
+	bh=m6qS5617TuTpmfK97/po0jJIyNcw9wN2GHQJwTKGgww=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YgNU7whFRFdBmSLXS/O/gJ9dTZNrioF5K5ii8+iwqz0fSqsriPM/BIsD+OZBfUjAerkpliorTpnAvQxEyZrAZW87xoybggZ80ZxXQrviPiNURz4dBU9DU/UTXOLezrvrW1obw9/c6/94G/udLiH3DyiZqjgOED1aYt8PUJLB9dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P28VbwyB; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1dee5daedf6so7810645ad.0;
+        Tue, 19 Mar 2024 11:00:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1710742603; x=1711347403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6b/rEMfgDnk+ZLvJP0z250HCAbjIkyzBbMGVUYaZYY0=;
-        b=zvj8p7NWgapzSBqGwbvxzIPrvhb/ca/HcdNRQWz26Jic0Cort1qtCQAmXLUPFRl+CP
-         QVuUaHBSKDlXp21E/IRa06bwySQZ3E7oR7XRYvzWvpBtQ+0mVMR5bEI7u07FuElMvWKF
-         G0nt3RvJiv9R/T07UeTT+AcGntIUULkFcQ6razJz8+CIom6faJcsEQepSZBPmd0rY2uJ
-         lAb+4ejbH4kTfV6A25+iGxsZWUGr8VWrAJ7300LUbDmtYMz5e7QBf2Eb4HjRU1LK3m7I
-         +/+suZGQG5ImV2P8Kq7+bGwarQWdpaeLQAcnig8zs+lGvOsQDa/3ASD1FXSq6sgbsQfj
-         3Yww==
+        d=gmail.com; s=20230601; t=1710871215; x=1711476015; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/7BfNykyTLG5a+/FmijDVcSSld3Qh/CcbfWa98bWLIQ=;
+        b=P28VbwyBAyTRH+x0rSgK34ROjRqFr1yL00lFZjp3aaXgpXEb18eEbakS5Btk/or8Lb
+         hAyWAPFNFCpdHqMJTAGf0ut2f0FYF7dWWisTnnuKgYxZmLzRQjG5omG9Xuoaw+NTYlnT
+         5d2TqrxyVACfSeUSqng3fpS0ObQpFI22mhaDOb7bIfEVYQQYi9i5kD2AGDp1M76GoFsX
+         jnLbF8W8cjY7wbq+SNgBpj0e58AwKUNJK56Ghr+ozMbcj6gJeaaMPtp+qRxRT8PGytwG
+         rgrOj2Y8rvMFsEYZuMxiHnHs06XGEj8ey0q+KOMWCOY6YvowFq8y6hUi/3Q+SOS0gyFr
+         ynJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710742603; x=1711347403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6b/rEMfgDnk+ZLvJP0z250HCAbjIkyzBbMGVUYaZYY0=;
-        b=eH80btAv7tIHkhqH38QAXvXUELMEE59UayXkj9HuKErBxVAef6ppmQuChNcyxV9rtf
-         tp16IDkY8uDN7Gla53N51Qv8+935G4ZZEA/YOs1NZO9gD3zCC28escnJVYnJpiI5b2SA
-         OiOuXBoKMc+/NTKo+MjrJqyDoK0g87Y6x4y7Sc4jkH5B3GHpvne6jBkpVwAAoha9HuCT
-         KwxrmCaIWbO9a7SoC9ADPlFzN1wjGmWmv/Hzs4dUu4f16LQdDk/elDQSgpFel6xvQQvI
-         6GAxmZSz1s741YL8XM1PA77hR/WIX4wBWintSvwApIeMCevujLV0i+zMNIbW7nT1exeB
-         5/eg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnbILRRBzvOLWKWyu9BjBwgbX/2GzxtlTf++z6+rB9HWTPhFT2efZVZPP1kbN8iGHByr5nRzlHck8ENOxGqQ51DwTMnhGlGRefv/wa
-X-Gm-Message-State: AOJu0YynMpG3O7iHkJMK1+VfWfo0fLGrLBq3R4cqfAXqHYZV/VNeNPlT
-	y2qrH58tdQpVaEkQXaDiBFevDhwLUvlNB09FD2wdWAO0iuHgIN1FcRe1srtMyyTgUaOw2xO1BZ7
-	+WEoClHT1GmFghlle0oA0l1juF4E0vtNrBfrYQZGaQ4eT3w1IpXTDODs=
-X-Google-Smtp-Source: AGHT+IFymnfC6bblaSbpnF30XrEOvSwqtWZiwKz26+3JU6/SuVEcyAbqZLPRbq/nJmNgEj7oVSrZVUuP1XHQmvzARDk=
-X-Received: by 2002:aa7:c1c9:0:b0:568:cef7:fe5e with SMTP id
- d9-20020aa7c1c9000000b00568cef7fe5emr110952edp.6.1710742602467; Sun, 17 Mar
- 2024 23:16:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710871215; x=1711476015;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/7BfNykyTLG5a+/FmijDVcSSld3Qh/CcbfWa98bWLIQ=;
+        b=mEqsUQLG/FU3YPSrB1M6djBjqoQ27JrkRMbzwM0QtXo6Q5U0cXzuqqDdyRU48MVxpL
+         tH2pqZqI/hwEk5Bfk+3QmhOnusJZ+MP0S+2o0smxwVPnrz4fpflN0H4sDLhCtsg5yMnj
+         KfO1RbJ8N4bk3pk3YVlxF3nc9/VPSP32AYjCUowFFybIY7b0rkQBGU9riSU9jyYbsq/C
+         dXH5J49IQtMxoxKD7fBotfj9yFLTc4ZUJKwUU2o57x7BP9+6dm2hRApjhnze+3D+FbdD
+         9ZBgGUh9VrjQS73qfxURkeGZVK0DE+3GlKeqYQF9YcP5R7TpFVFG9+fXlTur12lTr3UR
+         G6/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ7GK43co8a28dgK+OKjNrJFrJkxyqEfZyJ2XMOOCnSDCBHuPFxqf2jOWRar2rb1wLhUdt6ikIjjleRzLCC9vc/0NTTsU48T0PPegSx1/eTk4aQZMEyhnFLlySTI2U+X7YAfQ7KR7iohRTSXOEDUHqwKhWjTED4lRXrxvnSmuodVVh0ci5HdLHl/2Rh8AXjscmCwlglL+q/jgTtRD9Y1v5ZHzUgC2ED2pAJFcM
+X-Gm-Message-State: AOJu0Yw5iOxD9WJD0kQYY5rX8hQMzyK9dVv7j3Y+AKNRf22kKG55aziw
+	TUxirhrwoevl/JGrZSe2djhgwTM26PX9vD8E+W1x5XWwNZVysdr4
+X-Google-Smtp-Source: AGHT+IHe8YREwchsBs/MaMDuaMAMnJOq1i+WfWlbqsJTZbtd+9d60AYKAxpEKoD2MKO4iTbMEMZ5oA==
+X-Received: by 2002:a17:903:2448:b0:1dd:85eb:b11 with SMTP id l8-20020a170903244800b001dd85eb0b11mr3178823pls.1.1710871214158;
+        Tue, 19 Mar 2024 11:00:14 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id u16-20020a17090341d000b001dd3bee3cd6sm5531359ple.219.2024.03.19.11.00.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Mar 2024 11:00:13 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: colyli@suse.de,
+	kent.overstreet@linux.dev,
+	msakai@redhat.com,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	akpm@linux-foundation.org
+Cc: bfoster@redhat.com,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	jserv@ccns.ncku.edu.tw,
+	linux-bcache@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-bcachefs@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH 00/13] treewide: Refactor heap related implementation
+Date: Wed, 20 Mar 2024 01:59:52 +0800
+Message-Id: <20240319180005.246930-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1ddde040-9bde-515a-1d4d-b41de472a702@suse.de> <20240315224527.694458-1-robertpang@google.com>
- <584A2724-ACA2-4000-A8D2-50B6AA5684A7@suse.de> <CAJhEC06dsqq2y4MNCW7t52cPc1=PbStGTBOddZofg4vqGKkQsA@mail.gmail.com>
- <5B79FFA6-1995-4167-8318-3EDCC6F0B432@suse.de>
-In-Reply-To: <5B79FFA6-1995-4167-8318-3EDCC6F0B432@suse.de>
-From: Robert Pang <robertpang@google.com>
-Date: Sun, 17 Mar 2024 23:16:29 -0700
-Message-ID: <CAJhEC07hAWsW5Aq0=hCCAXJGKU47L_n8a0mQ-SjOq2wqGAj_gA@mail.gmail.com>
-Subject: Re: [PATCH v2] bcache: allow allocator to invalidate bucket in gc
-To: Coly Li <colyli@suse.de>
-Cc: Dongsheng Yang <dongsheng.yang@easystack.cn>, 
-	Bcache Linux <linux-bcache@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Coly
+Hello,
 
-Thank you for confirming. It looks like the 6.9 merge window just
-opened last week so we hope it can catch it. Please update in this
-thread when it gets submitted.
+This patch series focuses on several adjustments related to heap
+implementation. Firstly, a type-safe interface has been added to the
+min_heap, along with the introduction of several new functions to
+enhance its functionality. Additionally, the heap implementation for
+bcache and bcachefs has been replaced with the generic min_heap
+implementation from include/linux. Furthermore, several typos have been
+corrected.
 
-https://lore.kernel.org/lkml/CAHk-=3Dwiehc0DfPtL6fC2=3DbFuyzkTnuiuYSQrr6JTQ=
-xQao6pq1Q@mail.gmail.com/T/
+Previous discussion with Kent Overstreet:
+https://lkml.kernel.org/ioyfizrzq7w7mjrqcadtzsfgpuntowtjdw5pgn4qhvsdp4mqqg@nrlek5vmisbu
 
-BTW, speaking of testing, mind if you point us to the bcache test
-suite? We would like to have a look and maybe give it a try also.
+Regards,
+Kuan-Wei
 
-Thanks
-Robert
+Kuan-Wei Chiu (13):
+  perf/core: Fix several typos
+  bcache: Fix typo
+  bcachefs: Fix typo
+  lib min_heap: Add type safe interface
+  lib min_heap: Add min_heap_init()
+  lib min_heap: Add min_heap_peek()
+  lib min_heap: Add min_heap_full()
+  lib min_heap: Add args for min_heap_callbacks
+  lib min_heap: Update min_heap_push() and min_heap_pop() to return bool
+    values
+  bcache: Remove heap-related macros and switch to generic min_heap
+  lib min_heap: Add min_heap_del()
+  lib min_heap: Add min_heap_sift_up()
+  bcachefs: Remove heap-related macros and switch to generic min_heap
 
-On Sun, Mar 17, 2024 at 7:00=E2=80=AFAM Coly Li <colyli@suse.de> wrote:
->
->
->
-> > 2024=E5=B9=B43=E6=9C=8817=E6=97=A5 13:41=EF=BC=8CRobert Pang <robertpan=
-g@google.com> =E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > Hi Coly
-> >
->
-> Hi Robert,
->
-> > Thank you for looking into this issue.
-> >
-> > We tested this patch in 5 machines with local SSD size ranging from
-> > 375 GB to 9 TB, and ran tests for 10 to 12 hours each. We observed no
-> > stall nor other issues. Performance was comparable before and after
-> > the patch. Hope this info will be helpful.
->
-> Thanks for the information.
->
-> Also I was told this patch has been deployed and shipped for 1+ year in e=
-asystack products, works well.
->
-> The above information makes me feel confident for this patch. I will subm=
-it it in next merge window if some ultra testing loop passes.
->
-> Coly Li
->
->
-> >
-> >
-> > On Fri, Mar 15, 2024 at 7:49=E2=80=AFPM Coly Li <colyli@suse.de> wrote:
-> >>
-> >> Hi Robert,
-> >>
-> >> Thanks for your email.
-> >>
-> >>> 2024=E5=B9=B43=E6=9C=8816=E6=97=A5 06:45=EF=BC=8CRobert Pang <robertp=
-ang@google.com> =E5=86=99=E9=81=93=EF=BC=9A
-> >>>
-> >>> Hi all
-> >>>
-> >>> We found this patch via google.
-> >>>
-> >>> We have a setup that uses bcache to cache a network attached storage =
-in a local SSD drive. Under heavy traffic, IO on the cached device stalls e=
-very hour or so for tens of seconds. When we track the latency with "fio" u=
-tility continuously, we can see the max IO latency shoots up when stall hap=
-pens,
-> >>>
-> >>> latency_test: (groupid=3D0, jobs=3D1): err=3D 0: pid=3D50416: Fri Mar=
- 15 21:14:18 2024
-> >>> read: IOPS=3D62.3k, BW=3D486MiB/s (510MB/s)(11.4GiB/24000msec)
-> >>>   slat (nsec): min=3D1377, max=3D98964, avg=3D4567.31, stdev=3D1330.6=
-9
-> >>>   clat (nsec): min=3D367, max=3D43682, avg=3D429.77, stdev=3D234.70
-> >>>    lat (nsec): min=3D1866, max=3D105301, avg=3D5068.60, stdev=3D1383.=
-14
-> >>>   clat percentiles (nsec):
-> >>>    |  1.00th=3D[  386],  5.00th=3D[  406], 10.00th=3D[  406], 20.00th=
-=3D[  410],
-> >>>    | 30.00th=3D[  414], 40.00th=3D[  414], 50.00th=3D[  414], 60.00th=
-=3D[  418],
-> >>>    | 70.00th=3D[  418], 80.00th=3D[  422], 90.00th=3D[  426], 95.00th=
-=3D[  462],
-> >>>    | 99.00th=3D[  652], 99.50th=3D[  708], 99.90th=3D[ 3088], 99.95th=
-=3D[ 5600],
-> >>>    | 99.99th=3D[11328]
-> >>>  bw (  KiB/s): min=3D318192, max=3D627591, per=3D99.97%, avg=3D497939=
-.04, stdev=3D81923.63, samples=3D47
-> >>>  iops        : min=3D39774, max=3D78448, avg=3D62242.15, stdev=3D1024=
-0.39, samples=3D47
-> >>> ...
-> >>>
-> >>> <IO stall>
-> >>>
-> >>> latency_test: (groupid=3D0, jobs=3D1): err=3D 0: pid=3D50416: Fri Mar=
- 15 21:21:23 2024
-> >>> read: IOPS=3D26.0k, BW=3D203MiB/s (213MB/s)(89.1GiB/448867msec)
-> >>>   slat (nsec): min=3D958, max=3D40745M, avg=3D15596.66, stdev=3D13650=
-543.09
-> >>>   clat (nsec): min=3D364, max=3D104599, avg=3D435.81, stdev=3D302.81
-> >>>    lat (nsec): min=3D1416, max=3D40745M, avg=3D16104.06, stdev=3D1365=
-0546.77
-> >>>   clat percentiles (nsec):
-> >>>    |  1.00th=3D[  378],  5.00th=3D[  390], 10.00th=3D[  406], 20.00th=
-=3D[  410],
-> >>>    | 30.00th=3D[  414], 40.00th=3D[  414], 50.00th=3D[  418], 60.00th=
-=3D[  418],
-> >>>    | 70.00th=3D[  418], 80.00th=3D[  422], 90.00th=3D[  426], 95.00th=
-=3D[  494],
-> >>>    | 99.00th=3D[  772], 99.50th=3D[  916], 99.90th=3D[ 3856], 99.95th=
-=3D[ 5920],
-> >>>    | 99.99th=3D[10816]
-> >>>  bw (  KiB/s): min=3D    1, max=3D627591, per=3D100.00%, avg=3D244393=
-.77, stdev=3D103534.74, samples=3D765
-> >>>  iops        : min=3D    0, max=3D78448, avg=3D30549.06, stdev=3D1294=
-1.82, samples=3D765
-> >>>
-> >>> When we track per-second max latency in fio, we see something like th=
-is:
-> >>>
-> >>> <time-ms>,<max-latency-ns>,,,
-> >>> ...
-> >>> 777000, 5155548, 0, 0, 0
-> >>> 778000, 105551, 1, 0, 0
-> >>> 802615, 24276019570, 0, 0, 0
-> >>> 802615, 82134, 1, 0, 0
-> >>> 804000, 9944554, 0, 0, 0
-> >>> 805000, 7424638, 1, 0, 0
-> >>>
-> >>> fio --time_based --runtime=3D3600s --ramp_time=3D2s --ioengine=3Dliba=
-io --name=3Dlatency_test --filename=3Dfio --bs=3D8k --iodepth=3D1 --size=3D=
-900G  --readwrite=3Drandrw --verify=3D0 --filename=3Dfio --write_lat_log=3D=
-lat --log_avg_msec=3D1000 --log_max_value=3D1
-> >>>
-> >>> We saw a smiliar issue reported in https://www.spinics.net/lists/linu=
-x-bcache/msg09578.html, which suggests an issue in garbage collection. When=
- we trigger GC manually via "echo 1 > /sys/fs/bcache/a356bdb0-...-64f794387=
-488/internal/trigger_gc", the stall is always reproduced. That thread point=
-s to this patch (https://www.spinics.net/lists/linux-bcache/msg08870.html) =
-that we tested and the stall no longer happens.
-> >>>
-> >>> AFAIK, this patch marks buckets reclaimable at the beginning of GC to=
- unblock the allocator so it does not need to wait for GC to finish. This p=
-eriodic stall is a serious issue. Can the community look at this issue and =
-this patch if possible?
-> >>>
-> >>
-> >> Could you please share more performance information of this patch? And=
- how many nodes/how long time does the test cover so far?
-> >>
-> >> Last time I test the patch, it looked fine. But I was not confident ho=
-w large scale and how long time this patch was tested. If you may provide m=
-ore testing information, it will be helpful.
-> >>
-> >>
-> >> Coly Li
-> >
->
+ drivers/md/bcache/alloc.c      |  66 ++++++++----
+ drivers/md/bcache/bcache.h     |   2 +-
+ drivers/md/bcache/bset.c       |  73 ++++++++-----
+ drivers/md/bcache/bset.h       |  38 ++++---
+ drivers/md/bcache/btree.c      |  27 ++++-
+ drivers/md/bcache/extents.c    |  44 ++++----
+ drivers/md/bcache/movinggc.c   |  40 ++++++--
+ drivers/md/bcache/super.c      |  16 +++
+ drivers/md/bcache/sysfs.c      |   3 +
+ drivers/md/bcache/util.c       |   2 +-
+ drivers/md/bcache/util.h       |  81 +--------------
+ drivers/md/dm-vdo/repair.c     |  29 +++---
+ drivers/md/dm-vdo/slab-depot.c |  21 ++--
+ fs/bcachefs/clock.c            |  53 +++++++---
+ fs/bcachefs/clock_types.h      |   2 +-
+ fs/bcachefs/ec.c               |  99 +++++++++++-------
+ fs/bcachefs/ec_types.h         |   2 +-
+ fs/bcachefs/util.c             |   2 +-
+ fs/bcachefs/util.h             | 127 ++---------------------
+ include/linux/min_heap.h       | 180 ++++++++++++++++++++++++++-------
+ kernel/events/core.c           |  53 +++++-----
+ lib/test_min_heap.c            |  75 +++++++-------
+ 22 files changed, 565 insertions(+), 470 deletions(-)
+
+-- 
+2.34.1
+
 
