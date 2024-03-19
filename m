@@ -1,72 +1,72 @@
-Return-Path: <linux-bcache+bounces-295-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-296-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D3D880423
-	for <lists+linux-bcache@lfdr.de>; Tue, 19 Mar 2024 19:00:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADC48880426
+	for <lists+linux-bcache@lfdr.de>; Tue, 19 Mar 2024 19:00:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B13A5B22F69
-	for <lists+linux-bcache@lfdr.de>; Tue, 19 Mar 2024 18:00:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7271C22C02
+	for <lists+linux-bcache@lfdr.de>; Tue, 19 Mar 2024 18:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804912C68F;
-	Tue, 19 Mar 2024 18:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C7C25619;
+	Tue, 19 Mar 2024 18:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYWJHooN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdbdK5Ba"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020212C1A7;
-	Tue, 19 Mar 2024 18:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66F02E62B;
+	Tue, 19 Mar 2024 18:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710871221; cv=none; b=NMvpt2lRSuOnY8n3ptsUxZLkA8x1xh82g+TvpzcGA8QS3wMRB3XdEw2eyZTn6d5Fgjmro/am91jfWQrh2FdyVfyIO6EWIM7AzVx0PvljGylTJBmu3cS0BbDJ4gb42Y31b/4PbaIt2lT85hGq+hLm9YU0zp4RZcufQjtff3TnFFI=
+	t=1710871226; cv=none; b=ccZduOeQzvpJAiCGHgVnP1JhnDRU85uhQcO1o4D+TCP1LMlLszZOFZ9Fub7ED8obJOndoyx660hWPfMuHjULEbZuYXl92BHDL1aevAuWnvfzIZHVgsHzz/OT45JaQoaSRbq02tr44i4lwgngNw4QdEpjOxEW13XBc1XTGZMrc/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710871221; c=relaxed/simple;
-	bh=Uxy4FXDyNLzaAJy4CxHQi0yIvgpDLivSSBXdnPwCwuQ=;
+	s=arc-20240116; t=1710871226; c=relaxed/simple;
+	bh=fgS7YoHkqd6Gk9OHy+FkIeSgxsebxOkghiQdONm8t5g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NRUwUjP5ABfB+HccxlCNDaQT48jK9OQ/7u+Z40PXkJcFHIvlPrDEVTpUXzYC0IENWy9pD96RmWmDAMeR/SONJzxTQ9zbCgdydOMqZJ6cIZR/HUpnJDbWINgZBIZCDxCjYkEe1i8reE1AXfOThUtW+DmUnJKR3fSc0mul7jrfr5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYWJHooN; arc=none smtp.client-ip=209.85.210.173
+	 MIME-Version; b=Jl2rs1jlTDkcZQKKQKrETP5awPokZqd3LlEq3ELZPyjkPlzu/yCodADoEHo6IW69UYuCMttg6WEHz7Iv2P5jo4hrgSuIK/kBk7FvJc15vuGGz3qjPDnJNlJiRkYtifsKCwkmzmCLI+XH7hUDewleU5jsKUhQzC146gphFb5GXpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdbdK5Ba; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6e73f67adcdso378663b3a.0;
-        Tue, 19 Mar 2024 11:00:19 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1dee6672526so5305025ad.1;
+        Tue, 19 Mar 2024 11:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710871219; x=1711476019; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710871224; x=1711476024; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pHaHpy3VMSxU4FhivVA5zrQI0a35rqqHjlYe3D324Dw=;
-        b=EYWJHooNZXMeR7RrgWHWlvrPzkaWUPkLtrUoSOnYM8OC3xboeT9OtMvCgxZMAJWiEn
-         M4NIAFtA59C4t11QKhMP4TcxN9DLIJ5ml4V2ktJyBEwqrVELuoGi5cyvfAYWDJbsLT8W
-         oLhlFlxO/obQIndJNZszLf/T1panGoeTPrWcPP11MIR/eDq3LfaMaWHRpAeW0Z22eRHg
-         17q5BYeXjP4z8CpOr7ttWT7Pofa0C8Xr0/aCaGFQpr9Kx17BfIXoO8vlnWy/Oyf1pNH8
-         aSyirklQBKKdgDzJQmfcFeGewyW5TcFRLrjjTY48b+Mb+tYae7EXKtztRxxfFX64pkG8
-         K0vg==
+        bh=MhM32UpnGJPnLVyVQuYFJmPAIet94tyo1EZagEt6PY4=;
+        b=OdbdK5Batpoz4NqNLwAmr1pS4IZfQB8j49HZVvcxfr1EnAaeODWR8CtDeL7ATqh7/l
+         IwTcAStY2138KQtjWtoak7vHSt5oaSBVLya+aTUKZwhYLlbPHku701oGgn+twVAZnOm5
+         hSfovGd7MPfNCApaKeTEcXqs8CndjU3kH2SvB7I9jN4gParZK23Bw7O6m65sWs6M00xe
+         k67J5qJ+7mHm8EAJcpJrzd6nePn1MVYT+Gp/stgqSAMbtpfV0iYzGc27PUvm7ZXRs8Nr
+         6gVmPDWY2aXYbCaOM98sbFOEKEqexEHU3rQe+fjrOKU77xOa7Njg2FjVaTsAmpMkAcFB
+         9pjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710871219; x=1711476019;
+        d=1e100.net; s=20230601; t=1710871224; x=1711476024;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pHaHpy3VMSxU4FhivVA5zrQI0a35rqqHjlYe3D324Dw=;
-        b=akNnWvaykbp4gkE4Wj+AYqOLP9kJDavsNNoeThxNVd+E9HjfbmiBmDCerOK6cQbhZL
-         arZt3Yr2Blxk8EOLjhQahvYVceLCmhM3ZrNa4MJ27yjUJywgq2/7Mqy9J9GQnfvX49C1
-         plbkcxpro+l+h9SDKdLN/6FDTN2dxHg6qoteVDT0PShbZYWN8OiOwoglff6UmQgZGSBE
-         BgmeYiDJKOHc27wfy50+o/Fg9OITSAKmwtBJjphwZXAIakY2FkgGr0kV8NhTjQT3Ruju
-         wzAslPtY4STAMm+9JuD6fiFw1ZoU2kYILsxbk2qLaKYgg54S7E8wMHVlyvbEjS+7WYwY
-         btGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgQ9xIW01zi4S+mfaTwXkq4hs7833Ya8mmOJeUOAM060AOOzTJW9cG2jECwOQ4zlhVxR5K8aAhdc8lDSUfFniMMciepRYkFaS9DkkgDDhcnPFryUM4d8cX8q8huoSSGr9LjZe092hjK4ph3wBvbOrZ2Y1Icnq5OpIX5LW+kKMLiOeFVar2Z4SX09exZB276OdnjF3UzkM7PuIcH2kgQgdMTGeusjytSUGFADcP
-X-Gm-Message-State: AOJu0YxBvYqv1qHRMGIUbT5L1FHilXwXP8/Ucm3kC4OS2LbynkKsiqA/
-	0I5gornKRYH+saREV04FH5PRPd/AA0Gvh3U6OAQ+/WZ77B8eatf2
-X-Google-Smtp-Source: AGHT+IEhvdpXvwvqRRV0hHJ9/OeRmetDSphgKPoBonzn3eX0p5BLYq7lCrwYVR2oGhatifQimhK+0w==
-X-Received: by 2002:a05:6a20:72a9:b0:1a1:1a07:b0b3 with SMTP id o41-20020a056a2072a900b001a11a07b0b3mr17181784pzk.5.1710871219281;
-        Tue, 19 Mar 2024 11:00:19 -0700 (PDT)
+        bh=MhM32UpnGJPnLVyVQuYFJmPAIet94tyo1EZagEt6PY4=;
+        b=ehfJBes7pvQ1R2wrPa3+M/YXMj3FFX69h5lftbLVBh7Bm+4FOSsdu/rzrwDDFdOe0k
+         u7VRs3x0ZiiN83S0R8LJG2QyHx6eJLlELiX2PfGgvuIc6L6Eh/ZnpYAy1QEnTrp/rV2W
+         k8lkzWckOImOZaWmDZoLctVwJU1KNrGisWdWcuOpgFzJQ18oZONF9VbtHTBjk8ZRMutw
+         SdsojEA4qDpcH74YK87rUULDX73wqN6L7MKRfKkzr+1hWEwDwKUFhxEehcRsOY5LQC8s
+         OEDxdsZ6oZ+sKw0bJAOGyqytwxUWIngGXrbHTZW6QVXGALTiB6G88Qjd6/pe0pewi4aC
+         Ke0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXxare8wC1/K0B6XgLucw+3C+e+O+p8VzAYBFRzk6mYYhGmnhMbt5SuBjLOfF7JrqePnG0l6Gp3SoLnEd9tlujZTwsTTBc4ZqcSxZ1uWnU4HyRGdE2ywgW8Wdc1qMP/YJ4oiJchHlLYLBBL4BIiA6+OgEJvD+kCnzqOsKdnXoVl+Zw67XBPcQ9ILi3qmevadiHhoLz8FZzAqSSXvu0u42K/q2hzdRYNjg/8qjfx
+X-Gm-Message-State: AOJu0Yxkgd0N+NsZjGCFBOb9ipNlI7ZbBasSpGdkxjPl72AFRu/kWjgE
+	AOayYUgNVZ+xhfaGXIpEZchP0cfNhyO9PD2yNb9POz28VlyNREE3
+X-Google-Smtp-Source: AGHT+IH2KN8j2I6RFIqMV16DYXyC+c50lnC7pdEn/IN/+1SE4kATVcjPSy+d91Y1ECfUYLZTXBbVKQ==
+X-Received: by 2002:a17:903:24f:b0:1dd:7d66:bfc0 with SMTP id j15-20020a170903024f00b001dd7d66bfc0mr16665032plh.4.1710871223988;
+        Tue, 19 Mar 2024 11:00:23 -0700 (PDT)
 Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id u16-20020a17090341d000b001dd3bee3cd6sm5531359ple.219.2024.03.19.11.00.15
+        by smtp.gmail.com with ESMTPSA id u16-20020a17090341d000b001dd3bee3cd6sm5531359ple.219.2024.03.19.11.00.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Mar 2024 11:00:18 -0700 (PDT)
+        Tue, 19 Mar 2024 11:00:23 -0700 (PDT)
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
 To: colyli@suse.de,
 	kent.overstreet@linux.dev,
@@ -89,9 +89,9 @@ Cc: bfoster@redhat.com,
 	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH 01/13] perf/core: Fix several typos
-Date: Wed, 20 Mar 2024 01:59:53 +0800
-Message-Id: <20240319180005.246930-2-visitorckw@gmail.com>
+Subject: [PATCH 02/13] bcache: Fix typo
+Date: Wed, 20 Mar 2024 01:59:54 +0800
+Message-Id: <20240319180005.246930-3-visitorckw@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240319180005.246930-1-visitorckw@gmail.com>
 References: <20240319180005.246930-1-visitorckw@gmail.com>
@@ -103,51 +103,25 @@ List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace 'artifically' with 'artificially'.
-Replace 'irrespecive' with 'irrespective'.
-Replace 'futher' with 'further'.
-Replace 'sufficent' with 'sufficient'.
+Replace 'utiility' with 'utility'.
 
 Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 ---
- kernel/events/core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/md/bcache/util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 724e6d7e128f..10ac2db83f14 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -534,7 +534,7 @@ void perf_sample_event_took(u64 sample_len_ns)
- 	__this_cpu_write(running_sample_length, running_len);
- 
- 	/*
--	 * Note: this will be biased artifically low until we have
-+	 * Note: this will be biased artificially low until we have
- 	 * seen NR_ACCUMULATED_SAMPLES. Doing it this way keeps us
- 	 * from having to maintain a count.
- 	 */
-@@ -596,10 +596,10 @@ static inline u64 perf_event_clock(struct perf_event *event)
+diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+index ae380bc3992e..410d8cb49e50 100644
+--- a/drivers/md/bcache/util.c
++++ b/drivers/md/bcache/util.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * random utiility code, for bcache but in theory not specific to bcache
++ * random utility code, for bcache but in theory not specific to bcache
   *
-  * Event groups make things a little more complicated, but not terribly so. The
-  * rules for a group are that if the group leader is OFF the entire group is
-- * OFF, irrespecive of what the group member states are. This results in
-+ * OFF, irrespective of what the group member states are. This results in
-  * __perf_effective_state().
-  *
-- * A futher ramification is that when a group leader flips between OFF and
-+ * A further ramification is that when a group leader flips between OFF and
-  * !OFF, we need to update all group member times.
-  *
-  *
-@@ -891,7 +891,7 @@ static int perf_cgroup_ensure_storage(struct perf_event *event,
- 	int cpu, heap_size, ret = 0;
- 
- 	/*
--	 * Allow storage to have sufficent space for an iterator for each
-+	 * Allow storage to have sufficient space for an iterator for each
- 	 * possibly nested cgroup plus an iterator for events with no cgroup.
- 	 */
- 	for (heap_size = 1; css; css = css->parent)
+  * Copyright 2010, 2011 Kent Overstreet <kent.overstreet@gmail.com>
+  * Copyright 2012 Google, Inc.
 -- 
 2.34.1
 
