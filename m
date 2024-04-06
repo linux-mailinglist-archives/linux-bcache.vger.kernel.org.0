@@ -1,72 +1,72 @@
-Return-Path: <linux-bcache+bounces-377-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-378-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4246B89AC46
-	for <lists+linux-bcache@lfdr.de>; Sat,  6 Apr 2024 18:51:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44EF89AC49
+	for <lists+linux-bcache@lfdr.de>; Sat,  6 Apr 2024 18:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F358C281E50
-	for <lists+linux-bcache@lfdr.de>; Sat,  6 Apr 2024 16:51:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E94B282622
+	for <lists+linux-bcache@lfdr.de>; Sat,  6 Apr 2024 16:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827B64C627;
-	Sat,  6 Apr 2024 16:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE6B56454;
+	Sat,  6 Apr 2024 16:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hrX741L5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FO4b3Yok"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176A554902;
-	Sat,  6 Apr 2024 16:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF56654902;
+	Sat,  6 Apr 2024 16:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712422125; cv=none; b=Yd5Mu6tkGWEfbeOIJxQKX1UDMf0lOsnZ0GfuhOn/6D8Y4RCqkOGqOU6PcTigFBGGWunirfNpc7mKhFGDwbTyuMD7TjKqn8BDbK9VINo0lStroqacBrCGKusfTcDoiEm/eirz6zus0FsO6wgXIk+bfHv8engYKOeYJsdkG9qmy2Y=
+	t=1712422130; cv=none; b=h6YdSLy5m2cVr5w4ujCmPuSlbvhspz21MK5ZClraUCb15Pc/C9Uekem0sOTd7Z+qbJeilVshPKRvxwH/l++64BY4OBc/a3z1Y2tm3de/w4LoxJHBYUL3dsddrlOIp+7x01ezmIjyb1I1de9UiYC8OfNoewhAG1K/jPAVOFDjS28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712422125; c=relaxed/simple;
-	bh=jbKOXPA+Gl6IpPqMVqcysMX060d8McJnMIlICl/F5mc=;
+	s=arc-20240116; t=1712422130; c=relaxed/simple;
+	bh=cUOXm8PUXZY6Fju9709/MeuRssUa9uu6mwCwvhFly6U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r4GVd9LCDBLIQqHwHpKGZ6MUGl3yLMZKUy5PHyufeqkZy7wLaq2emPT+iSoVmyRvjXamSraJVh6GffvYf89DUE3UxZWHzTwyDjRnHl+GQkR3JzI6i38Q9FcTuQ6Ndd+TxpJG2ZwmCw+l8TNE7jdAZRmxOZ2Yp9U6mGZTsAGP7D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hrX741L5; arc=none smtp.client-ip=209.85.215.176
+	 MIME-Version; b=koxH7+gZvAXJp/QZr28at5OFK65yEcR2+D3p9ceBVG5jm0FnChVbpDWyeg2iszmE5EvL5TdDFdX5MuO7W9FOommmt7GzVQkBI5cJVjADXZkKqkVcsNu7BS80mcmirUzPkYmaYItpupVQRe86z+66ki3CwggqMIDQVAt1pDt1ue4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FO4b3Yok; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-5d862e8b163so659577a12.1;
-        Sat, 06 Apr 2024 09:48:43 -0700 (PDT)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2a49986efc0so371214a91.0;
+        Sat, 06 Apr 2024 09:48:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712422123; x=1713026923; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1712422128; x=1713026928; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mVBRW4eof9PowDsAk296tfYzBeUuniogKOiljPXuw18=;
-        b=hrX741L59lUj8Vi/FNMYjJI8iArVQ+BQoOFyI+L0SmWkUPf6+p/CgOMP4x2ztjG0Kr
-         JwEpez10N4+yf4KY8Hq3qFIAstBAForyUi4Uto/I3RiN5TZiuOXRxApXanIMKs/2mx0t
-         rB4c1uOYzvATfuWPPftg7qQAeN/uY/OrURAxYDuutPuZ5I3FCFc5aBcxOZ7bcIHBEaL/
-         6ZnE7W4U0jxFB9O5PIP+c3n9bbOFKNOUlGKgDsoqzWDvDJyut0cj61Ln7ejHIlndX7TZ
-         AwDVyQq7gcmo2uwKilDJNXSAPuprUJzkg0rYAHeK+JVR3t7DvqRudyMkYpswPPRW3ZGH
-         Eq9w==
+        bh=AHNxZpx8u+XjZvJ2GIg35GcXEPPNsfxng7fyYMZIxlQ=;
+        b=FO4b3YokEl7VCyFG0xd5D7OpJcxw+cAkRwOTQYZh0aFkX6cmCLFPSLe3edSJJngPfD
+         Qh4O+w/ukgASE3o0ZsQMOIeokEg3lRHrfFrtmkd2VIoDNB2osYj9WqUqgKzv++pF7fYp
+         zprh4EobzPYfD67+FJUNTj7JUDq3SDy58wDHxkKeRIWm0WNeVgNgwvk661nxj3SDzltV
+         Bbgy0UI0w7CJ7g8wkiNTFHTmZiMY+72slGNW+xjfveGXWmULXoUBuFzzuwAVdf/ut9SK
+         bzvU3dl/dza6L7CqATogILX6XIwGfn1IQ1Uo1WMBMs0fLptGzRCwYPaC0UrJSgXV4/fV
+         1liw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712422123; x=1713026923;
+        d=1e100.net; s=20230601; t=1712422128; x=1713026928;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mVBRW4eof9PowDsAk296tfYzBeUuniogKOiljPXuw18=;
-        b=fV14PHpQ5MZWmcRZh5QYlpSdckeowxPchGL+JWnjPSLQD03P7eu0oQUW5AA5SWs/Jl
-         ipZPJEVkVY+oF/t1FHntM/4INwMW1IYOdK3V5uF4OrTAaH/K2k+GFW4nc+wsTVetRzA+
-         39Mhi1CilPYjAXxF6TVjGGOlHneJUC/rDjjZzIag2jbxE2HRN7+7NUumj1dk8PRmgK8s
-         snDIm8Jp3MUn+kk4iqhmODkLFQEHkcGf28uau3OwLnepR4aRH2D/UsHCFoKitSv2tRHw
-         MXTr7rP8OlNJgeodU7R5GnKMoIXO0uKM+VtMeuYHFJ4nUkNQV8yiLohM4CaozMtdIf9P
-         JMYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXy2effRe2SvKkfo3fhmc3d8hYocKmmTEvEEeOX2VdBd4/b3JkqQoZ9eFrQtcrndzLKd3+b3wybi3G7nbeg3c+j9vLtarQZWLKrTbVC9OxP5rqkGsnSV+cCGgE5loOlzazMkhy3ly/c6gOzjzA+aoTAy47xKU76nHbNtS/DFdm20YqX3HUtPyBkjLOxIynKt5U3gpUp64sGXhkkuNF2kDKxbxQ2QvzonEJA01c/
-X-Gm-Message-State: AOJu0YztkSvx30amtW3QjMTIu5+FF8OPRFZ/pIkaS9FgUy9Uqb5W/VzV
-	Yd31G0jvOmdPf+D7At/x/C5zJwS230izUuKZbXgRt+bNs1o/vJFo
-X-Google-Smtp-Source: AGHT+IERmlFQH0vffhtfBW7h0zEYLfp3+ry7ehJ/YlP1A2Hxhl1UdWDOsD2vemJY5geJTKGS8TJGYA==
-X-Received: by 2002:a17:902:cecf:b0:1dd:85eb:b11 with SMTP id d15-20020a170902cecf00b001dd85eb0b11mr5562644plg.1.1712422123243;
-        Sat, 06 Apr 2024 09:48:43 -0700 (PDT)
+        bh=AHNxZpx8u+XjZvJ2GIg35GcXEPPNsfxng7fyYMZIxlQ=;
+        b=DWH4Pr6qGQc6+U29z+2GWFHqmduKKXgH+y4l2QFIfVnhy1pTSMH8PwZqUv0dycy8JR
+         YpjH+ZMkRLppL955ogiU5pL1bt/5wvrQFeltYTgDTxb+J0cRgAXhLeQ5DQmkTXCBFdIK
+         7IPa9K/RP9E2SGm1SM8CY6UFaVU1PXpLXUNbIyY3w1pA6RdJf+6+OL8TeVMIekp3mrMW
+         w3Lq6u0sW5NLTnLAOPEVTnkX8YM8GLWOpWWDqLqk+e/70J90rzy9r4/fwH3mflcpR7i2
+         iEsQZQ5V+89UAB+H/8NdM50uidTJfCfzlMBQmx0mGwayUghgYAqkOA82MceHtUyvKLRJ
+         q3Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzih6Dp7+5OviPTStSRsM0ti/iv2PO99D+yy8LpO0Qp+rt/uz6pHqowWHmEWjehnGE2EJidvZ3yT7C4Pjklkq4MWtB6DT3cpDr5bcK/AanxuQL9bZlRfBiAiOtbop3SPnlg44f0t6dHS9hdQARCeX56DB/MdRpi6xPId9Bi1BH9l3CvcvtMD22rQvPrXpZ9L1neaOwKkz/mz7g1Dthvj+MZ0Pz6Y6ocjR4jl1X
+X-Gm-Message-State: AOJu0YySNTFiLKqxRFYk6sEjmDMADRzkv7zTo9nLw9GBqU+D/Uo+IK9I
+	zC5oNWWBmjeZ5y+2u/pPnyUqMV6s+UueOxxYiEPNBI21K4igmUwG
+X-Google-Smtp-Source: AGHT+IERQEN3/6uksLr3AQKyXLHAVa4zgVwAOUohwmgfNl0NRAk+e2fuL1w5v1WlyH3tZ6/U0YsU8Q==
+X-Received: by 2002:a17:902:e811:b0:1e0:c887:f93f with SMTP id u17-20020a170902e81100b001e0c887f93fmr5627092plg.1.1712422127887;
+        Sat, 06 Apr 2024 09:48:47 -0700 (PDT)
 Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id q14-20020a170902a3ce00b001e2b8c91f04sm3665068plb.22.2024.04.06.09.48.39
+        by smtp.gmail.com with ESMTPSA id q14-20020a170902a3ce00b001e2b8c91f04sm3665068plb.22.2024.04.06.09.48.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Apr 2024 09:48:42 -0700 (PDT)
+        Sat, 06 Apr 2024 09:48:47 -0700 (PDT)
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
 To: colyli@suse.de,
 	kent.overstreet@linux.dev,
@@ -89,9 +89,9 @@ Cc: bfoster@redhat.com,
 	linux-bcachefs@vger.kernel.org,
 	linux-perf-users@vger.kernel.org,
 	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH v3 13/17] lib min_heap: Update min_heap_push() to use min_heap_sift_up()
-Date: Sun,  7 Apr 2024 00:47:23 +0800
-Message-Id: <20240406164727.577914-14-visitorckw@gmail.com>
+Subject: [PATCH v3 14/17] lib/test_min_heap: Use min_heap_init() for initializing
+Date: Sun,  7 Apr 2024 00:47:24 +0800
+Message-Id: <20240406164727.577914-15-visitorckw@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240406164727.577914-1-visitorckw@gmail.com>
 References: <20240406164727.577914-1-visitorckw@gmail.com>
@@ -103,41 +103,53 @@ List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Update min_heap_push() to use min_heap_sift_up() rather than its origin
-inline version.
+Replace direct assignment of values to heap data members with
+min_heap_init() for better code readability and maintainability.
 
+Link: https://lkml.kernel.org/CAP-5=fW+FvUu8JL+KrtVv5uC++4AW=VhyEOgmdWzpH1mswQNzw@mail.gmail.com
 Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Reviewed-by: Ian Rogers <irogers@google.com>
 ---
- include/linux/min_heap.h | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ lib/test_min_heap.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/min_heap.h b/include/linux/min_heap.h
-index 3086612d7cd5..fe037eb5952e 100644
---- a/include/linux/min_heap.h
-+++ b/include/linux/min_heap.h
-@@ -190,7 +190,6 @@ bool __min_heap_push(min_heap_char *heap, const void *element, size_t elem_size,
- 		const struct min_heap_callbacks *func, void *args)
- {
- 	void *data = heap->data;
--	void *child, *parent;
- 	int pos;
+diff --git a/lib/test_min_heap.c b/lib/test_min_heap.c
+index cc7219b49ba7..67dd4f644f6c 100644
+--- a/lib/test_min_heap.c
++++ b/lib/test_min_heap.c
+@@ -67,9 +67,8 @@ static __init int test_heapify_all(bool min_heap)
+ 			 -3, -1, -2, -4, 0x8000000, 0x7FFFFFF };
+ 	struct min_heap_test heap;
  
- 	if (WARN_ONCE(heap->nr >= heap->size, "Pushing on a full heap"))
-@@ -202,13 +201,7 @@ bool __min_heap_push(min_heap_char *heap, const void *element, size_t elem_size,
- 	heap->nr++;
+-	heap.data = values;
++	min_heap_init(&heap, values, ARRAY_SIZE(values));
+ 	heap.nr = ARRAY_SIZE(values);
+-	heap.size =  ARRAY_SIZE(values);
+ 	struct min_heap_callbacks funcs = {
+ 		.less = min_heap ? less_than : greater_than,
+ 		.swp = swap_ints,
+@@ -99,9 +98,7 @@ static __init int test_heap_push(bool min_heap)
+ 	int values[ARRAY_SIZE(data)];
+ 	struct min_heap_test heap;
  
- 	/* Sift child at pos up. */
--	for (; pos > 0; pos = (pos - 1) / 2) {
--		child = data + (pos * elem_size);
--		parent = data + ((pos - 1) / 2) * elem_size;
--		if (func->less(parent, child, args))
--			break;
--		func->swp(parent, child, args);
--	}
-+	__min_heap_sift_up(heap, elem_size, pos, func, args);
+-	heap.data = values;
+-	heap.nr = 0;
+-	heap.size =  ARRAY_SIZE(values);
++	min_heap_init(&heap, values, ARRAY_SIZE(values));
+ 	struct min_heap_callbacks funcs = {
+ 		.less = min_heap ? less_than : greater_than,
+ 		.swp = swap_ints,
+@@ -131,9 +128,7 @@ static __init int test_heap_pop_push(bool min_heap)
+ 	int values[ARRAY_SIZE(data)];
+ 	struct min_heap_test heap;
  
- 	return true;
- }
+-	heap.data = values;
+-	heap.nr = 0;
+-	heap.size =  ARRAY_SIZE(values);
++	min_heap_init(&heap, values, ARRAY_SIZE(values));
+ 	struct min_heap_callbacks funcs = {
+ 		.less = min_heap ? less_than : greater_than,
+ 		.swp = swap_ints,
 -- 
 2.34.1
 
