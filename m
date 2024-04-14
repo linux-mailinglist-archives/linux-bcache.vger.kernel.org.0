@@ -1,133 +1,142 @@
-Return-Path: <linux-bcache+bounces-399-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-400-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2569A8A2804
-	for <lists+linux-bcache@lfdr.de>; Fri, 12 Apr 2024 09:30:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDDB8A412D
+	for <lists+linux-bcache@lfdr.de>; Sun, 14 Apr 2024 10:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B98B61F22438
-	for <lists+linux-bcache@lfdr.de>; Fri, 12 Apr 2024 07:30:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74A681F21EC6
+	for <lists+linux-bcache@lfdr.de>; Sun, 14 Apr 2024 08:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781684CB35;
-	Fri, 12 Apr 2024 07:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0A421A19;
+	Sun, 14 Apr 2024 08:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eX4CZHVJ"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="othdOT1W"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D282C683;
-	Fri, 12 Apr 2024 07:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7608C15E9B;
+	Sun, 14 Apr 2024 08:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712907029; cv=none; b=BymKsUHSf6h+v1qZ5o9ZBEj0GJykyosGsw4dKrwerl23RX5+pRC2nGEhhRn3Q4OSckbc8t7p3ykOU7i4X2ekbyiEl02VvVF2nDcn5crHj6Bb0QeaBFTvR4B+MlZlrSipOgex3H0LLjTs6PFoljFl0aKD8sS41+yOfcQiArw8uB8=
+	t=1713083086; cv=none; b=QupputSaQjQgliVnQORG7wa5KS5grGfIOaaqhX16NsNlb0QelvH6aEAhuZ2EAD9VD+lAgmNvZ+Akj4CXAGdKAJamgDENhwcaNPTg1QL/vqQzTXmg+fl18HWl/3/QWaoYk8h9aqZHevi7KXF4kgrIVo4HncA1a813BHy0M4xyL2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712907029; c=relaxed/simple;
-	bh=SMJxN39eSTs8bPxN1doXBcsVnwkQ15ZuSI+TQzwARyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fDx/toZQ+4LZ2BmDAzDCFyzIsNfFDNfvlAWt13RMari9GiiP9Uxt/FgtlK0elae3f48HS8N1LQ87YTCDQVI+JHjqy3tRSxF/uc+VbcUgx6yPFXGG/RqtfrBBSRgfuw7X5pAe3PvQ8cyUw7GbyzFQKhX3N4DUUe013Jz/eN4BTlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eX4CZHVJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=WqsHOb8ca3wTRadlCQz8Y2C98VyRQKabao20sZYMVuU=; b=eX4CZHVJ3CoJuRj6xZ6ZoMY55b
-	E4+cHxnKRhwlspEuPLkPOEMBgu62L57QQplzsmnmGOU1X/5uNFjzPdfUO2PsB+gHBIqcqlsApOVvS
-	w0j47DZ6P36mawIWZi5pmYEEus/SkD8JgwMq6grItMkqZ948DCry5qcbupThkgcWrmkJ6dmvMRMc3
-	sgPanGppQemRKHkCd0b57PPzi6cFhYXZGz/I0dodBsrg49id0nMMEsQ1qvgunJZfvOqw0FnYbd3kM
-	Ym1mlyAaQHZyhzXHPSM1ktyo1vLV6kYiHMYC1g+FS26tGu8xjub1jjlvPX/seM/9iG3HKuQzqZgtb
-	m/G5bwCA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rvBMY-00000008fV6-1VBb;
-	Fri, 12 Apr 2024 07:30:18 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0880E3004D5; Fri, 12 Apr 2024 09:30:18 +0200 (CEST)
-Date: Fri, 12 Apr 2024 09:30:17 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: colyli@suse.de, kent.overstreet@linux.dev, msakai@redhat.com,
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	akpm@linux-foundation.org, bfoster@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com, jserv@ccns.ncku.edu.tw,
-	linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v3 04/17] lib min_heap: Add type safe interface
-Message-ID: <20240412073017.GE30852@noisy.programming.kicks-ass.net>
-References: <20240406164727.577914-1-visitorckw@gmail.com>
- <20240406164727.577914-5-visitorckw@gmail.com>
+	s=arc-20240116; t=1713083086; c=relaxed/simple;
+	bh=2Q+/4r+Qor5g10c5M5kZw06B/8Q720MWo5E/j+HaAsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o8P3zhB851Tl0DLPdbP13xW6sindEJf+tS8spC40X8NPSimSTd+0XTtFW89KImHI2LFVbTKU2QbKKuCt0r7XjDUjq2nucGpfWc4PI1XjlLVCLxmItkyuOcYo8q+TxRMVnwmmB8e3fQcEjSLK31r/2dnDFq+uebqP40nljtI3W+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=othdOT1W; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.18] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id vvAGrTmGTUGsCvvAHrYZlA; Sun, 14 Apr 2024 10:24:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1713083081;
+	bh=i9DFs5b+r7+eXYOXnNffp+stcM+i0qFnH109y2AB9uM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=othdOT1WNg/8WuUl6wXonjNE6QyUHShE9M7LtjoSUC8cA+5fXG0VauLhqFnHh2RTb
+	 CNTUSQ9cBlzJmIFT9K+eoG+ku/SF+tlZthI944dXWX46FRiaFGdcVQJoBWQJMQ3XpZ
+	 JybprpFYD61xlQkh8gnS0WDfVotziVwp/L9W2E6CIC03o5G5KlDYX5LbO7fEDSIQzo
+	 rYUCn6x/rcBOxS1pUbSL9BC1UHWZExbcSYsPehst3NWJafeog6QPAk3DhOJnRc/Gz2
+	 u/En++pS81pp+6bA+YxYTJm0zDbbUPYYSB2EcaCyExazTh9p0FsvzFfYmFB3Ag8mI1
+	 /q29lN+udhRHg==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 14 Apr 2024 10:24:41 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <4230d015-d9b6-4753-8957-717eab00d5cb@wanadoo.fr>
+Date: Sun, 14 Apr 2024 10:24:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240406164727.577914-5-visitorckw@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bcache: Remove usage of the deprecated ida_simple_xx()
+ API
+To: Coly Li <colyli@suse.de>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-bcache@vger.kernel.org
+References: <2f038df3860c2f44d5c7f5d06d03ca663cdbc651.1705235398.git.christophe.jaillet@wanadoo.fr>
+ <y2c3dt325d4xzcknmwtyd6gungco6jqucz3fsrm6lsyjtiwpp4@ozmsw6vp67jk>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <y2c3dt325d4xzcknmwtyd6gungco6jqucz3fsrm6lsyjtiwpp4@ozmsw6vp67jk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Apr 07, 2024 at 12:47:14AM +0800, Kuan-Wei Chiu wrote:
+Le 14/01/2024 à 16:16, Coly Li a écrit :
+> On Sun, Jan 14, 2024 at 01:30:16PM +0100, Christophe JAILLET wrote:
+>> ida_alloc() and ida_free() should be preferred to the deprecated
+>> ida_simple_get() and ida_simple_remove().
+>>
+>> Note that the upper limit of ida_simple_get() is exclusive, but the one of
+>> ida_alloc_max() is inclusive. So a -1 has been added when needed.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> It looks good to me. Add this patch into my testing directory.
+> 
+> Thanks.
+> 
+> Coly Li
 
-> -struct min_heap {
-> -	void *data;
-> -	int nr;
-> -	int size;
-> -};
-> +#define MIN_HEAP_PREALLOCATED(_type, _name, _nr)	\
-> +struct _name {	\
-> +	int nr;	\
-> +	int size;	\
-> +	_type *data;	\
-> +	_type preallocated[_nr];	\
-> +}
+Hi,
 
+polite reminder ;-)
 
-> @@ -3738,7 +3739,7 @@ static noinline int visit_groups_merge(struct perf_event_context *ctx,
->  	struct perf_cpu_context *cpuctx = NULL;
->  	/* Space for per CPU and/or any CPU event iterators. */
->  	struct perf_event *itrs[2];
-> -	struct min_heap event_heap;
-> +	struct perf_event_min_heap event_heap;
->  	struct perf_event **evt;
->  	int ret;
->  
-> @@ -3747,11 +3748,9 @@ static noinline int visit_groups_merge(struct perf_event_context *ctx,
->  
->  	if (!ctx->task) {
->  		cpuctx = this_cpu_ptr(&perf_cpu_context);
-> -		event_heap = (struct min_heap){
-> -			.data = cpuctx->heap,
-> -			.nr = 0,
-> -			.size = cpuctx->heap_size,
-> -		};
-> +		event_heap.data = cpuctx->heap;
-> +		event_heap.nr = 0;
-> +		event_heap.size = cpuctx->heap_size;
->  
->  		lockdep_assert_held(&cpuctx->ctx.lock);
->  
-> @@ -3760,11 +3759,9 @@ static noinline int visit_groups_merge(struct perf_event_context *ctx,
->  			css = &cpuctx->cgrp->css;
->  #endif
->  	} else {
-> -		event_heap = (struct min_heap){
-> -			.data = itrs,
-> -			.nr = 0,
-> -			.size = ARRAY_SIZE(itrs),
-> -		};
-> +		event_heap.data = itrs;
-> +		event_heap.nr = 0;
-> +		event_heap.size = ARRAY_SIZE(itrs);
->  		/* Events not within a CPU context may be on any CPU. */
->  		__heap_add(&event_heap, perf_event_groups_first(groups, -1, pmu, NULL));
->  	}
+CJ
 
-Not too happy about these. If you ever add more fields they will go
-uninitialized. Why not keep the existing form and fix the struct name?
+> 
+> 
+>> ---
+>>   drivers/md/bcache/super.c | 10 +++++-----
+>>   1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+>> index dc3f50f69714..a2eecd1db126 100644
+>> --- a/drivers/md/bcache/super.c
+>> +++ b/drivers/md/bcache/super.c
+>> @@ -881,8 +881,8 @@ static void bcache_device_free(struct bcache_device *d)
+>>   		bcache_device_detach(d);
+>>   
+>>   	if (disk) {
+>> -		ida_simple_remove(&bcache_device_idx,
+>> -				  first_minor_to_idx(disk->first_minor));
+>> +		ida_free(&bcache_device_idx,
+>> +			 first_minor_to_idx(disk->first_minor));
+>>   		put_disk(disk);
+>>   	}
+>>   
+>> @@ -926,8 +926,8 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+>>   	if (!d->full_dirty_stripes)
+>>   		goto out_free_stripe_sectors_dirty;
+>>   
+>> -	idx = ida_simple_get(&bcache_device_idx, 0,
+>> -				BCACHE_DEVICE_IDX_MAX, GFP_KERNEL);
+>> +	idx = ida_alloc_max(&bcache_device_idx, BCACHE_DEVICE_IDX_MAX - 1,
+>> +			    GFP_KERNEL);
+>>   	if (idx < 0)
+>>   		goto out_free_full_dirty_stripes;
+>>   
+>> @@ -980,7 +980,7 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
+>>   out_bioset_exit:
+>>   	bioset_exit(&d->bio_split);
+>>   out_ida_remove:
+>> -	ida_simple_remove(&bcache_device_idx, idx);
+>> +	ida_free(&bcache_device_idx, idx);
+>>   out_free_full_dirty_stripes:
+>>   	kvfree(d->full_dirty_stripes);
+>>   out_free_stripe_sectors_dirty:
+>> -- 
+>> 2.43.0
+>>
+> 
+
 
