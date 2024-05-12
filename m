@@ -1,177 +1,217 @@
-Return-Path: <linux-bcache+bounces-433-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-434-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69BD8C1258
-	for <lists+linux-bcache@lfdr.de>; Thu,  9 May 2024 17:56:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107EA8C3523
+	for <lists+linux-bcache@lfdr.de>; Sun, 12 May 2024 07:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83DFFB207E4
-	for <lists+linux-bcache@lfdr.de>; Thu,  9 May 2024 15:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851E11F2139B
+	for <lists+linux-bcache@lfdr.de>; Sun, 12 May 2024 05:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FD416F0FD;
-	Thu,  9 May 2024 15:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635AFCA40;
+	Sun, 12 May 2024 05:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hKSIYz+l"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-m605.netease.com (mail-m605.netease.com [210.79.60.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0464D3F8E2
-	for <linux-bcache@vger.kernel.org>; Thu,  9 May 2024 15:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.79.60.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95355C13D
+	for <linux-bcache@vger.kernel.org>; Sun, 12 May 2024 05:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715270179; cv=none; b=IHgLfE4HALa0wnHIqAogRaYwThHT81g75JV3N3EbREv8ABEHAzjOEXBONvU0pRm8F+0UA/HtZP0HCxYjO+AHppLDEF0pyt/9I1KJtPKBBscjdm2lOBeTulXaV76sOM3964LhjNBmNuGkJ6H8YrsWocDHzWUdebKGObOhcqcfawQ=
+	t=1715492603; cv=none; b=eweOhriVbruynRrwL4fPmywYR3j0vfoeWLuSo+5nOAEd9pBKp20aSYqKwMWpFX4gbGhxVRVXYAsTbSTCOB/4a4QrsZdqFQV37b37jwZEaneFnDcJsdvDA9HUbZ1tHf8Ik6PQyC/ozPMuM/ZsSYpPOS3tjyKiQjDUTedKM8GOrdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715270179; c=relaxed/simple;
-	bh=DZVN1uZYlyg7yG872Nhgig8UoFmTEZ/JL9yd2MZZDVc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p49jr28o4OrnIgPp2bluXz3cUOCpx/8lIT2AmV1bCyVAfQbGVwAiXjVko7TQCTc3lhyhaVUQuUpFK2ZyFBShM3tu+W1Q1CZClEq0sWVWTrt7Mu2ERUSr/W51O9vdx9CGCfrtvHAv0tMyhVR6AnDsa4mWLc49sMJTO0TDNJlKv2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=210.79.60.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
-Received: from easystack.cn (unknown [127.0.0.1])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 8FECC4C01FE
-	for <linux-bcache@vger.kernel.org>; Thu,  9 May 2024 10:59:03 +0800 (CST)
-Received: from localhost.localdomain (unknown [218.94.118.90])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id A460426024D;
-	Wed,  8 May 2024 15:32:22 +0800 (CST)
-From: mingzhe.zou@easystack.cn
-To: colyli@suse.de,
-	bcache@lists.ewheeler.net,
-	robertpang@google.com
-Cc: linux-bcache@vger.kernel.org,
-	zoumingzhe@qq.com,
-	Dongsheng Yang <dongsheng.yang@easystack.cn>,
-	Mingzhe Zou <mingzhe.zou@easystack.cn>
-Subject: [PATCH v3] bcache: allow allocator to invalidate bucket in gc
-Date: Wed,  8 May 2024 15:32:15 +0800
-Message-Id: <1596418224.689.1715223543586.JavaMail.hmail@wm-bj-12-entmail-virt53.gy.ntes>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715492603; c=relaxed/simple;
+	bh=VkFOzTbDdWHy17K2/xBr4HZAwm4320NegfXNwP7nr/A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sDy8che1pVwkS/XTE/BTPS/IkpIrDAGJ3RAKUG1oIi5KbhmBPNj5p8Xf3LUwMBvQP3UqhFqvmu5lGWg36SJh/0bJYSQEOCftYde0y+YjRy6/ygncKRxIyjFxIA5xDjsUdU0GU7UmBRLlnG7ZTcxTw5T7/sTVdx9UdNcVsKY7ZWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hKSIYz+l; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41ff3a5af40so34875e9.1
+        for <linux-bcache@vger.kernel.org>; Sat, 11 May 2024 22:43:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715492600; x=1716097400; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mi6OWa2mDCWBq1apdqVQ4e62XyCLGXys8pzdO7gmZmg=;
+        b=hKSIYz+l93Bx1J1uDWzsUpwYbBgZHHSAKyju1xyi6sFZWm2P9ljvR3gLL8EX8lhlW4
+         nDghJqkjf4WvcZKJO0uakL70CVNf2G2GGt9v9fircCev5JSSkOyWV9M5AE5CZNwNMjU2
+         uIHFn2+Zu6mTScNbqF2gFxKVlAEUIziwwgyvcBfc2l1meIQ1M0gm3k9F8xZArM6/CU4m
+         qvefxM9NqOAQNdGpZtXlnYtI1OYWLxAgNALWY7m2DLQTVfQvF3NciCf+Qt1zG/F6ZCgB
+         1XiWuyaushSWU97S4ylwBbZDvVwILTVgMo31Vh0shrebD3iFKH6I5RGPliD1K9AFj2L0
+         dkBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715492600; x=1716097400;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mi6OWa2mDCWBq1apdqVQ4e62XyCLGXys8pzdO7gmZmg=;
+        b=S+bZUI6aNmhx9hMyRkDaWLU3Opwc3/Zl3J4gduZwARJtN3Az8kznwjlXhziwgN9h6N
+         vXQw+87mIRoBdfOhDMUbebQOdqkHE4w348AstjkoR5wmMO/UL/F70aI7sjiRVd3+w78J
+         HKcynahpiz7RjfOZJUuUdfC7mqh1UM1p29hmMyoZnSWEMBe+lW24kdasrxLTe4nr4vRo
+         SED8FEqqT78F/2H8H4FrNP4wH746fVYtmq43cklqe96KfIhqzI7SbpY4SAvWYI0o5hMU
+         ZOFAug/Ka9hZCW4Q18G909FECsaKPZYdpHaSNXMdQRXxbHsIV5xyTEKIijGzKeNFqFi7
+         7Q9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWhm8MzoV2bvk3qMP+EiWBFoe41tBRIUeZ9nO/NWlpHq3BF3+0X7lW/ezJ1/FkJawDOn8o+ZCbR6j6ig93J4U4k+gUnuPcbS/wQvl2x
+X-Gm-Message-State: AOJu0YxAgs1oEr249RgEY6vlNGuoxv/l3MOuacRgzWZCHAWO2WMVCf8r
+	GPbdd9jQ9cDNyNRmhQ/O2m59Jqmo4ysGehuZE3q2WHVhtWQVB5W5to3CBuYg3ghI0uewVnRxvs5
+	h8tnfh8w6uB3vgQCYnvl6+uHQEqKYdXifPxM4
+X-Google-Smtp-Source: AGHT+IEPewLE+ZOznMzZFzNdwSgQdB4YPDDVWXug5Y+aEMpWetuYrX5haCruqrGYoXmrXeUpou6Qb0ekK+39ND0fIQo=
+X-Received: by 2002:a05:600c:a4a:b0:41c:a1b:2476 with SMTP id
+ 5b1f17b1804b1-4200ee3824fmr1960585e9.6.1715492599476; Sat, 11 May 2024
+ 22:43:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Resent-From: mingzhe.zou@easystack.cn
-Resent-Message-Id: <20240509025903.8FECC4C01FE@smtp.qiye.163.com>
-Resent-Date: Thu,  9 May 2024 10:59:03 +0800 (CST)
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSkgfVhhKHR1OQ0geGE5MSVUZERMWGhIXJBQOD1
-	lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpNT0lMTlVKS0tVSkJLS1kG
-X-HM-Tid: 0a8f5b4a3f250242kunm8fecc4c01fe
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQQ8JDh5XWRIfHhUPWUFZRzo8KjoeOjpDOj9NOi0cOD06Kzo6
-	QxoKFlVKVUpMSk5JSUhOT09KSElVMxYaEhdVFhIVHAETHlUBFA47HhoIAggPGhgQVRgVRVlXWRIL
-	WUFZSUpDVUJPVUpKQ1VCS1lXWQgBWUFOQ0lLNwY+
+References: <1ddde040-9bde-515a-1d4d-b41de472a702@suse.de> <20240315224527.694458-1-robertpang@google.com>
+ <584A2724-ACA2-4000-A8D2-50B6AA5684A7@suse.de> <CAJhEC06dsqq2y4MNCW7t52cPc1=PbStGTBOddZofg4vqGKkQsA@mail.gmail.com>
+ <5B79FFA6-1995-4167-8318-3EDCC6F0B432@suse.de> <CAJhEC07hAWsW5Aq0=hCCAXJGKU47L_n8a0mQ-SjOq2wqGAj_gA@mail.gmail.com>
+ <CAJhEC05TrboyqKAn0i5D72LWBs7bZ05qFrPedgmNWy8A7qYmOA@mail.gmail.com>
+ <C787D2E8-6D03-4F4D-9633-2237AA0B2BE7@suse.de> <CAJhEC05hzf2zVyJabVExFNF0esiLovc+WLHOY_YhV22OUdGFZw@mail.gmail.com>
+ <5C71FFC2-B22E-4FC2-852F-F40BFDEDFB2C@suse.de> <C659682B-4EAB-4022-A669-1574962ECE82@suse.de>
+ <CAJhEC04+VUKqUpMfACF0pSiwtdaJaOsb50dp_VbyhahPS6KE5A@mail.gmail.com>
+ <82DDC16E-F4BF-4F8D-8DB8-352D9A6D9AF5@suse.de> <ea18e5b9-2d10-c459-ffec-fe7012fad345@easystack.cn>
+In-Reply-To: <ea18e5b9-2d10-c459-ffec-fe7012fad345@easystack.cn>
+From: Robert Pang <robertpang@google.com>
+Date: Sat, 11 May 2024 22:43:07 -0700
+Message-ID: <CAJhEC04czCGuwdS3AC8JdzKax4aX9i4D7BJ01xgi3PKCpgzwzw@mail.gmail.com>
+Subject: Re: [PATCH v2] bcache: allow allocator to invalidate bucket in gc
+To: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Cc: Coly Li <colyli@suse.de>, mingzhe.zou@easystack.cn, 
+	Bcache Linux <linux-bcache@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Hi Coly
 
-Currently, if the gc is running, when the allocator found free_inc
-is empty, allocator has to wait the gc finish. Before that, the
-IO is blocked.
+I see that Mingzhe has submitted the rebased patch [1]. Do you have a
+chance to reproduce the stall and test the patch? Are we on track to
+submit this patch upstream in the coming 6.10 merge window? Do you
+need any help or more info?
 
-But actually, there would be some buckets is reclaimable before gc,
-and gc will never mark this kind of bucket to be unreclaimable.
+Thanks
+Robert
 
-So we can put these buckets into free_inc in gc running to avoid
-IO being blocked.
 
-Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
-Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
----
- drivers/md/bcache/alloc.c  | 13 +++++--------
- drivers/md/bcache/bcache.h |  1 +
- drivers/md/bcache/btree.c  |  7 ++++++-
- 3 files changed, 12 insertions(+), 9 deletions(-)
+[1] https://lore.kernel.org/linux-bcache/1596418224.689.1715223543586.JavaM=
+ail.hmail@wm-bj-12-entmail-virt53.gy.ntes/T/#u
 
-diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index ce13c272c387..32a46343097d 100644
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -129,12 +129,9 @@ static inline bool can_inc_bucket_gen(struct bucket *b)
- 
- bool bch_can_invalidate_bucket(struct cache *ca, struct bucket *b)
- {
--	BUG_ON(!ca->set->gc_mark_valid);
--
--	return (!GC_MARK(b) ||
--		GC_MARK(b) == GC_MARK_RECLAIMABLE) &&
--		!atomic_read(&b->pin) &&
--		can_inc_bucket_gen(b);
-+	return (ca->set->gc_mark_valid || b->reclaimable_in_gc) &&
-+	       ((!GC_MARK(b) || GC_MARK(b) == GC_MARK_RECLAIMABLE) &&
-+	       !atomic_read(&b->pin) && can_inc_bucket_gen(b));
- }
- 
- void __bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
-@@ -148,6 +145,7 @@ void __bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
- 	bch_inc_gen(ca, b);
- 	b->prio = INITIAL_PRIO;
- 	atomic_inc(&b->pin);
-+	b->reclaimable_in_gc = 0;
- }
- 
- static void bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
-@@ -352,8 +350,7 @@ static int bch_allocator_thread(void *arg)
- 		 */
- 
- retry_invalidate:
--		allocator_wait(ca, ca->set->gc_mark_valid &&
--			       !ca->invalidate_needs_gc);
-+		allocator_wait(ca, !ca->invalidate_needs_gc);
- 		invalidate_buckets(ca);
- 
- 		/*
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 4e6afa89921f..1d33e40d26ea 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -200,6 +200,7 @@ struct bucket {
- 	uint8_t		gen;
- 	uint8_t		last_gc; /* Most out of date gen in the btree */
- 	uint16_t	gc_mark; /* Bitfield used by GC. See below for field */
-+	uint16_t	reclaimable_in_gc:1;
- };
- 
- /*
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 196cdacce38f..5d64543a1fb2 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -1740,18 +1740,20 @@ static void btree_gc_start(struct cache_set *c)
- 
- 	mutex_lock(&c->bucket_lock);
- 
--	c->gc_mark_valid = 0;
- 	c->gc_done = ZERO_KEY;
- 
- 	ca = c->cache;
- 	for_each_bucket(b, ca) {
- 		b->last_gc = b->gen;
-+		if (bch_can_invalidate_bucket(ca, b))
-+			b->reclaimable_in_gc = 1;
- 		if (!atomic_read(&b->pin)) {
- 			SET_GC_MARK(b, 0);
- 			SET_GC_SECTORS_USED(b, 0);
- 		}
- 	}
- 
-+	c->gc_mark_valid = 0;
- 	mutex_unlock(&c->bucket_lock);
- }
- 
-@@ -1808,6 +1810,9 @@ static void bch_btree_gc_finish(struct cache_set *c)
- 	for_each_bucket(b, ca) {
- 		c->need_gc	= max(c->need_gc, bucket_gc_gen(b));
- 
-+		if (b->reclaimable_in_gc)
-+			b->reclaimable_in_gc = 0;
-+
- 		if (atomic_read(&b->pin))
- 			continue;
- 
--- 
-2.34.1
 
+On Tue, May 7, 2024 at 7:34=E2=80=AFPM Dongsheng Yang
+<dongsheng.yang@easystack.cn> wrote:
+>
+>
+>
+> =E5=9C=A8 2024/5/4 =E6=98=9F=E6=9C=9F=E5=85=AD =E4=B8=8A=E5=8D=88 11:08, =
+Coly Li =E5=86=99=E9=81=93:
+> >
+> >
+> >> 2024=E5=B9=B45=E6=9C=884=E6=97=A5 10:04=EF=BC=8CRobert Pang <robertpan=
+g@google.com> =E5=86=99=E9=81=93=EF=BC=9A
+> >>
+> >> Hi Coly,
+> >>
+> >>> Can I know In which kernel version did you test the patch?
+> >>
+> >> I tested in both Linux kernels 5.10 and 6.1.
+> >>
+> >>> I didn=E2=80=99t observe obvious performance advantage of this patch.
+> >>
+> >> This patch doesn't improve bcache performance. Instead, it eliminates =
+the IO stall in bcache that happens due to bch_allocator_thread() getting b=
+locked and waiting on GC to finish when GC happens.
+> >>
+> >> /*
+> >> * We've run out of free buckets, we need to find some buckets
+> >> * we can invalidate. First, invalidate them in memory and add
+> >> * them to the free_inc list:
+> >> */
+> >> retry_invalidate:
+> >> allocator_wait(ca, ca->set->gc_mark_valid &&  <--------
+> >>         !ca->invalidate_needs_gc);
+> >> invalidate_buckets(ca);
+> >>
+> >>  From what you showed, it looks like your rebase is good. As you alrea=
+dy noticed, the original patch was based on 4.x kernel so the bucket traver=
+sal in btree.c needs to be adapted for 5.x and 6.x kernels. I attached the =
+patch rebased to 6.9 HEAD for your reference.
+> >>
+> >> But to observe the IO stall before the patch, please test with a read-=
+write workload so GC will happen periodically enough (read-only or read-mos=
+tly workload doesn't show the problem). For me, I used the "fio" utility to=
+ generate a random read-write workload as follows.
+> >>
+> >> # Pre-generate a 900GB test file
+> >> $ truncate -s 900G test
+> >>
+> >> # Run random read-write workload for 1 hour
+> >> $ fio --time_based --runtime=3D3600s --ramp_time=3D2s --ioengine=3Dlib=
+aio --name=3Dlatency_test --filename=3Dtest --bs=3D8k --iodepth=3D1 --size=
+=3D900G  --readwrite=3Drandrw --verify=3D0 --filename=3Dfio --write_lat_log=
+=3Dlat --log_avg_msec=3D1000 --log_max_value=3D1
+> >>
+> >> We include the flags "--write_lat_log=3Dlat --log_avg_msec=3D1000 --lo=
+g_max_value=3D1" so fio will dump the second-by-second max latency into a l=
+og file at the end of test so we can when stall happens and for how long:
+> >>
+> >
+> > Copied. Thanks for the information. Let me try the above command lines =
+on my local machine with longer time.
+> >
+> >
+> >
+> >> E.g.
+> >>
+> >> $ more lat_lat.1.log
+> >> (format: <time-ms>,<max-latency-ns>,,,)
+> >> ...
+> >> 777000, 5155548, 0, 0, 0
+> >> 778000, 105551, 1, 0, 0
+> >> 802615, 24276019570, 0, 0, 0 <---- stalls for 24s with no IO possible
+> >> 802615, 82134, 1, 0, 0
+> >> 804000, 9944554, 0, 0, 0
+> >> 805000, 7424638, 1, 0, 0
+> >>
+> >> I used a 375 GB local SSD (cache device) and a 1 TB network-attached s=
+torage (backing device). In the 1-hr run, GC starts happening about 10 minu=
+tes into the run and then happens at ~ 5 minute intervals. The stall durati=
+on ranges from a few seconds at the beginning to close to 40 seconds toward=
+s the end. Only about 1/2 to 2/3 of the cache is used by the end.
+> >>
+> >> Note that this patch doesn't shorten the GC either. Instead, it just a=
+voids GC from blocking the allocator thread by first sweeping the buckets a=
+nd marking reclaimable ones quickly at the beginning of GC so the allocator=
+ can proceed while GC continues its actual job.
+> >>
+> >> We are eagerly looking forward to this patch to be merged in this comi=
+ng merge window that is expected to open in a week to two.
+> >
+> > In order to avoid the no-space deadlock, normally there are around 10% =
+space will not be allocated out. I need to look more close onto this patch.
+> >
+> >
+> > Dongsheng Yang,
+> >
+> > Could you please post a new version based on current mainline kernel co=
+de ?
+>
+> Hi Coly,
+>         Mingzhe will send a new version based on mainline.
+>
+> Thanx
+> >
+> > Thanks.
+> >
+> > Coly Li
+> >
+> >
+> >
 
