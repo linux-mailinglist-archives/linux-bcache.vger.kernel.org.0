@@ -1,180 +1,189 @@
-Return-Path: <linux-bcache+bounces-461-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-462-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7E98C63A1
-	for <lists+linux-bcache@lfdr.de>; Wed, 15 May 2024 11:26:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F948C7F36
+	for <lists+linux-bcache@lfdr.de>; Fri, 17 May 2024 02:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 702C31F237C6
-	for <lists+linux-bcache@lfdr.de>; Wed, 15 May 2024 09:26:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2659280CAB
+	for <lists+linux-bcache@lfdr.de>; Fri, 17 May 2024 00:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7C057CBB;
-	Wed, 15 May 2024 09:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmIo/tLI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4689A622;
+	Fri, 17 May 2024 00:30:21 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF344D5AB;
-	Wed, 15 May 2024 09:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09437FD
+	for <linux-bcache@vger.kernel.org>; Fri, 17 May 2024 00:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.205.220.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715765161; cv=none; b=Nv7yL2ok5XnA8bCoQODROwhnWBHm0I6GIy+HKF3hDSpfwnpWC1g/xZ0bwCWTJEAWtLXxr5rdP4TGTt7xr/3KG3oChst2cv8sui/HzwkyLTLaOF4L2zYahGjaBpqB9FyQoI+sCqMV5LBMoN9ET5f4Fl/yoPoqzD+Zsf+zDn2FMug=
+	t=1715905821; cv=none; b=M/vniD+moMAHBoTEIRUPK61zpE9/LAvUrNkITAZHgU3SDrpoMR5F7RT7FOmbpg4qWHPbdFaDo+tDEIzZnwg6But5NIRN1RCfOSl4A5evAdJIl7VEo1i1Qum0w3WcybzVsG/s9isuUwNeccxgLrQIj97pU9NO0S/hqARFg+9qgfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715765161; c=relaxed/simple;
-	bh=U537H0j/9PlQaC0LiL9fsVT4K5alZFkllM7ciYu/MeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C14nU+pTiDLxbj0/B8gV5PP/x9Q+ZBOPwS5Vr4IfKOHQG0OcBwxJLN4jBgM10WTT2RlUdjKtWM2faOuPY6w9+CvGReCb6ahsU9bbYsLZNJ8CXOuACvNe2Qe+dfhgKXdrvbjUWYzrspkVUWU4HWyjdwukEfxcozGSTQdEAgZaTWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmIo/tLI; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2b345894600so1470605a91.2;
-        Wed, 15 May 2024 02:26:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715765160; x=1716369960; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OPKfNooZp8Km8QQjbs+4OOukYiKVYt2UrV4I2QW6i4c=;
-        b=lmIo/tLIrvX2xWYXD60DzlGLY3GrSgRaVxAwdgCnj1P2IOWLCCbL6WN5vmuWBsk8fl
-         Gi255OD2MpDqcIRBS+zV8140QQA5Af6SlyjjBuyl2piJgtC4nv8QdI5Mk7OKxl3KNkMo
-         LJAJ6jfBAAAAv9h9vW7YsSukCQrOMxTCHlNEGRNsYN57nFqU0ndwAR5CuBw6HJiSbtn6
-         XPIliY9mfAZmIzV5Z79jZ7eYOxEPzfX8RZgJFDaYXRVf5peUPqErcF+VnYgwYMIAUSmj
-         V5MN6Rfu750gVP4w+pHw1BZedvMJNQHjwHwEOk1TNzQyMRzbqJDFPB+2yrM1WRdS+uCL
-         lubQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715765160; x=1716369960;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OPKfNooZp8Km8QQjbs+4OOukYiKVYt2UrV4I2QW6i4c=;
-        b=vZft5pflapvwPnq0Swi9eNdWkg3DAOCB6fATvDoZ0cfFsabsMkuV8ESlBuNC0EGlrU
-         R2jQ3iWiO51zdD50ltByVKQ4vafdaHm24DEx5Cci9XHiYDUDg+s3Zr7Ax37WPDbUU2pY
-         EQcLziqi5XSu98WzVj78TMd0LFHLRbHSkY+Q03gNcbjAEydU2ImuYl1LLeCUjy91kpdg
-         PVfop/PYyFGNbL6NDJ+mgOaLbyfs/ivu2t8B+9nZBd8or6LNdgdCrqmJHw+0NKI7RFOG
-         Ky8nkk6DkG454fi89O8YneTi3dKP8te4UXwxM8wz1rCjAue7ZE2685ImqHsmLlSCE2Ts
-         kwRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNXcRof4Z7LSAY1c/x/MSIRjuUq0BHHpMEej2bdOx8PITbSBFsnCF9eiZYrK1rvRteEsEl2QItKLNUBuFhZlmzluQlLFsLo1vDhu+3Ah/Isynsjz794iP/rhr+fcBmBw4T0lcUkTW3LCqj3KVeP5dMcTMwGzLKCnVFV68zTH0kqnZPegzEkHo6l9X/lBEmht4Zmq1cS9bmTMlG2DpztmBxUs+Wzh8A9oRBKMuP
-X-Gm-Message-State: AOJu0YwGtSNgb/jUa70xj0+8aknemstuov2hLB+9xpDgb9O8XR52LQko
-	Jm4ukdlt06wmfp/0Nr0JMEBlkviXPEMGF3WRQdRVtwqymxiVZD1c
-X-Google-Smtp-Source: AGHT+IF2x8/iHfJaxUooX4X3TGoGoXPwzr8yltF5Wclj64bedUjHLoWk82Et3XcILWR8yWtSNWfX5A==
-X-Received: by 2002:a17:902:cec6:b0:1eb:ac3c:e39f with SMTP id d9443c01a7336-1ef441b5da6mr178395365ad.6.1715765159464;
-        Wed, 15 May 2024 02:25:59 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d16dasm113812805ad.15.2024.05.15.02.25.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 02:25:58 -0700 (PDT)
-Date: Wed, 15 May 2024 17:25:54 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: colyli@suse.de, kent.overstreet@linux.dev, msakai@redhat.com,
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	akpm@linux-foundation.org, bfoster@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com, bagasdotme@gmail.com,
-	jserv@ccns.ncku.edu.tw, linux-bcache@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [RESEND PATCH v5 11/16] lib min_heap: Update min_heap_push() and
- min_heap_pop() to return bool values
-Message-ID: <ZkR/ovACvPFqvFCv@visitorckw-System-Product-Name>
-References: <20240514084724.557100-1-visitorckw@gmail.com>
- <20240514084724.557100-12-visitorckw@gmail.com>
- <20240515083755.GB40213@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1715905821; c=relaxed/simple;
+	bh=iGwXjOkixolmMraYWttL8WtjQCHsdiOUHhAf/OLy0qM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kbRTsrlErUD2eOXPtRtqgfozMaVIVLgUz2ZYzwXbI/ZLpkT8UMP40m5bvBuHurmpWxSCnMEDSSj6jSG8JWNOHAzLf9EUDkLYPlenf9SawA0NDQFAaR/+OKm6IVK8hojOwjADl6t54ibb/J69euWHd+Y7RN1AfjqiUP31aJo4PmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lists.ewheeler.net; spf=none smtp.mailfrom=lists.ewheeler.net; arc=none smtp.client-ip=173.205.220.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lists.ewheeler.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lists.ewheeler.net
+Received: from localhost (localhost [127.0.0.1])
+	by mx.ewheeler.net (Postfix) with ESMTP id E4A3347;
+	Thu, 16 May 2024 17:30:18 -0700 (PDT)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+	by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+	with LMTP id brjSbDugR980; Thu, 16 May 2024 17:30:17 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx.ewheeler.net (Postfix) with ESMTPSA id A4FF040;
+	Thu, 16 May 2024 17:30:17 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net A4FF040
+Date: Thu, 16 May 2024 17:30:17 -0700 (PDT)
+From: Eric Wheeler <bcache@lists.ewheeler.net>
+To: Coly Li <colyli@suse.de>
+cc: Robert Pang <robertpang@google.com>, 
+    Dongsheng Yang <dongsheng.yang@easystack.cn>, 
+    =?GB2312?B?197D99Xc?= <mingzhe.zou@easystack.cn>, 
+    Bcache Linux <linux-bcache@vger.kernel.org>
+Subject: Re: [PATCH v2] bcache: allow allocator to invalidate bucket in gc
+In-Reply-To: <xbm4drbn7hdxedptocnc77m53kce3jdaedsvxh7dcwts7yivjx@jbvhh43wd3tp>
+Message-ID: <9c197420-2c46-222a-6176-8a3ecae1d01d@ewheeler.net>
+References: <C787D2E8-6D03-4F4D-9633-2237AA0B2BE7@suse.de> <CAJhEC05hzf2zVyJabVExFNF0esiLovc+WLHOY_YhV22OUdGFZw@mail.gmail.com> <5C71FFC2-B22E-4FC2-852F-F40BFDEDFB2C@suse.de> <C659682B-4EAB-4022-A669-1574962ECE82@suse.de> <CAJhEC04+VUKqUpMfACF0pSiwtdaJaOsb50dp_VbyhahPS6KE5A@mail.gmail.com>
+ <82DDC16E-F4BF-4F8D-8DB8-352D9A6D9AF5@suse.de> <ea18e5b9-2d10-c459-ffec-fe7012fad345@easystack.cn> <CAJhEC04czCGuwdS3AC8JdzKax4aX9i4D7BJ01xgi3PKCpgzwzw@mail.gmail.com> <1B20E890-F136-496B-AF1F-C09DB0B45BE8@suse.de> <CAJhEC06FQPw3p7PHJpjN13CVjibbBVv-ZhwBb_6ducJP+XJ3gg@mail.gmail.com>
+ <xbm4drbn7hdxedptocnc77m53kce3jdaedsvxh7dcwts7yivjx@jbvhh43wd3tp>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515083755.GB40213@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, May 15, 2024 at 10:37:55AM +0200, Peter Zijlstra wrote:
-> On Tue, May 14, 2024 at 04:47:19PM +0800, Kuan-Wei Chiu wrote:
-> > Modify the min_heap_push() and min_heap_pop() to return a boolean
-> > value. They now return false when the operation fails and true when it
-> > succeeds.
+On Wed, 15 May 2024, Coly Li wrote:
+> On Mon, May 13, 2024 at 10:15:00PM -0700, Robert Pang wrote:
+> > Dear Coly,
+> >
 > 
-> But why ?!
-
-When handling failures of push/pop operations, although we could
-achieve the same effect by checking whether the heap is empty/full
-before push/pop, we have already performed such checks within the
-push/pop operations. Therefore, I believe directly using the result
-of the check as the return value will make the code written by the user
-more concise. This return value is used in subsequent patches for
-replacing the heap macro in bcache and bcachefs to determine if an
-error has occurred. The original heap macros in bcache and bcachefs
-also do the same thing.
-
-Regards,
-Kuan-Wei
+> Hi Robert,
 > 
-> > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > Reviewed-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  include/linux/min_heap.h | 12 ++++++++----
-> >  1 file changed, 8 insertions(+), 4 deletions(-)
+> Thanks for the email. Let me explain inline.
+>  
+> > Thank you for your dedication in reviewing this patch. I understand my
+> > previous message may have come across as urgent, but I want to
+> > emphasize the significance of this bcache operational issue as it has
+> > been reported by multiple users.
 > > 
-> > diff --git a/include/linux/min_heap.h b/include/linux/min_heap.h
-> > index c94f9d303205..2d080f85ad0d 100644
-> > --- a/include/linux/min_heap.h
-> > +++ b/include/linux/min_heap.h
-> > @@ -147,18 +147,20 @@ void __min_heapify_all(min_heap_char *heap, size_t elem_size,
-> >  
-> >  /* Remove minimum element from the heap, O(log2(nr)). */
-> >  static __always_inline
-> > -void __min_heap_pop(min_heap_char *heap, size_t elem_size,
-> > +bool __min_heap_pop(min_heap_char *heap, size_t elem_size,
-> >  		const struct min_heap_callbacks *func, void *args)
-> >  {
-> >  	void *data = heap->data;
-> >  
-> >  	if (WARN_ONCE(heap->nr <= 0, "Popping an empty heap"))
-> > -		return;
-> > +		return false;
-> >  
-> >  	/* Place last element at the root (position 0) and then sift down. */
-> >  	heap->nr--;
-> >  	memcpy(data, data + (heap->nr * elem_size), elem_size);
-> >  	__min_heapify(heap, 0, elem_size, func, args);
-> > +
-> > +	return true;
-> >  }
-> >  
-> >  #define min_heap_pop(_heap, _func, _args)	\
-> > @@ -184,7 +186,7 @@ void __min_heap_pop_push(min_heap_char *heap,
-> >  
-> >  /* Push an element on to the heap, O(log2(nr)). */
-> >  static __always_inline
-> > -void __min_heap_push(min_heap_char *heap, const void *element, size_t elem_size,
-> > +bool __min_heap_push(min_heap_char *heap, const void *element, size_t elem_size,
-> >  		const struct min_heap_callbacks *func, void *args)
-> >  {
-> >  	void *data = heap->data;
-> > @@ -192,7 +194,7 @@ void __min_heap_push(min_heap_char *heap, const void *element, size_t elem_size,
-> >  	int pos;
-> >  
-> >  	if (WARN_ONCE(heap->nr >= heap->size, "Pushing on a full heap"))
-> > -		return;
-> > +		return false;
-> >  
-> >  	/* Place at the end of data. */
-> >  	pos = heap->nr;
-> > @@ -207,6 +209,8 @@ void __min_heap_push(min_heap_char *heap, const void *element, size_t elem_size,
-> >  			break;
-> >  		func->swp(parent, child, args);
-> >  	}
-> > +
-> > +	return true;
-> >  }
-> >  
-> >  #define min_heap_push(_heap, _element, _func, _args)	\
-> > -- 
-> > 2.34.1
-> > 
+> 
+> What I concerned was still the testing itself. First of all, from the
+> following information, I see quite a lot of testings are done. I do
+> appreciate for the effort, which makes me confident for the quality of
+> this patch.
+> 
+> > We understand the importance of thoroughness, To that end, we have
+> > conducted extensive, repeated testing on this patch across a range of
+> > cache sizes (375G/750G/1.5T/3T/6T/9TB) and CPU cores
+> > (2/4/8/16/32/48/64/80/96/128) for an hour-long run. We tested various
+> > workloads (read-only, read-write, and write-only) with 8kB I/O size.
+> > In addition, we did a series of 16-hour runs with 750GB cache and 16
+> > CPU cores. Our tests, primarily in writethrough mode, haven't revealed
+> > any issues or deadlocks.
+> >
+> 
+> An hour-long run is not enough for bcache. Normally for stability prupose
+> at least 12-36 hours continue I/O pressure is necessary. Before Linux
+> v5.3 bcache will run into out-of-memory after 10 ~ 12 hours heavy randome
+> write workload on the server hardware Lenovo sponsored me.
+
+FYI:
+
+We have been running the v2 patch in production on 5 different servers 
+containing a total of 8 bcache volumes since April 7th this year, applied 
+to 6.6.25 and later kernels. Some servers run 4k sector sizes, and others 
+run 512-byte sectors for the data volume. For the cache volumes, their all 
+cache devices use 512 byte sectors.
+
+The backing storage on these servers range from 40-350 terabytes, and the 
+cache sizes are in the 1-2 TB range.  We log kernel messages with 
+netconsole into a centralized log server and have not had any bcache 
+issues.
+
+
+--
+Eric Wheeler
+
+
+> 
+> This patch tends to offer high priority to allocator than gc thread, I'd
+> like to see what will happen if most of the cache space are allocated.
+> 
+> In my testing, still on the Lenovo SR650. The cache device is 512G Intel
+> optane memory by pmem driver, the backing device is a 4TB nvme SSD,
+> there are 2-way Intel Xeon processors with 48 cores and 160G DRAM on the
+> system. An XFS with default configuration created on the writeback mode
+> bcache device, and following fio job file is used,
+> [global]
+> direct=1
+> thread=1
+> lockmem=1
+> ioengine=libaio
+> random_generator=tausworthe64
+> group_reporting=1
+> 
+> [job0]
+> directory=/mnt/xfs/
+> readwrite=randwrite
+> numjobs=20
+> blocksize=4K/50:8K/30:16K/10:32K/10
+> iodepth=128
+> nrfiles=50
+> size=80G
+> time_based=1
+> runtime=36h
+> 
+> After around 10~12 hours, the cache space is almost exhuasted, and all
+> I/Os go bypass the cache and directly into the backing device. On this
+> moment, cache in used is around 96% (85% is dirty data, rested might be
+> journal and btree nodes). This is as expected.
+> 
+> Then stop the fio task, wait for writeback thread flush all dirty data
+> into the backing device. Now the cache space is occupied by clean data
+> and betree nodes. Now restart the fio writing task, an unexpected
+> behavior can be observed: all I/Os still go bypass the cache device and
+> into the backing device directly, even the cache only contains clean
+> data.
+> 
+> The above behavior turns out to be a bug from existed bcache code. When
+> cache space is used more than 95%, all write I/Os will go bypass the
+> cache. So there won't be chance to decrease the sectors counter to be
+> negative value to trigger garbage collection. The result is clean data
+> occupies all cache space but cannot be collected and re-allocate again.
+> 
+> Before this patch, the above issue was a bit harder to produce. Since
+> this patch trends to offer more priority to allocator threads than gc
+> threads, with very high write workload for quite long time, it is more
+> easier to observe the above no-space issue.
+> 
+> Now I fixed it and the first 8 hours run looks fine. I just continue
+> another 12 hours run on the same hardware configuration at this moment.
+>  
+> > We hope this additional testing data proves helpful. Please let us
+> > know if there are any other specific tests or configurations you would
+> > like us to consider.
+> 
+> The above testing information is very helpful. And bcache now is widely
+> deployed on business critical workload, I/O pressure testing with long
+> time is necessary, otherwise such regression will escape from our eyes.
+> 
+> Thanks. 
+> 
+> [snipped]
+> 
+> -- 
+> Coly Li
+> 
+> 
 
