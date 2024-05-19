@@ -1,152 +1,104 @@
-Return-Path: <linux-bcache+bounces-466-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-467-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D80E58C8DDC
-	for <lists+linux-bcache@lfdr.de>; Fri, 17 May 2024 23:48:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D008C975A
+	for <lists+linux-bcache@lfdr.de>; Mon, 20 May 2024 01:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FB8A1C21D36
-	for <lists+linux-bcache@lfdr.de>; Fri, 17 May 2024 21:48:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 599C3B20C9B
+	for <lists+linux-bcache@lfdr.de>; Sun, 19 May 2024 23:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8E81DFD2;
-	Fri, 17 May 2024 21:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E63D7317D;
+	Sun, 19 May 2024 23:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f4IWLZse"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD561A2C20
-	for <linux-bcache@vger.kernel.org>; Fri, 17 May 2024 21:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.205.220.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAF6535DC
+	for <linux-bcache@vger.kernel.org>; Sun, 19 May 2024 23:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715982480; cv=none; b=LTiMTKFRVs7QRH1mDs4/ubYGG7ZyXPNd1hx+cSbUzyBt2m/DGZZn3IzKCpwA3Mh1TYl7gtxMQfTnGKA3UFNw7oMouiIeUNgH8qRlf6B/P/W8/IazO3uJ/hnChVmu+jNRRaGJFxFLSWu2LHvlwAfInh7zWrFTJFfWWNXt07Rp6t0=
+	t=1716159809; cv=none; b=rNK9ZaxIH3vBsHINWU02FJAPhpmjTrKsKD6/n2gcigL8S+0ZCxOcZe5C2jT3xZFpQYx1bWYaYJ8W9p0oBdIVPkREFbzMxBZbirFRsLGcQ2ZPBATFfHE7W/3x06ffye1T1e5/fGNnxG4PkHtHJAjFAfhHtVNQTBg1R5JybU+97oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715982480; c=relaxed/simple;
-	bh=JoacYGIFh7MEmqt/PnA6uTCX/gngoDnt2+11Qx6asMc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Ee25b6M6LzY5JjJM6XzY/ivulD2l1aywQtMTP1VryFW9r81c4tz1KSDMGywt2Tx2v9uS7AqeM7ZyWoy0RR5m1VrJYdWQ6ZdSWKL+UfYBDH3jU3lxFpHMcbr1oUhNlpcR+enc9JDZiwvbwotToT88Slw0s4OKhN2UVh5qhmTnXjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lists.ewheeler.net; spf=none smtp.mailfrom=lists.ewheeler.net; arc=none smtp.client-ip=173.205.220.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lists.ewheeler.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lists.ewheeler.net
-Received: from localhost (localhost [127.0.0.1])
-	by mx.ewheeler.net (Postfix) with ESMTP id 0DCE185;
-	Fri, 17 May 2024 14:47:57 -0700 (PDT)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-	by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-	with LMTP id leaR63pGVle0; Fri, 17 May 2024 14:47:52 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx.ewheeler.net (Postfix) with ESMTPSA id 8780B48;
-	Fri, 17 May 2024 14:47:52 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 8780B48
-Date: Fri, 17 May 2024 14:47:52 -0700 (PDT)
-From: Eric Wheeler <bcache@lists.ewheeler.net>
-To: Coly Li <colyli@suse.de>
-cc: Robert Pang <robertpang@google.com>, 
-    Dongsheng Yang <dongsheng.yang@easystack.cn>, 
-    =?GB2312?B?197D99Xc?= <mingzhe.zou@easystack.cn>, 
-    Bcache Linux <linux-bcache@vger.kernel.org>
-Subject: Re: [PATCH v2] bcache: allow allocator to invalidate bucket in gc
-In-Reply-To: <3E11DC5E-92D1-43FF-8948-B99F665E445D@suse.de>
-Message-ID: <5925155-cc27-3b46-9143-37e3cc44d6b@ewheeler.net>
-References: <C787D2E8-6D03-4F4D-9633-2237AA0B2BE7@suse.de> <CAJhEC05hzf2zVyJabVExFNF0esiLovc+WLHOY_YhV22OUdGFZw@mail.gmail.com> <5C71FFC2-B22E-4FC2-852F-F40BFDEDFB2C@suse.de> <C659682B-4EAB-4022-A669-1574962ECE82@suse.de> <CAJhEC04+VUKqUpMfACF0pSiwtdaJaOsb50dp_VbyhahPS6KE5A@mail.gmail.com>
- <82DDC16E-F4BF-4F8D-8DB8-352D9A6D9AF5@suse.de> <ea18e5b9-2d10-c459-ffec-fe7012fad345@easystack.cn> <CAJhEC04czCGuwdS3AC8JdzKax4aX9i4D7BJ01xgi3PKCpgzwzw@mail.gmail.com> <1B20E890-F136-496B-AF1F-C09DB0B45BE8@suse.de> <CAJhEC06FQPw3p7PHJpjN13CVjibbBVv-ZhwBb_6ducJP+XJ3gg@mail.gmail.com>
- <xbm4drbn7hdxedptocnc77m53kce3jdaedsvxh7dcwts7yivjx@jbvhh43wd3tp> <9c197420-2c46-222a-6176-8a3ecae1d01d@ewheeler.net> <3E11DC5E-92D1-43FF-8948-B99F665E445D@suse.de>
+	s=arc-20240116; t=1716159809; c=relaxed/simple;
+	bh=f+dqr7wX6Dzc+IEUgIjY13qVsDw6pGhMt1gywjtRTo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VnL3l4myk6vUIc3TNAxznvz75Eon3LC10Q79HRtul2cKNSvfXIHVMPypXQRsPP6NBymHyPb8AoAqH/BWORpS1psHf3ChfHoWf3DkfpTK9WGb+wCZXWT2ndgQBEvl3gjw8hx+f8aoLUD5ylx1a4TYKEaIZLP2T6iAxiecbflvE3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f4IWLZse; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: peterz@infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716159805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+V0S8PCd3+C0VSIsGmhpI47bpGeTogzeC9Uf4DblCds=;
+	b=f4IWLZseKij1P3S6iUqOHooBGx4YmH63N1gk6Db5y9+fNEwSYsB5ZWryj6CL/6Zp1k7KMO
+	SXRrBiH2liO9rphAmazVFlmynGsMBvRp3AVIXqEOFxiO7bO6bM+N2G1qZd/b7Pq4BT2oX9
+	y4a7bSknDHt6o0pyTN4E3oVxsZEC5y0=
+X-Envelope-To: visitorckw@gmail.com
+X-Envelope-To: colyli@suse.de
+X-Envelope-To: msakai@redhat.com
+X-Envelope-To: mingo@redhat.com
+X-Envelope-To: acme@kernel.org
+X-Envelope-To: namhyung@kernel.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: mark.rutland@arm.com
+X-Envelope-To: alexander.shishkin@linux.intel.com
+X-Envelope-To: jolsa@kernel.org
+X-Envelope-To: irogers@google.com
+X-Envelope-To: adrian.hunter@intel.com
+X-Envelope-To: bagasdotme@gmail.com
+X-Envelope-To: jserv@ccns.ncku.edu.tw
+X-Envelope-To: linux-bcache@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: dm-devel@lists.linux.dev
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-perf-users@vger.kernel.org
+Date: Sun, 19 May 2024 19:03:20 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, colyli@suse.de, 
+	msakai@redhat.com, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
+	akpm@linux-foundation.org, bfoster@redhat.com, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	bagasdotme@gmail.com, jserv@ccns.ncku.edu.tw, linux-bcache@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Subject: Re: [RESEND PATCH v5 11/16] lib min_heap: Update min_heap_push() and
+ min_heap_pop() to return bool values
+Message-ID: <tnsqm2iw2qmyll6hmgfadh6bgorpsqjjgefibg2vagopyqurjt@vrix7erg2jp7>
+References: <20240514084724.557100-1-visitorckw@gmail.com>
+ <20240514084724.557100-12-visitorckw@gmail.com>
+ <20240515083755.GB40213@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1147745001-1715982472=:9489"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240515083755.GB40213@noisy.programming.kicks-ass.net>
+X-Migadu-Flow: FLOW_OUT
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, May 15, 2024 at 10:37:55AM +0200, Peter Zijlstra wrote:
+> On Tue, May 14, 2024 at 04:47:19PM +0800, Kuan-Wei Chiu wrote:
+> > Modify the min_heap_push() and min_heap_pop() to return a boolean
+> > value. They now return false when the operation fails and true when it
+> > succeeds.
+> 
+> But why ?!
 
---8323328-1147745001-1715982472=:9489
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+like Kuan said, it makes for cleaner code.
 
-On Sat, 18 May 2024, Coly Li wrote:
-
-> 
-> 
-> > 2024年5月17日 08:30，Eric Wheeler <bcache@lists.ewheeler.net> 写道：
-> > 
-> > On Wed, 15 May 2024, Coly Li wrote:
-> >> On Mon, May 13, 2024 at 10:15:00PM -0700, Robert Pang wrote:
-> >>> Dear Coly,
-> >>> 
-> >> 
-> >> Hi Robert,
-> >> 
-> >> Thanks for the email. Let me explain inline.
-> >> 
-> >>> Thank you for your dedication in reviewing this patch. I understand my
-> >>> previous message may have come across as urgent, but I want to
-> >>> emphasize the significance of this bcache operational issue as it has
-> >>> been reported by multiple users.
-> >>> 
-> >> 
-> >> What I concerned was still the testing itself. First of all, from the
-> >> following information, I see quite a lot of testings are done. I do
-> >> appreciate for the effort, which makes me confident for the quality of
-> >> this patch.
-> >> 
-> >>> We understand the importance of thoroughness, To that end, we have
-> >>> conducted extensive, repeated testing on this patch across a range of
-> >>> cache sizes (375G/750G/1.5T/3T/6T/9TB) and CPU cores
-> >>> (2/4/8/16/32/48/64/80/96/128) for an hour-long run. We tested various
-> >>> workloads (read-only, read-write, and write-only) with 8kB I/O size.
-> >>> In addition, we did a series of 16-hour runs with 750GB cache and 16
-> >>> CPU cores. Our tests, primarily in writethrough mode, haven't revealed
-> >>> any issues or deadlocks.
-> >>> 
-> >> 
-> >> An hour-long run is not enough for bcache. Normally for stability prupose
-> >> at least 12-36 hours continue I/O pressure is necessary. Before Linux
-> >> v5.3 bcache will run into out-of-memory after 10 ~ 12 hours heavy randome
-> >> write workload on the server hardware Lenovo sponsored me.
-> > 
-> > FYI:
-> > 
-> > We have been running the v2 patch in production on 5 different servers 
-> > containing a total of 8 bcache volumes since April 7th this year, applied 
-> > to 6.6.25 and later kernels. Some servers run 4k sector sizes, and others 
-> > run 512-byte sectors for the data volume. For the cache volumes, their all 
-> > cache devices use 512 byte sectors.
-> > 
-> > The backing storage on these servers range from 40-350 terabytes, and the 
-> > cache sizes are in the 1-2 TB range.  We log kernel messages with 
-> > netconsole into a centralized log server and have not had any bcache 
-> > issues.
-> 
-> 
-> Thanks for the information. The issue I stated didn’t generate kernel 
-> message. It just causes all I/Os bypass the almost fully occupied cache 
-> even it is all clean data. Anyway this is not directly caused by this 
-> patch, this patch just makes it more easier to arrive such situation 
-> before I found and fixed it.
-
-I am glad that you were able to fix it. Did you already post the patch 
-with that fix, or can you point me add a commit hash?  I am eager to try 
-your fix.
-
---
-Eric Wheeler
-
-
-> 
-> 
-> And to all contributors (including Dongsheng, Mingzhe, Robert, Eric and others),
-> 
-> At this moment I see it works fine on my server. I am about to submit it to Jens next week, if no other issue pops up.
-> 
-> Thanks.
-> 
-> Coly Li
---8323328-1147745001-1715982472=:9489--
+It's also what the bcache/bcachefs heap (and fifo) implementations do,
+which we're consolidating.
 
