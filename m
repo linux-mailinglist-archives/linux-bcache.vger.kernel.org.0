@@ -1,119 +1,125 @@
-Return-Path: <linux-bcache+bounces-506-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-507-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA4C8D7C22
-	for <lists+linux-bcache@lfdr.de>; Mon,  3 Jun 2024 09:04:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583318FC23E
+	for <lists+linux-bcache@lfdr.de>; Wed,  5 Jun 2024 05:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5851F28436E
-	for <lists+linux-bcache@lfdr.de>; Mon,  3 Jun 2024 07:04:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572E01C22615
+	for <lists+linux-bcache@lfdr.de>; Wed,  5 Jun 2024 03:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD2E39850;
-	Mon,  3 Jun 2024 07:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E069D7345C;
+	Wed,  5 Jun 2024 03:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HHTzZ8JN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWO6naKT"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D994AEF2
-	for <linux-bcache@vger.kernel.org>; Mon,  3 Jun 2024 07:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A0C2207A;
+	Wed,  5 Jun 2024 03:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717398262; cv=none; b=tNvfVO78h52L8eKDX5pX/Kb/w6iC2FavbXXk3BJ1HciszARj5V9h+GVWtBES9PbXu3e4hA5eUN9JEXc5rLHEQZybaVjcTSbajA/0hCoqTidILYMBBLHxYU4MOJlwHR/OCgw02NHPmPZns56GSHn6dWb3paHqfJiyGXDaNmoRk90=
+	t=1717558917; cv=none; b=dXCW/1gbZbHnMXyohPkChRUZzIiPIzYwJwVlqqGP1wEtRHx7VG9yKQQ/dsprD5Z4T9JW1XzllkmOkD7L39B13Zd8sITUtMfpS7xJof8PF5xImAcmQdg/fDXqvu33CckzOXk+FJPc9v1uJ/ixy2CLBw4yQXb8+9Lc1kxmFpgHV0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717398262; c=relaxed/simple;
-	bh=EQpBVA3iYYvQj2cME3rxaw4If5OVTesvhnu5Usf/qGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lHVzIOnlU4qPRwN66v2aMm4DI4kf1BbURJmFA7tLpCaE1qATgcnGriDTE0LJo+z8J+o9d3cl45U1ye+W7L1UQXyDiaCCnP3JXybSwH55DEFhW4MsSW6h/PG2ML2cUe6I011bhmY/imnOt+6SZn+Wrt07N0UXXJbQWMq3/zDfFOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HHTzZ8JN; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42135a497c3so63775e9.0
-        for <linux-bcache@vger.kernel.org>; Mon, 03 Jun 2024 00:04:21 -0700 (PDT)
+	s=arc-20240116; t=1717558917; c=relaxed/simple;
+	bh=9c0gjMYAqxvtQn7aLIFBQnVk1OkShMwoxZgNanIbVts=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ng1SGxAONOeMfZy6tFNduI4EgbO7I3lMwxcdMB6ybD9GQnS9RNg3yrmVFBWBSxZtof9J9DJWAjPUQTjwE4Ny9M5DGXf/gr1Mi57AeMMBbGwcXtqYrOObCf6okOUKrP+Bqxl7UKSkRYv6hdDke0UlM8FEICpfNkwRJf9KbC8FLfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWO6naKT; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-656d8b346d2so4516567a12.2;
+        Tue, 04 Jun 2024 20:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717398259; x=1718003059; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EQpBVA3iYYvQj2cME3rxaw4If5OVTesvhnu5Usf/qGU=;
-        b=HHTzZ8JNSScfDAmETA8RcSMszJHAK3vAzxkm8/4VcWySUi4SGxIQvIFnU+HOIRdLBJ
-         yPrvJknClAHQqT3vSZUwr58xVMrmrVc8jTC9taABZwoZuC7QnwRnvCLGx45cIZcrutWb
-         49tVHguT7dYxAqOBiFP87qDDesdKj8pazLbDfiuNse4ZlHkJhDy3IKApBvRNGvKzrG6+
-         rSX2AHXXp3Y+8W9IjgK5+Dj/wBm24ntMApCNt7Vh2BwXrXD3hOVr4lfextbHvuUXUwz1
-         lo46+SQcOI2eyVrE2lB/E2m/irIxWw3MCfd79PnE8+uMMwsNZ7XVNcIIWFcJ2CX3YpXX
-         PeIw==
+        d=gmail.com; s=20230601; t=1717558916; x=1718163716; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j063GnbcnSiG+5t9I1lfB7FjoGarg4y5JgKSos4DqMw=;
+        b=EWO6naKTH95j8xnKK+py37N0mdPJxGyghd/CbuvczrnAR/RAuL7JJVvwV9rca6afl6
+         ibh9nlT+sb3qYqFGdbH7gXYhKBv7UX3Lx4a9U/pjPdovFY5ueaAaq0GTMtbMgHHp+its
+         9ZAc/hvZHkCeRGI5E03VvEptd29MY189N55wD0rC4cLhSsWsYMgdEEDPtuK1VXjuTz8c
+         HkUfQ55WWryJxwm2f2cV95OXP5zjIcpOeHjtSZ2PJSRyWv2jRWQR78oqlInDgxZqZc5T
+         JSq7Hc4+byOIIyvhT9UAaBfAuUhGZahyc3RZruCObQdbOBLx/3CpQbr68N7Kz9S7YO0J
+         qVuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717398259; x=1718003059;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EQpBVA3iYYvQj2cME3rxaw4If5OVTesvhnu5Usf/qGU=;
-        b=DQibz3QiI9/0GeAJVKyfWLqqAR0j7BPH3tRpKgwC/C+yhOUUDcX3yOf9oTzObTQOL1
-         +FTpuOeSE58AqtoX9Rxm1shbLxiNvetJ0hnVpEP7iAgfiMMb3oGBbT/VRXBnWZfEBrzj
-         tagc0SNiu3CA05jy4ht5Ma9Mmi+VBr5eii52KfFQfsI91bhcNYsNgyI3ZoYTlTMUt4Rd
-         IVN5qY6l5eO4Fh8nPM4L/AkLcqgsmSqn49noNP14xlsJrKG7wMOLRPP3KIm746YL2RtC
-         884PugkNhw3o5u0ptH7wDmwAoFcoDXgOfWQmKj6eslg+dyLnONYa3VG1dN6hjQ2iL0oE
-         62Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkSDcO4eYsBwz8jaSJMSRj0Rvy2/mDeQgX7n45yaiSuQ9idbTmMgCs8nzlRRscKHdMbCNJAiclJhEwFeV3F4J97SwPAUf7tF57eKyC
-X-Gm-Message-State: AOJu0YzG/gEurmGEmbvhT23G1opMhAsafdkKGaVZ3bfK75nl+hvfJ8if
-	UCe3vaR/nzRt7qxIibryjH/zL1sQQk18UP6eGMFc+03rNIXv47qZnljivl3PcxXnRK/7KFeEk3M
-	aohG9JAzgPUk/VBrzT1/l8URQqmHTpR0kR1tLCM7eL+QtXbGGe8D8
-X-Google-Smtp-Source: AGHT+IGooPDdXOb9Xx53ktdMqKMv3DO7jStpsOX+iIqeKOKjVtmULU2LsNRDn2radt4OO+IflyoG5EeIvF0ARX+GlPY=
-X-Received: by 2002:a7b:c8d0:0:b0:41f:9dd0:7168 with SMTP id
- 5b1f17b1804b1-42134ed7084mr3066795e9.2.1717398259180; Mon, 03 Jun 2024
- 00:04:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717558916; x=1718163716;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j063GnbcnSiG+5t9I1lfB7FjoGarg4y5JgKSos4DqMw=;
+        b=pLzTHgD9932ETknWIL/FPeKTkfXcMsNVrjdHqSOfx1gK/UwOR3e5xHEEJkAr0Pg3vl
+         Z1cjmB3kfZYBxdIaX88S2oaAMeZbf0ko2ecVAJ10PyI0obL87GE3YXSDU+z2lkMCdSeV
+         2Asjev7ydXDi60gMbhWypJAYd3t205k//5y+IDE4BT/e9attyu2mijd0pfuDoKw3i4oc
+         qrKDNHSXKN7oagx2bW+n8punertzOiNtQ2jC40yb5fG7jieiuvaMixOUN7bh6ozqUPqI
+         9KaaJfxtUG15JFSjcfqOddAUihUSSHPI6x1a7DgicmElTD5e/QIOt/69svJ1JK74Ux7U
+         iHrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTjBagTVxFimb7OzsWI9SRoYkqN2D5obUS0fdJyc5G6JD2Sn2SoH9bdbZWK4cMnVZx36WDkFdpSPETT0CikWaHHbCb2OIEBsk3AAXMfqXIb66CFHLDRC6zGbMuDu8qUcIBS6knlovCiZ6m
+X-Gm-Message-State: AOJu0YwRK5YbAusixGPEnQVefLNY0InjSRqpMoA8aznxgdD6GP2S+U9S
+	lGBLFc0Z1QN3yoTzZB0DtU6nBKKRbBZEQmJJ5ZPBWp7z0UqDMkU6s5PWoVkR
+X-Google-Smtp-Source: AGHT+IHR44CKnHUCQpTwDPAtiiHMVa9hZW7rkg4ZIG+Lu+JbdjIj5DMIAwQZv38pNCnkq/ROgXgh3g==
+X-Received: by 2002:a05:6a21:6da9:b0:1af:a37e:367e with SMTP id adf61e73a8af0-1b2b6f81145mr2068514637.15.1717558915569;
+        Tue, 04 Jun 2024 20:41:55 -0700 (PDT)
+Received: from mari.. ([2804:431:cfd3:42f5:5d7e:7952:2a52:2cb2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632416a1esm93861225ad.284.2024.06.04.20.41.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 20:41:55 -0700 (PDT)
+From: Marilene A Garcia <marilene.agarcia@gmail.com>
+To: Coly Li <colyli@suse.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Marilene A Garcia <marilene.agarcia@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-bcache@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] bcache: Fix compiler warnings
+Date: Wed,  5 Jun 2024 00:40:57 -0300
+Message-Id: <20240605034057.2671663-1-marilene.agarcia@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <C787D2E8-6D03-4F4D-9633-2237AA0B2BE7@suse.de> <CAJhEC05hzf2zVyJabVExFNF0esiLovc+WLHOY_YhV22OUdGFZw@mail.gmail.com>
- <5C71FFC2-B22E-4FC2-852F-F40BFDEDFB2C@suse.de> <C659682B-4EAB-4022-A669-1574962ECE82@suse.de>
- <CAJhEC04+VUKqUpMfACF0pSiwtdaJaOsb50dp_VbyhahPS6KE5A@mail.gmail.com>
- <82DDC16E-F4BF-4F8D-8DB8-352D9A6D9AF5@suse.de> <ea18e5b9-2d10-c459-ffec-fe7012fad345@easystack.cn>
- <CAJhEC04czCGuwdS3AC8JdzKax4aX9i4D7BJ01xgi3PKCpgzwzw@mail.gmail.com>
- <1B20E890-F136-496B-AF1F-C09DB0B45BE8@suse.de> <CAJhEC06FQPw3p7PHJpjN13CVjibbBVv-ZhwBb_6ducJP+XJ3gg@mail.gmail.com>
- <xbm4drbn7hdxedptocnc77m53kce3jdaedsvxh7dcwts7yivjx@jbvhh43wd3tp>
- <9c197420-2c46-222a-6176-8a3ecae1d01d@ewheeler.net> <3E11DC5E-92D1-43FF-8948-B99F665E445D@suse.de>
- <CAJhEC07Pdea5XKyMLVw=GeBZksNWoWpCmHs7shBPcgW3OoDonw@mail.gmail.com>
- <F310CA03-432E-4C8A-8054-EAF1BA5E8F12@suse.de> <CAJhEC06ro134BKQ_41TLpbsQNE+WwiMpoxrSc3UpA3CF1VX_Fw@mail.gmail.com>
- <355ABD73-04C8-45AF-9F8D-D912DABCA716@suse.de>
-In-Reply-To: <355ABD73-04C8-45AF-9F8D-D912DABCA716@suse.de>
-From: Robert Pang <robertpang@google.com>
-Date: Sun, 2 Jun 2024 21:04:07 -1000
-Message-ID: <CAJhEC05LuV8m8EMTgvoi0uP-rAU-AbB2tzkiVk15_mpZPfcipQ@mail.gmail.com>
-Subject: Re: [PATCH v2] bcache: allow allocator to invalidate bucket in gc
-To: Coly Li <colyli@suse.de>
-Cc: Eric Wheeler <bcache@lists.ewheeler.net>, Dongsheng Yang <dongsheng.yang@easystack.cn>, 
-	=?UTF-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>, 
-	Bcache Linux <linux-bcache@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Coly
+It fixes the following compiler warnings by
+using "/*" instead of "/**" in the comments
 
-I am pleased to see 6.10-rc2 released today with this patch. I really
-want to thank you and Dongsheng for this patch and your contributions
-to bcache. Much appreciated.
+drivers/md/bcache/request.c:309: warning:
+Function parameter or struct member 'bch_data_insert'
+not described in 'CLOSURE_CALLBACK'
 
-Best regards
-Robert
+drivers/md/bcache/request.c:309: warning: expecting
+prototype for bch_data_insert(). Prototype was for
+CLOSURE_CALLBACK() instead
 
-On Wed, May 29, 2024 at 6:24=E2=80=AFAM Coly Li <colyli@suse.de> wrote:
->
-> > 2024=E5=B9=B45=E6=9C=8828=E6=97=A5 13:50=EF=BC=8CRobert Pang <robertpan=
-g@google.com> =E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > Great to hear that. Any estimate when the test will finish and the
-> > patch can submit?
->
-> It is in linux-block already, will be in next -rc quite soon as expecting=
-.
->
-> Thanks.
-> Coly Li
+Signed-off-by: Marilene A Garcia <marilene.agarcia@gmail.com>
+---
+Hello,
+These warnings happen using GCC compiler the command 'make W=1'.
+
+Thank you.
+
+ drivers/md/bcache/request.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index af345dc6fde1..457b9605aff9 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -285,7 +285,7 @@ static CLOSURE_CALLBACK(bch_data_insert_start)
+ 	}
+ }
+ 
+-/**
++/*
+  * bch_data_insert - stick some data in the cache
+  * @cl: closure pointer.
+  *
+-- 
+2.34.1
+
 
