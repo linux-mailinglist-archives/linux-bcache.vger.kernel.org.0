@@ -1,134 +1,182 @@
-Return-Path: <linux-bcache+bounces-508-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-510-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DC08FD9D9
-	for <lists+linux-bcache@lfdr.de>; Thu,  6 Jun 2024 00:27:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5AA902FE1
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 07:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A7761F27213
-	for <lists+linux-bcache@lfdr.de>; Wed,  5 Jun 2024 22:27:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C24C8285A89
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 05:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6E715FA7D;
-	Wed,  5 Jun 2024 22:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A883171085;
+	Tue, 11 Jun 2024 05:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BFxXQNVD"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SP0peDuU"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05478621;
-	Wed,  5 Jun 2024 22:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C871E488;
+	Tue, 11 Jun 2024 05:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717626463; cv=none; b=TiZI5xq+xxdOxbC1E1A6ba/s5+EGLbvmNdQqiTSXnbWJlLqGBiKdpHIACpe28TNH+SaBrJbxTigkHzI6O34ExyKlf5VCiv7XwsxWLkqatQfdT0O0mvWn4SMCyXOyIvc/1Rf0auuD99RieTinzf3smdYApQUuRGixp9VN8MiBLQQ=
+	t=1718083189; cv=none; b=EIoK7UfaGzKLbDeD2AwyFmoVe3q2q6nFxBwB+VXj3JsI06ziL4u6t6Xdj9PFyk+g5wOArVoEF4y47qAKKpMCbxPHkCmus9Zj9XU1vZqQGUS0x64bnrsV4vyb3GEMB+T9M6QAhC1iC5ED7oq7+9ECVCHIxE/xETkCfa3cGOMIc6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717626463; c=relaxed/simple;
-	bh=zl+XN4junHxfzNRNgZTOGK2SrlWTfl4TOqLE7f86obk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EnXG1D/SP9HLldVWc3MKIa5CkJ8txX2c2wg9v4UFcdyn4a139vTiQv08gr2PzRpDsqodHSjL1sB6RF5ThG21B3r/SLDnoPMryRTq1ARg4SAqH6QNduM4CPeFqh6+j615PkEOmN6todykaC56TYjHUx8xZeDD0/zAo83se32nSL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BFxXQNVD; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7024494f7daso237908b3a.3;
-        Wed, 05 Jun 2024 15:27:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717626461; x=1718231261; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=toEEg0KZ6dGQnJwtPH4evK1WmjlVqa6UA7LKv3x9NPA=;
-        b=BFxXQNVDEpQh2aI/8VP5ozFZAJvuT6S5sUJf9tjkZg1CmoN9sOs1JoSf4doDFpZMDK
-         l7TAPaidMmFP3/ic+aFR/ZQrDdvhiKE0ZjP5bS99RKLiYwgzeTsfRgqjuXi25Z6AGGDq
-         WeYDM+wcG1Nf83WwnOBbBTpX0I95vy1TWflS6imETNZWYcQE0Vq5QfqRMu850ZFz+erG
-         mldCipzzPUjifJLAhX320F9owzTNWzgY7ELJ9RNYMFEQvKM6Rg+iUDuSMbhuP9jPTbvP
-         iNNaVRrpOOkS+fjyaFT93BC/MlCX1Z4a12dh270+/DbkujKtiumcdSbthM8f4146gV8q
-         t3Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717626461; x=1718231261;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=toEEg0KZ6dGQnJwtPH4evK1WmjlVqa6UA7LKv3x9NPA=;
-        b=m5gfjpH7tf6VbYoFDo1lEJdemPQ2Fmmct9LsvVsbgn0vhfD/T4DopV0q6gj0SwpBuN
-         oHcyFhTyv1+gs9lctqKYiLZ8Pw4e/OZhQO6WcdzhL1ZccLAUAIC++OFTuLpndaQZO/2A
-         XuLE3d22s5PzWns6jTXY/27kowpZg2PmTq3N6B0wziNhfKsJFD1h1ldocGOXTWRUJs9U
-         LcOY6PXpORHIMlLnPeiQ1r2v0dGCWgV+mfVWq80Y4Qus2Igrs9+kf7JAv4GkVxgKTmQD
-         cW1nFAMh9arg7Mgg6SBfgdljTgkX1a/ztI/V2FxkR1QcQtLSKZUaRqBWC3cCT15txnq1
-         mZiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnCodnrELllvQ7RcO53DO1yqHKYS455f3i3R7T090gJtf3gQdzC594xphBXsvWHvQhnaI1BS9epI9qzXAQ6ZHh/lkgNizosavd+S6Vyshxjw7PEL3Kwq1I/xrPbydNnjD07UH31N4k6XNp
-X-Gm-Message-State: AOJu0YzcD+HUa3FT01jZhCuiHHHHOmP0ovOtGHnx2k/5hIGxsD/RzHto
-	8qM5JxrKXmle/x27lzBg2wTkqxBi4JDWKqxO9XolT1CSmIAquZk4
-X-Google-Smtp-Source: AGHT+IHINrkZOpt3UhU9lY/8BQQRvuojzkqBE7EVX8mI3EqpwvKTDQPIVhaRBk08r60v44DZx6Kcaw==
-X-Received: by 2002:a05:6a00:1acd:b0:702:56c0:299 with SMTP id d2e1a72fcca58-703e59b653amr4384469b3a.20.1717626461180;
-        Wed, 05 Jun 2024 15:27:41 -0700 (PDT)
-Received: from ?IPV6:2804:431:cfd3:42f5:2c15:cfc8:6375:4391? ([2804:431:cfd3:42f5:2c15:cfc8:6375:4391])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd4f8847sm6618b3a.171.2024.06.05.15.27.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 15:27:40 -0700 (PDT)
-Message-ID: <cba4f849-8443-405b-8318-a7208e6b80cc@gmail.com>
-Date: Wed, 5 Jun 2024 19:27:36 -0300
+	s=arc-20240116; t=1718083189; c=relaxed/simple;
+	bh=hch/0P55byq5GbA9713XqbKHtmWPgz2RFxBLYpB4kbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HgNOG+OsbdsKoI80rVrawWwkHXtiCxMFIge11OjQjS0nMJqW7ILOnHLQ+dKFsfE5PhQYY9X7rfMSn2HXUXZZ1ONt9kYnXVV230HaCBnJcGtK9h8V9OnD9NHgyzKm9GhIQQOXCAYZM6zJXKRV9b+SCyzuhvcHtflJAJiOj8cyyGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SP0peDuU; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=xQZ0tGVxbRfMe28F2c3vaqhpukPqzWUR2mw3UooUIr8=; b=SP0peDuUs+KEwheRnMyMlYgkS7
+	BJO3TbWxLcYZrtF9hG/zSYlaaEBbMSCF64VvtU307jsPdSrtdMGsHLbLIPlb+3JQ+eYPkj0WFLQ82
+	0RHyWfdxKEhDZW5T1ob5hHG0b14ikv/6qveZEUAQmVDgvdsZVt4TYWW6sqJaVmrwg5KcUOZQ84nPg
+	CjpVq303dQfXA8cJ1suDHbBA/aeCpy9t1nwAxlcRoZCDjrGUy5Vn9fE6+OpvbxggFWtigsP5ZcQpg
+	pUZerKUXlbVu4I0/QgfLjMkjQJmRXdy7KEomGmmJMn8IDs2fYlaMIz6Izl+aZ3CL2CjeVsmwbwNGT
+	O/+0DiLA==;
+Received: from 2a02-8389-2341-5b80-cdb4-8e7d-405d-6b77.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:cdb4:8e7d:405d:6b77] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sGtuu-00000007Qnj-2sBx;
+	Tue, 11 Jun 2024 05:19:33 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Richard Weinberger <richard@nod.at>,
+	Philipp Reisner <philipp.reisner@linbit.com>,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	=?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	=?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+	Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>,
+	Vineeth Vijayan <vneethv@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-m68k@lists.linux-m68k.org,
+	linux-um@lists.infradead.org,
+	drbd-dev@lists.linbit.com,
+	nbd@other.debian.org,
+	linuxppc-dev@lists.ozlabs.org,
+	ceph-devel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	xen-devel@lists.xenproject.org,
+	linux-bcache@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-raid@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	nvdimm@lists.linux.dev,
+	linux-nvme@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: move features flags into queue_limits
+Date: Tue, 11 Jun 2024 07:19:00 +0200
+Message-ID: <20240611051929.513387-1-hch@lst.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bcache: Fix compiler warnings
-To: Coly Li <colyli@suse.de>, Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240605034057.2671663-1-marilene.agarcia@gmail.com>
-Content-Language: en-US
-From: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-In-Reply-To: <20240605034057.2671663-1-marilene.agarcia@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 05/06/2024 00:40, Marilene A Garcia wrote:
-> It fixes the following compiler warnings by
-> using "/*" instead of "/**" in the comments
-> 
-> drivers/md/bcache/request.c:309: warning:
-> Function parameter or struct member 'bch_data_insert'
-> not described in 'CLOSURE_CALLBACK'
-> 
-> drivers/md/bcache/request.c:309: warning: expecting
-> prototype for bch_data_insert(). Prototype was for
-> CLOSURE_CALLBACK() instead
-> 
-> Signed-off-by: Marilene A Garcia <marilene.agarcia@gmail.com>
-> ---
-> Hello,
-> These warnings happen using GCC compiler the command 'make W=1'.
-> 
-> Thank you.
-> 
->   drivers/md/bcache/request.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index af345dc6fde1..457b9605aff9 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -285,7 +285,7 @@ static CLOSURE_CALLBACK(bch_data_insert_start)
->   	}
->   }
->   
-> -/**
-> +/*
->    * bch_data_insert - stick some data in the cache
->    * @cl: closure pointer.
->    *
+Hi all,
 
-Hello,
-I have realized that even though this change could fix the warning, it 
-is not the correct fix to it, because it breaks the format of kernel 
-function comments.
+this is the third and last major series to convert settings to
+queue_limits for this merge window.  After a bunch of prep patches to
+get various drivers in shape, it moves all the queue_flags that specify
+driver controlled features into the queue limits so that they can be
+set atomically and are separated from the blk-mq internal flags.
 
-So please discard the patch.
-Thank you.
+Note that I've only Cc'ed the maintainers for drivers with non-mechanical
+changes as the Cc list is already huge.
+
+This series sits on top of the "convert the SCSI ULDs to the atomic queue
+limits API v2" and "move integrity settings to queue_limits v2" series.
+
+A git tree is available here:
+
+    git://git.infradead.org/users/hch/block.git block-limit-flags
+
+Gitweb:
+
+    http://git.infradead.org/?p=users/hch/block.git;a=shortlog;h=refs/heads/block-limit-flags
+
+Diffstat:
+ Documentation/block/writeback_cache_control.rst |   67 +++++---
+ arch/m68k/emu/nfblock.c                         |    1 
+ arch/um/drivers/ubd_kern.c                      |    3 
+ arch/xtensa/platforms/iss/simdisk.c             |    5 
+ block/blk-core.c                                |    7 
+ block/blk-flush.c                               |   36 ++--
+ block/blk-mq-debugfs.c                          |   13 -
+ block/blk-mq.c                                  |   42 +++--
+ block/blk-settings.c                            |   46 ++----
+ block/blk-sysfs.c                               |  118 ++++++++-------
+ block/blk-wbt.c                                 |    4 
+ block/blk.h                                     |    2 
+ drivers/block/amiflop.c                         |    5 
+ drivers/block/aoe/aoeblk.c                      |    1 
+ drivers/block/ataflop.c                         |    5 
+ drivers/block/brd.c                             |    6 
+ drivers/block/drbd/drbd_main.c                  |    6 
+ drivers/block/floppy.c                          |    3 
+ drivers/block/loop.c                            |   79 +++++-----
+ drivers/block/mtip32xx/mtip32xx.c               |    2 
+ drivers/block/n64cart.c                         |    2 
+ drivers/block/nbd.c                             |   24 +--
+ drivers/block/null_blk/main.c                   |   13 -
+ drivers/block/null_blk/zoned.c                  |    3 
+ drivers/block/pktcdvd.c                         |    1 
+ drivers/block/ps3disk.c                         |    8 -
+ drivers/block/rbd.c                             |   12 -
+ drivers/block/rnbd/rnbd-clt.c                   |   14 -
+ drivers/block/sunvdc.c                          |    1 
+ drivers/block/swim.c                            |    5 
+ drivers/block/swim3.c                           |    5 
+ drivers/block/ublk_drv.c                        |   21 +-
+ drivers/block/virtio_blk.c                      |   37 ++--
+ drivers/block/xen-blkfront.c                    |   33 +---
+ drivers/block/zram/zram_drv.c                   |    6 
+ drivers/cdrom/gdrom.c                           |    1 
+ drivers/md/bcache/super.c                       |    9 -
+ drivers/md/dm-table.c                           |  181 +++++-------------------
+ drivers/md/dm-zone.c                            |    2 
+ drivers/md/dm-zoned-target.c                    |    2 
+ drivers/md/dm.c                                 |   13 -
+ drivers/md/md.c                                 |   40 -----
+ drivers/md/raid5.c                              |    6 
+ drivers/mmc/core/block.c                        |   42 ++---
+ drivers/mmc/core/queue.c                        |   20 +-
+ drivers/mmc/core/queue.h                        |    3 
+ drivers/mtd/mtd_blkdevs.c                       |    9 -
+ drivers/nvdimm/btt.c                            |    4 
+ drivers/nvdimm/pmem.c                           |   14 -
+ drivers/nvme/host/core.c                        |   33 ++--
+ drivers/nvme/host/multipath.c                   |   24 ---
+ drivers/nvme/host/zns.c                         |    3 
+ drivers/s390/block/dasd_genhd.c                 |    1 
+ drivers/s390/block/dcssblk.c                    |    2 
+ drivers/s390/block/scm_blk.c                    |    5 
+ drivers/scsi/iscsi_tcp.c                        |    8 -
+ drivers/scsi/scsi_lib.c                         |    5 
+ drivers/scsi/sd.c                               |   60 +++----
+ drivers/scsi/sd.h                               |    7 
+ drivers/scsi/sd_zbc.c                           |   17 +-
+ include/linux/blkdev.h                          |  119 +++++++++++----
+ 61 files changed, 556 insertions(+), 710 deletions(-)
 
