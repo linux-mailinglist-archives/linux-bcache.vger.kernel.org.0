@@ -1,48 +1,48 @@
-Return-Path: <linux-bcache+bounces-557-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-558-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9369034CE
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 10:06:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE2E9034E1
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 10:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CAFD1C231D7
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 08:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1897F282B39
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 08:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FCA173323;
-	Tue, 11 Jun 2024 08:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EF9171082;
+	Tue, 11 Jun 2024 08:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/4pmxeJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASIoL/u9"
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7041314D449;
-	Tue, 11 Jun 2024 08:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940522AF11;
+	Tue, 11 Jun 2024 08:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718093195; cv=none; b=Pz0aQWladqS4cfPed8hjw/MQDK3++FpVV4SwKNvBSERgMGXuZ99eZmIx9LoSzYqEpW1z2eHRmlJrj13ubI7yZ+k35kxV5dJYaxaIx7hbu5kCIELKmDrgJCVt+FDTOhkWyIl7DXA0vcSsOy06l8k9Q6uic0nW8au1u+DtlJGJ928=
+	t=1718093392; cv=none; b=WQbdfO5lONPHbfIKeTJMLHceaHCYiOUVArd/IcnGPuPv8yayceZaLqgW5EAkFB+Uzy/kKc1BVNAy1+v0a6xI6Wqiij8z6qleCf6w+jVvXlCcrChIvE5xu2MQHA3wbYYkfACB0lHl5wlP7InoEEMhSiD+0cZ8YbtvpQ66AFJ3/1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718093195; c=relaxed/simple;
-	bh=jCn0oX3HrJ6Qlcw/LuQoAhJRxhLaDvFIki6GqIikVDs=;
+	s=arc-20240116; t=1718093392; c=relaxed/simple;
+	bh=q0QC/DwdDecsb+SsO2WPgUlAOrUNDUio/s56qnb48bM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qD+FYs7m6zTSliZV0Z+RmSNQpc/AJ4GreD4JQ1t6eNY5PXzBorMwx8GfdugnB6NDBva72EK7lzuAz30bGtR1b9kf5oz0mKxq8zeL5pyEm8E5H1UqN4xPKmo1npq8oBqXwwX21WLwerGjic3WoXznw0tYQK78EtOpJKB09r615Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/4pmxeJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59A7BC2BD10;
-	Tue, 11 Jun 2024 08:06:30 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=jp/OBNxEqs4ZpgIKmlwxRdyqCmTF0u7vSJIMdl4X24kTNTeWbQbXrpxPsWjzS1LpsTWdHc+a3eLSv9oSL7s5ev+e5Bu0G6NLuQzSrAeKlHP3TwrjJMq/LWjS5SZ3wqV/xChW30iEiTDh1MTFyuWk9GWQerhloxMfhG8vwzAnVWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASIoL/u9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F729C2BD10;
+	Tue, 11 Jun 2024 08:09:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718093195;
-	bh=jCn0oX3HrJ6Qlcw/LuQoAhJRxhLaDvFIki6GqIikVDs=;
+	s=k20201202; t=1718093392;
+	bh=q0QC/DwdDecsb+SsO2WPgUlAOrUNDUio/s56qnb48bM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d/4pmxeJzHoEeQ+g2h36PLWMNipYFVLUgldUlVqiJ/oHVrEeGGWvSVD8Qj0WOLs1h
-	 W+bfZgsci1Mj1j7xr+uUvjowbUTryqU8M7niWdxvm06YM2JVc8jmnbjYFRmHHcrBjc
-	 35EtrgT1CO5oyRbn/EfIn5kNPHJPwVOwHupvi057HyipWOQnDb4p6IBWsy9PJTe2z7
-	 aguwef6PSD/S3jnHhAFsQmA+8/MCfLVtbrqTe0OoYvK6gaKfrbg4IMTS8YbzdTrpnX
-	 ruwuQZ89i04k1WQRZE0wdLm48U3gwb4DUnNOpOrrhv3eKIrI6XQd7uuU3njn1J65js
-	 90POvgbQ696Tw==
-Message-ID: <0f01ed9c-6f85-427c-9690-1551e67e46a9@kernel.org>
-Date: Tue, 11 Jun 2024 17:06:29 +0900
+	b=ASIoL/u9H/6b4lUyYk5oEzSADY2SPITglYQKbn22RE2v5Zmv+Bdu4yXt2dx4LBuyj
+	 NVG1rUDMHnNTWyjPGwlGMS7q0dEKke4PAWQg/UzftKu/Ly2DNOhNfxEkKQj6EFDaHU
+	 gbMPLXlbaDGII4KmlbUUWCoStYYGCahBnCwU3sHyUUKQqZ1YdU0vcRocoxwls2ROg2
+	 gKF/wxkN6x65ww9rMbS9NJlQNYUg7Y5U2acfwFYdpXRWwDXOcSxo1CVQbqP3uooiqP
+	 0hvYmqaICGemmnL938SwljJXBPejQKyIB0+ALAtSSclYdQCRHYhtFi/CQNV4wF5aIA
+	 8HiTkYhUDl6Cg==
+Message-ID: <d51e4163-99e3-4435-870d-faef3887ab6a@kernel.org>
+Date: Tue, 11 Jun 2024 17:09:45 +0900
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -50,7 +50,8 @@ List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/26] block: move the add_random flag to queue_limits
+Subject: Re: [PATCH 16/26] block: move the io_stat flag setting to
+ queue_limits
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  Richard Weinberger <richard@nod.at>,
@@ -74,30 +75,27 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
  linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
 References: <20240611051929.513387-1-hch@lst.de>
- <20240611051929.513387-16-hch@lst.de>
+ <20240611051929.513387-17-hch@lst.de>
 Content-Language: en-US
 From: Damien Le Moal <dlemoal@kernel.org>
 Organization: Western Digital Research
-In-Reply-To: <20240611051929.513387-16-hch@lst.de>
+In-Reply-To: <20240611051929.513387-17-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 6/11/24 2:19 PM, Christoph Hellwig wrote:
-> Move the add_random flag into the queue_limits feature field so that it
+> Move the io_stat flag into the queue_limits feature field so that it
 > can be set atomically and all I/O is frozen when changing the flag.
 
-Same remark as the previous patches for the end of this sentence.c
+Why a feature ? It seems more appropriate for io_stat to be a flag rather than
+a feature as that is a block layer thing rather than a device characteristic, no ?
 
 > 
-> Note that this also removes code from dm to clear the flag based on
-> the underlying devices, which can't be reached as dm devices will
-> always start out without the flag set.
+> Simplify md and dm to set the flag unconditionally instead of avoiding
+> setting a simple flag for cases where it already is set by other means,
+> which is a bit pointless.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Other than that, looks OK to me.
-
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
 -- 
 Damien Le Moal
