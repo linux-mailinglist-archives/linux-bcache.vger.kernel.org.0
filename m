@@ -1,50 +1,50 @@
-Return-Path: <linux-bcache+bounces-509-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-511-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE9E902FD9
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 07:19:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36CC0902FED
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 07:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96EE9B21808
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 05:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05D21F2465A
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 05:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51847170835;
-	Tue, 11 Jun 2024 05:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1577A17165D;
+	Tue, 11 Jun 2024 05:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rUA9ZaXU"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T7BSPgV/"
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C3F8C04;
-	Tue, 11 Jun 2024 05:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771A7171060;
+	Tue, 11 Jun 2024 05:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718083188; cv=none; b=I/S/koMU/tjEFElJFDL86bu5pKIY2QqIHnTXty0FQ/1IB99n5GfgmkqKLGHyUXDFrnUGiUbHhjrsFwWAxwWOmuebCxngVoUSb1df9MTmVWH/Eh3GbW0PYFYZ2YLUwvRaSTMdjUXerJBESClwYJHayVU/63DuT4GFNoO3Wgq6ebI=
+	t=1718083190; cv=none; b=r2KnmvISJCQza4K70OnftXUYcd82TEpjwojV5ike45fRp8bmznXLRB+7V6wv7E50NT7ts7MDOCq4YraGsKkG6plGn7OMrACHCSSIgu6XO2wQL9QS3/QC2xokIC9iXJZKVkXWPF4YemUIxlruABfc0cIjQAd00TCiWDMASBWQH7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718083188; c=relaxed/simple;
-	bh=pJHJWcNs/pJcnRM22ACgcER3q2shJV55AlIb3h7/28E=;
+	s=arc-20240116; t=1718083190; c=relaxed/simple;
+	bh=mr+duLZqcamK3+esZDPGQn4ZiY3utg0BM2Ml43xyadg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=piQLpDRc+vLSU6w1LvAdWuJmNy0VD5ijkVvERRp+DvxQohI4+02XKxWU4tPPvz5QGZUpbqo7pZuHMEML6EGw5pbcuNJYon0cffukJzwg/V4T5dIF73he9m8qhARn7cwN7Fquwahp9YHxT4FxYjvW6K0KVN6oZJbqwUqNbmDsgDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rUA9ZaXU; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=icz6uDm02MYxJeio6X+CtEF8GgruJBlWoPqJsUmgCiDOqAhFvsv/mKoPOpJlVo7yfF5wE9ZNCQvj7j6xp48rnQnZvKWLhXLo8TuWHu89HARd66zY/ID9C1KSZJDbnZc7HnxAVX+43ySi3hDNWk95LpjgqV6KZedDAMS+GkgvKXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T7BSPgV/; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=lvXE5gTUk5P3TVKgX5q5Q8J1/DjEMwO75JeCg7ieY7s=; b=rUA9ZaXUx5MpyhS2j5LBHsyXxQ
-	KbTuAJUR1haH+9S1m8G4GZVBD1g7bx2ayPONElMYjcxYJ0QDJPl5o5zOp4k78Qgw0XyFdjZCPo5wp
-	vIgPX59oPcfHLDliRB8Y+Bi/vjpbtw2V1cwzkbepDA/QzMJIwAsmVAdMFC3UF8wgtmukkiprCLdOG
-	RnSyiCv+Mvh3ga6qyL+ash+wP6WvC9+JDwisvTf85QvcZuGjp66L5kSvkUkgxcMfJHjnZZ91k2qO0
-	ThG6qMn0y6iW42CQt05TqF0tEm3cI9aOk07AkgbKRZMt1CIdlg2QNDBGCgPEgHOzn7Iuc8T8ztdEX
-	0c6zkTmg==;
+	bh=LgTI+Mo1pVMP7QW3HpPljhgNIGtSuvGjjqfKNfk6Ue4=; b=T7BSPgV/QyrrcIKlwpgJzxhidX
+	awUsR5pwkW2Y+/MUO52qBbxgexFKnN5lOA2j2FyQhx+MMPXFJnlBRAC7Q73t7WcP8+sz5LnII/s8t
+	WjAaWbWnPNl4wwIf+gxy+iK9/rbGDSyhdks8mhXL++xpcrKaIympBw3/ZuRB6sO340tcY+E4rtfwn
+	TwEEHtQ3MRsu599usMYpH5vHlE7O6axb/guHQvsshFZgotq4wxafrcixMXnVqL150iG8TowKDlHNj
+	v336ivp7VUra5eU9XwMH15s+LohPlgy69vq7IBuXhmdR6+Ce7ImdHMsb7gj8BK/MgQUeBNe8bpumT
+	UBRUvVrQ==;
 Received: from 2a02-8389-2341-5b80-cdb4-8e7d-405d-6b77.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:cdb4:8e7d:405d:6b77] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sGtux-00000007Qnu-0nLE;
-	Tue, 11 Jun 2024 05:19:35 +0000
+	id 1sGtuz-00000007Qo9-2Hoe;
+	Tue, 11 Jun 2024 05:19:37 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -82,9 +82,9 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	linux-s390@vger.kernel.org,
 	linux-scsi@vger.kernel.org,
 	linux-block@vger.kernel.org
-Subject: [PATCH 01/26] sd: fix sd_is_zoned
-Date: Tue, 11 Jun 2024 07:19:01 +0200
-Message-ID: <20240611051929.513387-2-hch@lst.de>
+Subject: [PATCH 02/26] sd: move zone limits setup out of sd_read_block_characteristics
+Date: Tue, 11 Jun 2024 07:19:02 +0200
+Message-ID: <20240611051929.513387-3-hch@lst.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240611051929.513387-1-hch@lst.de>
 References: <20240611051929.513387-1-hch@lst.de>
@@ -97,53 +97,72 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Since commit 7437bb73f087 ("block: remove support for the host aware zone
-model"), only ZBC devices expose a zoned access model.  sd_is_zoned is
-used to check for that and thus return false for host aware devices.
+Move a bit of code that sets up the zone flag and the write granularity
+into sd_zbc_read_zones to be with the rest of the zoned limits.
 
-Fixes: 7437bb73f087 ("block: remove support for the host aware zone model")
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/scsi/sd.h     | 7 ++++++-
- drivers/scsi/sd_zbc.c | 7 +------
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/scsi/sd.c     | 21 +--------------------
+ drivers/scsi/sd_zbc.c | 13 ++++++++++++-
+ 2 files changed, 13 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/scsi/sd.h b/drivers/scsi/sd.h
-index 726f1613f6cb56..65dff3c2108926 100644
---- a/drivers/scsi/sd.h
-+++ b/drivers/scsi/sd.h
-@@ -222,9 +222,14 @@ static inline sector_t sectors_to_logical(struct scsi_device *sdev, sector_t sec
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 85b45345a27739..5bfed61c70db8f 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3308,29 +3308,10 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp,
+ 		blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
+ 	}
  
- void sd_dif_config_host(struct scsi_disk *sdkp, struct queue_limits *lim);
+-
+-#ifdef CONFIG_BLK_DEV_ZONED /* sd_probe rejects ZBD devices early otherwise */
+-	if (sdkp->device->type == TYPE_ZBC) {
+-		lim->zoned = true;
+-
+-		/*
+-		 * Per ZBC and ZAC specifications, writes in sequential write
+-		 * required zones of host-managed devices must be aligned to
+-		 * the device physical block size.
+-		 */
+-		lim->zone_write_granularity = sdkp->physical_block_size;
+-	} else {
+-		/*
+-		 * Host-aware devices are treated as conventional.
+-		 */
+-		lim->zoned = false;
+-	}
+-#endif /* CONFIG_BLK_DEV_ZONED */
+-
+ 	if (!sdkp->first_scan)
+ 		return;
  
-+/*
-+ * Check if we support a zoned model for this device.
-+ *
-+ * Note that host aware devices are treated as conventional by Linux.
-+ */
- static inline int sd_is_zoned(struct scsi_disk *sdkp)
- {
--	return sdkp->zoned == 1 || sdkp->device->type == TYPE_ZBC;
-+	return sdkp->device->type == TYPE_ZBC;
- }
- 
- #ifdef CONFIG_BLK_DEV_ZONED
+-	if (lim->zoned)
++	if (sdkp->device->type == TYPE_ZBC)
+ 		sd_printk(KERN_NOTICE, sdkp, "Host-managed zoned block device\n");
+ 	else if (sdkp->zoned == 1)
+ 		sd_printk(KERN_NOTICE, sdkp, "Host-aware SMR disk used as regular disk\n");
 diff --git a/drivers/scsi/sd_zbc.c b/drivers/scsi/sd_zbc.c
-index f685838d9ed214..422eaed8457227 100644
+index 422eaed8457227..e9501db0450be3 100644
 --- a/drivers/scsi/sd_zbc.c
 +++ b/drivers/scsi/sd_zbc.c
-@@ -598,13 +598,8 @@ int sd_zbc_read_zones(struct scsi_disk *sdkp, struct queue_limits *lim,
+@@ -598,8 +598,19 @@ int sd_zbc_read_zones(struct scsi_disk *sdkp, struct queue_limits *lim,
  	u32 zone_blocks = 0;
  	int ret;
  
--	if (!sd_is_zoned(sdkp)) {
--		/*
--		 * Device managed or normal SCSI disk, no special handling
--		 * required.
--		 */
-+	if (!sd_is_zoned(sdkp))
+-	if (!sd_is_zoned(sdkp))
++	if (!sd_is_zoned(sdkp)) {
++		lim->zoned = false;
  		return 0;
--	}
++	}
++
++	lim->zoned = true;
++
++	/*
++	 * Per ZBC and ZAC specifications, writes in sequential write required
++	 * zones of host-managed devices must be aligned to the device physical
++	 * block size.
++	 */
++	lim->zone_write_granularity = sdkp->physical_block_size;
  
  	/* READ16/WRITE16/SYNC16 is mandatory for ZBC devices */
  	sdkp->device->use_16_for_rw = 1;
