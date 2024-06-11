@@ -1,50 +1,50 @@
-Return-Path: <linux-bcache+bounces-518-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-519-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D451903041
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 07:22:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF6E90304A
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 07:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B30DB238CB
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 05:22:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BA531C23FD4
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 05:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1242171089;
-	Tue, 11 Jun 2024 05:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7724817108E;
+	Tue, 11 Jun 2024 05:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3Uu1BULf"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MgJCZXdC"
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541BA171085;
-	Tue, 11 Jun 2024 05:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D02171085;
+	Tue, 11 Jun 2024 05:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718083214; cv=none; b=NRdtgsXYdczhed2+oabk7ZelZ5/PwYk8UsPWfSNUcRXZd0MiCoq1+uDJRiLMt3ChhuluOD+xQrpRnxR2OjBoMK/pVuYa3hy/R6tdHw2p/DFFUadrc2mbww6FY+Dxs2bctxPk4gR+KCHs4zQrSIX2qntYhd6rYfmcG5/SsyETGrY=
+	t=1718083217; cv=none; b=Im3AsbqH5QbBpDs3YZhtw/CHLeGaUFZcrmvPCvpPk2hZ2+lYWWjZPuF0ZlnXE/AkxptYTC8P4/DlZJSrDmJBAPIDX3q7hTdiaYDDnCHUa8aOLqDSt9Uz92GHlqmF383pgLCnu8cT358BfdZ9wxJXx005I+TO06yFFUF1tma2/Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718083214; c=relaxed/simple;
-	bh=dXgxnA1yjd+AqEIirsWuoJqwEJ4ozXHP0WVC7mJpMQc=;
+	s=arc-20240116; t=1718083217; c=relaxed/simple;
+	bh=S/6b5sxCWO/SsxQYV3O9B7nBiepd0zuCVrHiKDAZwx8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gu8gEBoUAHn633Xh9BxvDuiYMVJ+TfSnxZ67KRhO4Mz3ePvhlwJhgVMuZPSXncjuoWVe+BZ02Hhq4xYlvC/6zmJhyxAgL2gV3cAcu+VpJNMu17CopGEHpC3NEdR8yBpYkPCavJ/AhbsLqWlrpxi11Q0bTVZGQYLViBtTn1gMkG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3Uu1BULf; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=P//q27bLvClZAiSb8v/Awch7HFMABL8NAXYlOve61nmklaeKheCRWow8b2G8Vyp+sxn6WgWUk6Yq5eVgX8jBb5xEgponnoEF2Rf4/LLw4d+eqt/0jub74UuA3B2ElDwgXfNRRnrLnaje1PqNdjwi84YrUW0APcuuFussxWdsEZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MgJCZXdC; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=lt3t26OR+aUwy+yHARJ3+3kli+Y9MzGBmWJgtPDO0Yk=; b=3Uu1BULf7magHnf6R7hsR1GIlN
-	SJd84Gj4n7hMxXgVxqwTjx12uB4BxsPsKofgqeK8s1tB9x/8UIqfFwYdEmhAf22CuIAOwrm0oxESi
-	ycgsWyJNCcFgkZRL9iNnvCLYcGs2YN4KpB13M0ItXIwsYf4zxZ//KlgnW18ry7obpXptNUl3Jior/
-	Fwwpt7Ey8K33VEKo8oxSt00ZEPoPxl7Xaeg9EVXtqGT/k85qAxMYikzkGk0wNt6tJYX2Bnl0J+7lG
-	lA1TnI+25z1ZuXjSGhoq/L28+4F0/MOFLHnnstU1+tbzD0qia6Man53VkKd6ZswYiGXsl7DEHICUx
-	lOPAQasw==;
+	bh=XX8OKzSF4I8HqKWv9CPGPzdF42TlXrJn92mCb7zGUpU=; b=MgJCZXdCXtq5WcrpKLj6n44BMN
+	x7as6F25HhuflNiQsl6jB5W6Jl8Cql52H+wX7EAkBatRuj+eJQEWJ77tUg0C3taOh9WTyyJ5Bqsdi
+	RXIGXMyVTRoSsh9a4uAfJCaQK5+FHeeQHkBBZE0YZA9FygNVsS+hGq+FQgsOMtLKMq7cOPugwuWbd
+	nHgbDPqb89/cUkFHBBzn5P6ypmdPwRtPSnVwTBJUEpsncbavyujHEC5azlnNETobhWGFD7GOTUPkY
+	4mvSB/tNstXuD79kJeevqTycR98vtBAfM0kE9ci/1QpnRCn9+ZGtDS5u57IeabqphYzfqjxqKjOQg
+	V0F/xAxw==;
 Received: from 2a02-8389-2341-5b80-cdb4-8e7d-405d-6b77.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:cdb4:8e7d:405d:6b77] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sGtvL-00000007R0v-1C21;
-	Tue, 11 Jun 2024 05:19:59 +0000
+	id 1sGtvO-00000007R2v-03k6;
+	Tue, 11 Jun 2024 05:20:02 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -82,9 +82,9 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	linux-s390@vger.kernel.org,
 	linux-scsi@vger.kernel.org,
 	linux-block@vger.kernel.org
-Subject: [PATCH 09/26] nbd: move setting the cache control flags to __nbd_set_size
-Date: Tue, 11 Jun 2024 07:19:09 +0200
-Message-ID: <20240611051929.513387-10-hch@lst.de>
+Subject: [PATCH 10/26] xen-blkfront: don't disable cache flushes when they fail
+Date: Tue, 11 Jun 2024 07:19:10 +0200
+Message-ID: <20240611051929.513387-11-hch@lst.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240611051929.513387-1-hch@lst.de>
 References: <20240611051929.513387-1-hch@lst.de>
@@ -97,52 +97,69 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Move setting the cache control flags in nbd in preparation for moving
-these flags into the queue_limits structure.
+blkfront always had a robust negotiation protocol for detecting a write
+cache.  Stop simply disabling cache flushes when they fail as that is
+a grave error.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/block/nbd.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/block/xen-blkfront.c | 29 +++++++++--------------------
+ 1 file changed, 9 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index ad887d614d5b3f..44b8c671921e5c 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -342,6 +342,12 @@ static int __nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
- 		lim.max_hw_discard_sectors = UINT_MAX;
- 	else
- 		lim.max_hw_discard_sectors = 0;
-+	if (!(nbd->config->flags & NBD_FLAG_SEND_FLUSH))
-+		blk_queue_write_cache(nbd->disk->queue, false, false);
-+	else if (nbd->config->flags & NBD_FLAG_SEND_FUA)
-+		blk_queue_write_cache(nbd->disk->queue, true, true);
-+	else
-+		blk_queue_write_cache(nbd->disk->queue, true, false);
- 	lim.logical_block_size = blksize;
- 	lim.physical_block_size = blksize;
- 	error = queue_limits_commit_update(nbd->disk->queue, &lim);
-@@ -1286,19 +1292,10 @@ static void nbd_bdev_reset(struct nbd_device *nbd)
- 
- static void nbd_parse_flags(struct nbd_device *nbd)
- {
--	struct nbd_config *config = nbd->config;
--	if (config->flags & NBD_FLAG_READ_ONLY)
-+	if (nbd->config->flags & NBD_FLAG_READ_ONLY)
- 		set_disk_ro(nbd->disk, true);
- 	else
- 		set_disk_ro(nbd->disk, false);
--	if (config->flags & NBD_FLAG_SEND_FLUSH) {
--		if (config->flags & NBD_FLAG_SEND_FUA)
--			blk_queue_write_cache(nbd->disk->queue, true, true);
--		else
--			blk_queue_write_cache(nbd->disk->queue, true, false);
--	}
--	else
--		blk_queue_write_cache(nbd->disk->queue, false, false);
+diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+index 9b4ec3e4908cce..9794ac2d3299d1 100644
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -982,18 +982,6 @@ static const char *flush_info(struct blkfront_info *info)
+ 		return "barrier or flush: disabled;";
  }
  
- static void send_disconnects(struct nbd_device *nbd)
+-static void xlvbd_flush(struct blkfront_info *info)
+-{
+-	blk_queue_write_cache(info->rq, info->feature_flush ? true : false,
+-			      info->feature_fua ? true : false);
+-	pr_info("blkfront: %s: %s %s %s %s %s %s %s\n",
+-		info->gd->disk_name, flush_info(info),
+-		"persistent grants:", info->feature_persistent ?
+-		"enabled;" : "disabled;", "indirect descriptors:",
+-		info->max_indirect_segments ? "enabled;" : "disabled;",
+-		"bounce buffer:", info->bounce ? "enabled" : "disabled;");
+-}
+-
+ static int xen_translate_vdev(int vdevice, int *minor, unsigned int *offset)
+ {
+ 	int major;
+@@ -1162,7 +1150,15 @@ static int xlvbd_alloc_gendisk(blkif_sector_t capacity,
+ 	info->sector_size = sector_size;
+ 	info->physical_sector_size = physical_sector_size;
+ 
+-	xlvbd_flush(info);
++	blk_queue_write_cache(info->rq, info->feature_flush ? true : false,
++			      info->feature_fua ? true : false);
++
++	pr_info("blkfront: %s: %s %s %s %s %s %s %s\n",
++		info->gd->disk_name, flush_info(info),
++		"persistent grants:", info->feature_persistent ?
++		"enabled;" : "disabled;", "indirect descriptors:",
++		info->max_indirect_segments ? "enabled;" : "disabled;",
++		"bounce buffer:", info->bounce ? "enabled" : "disabled;");
+ 
+ 	if (info->vdisk_info & VDISK_READONLY)
+ 		set_disk_ro(gd, 1);
+@@ -1622,13 +1618,6 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
+ 				       info->gd->disk_name, op_name(bret.operation));
+ 				blkif_req(req)->error = BLK_STS_NOTSUPP;
+ 			}
+-			if (unlikely(blkif_req(req)->error)) {
+-				if (blkif_req(req)->error == BLK_STS_NOTSUPP)
+-					blkif_req(req)->error = BLK_STS_OK;
+-				info->feature_fua = 0;
+-				info->feature_flush = 0;
+-				xlvbd_flush(info);
+-			}
+ 			fallthrough;
+ 		case BLKIF_OP_READ:
+ 		case BLKIF_OP_WRITE:
 -- 
 2.43.0
 
