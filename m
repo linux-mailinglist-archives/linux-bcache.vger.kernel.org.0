@@ -1,48 +1,54 @@
-Return-Path: <linux-bcache+bounces-575-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-576-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EDEF90360A
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 10:24:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CBE903614
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 10:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4A4A1C2322E
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 08:24:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 963EF289F9D
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 08:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67908175543;
-	Tue, 11 Jun 2024 08:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFzobLSE"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF96317622E;
+	Tue, 11 Jun 2024 08:23:57 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDF5174EDF;
-	Tue, 11 Jun 2024 08:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B827173359;
+	Tue, 11 Jun 2024 08:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718094211; cv=none; b=cWWMBPRLODMI4PkmRa+LEhT5O5M+5+lhwgPDCPG5MTAkJ9uX/SmuEXAU+fxS07eNkY76+nTuI+AD6ODCz7TXYg31eXLDPO4kDsIbr/IsMCpRvzVe/Zhjzkm2ujCwuA9gyOIdTsCe5uf0uA2Qq6lpXzzXqdAtw6AwF6P4bn4nXWE=
+	t=1718094237; cv=none; b=cPhoblRzgV/wpftWcA3S700T7P/UJnnFw59ZuW9iQmA7xRRoOk43BBcQvOZJ7vxAXN3haWpzBExFtnAj7LmI2syrDLLnJzCwMs/lGm1o3tdVy1So0uDjUOpLI+HxUW6huBXtxu09rFHj6Oh+QGwfiyOVmXij48k2dzevdlrz/h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718094211; c=relaxed/simple;
-	bh=PCwVdRvz4XJGGIiNmDy6wMkXrr3H3HUMT3pkIraybk8=;
+	s=arc-20240116; t=1718094237; c=relaxed/simple;
+	bh=jl+AuHhh+NWwichskrOVYh7aqE1Orjg16nPpl1EIpMk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kocCbrwifShZoPVUVYad9DhU3DbNvY3DYFEUx8SIhPceKm8Ng5KjUlkNyghM5UmdCqZXKEsB5BxHa28bXW/nNfxfDgZvIZ29wrl7sqWiFFr/xK3PwpTe4ZpcAkoR3S3ZX5CAWKawDek4pysHJpwBxv6YgUAvKfimxQK40ncwoAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFzobLSE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86496C2BD10;
-	Tue, 11 Jun 2024 08:23:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718094210;
-	bh=PCwVdRvz4XJGGIiNmDy6wMkXrr3H3HUMT3pkIraybk8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JFzobLSEwQfpgalfDjsXhew6RBycCszqE2f2C/Ru/r8ifaDggADerb3ZWcDYMf7wy
-	 2UguDgiYd7paLCb6tqnoYu2dxS7VJu76k45dUpfxH2c8l3qFSrNn2EGh4jWjnKfIAS
-	 HBvH4pVK5+Is/WKoiUVoWutNlCyWeMQP2hCSD9Kx8S9haYF4sfr4JiJhYG2nonJP87
-	 ivR19am2NLev5ARZzY2SbXtQPtiKMKt2kSHRh2CyzGWwYvO/eLAkUihfoIzngcBiyb
-	 99DP2nymQwawaYtHi2qz0jmjPnoMpqNkIxNh8Ag/5f+XcYLmzaYxN9ppmZ11QAIus7
-	 gALv/eJkusunA==
-Message-ID: <29c6bbe8-f0fe-49dd-a28b-327d86ceb51d@kernel.org>
-Date: Tue, 11 Jun 2024 17:23:25 +0900
+	 In-Reply-To:Content-Type; b=Yktt2yjlmqW+llxLo+0AzYMo+3q0CCf8nU272u4K7Gwf+QUJs798Crn7n8kyf4TbU/R/s19J1thJtVUqSBm7u6vBzBXsmzgMIgfSs8UTYE3R4gltxj1lbj+F2ud4U4V/lsZTZZi8Hy63hnnQ6MCGREwoQaCbly1ffQJofyildIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 57C2E20572;
+	Tue, 11 Jun 2024 08:23:54 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6A965137DF;
+	Tue, 11 Jun 2024 08:23:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1p7uGJkJaGbsXQAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 11 Jun 2024 08:23:53 +0000
+Message-ID: <def8fea1-66ae-4fea-9b49-2842b91404ea@suse.de>
+Date: Tue, 11 Jun 2024 10:23:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -50,7 +56,7 @@ List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 22/26] block: move the zoned flag into the feature field
+Subject: Re: [PATCH 12/26] block: remove blk_flush_policy
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  Richard Weinberger <richard@nod.at>,
@@ -74,27 +80,45 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
  linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
 References: <20240611051929.513387-1-hch@lst.de>
- <20240611051929.513387-23-hch@lst.de>
+ <20240611051929.513387-13-hch@lst.de>
 Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240611051929.513387-23-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240611051929.513387-13-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Rspamd-Queue-Id: 57C2E20572
 
-On 6/11/24 2:19 PM, Christoph Hellwig wrote:
-> Move the boolean zoned field into the flags field to reclaim a little
-> bit of space.
-
-Nit: flags -> feature flags
-
+On 6/11/24 07:19, Christoph Hellwig wrote:
+> Fold blk_flush_policy into the only caller to prepare for pending changes
+> to it.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   block/blk-flush.c | 33 +++++++++++++++------------------
+>   1 file changed, 15 insertions(+), 18 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Cheers,
 
+Hannes
 -- 
-Damien Le Moal
-Western Digital Research
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
