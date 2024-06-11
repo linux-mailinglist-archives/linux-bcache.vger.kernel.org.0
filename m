@@ -1,48 +1,95 @@
-Return-Path: <linux-bcache+bounces-558-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-559-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE2E9034E1
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 10:09:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F449034F4
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 10:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1897F282B39
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 08:09:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BD12283568
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 08:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EF9171082;
-	Tue, 11 Jun 2024 08:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD56173332;
+	Tue, 11 Jun 2024 08:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASIoL/u9"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Xw7LckrV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tY/SuqTu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Xw7LckrV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tY/SuqTu"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940522AF11;
-	Tue, 11 Jun 2024 08:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8876416F8EC;
+	Tue, 11 Jun 2024 08:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718093392; cv=none; b=WQbdfO5lONPHbfIKeTJMLHceaHCYiOUVArd/IcnGPuPv8yayceZaLqgW5EAkFB+Uzy/kKc1BVNAy1+v0a6xI6Wqiij8z6qleCf6w+jVvXlCcrChIvE5xu2MQHA3wbYYkfACB0lHl5wlP7InoEEMhSiD+0cZ8YbtvpQ66AFJ3/1U=
+	t=1718093487; cv=none; b=IUFdxdwrV5QZCcmntUxioQtLhRx4fSrT+weSKmh9cdRiW/x6Epow/VD0oqg67MQUx9i0bvfxyrkPLXFMk0Jq0RJ+UrXk2eEhx+eU1rCaeLhRt9TMNcwpujjcZ0PlkSxxFfxiMUi5tGj2Z4KJvpFqnUk4RC1msxcVosJ19DlJQ6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718093392; c=relaxed/simple;
-	bh=q0QC/DwdDecsb+SsO2WPgUlAOrUNDUio/s56qnb48bM=;
+	s=arc-20240116; t=1718093487; c=relaxed/simple;
+	bh=0fo0w6RD+HpduXfrJ2nZihqXnSiWHpXUPd37EsXlnIs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jp/OBNxEqs4ZpgIKmlwxRdyqCmTF0u7vSJIMdl4X24kTNTeWbQbXrpxPsWjzS1LpsTWdHc+a3eLSv9oSL7s5ev+e5Bu0G6NLuQzSrAeKlHP3TwrjJMq/LWjS5SZ3wqV/xChW30iEiTDh1MTFyuWk9GWQerhloxMfhG8vwzAnVWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASIoL/u9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F729C2BD10;
-	Tue, 11 Jun 2024 08:09:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718093392;
-	bh=q0QC/DwdDecsb+SsO2WPgUlAOrUNDUio/s56qnb48bM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ASIoL/u9H/6b4lUyYk5oEzSADY2SPITglYQKbn22RE2v5Zmv+Bdu4yXt2dx4LBuyj
-	 NVG1rUDMHnNTWyjPGwlGMS7q0dEKke4PAWQg/UzftKu/Ly2DNOhNfxEkKQj6EFDaHU
-	 gbMPLXlbaDGII4KmlbUUWCoStYYGCahBnCwU3sHyUUKQqZ1YdU0vcRocoxwls2ROg2
-	 gKF/wxkN6x65ww9rMbS9NJlQNYUg7Y5U2acfwFYdpXRWwDXOcSxo1CVQbqP3uooiqP
-	 0hvYmqaICGemmnL938SwljJXBPejQKyIB0+ALAtSSclYdQCRHYhtFi/CQNV4wF5aIA
-	 8HiTkYhUDl6Cg==
-Message-ID: <d51e4163-99e3-4435-870d-faef3887ab6a@kernel.org>
-Date: Tue, 11 Jun 2024 17:09:45 +0900
+	 In-Reply-To:Content-Type; b=FkCXUCusJSAeLn7ZlxjScBGsxWCpYmX2EIFaxLwgNmKAmo1gVeQwkq8ee5oJNOhjRilRGw9ByYMMTnaJPKPpbPnP5DfCEWlwwQb9f5lWPG71rzo3+cYA7mS6mneh3i3Kc0N2ifobgn0CGmVDf3hwz0cEKmxfJmAOZN+o2Z9DSuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Xw7LckrV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tY/SuqTu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Xw7LckrV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tY/SuqTu; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9402920557;
+	Tue, 11 Jun 2024 08:11:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718093483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wnQIUpYdHgOL/hM9GsXN8B0Ts994fdsauoO8bl3CExk=;
+	b=Xw7LckrVyqrAakH7KSEDESVADg9MT2w/sOoFpkdH/KzwzUXrjoXFGlasjukRVjQpOXbqnR
+	VEDyTRo7qiPPyB7GBgictg+KZT62wfeU0rWkpx7ertnwVCjRX97V2ITAvcIuwzNOYZyJWm
+	R6IQoIRGoRGYPlreoXuIGgLHDGiR/+I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718093483;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wnQIUpYdHgOL/hM9GsXN8B0Ts994fdsauoO8bl3CExk=;
+	b=tY/SuqTuiamIUOCP9Gy6Edetjtr/Waqk3ZBvBpF4W/PGm0bmy0haYRoNg/wzfxeSc++Z+2
+	TUnVbKx5YmbhspBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718093483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wnQIUpYdHgOL/hM9GsXN8B0Ts994fdsauoO8bl3CExk=;
+	b=Xw7LckrVyqrAakH7KSEDESVADg9MT2w/sOoFpkdH/KzwzUXrjoXFGlasjukRVjQpOXbqnR
+	VEDyTRo7qiPPyB7GBgictg+KZT62wfeU0rWkpx7ertnwVCjRX97V2ITAvcIuwzNOYZyJWm
+	R6IQoIRGoRGYPlreoXuIGgLHDGiR/+I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718093483;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wnQIUpYdHgOL/hM9GsXN8B0Ts994fdsauoO8bl3CExk=;
+	b=tY/SuqTuiamIUOCP9Gy6Edetjtr/Waqk3ZBvBpF4W/PGm0bmy0haYRoNg/wzfxeSc++Z+2
+	TUnVbKx5YmbhspBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EBB04137DF;
+	Tue, 11 Jun 2024 08:11:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id DmIXOaoGaGZ8WQAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 11 Jun 2024 08:11:22 +0000
+Message-ID: <f85620ad-a19b-400d-bae7-29a1815fc33d@suse.de>
+Date: Tue, 11 Jun 2024 10:11:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -50,8 +97,7 @@ List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 16/26] block: move the io_stat flag setting to
- queue_limits
+Subject: Re: [PATCH 01/26] sd: fix sd_is_zoned
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  Richard Weinberger <richard@nod.at>,
@@ -75,30 +121,59 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
  linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
 References: <20240611051929.513387-1-hch@lst.de>
- <20240611051929.513387-17-hch@lst.de>
+ <20240611051929.513387-2-hch@lst.de>
 Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240611051929.513387-17-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240611051929.513387-2-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -8.29
+X-Spam-Level: 
+X-Spamd-Result: default: False [-8.29 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[37];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLex1noz7jcsrkfdtgx8bqesde)];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email]
 
-On 6/11/24 2:19 PM, Christoph Hellwig wrote:
-> Move the io_stat flag into the queue_limits feature field so that it
-> can be set atomically and all I/O is frozen when changing the flag.
-
-Why a feature ? It seems more appropriate for io_stat to be a flag rather than
-a feature as that is a block layer thing rather than a device characteristic, no ?
-
+On 6/11/24 07:19, Christoph Hellwig wrote:
+> Since commit 7437bb73f087 ("block: remove support for the host aware zone
+> model"), only ZBC devices expose a zoned access model.  sd_is_zoned is
+> used to check for that and thus return false for host aware devices.
 > 
-> Simplify md and dm to set the flag unconditionally instead of avoiding
-> setting a simple flag for cases where it already is set by other means,
-> which is a bit pointless.
-> 
+> Fixes: 7437bb73f087 ("block: remove support for the host aware zone model")
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/scsi/sd.h     | 7 ++++++-
+>   drivers/scsi/sd_zbc.c | 7 +------
+>   2 files changed, 7 insertions(+), 7 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
+Cheers,
+
+Hannes
 -- 
-Damien Le Moal
-Western Digital Research
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
