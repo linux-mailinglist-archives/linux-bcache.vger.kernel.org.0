@@ -1,48 +1,54 @@
-Return-Path: <linux-bcache+bounces-565-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-566-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA938903551
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 10:16:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9930B903562
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 10:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7058B1F22259
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 08:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD07F1C219D0
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 08:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149DD16F83D;
-	Tue, 11 Jun 2024 08:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BshMQEOF"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604E9171075;
+	Tue, 11 Jun 2024 08:17:01 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AE93F8C7;
-	Tue, 11 Jun 2024 08:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22111420B8;
+	Tue, 11 Jun 2024 08:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718093803; cv=none; b=Bnya0LYkSYjz59KPN01JISnVI578hiXdAxrpGi6iA5oWRhiNhBfQA7V353znqOwyVEvGHwXCQC7MveX4sw7DrwCpX+pEBR37UdGAmo2PDbxrLgCPZFaWd3gT/ADegyn8ndO9hiAhhkXAduMW783c4lwbSFN+dqsHhdAabpfoxt4=
+	t=1718093821; cv=none; b=GGqj1OviJ9LiqtPIsI22PNtAAlS4RKynwU0Ydhr0TIWeQfntVrJhBjw7IiR8/tdB0N6wAFEeZvf6B0ru6QsiYC6AtpGmsoVVL6ulEkTYV8LRzvM1QO0DsMbvVDMM8TpbAHI4j36RSJihx0sDVPYR7V/9GX0xOELgvDtpFfoOK40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718093803; c=relaxed/simple;
-	bh=0xCsZy2WAGO31vOt2jMux3XsQG5JzkwMLoCsgqbDM7s=;
+	s=arc-20240116; t=1718093821; c=relaxed/simple;
+	bh=2aDyTruVW4lc3rkx53kLfvRbUlDy5ctVsIQCGj0e20c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Klp6UgG9DqOhwbrQ4msbpKrrcbWFUgc98WQe6hB1jwIWCMTRKvpcDbl5nvK4ywEx+4kjnVMdjnFKj6MRRRWhl8SC8nhrxIY1rNNRTZquB34gTCqlb8Y/ijFzJG/tZoTIVcbk98RY3xzeNxbQc5a8IcYkwAPlCFD4fbKXMXFISC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BshMQEOF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A204C2BD10;
-	Tue, 11 Jun 2024 08:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718093802;
-	bh=0xCsZy2WAGO31vOt2jMux3XsQG5JzkwMLoCsgqbDM7s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BshMQEOFKHQCAeU7Uq7D/QqRf+yvZZUvvFAljFVHRMbxOyzti+TjMe0D1IJKi9gMV
-	 zyUA+05eoWqeEmhuLL8uoXj2uFvoj39+EiUXirtXWtXQFdTuvV4hWDH4qLaMCjLfy+
-	 AnqgnZ0xCGWpIVHNkCHGqby5QcQzPelY2FXqqGrtk4KASWZEpNZldaxiF+wB3Rw9dc
-	 xbMnzOX/e3WR+yoGOTEoauLs/X9V3dTUosPnw+YpOF05bIeErHzOz8DqMDnd798OeG
-	 g23Oj4HG5YREgeqkRw2UIxm1G6V2rlg7SUCDzzjKvw7jq8xou/AYaSDtybrj1/IgEi
-	 S8SrLRUjTG4qQ==
-Message-ID: <4845aae8-ad03-407e-bf31-f164b8f684d4@kernel.org>
-Date: Tue, 11 Jun 2024 17:16:37 +0900
+	 In-Reply-To:Content-Type; b=fF6nGEEDI7zG+W4fDkUe60GRunzrrvZ/k/lqWaYuPoT3MWqXvv8h3XXvhJs/zra21lsj3+SnnnMehF0YwZKhXcEVde4CEvg0vTjGuPJJCOi70YeCP3llq7j9AnfwqQZJkmKSbOZl6OqUdqCPCjWSgYkEcjFsrggflhW1OIkI63I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2899F22D2F;
+	Tue, 11 Jun 2024 08:16:58 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BFD26137DF;
+	Tue, 11 Jun 2024 08:16:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2a1qLvkHaGY8WwAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 11 Jun 2024 08:16:57 +0000
+Message-ID: <e25047ab-2c01-4704-b554-df85a8d34cd7@suse.de>
+Date: Tue, 11 Jun 2024 10:16:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -50,7 +56,8 @@ List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/26] block: move the nowait flag to queue_limits
+Subject: Re: [PATCH 05/26] loop: regularize upgrading the lock size for direct
+ I/O
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  Richard Weinberger <richard@nod.at>,
@@ -74,38 +81,47 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
  linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
 References: <20240611051929.513387-1-hch@lst.de>
- <20240611051929.513387-20-hch@lst.de>
+ <20240611051929.513387-6-hch@lst.de>
 Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240611051929.513387-20-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240611051929.513387-6-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Rspamd-Queue-Id: 2899F22D2F
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
 
-On 6/11/24 2:19 PM, Christoph Hellwig wrote:
-> Move the nowait flag into the queue_limits feature field so that it
-> can be set atomically and all I/O is frozen when changing the flag.
-> 
-> Stacking drivers are simplified in that they now can simply set the
-> flag, and blk_stack_limits will clear it when the features is not
-> supported by any of the underlying devices.
+On 6/11/24 07:19, Christoph Hellwig wrote:
+> The LOOP_CONFIGURE path automatically upgrades the block size to that
+> of the underlying file for O_DIRECT file descriptors, but the
+> LOOP_SET_BLOCK_SIZE path does not.  Fix this by lifting the code to
+> pick the block size into common code.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/block/loop.c | 25 +++++++++++++++----------
+>   1 file changed, 15 insertions(+), 10 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
+Cheers,
 
-> @@ -1825,9 +1815,7 @@ int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
->  	int r;
->  
->  	if (dm_table_supports_nowait(t))
-> -		blk_queue_flag_set(QUEUE_FLAG_NOWAIT, q);
-> -	else
-> -		blk_queue_flag_clear(QUEUE_FLAG_NOWAIT, q);
-> +		limits->features &= ~BLK_FEAT_NOWAIT;
-
-Shouldn't you set the flag here instead of clearing it ?
-
+Hannes
 -- 
-Damien Le Moal
-Western Digital Research
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
