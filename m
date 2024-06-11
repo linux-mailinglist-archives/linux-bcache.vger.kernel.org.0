@@ -1,54 +1,48 @@
-Return-Path: <linux-bcache+bounces-560-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-561-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5508790350E
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 10:13:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50EBA903518
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 10:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF852B2342D
-	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 08:13:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3106F1C25033
+	for <lists+linux-bcache@lfdr.de>; Tue, 11 Jun 2024 08:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C4C17624F;
-	Tue, 11 Jun 2024 08:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F98174EC2;
+	Tue, 11 Jun 2024 08:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efMUQjqz"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A999017557C;
-	Tue, 11 Jun 2024 08:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BED173321;
+	Tue, 11 Jun 2024 08:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718093538; cv=none; b=dFUPIU9cArzV4EhXzlK10JkPmSaJonsbAsdjtVn1XzFgwHG+JtG0LBjFbeM7164XA77LpOVvkF/8YMHP2xii0NfUXlHJnPPkdaOsDzqT/oNAw8Dx+tmUu3H/Al5jGfcbY95mb4AwijXGhv7oQchKOFKLcki4ia5E+C5sGr51kBA=
+	t=1718093566; cv=none; b=sYu+SOxSSjc4qF0Jbih9kb1f6+53FiyFMIStLRf24A5gHShwpMeESOBiyDaIXvFHc3KmSCzeCjGZSST7MaolQln6raU/xULfg8dm5MF6Mad6OEtUQ2sFMPRIhkt+J7+8NfA4c42JQAu27LoZoYtBqRv/xwa5ZMj4YDzq4bAxDTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718093538; c=relaxed/simple;
-	bh=AauTPLgm0FonMDbEnLtMgAvubRqLx1bZAaVkd4WBLlc=;
+	s=arc-20240116; t=1718093566; c=relaxed/simple;
+	bh=zMBbLHWiI0o4/6MjscYA2/ULza201WjvhSMdL22ilmQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o6Ugf8vTicRJf+nNDpgRfPFW24npbtgDktmL6PxrEMPwImujlEUzrdnus5JnVr1A7wWU3Kghn+HujOUqsc8PEhIRwDgQ08h9gcrE2rqfj7Slc3uzut+zt+zATm9Aq/53tWgCpjQ7Z8bWkBibE4wn29OE/O5JnLHju6mk+n8rOg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F414222D0F;
-	Tue, 11 Jun 2024 08:12:14 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EBB43137DF;
-	Tue, 11 Jun 2024 08:12:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VT1AN90GaGbKWQAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 11 Jun 2024 08:12:13 +0000
-Message-ID: <4032635d-a17f-44e5-a547-b175fa271945@suse.de>
-Date: Tue, 11 Jun 2024 10:12:13 +0200
+	 In-Reply-To:Content-Type; b=ff2yLEktHNcSZKgmjSTcvptr/BrvLU4FohFQQRfkt+vxtTNsDuPXVuA0DCewEbhe5APyJNPicXPwNreNXLDBcX6gPPYJXevzeBJrlalJc6BbCx1o8E84C6ITj/PBUvYsKt/f24KOF/ymatzjao+KUj5egeqlo5IluMSOkotAgWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efMUQjqz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85352C2BD10;
+	Tue, 11 Jun 2024 08:12:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718093565;
+	bh=zMBbLHWiI0o4/6MjscYA2/ULza201WjvhSMdL22ilmQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=efMUQjqzDR6/6LZgdCczIkMTU67PAqpDM0RBu6vBwxbRTCrqV/SLQPjysAgXVIH+u
+	 Gs7FwJjGTrCL01zQP92DMiL3AF1rQHaJ0EqlTORyNynpUYXTzsuY6sJ9mfoqPT1Tvg
+	 BSo7cvDW+fM7fvH1aN5LdfHWfYWXWuQSJiOAXVL+z2KUCiOWthz8XV9sMCo6FSpXv+
+	 2SHsDignO7grM22XDSxgAJ0znadsNiLDmWusigAzWpriOV5Y9jvSmQhMPwNSEb8Bvj
+	 SvInHsx54FSttIPvfIwG30ulL5P3X40mKZipSzOnWLUzNb0kOcJMR/irZgSdTd0fnE
+	 LJc4doaBwGC7g==
+Message-ID: <a10087ad-8b2c-4a6c-accb-fb1e8015e704@kernel.org>
+Date: Tue, 11 Jun 2024 17:12:40 +0900
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -56,8 +50,7 @@ List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/26] sd: move zone limits setup out of
- sd_read_block_characteristics
+Subject: Re: [PATCH 17/26] block: move the stable_write flag to queue_limits
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  Richard Weinberger <richard@nod.at>,
@@ -81,79 +74,33 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
  linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
 References: <20240611051929.513387-1-hch@lst.de>
- <20240611051929.513387-3-hch@lst.de>
+ <20240611051929.513387-18-hch@lst.de>
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240611051929.513387-3-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: F414222D0F
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20240611051929.513387-18-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 6/11/24 07:19, Christoph Hellwig wrote:
-> Move a bit of code that sets up the zone flag and the write granularity
-> into sd_zbc_read_zones to be with the rest of the zoned limits.
+On 6/11/24 2:19 PM, Christoph Hellwig wrote:
+> Move the io_stat flag into the queue_limits feature field so that it can
+
+s/io_stat/stable_write
+
+> be set atomically and all I/O is frozen when changing the flag.
+> 
+> The flag is now inherited by blk_stack_limits, which greatly simplifies
+> the code in dm, and fixed md which previously did not pass on the flag
+> set on lower devices.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   drivers/scsi/sd.c     | 21 +--------------------
->   drivers/scsi/sd_zbc.c | 13 ++++++++++++-
->   2 files changed, 13 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> index 85b45345a27739..5bfed61c70db8f 100644
-> --- a/drivers/scsi/sd.c
-> +++ b/drivers/scsi/sd.c
-> @@ -3308,29 +3308,10 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp,
->   		blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
->   	}
->   
-> -
-> -#ifdef CONFIG_BLK_DEV_ZONED /* sd_probe rejects ZBD devices early otherwise */
-> -	if (sdkp->device->type == TYPE_ZBC) {
-> -		lim->zoned = true;
-> -
-> -		/*
-> -		 * Per ZBC and ZAC specifications, writes in sequential write
-> -		 * required zones of host-managed devices must be aligned to
-> -		 * the device physical block size.
-> -		 */
-> -		lim->zone_write_granularity = sdkp->physical_block_size;
-> -	} else {
-> -		/*
-> -		 * Host-aware devices are treated as conventional.
-> -		 */
-> -		lim->zoned = false;
-> -	}
-> -#endif /* CONFIG_BLK_DEV_ZONED */
-> -
->   	if (!sdkp->first_scan)
->   		return;
->   
-> -	if (lim->zoned)
-> +	if (sdkp->device->type == TYPE_ZBC)
 
-Why not sd_is_zoned()?
+Other than the nit above, looks OK to me.
 
-Cheers,
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-Hannes
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Damien Le Moal
+Western Digital Research
 
 
