@@ -1,39 +1,39 @@
-Return-Path: <linux-bcache+bounces-598-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-599-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3584B904A55
-	for <lists+linux-bcache@lfdr.de>; Wed, 12 Jun 2024 06:53:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9B6904A60
+	for <lists+linux-bcache@lfdr.de>; Wed, 12 Jun 2024 06:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A441FB235CC
-	for <lists+linux-bcache@lfdr.de>; Wed, 12 Jun 2024 04:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9818D285B5A
+	for <lists+linux-bcache@lfdr.de>; Wed, 12 Jun 2024 04:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD45B282F1;
-	Wed, 12 Jun 2024 04:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D859E2D03B;
+	Wed, 12 Jun 2024 04:54:34 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C09B286A8;
-	Wed, 12 Jun 2024 04:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471452746F;
+	Wed, 12 Jun 2024 04:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718167984; cv=none; b=JO2+ski5QUpDtLbU8IvCWy1J7YmHzSP04rE5/gs5UzloRwOM4bSGWLxfIDsLspo6WJAAC99BMbKXJWXhKHYqnkVSUGKXIk9K6CislS9chsQFdhRWBvIK/Jkk/3lLrnqh/Wie5N+b8poT1B8gIGuokgGOEN/HwU3xQPxsCiyCRzQ=
+	t=1718168074; cv=none; b=EFEPVgpwQM6A8Bk1DB6xaY7P8knFlRHOecGNfs+AOvRlVEP3TdpOr6UW2M4kNX3a0rRdg/rcyMIldW7NkhNZUrlEzVGsKBJOwPMS9lALAXGw01THIFkepaLOB9kFw4O4YZ133pnw3XK6pIf8kk/RLSzOAwkZr71cPw749y53yoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718167984; c=relaxed/simple;
-	bh=3tIN/Y5HlYGnvHIMt6/UA43lDeC7r6tZjRz/SL4lnjs=;
+	s=arc-20240116; t=1718168074; c=relaxed/simple;
+	bh=nM+nJLfCpFZS14IN7l4cfk/lGapv97cR2EMJitjBLJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Df3rYpOhpvJoGPkQe/7BtUfIdsmu5XydzPXxWGzWEzUNzV01txqiENCbmiXfhv5UN0srbiswWNFw2ukD4vMnOBMvsa9FWSkTmhxygr6cSoLYvxMQfnt1k7C1TXKq0ONCj3osBHFQDkeOoxNv7iRkL/NClBxE78QZFARzMHikmJU=
+	 Content-Type:Content-Disposition:In-Reply-To; b=pG0BPpy4bnv2zW3q8hdj+5hv/M4twy/iTAG2SLC7HoUA2a0DilKVer1qjytW07Vg9SH0SApe7tgTsXzOpG4Bzp7tar7YBCEC9+XyDzrIX0NeAwHnYdpgofhxLXhRGO2WNOM88gGFCqI0sidE6PsJWrcBIzyq9OXAQNhkLux6Yfw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id D6EFD68BEB; Wed, 12 Jun 2024 06:52:57 +0200 (CEST)
-Date: Wed, 12 Jun 2024 06:52:57 +0200
+	id 6904768BEB; Wed, 12 Jun 2024 06:54:29 +0200 (CEST)
+Date: Wed, 12 Jun 2024 06:54:29 +0200
 From: Christoph Hellwig <hch@lst.de>
-To: Hannes Reinecke <hare@suse.de>
+To: Damien Le Moal <dlemoal@kernel.org>
 Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
 	Richard Weinberger <richard@nod.at>,
@@ -60,8 +60,8 @@ Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
 	linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
 Subject: Re: [PATCH 13/26] block: move cache control settings out of
  queue->flags
-Message-ID: <20240612045257.GA26776@lst.de>
-References: <20240611051929.513387-1-hch@lst.de> <20240611051929.513387-14-hch@lst.de> <34a7b2a4-b0cb-4580-85c9-b598fd70449e@suse.de>
+Message-ID: <20240612045429.GB26776@lst.de>
+References: <20240611051929.513387-1-hch@lst.de> <20240611051929.513387-14-hch@lst.de> <d21b162a-1fd3-4fd1-a17f-f127f964bdf1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -70,10 +70,23 @@ List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <34a7b2a4-b0cb-4580-85c9-b598fd70449e@suse.de>
+In-Reply-To: <d21b162a-1fd3-4fd1-a17f-f127f964bdf1@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-A friendly reminder that I've skipped over the full quote.  Please
-properly quote mails if you want your replies to be seen.
+On Tue, Jun 11, 2024 at 04:55:04PM +0900, Damien Le Moal wrote:
+> On 6/11/24 2:19 PM, Christoph Hellwig wrote:
+> > Move the cache control settings into the queue_limits so that they
+> > can be set atomically and all I/O is frozen when changing the
+> > flags.
+> 
+> ...so that they can be set atomically with the device queue frozen when
+> changing the flags.
+> 
+> may be better.
+
+Sure.
+
+If there was anything below I've skipped it after skipping over two
+pages of full quotes.
 
 
