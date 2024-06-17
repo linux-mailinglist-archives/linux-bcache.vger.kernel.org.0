@@ -1,50 +1,50 @@
-Return-Path: <linux-bcache+bounces-622-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-623-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B61090A42B
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 08:08:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 727EE90A434
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 08:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A09F81C23408
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 06:08:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F4055285089
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 06:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA1918FDD4;
-	Mon, 17 Jun 2024 06:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96321862B5;
+	Mon, 17 Jun 2024 06:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="guhcPlS/"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b5fuAR9T"
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1A91850B1;
-	Mon, 17 Jun 2024 06:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C871850B1;
+	Mon, 17 Jun 2024 06:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718604379; cv=none; b=lrSSov8nxHHIa45jkOxBSUOSy6Tytl3J6i2WE7+Mnu8Tu7wDHmuRntiIAUe1sd7szMPndsbTl3plcuWSxaDg0oojyH8O23vKW4VmYCPyUSs+ptVwNOxJrjK6jglbq5mkRBH9wQ2tBDGzBCf7HqVBgHbrGw3lC7B/Vp6FRVlqe/E=
+	t=1718604384; cv=none; b=K/bQeDhzQ+kEV5PyZdKQqhr7hL/kygqHic/l/hAzD7CDKpJfy/Zxmoda+L7u8oOMo3gqy+YgP5OMn9e/5ddkeagQ2PKt8r7KXoLGjA5NowPJh9N/KDFZySuNkfbaSvl8WjSHzCptp0TeKKMepBtY8ujXytIvHZgfwJP0CSplUik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718604379; c=relaxed/simple;
-	bh=UUhDOVNGwIII900wkQCLGZKbOwKcpbX/NZyabxCXiXk=;
+	s=arc-20240116; t=1718604384; c=relaxed/simple;
+	bh=pPYMOOTbAVmZ6WHZRFvaeNtkf3EiocMKZV6Kj0ZwF1E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=odfh6/bR9dakwl+NI5VOdLixlYN0dhzCLSEwOC7nqqBv1rNAhplgvolQFUE/PbPmIkOmX5oqgSh6dwu+fWCEBeGos4PS+821E0YTw+NAOk18N4v9SkIzd/z9irEPuwpoSJQZNjwiWkfQgSgUkSIE6owg0sAUFFZ07v/uRvI7mw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=guhcPlS/; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=G0HT8jRybnZ9P7QrVnO6SF/cM/cFbKEnsdfNrxODFKyyyQ8ghUNaIlI7H+hxTGmA6tNKosYvA6pdufoSu/iYZmOOhZO2tAyIO3uK0k1tjE5B+OuR4gdelNz0pUmqfUNlBDxsEVijclaHdkEd2yhD7+WaAKmZr66SeVRTZfs/upE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b5fuAR9T; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=yUS2iT/5Ns+DBWa4sOqPiiTpW5do+ruhfRfUiDEShWo=; b=guhcPlS/XgOuKYq4PA9jwEJ1Mm
-	wjGQambf6XhIV/WMxs6kFqYaaHdFwvX6RWdpisscMw/wZ4WZsA+kBdl3+w11wI64QzozuUw29fCzF
-	6bcDqzUSjDf9S0c+iNFHOFpOaM4r3xPA7y9i2B22SLB/iHL8jg8OiIaZ5p0BiZ12ZoIHUAP/V5Phy
-	CaqhmT48hLkZcOQmzg39tPBxUdTSF6LnbixjqSNUesHltqV6UJpGD66vOEwdq7R391N+2LJtveGqS
-	OXm/2K7ni7fxsGeEBERanjYsCQ59EcXOvmPmxbR6wdKf8nAs0DNy0rPkfkuV/Q20bN324P+kRTZvf
-	Ns6wRmFQ==;
+	bh=Ehwi9XwmCWVOUn2mUiA9tAgE4ehpoZw+qtTIhW3bZ98=; b=b5fuAR9TpDmNCNYT10KjVNVORL
+	bhlzMRDqbc+gBpQCMf6xKCzaCmt81etF37Hfc5GNaF+0Z28NBjv3vPGGuIk0Xyt6kTEE+NWbGeZyZ
+	h6Q/t7+7IbfjYXP/wOi6yFmM/Aljo7LuWZejVUJJbH+B4KzYBh42aNhJ1xQxtuTsR8htCxIZdw4ig
+	e/dc4UJumZkiGeO2ijwxW0xoScDAwbsnVI/3mm4hsHagmG67EpCXpTQtwwznBA4GBXM0HSRKedrwi
+	t/TMBViLWu9lh4AmI0TQMwSzBaVPIx9UgQuB8lyYpIaamAqcXrWYoFio8OG8eE2Rrj/s4+u6fInAv
+	0AhJ0xvA==;
 Received: from [91.187.204.140] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sJ5VB-00000009ISa-1G1W;
-	Mon, 17 Jun 2024 06:06:01 +0000
+	id 1sJ5VD-00000009IVS-3gIx;
+	Mon, 17 Jun 2024 06:06:04 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -83,13 +83,11 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	linux-scsi@vger.kernel.org,
 	linux-block@vger.kernel.org,
 	Bart Van Assche <bvanassche@acm.org>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
 	Damien Le Moal <dlemoal@kernel.org>,
-	Hannes Reinecke <hare@suse.de>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 09/26] virtio_blk: remove virtblk_update_cache_mode
-Date: Mon, 17 Jun 2024 08:04:36 +0200
-Message-ID: <20240617060532.127975-10-hch@lst.de>
+	Hannes Reinecke <hare@suse.de>
+Subject: [PATCH 10/26] nbd: move setting the cache control flags to __nbd_set_size
+Date: Mon, 17 Jun 2024 08:04:37 +0200
+Message-ID: <20240617060532.127975-11-hch@lst.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240617060532.127975-1-hch@lst.de>
 References: <20240617060532.127975-1-hch@lst.de>
@@ -102,58 +100,56 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-virtblk_update_cache_mode boils down to a single call to
-blk_queue_write_cache.  Remove it in preparation for moving the cache
-control flags into the queue_limits.
+Move setting the cache control flags in nbd in preparation for moving
+these flags into the queue_limits structure.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- drivers/block/virtio_blk.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ drivers/block/nbd.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index 2351f411fa4680..378b241911ca87 100644
---- a/drivers/block/virtio_blk.c
-+++ b/drivers/block/virtio_blk.c
-@@ -1089,14 +1089,6 @@ static int virtblk_get_cache_mode(struct virtio_device *vdev)
- 	return writeback;
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index ad887d614d5b3f..44b8c671921e5c 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -342,6 +342,12 @@ static int __nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
+ 		lim.max_hw_discard_sectors = UINT_MAX;
+ 	else
+ 		lim.max_hw_discard_sectors = 0;
++	if (!(nbd->config->flags & NBD_FLAG_SEND_FLUSH))
++		blk_queue_write_cache(nbd->disk->queue, false, false);
++	else if (nbd->config->flags & NBD_FLAG_SEND_FUA)
++		blk_queue_write_cache(nbd->disk->queue, true, true);
++	else
++		blk_queue_write_cache(nbd->disk->queue, true, false);
+ 	lim.logical_block_size = blksize;
+ 	lim.physical_block_size = blksize;
+ 	error = queue_limits_commit_update(nbd->disk->queue, &lim);
+@@ -1286,19 +1292,10 @@ static void nbd_bdev_reset(struct nbd_device *nbd)
+ 
+ static void nbd_parse_flags(struct nbd_device *nbd)
+ {
+-	struct nbd_config *config = nbd->config;
+-	if (config->flags & NBD_FLAG_READ_ONLY)
++	if (nbd->config->flags & NBD_FLAG_READ_ONLY)
+ 		set_disk_ro(nbd->disk, true);
+ 	else
+ 		set_disk_ro(nbd->disk, false);
+-	if (config->flags & NBD_FLAG_SEND_FLUSH) {
+-		if (config->flags & NBD_FLAG_SEND_FUA)
+-			blk_queue_write_cache(nbd->disk->queue, true, true);
+-		else
+-			blk_queue_write_cache(nbd->disk->queue, true, false);
+-	}
+-	else
+-		blk_queue_write_cache(nbd->disk->queue, false, false);
  }
  
--static void virtblk_update_cache_mode(struct virtio_device *vdev)
--{
--	u8 writeback = virtblk_get_cache_mode(vdev);
--	struct virtio_blk *vblk = vdev->priv;
--
--	blk_queue_write_cache(vblk->disk->queue, writeback, false);
--}
--
- static const char *const virtblk_cache_types[] = {
- 	"write through", "write back"
- };
-@@ -1116,7 +1108,7 @@ cache_type_store(struct device *dev, struct device_attribute *attr,
- 		return i;
- 
- 	virtio_cwrite8(vdev, offsetof(struct virtio_blk_config, wce), i);
--	virtblk_update_cache_mode(vdev);
-+	blk_queue_write_cache(disk->queue, virtblk_get_cache_mode(vdev), false);
- 	return count;
- }
- 
-@@ -1528,7 +1520,8 @@ static int virtblk_probe(struct virtio_device *vdev)
- 	vblk->index = index;
- 
- 	/* configure queue flush support */
--	virtblk_update_cache_mode(vdev);
-+	blk_queue_write_cache(vblk->disk->queue, virtblk_get_cache_mode(vdev),
-+			false);
- 
- 	/* If disk is read-only in the host, the guest should obey */
- 	if (virtio_has_feature(vdev, VIRTIO_BLK_F_RO))
+ static void send_disconnects(struct nbd_device *nbd)
 -- 
 2.43.0
 
