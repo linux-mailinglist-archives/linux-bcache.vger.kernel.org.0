@@ -1,31 +1,31 @@
-Return-Path: <linux-bcache+bounces-651-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-652-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408CA90AB51
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 12:38:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3023390AB5D
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 12:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 672241C21AA7
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 10:38:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1E322817BF
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 10:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BCE194158;
-	Mon, 17 Jun 2024 10:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E25D1946C5;
+	Mon, 17 Jun 2024 10:39:00 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D0613CFBC;
-	Mon, 17 Jun 2024 10:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB17F190673;
+	Mon, 17 Jun 2024 10:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718620713; cv=none; b=ismLqxl81j1zteWoL7EK4X3Z6HQyqi4fVEtEtSyve6lZt22b6LLrpEJNdVek/U1GrmvyIeIMI95Ptgf0llQIMkbUD4eOdf8W4hMwitmnXU5+YHVsm3bNBy/ll8xhH+6qNQahE/2GBmFJKUQOsWTZV0xQODqbDI3zIrWs4Vg8C/g=
+	t=1718620740; cv=none; b=VISuM4Aaq/cilWpJHtaFVbhZTQ7/uNkCf6A636/ThXNJSijdQqNssZ8Y68rf1r7udcoEdzwYNMtXTsTHJi9loMzHrCCVjEmZkswpov5ASGtKZnkqX0dCdKnR68TQDxgYXOdzXkdaios1Hkpm5K8AUHete4vjKfNgJwH34JqJjQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718620713; c=relaxed/simple;
-	bh=sLGpFpbuMerOCYp/S8r/v/Lw1PMCXDpInNufgD15eGo=;
+	s=arc-20240116; t=1718620740; c=relaxed/simple;
+	bh=/hqCsjfhyukyt233k4nJcR91Ol92Pn8FIAgpyed+nQ8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UhcsfmxNLzeqsx2riOiaOcrR1MU7lwSPfYDP5jXbqQaVcP+SRNuweQrj0V1Lj3jEI4q+gRgXmbLDmw/1Z9I0G6txxJofkxsS//t8+jB1j5g1c/ofSvFewXvpzGrxloGeR7V6Q7piYYxn4LBnQJkgINgWKZMiB7/C4naCYnj9ns4=
+	 In-Reply-To:Content-Type; b=IAjBMaBnPq6uMhUEfrmTe6VMnZFqBrAZRQcGQh+Ou7+t9geeO1Rp/SSBeW88Y1QE45Flf+9TmZxpvi7/aLz8CHZDAV+wyEZfzyM4Fvuf0gPuriSyZ6gM8ot16maSeQ/0BN1bYulK98o0kUedM6luSE3+B9oL///07/rcFp45UXg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
@@ -33,22 +33,22 @@ Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D55E65FCD9;
-	Mon, 17 Jun 2024 10:38:29 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 205F75FED3;
+	Mon, 17 Jun 2024 10:38:57 +0000 (UTC)
 Authentication-Results: smtp-out2.suse.de;
 	none
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 337B2139AB;
-	Mon, 17 Jun 2024 10:38:29 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 62CE8139AB;
+	Mon, 17 Jun 2024 10:38:56 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WyrSCyUScGbNDAAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 17 Jun 2024 10:38:29 +0000
-Message-ID: <74df67d6-3d02-4987-becb-eebf60492d26@suse.de>
-Date: Mon, 17 Jun 2024 12:38:28 +0200
+	id HLO9FEAScGb3DAAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 17 Jun 2024 10:38:56 +0000
+Message-ID: <5380a984-013a-4a63-9d95-7d8eec0b45c7@suse.de>
+Date: Mon, 17 Jun 2024 12:38:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -56,7 +56,8 @@ List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/26] block: move the add_random flag to queue_limits
+Subject: Re: [PATCH 16/26] block: move the io_stat flag setting to
+ queue_limits
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  Richard Weinberger <richard@nod.at>,
@@ -78,52 +79,48 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
  linux-mtd@lists.infradead.org, nvdimm@lists.linux.dev,
  linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
- Damien Le Moal <dlemoal@kernel.org>
+ linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
 References: <20240617060532.127975-1-hch@lst.de>
- <20240617060532.127975-16-hch@lst.de>
+ <20240617060532.127975-17-hch@lst.de>
 Content-Language: en-US
 From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240617060532.127975-16-hch@lst.de>
+In-Reply-To: <20240617060532.127975-17-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
 	Message is reply to one we originated
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: 205F75FED3
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
 	Message is reply to one we originated
-X-Rspamd-Queue-Id: D55E65FCD9
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
 
 On 6/17/24 08:04, Christoph Hellwig wrote:
-> Move the add_random flag into the queue_limits feature field so that it
-> can be set atomically with the queue frozen.
+> Move the io_stat flag into the queue_limits feature field so that it can
+> be set atomically with the queue frozen.
 > 
-> Note that this also removes code from dm to clear the flag based on
-> the underlying devices, which can't be reached as dm devices will
-> always start out without the flag set.
+> Simplify md and dm to set the flag unconditionally instead of avoiding
+> setting a simple flag for cases where it already is set by other means,
+> which is a bit pointless.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 > ---
->   block/blk-mq-debugfs.c            |  1 -
->   block/blk-sysfs.c                 |  6 +++---
->   drivers/block/mtip32xx/mtip32xx.c |  1 -
->   drivers/md/dm-table.c             | 18 ------------------
->   drivers/mmc/core/queue.c          |  2 --
->   drivers/mtd/mtd_blkdevs.c         |  3 ---
->   drivers/s390/block/scm_blk.c      |  4 ----
->   drivers/scsi/scsi_lib.c           |  3 +--
->   drivers/scsi/sd.c                 | 11 +++--------
->   include/linux/blkdev.h            |  5 +++--
->   10 files changed, 10 insertions(+), 44 deletions(-)
+>   block/blk-mq-debugfs.c        |  1 -
+>   block/blk-mq.c                |  6 +++++-
+>   block/blk-sysfs.c             |  2 +-
+>   drivers/md/dm-table.c         | 12 +++++++++---
+>   drivers/md/dm.c               | 13 +++----------
+>   drivers/md/md.c               |  5 ++---
+>   drivers/nvme/host/multipath.c |  2 +-
+>   include/linux/blkdev.h        |  9 +++++----
+>   8 files changed, 26 insertions(+), 24 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
