@@ -1,31 +1,31 @@
-Return-Path: <linux-bcache+bounces-648-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-649-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E19E90AAAC
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 12:04:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF9290AB34
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 12:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083BD2843B2
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 10:04:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 817C11C21702
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 10:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC6C194082;
-	Mon, 17 Jun 2024 10:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B601946A9;
+	Mon, 17 Jun 2024 10:36:07 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDF2188CD0;
-	Mon, 17 Jun 2024 10:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B92190673;
+	Mon, 17 Jun 2024 10:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718618655; cv=none; b=U5qiS3ZrDcnLQfZrINYG88y+nCyupAz/P+c0Ldd6Eo8zkCSja69beKiz3nu4NuKzW0rC93ritrdykT5Du7xTOjH6M9ydjtrxgef3SMNLSlNUmbrIoNatIpJK8aXbTgHiGqlbkusxn4mSHG/eNhHkhEqiYEq1kJ+q9Ytt0aObkJM=
+	t=1718620566; cv=none; b=En+gz33ShJZgFnVsUw1VzqunKrz/Dwh1NM2BinvmAuRn4OSxqPVCWDuitLq2QYH76oqU3TY7bLzaLLwg4z89R1CX52fZPuhegudzEY/q7OjkWPK8+DGgurTIgGAzVkcZecDkiSQWQAe0NsQsPEgGBo8j32+mNaftecZd0EXbhl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718618655; c=relaxed/simple;
-	bh=6oy05OToViGr9lr0f5vEDIjIEV9pAjtuDsePNeAs5n8=;
+	s=arc-20240116; t=1718620566; c=relaxed/simple;
+	bh=L0Hvrn5t4C59d0fU0sRiDSzKUQPrwo4js/16oSxUxu4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vix/fWxvN8Xyce+E4Y9TlM7DHNFuyPWWCEpMLpE9jivurW8DdUib5mwExA1WWhupwoMJJvs3h/y7MerMscrv1UNgOP4PXDR1YaMZ8dyJJWhifcwwSiUHJ8yvgKkzQiRoGU9XSKisCJDqECfkATIhxN6GRr+xM0TMIQ64I3N68cg=
+	 In-Reply-To:Content-Type; b=qOMy9ZFC9jBhOeLXMAvcbmv+/eemboTe7g2thyQiYQB/HtOVTG+TZC/UQWNJhMsQnck76lGt3qxgrI8logiNc4fSV6qZwLFpkTJfExWhD6lZYbGSFJhb2DvbBqSTgCASQsvJ8VpxHw5jj67jUlgEjlRCLewhkN8QLRIrFTEdtE8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
@@ -33,22 +33,22 @@ Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C806B5FE69;
-	Mon, 17 Jun 2024 10:04:12 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 75F3B5FECC;
+	Mon, 17 Jun 2024 10:36:03 +0000 (UTC)
 Authentication-Results: smtp-out2.suse.de;
 	none
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20824139AB;
-	Mon, 17 Jun 2024 10:04:12 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D6842139AB;
+	Mon, 17 Jun 2024 10:36:02 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vXUeBxwKcGbQAQAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 17 Jun 2024 10:04:12 +0000
-Message-ID: <114579f8-74e1-416f-a808-420ec8314882@suse.de>
-Date: Mon, 17 Jun 2024 12:04:11 +0200
+	id AHKOMJIRcGYTDAAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 17 Jun 2024 10:36:02 +0000
+Message-ID: <c91d77a0-eec5-4af0-b3dd-bc2724108fc9@suse.de>
+Date: Mon, 17 Jun 2024 12:36:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -56,8 +56,8 @@ List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/26] sd: move zone limits setup out of
- sd_read_block_characteristics
+Subject: Re: [PATCH 13/26] block: move cache control settings out of
+ queue->flags
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  Richard Weinberger <richard@nod.at>,
@@ -79,39 +79,56 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
  linux-mtd@lists.infradead.org, nvdimm@lists.linux.dev,
  linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
+ linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+ Ulf Hansson <ulf.hansson@linaro.org>
 References: <20240617060532.127975-1-hch@lst.de>
- <20240617060532.127975-4-hch@lst.de>
+ <20240617060532.127975-14-hch@lst.de>
 Content-Language: en-US
 From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240617060532.127975-4-hch@lst.de>
+In-Reply-To: <20240617060532.127975-14-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
 	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: C806B5FE69
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
 X-Spam-Flag: NO
 X-Spam-Score: -4.00
 X-Spam-Level: 
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Queue-Id: 75F3B5FECC
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
 On 6/17/24 08:04, Christoph Hellwig wrote:
-> Move a bit of code that sets up the zone flag and the write granularity
-> into sd_zbc_read_zones to be with the rest of the zoned limits.
+> Move the cache control settings into the queue_limits so that the flags
+> can be set atomically with the device queue frozen.
+> 
+> Add new features and flags field for the driver set flags, and internal
+> (usually sysfs-controlled) flags in the block layer.  Note that we'll
+> eventually remove enough field from queue_limits to bring it back to the
+> previous size.
+> 
+> The disable flag is inverted compared to the previous meaning, which
+> means it now survives a rescan, similar to the max_sectors and
+> max_discard_sectors user limits.
+> 
+> The FLUSH and FUA flags are now inherited by blk_stack_limits, which
+> simplified the code in dm a lot, but also causes a slight behavior
+> change in that dm-switch and dm-unstripe now advertise a write cache
+> despite setting num_flush_bios to 0.  The I/O path will handle this
+> gracefully, but as far as I can tell the lack of num_flush_bios
+> and thus flush support is a pre-existing data integrity bug in those
+> targets that really needs fixing, after which a non-zero num_flush_bios
+> should be required in dm for targets that map to underlying devices.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Ulf Hansson <ulf.hansson@linaro.org> [mmc]
 > ---
->   drivers/scsi/sd.c     | 21 +--------------------
->   drivers/scsi/sd_zbc.c |  9 +++++++++
->   2 files changed, 10 insertions(+), 20 deletions(-)
-> 
+
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,
