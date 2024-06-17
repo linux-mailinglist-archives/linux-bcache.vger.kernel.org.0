@@ -1,181 +1,95 @@
-Return-Path: <linux-bcache+bounces-662-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-663-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A555190AC01
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 12:48:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C2C90B3B0
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 17:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA111C20ECD
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 10:48:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5B91F28A37
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 15:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E80194AFB;
-	Mon, 17 Jun 2024 10:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97D6158A37;
+	Mon, 17 Jun 2024 14:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cHdgn9W4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="j6x1ql3o";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cHdgn9W4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="j6x1ql3o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eD5n/nvW"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9372194ADF;
-	Mon, 17 Jun 2024 10:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFF0158A05;
+	Mon, 17 Jun 2024 14:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718621137; cv=none; b=DmRa6DYRphfOC1bPqMpHaCTw9jpA5a8ZjE37uEYTregB1LYwpcDPHV8cqPzcyhU+RaPAakiQxARC0VNa9+Qh7qRZbRLfYcp+RR/IyEU+FJBCcKnkr62+aQCePmeDdMA2fbs538Bh1y5C4SO0MeQsjFpjk3MvYbeWuhuspDhQcVo=
+	t=1718634907; cv=none; b=KiM+GgE2CCBVWpN14REjdiO72KjyYUmBKg67cledLbY/epVdRh6CJP+Vf0f9Uo4SErntKCp1kHdg+6oafnVXLfqlUJ6HvnhRrxu5ZIwGltQ4+RyGI82xdYmCDyMCmsPT031/CCSitVczlum9qoR1P2zh8dMEanXHjwTf65H3FjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718621137; c=relaxed/simple;
-	bh=eRoBK5/4xu/plFLs53OdfVIJexRh8oeq7oJw1sSkyF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QAWe4uvyxI3PJHrHYceLEi8bn6wd5xcDshcc/a3TMtdFizYVbrY7INIkfiosUfPEvE4inFp9N4cC6PHxlsMty4d+mP3DPd41eWFTBeIu/p1248x2ZuPXoTd9Mf6sgYTjRU/y9HLNr0QFKmtzvC2PW7B84shuXe4G2CKqvvlR0XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cHdgn9W4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=j6x1ql3o; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cHdgn9W4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=j6x1ql3o; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CCF9C3804B;
-	Mon, 17 Jun 2024 10:45:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718621133; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=slP8wzcVm+UAH6cgQCtZYK/eQ7AbIkDnYf3KLR9axr8=;
-	b=cHdgn9W4G9J0bE9J3jdrIA5h9r80guqMNBb5W5GdFASLapAtRmAO+S/TDk3J9mxlXYKQ3p
-	XeyPNYiHIsartGEh8VHnpDVPl9PlSbixXhfd1N8WS6mi9euOFHAttCLDL2I6PiAjR9dt4c
-	b8iVdUv2vEMMALrToXYEjc2bLtRNGCk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718621133;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=slP8wzcVm+UAH6cgQCtZYK/eQ7AbIkDnYf3KLR9axr8=;
-	b=j6x1ql3oipn4My7hzsZomUyOPKAHtZ3GuatVGjA1bA/HdSpLPFhhpg/i+I1E4ZCYoxxHNa
-	kb4ijVWkbYZKZPAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718621133; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=slP8wzcVm+UAH6cgQCtZYK/eQ7AbIkDnYf3KLR9axr8=;
-	b=cHdgn9W4G9J0bE9J3jdrIA5h9r80guqMNBb5W5GdFASLapAtRmAO+S/TDk3J9mxlXYKQ3p
-	XeyPNYiHIsartGEh8VHnpDVPl9PlSbixXhfd1N8WS6mi9euOFHAttCLDL2I6PiAjR9dt4c
-	b8iVdUv2vEMMALrToXYEjc2bLtRNGCk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718621133;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=slP8wzcVm+UAH6cgQCtZYK/eQ7AbIkDnYf3KLR9axr8=;
-	b=j6x1ql3oipn4My7hzsZomUyOPKAHtZ3GuatVGjA1bA/HdSpLPFhhpg/i+I1E4ZCYoxxHNa
-	kb4ijVWkbYZKZPAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C97B13AAA;
-	Mon, 17 Jun 2024 10:45:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xJQVGs0TcGYTDwAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 17 Jun 2024 10:45:33 +0000
-Message-ID: <94db71a8-75ef-4490-a28a-aea26f6dd945@suse.de>
-Date: Mon, 17 Jun 2024 12:45:33 +0200
+	s=arc-20240116; t=1718634907; c=relaxed/simple;
+	bh=zR4PmzG8eM11uEea9QT6dpcyWJEpQ/sobqtYRuY7p2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eqxtyjYTm+h4cPOpB1NvrWKHldAZ4h173Lde+YoP6k2ni4/MzlbFBgoPS/eXrrTslI7YBsrMv7EbJzgVUcWcaxDA0Q/9e0VDr4hV3alIXfduWEOdvuCjvnEnwOm4OmK2R3gLQIJL9SWbQjN9sDXBVSCXExXRiR7GQyPxiiDyOgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eD5n/nvW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7346C2BD10;
+	Mon, 17 Jun 2024 14:35:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718634907;
+	bh=zR4PmzG8eM11uEea9QT6dpcyWJEpQ/sobqtYRuY7p2o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eD5n/nvWPH0mROLi1mYqjLG+6CkIkCxCEDr7KHYv5mCJ6cJ3axvL3iUR8FSfF/NAJ
+	 aWF+hMFp26+MYq12L40CvD0LxAzWJTFIpFvJFlT/13JJ1EJCWWsc/XXuMYInx3fYPk
+	 PVqFFZp9qinzyqQ1wbJp1uQUpFSEgZjA7/AJ/D87BnMG71EbVAfG4CFQOyKDe6kjS2
+	 0qjhzv59DCAwJqh60nhssiSotn3a1GiLXJljndQUFTrzdMkRj7pO46aG6KaDjyXOpw
+	 MXJnwDrZxtrM68cj9z93ToW3XbCMjuJFfQuHw/qbhAPx1AOR5+hjUoIbpzcdxhC3Vq
+	 UbiPTmWDLBjCA==
+Date: Mon, 17 Jun 2024 08:35:02 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Geert Uytterhoeven <geert@linux-m68k.org>,
+	Richard Weinberger <richard@nod.at>,
+	Philipp Reisner <philipp.reisner@linbit.com>,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	Christoph =?iso-8859-1?Q?B=F6hmwalder?= <christoph.boehmwalder@linbit.com>,
+	Josef Bacik <josef@toxicpanda.com>, Ming Lei <ming.lei@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>, Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>,
+	Vineeth Vijayan <vneethv@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-m68k@lists.linux-m68k.org, linux-um@lists.infradead.org,
+	drbd-dev@lists.linbit.com, nbd@other.debian.org,
+	linuxppc-dev@lists.ozlabs.org, ceph-devel@vger.kernel.org,
+	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
+	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-mtd@lists.infradead.org, nvdimm@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+	Damien Le Moal <dlemoal@kernel.org>
+Subject: Re: [PATCH 26/26] block: move the bounce flag into the features field
+Message-ID: <ZnBJlix63Fj_G1px@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240617060532.127975-1-hch@lst.de>
+ <20240617060532.127975-27-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 26/26] block: move the bounce flag into the features field
-To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
- Richard Weinberger <richard@nod.at>,
- Philipp Reisner <philipp.reisner@linbit.com>,
- Lars Ellenberg <lars.ellenberg@linbit.com>,
- =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
- Josef Bacik <josef@toxicpanda.com>, Ming Lei <ming.lei@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>, Song Liu <song@kernel.org>,
- Yu Kuai <yukuai3@huawei.com>, Vineeth Vijayan <vneethv@linux.ibm.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- linux-m68k@lists.linux-m68k.org, linux-um@lists.infradead.org,
- drbd-dev@lists.linbit.com, nbd@other.debian.org,
- linuxppc-dev@lists.ozlabs.org, ceph-devel@vger.kernel.org,
- virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
- linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-mtd@lists.infradead.org, nvdimm@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
- Damien Le Moal <dlemoal@kernel.org>
-References: <20240617060532.127975-1-hch@lst.de>
- <20240617060532.127975-27-hch@lst.de>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20240617060532.127975-27-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-8.29 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[38];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLex1noz7jcsrkfdtgx8bqesde)];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,lst.de:email,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -8.29
-X-Spam-Level: 
 
-On 6/17/24 08:04, Christoph Hellwig wrote:
-> Move the bounce flag into the features field to reclaim a little bit of
-> space.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-> ---
->   block/blk-settings.c    | 1 -
->   block/blk.h             | 2 +-
->   drivers/scsi/scsi_lib.c | 2 +-
->   include/linux/blkdev.h  | 6 ++++--
->   4 files changed, 6 insertions(+), 5 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+On Mon, Jun 17, 2024 at 08:04:53AM +0200, Christoph Hellwig wrote:
+> @@ -352,7 +355,6 @@ enum blk_bounce {
 
-Cheers,
+No more users of "enum blk_bounce" after this, so you can delete that
+too.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
-
+>  struct queue_limits {
+>  	unsigned int		features;
+>  	unsigned int		flags;
+> -	enum blk_bounce		bounce;
 
