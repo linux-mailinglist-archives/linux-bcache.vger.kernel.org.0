@@ -1,95 +1,95 @@
-Return-Path: <linux-bcache+bounces-655-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-656-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3041690AB88
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 12:41:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6242390ABD5
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 12:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FBB1285BCC
-	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 10:41:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95A3EB26EAD
+	for <lists+linux-bcache@lfdr.de>; Mon, 17 Jun 2024 10:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3D91946BC;
-	Mon, 17 Jun 2024 10:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53584194A6E;
+	Mon, 17 Jun 2024 10:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IeFJAWsH";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uBuChXRm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tk56hY7X";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uAuSy9hb"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0aaHE0nD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="u/mMPT+2";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xTEWwfzF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qkTWtDj2"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936F2181BBB;
-	Mon, 17 Jun 2024 10:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9661940A1;
+	Mon, 17 Jun 2024 10:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718620888; cv=none; b=HkkhfvXyFTatu7MmBLpV8DYk8wwuMaWBVg5GLBus+Y6dU0/6+Kzc8quHid1KsCEWtbNoQT1c40T9Hdc6MWF7D8wbDMIYeVAK7hnqCGBIYHl1H1BuyvByjA0whtvA0f4BxaC9AbJdl13wgUf87XIBFYezkBrr2yTIZjjLvxy3gBE=
+	t=1718620925; cv=none; b=RkX9AOtFqbdoVvsvWoaCQKAIVAN7GJ14ZLxg0TI49qnmMJHdUO4KXXOb0I2oYP7FjzGYwieGApAk6k2Bavcvm2wwO7kU8z7mapYmKbExrelRnu94Mke0pMX/oM0jxI/8Twtfud/mL1uXJnzr1OSpBObkCqz2B+KmGNSwhIasR8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718620888; c=relaxed/simple;
-	bh=AhwK+yKsTemWGuM0+yGtqqZD8Aj8it07SwFGwJcsNqE=;
+	s=arc-20240116; t=1718620925; c=relaxed/simple;
+	bh=uLD0MnBZUkmBcdQuYDt2WcOIDQqWv+V2wjGWGGRGgpE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QKbuJapdwVqmnGuShlbkmXkl5ijHNv98StX4Y3w4xel6NSBKt4S9/vgITZjNJLeq0sRclOt3nn4evB018t3zN2uuq41pPwt1+F58U3ACdbYPp0CEawXtwvljLBUs0FepZDHtyU9gqXt5xvZ+x0vB2B+fS35enmJU8j+Y04Sh7Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IeFJAWsH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uBuChXRm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tk56hY7X; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uAuSy9hb; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=BNqp+pQm17t5KmEZFBmcQSZAvjWFi0oIL5lzXnx+Z4EYuI0ADyLx3XTw3tmcF89YEZQ9K4Mp7hhzaVF/yXObIDFyWU1PZiP8nwDL+ZaPhg9K+Wko6+KvGCBG+RC9fBy8bxj8NKbkYUWse2ku26UfoBNZtoPn5PqHm2ytPNWpwOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0aaHE0nD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=u/mMPT+2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xTEWwfzF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qkTWtDj2; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EDEFF3803D;
-	Mon, 17 Jun 2024 10:41:24 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E7E405FEE9;
+	Mon, 17 Jun 2024 10:42:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718620885; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1718620921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jgtG6m+m1FRqVquXEHPrn3wmZaPvf3OoaYY0kuxzjZY=;
-	b=IeFJAWsH75KCYIyv8/qhBGrl5836YIwBOLXQ3jGs9AGu4tCLccHXdaOiEmZNwYilYVnXvA
-	SRmfeAJG/mJlmng7doCTF2JrMj/j1v1AtSvyaeFMA6zC9Uo8Apn9VwECptdlpKPI1o/2oN
-	26YOZad+Gw/DJeftHbAa4kTM/y28MNI=
+	bh=ei0H6kpwHCrAVar/RhH6iZ8w6j4VD0fXtJ6uoOiivc4=;
+	b=0aaHE0nDv3sFsKVo4RUNdgi1Gj4Z+MuxUZnX8NnbX4LzirK+9YxDEKeKTIvvb3Wd8UZxyQ
+	pL02vk2jca8kXflRM+INPCSpkiMwMWo7zucPCyoXwRKjtHW7Td94vfcVrUznX/Wrnql6uU
+	nbRjt2sHYPvoTYF1vldXy3sMrqyJ5ns=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718620885;
+	s=susede2_ed25519; t=1718620921;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jgtG6m+m1FRqVquXEHPrn3wmZaPvf3OoaYY0kuxzjZY=;
-	b=uBuChXRm9UIyUB63kLl7vU6i6aEesxd1N6Ygk5vJm28e2KE/5WoIJeYPC8888eXD55Tt/v
-	dimXmhyYdWeO0iCQ==
-Authentication-Results: smtp-out1.suse.de;
+	bh=ei0H6kpwHCrAVar/RhH6iZ8w6j4VD0fXtJ6uoOiivc4=;
+	b=u/mMPT+20sxE/ovrpfH8HyTUV2cuE+R8tuWdBd19R5MUKmu37GlwIbXmeKfQurMrJvkHuR
+	ct5GSA7YBBDQI5Ag==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718620884; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1718620920; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jgtG6m+m1FRqVquXEHPrn3wmZaPvf3OoaYY0kuxzjZY=;
-	b=tk56hY7XbD+wgCVvAVC5TAAMNdWYTqZxaVADpw5mpu/Frmc+Y8zzf8x9gaIUWi7pHO5rjZ
-	Tm01WQr3GPaAKNEgrckaVdo8Qm+/hXaj53GmO1gpM2xNwupMPVgSsIQq7PJCLZa0lbR+XN
-	ddtS7T4F7YuLIEsh0v7LCAvj96Hq13s=
+	bh=ei0H6kpwHCrAVar/RhH6iZ8w6j4VD0fXtJ6uoOiivc4=;
+	b=xTEWwfzFhRWHcOXnCi0toiBdIbekgACZlSGjefUOBapq+sr5vsf4vQJQ1gCTgtm0E9xveU
+	accWTuwIKPqiaNL6bALixViV7AYgXFVqL7fo2rJJx59ox9JSCXpgx4591/71uuV/xfscUt
+	sB86pC4PSbMmA80wDdJRXCgbv9+51b4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718620884;
+	s=susede2_ed25519; t=1718620920;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jgtG6m+m1FRqVquXEHPrn3wmZaPvf3OoaYY0kuxzjZY=;
-	b=uAuSy9hbCb4YbUBJdXvIQbCOSketcC7FumfbAwU1hmYHwd+Jx1h140JOgS5gMLtaFdjOqr
-	qYR/OoHcbBQkZAAA==
+	bh=ei0H6kpwHCrAVar/RhH6iZ8w6j4VD0fXtJ6uoOiivc4=;
+	b=qkTWtDj2KUeKlE0sNEFFUQfU+KX8KlrCG6SQVbv5pLDtOUA6x3/nFzgU57ULpz5g8bO5y2
+	Ph8SFQJlrPTNjiAw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7B5A113AAA;
-	Mon, 17 Jun 2024 10:41:24 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84C9013AAA;
+	Mon, 17 Jun 2024 10:42:00 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5susHdQScGauDQAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 17 Jun 2024 10:41:24 +0000
-Message-ID: <24322288-fd9f-4f49-9a94-e2aaf97bb700@suse.de>
-Date: Mon, 17 Jun 2024 12:41:24 +0200
+	id bAPLHPgScGbeDQAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 17 Jun 2024 10:42:00 +0000
+Message-ID: <c33258a8-6ad2-4b8b-bd38-90c08d366c2c@suse.de>
+Date: Mon, 17 Jun 2024 12:42:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -97,7 +97,7 @@ List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/26] block: move the nowait flag to queue_limits
+Subject: Re: [PATCH 20/26] block: move the dax flag to queue_limits
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  Richard Weinberger <richard@nod.at>,
@@ -119,16 +119,16 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
  linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
  linux-mtd@lists.infradead.org, nvdimm@lists.linux.dev,
  linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
+ linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+ Damien Le Moal <dlemoal@kernel.org>
 References: <20240617060532.127975-1-hch@lst.de>
- <20240617060532.127975-20-hch@lst.de>
+ <20240617060532.127975-21-hch@lst.de>
 Content-Language: en-US
 From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240617060532.127975-20-hch@lst.de>
+In-Reply-To: <20240617060532.127975-21-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-8.29 / 50.00];
-	REPLY(-4.00)[];
+X-Spamd-Result: default: False [-4.29 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
@@ -137,41 +137,35 @@ X-Spamd-Result: default: False [-8.29 / 50.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ARC_NA(0.00)[];
 	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[38];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[37];
 	MID_RHS_MATCH_FROM(0.00)[];
 	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
 	FROM_HAS_DN(0.00)[];
 	R_RATELIMIT(0.00)[to_ip_from(RLex1noz7jcsrkfdtgx8bqesde)];
 	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,lst.de:email]
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,imap1.dmz-prg2.suse.org:helo]
 X-Spam-Flag: NO
-X-Spam-Score: -8.29
+X-Spam-Score: -4.29
 X-Spam-Level: 
 
 On 6/17/24 08:04, Christoph Hellwig wrote:
-> Move the nowait flag into the queue_limits feature field so that it can
-> be set atomically with the queue frozen.
-> 
-> Stacking drivers are simplified in that they now can simply set the
-> flag, and blk_stack_limits will clear it when the features is not
-> supported by any of the underlying devices.
+> Move the dax flag into the queue_limits feature field so that it can be
+> set atomically with the queue frozen.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 > ---
->   block/blk-mq-debugfs.c        |  1 -
->   block/blk-mq.c                |  2 +-
->   block/blk-settings.c          |  9 +++++++++
->   drivers/block/brd.c           |  4 ++--
->   drivers/md/dm-table.c         | 18 +++---------------
->   drivers/md/md.c               | 18 +-----------------
->   drivers/nvme/host/multipath.c |  3 +--
->   include/linux/blkdev.h        |  9 +++++----
->   8 files changed, 22 insertions(+), 42 deletions(-)
+>   block/blk-mq-debugfs.c       | 1 -
+>   drivers/md/dm-table.c        | 4 ++--
+>   drivers/nvdimm/pmem.c        | 7 ++-----
+>   drivers/s390/block/dcssblk.c | 2 +-
+>   include/linux/blkdev.h       | 6 ++++--
+>   5 files changed, 9 insertions(+), 11 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
