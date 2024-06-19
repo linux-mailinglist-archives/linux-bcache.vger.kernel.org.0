@@ -1,158 +1,202 @@
-Return-Path: <linux-bcache+bounces-678-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-679-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9C690F34E
-	for <lists+linux-bcache@lfdr.de>; Wed, 19 Jun 2024 17:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3B790F3A9
+	for <lists+linux-bcache@lfdr.de>; Wed, 19 Jun 2024 18:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B178284D10
-	for <lists+linux-bcache@lfdr.de>; Wed, 19 Jun 2024 15:58:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59548282E99
+	for <lists+linux-bcache@lfdr.de>; Wed, 19 Jun 2024 16:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDAA155346;
-	Wed, 19 Jun 2024 15:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A4D1586C2;
+	Wed, 19 Jun 2024 16:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rM1UjcI4"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RwqQRz67";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ixht4UpH"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E922153BDB;
-	Wed, 19 Jun 2024 15:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812020; cv=none; b=mpN42/b8LCmt/v4TaKFQS2kF+Bv86WG4Ui7oY2Hl5hPJMTmaISGHa/W8yzatplA/DJ11kqaAnQrfSv8YF/BQxR3QCFBVBrnxqaNLupiJQLZT4Kg0ewnUPArEUNiSKRSeJzmtsUUYmK7jnmPYtdO2w0xFnA/Be0QREUim1B+ZTgo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812020; c=relaxed/simple;
-	bh=dzy8FtS5ptyyjEg3F2+R5n491vJchLvqcJqx3tjkXJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nn+r8XD3FnVjOE37HCkDDEYRasxVZ+b3//eSpHlxS1Qt9ZWiaalo/EIIMzLlut/u5Y6ao+ollwOsMuPWziJVLab7hbUMZJ5LSu3HKqQH6I3+Y+xoG20HIh7VdT5AxsgaBc7+DQZRQFYiUKjJk66JkMhEZAHoLoOwcldcHkNvYMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rM1UjcI4; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=EFmCuyU3FDXod3wDEHBU3uceajQieBgAbma/lzHzBoI=; b=rM1UjcI472M5Qyr+SCi/ILajZy
-	KkHiZBQ+cnq9ftp4IrwDQYAj51jL/7/Cse/o+kIfAAajZhcJO9ASvfVY6IzVl7UBcIC9tar5VNLqq
-	uCrxsHgb3iAvo4v2r3/hrkzwghhdT04M3FJ+rKd0pE7rajavf0s9SRHrfW/3atnL4eXP22PygjED/
-	+dVHYnpY+zBSTEAz2K5w+rsi67zXjO3DUhbYFKxJtU8T6ZyLB7oaZuoqXehVVVy3OdQXQBczw+Aqf
-	ZosZeIl0hZtNK1mJezMZ7up85kRigTc0nxaPX2BzjVNHBmeKy+mXDliUB+RHYHGT8KeZxmWonH/Ws
-	J3rAi/oA==;
-Received: from 2a02-8389-2341-5b80-3836-7e72-cede-2f46.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:3836:7e72:cede:2f46] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sJxWU-00000001suU-00Op;
-	Wed, 19 Jun 2024 15:46:58 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org,
-	linux-bcache@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-raid@vger.kernel.org
-Subject: [PATCH 6/6] block: move the raid_partial_stripes_expensive flag into the features field
-Date: Wed, 19 Jun 2024 17:45:38 +0200
-Message-ID: <20240619154623.450048-7-hch@lst.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240619154623.450048-1-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88B0152787;
+	Wed, 19 Jun 2024 16:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718813039; cv=fail; b=UGhQ16hcdOXbGDsz+P/I2MAwGZ5anDqEYfcyJd1gBzRQFleR39TVt53dA9nqrdtMD6kUSdR3KKN37E260tc4g7poY1kM/xfc42P6OoOlwFC/khbRceC1Z02otICtlFY+pwyTIC9B/kl4J5e+OiiHS5ZcevePewr9vCqAK+6HGlY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718813039; c=relaxed/simple;
+	bh=OC90+sgQOjqJb0+gkledryNcHMeeVp324e/UPoxW5bo=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=MtrDw37tuCeb33ZQJCXeyeTZ3zgq1Om6XTOqmuVOhfo+AUEfQ/65Jdw6kVfUp8d4TY9WJo2y/f84F+0/MQvK6oSEcHbinlWYQ+Ru9I/jS9tlD+kiTiiWk9WKFSkRJRI0t6HX4OIWWs5ngrgTvyXLq9o9hqV3RP10JueGWaPwEok=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RwqQRz67; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ixht4UpH; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JFBRnq026171;
+	Wed, 19 Jun 2024 16:03:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
+	:cc:subject:from:in-reply-to:message-id:references:date
+	:content-type:mime-version; s=corp-2023-11-20; bh=jZz6Z/2aYj5vCV
+	d71aSVK7EvWm1fbfvst6zPsOFVDnQ=; b=RwqQRz67169WpO8n7PrmsW2+kAcVgq
+	M3oHmWtlHcNHbXWi28lb8NHDOfGlHen1ZnPTjwnSFjouEBlTaXuO0oTLPZg5rR7q
+	0lcovlaRHd2H+Art8q0QwEgmjFjr+wqRG9OyWu9ghgmfg4nEWn6H3kXJGQURAqAM
+	cwVaWiPXFbcGgPU6g0RdL90l5b0564234LUCrLA8nUj/s/jV8ToCu1ZqrkdDEFek
+	q4EPQkHG2cATfz9b7Sv6Q3dN3TvkpSGyURyr2UWQnLYbrEf5/I801+NhaeF895ze
+	FzUXEdr8Xdg2X2RQcjc1ayeqdgE++HZtgsKex+8VwSefxs0PUAi5rogg==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yuj9n9kcx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Jun 2024 16:03:51 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45JEaOsG032918;
+	Wed, 19 Jun 2024 16:03:50 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2176.outbound.protection.outlook.com [104.47.58.176])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ys1d9fkd3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Jun 2024 16:03:50 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CUZOrmx3AFqYx4rYIo+qYd1yTowBTk78EuuqjxcEMuWTAGH1rYPgrZY+N6FGOdUSMat6hewBfn2RW/FYVSsf3R8u7QDpb555lezk94JfgWDk+kwcHNexOZOJE+o/MMDJ3dairJnHnd61pIvDniWBgjcFPR7PSWMSZBBYU6xEimHdwuEvuYhwKLigGr3lqZhpCbRJW6HZDgd1GkW4jmouW9LH0vPo1s6ic0USyrjcy7Rss/MHjWh7Nib8pAnK8XfRmvvgT4BNaJxauJgcYMJ3VF4BkdPTAc7QEkHmHj/tB5XaVzujkQbXnQjDIRCC5JVR4FfXQSKlisILUnAvsN3HHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jZz6Z/2aYj5vCVd71aSVK7EvWm1fbfvst6zPsOFVDnQ=;
+ b=TCzGjSEFhjAf2tm8uAHbpFfZd+oegoK3EeXqkMGw/UyvF9ewEua3Me9qUAX5AciCwvnZvCYj3GVXh1ucQXyk5QrfoiyIDWKZ5iNww7U6IEK/0Rd1UhmV7hzG5pG8yzAzWmvcbRkGw5wQdneLHoWwgPooeem1FBorZZIXT6ZTfQfhEieqsPSG2RvpI8Wfi1EzucfSBugKOnBKBOCi5adE4zL6Ac5wv5jLnqtQ7SvRW8xK6JyGl00vAJDvDtNnAChdq2k21jyYIvs8l5a6vOQ+mhWQhOFb/a/73zxxpG5xWCoCVQnoa93hBMI3tWiMelsEM8Yy+FdeTDryVVMfLWGF8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jZz6Z/2aYj5vCVd71aSVK7EvWm1fbfvst6zPsOFVDnQ=;
+ b=ixht4UpHqvMX8ROvWhhRiNEkhl1ZwOn7e3K51dZeAZZ4CiR7sJbz7hPU2FhQzrveD1BPIiak5NI39zHFyWfBDwaNxsCbn78+I2pyvfPdA+1obeanSIPTVPVCPwl3Rp39EALZXAPhqYD1N0yNmY+W66aorssyEObuRkWelhSEooo=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by SA1PR10MB5866.namprd10.prod.outlook.com (2603:10b6:806:22b::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Wed, 19 Jun
+ 2024 16:03:47 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7698.019; Wed, 19 Jun 2024
+ 16:03:47 +0000
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
+        linux-raid@vger.kernel.org
+Subject: Re: misc queue_limits fixups
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20240619154623.450048-1-hch@lst.de> (Christoph Hellwig's message
+	of "Wed, 19 Jun 2024 17:45:32 +0200")
+Organization: Oracle Corporation
+Message-ID: <yq11q4sq5rq.fsf@ca-mkp.ca.oracle.com>
 References: <20240619154623.450048-1-hch@lst.de>
+Date: Wed, 19 Jun 2024 12:03:45 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: BL1PR13CA0178.namprd13.prod.outlook.com
+ (2603:10b6:208:2bd::33) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|SA1PR10MB5866:EE_
+X-MS-Office365-Filtering-Correlation-Id: 195024ef-55a2-4c30-0315-08dc9079673b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|366013|1800799021;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?pDrri9vdSsOkqRLhivExoGg1Qbeht7b2fxIDL7LPHvMOuQZzy2rhpIzDOvzx?=
+ =?us-ascii?Q?jewJYvvEArfaTfQzPPtqyHanj8keG/9nW0O+CZP/AXwD1kjPN3Vtie6UWL0R?=
+ =?us-ascii?Q?DpcWrxaMZR+i47MztWxe8JFi5XOK9P4X2be+nDQpAU1thP9610FElwmq07YW?=
+ =?us-ascii?Q?e9THNcX+1MeNKVrK6KBuUyR+9ZSv2hCfPMZE3o8ZQItrGj/L4TLjNh8lTw+x?=
+ =?us-ascii?Q?0+kxKXqlzG+fNJx4MiglefQPpJXVu9mcOGzZJj3CjOzDIivsg8rTNXemVF6d?=
+ =?us-ascii?Q?Js9NohAAq0e0P+kE4MIKUw4pYDXW8Y1peKhFVhHPT2lFqb0I7Y47eFGU0R4z?=
+ =?us-ascii?Q?VzaDYk3E6wIP/7pAT0LLfrECCHq7DhRtL7jHyMqIxtWCIwkSF8WL4BM6jJDr?=
+ =?us-ascii?Q?v5rGlIx7l0lwXpmzxw9yxeL1V/PF69tV1dQQ36Hdss5Xap2uUW1iNlkJK2rt?=
+ =?us-ascii?Q?gLTG1uBZBj5WrNg7nQZANS0T21g0USpwaL8W8C5cx+Dzk+drWKDBK+uEl8bF?=
+ =?us-ascii?Q?Pn5y53h+H5DOBzxKrXVP1cB0htHKQkzhpo7HBjwvmJDLpczAarBg5jZYJgD7?=
+ =?us-ascii?Q?/ZFtIKR6Igcq+TGEMjH2iMm5nzP6HYzi4/DePXd1V2ZgZgV1nHWHq23m3pR4?=
+ =?us-ascii?Q?eaiUlFnCJSk9Mi2E1vYvCDHe9iJhxpuIFJypfGIAtfK0DYESP8CHEDahnWm7?=
+ =?us-ascii?Q?Jurom0p/1HyZ/264mdDaPc9NYxJSC8GaKIYEZakBwMTc++YZpdk5wJydBs7c?=
+ =?us-ascii?Q?VmynjcjqBTGC56+pXKllaQgwvGkOlUN1Y/Z5pag9ggb+BUW0033/fm14j2ds?=
+ =?us-ascii?Q?S+k9Y/dY2QVnmIxs18s1UtGUCmLDEdm9FZHZYBuLeHtL+HDsQP1JgMpBzvaN?=
+ =?us-ascii?Q?VUfpaA7gzVsk11lwIKq1vz0+USIPfDNwYiEEtDXYu1PiSONOOA/nu2KHiz2n?=
+ =?us-ascii?Q?eT92x5hv8qU+Bl/ydUu++tvg64K/i1zH3CM7XDmsaRFNr6SH1SbUt3HaqMO0?=
+ =?us-ascii?Q?1MLNvOA5tjm1kyd1ro8I5a/UfUjpPWhxXKMsMWX+ckrEtAs0VfpMPCVzNBgg?=
+ =?us-ascii?Q?CCPAuALPIEIZDtE+U33WaoDHh8W+gNJcvwnhjCzyJL/Ywn8U8i0jTysAODsa?=
+ =?us-ascii?Q?2rgRFTiJ66LzgwvcImjhJ4REzObqi3mfxTFzRJxXRUiq3GPwGbf8MQ90dWNm?=
+ =?us-ascii?Q?YwAUe83HQn4YcGYdZnQ82lNYfCeP9ieV4Zv5+srMbjfzTAoP7dXJNxQ+LJFm?=
+ =?us-ascii?Q?A5tqj02qfljddtPwjpxIL6GOqKQdkc1RKCR/RrL1s3aS+IN+WU1EedgQu6WJ?=
+ =?us-ascii?Q?aJM=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(366013)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?d/Lppai4yNg8V0Fn6UnoD1i8vr4cOl6Tui76jBvm/99QABugbZxZE1GH/lCw?=
+ =?us-ascii?Q?wZThR70FdHKuPyeY1zOL06I/hvS4EbfVEQTNSAVH+FoAYk8otrtUTcCAe/bE?=
+ =?us-ascii?Q?wO+tY/cZBJmjBQXEH5aNcXXRQtgvSEWTUA7T8egAJnupyNKmuqFSKLp1Qi2C?=
+ =?us-ascii?Q?AUofaeT0G9Z5fxM/3LsEZB/VP9t5LEp3lQfCTrt8w0dSXJyvkH+xZCzg3s9H?=
+ =?us-ascii?Q?LYeXUGc9GF1JTFaY5iadW06kYgchRUvLQHJYOgZfzEwM0LF7rrjAj4VZew6Q?=
+ =?us-ascii?Q?G96XCroW2v66EL6gy8TERq3feAfgqmAIXeaprZ8OC0W0kCg+WzX3dL4gm2bo?=
+ =?us-ascii?Q?grAAF9Sg0txDT8OJYcpbwVRbAiTMSumjPYTQDCj8G2N6O/LFya1zznqq8qar?=
+ =?us-ascii?Q?aVhcLVlJSUYpq3K3lVF0TjjfIiwJL8hUbCIj3q6yHwKJFm/2JeW7zxlLytpY?=
+ =?us-ascii?Q?MFqmh733bvROMzPliT2UmBxC5XgfxT9t/iYjJZTPe+froq1L1253HLBIP1Hb?=
+ =?us-ascii?Q?Q9jt0i8PuYnODkDVz2K09/FtmvBeLLamlzCa/ybNjjDnH4D4cgn5zem1Md/7?=
+ =?us-ascii?Q?mOTV9xy8V+xK3lnTfPNMmdbA69e0rD67sPpBYPHjhlggnC0DtonjS/geHX1h?=
+ =?us-ascii?Q?QlrjLBfmCBUhnFYyck+PKc0KKThC5gy6cRV+LoRrxtvV+2X5KO2kjOr183tQ?=
+ =?us-ascii?Q?g4nvnGnFSa3vj3nT3A0rfK10+JPzORwY90mC4JRRGJk+3jHTXSyz93loF9g9?=
+ =?us-ascii?Q?eE0oKkKo+kAauYxboCF+B/1Xcp5L31l7+M2LydwgMY6pe/Me4vp1LoSdmyws?=
+ =?us-ascii?Q?gX8M78XTz0aO+Cirr+oXFWIpiPhuqI8MzoJvWEivjUpl0wiy/rdj0nlQ9Hu0?=
+ =?us-ascii?Q?8t6aahq/C7gr6tkGLAhjiGGVMv5JI+G5zME78/eaQVMWP9XU4BU9b4URUOPN?=
+ =?us-ascii?Q?qI0XGDhJR7msG36eIUSqdyh/O/bOlXDaaSdY24+9B8m8KA865s0KWSbW1SgX?=
+ =?us-ascii?Q?gQKCUmxRX48o1dn07wg7CFmzciVCmIBS/l4+DeXJqRy4yI/YCpyf/bFJ3hBE?=
+ =?us-ascii?Q?o6nxmnnT09XwPp5BZmcAV/wH3ppxEYam15c4uJD8G+bTHsU4cOezvuxiS89x?=
+ =?us-ascii?Q?IeDxRobpZwLurJR1sCRUuPNsDm/5STINeFZP5irEu20fDITOrlZiXP8kXoBN?=
+ =?us-ascii?Q?tVcri+l96Mhy9PAz43LBomsplPZlxiWclfZNTUNcGxHatEEj02nZVvcKn2Dy?=
+ =?us-ascii?Q?3ImJ6OBPIdL46maP+QddaAogAcWJdsvPbABDy+JYilnmr95ElxGhpTHr7l8d?=
+ =?us-ascii?Q?N8qoLa7ad5clf9nHt804BBAEL1jn8c4zDoO2OjmLh6iFSOSyC7zW+K/gqymq?=
+ =?us-ascii?Q?b3lwzOGTgTu9vT684gZcSqa43GecboOwsIAGU/Sw/P1TMPoWmG2UJP4Oc4xG?=
+ =?us-ascii?Q?+WMlZreuCTuSfRze9bQjCRTvA5KnwqkJzm+4qAK+VZEmMoKbiS/9UurF6iFv?=
+ =?us-ascii?Q?pvSQn0TfxpNLBJMfvoTucvnkb5lkbZL4Ax6SBTiDWq5aciN7dgyTppBfZF3Z?=
+ =?us-ascii?Q?rGJpsxV9sgh1gfxGyv3IlWj5JSnyd7Zy49hGFy7Y/Gn7DcJrKn/rzqYvppqc?=
+ =?us-ascii?Q?tw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	kUVDUV2/UOCMXOCpcJAN8G3PZx5QOZgji9DXr5kJfUrRv42qv4tvn/plhvJAEYKXMSh1BCSd1OMmO17hTZSWiVLS8CeFN+QnkHNCez2K7tZe60+sgbs1g1LfS0HYDFR2DrgekudswY1t3Zs9zoDnGF4TJWtetVQ9+NUTixmDf4KEnXqLV0/exAX7vNd5Qw4NmJVxAHG7rRQlFukxBD2ztH23VZs2qTI+QNRUPDNNM35Egzqsxm/JIV8sDdBEOn0d2X3hXhsk1d7EXzVCWmGJBE9cX4wIrVKFLtmiXqY9wcpKE75VKg0CtURT/nJyZS/w/3+9l0hUu7RcDnhb3k3ggC+JrwvMmQk4Nh7VoK/ndsB9oVSSIO1gt/5Ww96Frwkkqg/+5zdj6sBkGqa95zcxQWTXOY63vBlxSm2kt2KMR+k6GsnyoxojxG/mk0VeVyZRhhbb7Vu5pckJ9Bhydg6xXRbYeGmdAcVRCh4HAd4fVhx0pK7KsGsoo8gn6/1s9ToPCkGL8yjqCNPGWNGuyvIzpHyGCA9bx262Oqk4GQ1GzDtgletAMfkZ+ubKGfPOlL03FsWZDVbYGNoEXo+tcECYGb5Mo/4ozLbgMHQr8/GukaM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 195024ef-55a2-4c30-0315-08dc9079673b
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2024 16:03:47.8182
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ckq/G5WhZzyimstuvphcvxCkH9gpgxmzK8xCnT1Mt7ISZ/VTIMnlXH0tisMCkDMKnJHbZhEpSYnBg6wiVt5xfYDKjyUrNB83bvoYMqJfBDw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB5866
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
+ mlxlogscore=999 mlxscore=0 phishscore=0 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406190121
+X-Proofpoint-GUID: 5yBRfaQq8K5F5PhHR-1kN0YPIY3jCGG2
+X-Proofpoint-ORIG-GUID: 5yBRfaQq8K5F5PhHR-1kN0YPIY3jCGG2
 
-Move the raid_partial_stripes_expensive flags into the features field to
-reclaim a little bit of space.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/blk-settings.c      | 4 ----
- drivers/md/bcache/super.c | 4 ++--
- drivers/md/raid5.c        | 2 +-
- include/linux/blkdev.h    | 7 +++++--
- 4 files changed, 8 insertions(+), 9 deletions(-)
+Christoph,
 
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index 62588d9a38e39a..008fed84edb432 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -556,10 +556,6 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
- 		ret = -1;
- 	}
- 
--	t->raid_partial_stripes_expensive =
--		max(t->raid_partial_stripes_expensive,
--		    b->raid_partial_stripes_expensive);
--
- 	/* Find lowest common alignment_offset */
- 	t->alignment_offset = lcm_not_zero(t->alignment_offset, alignment)
- 		% max(t->physical_block_size, t->io_min);
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index baa364eedd0051..283b2511c6d21f 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1416,8 +1416,8 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
- 	}
- 
- 	if (bdev_io_opt(dc->bdev))
--		dc->partial_stripes_expensive =
--			q->limits.raid_partial_stripes_expensive;
-+		dc->partial_stripes_expensive = q->limits.features &
-+			BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE;
- 
- 	ret = bcache_device_init(&dc->disk, block_size,
- 			 bdev_nr_sectors(dc->bdev) - dc->sb.data_offset,
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index e875763d69917d..72f91eaa3201c4 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -7707,7 +7707,7 @@ static int raid5_set_limits(struct mddev *mddev)
- 	blk_set_stacking_limits(&lim);
- 	lim.io_min = mddev->chunk_sectors << 9;
- 	lim.io_opt = lim.io_min * (conf->raid_disks - conf->max_degraded);
--	lim.raid_partial_stripes_expensive = 1;
-+	lim.features |= BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE;
- 	lim.discard_granularity = stripe;
- 	lim.max_write_zeroes_sectors = 0;
- 	mddev_stack_rdev_limits(mddev, &lim, 0);
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 86410ce41bf60e..1fa2b148c20696 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -328,6 +328,9 @@ enum {
- 
- 	/* bounce all highmem pages */
- 	BLK_FEAT_BOUNCE_HIGH			= (1u << 14),
-+
-+	/* undocumented magic for bcache */
-+	BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE	= (1u << 15),
- };
- 
- /*
-@@ -335,7 +338,8 @@ enum {
-  */
- #define BLK_FEAT_INHERIT_MASK \
- 	(BLK_FEAT_WRITE_CACHE | BLK_FEAT_FUA | BLK_FEAT_ROTATIONAL | \
--	 BLK_FEAT_STABLE_WRITES | BLK_FEAT_ZONED | BLK_FEAT_BOUNCE_HIGH)
-+	 BLK_FEAT_STABLE_WRITES | BLK_FEAT_ZONED | BLK_FEAT_BOUNCE_HIGH | \
-+	 BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE)
- 
- /* internal flags in queue_limits.flags */
- enum {
-@@ -377,7 +381,6 @@ struct queue_limits {
- 	unsigned short		max_integrity_segments;
- 	unsigned short		max_discard_segments;
- 
--	unsigned char		raid_partial_stripes_expensive;
- 	unsigned int		max_open_zones;
- 	unsigned int		max_active_zones;
- 
+> this series is a mix of a few fixups for the last round of
+> queue_limits fixed that I had prepared for a rev of the queue limits
+> features series, and a bunch of imcremental conversions that I didn't
+> want to bloat that series with.
+
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+
 -- 
-2.43.0
-
+Martin K. Petersen	Oracle Linux Engineering
 
