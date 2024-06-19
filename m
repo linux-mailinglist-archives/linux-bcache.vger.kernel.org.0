@@ -1,214 +1,182 @@
-Return-Path: <linux-bcache+bounces-667-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-668-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BFB690C181
-	for <lists+linux-bcache@lfdr.de>; Tue, 18 Jun 2024 03:42:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E42290F02C
+	for <lists+linux-bcache@lfdr.de>; Wed, 19 Jun 2024 16:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E641E283CBC
-	for <lists+linux-bcache@lfdr.de>; Tue, 18 Jun 2024 01:42:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 673461C242C1
+	for <lists+linux-bcache@lfdr.de>; Wed, 19 Jun 2024 14:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4C017740;
-	Tue, 18 Jun 2024 01:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD15125C9;
+	Wed, 19 Jun 2024 14:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Kvw9/6by"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YYKvsL3V"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2078.outbound.protection.outlook.com [40.107.94.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352B515E9B;
-	Tue, 18 Jun 2024 01:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718674937; cv=fail; b=iAUuTvhU0e33BOEJds+E/ob/MjRW3Fip6wEoJLE5UbIJ+4JLorDjYOFNkyTTjexQMyWRf0ycPy3vvIy6V3YKQ4Bf4s1BC/C4cYuuI89inufBagax8EcKuvEnT00W/LT2/YAUEKDkTeLUSHC8fEAy5kVc3HgvBZu/hTylNjJsWdU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718674937; c=relaxed/simple;
-	bh=AvqBCrHLxrSkVI4/ya++JVzMGTBvamOk/ZlCrkTQ4C8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=q/+xyPXIZ+B/09bkDvg26rWQgAYark0Se0Es8LGZrU5kgVbGH9QRuYSJxkylQnPFT7yzvYDjWol6u4l8s5aV5Ar6KouUglMqsQWoJ8TxnzXEBVQ0jNS3bW8RHwiLSWWyYUkKYb+8tD22mh9IqHqsBERRFZlqJI2u1aocckoXflU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Kvw9/6by; arc=fail smtp.client-ip=40.107.94.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cz6BEx4CprwjUxnx0wQGmK6ABnqQWoGDgcRu/HJcZVFncWnK6kkJMxQwJgzNmkGBgJDxs1C5pfHJIJlJNxLkKUoHRhe55E9KBNgN4T8l3DdIRdurQsiEsoDU/8yCvyXv23fPA0C5hoQIfAPsbdLbOMaG0Vp1c1umIALwICbm7LsGSEyqcgarrbIB+KRK46DDD6isw4/YQcIKk+QvaLzvn/YsaxUxwmP9cMUGcdyCMTnUnoIkRxn8t2oIu+I5q5XFgUCKJXDVUOq9O842RKlRfO/liTF57I5HbpvEOBejQwm3kQhlcvnsheVMTbxxhgYbh1x8KvpyqFFJGcg5w3m/mA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AvqBCrHLxrSkVI4/ya++JVzMGTBvamOk/ZlCrkTQ4C8=;
- b=iUD50X4pidXQFI7huAOAJe87IqTyF/Ec9wz+31dsQNX1kwzoDQwj20XfhW3EwHvi+aHGlWohHu4c9v6YkpknXy7zcopHJfGnCLMIqyKdZmxW2GOCO3ZQh+vUdfy1Dj1JIunF++ZK/4x6Z3h+Xkt1rI6mN/OkoxoujCMs+TYq1xsdJiLHUuDJodIzcaOlGiOwOTcdZFoRXz66OwfAhxkJi/5GY0bwUfrU22Vf0dLd9vhBHjnpj8fRAB2dcYDqSJQXIhOuWj4SE4PflMDWQtVEUG5xsCzJ9bH0D7sYzTfgPaJZ5CbZjjAbBMlAjwUYWqWWChvyqyBpkvqdMc3gtg2CTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AvqBCrHLxrSkVI4/ya++JVzMGTBvamOk/ZlCrkTQ4C8=;
- b=Kvw9/6byNcgTDwCWHNJ8GC7jvqIfi3Ip1Pk/zNEco5FhrEdCCo15nbxxXFeZVMEIqEVwn5h3OCG4k8T7SMW72s6r/MD3i3OdZo7Fs2PG+lJoACJMG0Sl6ro0JsTSO7OaQXovekeU3RfCe8URm2SAbsB2G3sQ17t1oPiXUYi1ajWBqSi2yOKH/M3Q3k8Jp1EV+bGDZ6Q4mg+tldO0d3ugw9IU1/dnD7+Vpx4fCYJKfldOKXD3qpZ859mRFvvCGUlEtVQU87Z3Sc53cm6zfBidI3VyJkqFWr1jGgngBPEknDtk612To35RVbnnUvcaT5U3jM3ZhTIErcNTXZ+etRhkAg==
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
- by LV3PR12MB9143.namprd12.prod.outlook.com (2603:10b6:408:19e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Tue, 18 Jun
- 2024 01:42:13 +0000
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.7677.030; Tue, 18 Jun 2024
- 01:42:13 +0000
-From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>, Richard Weinberger
-	<richard@nod.at>, Philipp Reisner <philipp.reisner@linbit.com>, Lars
- Ellenberg <lars.ellenberg@linbit.com>,
-	=?utf-8?B?Q2hyaXN0b3BoIELDtmhtd2FsZGVy?= <christoph.boehmwalder@linbit.com>,
-	Josef Bacik <josef@toxicpanda.com>, Ming Lei <ming.lei@redhat.com>, "Michael
- S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	=?utf-8?B?Um9nZXIgUGF1IE1vbm7DqQ==?= <roger.pau@citrix.com>, Alasdair Kergon
-	<agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Song Liu <song@kernel.org>, Yu Kuai
-	<yukuai3@huawei.com>, Vineeth Vijayan <vneethv@linux.ibm.com>, "Martin K.
- Petersen" <martin.petersen@oracle.com>, "linux-m68k@lists.linux-m68k.org"
-	<linux-m68k@lists.linux-m68k.org>, "linux-um@lists.infradead.org"
-	<linux-um@lists.infradead.org>, "drbd-dev@lists.linbit.com"
-	<drbd-dev@lists.linbit.com>, "nbd@other.debian.org" <nbd@other.debian.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
-	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-	"linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-	"dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>,
-	"linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-	"nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, Bart Van Assche
-	<bvanassche@acm.org>, Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke
-	<hare@suse.de>
-Subject: Re: [PATCH 12/26] block: remove blk_flush_policy
-Thread-Topic: [PATCH 12/26] block: remove blk_flush_policy
-Thread-Index: AQHawHz28nZoEIRw00+RUjxGUtmA5LHMwIGA
-Date: Tue, 18 Jun 2024 01:42:13 +0000
-Message-ID: <1060c01c-febc-40d0-95ad-0be879c05545@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E848014A82
+	for <linux-bcache@vger.kernel.org>; Wed, 19 Jun 2024 14:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718806725; cv=none; b=Jb2+aenlkZMFJ0334TETGDIPSosK+xKKxPuoqdxF01hbDLVe5xXrJ//GPac8FciqNH+y8o8wFufVSO6prdzYt12BdhTgQYUQtioveKhscEY1bVvwe3Y6zjfJD2TSPxSniEBlafhZCfWwResglw1q18pUOk0XU1ELCEWr5iy7/yo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718806725; c=relaxed/simple;
+	bh=QWK4q+Z6QaRcjKIsA7MnW3f/QFVZHOJVpMu7UnF/4Ms=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WL7NYQR9FDMdgHXt/pdUA9q45/NiKbczGEum8bQxomQWArRUEviCRN2yjyWmDDIKPRuXpeEq8czC0gAHpCCaSUWT58O/CCHpxU7N9BdaAX3+yTDmyHAxnegt0DRaBMx4UqXsDU8ukc+LhfL2di/GIZpjmuqo3WTDwjqESzvxLTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YYKvsL3V; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-6f86dcadb14so170629a12.1
+        for <linux-bcache@vger.kernel.org>; Wed, 19 Jun 2024 07:18:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718806723; x=1719411523; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kVFpcyqMw7891fhn8oME2l6O88u8sGFZorCmmUmii2A=;
+        b=YYKvsL3V7pFte5XJ+EgV6Rr/aZQKDUNVDjBzLYhcJOZY9sv3lahrntnmepmQ1N/nsE
+         kMvwP/e87x23xbRXg6l611pPSUDb2onpuOWYkCGXQ7NtaDqq+YOGOFD9XiZ/ZRQO9DOx
+         VeocFfIQ61zRcVGgIKpqe/Ckdbsx8HxTk8Wv/LvgIGUL8Crkdh+orFTuksw6ceLd6pfe
+         TWIAkqwCz7ablOCKmpnwXK+s/k/1CLq7D1GOR3TlJJf2xBv0cqZ6g13XMZC/QjAJb0yp
+         /szfdrT8dBU/XeRzCN7VaBOzWf6+41YxO2boQ0vuoJRNJwD8pEbOK0DUgLebnjyEr3rQ
+         tvrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718806723; x=1719411523;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kVFpcyqMw7891fhn8oME2l6O88u8sGFZorCmmUmii2A=;
+        b=PMdL3WK/nZsjQtLdCtILZklpmmNdVW+TeKmiXxi4sMW/ABdFHDqROnMAvFcFJLojAx
+         3KW+vQ0SlPZksq+GSKNGkcLvPIIXVmgsfW9R1473o6EuYTTKwCUx8QrEaVwmXnjXYO6o
+         DGqpWcRO/s48LmciHycafE02V7/RyKPs4UR/BsQ1GZ9seJBeEPM/a9OBCddwpRkE2xNV
+         zVrODpBu1Rvg4TmQm8REqZEKgL2x+/ysOYceZj4bD+XqWhX2vgTqKeUepiMc+yJWMgh0
+         hRJhR4Q+NAK/YeuRt7oMQP/h5bMp+axvK6B93qgNcXnlj/c26uYmjH3y3ddLCrqneYx3
+         fTXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNUyxPE/1LZrbL36zQcAw2H+o11M2kct7LujldgtF+bdg7uNpw5Pbw+WCUSnTAlQAIWxn6EBCw5QqkKxXQAD+KShzXOyhQZjbfH+4A
+X-Gm-Message-State: AOJu0Yy73Mzt+qmx12/tuYXcKoX+VxcKfAO+1TyOloQomSFaBZJrdZ19
+	GhN36DU9geyzGX8/7eDoM4ZlfjbFKyHGXgLu/Ls9OHMMmaTpn4OUiseSB3j8SzA=
+X-Google-Smtp-Source: AGHT+IEWR0naxsjqG6PjL5n5tEp1Ci8rJdxP3J1CbAApgRxLYFkmM+R0aL8qHW5Lv8+tjuuvrYAkhg==
+X-Received: by 2002:a05:6a20:3ca0:b0:1b6:fadd:8862 with SMTP id adf61e73a8af0-1bcbb8ce3e2mr2590711637.6.1718806723107;
+        Wed, 19 Jun 2024 07:18:43 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb3d2e8sm10689218b3a.107.2024.06.19.07.18.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 07:18:42 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+ Richard Weinberger <richard@nod.at>, 
+ Philipp Reisner <philipp.reisner@linbit.com>, 
+ Lars Ellenberg <lars.ellenberg@linbit.com>, 
+ =?utf-8?q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>, 
+ Josef Bacik <josef@toxicpanda.com>, Ming Lei <ming.lei@redhat.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ =?utf-8?q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+ Mikulas Patocka <mpatocka@redhat.com>, Song Liu <song@kernel.org>, 
+ Yu Kuai <yukuai3@huawei.com>, Vineeth Vijayan <vneethv@linux.ibm.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ linux-m68k@lists.linux-m68k.org, linux-um@lists.infradead.org, 
+ drbd-dev@lists.linbit.com, nbd@other.debian.org, 
+ linuxppc-dev@lists.ozlabs.org, ceph-devel@vger.kernel.org, 
+ virtualization@lists.linux.dev, xen-devel@lists.xenproject.org, 
+ linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev, 
+ linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org, 
+ linux-mtd@lists.infradead.org, nvdimm@lists.linux.dev, 
+ linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org, 
+ linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
+In-Reply-To: <20240617060532.127975-1-hch@lst.de>
 References: <20240617060532.127975-1-hch@lst.de>
- <20240617060532.127975-13-hch@lst.de>
-In-Reply-To: <20240617060532.127975-13-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|LV3PR12MB9143:EE_
-x-ms-office365-filtering-correlation-id: 52b9fe8e-a740-4958-c050-08dc8f37e0ba
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230037|376011|7416011|1800799021|366013|38070700015;
-x-microsoft-antispam-message-info:
- =?utf-8?B?K0pRL3ZxUVBESk5qNlErZms4MytiZmxGcDNTSU04SUhsNUJNQTAxaURMNnVp?=
- =?utf-8?B?V1YvT2RxNlhmMWZESGFtQTJXdGQ1QXNMdjFRMVhYUlNmQjliU215WXFKSU94?=
- =?utf-8?B?T0J1UVFiLzAyaEdlNTZYeXpxd0IwRUJrSWF5Wk40TXp6SWhYZGtMMU5zbWdP?=
- =?utf-8?B?T2p1aEJrcG1XYjlZWVM3Z1h3OHpxZ1VvVE9UcVA2UlhjcnFWeU9ZbDBTclFO?=
- =?utf-8?B?VUV3bGQ4L1h3VlF5NlpOa0d2VysrNEc4YjdVU1VnK3MrWkFXL2pIUURuMGhM?=
- =?utf-8?B?K0d5TUFNUDNsVWR0K0w5N0pOQ1ovdDkyT0QxQkd1dGh1NlAza016bktORlM2?=
- =?utf-8?B?cGpqYjg3QmZCSnE2RDVHTFdmZXBwc0YzaklhS0lRVVpzLzFRbGRzMzFKUkU3?=
- =?utf-8?B?ZngzZmtQeDdzQWNyZ0tYNG8vR05WSmNMRWFjWDRvU2NFTVllVXRveTBPaU5X?=
- =?utf-8?B?cUpIRzA4Ym5HRnlHMGRmTFUxSHFkMUkvMHdlbEU4dEQ2NHNuc2NEWVpmdTFu?=
- =?utf-8?B?RUFHcy9PcWsyUW83Z2tMRCtvUlJiNm5ORGUzbXFGVmR2Uk9hYTc1Nnozd1d0?=
- =?utf-8?B?KzFZOWNIRkRnMnRKeGRuRkpQdE54REZ4ZmE3Y3NERlNibENPaFFRL2QyWFFP?=
- =?utf-8?B?YU05V2MxUnRMT05mQ2tpVXE3TEhFMVBCK1V0aVNVUWN1V0pGQzFid2RJTFVI?=
- =?utf-8?B?Qy9yZ1RObmxhOWgwWjVDeDNteGFJK2lrajBFeFN6bDJwdjNoSGhNelZDdm1B?=
- =?utf-8?B?Q3pIR1ErcC9tb1RBb1FMcENTSk9xQ1pkYUdkWWU1SEFELzhrSWp5dFZKcHBY?=
- =?utf-8?B?QTduckxkV3BpVmpEMElXMDlBUjVhMnNweWovMTBaOHQxUWl4UVZFLzgzUXZF?=
- =?utf-8?B?cmdFendlRnRMdHlHdG9HOWVvaUpMeUVBQlVleVF5M0dYbTVycC9oMFlmTUJs?=
- =?utf-8?B?NGd5MEJnaWFnOU0wZFBaWWR1OUk1UWIraHMrTzRiYzk0RHB3YWgyTmZpbmFB?=
- =?utf-8?B?RTNRdXVhN0JXdTdJRmZUY1p6bnFBYlpjZG5ESnlDZTFybm1HeCtjTUZ4bE5k?=
- =?utf-8?B?YTM3SjVQOFRMUG85N0FlaWFsdDBpVDd6NW1nOUZ6M2tNOE95bElKWHFiUFln?=
- =?utf-8?B?YzhiSCsvLzFHdDhGVUVNWTZZMWRNTlh4Z0tFREhoUm44Skc0YlMvdStWeFJN?=
- =?utf-8?B?Y0pEOUsxaWFXVCs3dWk2VVdtU0dmTVlqclNvU2xOS0pmZHV2eUc0T0dyajc0?=
- =?utf-8?B?alNJZnpTRkV1Y0xBRERzZlZUVUl3bFBSYklpWnU2Q2hDak5tZVhrSk9sVzhP?=
- =?utf-8?B?QnJsOTBUQVRQeGhmSDU4aExUUnd2VG1reElqRjNsZHpBWTQvWWVxSWVUaVRS?=
- =?utf-8?B?TzJYTGZMaGxmQ1VWTFpwd1BiZ250YzZnWXRueEk2c1d1U3l6L1Z3QU5qSDRZ?=
- =?utf-8?B?WHRHZ1lCZzlwRFNHbkNSS3hjWTFCVUoyWHRyOERaS2hDTUxPMUI3ZGF5U3VB?=
- =?utf-8?B?WHFqQTZxdlZuM2ZwMU92bmZoYmppQVFOR2E1aVVLaFJsOHAwb2hlWDNwN3NF?=
- =?utf-8?B?RTExc2lScHlKZE03aVcrUWtZN0dBbm1qQ0xHSXY5Rk1NRUhuVGVjYnBGN2lV?=
- =?utf-8?B?NEN5RjdwaURiK0FwY05FNTRmL2dRMUVtd2pSSzlsVDZwaXgxYkg4aGM4RjZS?=
- =?utf-8?B?aWF1bUQ1cFBpZjFPdVk4TDJiTy84ZFB2QW02amgzKzZVcWRIdGdkYWNZbmpw?=
- =?utf-8?B?TlJUKzQ1Tng2b1ZkbGJQSTJNK21PMFhGeW9xYXBIQm5YUldSbG5wTDlwRld5?=
- =?utf-8?Q?49GHNv/izdmHdk+Cr3zKjy9gUkccNSGAIcySk=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(7416011)(1800799021)(366013)(38070700015);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Q0RwQ2hVVWprSzY0c0Q3TS9YMTdpZ2Y1SmxMbVVXek51aDgxVkZZTDNldkVJ?=
- =?utf-8?B?NnVBTHhWK1c2R2tNb0pxMUMxMWJZdEQxeVFrZjBpdkJHNUNRbkI5MnN2OW0v?=
- =?utf-8?B?SWNvc3lydzBYVGZ0eVplYzEyTlZxN1RTQU9qZEFoNHhzQkRtajQ5bWdZWUNs?=
- =?utf-8?B?b2NSUnpiSzR4eEJTaHR2Y0RCUGZGTnlDKzVDVUk0T3J0dlpmQ28wd1ZEdWZv?=
- =?utf-8?B?US8yZDJYREErVGJja2NUbUxzd3J3ekNCeVVBYUtuSWZNYkxyMThab05uSHZs?=
- =?utf-8?B?czJGQmdQV2Zzdml0bVJKeW1ZZ0dyaVZuTzdmamh3c1BTNXNWR2hzK3E0S0JF?=
- =?utf-8?B?RUJ6S1RnUFRoOTdxZWlBTjBETUhzYXM2RHRjSTdNVW8yNTk1a2psOUpPOTJ0?=
- =?utf-8?B?WDBIMEFncDdnanJMc3ErVkZVMFgzaWFUU0pWNGsrenlmN3NZNTFqYzk4SGpV?=
- =?utf-8?B?aStrL2ZQREFoV0lNNkFpazhaK1cyS25XZEpOdXZlQXZtVDI1WGF3ejhRZFZO?=
- =?utf-8?B?U3BBRTlKcnl5Q29yMFpNemxlWG1Zd3FwRFVvajViM2VoYmZOZlVpMlRiUzBj?=
- =?utf-8?B?RTBJam43Qzg5Z043U0k4RDJ0TExSb1JKUjlJQ3dVM2RPbmlVOWFxRUtFYzEv?=
- =?utf-8?B?am1lendYWWZlSldJZkluOW01aEVuZ2FoZzVSLzRNaXV5OUJReWEva1U1ekxs?=
- =?utf-8?B?bkJydHJDTGxyTml6b3VjWEtXUkh0MGFTcWtvRVlia05KRDZTektEREFNYnAx?=
- =?utf-8?B?QUNHNU1JaUFwVmZ3bGg4a2Z1OHU5RnJab2xzM3ZmazFmdVdFV3dVajhZOTVw?=
- =?utf-8?B?L0NtRGRvc2JsTDRDSE9VMjJxTk9iQzIrdzVuakUrRkFMNXMwRGUwcnRSZ211?=
- =?utf-8?B?dEFnbTNJVk1nNG9KZVpWVnI5RWJXVUFQbkpYWlJpSlVXeVdKZ0pwVUZaNzdu?=
- =?utf-8?B?SzZYVmc0S05HTUlkTEltNmVmQVd5cnFuT1hTVUw1YnRqUHc3VTVuM2NlUjdU?=
- =?utf-8?B?Z21Bd1E1ZFpUV25CaU05OUgxUjFGQW81RmVIRHQ3bUozUVBVVml6NnlBd01t?=
- =?utf-8?B?ekJPakJIYlEzK2VlbjdZY2lRTEFNUjFscG9yTnY4aExQV0tZU2dsbWxtTnFL?=
- =?utf-8?B?SnEybzJjMnNwTGJ6RlpzUHJpYUNMRi92NWtFMGdhZzBpWElYUFVJaWh6VGdk?=
- =?utf-8?B?dFdCUU9hSDRnL1hjOG14U1EwZkZmVUxSYlZ3MlQzMFU2Ymk5cU1NRVd0cnFP?=
- =?utf-8?B?ejNIbGprZENqTDZxM0JvNjNOZnIzT29Eazl3cXhiQkErdllkUkltWnRocHlV?=
- =?utf-8?B?dHlxOVpwNDMzdG1GUTNMVVNwT3RJTzFuK1NnS0l6cGxWWUNKdVdtTi9Fcmhm?=
- =?utf-8?B?YVV6NmNMNTFwV3FwSlZ1c3BMRUt3S3hTbHRFdjNzRENCUUxGaElhR3g5MUhn?=
- =?utf-8?B?dzN2MWkwWlVkOUpmaWdLejhvbHNGL2M5Q1E5Vnp5YWNKY05zejI5RitrS2NB?=
- =?utf-8?B?WFhueEd3ajUyb1VaZThRS3JXcGlaZldoZEF5cm8zUU1EdERGQ1pwN1JtRk9o?=
- =?utf-8?B?ejd5SDlzWjZiV0R3VUZlY0VLTFZVREpUcHM1NThBWnZzY1JjbENVOVBtZUxp?=
- =?utf-8?B?VzlFR0Nzc0xRSXJ3SUtvdkhYdVNNbnF6eVl4ZVZjU1lBOTg2UStaWEp2S0Jp?=
- =?utf-8?B?TXYyL09QTko5bmVhRG5xSzIrakZIanJ5Q2tpREJnRGoxdUk1d2pKaXpQbWp6?=
- =?utf-8?B?aWd0KzF1ZkNnRFEzMm14SWFadXBtN0ZFU2JTYU5DTTdRUlVONVBZdkx5eG5n?=
- =?utf-8?B?MDJDMnNvMnQ1bjVvajVqS0lKaFRDRzVXMStrNkI5RVRLQ1lQODVqcVVoR1hk?=
- =?utf-8?B?R0pQYk9BbkRMUDkwaFNYaDFSbUtmeXlZZWJMQmxVc282RzNTQ09CUysydDVz?=
- =?utf-8?B?WEFhMnlSS2FadW0rNzVxRS9aVGNyL2R6Y1A5MU5JeTZESWFaWGZZQjc0S2JC?=
- =?utf-8?B?cDdUUzJycjM5bHl0L3J5OGpWc0lQNnpVcTgvaFNmNUE4aFVBOEJESzhwT1lM?=
- =?utf-8?B?d2VIem9vOFlPYm0xTGRiTjlCd3BnSWZ3TlNEYzRGTUo3bm9kL2JURFBaRnkv?=
- =?utf-8?B?eUMzTlZmR2FxZURUQXpYN3ZuVktudFRsc3g1M2ZmVUUvOEVsb1BldUNnNHh3?=
- =?utf-8?Q?Zf/7lYEfeRH45bcTQWT3N7HCUIX1kADFhrRsQhhvTqW/?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4C038F52BEFB8F419B64CC739CDBAAE2@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Subject: Re: move features flags into queue_limits v2
+Message-Id: <171880672048.115609.5962725096227627176.b4-ty@kernel.dk>
+Date: Wed, 19 Jun 2024 08:18:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52b9fe8e-a740-4958-c050-08dc8f37e0ba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2024 01:42:13.5830
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: o6WqYsOoZkowW1dtrOjCSGbhd3lBCoC6MtH/Y9tz3WCPrl1k9cYw2gR+RauMyHkz5ngZPKhagSHPfMHoDmZi+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9143
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-T24gNi8xNi8yNCAyMzowNCwgQ2hyaXN0b3BoIEhlbGx3aWcgd3JvdGU6DQo+IEZvbGQgYmxrX2Zs
-dXNoX3BvbGljeSBpbnRvIHRoZSBvbmx5IGNhbGxlciB0byBwcmVwYXJlIGZvciBwZW5kaW5nIGNo
-YW5nZXMNCj4gdG8gaXQuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waCBIZWxsd2lnIDxo
-Y2hAbHN0LmRlPg0KPiBSZXZpZXdlZC1ieTogQmFydCBWYW4gQXNzY2hlIDxidmFuYXNzY2hlQGFj
-bS5vcmc+DQo+IFJldmlld2VkLWJ5OiBEYW1pZW4gTGUgTW9hbCA8ZGxlbW9hbEBrZXJuZWwub3Jn
-Pg0KPiBSZXZpZXdlZC1ieTogSGFubmVzIFJlaW5lY2tlIDxoYXJlQHN1c2UuZGU+DQo+IC0tLQ0K
-PiAgIA0KDQoNCkxvb2tzIGdvb2QuDQoNClJldmlld2VkLWJ5OiBDaGFpdGFueWEgS3Vsa2Fybmkg
-PGtjaEBudmlkaWEuY29tPg0KDQotY2sNCg0KDQo=
+
+On Mon, 17 Jun 2024 08:04:27 +0200, Christoph Hellwig wrote:
+> this is the third and last major series to convert settings to
+> queue_limits for this merge window.  After a bunch of prep patches to
+> get various drivers in shape, it moves all the queue_flags that specify
+> driver controlled features into the queue limits so that they can be
+> set atomically and are separated from the blk-mq internal flags.
+> 
+> Note that I've only Cc'ed the maintainers for drivers with non-mechanical
+> changes as the Cc list is already huge.
+> 
+> [...]
+
+Applied, thanks!
+
+[01/26] xen-blkfront: don't disable cache flushes when they fail
+        commit: dd9300e9eaeeb212f77ffeb72d1d8756107f1f1f
+[02/26] sd: remove sd_is_zoned
+        commit: be60e7700e6df1e16a2f60f45bece08e6140a46d
+[03/26] sd: move zone limits setup out of sd_read_block_characteristics
+        commit: 308ad58af49d6c4c3b7a36b98972cc9db4d7b36a
+[04/26] loop: stop using loop_reconfigure_limits in __loop_clr_fd
+        commit: c9055b44abe60da69aa4ee4fdcb78ee7fe733335
+[05/26] loop: always update discard settings in loop_reconfigure_limits
+        commit: ae0d40ff49642651f969883ef9fc79d69c1632d7
+[06/26] loop: regularize upgrading the block size for direct I/O
+        commit: a17ece76bcfe7b86327b19cae1652d7c62068a30
+[07/26] loop: also use the default block size from an underlying block device
+        commit: 4ce37fe0938b02b7b947029c40b72d76a22a3882
+[08/26] loop: fold loop_update_rotational into loop_reconfigure_limits
+        commit: 97dd4a43d69b74a114be466d6887e257971adfe9
+[09/26] virtio_blk: remove virtblk_update_cache_mode
+        commit: bbe5c84122b35c37f2706872fe34da66f0854b56
+[10/26] nbd: move setting the cache control flags to __nbd_set_size
+        commit: 6b377787a306253111404325aee98005b361e59a
+[11/26] block: freeze the queue in queue_attr_store
+        commit: af2814149883e2c1851866ea2afcd8eadc040f79
+[12/26] block: remove blk_flush_policy
+        commit: 70905f8706b62113ae32c8df721384ff6ffb6c6a
+[13/26] block: move cache control settings out of queue->flags
+        commit: 1122c0c1cc71f740fa4d5f14f239194e06a1d5e7
+[14/26] block: move the nonrot flag to queue_limits
+        commit: bd4a633b6f7c3c6b6ebc1a07317643270e751a94
+[15/26] block: move the add_random flag to queue_limits
+        commit: 39a9f1c334f9f27b3b3e6d0005c10ed667268346
+[16/26] block: move the io_stat flag setting to queue_limits
+        commit: cdb2497918cc2929691408bac87b58433b45b6d3
+[17/26] block: move the stable_writes flag to queue_limits
+        commit: 1a02f3a73f8c670eddeb44bf52a75ae7f67cfc11
+[18/26] block: move the synchronous flag to queue_limits
+        commit: aadd5c59c910427c0464c217d5ed588ff14e2502
+[19/26] block: move the nowait flag to queue_limits
+        commit: f76af42f8bf13d2620084f305f01691de9238fc7
+[20/26] block: move the dax flag to queue_limits
+        commit: f467fee48da4500786e145489787b37adae317c3
+[21/26] block: move the poll flag to queue_limits
+        commit: 8023e144f9d6e35f8786937e2f0c2fea0aba6dbc
+[22/26] block: move the zoned flag into the features field
+        commit: b1fc937a55f5735b98d9dceae5bb6ba262501f56
+[23/26] block: move the zone_resetall flag to queue_limits
+        commit: a52758a39768f441e468a41da6c15a59d6d6011a
+[24/26] block: move the pci_p2pdma flag to queue_limits
+        commit: 9c1e42e3c876c66796eda23e79836a4d92613a61
+[25/26] block: move the skip_tagset_quiesce flag to queue_limits
+        commit: 8c8f5c85b20d0a7dc0ab9b2a17318130d69ceb5a
+[26/26] block: move the bounce flag into the features field
+        commit: 339d3948c07b4aa2940aeb874294a7d6782cec16
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
