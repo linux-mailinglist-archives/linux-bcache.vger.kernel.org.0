@@ -1,45 +1,64 @@
-Return-Path: <linux-bcache+bounces-686-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-687-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12019151E4
-	for <lists+linux-bcache@lfdr.de>; Mon, 24 Jun 2024 17:20:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4888191550D
+	for <lists+linux-bcache@lfdr.de>; Mon, 24 Jun 2024 19:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631D01F22F66
-	for <lists+linux-bcache@lfdr.de>; Mon, 24 Jun 2024 15:20:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7990B2595D
+	for <lists+linux-bcache@lfdr.de>; Mon, 24 Jun 2024 17:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1236F19B3ED;
-	Mon, 24 Jun 2024 15:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8482119EEB1;
+	Mon, 24 Jun 2024 17:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8C/s3Ng"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454A51DFEA;
-	Mon, 24 Jun 2024 15:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC301EA87;
+	Mon, 24 Jun 2024 17:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242437; cv=none; b=g+65n3b9JqXhlldieqHuhXDpfi+12aGrwSi49Dd35nG0Z7EmLrMJZUbl6YZcFsOHmyoGRyTO3zvG4h3I/jiYID1sJxWm+NOSs0fnR28YxC6YROPFvOPVDe7lFRDBpd9YH/5i09HuoB1XikQTCaKB9JrsZ0jqWoTghGExPhAd/+o=
+	t=1719248903; cv=none; b=Ak3u/B+r6+h3FmaclxeeDgT0Prv8sodSjcnPYVj9RxtAkpgHrU5J/SlQqORE8vbwZidDO1L0VGFhvqV4yadQhSpSOt9BnUp+KMNh+3tInSB45ELPupdIhhgzAc1DefO3hipvX/cGJlDDTURyvR9kVaTQRvfbvg2/dH4GjZPImUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242437; c=relaxed/simple;
-	bh=/E9O2ottwm4ttwGeO0wU48nA9Dao832H9uEl8uWGVRs=;
+	s=arc-20240116; t=1719248903; c=relaxed/simple;
+	bh=c5IMwi2AkSm61J7nCdd2EBXV6o3vo+7AANeGa2JN45A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oO2uPLbjYj26viXxV2QCI0+ogiZjtrsVggrltLcnDkrT//UClxADbovlPTXOoDn/NmO/Cn7MbTbxCCGdrLonLgdkaRCG0wj/KnR+l0gjaNWVjTM2IG40T8U690wZLAayq2SPMAULWx7OjQJ6+crzOyMURezvRZvwTlQt70sBFio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id AAC0B68D05; Mon, 24 Jun 2024 17:20:28 +0200 (CEST)
-Date: Mon, 24 Jun 2024 17:20:28 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, Jens Axboe <axboe@kernel.dk>,
-	Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=aBJ8TZyaH8WIj2Ts6Q4p6lV2Ty+f6miWRlG1702oDfCCd8MuzgjAxCrcD9E/BqqIYkgMTUjwrncYv+xjFEFBJL/4Q13pgvZRQ3FgyGsc/2HrdI81eMRNZuHojM/0NHXCmYLqGuZq7DE0D7kPuMlWWFTG6l3N7g2zwrg8gEasji0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8C/s3Ng; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682D2C2BBFC;
+	Mon, 24 Jun 2024 17:08:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719248903;
+	bh=c5IMwi2AkSm61J7nCdd2EBXV6o3vo+7AANeGa2JN45A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d8C/s3NgDhBmDzX7X6Z3a8NgLG1XRNWm3AVon41eJewAqY4XNmD50+AdQpjukysaA
+	 0+c9peZEcs8AURzleAxgVmV3zaxrAP0+WMQxnkR3oNoVdRegLrw7QTozLmVentUZPE
+	 P0BMSL1dkoExQoFoaBFFudfcpEmdYCHeKJ0irUoLxUFwgxCKTvfHLKHNHL2RN4iLoh
+	 ki4NFa+liGK52kKToNiMhO53pIJVSGFwHndW7Uw+1UTH4eb3kjlEU/UFxvZz4PM4y3
+	 BbdO/dVn76ts+09ZmrGp9NorxeNYJ2cNYzLcTNejNMPSMmam7/bl5ZZAKhBMTTCFIl
+	 W6hH1Idyq3vZQ==
+Date: Mon, 24 Jun 2024 11:08:16 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Geert Uytterhoeven <geert@linux-m68k.org>,
+	Richard Weinberger <richard@nod.at>,
+	Philipp Reisner <philipp.reisner@linbit.com>,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	Christoph =?iso-8859-1?Q?B=F6hmwalder?= <christoph.boehmwalder@linbit.com>,
+	Josef Bacik <josef@toxicpanda.com>, Ming Lei <ming.lei@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>, Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>,
+	Vineeth Vijayan <vneethv@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	linux-m68k@lists.linux-m68k.org, linux-um@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
 	drbd-dev@lists.linbit.com, nbd@other.debian.org,
 	linuxppc-dev@lists.ozlabs.org, ceph-devel@vger.kernel.org,
 	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
@@ -47,12 +66,12 @@ Cc: Christoph Hellwig <hch@lst.de>,
 	linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
 	linux-mtd@lists.infradead.org, nvdimm@lists.linux.dev,
 	linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org, ying.huang@intel.com,
-	feng.tang@intel.com, fengwei.yin@intel.com
-Subject: Re: [axboe-block:for-next] [block]  bd4a633b6f:
- fsmark.files_per_sec -64.5% regression
-Message-ID: <20240624152028.GA11961@lst.de>
-References: <202406241546.6bbd44a7-oliver.sang@intel.com> <20240624083537.GA19941@lst.de> <Znl4lXRmK2ukDB7r@ryzen.lan>
+	linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+	Damien Le Moal <dlemoal@kernel.org>
+Subject: Re: [PATCH 14/26] block: move the nonrot flag to queue_limits
+Message-ID: <ZnmoANp0TgpxWuF-@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240617060532.127975-1-hch@lst.de>
+ <20240617060532.127975-15-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -61,22 +80,13 @@ List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Znl4lXRmK2ukDB7r@ryzen.lan>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20240617060532.127975-15-hch@lst.de>
 
-On Mon, Jun 24, 2024 at 03:45:57PM +0200, Niklas Cassel wrote:
-> Seems to be ATA SSD:
-> https://download.01.org/0day-ci/archive/20240624/202406241546.6bbd44a7-oliver.sang@intel.com/job.yaml
-> 
-> ssd_partitions: "/dev/disk/by-id/ata-INTEL_SSDSC2BG012T4_BTHC428201ZX1P2OGN-part1"
-> 
-> Most likely btrfs does something different depending on the nonrot flag
-> being set or not. (And like you are suggesting, most likely the value of
-> the nonrot flag is somehow different after commit bd4a633b6f)
+On Mon, Jun 17, 2024 at 08:04:41AM +0200, Christoph Hellwig wrote:
+> -#define blk_queue_nonrot(q)	test_bit(QUEUE_FLAG_NONROT, &(q)->queue_flags)
+> +#define blk_queue_nonrot(q)	((q)->limits.features & BLK_FEAT_ROTATIONAL)
 
-Yes, btrfs does.  That's why I'm curious about the before and after,
-as I can't see any way how they would be set differently.  Right now
-I can only claim with vitual AHCI devices, which claim to be rotational,
-though.
+This is inverted. Should be:
 
+ #define blk_queue_nonrot(q)	(!((q)->limits.features & BLK_FEAT_ROTATIONAL))
 
