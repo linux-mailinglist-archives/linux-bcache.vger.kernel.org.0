@@ -1,258 +1,163 @@
-Return-Path: <linux-bcache+bounces-707-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-708-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE86948B6D
-	for <lists+linux-bcache@lfdr.de>; Tue,  6 Aug 2024 10:38:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5A8948C18
+	for <lists+linux-bcache@lfdr.de>; Tue,  6 Aug 2024 11:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2EB81C22807
-	for <lists+linux-bcache@lfdr.de>; Tue,  6 Aug 2024 08:38:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 506F31C23449
+	for <lists+linux-bcache@lfdr.de>; Tue,  6 Aug 2024 09:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC161BD00C;
-	Tue,  6 Aug 2024 08:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C43C1BDA8F;
+	Tue,  6 Aug 2024 09:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="MlaUS+f9"
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="nAEJxCgS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=jonathancarter.org header.i=@jonathancarter.org header.b="np9OO1uz"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08ADC1BD006
-	for <linux-bcache@vger.kernel.org>; Tue,  6 Aug 2024 08:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC651BD50E
+	for <linux-bcache@vger.kernel.org>; Tue,  6 Aug 2024 09:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722933474; cv=none; b=akkRfu/ge1iHGjAx3AOTeyn0JVa5K0AJLArnixaqW7YOK7tL3vRIW74/XEON89GBnfv3bfjKQZLDYE6x7Jr5WYQU1VzcaFWXY88Wzo1EbBQFEDLxZV4iXb1A4ooW7HCUGh5/1C7OB7qasEjKeWkyvJZzF0g5Kh/CP3ri9tpzIaQ=
+	t=1722936084; cv=none; b=kVI2uy1qiZE8Hcq12fOYQW6KBJ7YzuaSOYwZnmyreLarr8iqPQO7GHWlJpsD378kkmyxSkacHoqGWbZSCXn2/R75Ahr+GpEXkO/tQojZ8dg7O8ph0S+3OuvbVUkRma8wgknRIeFKgcLgqapEQQ8A9lF0mu8YOaqbKZV8WJmbrMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722933474; c=relaxed/simple;
-	bh=F35aLwqiILPCijHBnQlpwwzgTlzsYND2zjk9OXBKLGU=;
+	s=arc-20240116; t=1722936084; c=relaxed/simple;
+	bh=OemcXKUlOGKfrxGp4tbmxuBJNATBLaVCy5GhnZBCjdQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nSjurnE0z3cRQMSfDMNVt67ulm8XngkXosZB3fdn9eAN3JncmW7YG8lNO0OWJa+ydfHB2IxqKtI0DZCrgMRd0Na14BTsLb2Swme6F2CJqUccpzqRJmfyDNNFjGqQ5oquGJihflA8Xflsky9DdQDlN01ExYE74GQ6gCQCxofnF+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=MlaUS+f9; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f032cb782dso2769981fa.3
-        for <linux-bcache@vger.kernel.org>; Tue, 06 Aug 2024 01:37:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1722933470; x=1723538270; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0pKX6magl4mayyJYiocL/Ow+u/r2O2haRF9Xk/LPbes=;
-        b=MlaUS+f9bbk8mvKD7tOP8enq/W0soQ611TtH6buy18W28mTdzaNLtMiIKmqjY5nafa
-         0FPnQIx7ERKgCycGSj/fdslWN3cYpMEthyo5YY2dhi4SHLlummwWnQ/C+R232raNT/fi
-         JBedRRBSUSFRLQYNc9Q2WV4CE+JpzkqeKGMzHoP3sQSoKmG9rIqB/XpreArs1HtTimkR
-         MT4qEORa6gjERnGzhdrvfvASEkQ2YNCE8a7sJyL6atRm7VfypXl7R7amH07HLR4ANq2y
-         R2f7pjbT+/z8TBjUmeftt/3OFW+ZuYM2JUpAqgImG1ScLIwuaiM46GF200waJJa0GgLK
-         5nTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722933470; x=1723538270;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0pKX6magl4mayyJYiocL/Ow+u/r2O2haRF9Xk/LPbes=;
-        b=vH/PFv+mgMvtgXpZeHgzNyQTeFyjb1ZsniKm3X1BWOqSMoDK9YwBHAeAFysl3yZ2ao
-         r7gj8Ji9eoIkUSdAxlPGsIYF2VWDV7tAdEdOuzxxrSqJCZJc3M2cEGwfhiGMVvZ5jJOA
-         r3SxWBsF5gXGCIwh0jDS+oHFlYZSn4JCPtSdy0hTTRW8UxTwYY7p4Ll0iE2XV+g4yi5P
-         dZFFMv1/CjC/DYwGzNZzUGfSP2AzM3ESBCXlNUNKu1cbhuvHmDdOs11dC7xaGcvQAmO4
-         x8rK3Q4TwW1Umoz5F4o3Nbhh7b0GwpHFr9F6w2i8oQdmd4ROMUFVmaE22vIGZxGk88xR
-         NpSg==
-X-Gm-Message-State: AOJu0Ywc18Y44nqgXD++qKWAQr7Pxco5QWVfHvocRdYWlP4qygnKV+tZ
-	r3z4rCfPrPpilYuzMcy7Fl/kezVG2Tm+H4f88mk131fh5MBomSY5X0rNnIsqi54DB/+ONPhOikS
-	egG8=
-X-Google-Smtp-Source: AGHT+IF/1mmA3iQS7vSGDZrRgKwmmCxYZP+7ApvEaerc52qW0Oq+A98CGRDSByuWPnuMwetiNCuIDg==
-X-Received: by 2002:a2e:8794:0:b0:2ef:1784:a20 with SMTP id 38308e7fff4ca-2f15ab0c2b7mr103652901fa.38.1722933469704;
-        Tue, 06 Aug 2024 01:37:49 -0700 (PDT)
-Received: from [10.8.7.139] ([84.252.147.250])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e1b6443sm13791341fa.52.2024.08.06.01.37.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 01:37:44 -0700 (PDT)
-Message-ID: <a69e15dc-62d4-4ab1-99d5-bfb982ab7f84@dubeyko.com>
-Date: Tue, 6 Aug 2024 11:37:41 +0300
+	 In-Reply-To:Content-Type; b=sDqrGxOb9eMOPnENGsI5A+v5oBHyoyFPpFk6Y/sShkydS68ADotZlnGdxaix1Uqo+L//IOmz96fy6mNeOZGl3Ws0aEKX5zjbElHbbT/WBFaV1GKJ0eVe+AP+I94CTrtusMjSGjMTwg9cWMw9qRXTxd0zg1JmzcbjqGnO4ZyMbhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=nAEJxCgS; dkim=fail (0-bit key) header.d=jonathancarter.org header.i=@jonathancarter.org header.b=np9OO1uz reason="key not found in DNS"; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Reply-To:Content-ID:Content-Description;
+	bh=wF6RYCsrwOK5HCey7P4XZb8UnGF/ZMcoMjrBmDUa5pE=; b=nAEJxCgSXMv26Ij1mWvF4/iodo
+	wSAsEgdq65SJ7Ml/Da9iGdLlXdCAqK+2L+QZJXHSRV5MgwN9iRWt2JLF0nme4yLqE8v+/4uWYlOPd
+	I9q3FaIWcIiRSq5QGhzSzBeS66iFry23J2yCQxRnQ4ads7/VHxYO9PtVItgosG8KAho+OK6ZZtlS6
+	FG4fGyo7xpkx08NPwMR7Cz+DLasqBawE3fOOP31vJ4PMdYqv32zzKeQL676DDfesTD4bXza/EUU6T
+	qnSNG5MBiw3dDavxen3ZA72n67ldJpA1QmfcZbHH/A9NvbrfDJ34LTjlOIbg+GTJhXspo6eAjA8KK
+	DPt5s5Cw==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <jcc@debian.org>)
+	id 1sbGNY-000NOl-JU
+	for linux-bcache@vger.kernel.org; Tue, 06 Aug 2024 09:21:16 +0000
+Received: from mail.jonathancarter.org (localhost [127.0.0.1])
+	by mail.jonathancarter.org (Postfix) with ESMTP id 4WdSV254jhz2XLG
+	for <linux-bcache@vger.kernel.org>; Tue,  6 Aug 2024 09:21:14 +0000 (UTC)
+Authentication-Results: mail.jonathancarter.org (amavis); dkim=pass
+ reason="pass (just generated, assumed good)" header.d=jonathancarter.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+	jonathancarter.org; h=content-transfer-encoding:content-type
+	:in-reply-to:organization:from:content-language:references:to
+	:subject:user-agent:mime-version:date:message-id; s=dkim; t=
+	1722936073; x=1725528074; bh=OemcXKUlOGKfrxGp4tbmxuBJNATBLaVCy5G
+	hnZBCjdQ=; b=np9OO1uzuZKP6dRhJCp8DOugaz+onlh+FsHW1s30X10vl3QTY69
+	mPboubv6V4DX3rwy1hdF6LKomtSISxCGfMz+M/nXR19ige/NFUfY+SZCOcOF8aQ3
+	cNXFbOhHsD4hN12yE8X+6GxDBIhNVy62XE8PApB/nYR3pJArSoRfi/ff8kXRle3Y
+	efmM4FlTrUqLCAbj+bKNxjSQf4JUhmuQ9Aan/CMHXpr3vF0nS+FmIFtby9kbW3gp
+	8M42E8c2+bJ+gMMwjwxb86v8NQXPaCk+KriYe4RFCq0r0Vu0JXD6C+7klOHwRdAJ
+	aqrHJoAGBdmcbX/G0yDT/7f/NbhQA8TT89g==
+X-Virus-Scanned: Debian amavis at 
+Received: from mail.jonathancarter.org ([127.0.0.1])
+ by mail.jonathancarter.org (mail.jonathancarter.org [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id OoqEaCXYPuBu for <linux-bcache@vger.kernel.org>;
+ Tue,  6 Aug 2024 09:21:13 +0000 (UTC)
+Received: from [10.8.0.6] (unknown [45.222.31.113])
+	by mail.jonathancarter.org (Postfix) with ESMTPSA id 4WdSTy3JLJz2XL5;
+	Tue,  6 Aug 2024 09:21:09 +0000 (UTC)
+Message-ID: <21872462-7c7c-4320-9c46-7b34195b92de@debian.org>
+Date: Tue, 6 Aug 2024 17:21:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+User-Agent: Mozilla Thunderbird Beta
 Subject: Re: bcachefs mount issue
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- Jonathan Carter <jcc@debian.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
 Cc: linux-bcache@vger.kernel.org,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>, slava@dubeiko.com
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ Viacheslav Dubeyko <slava@dubeyko.com>, slava@dubeiko.com
 References: <0D2287C8-F086-43B1-85FA-B672BFF908F5@dubeyko.com>
  <6l34ceq4gzigfv7dzrs7t4eo3tops7e5ryasdzv4fo5steponz@d5uqypjctrem>
 Content-Language: en-US
-From: Viacheslav Dubeyko <slava@dubeyko.com>
+From: Jonathan Carter <jcc@debian.org>
+Autocrypt: addr=jcc@debian.org; keydata=
+ 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
+ TkkZgS7faBgWCfXaSieOUCHVPkCPtYzWZCTb
+Organization: Debian
 In-Reply-To: <6l34ceq4gzigfv7dzrs7t4eo3tops7e5ryasdzv4fo5steponz@d5uqypjctrem>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Debian-User: jcc
 
+Hi Kent
 
-
-On 8/6/24 03:50, Kent Overstreet wrote:
-> On Mon, Aug 05, 2024 at 09:35:09PM GMT, Viacheslav Dubeyko wrote:
->> Hi Kent,
->>
->> As far as I  can see, I have found a mount issue. I believe that it’s a mkfs tool issue.
->>
->> ENVIRONMENT:
->> Linux ssdfs-test-0070 6.10.0 #15 SMP PREEMPT_DYNAMIC Mon Aug  5 19:00:55 MSK 2024 x86_64 x86_64 x86_64 GNU/Linux
->>
->> I am not sure how to share the mkfs.bcachefs tool version because this tool doesn’t show the version.
-> 
-> You're using an ancient version - I presume from Debian?
-> 
+On 2024/08/06 09:50, Kent Overstreet wrote:
 > Debian hasn't been getting tools updates, you can't get anything modern
 > because of, I believe, a libsodium transition (?), and modern 1.9.x
 > versions aren't getting pushed out either.
 > 
 > I'll have to refer you to them - Jonathan, what's going on?
-> 
 
-I am using Ubuntu:
+1.9.1 is in unstable. 1.9.4 would be good to go if it wasn't for a build 
+failure I haven't had time to figure out, although I e-mailed you about 
+it on the 26th (Message-ID: 
+<2250a9ef-39e0-4afc-8d0d-2d26fbddbdaa@debian.org>) but haven't received 
+any reply yet.
 
-lsb_release -a
-No LSB modules are available.
-Distributor ID:	Ubuntu
-Description:	Ubuntu 22.04.3 LTS
-Release:	22.04
-Codename:	jammy
+Since the 26th I've also been at DebCamp/DebConf the last two weeks in 
+Korea, with way too many other things going on, but when I'm back home 
+after my travels I can also ask the Debian Rust team for some assistance 
+if you don't beat them to it.
 
-Thanks,
-Slava.
-
->> REPRODUCTION PATH:
->>
->> (1) Format partition by mkfs tool of any file system (for example, NILFS2)
->> (2) Mount the prepared volume
->> (3) Execute any file system operations on the volume
->> (4) Unmount the volume
->> (5) Format partition by mkfs.bcachefs tool
->> (6) Try to mount the prepared  bcachefs volume
->> (7) The bcachefs logic fails too mount the formatted volume
->>
->> sudo mkfs.nilfs2 -f -b 4096 /dev/sda1
->> mkfs.nilfs2 (nilfs-utils 2.2.8)
->> Start writing file system initial data to the device
->>         Blocksize:4096  Device:/dev/sda1  Device Size:999292928
->> File system initialization succeeded !!
->>
->> sudo mount /dev/sda1 /mnt/test/
->>
->> mount
->> <skipped>
->> /dev/sda1 on /mnt/test type nilfs2 (rw,relatime)
->>
->> Aug  5 19:14:40 ssdfs-test-0070 kernel: [  520.066975] NILFS (sda1): segctord starting. Construction interval = 5 seconds, CP frequency < 30 seconds
->> Aug  5 19:14:40 ssdfs-test-0070 nilfs_cleanerd[3854]: start
->> Aug  5 19:14:40 ssdfs-test-0070 nilfs_cleanerd[3854]: pause (clean check)
->>
->> sudo umount /mnt/test
->>
->> Aug  5 19:15:18 ssdfs-test-0070 nilfs_cleanerd[3854]: shutdown
->>
->> sudo mkfs.bcachefs -f --block_size=4096 /dev/sda1
->> External UUID: 483fb669-63aa-4f41-b0ba-61eb2446c2fe
->> Internal UUID: 43527890-f6c8-43f1-bdd9-1c4936f71a8d
->> Device index: 0
->> Label:
->> Version: 14
->> Oldest version on disk: 14
->> Created: Mon Aug  5 19:20:32 2024
->> Squence number: 0
->> Block_size: 4.0K
->> Btree node size: 128.0K
->> Error action: ro
->> Clean: 0
->> Features: new_siphash,new_extent_overwrite,btree_ptr_v2,extents_above_btree_updates,btree_updates_journalled,new_varint,journal_no_flush,alloc_v2,extents_across_btree_nodes
->> Compat features:
->> Metadata replicas: 1
->> Data replicas: 1
->> Metadata checksum type: crc32c (1)
->> Data checksum type: crc32c (1)
->> Compression type: none (0)
->> Foreground write target: none
->> Background write target: none
->> Promote target: none
->> Metadata target:                none
->> String hash type: siphash (2)
->> 32 bit inodes: 1
->> GC reserve percentage: 8%
->> Root reserve percentage: 0%
->> Devices: 1 live, 1 total
->> Sections: members
->> Superblock size: 816
->>
->> Members (size 64):
->>    Device 0:
->>      UUID: 2c54ddfc-f50c-4d15-aa80-7d23474de3e6
->>      Size: 953.0M
->>      Bucket size: 128.0K
->>      First bucket: 0
->>      Buckets: 7624
->>      Last mount: (never)
->>      State: rw
->>      Group: (none)
->>      Data allowed: journal,btree,user
->>      Has data: (none)
->>      Replacement policy: lru
->>      Discard: 0
->> initializing new filesystem
->> going read-write
->> mounted with opts: (null)
->>
->> sudo mount /dev/sda1 /mnt/test/
->>
->> mount
->> <skipped>
->> /dev/sda1 on /mnt/test type nilfs2 (rw,relatime) <— completely unexpected
->>
->> Aug  5 19:21:13 ssdfs-test-0070 kernel: [  912.678991] NILFS (sda1): broken superblock, retrying with spare superblock (blocksize = 1024)
->> Aug  5 19:21:13 ssdfs-test-0070 kernel: [  912.679835] NILFS (sda1): broken superblock, retrying with spare superblock (blocksize = 4096)
->> Aug  5 19:21:13 ssdfs-test-0070 kernel: [  912.706795] NILFS (sda1): segctord starting. Construction interval = 5 seconds, CP frequency < 30 seconds
->> Aug  5 19:21:13 ssdfs-test-0070 nilfs_cleanerd[4751]: start
->> Aug  5 19:21:13 ssdfs-test-0070 nilfs_cleanerd[4751]: pause (clean check)
->>
->> sudo umount /mnt/test
->>
->> sudo mount -t bcachefs /dev/sda1 /mnt/test/
->> mount: /mnt/test: wrong fs type, bad option, bad superblock on /dev/sda1, missing codepage or helper program, or other error.
->>
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311715] bcachefs (sda1): mounting version 0.14: btree_ptr_sectors_written opts=noshard_inode_numbers,journal_reclaim_delay=1000,nojournal_transaction_names
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311753] bcachefs (sda1): recovering from clean shutdown, journal seq 4
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311782] bcachefs (sda1): Version upgrade required:
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311782] Doing incompatible version upgrade from 0.14: btree_ptr_sectors_written to 1.7: mi_btree_bitmap
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311782]   running recovery passes: check_allocations,check_alloc_info,check_lrus,check_btree_backpointers,check_backpointers_to_extents,check_extents_to_backpointers,check_alloc_to_lru_refs,bucket_gens_init,check_snapshot_trees,check_snapshots,check_subvols,check_subvol_children,delete_dead_snapshots,check_inodes,check_extents,check_indirect_extents,check_dirents,check_xattrs,check_root,check_subvolume_structure,check_directory_structure,check_nlinks,delete_dead_inodes,set_fs_needs_rebalance
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431462] bcachefs (sda1): alloc_read... done
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431675] bcachefs (sda1): stripes_read... done
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431688] bcachefs (sda1): snapshots_read... done
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431702] bcachefs (sda1): check_allocations...
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.469609] dev 0 has wrong free buckets: got 0, should be 7537, fixing
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.469683]  done
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.471013] bcachefs (sda1): going read-write
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.471766] bcachefs (sda1): journal_replay... done
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.471794] bcachefs (sda1): check_alloc_info... done
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.472921] bcachefs (sda1): check_lrus... done
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.473309] bcachefs (sda1): check_btree_backpointers... done
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.473960] bcachefs (sda1): check_backpointers_to_extents... done
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474483] bcachefs (sda1): check_extents_to_backpointers...
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474582] missing backpointer for btree=inodes l=1 u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq d7dbe59ccc0e54fa written 24 min_key POS_MIN durability: 1 ptr: 0:78:0 gen 1
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474590]   got:   u64s 5 type deleted 0:20447232:0 len 0 ver 0
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474595]   want:  u64s 9 type backpointer 0:20447232:0 len 0 ver 0: bucket=0:78:0 btree=inodes l=1 offset=0:0 len=256 pos=SPOS_MAX, shutting down
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474645] bcachefs (sda1): inconsistency detected - emergency read only at journal seq 4
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474664] bcachefs (sda1): bch2_check_extents_to_backpointers(): error fsck_errors_not_fixed
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474682] bcachefs (sda1): bch2_fs_recovery(): error fsck_errors_not_fixed
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474692] bcachefs (sda1): bch2_fs_start(): error starting filesystem fsck_errors_not_fixed
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474842] bcachefs (sda1): unshutdown complete, journal seq 4
->> Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.595522] bcachefs: bch2_mount() error: fsck_errors_not_fixed
->>
->> Thanks,
->> Slava.
->>
->>
->>
->>
->>
+-Jonathan
 
