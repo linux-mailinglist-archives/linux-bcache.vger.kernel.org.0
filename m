@@ -1,232 +1,137 @@
-Return-Path: <linux-bcache+bounces-714-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-715-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75F394E797
-	for <lists+linux-bcache@lfdr.de>; Mon, 12 Aug 2024 09:17:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B28895DFF7
+	for <lists+linux-bcache@lfdr.de>; Sat, 24 Aug 2024 22:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4114F1F237E6
-	for <lists+linux-bcache@lfdr.de>; Mon, 12 Aug 2024 07:17:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B41C51C20C50
+	for <lists+linux-bcache@lfdr.de>; Sat, 24 Aug 2024 20:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C7F14B952;
-	Mon, 12 Aug 2024 07:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486AE7404B;
+	Sat, 24 Aug 2024 20:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tMl3po9x";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1y0B5M7l";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AgPrHJfV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vw97HRxf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfQlQSBm"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B23B45C0B
-	for <linux-bcache@vger.kernel.org>; Mon, 12 Aug 2024 07:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56F814A85
+	for <linux-bcache@vger.kernel.org>; Sat, 24 Aug 2024 20:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723447057; cv=none; b=ecsKAPwCSBC0GfVCbjCHD/NXnC9YSdvyzwKbMGtAzOqJbMjeMYXdIgxcjJyElgBMOHfMQk4S2rQ0a+HMvXUA0h1oBTyJk2Dc81GHZS2byUIorydzmvdveSgx6wLvsW5WOqiWszbEuEknKcrgVn/JA+C/d7fIJdfesH2AGMUZcxA=
+	t=1724530644; cv=none; b=mR0qZVOX4A3n5y6bnvXvK16K99osKW0qbtyBPaXCfrjkGegLCEqNEqSVV6ngft/d4eQs50o55GC6Pw0VH3ERlJN0srvssa1y1k47cXQwV3XKR8PwWP72lmz1WB4K3lyw3+O4MVlT9NpwmbWVCyvrqfwSrCtOac2rgPmBX4j2dHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723447057; c=relaxed/simple;
-	bh=ZZy9iZENB2gsQhbk9D0CN06NGQMk4S2ZGet4JgWCHgw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=XoR1BpPwGD4DLK7oAyHrsL7ZMWhRHzk7Y58S2i+hCrmJW4ZcHOg2QzMpclpZWPetrji87yanyCS12EfvJkKHQ7WFhRFrWruJXHmPkqY5r3EW9hhxRGMm94i+F5eOtaYTr494kuwnC98hOPRl36QNs2xirpmlZys8ABZGFsRkry8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tMl3po9x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1y0B5M7l; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AgPrHJfV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vw97HRxf; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D1AAE2022B;
-	Mon, 12 Aug 2024 07:17:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723447053; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZZy9iZENB2gsQhbk9D0CN06NGQMk4S2ZGet4JgWCHgw=;
-	b=tMl3po9xgfRpY2v5eufmzMnI2HHHPx0WOITT9UA57tngPVCbXV0j2f+bvqRN3Sj8vmcray
-	cgYOiEqpQliYTLJrHHpTTgFLWoz5X5NFYOHdH//lZRUzDY0HC/bRf3DcOffTSOdac6/sLp
-	Qs9tKmOM5/ZkEOP6gVjHE5XFynBFlsQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723447053;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZZy9iZENB2gsQhbk9D0CN06NGQMk4S2ZGet4JgWCHgw=;
-	b=1y0B5M7lrjghk9KEZqexeqM9vQ4feDb2Sy4zehGgpMHEBqgxD9ploodK0kmujkvD67RbaM
-	TEAxdYoE4w6lUADg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=AgPrHJfV;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vw97HRxf
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723447051; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZZy9iZENB2gsQhbk9D0CN06NGQMk4S2ZGet4JgWCHgw=;
-	b=AgPrHJfVv0RZjVm/l13yfvtGpVqqSB1N1nd19WX3y+iRC/BBs+E4jbtaNxywqsE9vWzkY2
-	WCEv4Kfvkg+awDQey9rJmGh+79VJzubGviXhH5G9ShiwgbiKBo/oCSjuHlZ6ULRzgAYfEX
-	KXOTcAHgAafVNkI1lLoAJ+SKcCVsrSs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723447051;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZZy9iZENB2gsQhbk9D0CN06NGQMk4S2ZGet4JgWCHgw=;
-	b=vw97HRxfjY8mGd4OxDN4trxBmUYHgXrau0BlVdNECnifT9eBqJyOi43uPy45Qt4GiK4+Vq
-	uxmKCRZjZIQk55AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AF211137BA;
-	Mon, 12 Aug 2024 07:17:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fZPKFAq3uWa6CgAAD6G6ig
-	(envelope-from <colyli@suse.de>); Mon, 12 Aug 2024 07:17:30 +0000
+	s=arc-20240116; t=1724530644; c=relaxed/simple;
+	bh=V8UfwUYSJHwx71i8vs2aQTI+vcA9UUp4FzH6wapigRA=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:To; b=oGOGO4SUe9tBgH11jygFYfJwsrUxtHHlipRAIvS9nww4O9NKrwrPvLJHnMfaJ8/5bfId47BRlc7DpxjPF71jCxOqTDNvhNR1FEXZof52WUGjYopVCkydz123Ti4cwLLb+qQMc5J8TIuE5d6Kfvj+LXmLKmR+t6uXxD5MQVtsibo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfQlQSBm; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-498cd1112c3so801760137.0
+        for <linux-bcache@vger.kernel.org>; Sat, 24 Aug 2024 13:17:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724530640; x=1725135440; darn=vger.kernel.org;
+        h=to:date:message-id:subject:mime-version:content-transfer-encoding
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V8UfwUYSJHwx71i8vs2aQTI+vcA9UUp4FzH6wapigRA=;
+        b=nfQlQSBm9Xr3gblOJHgR+ljKy1GJ/zib+M2NcPmbOQxAecCGHu6zk6Szo/G33KDFkA
+         uCrmTaOB2upSPEX1GqZH85nk5oWPveYyVH4UKPlaaBg5TFIeH35GrJbQqxGU/OkluyDQ
+         YVTfZswTB/2zlVHvDmaWEyOy/YPvvoH5rEZzBCmtrN0d3tpQ+AXmMnmWySmyCx4ndM0h
+         n1jXzDVxiPnTjVBZniCu0JvLX8BZKC8KYJc/xwSezhCmaoMlhwIco+c0HD5WVtPgZ2se
+         JMHehpLmYBPfi2Qwdf9P5Arj8FpB2mpS9Mui/Z8YhnQqSBU/4FMWy7efd/7VmGQiK3Zp
+         9u4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724530640; x=1725135440;
+        h=to:date:message-id:subject:mime-version:content-transfer-encoding
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V8UfwUYSJHwx71i8vs2aQTI+vcA9UUp4FzH6wapigRA=;
+        b=eE0gLUO5RZILbyGS/HXKIj7L9r26PocNJK5rcndcRtrpGvUxlQJzsa7nxeculZ4+uo
+         7Xf5j+EWNHSEsirLt730PDkDJdn9kEALxbd3hmi3sCaF8spH37dM3WUt7Yi0VI6K8T/C
+         DPy69CRPKutwyeXolezpVFVX2Nk/K36VyteBtVE81oQKddMK0ClCBeyYwSa7hA4MbNDR
+         38/yx7AfUdFakI2tjW3JM2Y3wzVjaGDpNwL769cOzkvIr6nEdSm7ltM4foJPuvXM0PiL
+         WQfkJUUBB69qa/f1Hyf7X2/aawPlJaG040vqKz8UCYa0pASh/IedFEDOgSqfWegQotNy
+         eL/A==
+X-Gm-Message-State: AOJu0YxI0M/VS+fy+JtlH9eBI8A3NK+VLV+32JVBxvK7Z4k3Yzs+pved
+	HBj7ds2JzPHxye+wFT7/4i/D9hvSSQrwwGJvKELOJwV98lL3RpwTZ0GKmg==
+X-Google-Smtp-Source: AGHT+IHb7vZg6nT4oli8zOYcvOySOc95fqRJ/EkVPKabWCBbUtVNOl3dbPS0VOlNTkE5o5ogUUObzg==
+X-Received: by 2002:a05:6102:358c:b0:498:c2cd:1ac5 with SMTP id ada2fe7eead31-498f4b15bc6mr6638401137.9.1724530640066;
+        Sat, 24 Aug 2024 13:17:20 -0700 (PDT)
+Received: from smtpclient.apple ([2600:1700:2520:442d:fde1:5fd6:16d1:d6dc])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-498e47f3933sm915503137.17.2024.08.24.13.17.19
+        for <linux-bcache@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 24 Aug 2024 13:17:19 -0700 (PDT)
+From: Giovanni Francesco <gioflux@gmail.com>
 Content-Type: text/plain;
 	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: multipath'd bcache device
-From: Coly Li <colyli@suse.de>
-In-Reply-To: <CAG2GFaFQBkzhOJZedHPVdZLYRvU_XMs4MZ-4KKPkDUfbU9AfVg@mail.gmail.com>
-Date: Mon, 12 Aug 2024 15:17:10 +0800
-Cc: Bcache Linux <linux-bcache@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BD613445-66A6-4B29-A62E-2340C97D831A@suse.de>
-References: <CAG2GFaH3_Ux=Ewi_SOqpiDhF=qVDkX-sTBB8z75mm8LOd03tfw@mail.gmail.com>
- <08E9CAFD-1ECC-4B46-8F0D-7124716E76EF@suse.de>
- <CAG2GFaFQBkzhOJZedHPVdZLYRvU_XMs4MZ-4KKPkDUfbU9AfVg@mail.gmail.com>
-To: Mitchell Dzurick <mitchell.dzurick@canonical.com>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-Spam-Score: -4.51
-X-Rspamd-Queue-Id: D1AAE2022B
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWO(0.00)[2];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	APPLE_MAILER_COMMON(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[canonical.com:email,canonical.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email,evilpiepirate.org:url,launchpad.net:url]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Spam-Flag: NO
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Filesystem stability and recommendations?
+Message-Id: <91488477-9465-430C-96FF-44BB5C02C384@gmail.com>
+Date: Sat, 24 Aug 2024 16:17:09 -0400
+To: linux-bcache@vger.kernel.org
+X-Mailer: Apple Mail (2.3776.700.51)
 
-Hi Mitchell,
+Hi. Which filesystems are considered stable and recommended for a =
+reliable bcache setup in 2024?
 
+There=E2=80=99s a lot of misinformation on the internet dating back to =
+several years and I wanted to feel confident in using bcache for my home =
+NAS server.=20
 
-It sounds like a timing issue of the initialization scripts. I assume =
-the cache and backing devices are relative large, so the initialization =
-takes time. And because the storage is not local, the remote link =
-contributes more time to wait for the bcache device being ready.
+I have done some of my own experiments and =E2=80=9Cspeed benchmarks=E2=80=
+=9D, noting that XFS and EXT4 filesystems seem to be the =E2=80=9Cfastest=E2=
+=80=9D when compared to say btrfs and zfs.
 
-If this is the case, then you have to tune the multipath initialization =
-to wait for longer, or compose a customized script to start services =
-depending on bcache devices.=20
+My use case is NAS media server where I want to be very greedy with =
+catching everything on first write or first read, so my HDDs can go back =
+to sleep/idle/low-power state. My bcache configuration used on my =
+experiments and =E2=80=9Ccheatsheet=E2=80=9D is here: =
+https://github.com/TheLinuxGuy/ugreen-nas/blob/main/bcache-cheatsheet.md
 
-BTW, I assume the bcache Kconfig =E2=80=9CAsynchronous device =
-registration=E2=80=9D is checked/enabled. If not, maybe check it on can =
-be a bit helpful.
+High-level insights on hardware and my goals:
+* 4 to 6 large capacity hard disks of mixed sizes (18TB, 14TB, 10TB, =
+20TB)
+* 2x 1TB NVME PCIE 3.0 x4 Samsung and WD, configured on RAID1 mdadm, =
+/dev/md0p1 which is 85% of total available space. The remaining 15% of =
+the nvmes are left empty on /dev/md0p2 following recommendations in this =
+mailing list about =E2=80=9Cblkdiscard=E2=80=9D (because Arch Linux =
+bcache article scares you of using =E2=80=9Cdiscard=E2=80=9D option =
+natively in bcache)
+* Would like my 4-6 backing disks to be RAID5, so 1 disk failure can =
+occur.
 
-Just FYI.
+Some experiments and benchmarks I have done on my own and its results:
+- mdadm + bcache + btrfs (no lvm): =
+https://github.com/TheLinuxGuy/ugreen-nas/blob/main/experiments-bench/mdad=
+m-bcache-btrfs.md
+- same but LVM2 on top: =
+https://github.com/TheLinuxGuy/ugreen-nas/blob/main/experiments-bench/mdad=
+m-lvm2-bcache-btrfs.md
+- ZFS monster with custom settings and bcache: =
+https://github.com/TheLinuxGuy/ugreen-nas/blob/main/experiments-bench/mdad=
+m-lvm2-bcache-zfs.md
 
-Coly Li=20
+OK sorry for the wall of text. Please help me understand and recommend:
+1) Can I trust bcache =E2=80=9Cdiscard=E2=80=9D on my nvme /dev/md0 =
+RAID1, or should I stick with blkdiscard on blank partition2?
+2) Can I fully rely on btrfs as a filesystem on top of bcache? Setup =
+like mdadm + lvm2 vol (bcache backing)
+3) Any other warnings, recommendations, suggestions or things to =
+consider?
 
-> 2024=E5=B9=B48=E6=9C=8812=E6=97=A5 10:54=EF=BC=8CMitchell Dzurick =
-<mitchell.dzurick@canonical.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> Thanks for the reply Coly.
->=20
-> I've been able to reproduce this in Ubuntu Noble and Oracular (24.04
-> && 24.10). It should be an issue in Jammy but haven't tested that yet.
-> The current kernel used in Oracular is 6.8.0-31.31 and the current
-> kernel used in Noble is 6.8.0-40.40.
->=20
-> Unfortunately you need an account to access pastebin. I can copy that
-> information elsewhere for you if that would be helpful, but I can also
-> just gather any extra information you may want from my testbed.
->=20
-> I also have some steps in the bug report to reproduce this issue using =
-kvm.
->=20
-> Lastly, if there's any steps you'd like me to try or look into, I'd be
-> glad to hear :)
->=20
-> -Mitch
->=20
-> On Sun, Aug 11, 2024 at 5:31=E2=80=AFAM Coly Li <colyli@suse.de> =
-wrote:
->>=20
->>=20
->>=20
->>> 2024=E5=B9=B48=E6=9C=888=E6=97=A5 09:21=EF=BC=8CMitchell Dzurick =
-<mitchell.dzurick@canonical.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>=20
->>> Hello bcache team.
->>>=20
->>> I know this project is done and stable as [0] says, but I have a
->>> question if anyone is around to answer.
->>>=20
->>> Has bcache devices been tested and supported on multipath'd disks? =
-I'm
->>> looking into an Ubuntu bug[1], where these 2 projects are clashing.
->>> I'm wondering if there was any consideration or support for
->>> multipathing when this project was made.
->>>=20
->>> Also, your new project, bcachefs, might be hitting the same =
-scenario.
->>> I haven't had the time to test this though unfortunately.
->>>=20
->>> Thanks for your time,
->>> -Mitch
->>>=20
->>> [0] - https://bcache.evilpiepirate.org/#index4h1
->>> [1] - =
-https://bugs.launchpad.net/ubuntu/+source/bcache-tools/+bug/1887558
->>>=20
->>=20
->> =46rom the Ubuntu bug report, I don=E2=80=99t see the kernel version. =
-After parallel and asynchronous initialization was enabled, the udev =
-rule won=E2=80=99t always occupy the bcache block device for long time.
->>=20
->> It might be a bit helpful if you may provide the kernel version and =
-Ubuntu os version. BTW I don=E2=80=99t have ubuntu account and cannot =
-access pastern.canonical.com.
->>=20
->> Thanks.
->>=20
->> Coly Li
->=20
+The reason for btrfs over all others is: snapshots, ability to shrink =
+filesystem and expand it at will. LVM2 is used for stitching up disks of =
+different sizes with the least amount of wasted disk space.
 
+Thanks
+Giovanni=
 
