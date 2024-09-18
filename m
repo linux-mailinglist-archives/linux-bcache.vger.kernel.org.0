@@ -1,47 +1,47 @@
-Return-Path: <linux-bcache+bounces-724-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-725-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533D097BABD
-	for <lists+linux-bcache@lfdr.de>; Wed, 18 Sep 2024 12:20:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 458AE97BAC0
+	for <lists+linux-bcache@lfdr.de>; Wed, 18 Sep 2024 12:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78A491C21960
-	for <lists+linux-bcache@lfdr.de>; Wed, 18 Sep 2024 10:20:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A64C1C2250C
+	for <lists+linux-bcache@lfdr.de>; Wed, 18 Sep 2024 10:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EBD18990D;
-	Wed, 18 Sep 2024 10:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D860A189B86;
+	Wed, 18 Sep 2024 10:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eJNEcFQL"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SsHV7yO9"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16587189900
-	for <linux-bcache@vger.kernel.org>; Wed, 18 Sep 2024 10:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9CC189901
+	for <linux-bcache@vger.kernel.org>; Wed, 18 Sep 2024 10:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726654756; cv=none; b=fCj3DQJZroSU+tnyucH8/OPApFSwvFAtkOxbofPa47jmFzwgQeTfSAyBJmE36ykuMOiQz7wOUCGw+qUa+mo+puyY4ahPOx6olpeCc6UxQpgx2lPS15zZ7tXH8ngA0/sc1tB1syqolb1zBHA8GVM2ejLiza921ULfcdU9UP0Ssz4=
+	t=1726654760; cv=none; b=dwvVGpb6leNogUdzAfBLwaw/JjwyOT6yXtr2DAtXZcrItNnSLoYrzLg2go2wedLPDppr0RkoA4+YKdQ7RM5XRmWzsRL3iNumT4hBebmlQ5MfwybO6smeo+6IOcPnSbvkU+0r9vSz2U3m4q5ILGbrsdUmwTcufch2Y1miCfGNqUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726654756; c=relaxed/simple;
-	bh=BaUGCto9vs8oFFeaBFeumiYxEaC+cI0sNS72mCFbL4c=;
+	s=arc-20240116; t=1726654760; c=relaxed/simple;
+	bh=nQSOWFnAXLLYKidxd/Kf+SBffy0qObGhTTWo18/oS3E=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=o9+qkKY/c4u7wkhPNFmmgCrfuxooPzSdhkiv4MQImCsnU4E72yyh96D8augRnldPM37P2ghTa89aKEFERBcNlT6iweCYCx9YgoaTKqzEBLOoukgMZZH7ueYxXz1KsIWq9qVFY3oIbKqHJzDQOrcPSelbpNGFYL96oTB+/OzORuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eJNEcFQL; arc=none smtp.client-ip=95.215.58.176
+	 MIME-Version; b=JgNURLa+O+ny5mqRpz8qqkXmmZsCTqXBcyrn1Q+zpZcAHFLUaok/w8RhukMMQJMU5oxEfx1emojjRFQXWUOmNpPWxO5ouBqm2i2k39TeE9dlbOi11WMgZqzQZw0ngSrNj+/lbJpJGvlqfoe8N9RAIAcY6KIGEoQesHol+phNAJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SsHV7yO9; arc=none smtp.client-ip=95.215.58.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726654751;
+	t=1726654755;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=W1Gtd6ScgTrJJmOdkTMe2oKtbid4lctcDodxd4qiA3I=;
-	b=eJNEcFQLFvjjY7KxtUWbts+lI1tq4qCiD/LxDrmdnbBlSvQRi8WKAgSXEyLFAT1mP+eoIE
-	rKYYuWenAMd5dIURS8RuoGmaCN3z7DRU3Q4PVz/aDm2KMSN2MoJaGhU4dT5VJEmg2rBeHo
-	WOUuHkHTTebUi5k614JXjMl7PqtKvYA=
+	bh=v4dKpUx85fl3YTGHcK89lmOveS0EI6KnldbDyoQf1bs=;
+	b=SsHV7yO9iYgdH1YQRgodUzX3Smdscq8o3yFVxXTNH1UVKX1QT5nJvKqo4KU2/1PSKb7j1Y
+	MTHOqTZzs5pTqUtjQ+QNm2Xb4UfoTmbObbKBOjtAreJlTUuMnatv2SwyiXxxt+T5Bf0+vc
+	+lEYr4itRvcfx9OSlNrvJqN6hta+7Pc=
 From: Dongsheng Yang <dongsheng.yang@linux.dev>
 To: axboe@kernel.dk,
 	dan.j.williams@intel.com,
@@ -56,9 +56,9 @@ Cc: linux-block@vger.kernel.org,
 	linux-cxl@vger.kernel.org,
 	linux-bcache@vger.kernel.org,
 	Dongsheng Yang <dongsheng.yang@linux.dev>
-Subject: [PATCH v2 6/8] cbd: introduce cbd_blkdev
-Date: Wed, 18 Sep 2024 10:18:19 +0000
-Message-Id: <20240918101821.681118-7-dongsheng.yang@linux.dev>
+Subject: [PATCH v2 7/8] cbd: introduce cbd_backend
+Date: Wed, 18 Sep 2024 10:18:20 +0000
+Message-Id: <20240918101821.681118-8-dongsheng.yang@linux.dev>
 In-Reply-To: <20240918101821.681118-1-dongsheng.yang@linux.dev>
 References: <20240918101821.681118-1-dongsheng.yang@linux.dev>
 Precedence: bulk
@@ -70,1043 +70,672 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-The "cbd_blkdev" represents a virtual block device named "/dev/cbdX". It
-corresponds to a backend. The "blkdev" interacts with upper-layer users
-and accepts IO requests from them. A "blkdev" includes multiple
-"cbd_queues", each of which requires a "cbd_channel" to
-interact with the backend's handler. The "cbd_queue" forwards IO
-requests from the upper layer to the backend's handler through the
-channel.
+The "cbd_backend" is responsible for exposing a local block device (such
+as "/dev/sda") through the "cbd_transport" to other hosts.
 
-cbd_blkdev allow user to force stop a /dev/cbdX, even if backend is not
-responsible.
+Any host that registers this transport can map this backend to a local
+"cbd device"(such as "/dev/cbd0"). All reads and writes to "cbd0" are
+transmitted through the channel inside the transport to the backend. The handler
+inside the backend is responsible for processing these read and write
+requests, converting them into read and write requests corresponding to
+"sda".
 
 Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
 ---
- drivers/block/cbd/cbd_blkdev.c | 433 +++++++++++++++++++++++++
- drivers/block/cbd/cbd_queue.c  | 574 +++++++++++++++++++++++++++++++++
- 2 files changed, 1007 insertions(+)
- create mode 100644 drivers/block/cbd/cbd_blkdev.c
- create mode 100644 drivers/block/cbd/cbd_queue.c
+ drivers/block/cbd/cbd_backend.c | 395 ++++++++++++++++++++++++++++++++
+ drivers/block/cbd/cbd_handler.c | 242 +++++++++++++++++++
+ 2 files changed, 637 insertions(+)
+ create mode 100644 drivers/block/cbd/cbd_backend.c
+ create mode 100644 drivers/block/cbd/cbd_handler.c
 
-diff --git a/drivers/block/cbd/cbd_blkdev.c b/drivers/block/cbd/cbd_blkdev.c
+diff --git a/drivers/block/cbd/cbd_backend.c b/drivers/block/cbd/cbd_backend.c
 new file mode 100644
-index 000000000000..f16bc429704b
+index 000000000000..2f7e61b09779
 --- /dev/null
-+++ b/drivers/block/cbd/cbd_blkdev.c
-@@ -0,0 +1,433 @@
++++ b/drivers/block/cbd/cbd_backend.c
+@@ -0,0 +1,395 @@
 +#include "cbd_internal.h"
 +
-+static ssize_t blkdev_backend_id_show(struct device *dev,
++static ssize_t backend_host_id_show(struct device *dev,
 +			       struct device_attribute *attr,
 +			       char *buf)
 +{
-+	struct cbd_blkdev_device *blkdev;
-+	struct cbd_blkdev_info *blkdev_info;
++	struct cbd_backend_device *backend;
++	struct cbd_backend_info *backend_info;
 +
-+	blkdev = container_of(dev, struct cbd_blkdev_device, dev);
-+	blkdev_info = blkdev->blkdev_info;
++	backend = container_of(dev, struct cbd_backend_device, dev);
++	backend_info = backend->backend_info;
 +
-+	if (blkdev_info->state == cbd_blkdev_state_none)
++	if (backend_info->state == cbd_backend_state_none)
 +		return 0;
 +
-+	return sprintf(buf, "%u\n", blkdev_info->backend_id);
++	return sprintf(buf, "%u\n", backend_info->host_id);
 +}
 +
-+static DEVICE_ATTR(backend_id, 0400, blkdev_backend_id_show, NULL);
++static DEVICE_ATTR(host_id, 0400, backend_host_id_show, NULL);
 +
-+static ssize_t blkdev_host_id_show(struct device *dev,
++static ssize_t backend_path_show(struct device *dev,
 +			       struct device_attribute *attr,
 +			       char *buf)
 +{
-+	struct cbd_blkdev_device *blkdev;
-+	struct cbd_blkdev_info *blkdev_info;
++	struct cbd_backend_device *backend;
++	struct cbd_backend_info *backend_info;
 +
-+	blkdev = container_of(dev, struct cbd_blkdev_device, dev);
-+	blkdev_info = blkdev->blkdev_info;
++	backend = container_of(dev, struct cbd_backend_device, dev);
++	backend_info = backend->backend_info;
 +
-+	if (blkdev_info->state == cbd_blkdev_state_none)
++	if (backend_info->state == cbd_backend_state_none)
 +		return 0;
 +
-+	return sprintf(buf, "%u\n", blkdev_info->host_id);
++	return sprintf(buf, "%s\n", backend_info->path);
 +}
 +
-+static DEVICE_ATTR(host_id, 0400, blkdev_host_id_show, NULL);
++static DEVICE_ATTR(path, 0400, backend_path_show, NULL);
 +
-+static ssize_t blkdev_mapped_id_show(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
-+{
-+	struct cbd_blkdev_device *blkdev;
-+	struct cbd_blkdev_info *blkdev_info;
++CBD_OBJ_HEARTBEAT(backend);
 +
-+	blkdev = container_of(dev, struct cbd_blkdev_device, dev);
-+	blkdev_info = blkdev->blkdev_info;
-+
-+	if (blkdev_info->state == cbd_blkdev_state_none)
-+		return 0;
-+
-+	return sprintf(buf, "%u\n", blkdev_info->mapped_id);
-+}
-+
-+static DEVICE_ATTR(mapped_id, 0400, blkdev_mapped_id_show, NULL);
-+
-+CBD_OBJ_HEARTBEAT(blkdev);
-+
-+static struct attribute *cbd_blkdev_attrs[] = {
-+	&dev_attr_mapped_id.attr,
++static struct attribute *cbd_backend_attrs[] = {
++	&dev_attr_path.attr,
 +	&dev_attr_host_id.attr,
-+	&dev_attr_backend_id.attr,
 +	&dev_attr_alive.attr,
 +	NULL
 +};
 +
-+static struct attribute_group cbd_blkdev_attr_group = {
-+	.attrs = cbd_blkdev_attrs,
++static struct attribute_group cbd_backend_attr_group = {
++	.attrs = cbd_backend_attrs,
 +};
 +
-+static const struct attribute_group *cbd_blkdev_attr_groups[] = {
-+	&cbd_blkdev_attr_group,
++static const struct attribute_group *cbd_backend_attr_groups[] = {
++	&cbd_backend_attr_group,
 +	NULL
 +};
 +
-+static void cbd_blkdev_release(struct device *dev)
++static void cbd_backend_release(struct device *dev)
 +{
 +}
 +
-+const struct device_type cbd_blkdev_type = {
-+	.name		= "cbd_blkdev",
-+	.groups		= cbd_blkdev_attr_groups,
-+	.release	= cbd_blkdev_release,
++const struct device_type cbd_backend_type = {
++	.name		= "cbd_backend",
++	.groups		= cbd_backend_attr_groups,
++	.release	= cbd_backend_release,
 +};
 +
-+const struct device_type cbd_blkdevs_type = {
-+	.name		= "cbd_blkdevs",
-+	.release	= cbd_blkdev_release,
++const struct device_type cbd_backends_type = {
++	.name		= "cbd_backends",
++	.release	= cbd_backend_release,
 +};
 +
-+
-+static int cbd_major;
-+static DEFINE_IDA(cbd_mapped_id_ida);
-+
-+static int minor_to_cbd_mapped_id(int minor)
++int cbdb_add_handler(struct cbd_backend *cbdb, struct cbd_handler *handler)
 +{
-+	return minor >> CBD_PART_SHIFT;
-+}
-+
-+
-+static int cbd_open(struct gendisk *disk, blk_mode_t mode)
-+{
-+	struct cbd_blkdev *cbd_blkdev = disk->private_data;
-+
-+	mutex_lock(&cbd_blkdev->lock);
-+	cbd_blkdev->open_count++;
-+	mutex_unlock(&cbd_blkdev->lock);
-+
-+	return 0;
-+}
-+
-+static void cbd_release(struct gendisk *disk)
-+{
-+	struct cbd_blkdev *cbd_blkdev = disk->private_data;
-+
-+	mutex_lock(&cbd_blkdev->lock);
-+	cbd_blkdev->open_count--;
-+	mutex_unlock(&cbd_blkdev->lock);
-+}
-+
-+static const struct block_device_operations cbd_bd_ops = {
-+	.owner			= THIS_MODULE,
-+	.open			= cbd_open,
-+	.release		= cbd_release,
-+};
-+
-+static void cbd_blkdev_stop_queues(struct cbd_blkdev *cbd_blkdev)
-+{
-+	int i;
-+
-+	for (i = 0; i < cbd_blkdev->num_queues; i++)
-+		cbd_queue_stop(&cbd_blkdev->queues[i]);
-+}
-+
-+static void cbd_blkdev_destroy_queues(struct cbd_blkdev *cbd_blkdev)
-+{
-+	cbd_blkdev_stop_queues(cbd_blkdev);
-+	kfree(cbd_blkdev->queues);
-+}
-+
-+static int cbd_blkdev_create_queues(struct cbd_blkdev *cbd_blkdev)
-+{
-+	int i;
-+	int ret;
-+	struct cbd_queue *cbdq;
-+
-+	cbd_blkdev->queues = kcalloc(cbd_blkdev->num_queues, sizeof(struct cbd_queue), GFP_KERNEL);
-+	if (!cbd_blkdev->queues)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < cbd_blkdev->num_queues; i++) {
-+		cbdq = &cbd_blkdev->queues[i];
-+		cbdq->cbd_blkdev = cbd_blkdev;
-+		cbdq->index = i;
-+		ret = cbd_queue_start(cbdq);
-+		if (ret)
-+			goto err;
-+	}
-+
-+	return 0;
-+err:
-+	cbd_blkdev_destroy_queues(cbd_blkdev);
-+	return ret;
-+}
-+
-+static int disk_start(struct cbd_blkdev *cbd_blkdev)
-+{
-+	struct gendisk *disk;
-+	struct queue_limits lim = {
-+		.max_hw_sectors			= BIO_MAX_VECS * PAGE_SECTORS,
-+		.io_min				= 4096,
-+		.io_opt				= 4096,
-+		.max_segments			= USHRT_MAX,
-+		.max_segment_size		= UINT_MAX,
-+		.discard_granularity		= 0,
-+		.max_hw_discard_sectors		= 0,
-+		.max_write_zeroes_sectors	= 0
-+	};
-+	int ret;
-+
-+	memset(&cbd_blkdev->tag_set, 0, sizeof(cbd_blkdev->tag_set));
-+	cbd_blkdev->tag_set.ops = &cbd_mq_ops;
-+	cbd_blkdev->tag_set.queue_depth = 128;
-+	cbd_blkdev->tag_set.numa_node = NUMA_NO_NODE;
-+	cbd_blkdev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_NO_SCHED;
-+	cbd_blkdev->tag_set.nr_hw_queues = cbd_blkdev->num_queues;
-+	cbd_blkdev->tag_set.cmd_size = sizeof(struct cbd_request);
-+	cbd_blkdev->tag_set.timeout = 0;
-+	cbd_blkdev->tag_set.driver_data = cbd_blkdev;
-+
-+	ret = blk_mq_alloc_tag_set(&cbd_blkdev->tag_set);
-+	if (ret) {
-+		cbd_blk_err(cbd_blkdev, "failed to alloc tag set %d", ret);
-+		goto err;
-+	}
-+
-+	disk = blk_mq_alloc_disk(&cbd_blkdev->tag_set, &lim, cbd_blkdev);
-+	if (IS_ERR(disk)) {
-+		ret = PTR_ERR(disk);
-+		cbd_blk_err(cbd_blkdev, "failed to alloc disk");
-+		goto out_tag_set;
-+	}
-+
-+	snprintf(disk->disk_name, sizeof(disk->disk_name), "cbd%d",
-+		 cbd_blkdev->mapped_id);
-+
-+	disk->major = cbd_major;
-+	disk->first_minor = cbd_blkdev->mapped_id << CBD_PART_SHIFT;
-+	disk->minors = (1 << CBD_PART_SHIFT);
-+
-+	disk->fops = &cbd_bd_ops;
-+	disk->private_data = cbd_blkdev;
-+
-+	/* Tell the block layer that this is not a rotational device */
-+	blk_queue_flag_set(QUEUE_FLAG_NONROT, disk->queue);
-+
-+	cbd_blkdev->disk = disk;
-+
-+	cbdt_add_blkdev(cbd_blkdev->cbdt, cbd_blkdev);
-+	cbd_blkdev->blkdev_info->mapped_id = cbd_blkdev->blkdev_id;
-+	cbd_blkdev->blkdev_info->state = cbd_blkdev_state_running;
-+
-+	set_capacity(cbd_blkdev->disk, cbd_blkdev->dev_size);
-+
-+	set_disk_ro(cbd_blkdev->disk, false);
-+	blk_queue_write_cache(cbd_blkdev->disk->queue, false, false);
-+
-+	ret = add_disk(cbd_blkdev->disk);
-+	if (ret)
-+		goto put_disk;
-+
-+	ret = sysfs_create_link(&disk_to_dev(cbd_blkdev->disk)->kobj,
-+				&cbd_blkdev->blkdev_dev->dev.kobj, "cbd_blkdev");
-+	if (ret)
-+		goto del_disk;
-+
-+	return 0;
-+
-+del_disk:
-+	del_gendisk(cbd_blkdev->disk);
-+put_disk:
-+	put_disk(cbd_blkdev->disk);
-+out_tag_set:
-+	blk_mq_free_tag_set(&cbd_blkdev->tag_set);
-+err:
-+	return ret;
-+}
-+
-+int cbd_blkdev_start(struct cbd_transport *cbdt, u32 backend_id, u32 queues)
-+{
-+	struct cbd_blkdev *cbd_blkdev;
-+	struct cbd_backend_info *backend_info;
-+	u64 dev_size;
-+	int ret;
-+
-+	backend_info = cbdt_get_backend_info(cbdt, backend_id);
-+	if (backend_info->blkdev_count == CBDB_BLKDEV_COUNT_MAX)
-+		return -EBUSY;
-+
-+	if (!cbd_backend_info_is_alive(backend_info)) {
-+		cbdt_err(cbdt, "backend %u is not alive\n", backend_id);
-+		return -EINVAL;
-+	}
-+
-+	dev_size = backend_info->dev_size;
-+
-+	cbd_blkdev = kzalloc(sizeof(struct cbd_blkdev), GFP_KERNEL);
-+	if (!cbd_blkdev)
-+		return -ENOMEM;
-+
-+	mutex_init(&cbd_blkdev->lock);
-+
-+	if (backend_info->host_id == cbdt->host->host_id)
-+		cbd_blkdev->backend = cbdt_get_backend(cbdt, backend_id);
-+
-+	ret = cbdt_get_empty_blkdev_id(cbdt, &cbd_blkdev->blkdev_id);
-+	if (ret < 0)
-+		goto blkdev_free;
-+
-+	cbd_blkdev->mapped_id = ida_simple_get(&cbd_mapped_id_ida, 0,
-+					 minor_to_cbd_mapped_id(1 << MINORBITS),
-+					 GFP_KERNEL);
-+	if (cbd_blkdev->mapped_id < 0) {
-+		ret = -ENOENT;
-+		goto blkdev_free;
-+	}
-+
-+	cbd_blkdev->task_wq = alloc_workqueue("cbdt%d-d%u",  WQ_UNBOUND | WQ_MEM_RECLAIM,
-+					0, cbdt->id, cbd_blkdev->mapped_id);
-+	if (!cbd_blkdev->task_wq) {
-+		ret = -ENOMEM;
-+		goto ida_remove;
-+	}
-+
-+	INIT_LIST_HEAD(&cbd_blkdev->node);
-+	cbd_blkdev->cbdt = cbdt;
-+	cbd_blkdev->backend_id = backend_id;
-+	cbd_blkdev->num_queues = queues;
-+	cbd_blkdev->dev_size = dev_size;
-+	cbd_blkdev->blkdev_info = cbdt_get_blkdev_info(cbdt, cbd_blkdev->blkdev_id);
-+	cbd_blkdev->blkdev_dev = &cbdt->cbd_blkdevs_dev->blkdev_devs[cbd_blkdev->blkdev_id];
-+
-+	cbd_blkdev->blkdev_info->backend_id = backend_id;
-+	cbd_blkdev->blkdev_info->host_id = cbdt->host->host_id;
-+	cbd_blkdev->blkdev_info->state = cbd_blkdev_state_running;
-+
-+
-+	if (cbd_backend_cache_on(backend_info)) {
-+		struct cbd_cache_opts cache_opts = { 0 };
-+
-+		cache_opts.cache_info = &backend_info->cache_info;
-+		cache_opts.alloc_segs = false;
-+		cache_opts.start_writeback = false;
-+		cache_opts.start_gc = true;
-+		cache_opts.init_keys = true;
-+		cache_opts.dev_size = dev_size;
-+		cache_opts.n_paral = cbd_blkdev->num_queues;
-+		cbd_blkdev->cbd_cache = cbd_cache_alloc(cbdt, &cache_opts);
-+		if (!cbd_blkdev->cbd_cache) {
-+			ret = -ENOMEM;
-+			goto destroy_wq;
-+		}
-+	}
-+
-+	ret = cbd_blkdev_create_queues(cbd_blkdev);
-+	if (ret < 0)
-+		goto destroy_cache;
-+
-+	backend_info->blkdev_count++;
-+
-+	INIT_DELAYED_WORK(&cbd_blkdev->hb_work, blkdev_hb_workfn);
-+	queue_delayed_work(cbd_wq, &cbd_blkdev->hb_work, 0);
-+
-+	ret = disk_start(cbd_blkdev);
-+	if (ret < 0)
-+		goto destroy_queues;
-+	return 0;
-+
-+destroy_queues:
-+	cancel_delayed_work_sync(&cbd_blkdev->hb_work);
-+	cbd_blkdev_destroy_queues(cbd_blkdev);
-+destroy_cache:
-+	if (cbd_blkdev->cbd_cache)
-+		cbd_cache_destroy(cbd_blkdev->cbd_cache);
-+destroy_wq:
-+	cbd_blkdev->blkdev_info->state = cbd_blkdev_state_none;
-+	destroy_workqueue(cbd_blkdev->task_wq);
-+ida_remove:
-+	ida_simple_remove(&cbd_mapped_id_ida, cbd_blkdev->mapped_id);
-+blkdev_free:
-+	kfree(cbd_blkdev);
-+	return ret;
-+}
-+
-+static void disk_stop(struct cbd_blkdev *cbd_blkdev)
-+{
-+	sysfs_remove_link(&disk_to_dev(cbd_blkdev->disk)->kobj, "cbd_blkdev");
-+	del_gendisk(cbd_blkdev->disk);
-+	put_disk(cbd_blkdev->disk);
-+	blk_mq_free_tag_set(&cbd_blkdev->tag_set);
-+}
-+
-+int cbd_blkdev_stop(struct cbd_transport *cbdt, u32 devid, bool force)
-+{
-+	struct cbd_blkdev *cbd_blkdev;
-+	struct cbd_backend_info *backend_info;
-+
-+	cbd_blkdev = cbdt_get_blkdev(cbdt, devid);
-+	if (!cbd_blkdev)
-+		return -EINVAL;
-+
-+	mutex_lock(&cbd_blkdev->lock);
-+	if (cbd_blkdev->open_count > 0 && !force) {
-+		mutex_unlock(&cbd_blkdev->lock);
-+		return -EBUSY;
-+	}
-+
-+	cbdt_del_blkdev(cbdt, cbd_blkdev);
-+	mutex_unlock(&cbd_blkdev->lock);
-+
-+	cbd_blkdev_stop_queues(cbd_blkdev);
-+	disk_stop(cbd_blkdev);
-+	kfree(cbd_blkdev->queues);
-+
-+	cancel_delayed_work_sync(&cbd_blkdev->hb_work);
-+	cbd_blkdev->blkdev_info->state = cbd_blkdev_state_none;
-+
-+	drain_workqueue(cbd_blkdev->task_wq);
-+	destroy_workqueue(cbd_blkdev->task_wq);
-+	ida_simple_remove(&cbd_mapped_id_ida, cbd_blkdev->mapped_id);
-+	backend_info = cbdt_get_backend_info(cbdt, cbd_blkdev->backend_id);
-+
-+	if (cbd_blkdev->cbd_cache)
-+		cbd_cache_destroy(cbd_blkdev->cbd_cache);
-+
-+	kfree(cbd_blkdev);
-+
-+	backend_info->blkdev_count--;
-+
-+	return 0;
-+}
-+
-+int cbd_blkdev_clear(struct cbd_transport *cbdt, u32 devid)
-+{
-+	struct cbd_blkdev_info *blkdev_info;
-+
-+	blkdev_info = cbdt_get_blkdev_info(cbdt, devid);
-+	if (cbd_blkdev_info_is_alive(blkdev_info)) {
-+		cbdt_err(cbdt, "blkdev %u is still alive\n", devid);
-+		return -EBUSY;
-+	}
-+
-+	if (blkdev_info->state == cbd_blkdev_state_none)
-+		return 0;
-+
-+	blkdev_info->state = cbd_blkdev_state_none;
-+
-+	return 0;
-+}
-+
-+int cbd_blkdev_init(void)
-+{
-+	cbd_major = register_blkdev(0, "cbd");
-+	if (cbd_major < 0)
-+		return cbd_major;
-+
-+	return 0;
-+}
-+
-+void cbd_blkdev_exit(void)
-+{
-+	unregister_blkdev(cbd_major, "cbd");
-+}
-diff --git a/drivers/block/cbd/cbd_queue.c b/drivers/block/cbd/cbd_queue.c
-new file mode 100644
-index 000000000000..cd40574d4a48
---- /dev/null
-+++ b/drivers/block/cbd/cbd_queue.c
-@@ -0,0 +1,574 @@
-+#include "cbd_internal.h"
-+
-+static inline struct cbd_se *get_submit_entry(struct cbd_queue *cbdq)
-+{
-+	return (struct cbd_se *)(cbdq->channel.submr + cbdq->channel_info->submr_head);
-+}
-+
-+static inline struct cbd_se *get_oldest_se(struct cbd_queue *cbdq)
-+{
-+	if (cbdq->channel_info->submr_tail == cbdq->channel_info->submr_head)
-+		return NULL;
-+
-+	return (struct cbd_se *)(cbdq->channel.submr + cbdq->channel_info->submr_tail);
-+}
-+
-+static inline struct cbd_ce *get_complete_entry(struct cbd_queue *cbdq)
-+{
-+	if (cbdq->channel_info->compr_tail == cbdq->channel_info->compr_head)
-+		return NULL;
-+
-+	return (struct cbd_ce *)(cbdq->channel.compr + cbdq->channel_info->compr_tail);
-+}
-+
-+static void cbd_req_init(struct cbd_queue *cbdq, enum cbd_op op, struct request *rq)
-+{
-+	struct cbd_request *cbd_req = blk_mq_rq_to_pdu(rq);
-+
-+	cbd_req->req = rq;
-+	cbd_req->cbdq = cbdq;
-+	cbd_req->op = op;
-+
-+	if (req_op(rq) == REQ_OP_READ || req_op(rq) == REQ_OP_WRITE)
-+		cbd_req->data_len = blk_rq_bytes(rq);
-+	else
-+		cbd_req->data_len = 0;
-+
-+	cbd_req->bio = rq->bio;
-+	cbd_req->off = (u64)blk_rq_pos(rq) << SECTOR_SHIFT;
-+}
-+
-+static bool cbd_req_nodata(struct cbd_request *cbd_req)
-+{
-+	switch (cbd_req->op) {
-+	case CBD_OP_WRITE:
-+	case CBD_OP_READ:
-+		return false;
-+	case CBD_OP_FLUSH:
-+		return true;
-+	default:
-+		BUG();
-+	}
-+}
-+
-+static void queue_req_se_init(struct cbd_request *cbd_req)
-+{
-+	struct cbd_se	*se;
-+	u64 offset = cbd_req->off;
-+	u32 length = cbd_req->data_len;
-+
-+	se = get_submit_entry(cbd_req->cbdq);
-+	memset(se, 0, sizeof(struct cbd_se));
-+	se->op = cbd_req->op;
-+
-+	se->req_tid = cbd_req->req_tid;
-+	se->offset = offset;
-+	se->len = length;
-+
-+	if (cbd_req->op == CBD_OP_READ || cbd_req->op == CBD_OP_WRITE) {
-+		se->data_off = cbd_req->cbdq->channel.data_head;
-+		se->data_len = length;
-+	}
-+
-+	cbd_req->se = se;
-+}
-+
-+static bool data_space_enough(struct cbd_queue *cbdq, struct cbd_request *cbd_req)
-+{
-+	struct cbd_channel *channel = &cbdq->channel;
-+	u32 space_available = channel->data_size;
-+	u32 space_needed;
-+
-+	if (channel->data_head > channel->data_tail) {
-+		space_available = channel->data_size - channel->data_head;
-+		space_available += channel->data_tail;
-+	} else if (channel->data_head < channel->data_tail) {
-+		space_available = channel->data_tail - channel->data_head;
-+	}
-+
-+	space_needed = round_up(cbd_req->data_len, CBDC_DATA_ALIGH);
-+
-+	if (space_available - CBDC_DATA_RESERVED < space_needed)
-+		return false;
-+
-+	return true;
-+}
-+
-+static bool submit_ring_full(struct cbd_queue *cbdq)
-+{
-+	u32 space_available = cbdq->channel.submr_size;
-+	struct cbd_channel_info *info = cbdq->channel_info;
-+
-+	if (info->submr_head > info->submr_tail) {
-+		space_available = cbdq->channel.submr_size - info->submr_head;
-+		space_available += info->submr_tail;
-+	} else if (info->submr_head < info->submr_tail) {
-+		space_available = info->submr_tail - info->submr_head;
-+	}
-+
-+	/* There is a SUBMR_RESERVED we dont use to prevent the ring to be used up */
-+	if (space_available - CBDC_SUBMR_RESERVED < sizeof(struct cbd_se))
-+		return true;
-+
-+	return false;
-+}
-+
-+static void queue_req_data_init(struct cbd_request *cbd_req)
-+{
-+	struct cbd_queue *cbdq = cbd_req->cbdq;
-+	struct bio *bio = cbd_req->bio;
-+
-+	if (cbd_req->op == CBD_OP_READ)
-+		goto advance_data_head;
-+
-+	cbdc_copy_from_bio(&cbdq->channel, cbd_req->data_off, cbd_req->data_len, bio, cbd_req->bio_off);
-+
-+advance_data_head:
-+	cbdq->channel.data_head = round_up(cbdq->channel.data_head + cbd_req->data_len, PAGE_SIZE);
-+	cbdq->channel.data_head %= cbdq->channel.data_size;
-+}
-+
-+#ifdef CONFIG_CBD_CRC
-+static void cbd_req_crc_init(struct cbd_request *cbd_req)
-+{
-+	struct cbd_queue *cbdq = cbd_req->cbdq;
-+	struct cbd_se *se = cbd_req->se;
-+
-+	if (cbd_req->op == CBD_OP_WRITE)
-+		se->data_crc = cbd_channel_crc(&cbdq->channel,
-+					       cbd_req->data_off,
-+					       cbd_req->data_len);
-+
-+	se->se_crc = cbd_se_crc(se);
-+}
-+#endif
-+
-+static void end_req(struct kref *ref)
-+{
-+	struct cbd_request *cbd_req = container_of(ref, struct cbd_request, ref);
-+	struct request *req = cbd_req->req;
-+	int ret = cbd_req->ret;
-+
-+	if (cbd_req->end_req)
-+		cbd_req->end_req(cbd_req, cbd_req->priv_data);
-+
-+	if (req) {
-+		if (ret == -ENOMEM || ret == -EBUSY)
-+			blk_mq_requeue_request(req, true);
-+		else
-+			blk_mq_end_request(req, errno_to_blk_status(ret));
-+	}
-+
-+}
-+
-+void cbd_req_get(struct cbd_request *cbd_req)
-+{
-+	kref_get(&cbd_req->ref);
-+}
-+
-+void cbd_req_put(struct cbd_request *cbd_req, int ret)
-+{
-+	struct cbd_request *parent = cbd_req->parent;
-+
-+	if (ret && !cbd_req->ret)
-+		cbd_req->ret = ret;
-+
-+	if (kref_put(&cbd_req->ref, end_req) && parent)
-+		cbd_req_put(parent, ret);
-+}
-+
-+static void complete_inflight_req(struct cbd_queue *cbdq, struct cbd_request *cbd_req, int ret);
-+int cbd_queue_req_to_backend(struct cbd_request *cbd_req)
-+{
-+	struct cbd_queue *cbdq = cbd_req->cbdq;
-+	size_t command_size;
-+	int ret;
-+
-+	spin_lock(&cbdq->inflight_reqs_lock);
-+	if (atomic_read(&cbdq->state) == cbd_queue_state_removing) {
-+		spin_unlock(&cbdq->inflight_reqs_lock);
-+		ret = -EIO;
-+		goto err;
-+	}
-+	list_add_tail(&cbd_req->inflight_reqs_node, &cbdq->inflight_reqs);
-+	spin_unlock(&cbdq->inflight_reqs_lock);
-+
-+	command_size = sizeof(struct cbd_se);
-+
-+	spin_lock(&cbdq->channel.submr_lock);
-+	if (cbd_req->op == CBD_OP_WRITE || cbd_req->op == CBD_OP_READ)
-+		cbd_req->data_off = cbdq->channel.data_head;
-+	else
-+		cbd_req->data_off = -1;
-+
-+	if (submit_ring_full(cbdq) ||
-+			!data_space_enough(cbdq, cbd_req)) {
-+		spin_unlock(&cbdq->channel.submr_lock);
-+
-+		/* remove request from inflight_reqs */
-+		spin_lock(&cbdq->inflight_reqs_lock);
-+		list_del_init(&cbd_req->inflight_reqs_node);
-+		spin_unlock(&cbdq->inflight_reqs_lock);
-+
-+		/* return ocuppied space */
-+		cbd_req->data_len = 0;
-+
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+
-+	cbd_req->req_tid = ++cbdq->req_tid;
-+	queue_req_se_init(cbd_req);
-+
-+	if (!cbd_req_nodata(cbd_req))
-+		queue_req_data_init(cbd_req);
-+
-+	cbd_req_get(cbd_req);
-+#ifdef CONFIG_CBD_CRC
-+	cbd_req_crc_init(cbd_req);
-+#endif
-+	CBDC_UPDATE_SUBMR_HEAD(cbdq->channel_info->submr_head,
-+			sizeof(struct cbd_se),
-+			cbdq->channel.submr_size);
-+	spin_unlock(&cbdq->channel.submr_lock);
-+
-+	if (cbdq->cbd_blkdev->backend)
-+		cbd_backend_notify(cbdq->cbd_blkdev->backend, cbdq->channel.seg_id);
-+	queue_delayed_work(cbdq->cbd_blkdev->task_wq, &cbdq->complete_work, 0);
-+
-+	return 0;
-+
-+err:
-+	return ret;
-+}
-+
-+static void queue_req_end_req(struct cbd_request *cbd_req, void *priv_data);
-+static void cbd_queue_req(struct cbd_queue *cbdq, struct cbd_request *cbd_req)
-+{
-+	int ret;
-+
-+	if (cbdq->cbd_blkdev->cbd_cache) {
-+		ret = cbd_cache_handle_req(cbdq->cbd_blkdev->cbd_cache, cbd_req);
-+		goto end;
-+	}
-+
-+	cbd_req->end_req = queue_req_end_req;
-+
-+	ret = cbd_queue_req_to_backend(cbd_req);
-+end:
-+	cbd_req_put(cbd_req, ret);
-+}
-+
-+static void advance_subm_ring(struct cbd_queue *cbdq)
-+{
-+	struct cbd_se *se;
-+again:
-+	se = get_oldest_se(cbdq);
-+	if (!se)
++	int ret = 0;
++
++	spin_lock(&cbdb->lock);
++	if (cbdb->backend_info->state == cbd_backend_state_removing) {
++		ret = -EFAULT;
 +		goto out;
-+
-+	if (cbd_se_flags_test(se, CBD_SE_FLAGS_DONE)) {
-+		CBDC_UPDATE_SUBMR_TAIL(cbdq->channel_info->submr_tail,
-+				sizeof(struct cbd_se),
-+				cbdq->channel.submr_size);
-+		goto again;
 +	}
++	hash_add(cbdb->handlers_hash, &handler->hash_node, handler->channel.seg_id);
 +out:
-+	return;
++	spin_unlock(&cbdb->lock);
++	return ret;
 +}
 +
-+static bool __advance_data_tail(struct cbd_queue *cbdq, u32 data_off, u32 data_len)
++void cbdb_del_handler(struct cbd_backend *cbdb, struct cbd_handler *handler)
 +{
-+	if (data_off == cbdq->channel.data_tail) {
-+		cbdq->released_extents[data_off / PAGE_SIZE] = 0;
-+		cbdq->channel.data_tail += data_len;
-+		cbdq->channel.data_tail %= cbdq->channel.data_size;
-+		return true;
-+	}
-+
-+	return false;
++	spin_lock(&cbdb->lock);
++	hash_del(&handler->hash_node);
++	spin_unlock(&cbdb->lock);
 +}
 +
-+static void advance_data_tail(struct cbd_queue *cbdq, u32 data_off, u32 data_len)
++static struct cbd_handler *cbdb_get_handler(struct cbd_backend *cbdb, u32 seg_id)
 +{
-+	data_off %= cbdq->channel.data_size;
-+	cbdq->released_extents[data_off / PAGE_SIZE] = data_len;
-+
-+	while (__advance_data_tail(cbdq, data_off, data_len)) {
-+		data_off += data_len;
-+		data_off %= cbdq->channel.data_size;
-+		data_len = cbdq->released_extents[data_off / PAGE_SIZE];
-+		if (!data_len)
-+			break;
-+	}
-+}
-+
-+void cbd_queue_advance(struct cbd_queue *cbdq, struct cbd_request *cbd_req)
-+{
-+	spin_lock(&cbdq->channel.submr_lock);
-+	advance_subm_ring(cbdq);
-+	if (!cbd_req_nodata(cbd_req) && cbd_req->data_len)
-+		advance_data_tail(cbdq, cbd_req->data_off, round_up(cbd_req->data_len, PAGE_SIZE));
-+	spin_unlock(&cbdq->channel.submr_lock);
-+}
-+
-+static void queue_req_end_req(struct cbd_request *cbd_req, void *priv_data)
-+{
-+	cbd_queue_advance(cbd_req->cbdq, cbd_req);
-+}
-+
-+static inline void complete_inflight_req(struct cbd_queue *cbdq, struct cbd_request *cbd_req, int ret)
-+{
-+	spin_lock(&cbdq->inflight_reqs_lock);
-+	list_del_init(&cbd_req->inflight_reqs_node);
-+	spin_unlock(&cbdq->inflight_reqs_lock);
-+
-+	cbd_se_flags_set(cbd_req->se, CBD_SE_FLAGS_DONE);
-+
-+	cbd_req_put(cbd_req, ret);
-+}
-+
-+static struct cbd_request *find_inflight_req(struct cbd_queue *cbdq, u64 req_tid)
-+{
-+	struct cbd_request *req;
++	struct cbd_handler *handler;
 +	bool found = false;
 +
-+	list_for_each_entry(req, &cbdq->inflight_reqs, inflight_reqs_node) {
-+		if (req->req_tid == req_tid) {
++	spin_lock(&cbdb->lock);
++	hash_for_each_possible(cbdb->handlers_hash, handler,
++			       hash_node, seg_id) {
++		if (handler->channel.seg_id == seg_id) {
 +			found = true;
 +			break;
 +		}
 +	}
++	spin_unlock(&cbdb->lock);
 +
 +	if (found)
-+		return req;
++		return handler;
 +
 +	return NULL;
 +}
 +
-+static void copy_data_from_cbdreq(struct cbd_request *cbd_req)
++static void state_work_fn(struct work_struct *work)
 +{
-+	struct bio *bio = cbd_req->bio;
-+	struct cbd_queue *cbdq = cbd_req->cbdq;
++	struct cbd_backend *cbdb = container_of(work, struct cbd_backend, state_work.work);
++	struct cbd_transport *cbdt = cbdb->cbdt;
++	struct cbd_segment_info *segment_info;
++	struct cbd_channel_info *channel_info;
++	u32 blkdev_state, backend_state, backend_id;
++	int ret;
++	int i;
 +
-+	spin_lock(&cbd_req->lock);
-+	cbdc_copy_to_bio(&cbdq->channel, cbd_req->data_off, cbd_req->data_len, bio, cbd_req->bio_off);
-+	spin_unlock(&cbd_req->lock);
++	for (i = 0; i < cbdt->transport_info->segment_num; i++) {
++		segment_info = cbdt_get_segment_info(cbdt, i);
++		if (segment_info->type != cbds_type_channel)
++			continue;
++
++		channel_info = (struct cbd_channel_info *)segment_info;
++
++		blkdev_state = channel_info->blkdev_state;
++		backend_state = channel_info->backend_state;
++		backend_id = channel_info->backend_id;
++
++		if (blkdev_state == cbdc_blkdev_state_running &&
++				backend_state == cbdc_backend_state_none &&
++				backend_id == cbdb->backend_id) {
++
++			ret = cbd_handler_create(cbdb, i);
++			if (ret) {
++				cbdb_err(cbdb, "create handler for %u error", i);
++				continue;
++			}
++		}
++
++		if (blkdev_state == cbdc_blkdev_state_none &&
++				backend_state == cbdc_backend_state_running &&
++				backend_id == cbdb->backend_id) {
++			struct cbd_handler *handler;
++
++			handler = cbdb_get_handler(cbdb, i);
++			if (!handler)
++				continue;
++			cbd_handler_destroy(handler);
++		}
++	}
++
++	queue_delayed_work(cbd_wq, &cbdb->state_work, 1 * HZ);
 +}
 +
-+static void complete_work_fn(struct work_struct *work)
++static int cbd_backend_init(struct cbd_backend *cbdb, bool new_backend)
 +{
-+	struct cbd_queue *cbdq = container_of(work, struct cbd_queue, complete_work.work);
-+	struct cbd_ce *ce;
-+	struct cbd_request *cbd_req;
-+
-+again:
-+	/* compr_head would be updated by backend handler */
-+	spin_lock(&cbdq->channel.compr_lock);
-+	ce = get_complete_entry(cbdq);
-+	spin_unlock(&cbdq->channel.compr_lock);
-+	if (!ce)
-+		goto miss;
-+
-+	spin_lock(&cbdq->inflight_reqs_lock);
-+	cbd_req = find_inflight_req(cbdq, ce->req_tid);
-+	spin_unlock(&cbdq->inflight_reqs_lock);
-+	if (!cbd_req) {
-+		cbd_queue_err(cbdq, "inflight request not found: %llu.", ce->req_tid);
-+		goto miss;
-+	}
-+
-+#ifdef CONFIG_CBD_CRC
-+	if (ce->ce_crc != cbd_ce_crc(ce)) {
-+		cbd_queue_err(cbdq, "ce crc bad 0x%x != 0x%x(expected)",
-+				cbd_ce_crc(ce), ce->ce_crc);
-+		goto miss;
-+	}
-+
-+	if (cbd_req->op == CBD_OP_READ &&
-+		ce->data_crc != cbd_channel_crc(&cbdq->channel,
-+					       cbd_req->data_off,
-+					       cbd_req->data_len)) {
-+		cbd_queue_err(cbdq, "ce data_crc bad 0x%x != 0x%x(expected)",
-+				cbd_channel_crc(&cbdq->channel,
-+						cbd_req->data_off,
-+						cbd_req->data_len),
-+				ce->data_crc);
-+		goto miss;
-+	}
-+#endif
-+
-+	cbdwc_hit(&cbdq->complete_worker_cfg);
-+	CBDC_UPDATE_COMPR_TAIL(cbdq->channel_info->compr_tail,
-+			       sizeof(struct cbd_ce),
-+			       cbdq->channel.compr_size);
-+
-+	if (cbd_req->op == CBD_OP_READ) {
-+		spin_lock(&cbdq->channel.submr_lock);
-+		copy_data_from_cbdreq(cbd_req);
-+		spin_unlock(&cbdq->channel.submr_lock);
-+	}
-+
-+	complete_inflight_req(cbdq, cbd_req, ce->result);
-+
-+	goto again;
-+
-+miss:
-+	if (cbdwc_need_retry(&cbdq->complete_worker_cfg))
-+		goto again;
-+
-+	spin_lock(&cbdq->inflight_reqs_lock);
-+	if (list_empty(&cbdq->inflight_reqs)) {
-+		spin_unlock(&cbdq->inflight_reqs_lock);
-+		cbdwc_init(&cbdq->complete_worker_cfg);
-+		return;
-+	}
-+	spin_unlock(&cbdq->inflight_reqs_lock);
-+	cbdwc_miss(&cbdq->complete_worker_cfg);
-+
-+	cpu_relax();
-+	queue_delayed_work(cbdq->cbd_blkdev->task_wq, &cbdq->complete_work, 0);
-+}
-+
-+static blk_status_t cbd_queue_rq(struct blk_mq_hw_ctx *hctx,
-+		const struct blk_mq_queue_data *bd)
-+{
-+	struct request *req = bd->rq;
-+	struct cbd_queue *cbdq = hctx->driver_data;
-+	struct cbd_request *cbd_req = blk_mq_rq_to_pdu(bd->rq);
-+
-+	memset(cbd_req, 0, sizeof(struct cbd_request));
-+	INIT_LIST_HEAD(&cbd_req->inflight_reqs_node);
-+	kref_init(&cbd_req->ref);
-+	spin_lock_init(&cbd_req->lock);
-+
-+	blk_mq_start_request(bd->rq);
-+
-+	switch (req_op(bd->rq)) {
-+	case REQ_OP_FLUSH:
-+		cbd_req_init(cbdq, CBD_OP_FLUSH, req);
-+		break;
-+	case REQ_OP_WRITE:
-+		cbd_req_init(cbdq, CBD_OP_WRITE, req);
-+		break;
-+	case REQ_OP_READ:
-+		cbd_req_init(cbdq, CBD_OP_READ, req);
-+		break;
-+	default:
-+		return BLK_STS_IOERR;
-+	}
-+
-+	cbd_queue_req(cbdq, cbd_req);
-+
-+	return BLK_STS_OK;
-+}
-+
-+static int cbd_init_hctx(struct blk_mq_hw_ctx *hctx, void *driver_data,
-+			unsigned int hctx_idx)
-+{
-+	struct cbd_blkdev *cbd_blkdev = driver_data;
-+	struct cbd_queue *cbdq;
-+
-+	cbdq = &cbd_blkdev->queues[hctx_idx];
-+	hctx->driver_data = cbdq;
-+
-+	return 0;
-+}
-+
-+const struct blk_mq_ops cbd_mq_ops = {
-+	.queue_rq	= cbd_queue_rq,
-+	.init_hctx	= cbd_init_hctx,
-+};
-+
-+static int cbd_queue_channel_init(struct cbd_queue *cbdq, u32 channel_id)
-+{
-+	struct cbd_blkdev *cbd_blkdev = cbdq->cbd_blkdev;
-+	struct cbd_transport *cbdt = cbd_blkdev->cbdt;
-+
-+	cbd_channel_init(&cbdq->channel, cbdt, channel_id);
-+	cbdq->channel_info = cbdq->channel.channel_info;
-+
-+	if (!cbd_blkdev->backend)
-+		cbdq->channel_info->polling = true;
-+
-+	cbdq->channel.data_head = cbdq->channel.data_tail = 0;
-+	cbdq->channel_info->submr_tail = cbdq->channel_info->submr_head = 0;
-+	cbdq->channel_info->compr_tail = cbdq->channel_info->compr_head = 0;
-+
-+	cbdq->channel_info->backend_id = cbd_blkdev->backend_id;
-+	cbdq->channel_info->blkdev_id = cbd_blkdev->blkdev_id;
-+	cbdq->channel_info->blkdev_state = cbdc_blkdev_state_running;
-+
-+	return 0;
-+}
-+
-+int cbd_queue_start(struct cbd_queue *cbdq)
-+{
-+	struct cbd_transport *cbdt = cbdq->cbd_blkdev->cbdt;
-+	u32 channel_id;
++	struct cbd_backend_info *b_info;
++	struct cbd_transport *cbdt = cbdb->cbdt;
 +	int ret;
 +
-+	ret = cbd_get_empty_channel_id(cbdt, &channel_id);
-+	if (ret < 0) {
-+		cbdt_err(cbdt, "failed find available channel_id.\n");
-+		goto err;
-+	}
++	b_info = cbdt_get_backend_info(cbdt, cbdb->backend_id);
++	cbdb->backend_info = b_info;
 +
-+	ret = cbd_queue_channel_init(cbdq, channel_id);
-+	if (ret) {
-+		cbdt_err(cbdt, "failed to init dev channel_info: %d.", ret);
-+		goto err;
-+	}
++	b_info->host_id = cbdb->cbdt->host->host_id;
 +
-+	INIT_LIST_HEAD(&cbdq->inflight_reqs);
-+	spin_lock_init(&cbdq->inflight_reqs_lock);
-+	cbdq->req_tid = 0;
-+	INIT_DELAYED_WORK(&cbdq->complete_work, complete_work_fn);
-+	cbdwc_init(&cbdq->complete_worker_cfg);
-+
-+	cbdq->released_extents = kzalloc(sizeof(u64) * (CBDC_DATA_SIZE >> PAGE_SHIFT), GFP_KERNEL);
-+	if (!cbdq->released_extents) {
++	cbdb->backend_io_cache = KMEM_CACHE(cbd_backend_io, 0);
++	if (!cbdb->backend_io_cache) {
 +		ret = -ENOMEM;
-+		goto channel_exit;
++		goto err;
 +	}
 +
-+	queue_delayed_work(cbdq->cbd_blkdev->task_wq, &cbdq->complete_work, 0);
++	cbdb->task_wq = alloc_workqueue("cbdt%d-b%u",  WQ_UNBOUND | WQ_MEM_RECLAIM,
++					0, cbdt->id, cbdb->backend_id);
++	if (!cbdb->task_wq) {
++		ret = -ENOMEM;
++		goto destroy_io_cache;
++	}
 +
-+	atomic_set(&cbdq->state, cbd_queue_state_running);
++	cbdb->bdev_file = bdev_file_open_by_path(cbdb->path,
++			BLK_OPEN_READ | BLK_OPEN_WRITE, cbdb, NULL);
++	if (IS_ERR(cbdb->bdev_file)) {
++		cbdt_err(cbdt, "failed to open bdev: %d", (int)PTR_ERR(cbdb->bdev_file));
++		ret = PTR_ERR(cbdb->bdev_file);
++		goto destroy_wq;
++	}
++
++	cbdb->bdev = file_bdev(cbdb->bdev_file);
++	if (new_backend) {
++		b_info->dev_size = bdev_nr_sectors(cbdb->bdev);
++	} else {
++		if (b_info->dev_size != bdev_nr_sectors(cbdb->bdev)) {
++			cbdt_err(cbdt, "Unexpected backend size: %llu, expected: %llu\n",
++				 bdev_nr_sectors(cbdb->bdev), b_info->dev_size);
++			ret = -EINVAL;
++			goto close_file;
++		}
++	}
++
++	INIT_DELAYED_WORK(&cbdb->state_work, state_work_fn);
++	INIT_DELAYED_WORK(&cbdb->hb_work, backend_hb_workfn);
++	hash_init(cbdb->handlers_hash);
++	cbdb->backend_device = &cbdt->cbd_backends_dev->backend_devs[cbdb->backend_id];
++
++	spin_lock_init(&cbdb->lock);
++
++	b_info->state = cbd_backend_state_running;
++
++	queue_delayed_work(cbd_wq, &cbdb->state_work, 0);
++	queue_delayed_work(cbd_wq, &cbdb->hb_work, 0);
 +
 +	return 0;
 +
-+channel_exit:
-+	cbdq->channel_info->blkdev_state = cbdc_blkdev_state_none;
-+	cbd_channel_exit(&cbdq->channel);
++close_file:
++	fput(cbdb->bdev_file);
++destroy_wq:
++	destroy_workqueue(cbdb->task_wq);
++destroy_io_cache:
++	kmem_cache_destroy(cbdb->backend_io_cache);
 +err:
 +	return ret;
 +}
 +
-+void cbd_queue_stop(struct cbd_queue *cbdq)
++extern struct device_type cbd_cache_type;
++
++int cbd_backend_start(struct cbd_transport *cbdt, char *path, u32 backend_id, u32 cache_segs)
 +{
-+	LIST_HEAD(tmp_list);
-+	struct cbd_request *cbd_req;
++	struct cbd_backend *backend;
++	struct cbd_backend_info *backend_info;
++	struct cbd_cache_info *cache_info;
++	bool new_backend = false;
++	int ret;
 +
-+	if (atomic_read(&cbdq->state) != cbd_queue_state_running)
-+		return;
++	if (backend_id == U32_MAX)
++		new_backend = true;
 +
-+	atomic_set(&cbdq->state, cbd_queue_state_removing);
-+	cancel_delayed_work_sync(&cbdq->complete_work);
++	if (new_backend) {
++		ret = cbdt_get_empty_backend_id(cbdt, &backend_id);
++		if (ret)
++			return ret;
 +
-+	spin_lock(&cbdq->inflight_reqs_lock);
-+	list_splice_init(&cbdq->inflight_reqs, &tmp_list);
-+	spin_unlock(&cbdq->inflight_reqs_lock);
-+
-+	while (!list_empty(&tmp_list)) {
-+		cbd_req = list_first_entry(&tmp_list,
-+				struct cbd_request, inflight_reqs_node);
-+		list_del_init(&cbd_req->inflight_reqs_node);
-+		cancel_work_sync(&cbd_req->work);
-+		cbd_req_put(cbd_req, -EIO);
++		backend_info = cbdt_get_backend_info(cbdt, backend_id);
++		cache_info = &backend_info->cache_info;
++		cache_info->n_segs = cache_segs;
++	} else {
++		backend_info = cbdt_get_backend_info(cbdt, backend_id);
++		if (cbd_backend_info_is_alive(backend_info))
++			return -EBUSY;
++		cache_info = &backend_info->cache_info;
 +	}
 +
-+	kfree(cbdq->released_extents);
-+	cbdq->channel_info->blkdev_state = cbdc_blkdev_state_none;
-+	cbd_channel_exit(&cbdq->channel);
++	backend = kzalloc(sizeof(*backend), GFP_KERNEL);
++	if (!backend)
++		return -ENOMEM;
++
++	strscpy(backend->path, path, CBD_PATH_LEN);
++	memcpy(backend_info->path, backend->path, CBD_PATH_LEN);
++	INIT_LIST_HEAD(&backend->node);
++	backend->backend_id = backend_id;
++	backend->cbdt = cbdt;
++
++	ret = cbd_backend_init(backend, new_backend);
++	if (ret) {
++		kfree(backend);
++		return ret;
++	}
++
++	cbdt_add_backend(cbdt, backend);
++
++	if (cache_info->n_segs) {
++		struct cbd_cache_opts cache_opts = { 0 };
++
++		cache_opts.cache_info = cache_info;
++		cache_opts.alloc_segs = new_backend;
++		cache_opts.start_writeback = true;
++		cache_opts.start_gc = false;
++		cache_opts.init_keys = false;
++		cache_opts.bdev_file = backend->bdev_file;
++		cache_opts.dev_size = backend_info->dev_size;
++		backend->cbd_cache = cbd_cache_alloc(cbdt, &cache_opts);
++		if (!backend->cbd_cache) {
++			ret = -ENOMEM;
++			goto backend_stop;
++		}
++
++		device_initialize(&backend->cache_dev);
++		device_set_pm_not_required(&backend->cache_dev);
++		dev_set_name(&backend->cache_dev, "cache");
++		backend->cache_dev.parent = &backend->backend_device->dev;
++		backend->cache_dev.type = &cbd_cache_type;
++		ret = device_add(&backend->cache_dev);
++		if (ret)
++			goto backend_stop;
++		backend->cache_dev_registered = true;
++	}
++
++	return 0;
++
++backend_stop:
++	cbd_backend_stop(cbdt, backend_id);
++
++	return ret;
++}
++
++int cbd_backend_stop(struct cbd_transport *cbdt, u32 backend_id)
++{
++	struct cbd_backend *cbdb;
++	struct cbd_backend_info *backend_info;
++
++	cbdb = cbdt_get_backend(cbdt, backend_id);
++	if (!cbdb)
++		return -ENOENT;
++
++	spin_lock(&cbdb->lock);
++	if (!hash_empty(cbdb->handlers_hash)) {
++		spin_unlock(&cbdb->lock);
++		return -EBUSY;
++	}
++
++	if (cbdb->backend_info->state == cbd_backend_state_removing) {
++		spin_unlock(&cbdb->lock);
++		return -EBUSY;
++	}
++
++	cbdb->backend_info->state = cbd_backend_state_removing;
++	spin_unlock(&cbdb->lock);
++
++	cbdt_del_backend(cbdt, cbdb);
++
++	if (cbdb->cbd_cache) {
++		if (cbdb->cache_dev_registered)
++			device_unregister(&cbdb->cache_dev);
++		cbd_cache_destroy(cbdb->cbd_cache);
++	}
++
++	cancel_delayed_work_sync(&cbdb->hb_work);
++	cancel_delayed_work_sync(&cbdb->state_work);
++
++	backend_info = cbdt_get_backend_info(cbdt, cbdb->backend_id);
++	backend_info->state = cbd_backend_state_none;
++	backend_info->alive_ts = 0;
++
++	drain_workqueue(cbdb->task_wq);
++	destroy_workqueue(cbdb->task_wq);
++
++	kmem_cache_destroy(cbdb->backend_io_cache);
++
++	fput(cbdb->bdev_file);
++	kfree(cbdb);
++
++	return 0;
++}
++
++int cbd_backend_clear(struct cbd_transport *cbdt, u32 backend_id)
++{
++	struct cbd_backend_info *backend_info;
++
++	backend_info = cbdt_get_backend_info(cbdt, backend_id);
++	if (cbd_backend_info_is_alive(backend_info)) {
++		cbdt_err(cbdt, "backend %u is still alive\n", backend_id);
++		return -EBUSY;
++	}
++
++	if (backend_info->state == cbd_backend_state_none)
++		return 0;
++
++	backend_info->state = cbd_backend_state_none;
++
++	return 0;
++}
++
++bool cbd_backend_cache_on(struct cbd_backend_info *backend_info)
++{
++	return (backend_info->cache_info.n_segs != 0);
++}
++
++void cbd_backend_notify(struct cbd_backend *cbdb, u32 seg_id)
++{
++	struct cbd_handler *handler;
++
++	handler = cbdb_get_handler(cbdb, seg_id);
++	/*
++	 * If the handler is not ready, return directly and
++	 * wait handler to queue the handle_work in creating
++	 */
++	if (!handler)
++		return;
++	cbd_handler_notify(handler);
++}
+diff --git a/drivers/block/cbd/cbd_handler.c b/drivers/block/cbd/cbd_handler.c
+new file mode 100644
+index 000000000000..6589dbe9acc7
+--- /dev/null
++++ b/drivers/block/cbd/cbd_handler.c
+@@ -0,0 +1,242 @@
++#include "cbd_internal.h"
++
++static inline struct cbd_se *get_se_head(struct cbd_handler *handler)
++{
++	return (struct cbd_se *)(handler->channel.submr + handler->channel_info->submr_head);
++}
++
++static inline struct cbd_se *get_se_to_handle(struct cbd_handler *handler)
++{
++	return (struct cbd_se *)(handler->channel.submr + handler->se_to_handle);
++}
++
++static inline struct cbd_ce *get_compr_head(struct cbd_handler *handler)
++{
++	return (struct cbd_ce *)(handler->channel.compr + handler->channel_info->compr_head);
++}
++
++static inline void complete_cmd(struct cbd_handler *handler, struct cbd_se *se, int ret)
++{
++	struct cbd_ce *ce;
++	unsigned long flags;
++
++	spin_lock_irqsave(&handler->compr_lock, flags);
++	ce = get_compr_head(handler);
++
++	memset(ce, 0, sizeof(*ce));
++	ce->req_tid = se->req_tid;
++	ce->result = ret;
++#ifdef CONFIG_CBD_CRC
++	if (se->op == CBD_OP_READ)
++		ce->data_crc = cbd_channel_crc(&handler->channel, se->data_off, se->data_len);
++	ce->ce_crc = cbd_ce_crc(ce);
++#endif
++	CBDC_UPDATE_COMPR_HEAD(handler->channel_info->compr_head,
++			       sizeof(struct cbd_ce),
++			       handler->channel.compr_size);
++	spin_unlock_irqrestore(&handler->compr_lock, flags);
++}
++
++static void backend_bio_end(struct bio *bio)
++{
++	struct cbd_backend_io *backend_io = bio->bi_private;
++	struct cbd_se *se = backend_io->se;
++	struct cbd_handler *handler = backend_io->handler;
++	struct cbd_backend *cbdb = handler->cbdb;
++
++	complete_cmd(handler, se, bio->bi_status);
++
++	bio_put(bio);
++	kmem_cache_free(cbdb->backend_io_cache, backend_io);
++}
++
++static struct cbd_backend_io *backend_prepare_io(struct cbd_handler *handler,
++						 struct cbd_se *se, blk_opf_t opf)
++{
++	struct cbd_backend_io *backend_io;
++	struct cbd_backend *cbdb = handler->cbdb;
++
++	backend_io = kmem_cache_zalloc(cbdb->backend_io_cache, GFP_KERNEL);
++	if (!backend_io)
++		return NULL;
++	backend_io->se = se;
++
++	backend_io->handler = handler;
++	backend_io->bio = bio_alloc_bioset(cbdb->bdev,
++				DIV_ROUND_UP(se->len, PAGE_SIZE),
++				opf, GFP_KERNEL, &handler->bioset);
++
++	if (!backend_io->bio) {
++		kmem_cache_free(cbdb->backend_io_cache, backend_io);
++		return NULL;
++	}
++
++	backend_io->bio->bi_iter.bi_sector = se->offset >> SECTOR_SHIFT;
++	backend_io->bio->bi_iter.bi_size = 0;
++	backend_io->bio->bi_private = backend_io;
++	backend_io->bio->bi_end_io = backend_bio_end;
++
++	return backend_io;
++}
++
++static int handle_backend_cmd(struct cbd_handler *handler, struct cbd_se *se)
++{
++	struct cbd_backend *cbdb = handler->cbdb;
++	struct cbd_backend_io *backend_io = NULL;
++	int ret;
++
++	if (cbd_se_flags_test(se, CBD_SE_FLAGS_DONE))
++		return 0;
++
++	switch (se->op) {
++	case CBD_OP_READ:
++		backend_io = backend_prepare_io(handler, se, REQ_OP_READ);
++		break;
++	case CBD_OP_WRITE:
++		backend_io = backend_prepare_io(handler, se, REQ_OP_WRITE);
++		break;
++	case CBD_OP_FLUSH:
++		ret = blkdev_issue_flush(cbdb->bdev);
++		goto complete_cmd;
++	default:
++		cbd_handler_err(handler, "unrecognized op: 0x%x", se->op);
++		ret = -EIO;
++		goto complete_cmd;
++	}
++
++	if (!backend_io)
++		return -ENOMEM;
++
++	ret = cbdc_map_pages(&handler->channel, backend_io);
++	if (ret) {
++		kmem_cache_free(cbdb->backend_io_cache, backend_io);
++		return ret;
++	}
++
++	submit_bio(backend_io->bio);
++
++	return 0;
++
++complete_cmd:
++	complete_cmd(handler, se, ret);
++	return 0;
++}
++
++void cbd_handler_notify(struct cbd_handler *handler)
++{
++	queue_delayed_work(handler->cbdb->task_wq, &handler->handle_work, 0);
++}
++
++static void handle_work_fn(struct work_struct *work)
++{
++	struct cbd_handler *handler = container_of(work, struct cbd_handler,
++						   handle_work.work);
++	struct cbd_se *se;
++	u64 req_tid;
++	int ret;
++
++again:
++	/* channel ctrl would be updated by blkdev queue */
++	se = get_se_to_handle(handler);
++	if (se == get_se_head(handler))
++		goto miss;
++
++	req_tid = se->req_tid;
++	if (handler->req_tid_expected != U64_MAX &&
++			req_tid != handler->req_tid_expected) {
++		cbd_handler_err(handler, "req_tid (%llu) is not expected (%llu)",
++				req_tid, handler->req_tid_expected);
++		goto miss;
++	}
++
++#ifdef CONFIG_CBD_CRC
++	if (se->se_crc != cbd_se_crc(se)) {
++		cbd_handler_err(handler, "se crc(0x%x) is not expected(0x%x)",
++				cbd_se_crc(se), se->se_crc);
++		goto miss;
++	}
++
++	if (se->op == CBD_OP_WRITE &&
++		se->data_crc != cbd_channel_crc(&handler->channel,
++						se->data_off,
++						se->data_len)) {
++		cbd_handler_err(handler, "data crc(0x%x) is not expected(0x%x)",
++				cbd_channel_crc(&handler->channel, se->data_off, se->data_len),
++				se->data_crc);
++		goto miss;
++	}
++#endif
++
++	cbdwc_hit(&handler->handle_worker_cfg);
++	ret = handle_backend_cmd(handler, se);
++	if (!ret) {
++		/* this se is handled */
++		handler->req_tid_expected = req_tid + 1;
++		handler->se_to_handle = (handler->se_to_handle + sizeof(struct cbd_se)) %
++							handler->channel.submr_size;
++	}
++
++	goto again;
++
++miss:
++	if (cbdwc_need_retry(&handler->handle_worker_cfg))
++		goto again;
++
++	cbdwc_miss(&handler->handle_worker_cfg);
++
++	if (handler->polling)
++		queue_delayed_work(handler->cbdb->task_wq, &handler->handle_work, 0);
++}
++
++int cbd_handler_create(struct cbd_backend *cbdb, u32 channel_id)
++{
++	struct cbd_transport *cbdt = cbdb->cbdt;
++	struct cbd_handler *handler;
++	int ret;
++
++	handler = kzalloc(sizeof(struct cbd_handler), GFP_KERNEL);
++	if (!handler)
++		return -ENOMEM;
++
++	ret = bioset_init(&handler->bioset, 256, 0, BIOSET_NEED_BVECS);
++	if (ret)
++		goto err;
++
++	handler->cbdb = cbdb;
++	cbd_channel_init(&handler->channel, cbdt, channel_id);
++	handler->channel_info = handler->channel.channel_info;
++
++	if (handler->channel_info->polling)
++		handler->polling = true;
++
++	handler->se_to_handle = handler->channel_info->submr_tail;
++	handler->req_tid_expected = U64_MAX;
++
++	spin_lock_init(&handler->compr_lock);
++	INIT_DELAYED_WORK(&handler->handle_work, handle_work_fn);
++
++	cbdwc_init(&handler->handle_worker_cfg);
++
++	cbdb_add_handler(cbdb, handler);
++	handler->channel_info->backend_state = cbdc_backend_state_running;
++
++	queue_delayed_work(cbdb->task_wq, &handler->handle_work, 0);
++
++	return 0;
++err:
++	kfree(handler);
++	return ret;
++};
++
++void cbd_handler_destroy(struct cbd_handler *handler)
++{
++	cbdb_del_handler(handler->cbdb, handler);
++
++	cancel_delayed_work_sync(&handler->handle_work);
++
++	handler->channel_info->backend_state = cbdc_backend_state_none;
++	cbd_channel_exit(&handler->channel);
++
++	bioset_exit(&handler->bioset);
++	kfree(handler);
 +}
 -- 
 2.34.1
