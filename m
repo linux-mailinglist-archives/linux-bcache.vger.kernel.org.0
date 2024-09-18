@@ -1,47 +1,47 @@
-Return-Path: <linux-bcache+bounces-723-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-724-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E24D97BABA
-	for <lists+linux-bcache@lfdr.de>; Wed, 18 Sep 2024 12:20:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 533D097BABD
+	for <lists+linux-bcache@lfdr.de>; Wed, 18 Sep 2024 12:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE234B23B18
-	for <lists+linux-bcache@lfdr.de>; Wed, 18 Sep 2024 10:20:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78A491C21960
+	for <lists+linux-bcache@lfdr.de>; Wed, 18 Sep 2024 10:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54876183CDE;
-	Wed, 18 Sep 2024 10:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EBD18990D;
+	Wed, 18 Sep 2024 10:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pAVzJKyC"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eJNEcFQL"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FA1188A20;
-	Wed, 18 Sep 2024 10:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16587189900
+	for <linux-bcache@vger.kernel.org>; Wed, 18 Sep 2024 10:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726654752; cv=none; b=OurKqBm3bcmiPlfz847KYbCaViV/7rSKpBO2djJugmBSHrfHrN1DanmG2y9JHTtxxYAkrPM+vYpCKG+tHyAqEmQimFb/BEbwzyF0qOGfrDk1JL8qVZei7zpERJHnmpYneA6MHQBPmiA1bILUdy8JnoNxCxGAXVfRTu6e8yNa8l4=
+	t=1726654756; cv=none; b=fCj3DQJZroSU+tnyucH8/OPApFSwvFAtkOxbofPa47jmFzwgQeTfSAyBJmE36ykuMOiQz7wOUCGw+qUa+mo+puyY4ahPOx6olpeCc6UxQpgx2lPS15zZ7tXH8ngA0/sc1tB1syqolb1zBHA8GVM2ejLiza921ULfcdU9UP0Ssz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726654752; c=relaxed/simple;
-	bh=IrAGkSmHMVrJ582AiyQPE8dcbMa0pA8DXHVBDgvBJ1E=;
+	s=arc-20240116; t=1726654756; c=relaxed/simple;
+	bh=BaUGCto9vs8oFFeaBFeumiYxEaC+cI0sNS72mCFbL4c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pdUcECn5j0uwDHMciDWHdLfmjk/rT/ZXy/TZc/7jxb2nAB24IHSy+XjHeXHXvSlng2h0qDHaGXgvGBFIUaicA7KEAmrPWdwQVEjNyq6LtDJIwXYihLaeY5+twuHt/rOoHI/ozgs803YnRcekG5VnSck5xnOHCgc71Cjx9cKXqVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pAVzJKyC; arc=none smtp.client-ip=95.215.58.181
+	 MIME-Version; b=o9+qkKY/c4u7wkhPNFmmgCrfuxooPzSdhkiv4MQImCsnU4E72yyh96D8augRnldPM37P2ghTa89aKEFERBcNlT6iweCYCx9YgoaTKqzEBLOoukgMZZH7ueYxXz1KsIWq9qVFY3oIbKqHJzDQOrcPSelbpNGFYL96oTB+/OzORuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eJNEcFQL; arc=none smtp.client-ip=95.215.58.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726654746;
+	t=1726654751;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hVl8YEPhue4gkg8taRJYSJaQ8lDCQRI6aDhcH+Bd4mE=;
-	b=pAVzJKyCfa+t4POHqhExzKLMHbqn650DP/XIMmVqits5hhk3LT2y03OsJ8tFXtKUKob5Oq
-	G9lvFaQvySEpqAZFGRow1w31vZIOShZ3Qvr00jnAp1Mw/jIfr4iQOcroHDkEcyV3xBhSur
-	DhIiKVpCsSk0EDgi+eA5WXrhg+tI4oA=
+	bh=W1Gtd6ScgTrJJmOdkTMe2oKtbid4lctcDodxd4qiA3I=;
+	b=eJNEcFQLFvjjY7KxtUWbts+lI1tq4qCiD/LxDrmdnbBlSvQRi8WKAgSXEyLFAT1mP+eoIE
+	rKYYuWenAMd5dIURS8RuoGmaCN3z7DRU3Q4PVz/aDm2KMSN2MoJaGhU4dT5VJEmg2rBeHo
+	WOUuHkHTTebUi5k614JXjMl7PqtKvYA=
 From: Dongsheng Yang <dongsheng.yang@linux.dev>
 To: axboe@kernel.dk,
 	dan.j.williams@intel.com,
@@ -56,9 +56,9 @@ Cc: linux-block@vger.kernel.org,
 	linux-cxl@vger.kernel.org,
 	linux-bcache@vger.kernel.org,
 	Dongsheng Yang <dongsheng.yang@linux.dev>
-Subject: [PATCH v2 5/8] cbd: introduce cbd_cache
-Date: Wed, 18 Sep 2024 10:18:18 +0000
-Message-Id: <20240918101821.681118-6-dongsheng.yang@linux.dev>
+Subject: [PATCH v2 6/8] cbd: introduce cbd_blkdev
+Date: Wed, 18 Sep 2024 10:18:19 +0000
+Message-Id: <20240918101821.681118-7-dongsheng.yang@linux.dev>
 In-Reply-To: <20240918101821.681118-1-dongsheng.yang@linux.dev>
 References: <20240918101821.681118-1-dongsheng.yang@linux.dev>
 Precedence: bulk
@@ -70,2438 +70,1043 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-cbd cache is a lightweight solution that uses persistent memory as block
-device cache. It works similar with bcache, where bcache uses block
-devices as cache drives, but cbd cache only supports persistent memory
-devices for caching. It s designed specifically for PMEM scenarios, with
-a simple design and implementation, aiming to provide a low-latency,
-high-concurrency, and performance-stable caching solution.
+The "cbd_blkdev" represents a virtual block device named "/dev/cbdX". It
+corresponds to a backend. The "blkdev" interacts with upper-layer users
+and accepts IO requests from them. A "blkdev" includes multiple
+"cbd_queues", each of which requires a "cbd_channel" to
+interact with the backend's handler. The "cbd_queue" forwards IO
+requests from the upper layer to the backend's handler through the
+channel.
 
-Note: cbd cache is not intended to replace your bcache. Instead, it
-offers an alternative solution specifically suited for scenarios where
-you want to use persistent memory devices as block device cache.
+cbd_blkdev allow user to force stop a /dev/cbdX, even if backend is not
+responsible.
 
 Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
 ---
- drivers/block/cbd/cbd_cache.c | 2410 +++++++++++++++++++++++++++++++++
- 1 file changed, 2410 insertions(+)
- create mode 100644 drivers/block/cbd/cbd_cache.c
+ drivers/block/cbd/cbd_blkdev.c | 433 +++++++++++++++++++++++++
+ drivers/block/cbd/cbd_queue.c  | 574 +++++++++++++++++++++++++++++++++
+ 2 files changed, 1007 insertions(+)
+ create mode 100644 drivers/block/cbd/cbd_blkdev.c
+ create mode 100644 drivers/block/cbd/cbd_queue.c
 
-diff --git a/drivers/block/cbd/cbd_cache.c b/drivers/block/cbd/cbd_cache.c
+diff --git a/drivers/block/cbd/cbd_blkdev.c b/drivers/block/cbd/cbd_blkdev.c
 new file mode 100644
-index 000000000000..17efb6d67429
+index 000000000000..f16bc429704b
 --- /dev/null
-+++ b/drivers/block/cbd/cbd_cache.c
-@@ -0,0 +1,2410 @@
++++ b/drivers/block/cbd/cbd_blkdev.c
+@@ -0,0 +1,433 @@
 +#include "cbd_internal.h"
 +
-+#define CBD_CACHE_PARAL_MAX		(128)
-+
-+#define CBD_CACHE_TREE_SIZE		(4 * 1024 * 1024)
-+#define CBD_CACHE_TREE_SIZE_MASK	0x3FFFFF
-+#define CBD_CACHE_TREE_SIZE_SHIFT	22
-+
-+#define CBD_KSET_KEYS_MAX		128
-+#define CBD_KSET_ONMEDIA_SIZE_MAX	struct_size_t(struct cbd_cache_kset_onmedia, data, CBD_KSET_KEYS_MAX)
-+#define CBD_KSET_SIZE			(sizeof(struct cbd_cache_kset) + sizeof(struct cbd_cache_key_onmedia) * CBD_KSET_KEYS_MAX)
-+
-+#define CBD_CACHE_GC_PERCENT_MIN	0
-+#define CBD_CACHE_GC_PERCENT_MAX	90
-+#define CBD_CACHE_GC_PERCENT_DEFAULT	70
-+
-+#define CBD_CACHE_SEGS_EACH_PARAL	4
-+
-+#define CBD_CLEAN_KEYS_MAX		10
-+
-+#define CACHE_KEY(node)		(container_of(node, struct cbd_cache_key, rb_node))
-+
-+static inline struct cbd_cache_tree *get_cache_tree(struct cbd_cache *cache, u64 off)
-+{
-+	return &cache->cache_trees[off >> CBD_CACHE_TREE_SIZE_SHIFT];
-+}
-+
-+static inline void *cache_pos_addr(struct cbd_cache_pos *pos)
-+{
-+	return (pos->cache_seg->segment.data + pos->seg_off);
-+}
-+static inline struct cbd_cache_kset_onmedia *get_key_head_addr(struct cbd_cache *cache)
-+{
-+	return (struct cbd_cache_kset_onmedia *)cache_pos_addr(&cache->key_head);
-+}
-+
-+static inline u32 get_kset_id(struct cbd_cache *cache, u64 off)
-+{
-+	return (off >> CBD_CACHE_TREE_SIZE_SHIFT) % cache->n_ksets;
-+}
-+
-+static inline struct cbd_cache_kset *get_kset(struct cbd_cache *cache, u32 kset_id)
-+{
-+	return (void *)cache->ksets + CBD_KSET_SIZE * kset_id;
-+}
-+
-+static inline struct cbd_cache_data_head *get_data_head(struct cbd_cache *cache, u32 i)
-+{
-+	return &cache->data_heads[i % cache->n_heads];
-+}
-+
-+static inline bool cache_key_empty(struct cbd_cache_key *key)
-+{
-+	return key->flags & CBD_CACHE_KEY_FLAGS_EMPTY;
-+}
-+
-+static inline bool cache_key_clean(struct cbd_cache_key *key)
-+{
-+	return key->flags & CBD_CACHE_KEY_FLAGS_CLEAN;
-+}
-+
-+static inline u32 get_backend_id(struct cbd_transport *cbdt,
-+				 struct cbd_backend_info *backend_info)
-+{
-+	u64 backend_off;
-+	struct cbd_transport_info *transport_info;
-+
-+	transport_info = cbdt->transport_info;
-+	backend_off = (void *)backend_info - (void *)transport_info;
-+
-+	return (backend_off - transport_info->backend_area_off) / transport_info->backend_info_size;
-+}
-+
-+static inline bool cache_seg_has_next(struct cbd_cache_segment *cache_seg)
-+{
-+	return (cache_seg->cache_seg_info->flags & CBD_CACHE_SEG_FLAGS_HAS_NEXT);
-+}
-+
-+static inline bool cache_seg_wb_done(struct cbd_cache_segment *cache_seg)
-+{
-+	return (cache_seg->cache_seg_info->flags & CBD_CACHE_SEG_FLAGS_WB_DONE);
-+}
-+
-+static inline bool cache_seg_gc_done(struct cbd_cache_segment *cache_seg)
-+{
-+	return (cache_seg->cache_seg_info->flags & CBD_CACHE_SEG_FLAGS_GC_DONE);
-+}
-+
-+static inline void cache_pos_copy(struct cbd_cache_pos *dst, struct cbd_cache_pos *src)
-+{
-+	memcpy(dst, src, sizeof(struct cbd_cache_pos));
-+}
-+
-+/* cbd_cache_seg_ops */
-+static struct cbd_cache_segment *cache_seg_get_next(struct cbd_cache_segment *cache_seg)
-+{
-+	struct cbd_cache *cache = cache_seg->cache;
-+
-+	if (cache_seg->cache_seg_info->flags & CBD_CACHE_SEG_FLAGS_HAS_NEXT)
-+		return &cache->segments[cache_seg->cache_seg_info->next_cache_seg_id];
-+
-+	return NULL;
-+}
-+
-+static void cbd_cache_seg_sanitize_pos(struct cbd_seg_pos *pos)
-+{
-+	struct cbd_segment *segment;
-+	struct cbd_cache_segment *cache_seg;
-+
-+again:
-+	segment = pos->segment;
-+	cache_seg = container_of(segment, struct cbd_cache_segment, segment);
-+	if (pos->off >= segment->data_size) {
-+		pos->off -= segment->data_size;
-+		cache_seg = cache_seg_get_next(cache_seg);
-+		BUG_ON(!cache_seg);
-+		pos->segment = &cache_seg->segment;
-+
-+		goto again;
-+	}
-+}
-+
-+static struct cbd_seg_ops cbd_cache_seg_ops = {
-+	.sanitize_pos = cbd_cache_seg_sanitize_pos
-+};
-+
-+/* sysfs for cache */
-+static ssize_t cache_segs_show(struct device *dev,
++static ssize_t blkdev_backend_id_show(struct device *dev,
 +			       struct device_attribute *attr,
 +			       char *buf)
 +{
-+	struct cbd_backend *backend;
++	struct cbd_blkdev_device *blkdev;
++	struct cbd_blkdev_info *blkdev_info;
 +
-+	backend = container_of(dev, struct cbd_backend, cache_dev);
++	blkdev = container_of(dev, struct cbd_blkdev_device, dev);
++	blkdev_info = blkdev->blkdev_info;
 +
-+	return sprintf(buf, "%u\n", backend->cbd_cache->cache_info->n_segs);
-+}
-+
-+static DEVICE_ATTR(cache_segs, 0400, cache_segs_show, NULL);
-+
-+static ssize_t used_segs_show(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
-+{
-+	struct cbd_backend *backend;
-+	struct cbd_cache *cache;
-+
-+	backend = container_of(dev, struct cbd_backend, cache_dev);
-+	cache = backend->cbd_cache;
-+
-+	return sprintf(buf, "%u\n", cache->cache_info->used_segs);
-+}
-+
-+static DEVICE_ATTR(used_segs, 0400, used_segs_show, NULL);
-+
-+static ssize_t gc_percent_show(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
-+{
-+	struct cbd_backend *backend;
-+
-+	backend = container_of(dev, struct cbd_backend, cache_dev);
-+
-+	return sprintf(buf, "%u\n", backend->cbd_cache->cache_info->gc_percent);
-+}
-+
-+static ssize_t gc_percent_store(struct device *dev,
-+					struct device_attribute *attr,
-+					const char *buf,
-+					size_t size)
-+{
-+	struct cbd_backend *backend;
-+	unsigned long val;
-+	int ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	backend = container_of(dev, struct cbd_backend, cache_dev);
-+	ret = kstrtoul(buf, 10, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (val < CBD_CACHE_GC_PERCENT_MIN ||
-+			val > CBD_CACHE_GC_PERCENT_MAX)
-+		return -EINVAL;
-+
-+	backend->cbd_cache->cache_info->gc_percent = val;
-+
-+	return size;
-+}
-+
-+static DEVICE_ATTR(gc_percent, 0600, gc_percent_show, gc_percent_store);
-+
-+static struct attribute *cbd_cache_attrs[] = {
-+	&dev_attr_cache_segs.attr,
-+	&dev_attr_used_segs.attr,
-+	&dev_attr_gc_percent.attr,
-+	NULL
-+};
-+
-+static struct attribute_group cbd_cache_attr_group = {
-+	.attrs = cbd_cache_attrs,
-+};
-+
-+static const struct attribute_group *cbd_cache_attr_groups[] = {
-+	&cbd_cache_attr_group,
-+	NULL
-+};
-+
-+static void cbd_cache_release(struct device *dev)
-+{
-+}
-+
-+const struct device_type cbd_cache_type = {
-+	.name		= "cbd_cache",
-+	.groups		= cbd_cache_attr_groups,
-+	.release	= cbd_cache_release,
-+};
-+
-+/* debug functions */
-+#ifdef CONFIG_CBD_DEBUG
-+static void dump_seg_map(struct cbd_cache *cache)
-+{
-+	int i;
-+
-+	cbd_cache_debug(cache, "start seg map dump");
-+	for (i = 0; i < cache->n_segs; i++)
-+		cbd_cache_debug(cache, "seg: %u, %u", i, test_bit(i, cache->seg_map));
-+	cbd_cache_debug(cache, "end seg map dump");
-+}
-+
-+static void dump_cache(struct cbd_cache *cache)
-+{
-+	struct cbd_cache_key *key;
-+	struct rb_node *node;
-+	int i;
-+
-+	cbd_cache_debug(cache, "start cache tree dump");
-+
-+	for (i = 0; i < cache->n_trees; i++) {
-+		struct cbd_cache_tree *cache_tree;
-+
-+		cache_tree = &cache->cache_trees[i];
-+		node = rb_first(&cache_tree->root);
-+		while (node) {
-+			key = CACHE_KEY(node);
-+			node = rb_next(node);
-+
-+			if (cache_key_empty(key))
-+				continue;
-+
-+			cbd_cache_debug(cache, "key: %p gen: %llu key->off: %llu, len: %u, cache: %p segid: %u, seg_off: %u\n",
-+					key, key->seg_gen, key->off, key->len, cache_pos_addr(&key->cache_pos),
-+					key->cache_pos.cache_seg->cache_seg_id, key->cache_pos.seg_off);
-+		}
-+	}
-+	cbd_cache_debug(cache, "end cache tree dump");
-+}
-+
-+#endif /* CONFIG_CBD_DEBUG */
-+
-+/* cache_segment allocation and reclaim */
-+static void cache_seg_init(struct cbd_cache *cache,
-+			   u32 seg_id, u32 cache_seg_id)
-+{
-+	struct cbd_transport *cbdt = cache->cbdt;
-+	struct cbd_cache_segment *cache_seg = &cache->segments[cache_seg_id];
-+	struct cbds_init_options seg_options = { 0 };
-+	struct cbd_segment *segment = &cache_seg->segment;
-+
-+	seg_options.type = cbds_type_cache;
-+	seg_options.data_off = round_up(sizeof(struct cbd_cache_seg_info), PAGE_SIZE);
-+	seg_options.seg_ops = &cbd_cache_seg_ops;
-+	seg_options.seg_id = seg_id;
-+
-+	cbd_segment_init(cbdt, segment, &seg_options);
-+
-+	atomic_set(&cache_seg->refs, 0);
-+	spin_lock_init(&cache_seg->gen_lock);
-+	cache_seg->cache = cache;
-+	cache_seg->cache_seg_id = cache_seg_id;
-+	cache_seg->cache_seg_info = (struct cbd_cache_seg_info *)segment->segment_info;
-+}
-+
-+static void cache_seg_exit(struct cbd_cache_segment *cache_seg)
-+{
-+	cbd_segment_exit(&cache_seg->segment);
-+}
-+
-+#define CBD_WAIT_NEW_CACHE_INTERVAL	100 /* usecs */
-+#define CBD_WAIT_NEW_CACHE_COUNT	100
-+
-+static struct cbd_cache_segment *get_cache_segment(struct cbd_cache *cache)
-+{
-+	struct cbd_cache_segment *cache_seg;
-+	u32 seg_id;
-+	u32 wait_count = 0;
-+
-+again:
-+	spin_lock(&cache->seg_map_lock);
-+	seg_id = find_next_zero_bit(cache->seg_map, cache->n_segs, cache->last_cache_seg);
-+	if (seg_id == cache->n_segs) {
-+		spin_unlock(&cache->seg_map_lock);
-+		if (cache->last_cache_seg) {
-+			cache->last_cache_seg = 0;
-+			goto again;
-+		}
-+
-+		if (++wait_count >= CBD_WAIT_NEW_CACHE_COUNT)
-+			return NULL;
-+		udelay(CBD_WAIT_NEW_CACHE_INTERVAL);
-+		goto again;
-+	}
-+
-+	set_bit(seg_id, cache->seg_map);
-+	cache->cache_info->used_segs++;
-+	cache->last_cache_seg = seg_id;
-+	spin_unlock(&cache->seg_map_lock);
-+
-+	cache_seg = &cache->segments[seg_id];
-+	cache_seg->cache_seg_id = seg_id;
-+	cache_seg->cache_seg_info->flags = 0;
-+
-+	cbdt_zero_range(cache->cbdt, cache_seg->segment.data, cache_seg->segment.data_size);
-+
-+	return cache_seg;
-+}
-+
-+static void cache_seg_get(struct cbd_cache_segment *cache_seg)
-+{
-+	atomic_inc(&cache_seg->refs);
-+}
-+
-+static void cache_seg_invalidate(struct cbd_cache_segment *cache_seg)
-+{
-+	struct cbd_cache *cache;
-+
-+	cache = cache_seg->cache;
-+
-+	spin_lock(&cache_seg->gen_lock);
-+	cache_seg->cache_seg_info->gen++;
-+	spin_unlock(&cache_seg->gen_lock);
-+
-+	spin_lock(&cache->seg_map_lock);
-+	clear_bit(cache_seg->cache_seg_id, cache->seg_map);
-+	cache->cache_info->used_segs--;
-+	spin_unlock(&cache->seg_map_lock);
-+
-+	queue_work(cache->cache_wq, &cache->clean_work);
-+	cbd_cache_debug(cache, "gc invalidat seg: %u\n", cache_seg->cache_seg_id);
-+
-+#ifdef CONFIG_CBD_DEBUG
-+	dump_seg_map(cache);
-+#endif
-+}
-+
-+static void cache_seg_put(struct cbd_cache_segment *cache_seg)
-+{
-+	if (atomic_dec_and_test(&cache_seg->refs))
-+		cache_seg_invalidate(cache_seg);
-+}
-+
-+static void cache_key_gc(struct cbd_cache *cache, struct cbd_cache_key *key)
-+{
-+	struct cbd_cache_segment *cache_seg = key->cache_pos.cache_seg;
-+
-+	cache_seg_put(cache_seg);
-+}
-+
-+static int cache_data_head_init(struct cbd_cache *cache, u32 i)
-+{
-+	struct cbd_cache_segment *next_seg;
-+	struct cbd_cache_data_head *data_head;
-+
-+	data_head = get_data_head(cache, i);
-+	next_seg = get_cache_segment(cache);
-+	if (!next_seg)
-+		return -EBUSY;
-+
-+	cache_seg_get(next_seg);
-+	data_head->head_pos.cache_seg = next_seg;
-+	data_head->head_pos.seg_off = 0;
-+
-+	return 0;
-+}
-+
-+static void cache_pos_advance(struct cbd_cache_pos *pos, u32 len, bool set);
-+static int cache_data_alloc(struct cbd_cache *cache, struct cbd_cache_key *key, u32 head_index)
-+{
-+	struct cbd_cache_data_head *data_head;
-+	struct cbd_cache_pos *head_pos;
-+	struct cbd_cache_segment *cache_seg;
-+	struct cbd_segment *segment;
-+	u32 seg_remain;
-+	u32 allocated = 0, to_alloc;
-+	int ret = 0;
-+
-+	data_head = get_data_head(cache, head_index);
-+
-+	spin_lock(&data_head->data_head_lock);
-+again:
-+	if (!data_head->head_pos.cache_seg) {
-+		seg_remain = 0;
-+	} else {
-+		cache_pos_copy(&key->cache_pos, &data_head->head_pos);
-+		key->seg_gen = key->cache_pos.cache_seg->cache_seg_info->gen;
-+
-+		head_pos = &data_head->head_pos;
-+		cache_seg = head_pos->cache_seg;
-+		segment = &cache_seg->segment;
-+		seg_remain = segment->data_size - head_pos->seg_off;
-+		to_alloc = key->len - allocated;
-+	}
-+
-+	if (seg_remain > to_alloc) {
-+		cache_pos_advance(head_pos, to_alloc, false);
-+		allocated += to_alloc;
-+		cache_seg_get(cache_seg);
-+	} else if (seg_remain) {
-+		cache_pos_advance(head_pos, seg_remain, false);
-+		key->len = seg_remain;
-+		cache_seg_get(cache_seg); /* get for key */
-+
-+		cache_seg_put(head_pos->cache_seg); /* put for head_pos->cache_seg */
-+		head_pos->cache_seg = NULL;
-+	} else {
-+		ret = cache_data_head_init(cache, head_index);
-+		if (ret)
-+			goto out;
-+
-+		goto again;
-+	}
-+
-+out:
-+	spin_unlock(&data_head->data_head_lock);
-+
-+	return ret;
-+}
-+
-+static void cache_copy_from_req_bio(struct cbd_cache *cache, struct cbd_cache_key *key,
-+				struct cbd_request *cbd_req, u32 bio_off)
-+{
-+	struct cbd_cache_pos *pos = &key->cache_pos;
-+	struct cbd_segment *segment;
-+
-+	segment = &pos->cache_seg->segment;
-+
-+	cbds_copy_from_bio(segment, pos->seg_off, key->len, cbd_req->bio, bio_off);
-+}
-+
-+static int cache_copy_to_req_bio(struct cbd_cache *cache, struct cbd_request *cbd_req,
-+			    u32 off, u32 len, struct cbd_cache_pos *pos, u64 key_gen)
-+{
-+	struct cbd_cache_segment *cache_seg = pos->cache_seg;
-+	struct cbd_segment *segment = &cache_seg->segment;
-+
-+	spin_lock(&cache_seg->gen_lock);
-+	if (key_gen < cache_seg->cache_seg_info->gen) {
-+		spin_unlock(&cache_seg->gen_lock);
-+		return -EINVAL;
-+	}
-+
-+	spin_lock(&cbd_req->lock);
-+	cbds_copy_to_bio(segment, pos->seg_off, len, cbd_req->bio, off);
-+	spin_unlock(&cbd_req->lock);
-+	spin_unlock(&cache_seg->gen_lock);
-+
-+	return 0;
-+}
-+
-+static void cache_copy_from_req_channel(struct cbd_cache *cache, struct cbd_request *cbd_req,
-+				struct cbd_cache_pos *pos, u32 off, u32 len)
-+{
-+	struct cbd_seg_pos dst_pos, src_pos;
-+
-+	src_pos.segment = &cbd_req->cbdq->channel.segment;
-+	src_pos.off = cbd_req->data_off;
-+
-+	dst_pos.segment = &pos->cache_seg->segment;
-+	dst_pos.off = pos->seg_off;
-+
-+	if (off) {
-+		cbds_pos_advance(&dst_pos, off);
-+		cbds_pos_advance(&src_pos, off);
-+	}
-+
-+	cbds_copy_data(&dst_pos, &src_pos, len);
-+}
-+
-+
-+/* cache_key management, allocation, destroy, cutfront, cutback...*/
-+static struct cbd_cache_key *cache_key_alloc(struct cbd_cache *cache)
-+{
-+	struct cbd_cache_key *key;
-+
-+	key = kmem_cache_zalloc(cache->key_cache, GFP_NOWAIT);
-+	if (!key)
-+		return NULL;
-+
-+	kref_init(&key->ref);
-+	key->cache = cache;
-+	INIT_LIST_HEAD(&key->list_node);
-+	RB_CLEAR_NODE(&key->rb_node);
-+
-+	return key;
-+}
-+
-+static void cache_key_get(struct cbd_cache_key *key)
-+{
-+	kref_get(&key->ref);
-+}
-+
-+static void cache_key_destroy(struct kref *ref)
-+{
-+	struct cbd_cache_key *key = container_of(ref, struct cbd_cache_key, ref);
-+	struct cbd_cache *cache = key->cache;
-+
-+	kmem_cache_free(cache->key_cache, key);
-+}
-+
-+static void cache_key_put(struct cbd_cache_key *key)
-+{
-+	kref_put(&key->ref, cache_key_destroy);
-+}
-+
-+static inline u64 cache_key_lstart(struct cbd_cache_key *key)
-+{
-+	return key->off;
-+}
-+
-+static inline u64 cache_key_lend(struct cbd_cache_key *key)
-+{
-+	return key->off + key->len;
-+}
-+
-+static inline void cache_key_copy(struct cbd_cache_key *key_dst, struct cbd_cache_key *key_src)
-+{
-+	key_dst->off = key_src->off;
-+	key_dst->len = key_src->len;
-+	key_dst->seg_gen = key_src->seg_gen;
-+	key_dst->cache_tree = key_src->cache_tree;
-+	key_dst->flags = key_src->flags;
-+
-+	cache_pos_copy(&key_dst->cache_pos, &key_src->cache_pos);
-+}
-+
-+static void cache_pos_advance(struct cbd_cache_pos *pos, u32 len, bool set)
-+{
-+	struct cbd_cache_segment *cache_seg;
-+	struct cbd_segment *segment;
-+	u32 seg_remain, to_advance;
-+	u32 advanced = 0;
-+
-+again:
-+	cache_seg = pos->cache_seg;
-+	BUG_ON(!cache_seg);
-+	segment = &cache_seg->segment;
-+	seg_remain = segment->data_size - pos->seg_off;
-+	to_advance = len - advanced;
-+
-+	if (seg_remain >= to_advance) {
-+		pos->seg_off += to_advance;
-+		advanced += to_advance;
-+	} else if (seg_remain) {
-+		pos->seg_off += seg_remain;
-+		advanced += seg_remain;
-+	} else {
-+		pos->cache_seg = cache_seg_get_next(pos->cache_seg);
-+		BUG_ON(!pos->cache_seg);
-+		pos->seg_off = 0;
-+		if (set) {
-+			struct cbd_cache *cache = pos->cache_seg->cache;
-+
-+			set_bit(pos->cache_seg->cache_seg_id, pos->cache_seg->cache->seg_map);
-+			cbd_cache_debug(cache, "set seg in advance %u\n", pos->cache_seg->cache_seg_id);
-+#ifdef CONFIG_CBD_DEBUG
-+			dump_seg_map(cache);
-+#endif
-+		}
-+	}
-+
-+	if (advanced < len)
-+		goto again;
-+}
-+
-+static inline void cache_key_cutfront(struct cbd_cache_key *key, u32 cut_len)
-+{
-+	if (key->cache_pos.cache_seg)
-+		cache_pos_advance(&key->cache_pos, cut_len, false);
-+
-+	key->off += cut_len;
-+	key->len -= cut_len;
-+}
-+
-+static inline void cache_key_cutback(struct cbd_cache_key *key, u32 cut_len)
-+{
-+	key->len -= cut_len;
-+}
-+
-+static inline void cache_key_delete(struct cbd_cache_key *key)
-+{
-+	struct cbd_cache_tree *cache_tree;
-+
-+	cache_tree = key->cache_tree;
-+	if (!cache_tree)
-+		return;
-+
-+	rb_erase(&key->rb_node, &cache_tree->root);
-+	key->flags = 0;
-+	cache_key_put(key);
-+}
-+
-+static inline u32 cache_key_data_crc(struct cbd_cache_key *key)
-+{
-+	void *data;
-+
-+	data = cache_pos_addr(&key->cache_pos);
-+
-+	return crc32(0, data, key->len);
-+}
-+
-+static void cache_key_encode(struct cbd_cache_key_onmedia *key_onmedia,
-+			     struct cbd_cache_key *key)
-+{
-+	key_onmedia->off = key->off;
-+	key_onmedia->len = key->len;
-+
-+	key_onmedia->cache_seg_id = key->cache_pos.cache_seg->cache_seg_id;
-+	key_onmedia->cache_seg_off = key->cache_pos.seg_off;
-+
-+	key_onmedia->seg_gen = key->seg_gen;
-+	key_onmedia->flags = key->flags;
-+
-+#ifdef CONFIG_CBD_CRC
-+	key_onmedia->data_crc = key->data_crc;
-+#endif
-+}
-+
-+static void cache_key_decode(struct cbd_cache_key_onmedia *key_onmedia, struct cbd_cache_key *key)
-+{
-+	struct cbd_cache *cache = key->cache;
-+
-+	key->off = key_onmedia->off;
-+	key->len = key_onmedia->len;
-+
-+	key->cache_pos.cache_seg = &cache->segments[key_onmedia->cache_seg_id];
-+	key->cache_pos.seg_off = key_onmedia->cache_seg_off;
-+
-+	key->seg_gen = key_onmedia->seg_gen;
-+	key->flags = key_onmedia->flags;
-+
-+#ifdef CONFIG_CBD_CRC
-+	key->data_crc = key_onmedia->data_crc;
-+#endif
-+}
-+
-+/* cache_kset */
-+static inline u32 cache_kset_crc(struct cbd_cache_kset_onmedia *kset_onmedia)
-+{
-+	return crc32(0, (void *)kset_onmedia + 4, struct_size(kset_onmedia, data, kset_onmedia->key_num) - 4);
-+}
-+
-+static inline u32 get_kset_onmedia_size(struct cbd_cache_kset_onmedia *kset_onmedia)
-+{
-+	return struct_size_t(struct cbd_cache_kset_onmedia, data, kset_onmedia->key_num);
-+}
-+
-+static inline u32 get_seg_remain(struct cbd_cache_pos *pos)
-+{
-+	struct cbd_cache_segment *cache_seg;
-+	struct cbd_segment *segment;
-+	u32 seg_remain;
-+
-+	cache_seg = pos->cache_seg;
-+	segment = &cache_seg->segment;
-+	seg_remain = segment->data_size - pos->seg_off;
-+
-+	return seg_remain;
-+}
-+
-+static int cache_kset_close(struct cbd_cache *cache, struct cbd_cache_kset *kset)
-+{
-+	struct cbd_cache_kset_onmedia *kset_onmedia;
-+	u32 kset_onmedia_size;
-+	int ret;
-+
-+	kset_onmedia = &kset->kset_onmedia;
-+
-+	if (!kset_onmedia->key_num)
++	if (blkdev_info->state == cbd_blkdev_state_none)
 +		return 0;
 +
-+	kset_onmedia_size = struct_size(kset_onmedia, data, kset_onmedia->key_num);
-+
-+	spin_lock(&cache->key_head_lock);
-+again:
-+	if (get_seg_remain(&cache->key_head) < CBD_KSET_ONMEDIA_SIZE_MAX) {
-+		struct cbd_cache_segment *cur_seg, *next_seg;
-+
-+		next_seg = get_cache_segment(cache);
-+		if (!next_seg) {
-+			ret = -EBUSY;
-+			goto out;
-+		}
-+
-+		cur_seg = cache->key_head.cache_seg;
-+
-+		cur_seg->cache_seg_info->next_cache_seg_id = next_seg->cache_seg_id;
-+		cur_seg->cache_seg_info->flags |= CBD_CACHE_SEG_FLAGS_HAS_NEXT;
-+
-+		cache->key_head.cache_seg = next_seg;
-+		cache->key_head.seg_off = 0;
-+		goto again;
-+	}
-+
-+	if (get_seg_remain(&cache->key_head) - kset_onmedia_size < CBD_KSET_ONMEDIA_SIZE_MAX)
-+		kset_onmedia->flags |= CBD_KSET_FLAGS_LAST;
-+
-+	kset_onmedia->magic = CBD_KSET_MAGIC;
-+	kset_onmedia->crc = cache_kset_crc(kset_onmedia);
-+
-+	memcpy(get_key_head_addr(cache), kset_onmedia, kset_onmedia_size);
-+	memset(kset_onmedia, 0, sizeof(struct cbd_cache_kset_onmedia));
-+
-+	cache_pos_advance(&cache->key_head, kset_onmedia_size, false);
-+
-+	ret = 0;
-+out:
-+	spin_unlock(&cache->key_head_lock);
-+
-+	return ret;
++	return sprintf(buf, "%u\n", blkdev_info->backend_id);
 +}
 +
-+/* append a cache_key into related kset, if this kset full, close this kset,
-+ * else queue a flush_work to do kset writting.
-+ */
-+static int cache_key_append(struct cbd_cache *cache, struct cbd_cache_key *key)
++static DEVICE_ATTR(backend_id, 0400, blkdev_backend_id_show, NULL);
++
++static ssize_t blkdev_host_id_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
 +{
-+	struct cbd_cache_kset *kset;
-+	struct cbd_cache_kset_onmedia *kset_onmedia;
-+	struct cbd_cache_key_onmedia *key_onmedia;
-+	u32 kset_id = get_kset_id(cache, key->off);
-+	int ret = 0;
++	struct cbd_blkdev_device *blkdev;
++	struct cbd_blkdev_info *blkdev_info;
 +
-+	kset = get_kset(cache, kset_id);
-+	kset_onmedia = &kset->kset_onmedia;
++	blkdev = container_of(dev, struct cbd_blkdev_device, dev);
++	blkdev_info = blkdev->blkdev_info;
 +
-+	spin_lock(&kset->kset_lock);
-+	key_onmedia = &kset_onmedia->data[kset_onmedia->key_num];
-+#ifdef CONFIG_CBD_CRC
-+	key->data_crc = cache_key_data_crc(key);
-+#endif
-+	cache_key_encode(key_onmedia, key);
-+	if (++kset_onmedia->key_num == CBD_KSET_KEYS_MAX) {
-+		ret = cache_kset_close(cache, kset);
-+		if (ret) {
-+			/* return ocuppied key back */
-+			kset_onmedia->key_num--;
-+			goto out;
-+		}
-+	} else {
-+		queue_delayed_work(cache->cache_wq, &kset->flush_work, 1 * HZ);
-+	}
-+out:
-+	spin_unlock(&kset->kset_lock);
++	if (blkdev_info->state == cbd_blkdev_state_none)
++		return 0;
 +
-+	return ret;
++	return sprintf(buf, "%u\n", blkdev_info->host_id);
 +}
 +
-+/* cache_tree walk */
-+struct cbd_cache_tree_walk_ctx {
-+	struct cbd_cache *cache;
-+	struct rb_node *start_node;
-+	struct cbd_request *cbd_req;
-+	u32	req_done;
-+	struct cbd_cache_key *key;
++static DEVICE_ATTR(host_id, 0400, blkdev_host_id_show, NULL);
 +
-+	struct list_head *delete_key_list;
-+	struct list_head *submit_req_list;
++static ssize_t blkdev_mapped_id_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
++{
++	struct cbd_blkdev_device *blkdev;
++	struct cbd_blkdev_info *blkdev_info;
 +
-+	/*
-+	 *	  |--------|		key_tmp
-+	 * |====|			key
-+	 */
-+	int (*before)(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+			struct cbd_cache_tree_walk_ctx *ctx);
++	blkdev = container_of(dev, struct cbd_blkdev_device, dev);
++	blkdev_info = blkdev->blkdev_info;
 +
-+	/*
-+	 * |----------|			key_tmp
-+	 *		|=====|		key
-+	 */
-+	int (*after)(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+			struct cbd_cache_tree_walk_ctx *ctx);
++	if (blkdev_info->state == cbd_blkdev_state_none)
++		return 0;
 +
-+	/*
-+	 *     |----------------|	key_tmp
-+	 * |===========|		key
-+	 */
-+	int (*overlap_tail)(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+			struct cbd_cache_tree_walk_ctx *ctx);
++	return sprintf(buf, "%u\n", blkdev_info->mapped_id);
++}
 +
-+	/*
-+	 * |--------|			key_tmp
-+	 *   |==========|		key
-+	 */
-+	int (*overlap_head)(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+			struct cbd_cache_tree_walk_ctx *ctx);
++static DEVICE_ATTR(mapped_id, 0400, blkdev_mapped_id_show, NULL);
 +
-+	/*
-+	 *    |----|			key_tmp
-+	 * |==========|			key
-+	 */
-+	int (*overlap_contain)(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+			struct cbd_cache_tree_walk_ctx *ctx);
++CBD_OBJ_HEARTBEAT(blkdev);
 +
-+	/*
-+	 * |-----------|		key_tmp
-+	 *   |====|			key
-+	 */
-+	int (*overlap_contained)(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+			struct cbd_cache_tree_walk_ctx *ctx);
-+
-+	int (*walk_finally)(struct cbd_cache_tree_walk_ctx *ctx);
-+	bool (*walk_done)(struct cbd_cache_tree_walk_ctx *ctx);
++static struct attribute *cbd_blkdev_attrs[] = {
++	&dev_attr_mapped_id.attr,
++	&dev_attr_host_id.attr,
++	&dev_attr_backend_id.attr,
++	&dev_attr_alive.attr,
++	NULL
 +};
 +
-+static int cache_tree_walk(struct cbd_cache *cache, struct cbd_cache_tree_walk_ctx *ctx)
++static struct attribute_group cbd_blkdev_attr_group = {
++	.attrs = cbd_blkdev_attrs,
++};
++
++static const struct attribute_group *cbd_blkdev_attr_groups[] = {
++	&cbd_blkdev_attr_group,
++	NULL
++};
++
++static void cbd_blkdev_release(struct device *dev)
 +{
-+	struct cbd_cache_key *key_tmp, *key;
-+	struct rb_node *node_tmp;
-+	int ret;
-+
-+	key = ctx->key;
-+	node_tmp = ctx->start_node;
-+
-+	while (node_tmp) {
-+		if (ctx->walk_done && ctx->walk_done(ctx))
-+			break;
-+
-+		key_tmp = CACHE_KEY(node_tmp);
-+		/*
-+		 * |----------|
-+		 *		|=====|
-+		 */
-+		if (cache_key_lend(key_tmp) <= cache_key_lstart(key)) {
-+			if (ctx->after) {
-+				ret = ctx->after(key, key_tmp, ctx);
-+				if (ret)
-+					goto out;
-+			}
-+			goto next;
-+		}
-+
-+		/*
-+		 *	  |--------|
-+		 * |====|
-+		 */
-+		if (cache_key_lstart(key_tmp) >= cache_key_lend(key)) {
-+			if (ctx->before) {
-+				ret = ctx->before(key, key_tmp, ctx);
-+				if (ret)
-+					goto out;
-+			}
-+			break;
-+		}
-+
-+		/* overlap */
-+		if (cache_key_lstart(key_tmp) >= cache_key_lstart(key)) {
-+			/*
-+			 *     |----------------|	key_tmp
-+			 * |===========|		key
-+			 */
-+			if (cache_key_lend(key_tmp) >= cache_key_lend(key)) {
-+				if (ctx->overlap_tail) {
-+					ret = ctx->overlap_tail(key, key_tmp, ctx);
-+					if (ret)
-+						goto out;
-+				}
-+				break;
-+			}
-+
-+			/*
-+			 *    |----|		key_tmp
-+			 * |==========|		key
-+			 */
-+			if (ctx->overlap_contain) {
-+				ret = ctx->overlap_contain(key, key_tmp, ctx);
-+				if (ret)
-+					goto out;
-+			}
-+
-+			goto next;
-+		}
-+
-+		/*
-+		 * |-----------|	key_tmp
-+		 *   |====|		key
-+		 */
-+		if (cache_key_lend(key_tmp) > cache_key_lend(key)) {
-+			if (ctx->overlap_contained) {
-+				ret = ctx->overlap_contained(key, key_tmp, ctx);
-+				if (ret)
-+					goto out;
-+			}
-+			break;
-+		}
-+
-+		/*
-+		 * |--------|		key_tmp
-+		 *   |==========|	key
-+		 */
-+		if (ctx->overlap_head) {
-+			ret = ctx->overlap_head(key, key_tmp, ctx);
-+			if (ret)
-+				goto out;
-+		}
-+next:
-+		node_tmp = rb_next(node_tmp);
-+	}
-+
-+	if (ctx->walk_finally) {
-+		ret = ctx->walk_finally(ctx);
-+		if (ret)
-+			goto out;
-+	}
-+
-+	return 0;
-+out:
-+	return ret;
 +}
 +
-+/* cache_tree_search, search in a cache_tree */
-+static inline bool cache_key_invalid(struct cbd_cache_key *key)
-+{
-+	if (cache_key_empty(key))
-+		return false;
++const struct device_type cbd_blkdev_type = {
++	.name		= "cbd_blkdev",
++	.groups		= cbd_blkdev_attr_groups,
++	.release	= cbd_blkdev_release,
++};
 +
-+	return (key->seg_gen < key->cache_pos.cache_seg->cache_seg_info->gen);
++const struct device_type cbd_blkdevs_type = {
++	.name		= "cbd_blkdevs",
++	.release	= cbd_blkdev_release,
++};
++
++
++static int cbd_major;
++static DEFINE_IDA(cbd_mapped_id_ida);
++
++static int minor_to_cbd_mapped_id(int minor)
++{
++	return minor >> CBD_PART_SHIFT;
 +}
 +
-+static struct rb_node *cache_tree_search(struct cbd_cache_tree *cache_tree, struct cbd_cache_key *key,
-+					 struct rb_node **parentp, struct rb_node ***newp,
-+					 struct list_head *delete_key_list)
++
++static int cbd_open(struct gendisk *disk, blk_mode_t mode)
 +{
-+	struct rb_node **new, *parent = NULL;
-+	struct cbd_cache_key *key_tmp;
-+	struct rb_node *prev_node = NULL;
++	struct cbd_blkdev *cbd_blkdev = disk->private_data;
 +
-+	new = &(cache_tree->root.rb_node);
-+	while (*new) {
-+		key_tmp = container_of(*new, struct cbd_cache_key, rb_node);
-+		if (cache_key_invalid(key_tmp))
-+			list_add(&key_tmp->list_node, delete_key_list);
-+
-+		parent = *new;
-+		if (key_tmp->off >= key->off) {
-+			new = &((*new)->rb_left);
-+		} else {
-+			prev_node = *new;
-+			new = &((*new)->rb_right);
-+		}
-+	}
-+
-+	if (!prev_node)
-+		prev_node = rb_first(&cache_tree->root);
-+
-+	if (parentp)
-+		*parentp = parent;
-+
-+	if (newp)
-+		*newp = new;
-+
-+	return prev_node;
-+}
-+
-+/* cache insert fixup, which will walk the cache_tree and do some fixup for key insert
-+ * if the new key has overlap with existing keys in cache_tree
-+ */
-+static int fixup_overlap_tail(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+		struct cbd_cache_tree_walk_ctx *ctx)
-+{
-+	int ret;
-+
-+	/*
-+	 *     |----------------|	key_tmp
-+	 * |===========|		key
-+	 */
-+	cache_key_cutfront(key_tmp, cache_key_lend(key) - cache_key_lstart(key_tmp));
-+	if (key_tmp->len == 0) {
-+		cache_key_delete(key_tmp);
-+		ret = -EAGAIN;
-+		goto out;
-+	}
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+
-+static int fixup_overlap_contain(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+		struct cbd_cache_tree_walk_ctx *ctx)
-+{
-+	/*
-+	 *    |----|			key_tmp
-+	 * |==========|			key
-+	 */
-+	cache_key_delete(key_tmp);
-+
-+	return -EAGAIN;
-+}
-+
-+static int cache_insert_key(struct cbd_cache *cache, struct cbd_cache_key *key, bool new);
-+static int fixup_overlap_contained(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+		struct cbd_cache_tree_walk_ctx *ctx)
-+{
-+	struct cbd_cache *cache = ctx->cache;
-+	int ret;
-+
-+	/*
-+	 * |-----------|		key_tmp
-+	 *   |====|			key
-+	 */
-+	if (cache_key_empty(key_tmp)) {
-+		/* if key_tmp is empty, dont split key_tmp */
-+		cache_key_cutback(key_tmp, cache_key_lend(key_tmp) - cache_key_lstart(key));
-+		if (key_tmp->len == 0) {
-+			cache_key_delete(key_tmp);
-+			ret = -EAGAIN;
-+			goto out;
-+		}
-+	} else {
-+		struct cbd_cache_key *key_fixup;
-+		bool need_research = false;
-+
-+		key_fixup = cache_key_alloc(cache);
-+		if (!key_fixup) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+
-+		cache_key_copy(key_fixup, key_tmp);
-+
-+		cache_key_cutback(key_tmp, cache_key_lend(key_tmp) - cache_key_lstart(key));
-+		if (key_tmp->len == 0) {
-+			cache_key_delete(key_tmp);
-+			need_research = true;
-+		}
-+
-+		cache_key_cutfront(key_fixup, cache_key_lend(key) - cache_key_lstart(key_tmp));
-+		if (key_fixup->len == 0) {
-+			cache_key_put(key_fixup);
-+		} else {
-+			ret = cache_insert_key(cache, key_fixup, false);
-+			if (ret)
-+				goto out;
-+			need_research = true;
-+		}
-+
-+		if (need_research) {
-+			ret = -EAGAIN;
-+			goto out;
-+		}
-+	}
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+
-+static int fixup_overlap_head(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+		struct cbd_cache_tree_walk_ctx *ctx)
-+{
-+	/*
-+	 * |--------|		key_tmp
-+	 *   |==========|	key
-+	 */
-+	cache_key_cutback(key_tmp, cache_key_lend(key_tmp) - cache_key_lstart(key));
-+	if (key_tmp->len == 0) {
-+		cache_key_delete(key_tmp);
-+		return -EAGAIN;
-+	}
++	mutex_lock(&cbd_blkdev->lock);
++	cbd_blkdev->open_count++;
++	mutex_unlock(&cbd_blkdev->lock);
 +
 +	return 0;
 +}
 +
-+static int cache_insert_fixup(struct cbd_cache *cache, struct cbd_cache_key *key, struct rb_node *prev_node)
++static void cbd_release(struct gendisk *disk)
 +{
-+	struct cbd_cache_tree_walk_ctx walk_ctx = { 0 };
++	struct cbd_blkdev *cbd_blkdev = disk->private_data;
 +
-+	walk_ctx.cache = cache;
-+	walk_ctx.start_node = prev_node;
-+	walk_ctx.key = key;
-+
-+	walk_ctx.overlap_tail = fixup_overlap_tail;
-+	walk_ctx.overlap_head = fixup_overlap_head;
-+	walk_ctx.overlap_contain = fixup_overlap_contain;
-+	walk_ctx.overlap_contained = fixup_overlap_contained;
-+
-+	return cache_tree_walk(cache, &walk_ctx);
++	mutex_lock(&cbd_blkdev->lock);
++	cbd_blkdev->open_count--;
++	mutex_unlock(&cbd_blkdev->lock);
 +}
-+static int cache_insert_key(struct cbd_cache *cache, struct cbd_cache_key *key, bool new_key)
++
++static const struct block_device_operations cbd_bd_ops = {
++	.owner			= THIS_MODULE,
++	.open			= cbd_open,
++	.release		= cbd_release,
++};
++
++static void cbd_blkdev_stop_queues(struct cbd_blkdev *cbd_blkdev)
 +{
-+	struct rb_node **new, *parent = NULL;
-+	struct cbd_cache_tree *cache_tree;
-+	struct cbd_cache_key *key_tmp = NULL, *key_next;
-+	struct rb_node	*prev_node = NULL;
-+	LIST_HEAD(delete_key_list);
++	int i;
++
++	for (i = 0; i < cbd_blkdev->num_queues; i++)
++		cbd_queue_stop(&cbd_blkdev->queues[i]);
++}
++
++static void cbd_blkdev_destroy_queues(struct cbd_blkdev *cbd_blkdev)
++{
++	cbd_blkdev_stop_queues(cbd_blkdev);
++	kfree(cbd_blkdev->queues);
++}
++
++static int cbd_blkdev_create_queues(struct cbd_blkdev *cbd_blkdev)
++{
++	int i;
 +	int ret;
++	struct cbd_queue *cbdq;
 +
-+	cache_tree = get_cache_tree(cache, key->off);
-+
-+	if (new_key)
-+		key->cache_tree = cache_tree;
-+
-+search:
-+	prev_node = cache_tree_search(cache_tree, key, &parent, &new, &delete_key_list);
-+
-+	if (!list_empty(&delete_key_list)) {
-+		list_for_each_entry_safe(key_tmp, key_next, &delete_key_list, list_node) {
-+			list_del_init(&key_tmp->list_node);
-+			cache_key_delete(key_tmp);
-+		}
-+		goto search;
-+	}
-+
-+	if (new_key) {
-+		ret = cache_insert_fixup(cache, key, prev_node);
-+		if (ret == -EAGAIN)
-+			goto search;
-+		if (ret)
-+			goto out;
-+	}
-+
-+	rb_link_node(&key->rb_node, parent, new);
-+	rb_insert_color(&key->rb_node, &cache_tree->root);
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+
-+/* cache miss: when a read miss happen on cbd_cache, it will submit a backing request
-+ * to read from backend, and when this backing request done, it will copy the data
-+ * read from backend into cache, then next user can read the same data immediately from
-+ * cache
-+ */
-+static void miss_read_end_req(struct cbd_cache *cache, struct cbd_request *cbd_req)
-+{
-+	void *priv_data = cbd_req->priv_data;
-+	int ret;
-+
-+	if (priv_data) {
-+		struct cbd_cache_key *key;
-+		struct cbd_cache_tree *cache_tree;
-+
-+		key = (struct cbd_cache_key *)priv_data;
-+		cache_tree = key->cache_tree;
-+
-+		spin_lock(&cache_tree->tree_lock);
-+		if (key->flags & CBD_CACHE_KEY_FLAGS_EMPTY) {
-+			if (cbd_req->ret) {
-+				cache_key_delete(key);
-+				goto unlock;
-+			}
-+
-+			ret = cache_data_alloc(cache, key, cbd_req->cbdq->index);
-+			if (ret) {
-+				cache_key_delete(key);
-+				goto unlock;
-+			}
-+			cache_copy_from_req_channel(cache, cbd_req, &key->cache_pos,
-+						    key->off - cbd_req->off, key->len);
-+			key->flags &= ~CBD_CACHE_KEY_FLAGS_EMPTY;
-+			key->flags |= CBD_CACHE_KEY_FLAGS_CLEAN;
-+
-+			ret = cache_key_append(cache, key);
-+			if (ret) {
-+				cache_seg_put(key->cache_pos.cache_seg);
-+				cache_key_delete(key);
-+				goto unlock;
-+			}
-+		}
-+unlock:
-+		spin_unlock(&cache_tree->tree_lock);
-+		cache_key_put(key);
-+	}
-+
-+	cbd_queue_advance(cbd_req->cbdq, cbd_req);
-+	kmem_cache_free(cache->req_cache, cbd_req);
-+}
-+
-+static void miss_read_end_work_fn(struct work_struct *work)
-+{
-+	struct cbd_cache *cache = container_of(work, struct cbd_cache, miss_read_end_work);
-+	struct cbd_request *cbd_req;
-+	LIST_HEAD(tmp_list);
-+
-+	spin_lock(&cache->miss_read_reqs_lock);
-+	list_splice_init(&cache->miss_read_reqs, &tmp_list);
-+	spin_unlock(&cache->miss_read_reqs_lock);
-+
-+	while (!list_empty(&tmp_list)) {
-+		cbd_req = list_first_entry(&tmp_list,
-+				struct cbd_request, inflight_reqs_node);
-+		list_del_init(&cbd_req->inflight_reqs_node);
-+		miss_read_end_req(cache, cbd_req);
-+	}
-+}
-+
-+static void cache_backing_req_end_req(struct cbd_request *cbd_req, void *priv_data)
-+{
-+	struct cbd_cache *cache = cbd_req->cbdq->cbd_blkdev->cbd_cache;
-+
-+	spin_lock(&cache->miss_read_reqs_lock);
-+	list_add_tail(&cbd_req->inflight_reqs_node, &cache->miss_read_reqs);
-+	spin_unlock(&cache->miss_read_reqs_lock);
-+
-+	queue_work(cache->cache_wq, &cache->miss_read_end_work);
-+}
-+
-+static void submit_backing_req(struct cbd_cache *cache, struct cbd_request *cbd_req)
-+{
-+	int ret;
-+
-+	if (cbd_req->priv_data) {
-+		struct cbd_cache_key *key;
-+
-+		key = (struct cbd_cache_key *)cbd_req->priv_data;
-+		ret = cache_insert_key(cache, key, true);
-+		if (ret) {
-+			cache_key_put(key);
-+			cbd_req->priv_data = NULL;
-+			goto out;
-+		}
-+	}
-+
-+	ret = cbd_queue_req_to_backend(cbd_req);
-+out:
-+	cbd_req_put(cbd_req, ret);
-+}
-+
-+static struct cbd_request *create_backing_req(struct cbd_cache *cache, struct cbd_request *parent,
-+					u32 off, u32 len, bool insert_key)
-+{
-+	struct cbd_request *new_req;
-+	struct cbd_cache_key *key = NULL;
-+	int ret;
-+
-+	if (insert_key) {
-+		key = cache_key_alloc(cache);
-+		if (!key) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+
-+		key->off = parent->off + off;
-+		key->len = len;
-+		key->flags |= CBD_CACHE_KEY_FLAGS_EMPTY;
-+	}
-+
-+	new_req = kmem_cache_zalloc(cache->req_cache, GFP_NOWAIT);
-+	if (!new_req) {
-+		ret = -ENOMEM;
-+		goto delete_key;
-+	}
-+
-+	INIT_LIST_HEAD(&new_req->inflight_reqs_node);
-+	kref_init(&new_req->ref);
-+	spin_lock_init(&new_req->lock);
-+
-+	new_req->cbdq = parent->cbdq;
-+	new_req->bio = parent->bio;
-+	new_req->off = parent->off + off;
-+	new_req->op = parent->op;
-+	new_req->bio_off = off;
-+	new_req->data_len = len;
-+	new_req->req = NULL;
-+
-+	cbd_req_get(parent);
-+	new_req->parent = parent;
-+
-+	if (key) {
-+		cache_key_get(key);
-+		new_req->priv_data = key;
-+	}
-+
-+	new_req->end_req = cache_backing_req_end_req;
-+
-+	return new_req;
-+
-+delete_key:
-+	if (key)
-+		cache_key_delete(key);
-+out:
-+	return NULL;
-+}
-+
-+static int send_backing_req(struct cbd_cache *cache, struct cbd_request *cbd_req,
-+			    u32 off, u32 len, bool insert_key)
-+{
-+	struct cbd_request *new_req;
-+
-+	new_req = create_backing_req(cache, cbd_req, off, len, insert_key);
-+	if (!new_req)
++	cbd_blkdev->queues = kcalloc(cbd_blkdev->num_queues, sizeof(struct cbd_queue), GFP_KERNEL);
++	if (!cbd_blkdev->queues)
 +		return -ENOMEM;
 +
-+	submit_backing_req(cache, new_req);
-+
-+	return 0;
-+}
-+
-+/* cache tree walk for cache_read */
-+static int read_before(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+		struct cbd_cache_tree_walk_ctx *ctx)
-+{
-+	struct cbd_request *backing_req;
-+	int ret;
-+
-+	backing_req = create_backing_req(ctx->cache, ctx->cbd_req, ctx->req_done, key->len, true);
-+	if (!backing_req) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+	list_add(&backing_req->inflight_reqs_node, ctx->submit_req_list);
-+
-+	ctx->req_done += key->len;
-+	cache_key_cutfront(key, key->len);
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+
-+static int read_overlap_tail(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+		struct cbd_cache_tree_walk_ctx *ctx)
-+{
-+	struct cbd_request *backing_req;
-+	u32 io_len;
-+	int ret;
-+
-+	/*
-+	 *     |----------------|	key_tmp
-+	 * |===========|		key
-+	 */
-+	io_len = cache_key_lstart(key_tmp) - cache_key_lstart(key);
-+	if (io_len) {
-+		backing_req = create_backing_req(ctx->cache, ctx->cbd_req, ctx->req_done, io_len, true);
-+		if (!backing_req) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+		list_add(&backing_req->inflight_reqs_node, ctx->submit_req_list);
-+
-+		ctx->req_done += io_len;
-+		cache_key_cutfront(key, io_len);
-+	}
-+
-+	io_len = cache_key_lend(key) - cache_key_lstart(key_tmp);
-+	if (cache_key_empty(key_tmp)) {
-+		ret = send_backing_req(ctx->cache, ctx->cbd_req, ctx->req_done, io_len, false);
++	for (i = 0; i < cbd_blkdev->num_queues; i++) {
++		cbdq = &cbd_blkdev->queues[i];
++		cbdq->cbd_blkdev = cbd_blkdev;
++		cbdq->index = i;
++		ret = cbd_queue_start(cbdq);
 +		if (ret)
-+			goto out;
-+	} else {
-+		ret = cache_copy_to_req_bio(ctx->cache, ctx->cbd_req, ctx->req_done,
-+					io_len, &key_tmp->cache_pos, key_tmp->seg_gen);
-+		if (ret) {
-+			list_add(&key_tmp->list_node, ctx->delete_key_list);
-+			goto out;
-+		}
-+	}
-+	ctx->req_done += io_len;
-+	cache_key_cutfront(key, io_len);
-+
-+	return 0;
-+
-+out:
-+	return ret;
-+}
-+
-+static int read_overlap_contain(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+		struct cbd_cache_tree_walk_ctx *ctx)
-+{
-+	struct cbd_request *backing_req;
-+	u32 io_len;
-+	int ret;
-+	/*
-+	 *    |----|			key_tmp
-+	 * |==========|			key
-+	 */
-+	io_len = cache_key_lstart(key_tmp) - cache_key_lstart(key);
-+	if (io_len) {
-+		backing_req = create_backing_req(ctx->cache, ctx->cbd_req, ctx->req_done, io_len, true);
-+		if (!backing_req) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+		list_add(&backing_req->inflight_reqs_node, ctx->submit_req_list);
-+
-+		ctx->req_done += io_len;
-+		cache_key_cutfront(key, io_len);
-+	}
-+
-+	io_len = key_tmp->len;
-+	if (cache_key_empty(key_tmp)) {
-+		ret = send_backing_req(ctx->cache, ctx->cbd_req, ctx->req_done, io_len, false);
-+		if (ret)
-+			goto out;
-+	} else {
-+		ret = cache_copy_to_req_bio(ctx->cache, ctx->cbd_req, ctx->req_done,
-+					io_len, &key_tmp->cache_pos, key_tmp->seg_gen);
-+		if (ret) {
-+			list_add(&key_tmp->list_node, ctx->delete_key_list);
-+			goto out;
-+		}
-+	}
-+	ctx->req_done += io_len;
-+	cache_key_cutfront(key, io_len);
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+
-+static int read_overlap_contained(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+		struct cbd_cache_tree_walk_ctx *ctx)
-+{
-+	struct cbd_cache_pos pos;
-+	int ret;
-+
-+	/*
-+	 * |-----------|		key_tmp
-+	 *   |====|			key
-+	 */
-+	if (cache_key_empty(key_tmp)) {
-+		ret = send_backing_req(ctx->cache, ctx->cbd_req, ctx->req_done, key->len, false);
-+		if (ret)
-+			goto out;
-+	} else {
-+		cache_pos_copy(&pos, &key_tmp->cache_pos);
-+		cache_pos_advance(&pos, cache_key_lstart(key) - cache_key_lstart(key_tmp), false);
-+
-+		ret = cache_copy_to_req_bio(ctx->cache, ctx->cbd_req, ctx->req_done,
-+					key->len, &pos, key_tmp->seg_gen);
-+		if (ret) {
-+			list_add(&key_tmp->list_node, ctx->delete_key_list);
-+			goto out;
-+		}
-+	}
-+	ctx->req_done += key->len;
-+	cache_key_cutfront(key, key->len);
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+
-+static int read_overlap_head(struct cbd_cache_key *key, struct cbd_cache_key *key_tmp,
-+		struct cbd_cache_tree_walk_ctx *ctx)
-+{
-+	struct cbd_cache_pos pos;
-+	u32 io_len;
-+	int ret;
-+	/*
-+	 * |--------|		key_tmp
-+	 *   |==========|	key
-+	 */
-+	io_len = cache_key_lend(key_tmp) - cache_key_lstart(key);
-+
-+	if (cache_key_empty(key_tmp)) {
-+		ret = send_backing_req(ctx->cache, ctx->cbd_req, ctx->req_done, io_len, false);
-+		if (ret)
-+			goto out;
-+	} else {
-+		cache_pos_copy(&pos, &key_tmp->cache_pos);
-+		cache_pos_advance(&pos, cache_key_lstart(key) - cache_key_lstart(key_tmp), false);
-+
-+		ret = cache_copy_to_req_bio(ctx->cache, ctx->cbd_req, ctx->req_done,
-+					io_len, &pos, key_tmp->seg_gen);
-+		if (ret) {
-+			list_add(&key_tmp->list_node, ctx->delete_key_list);
-+			goto out;
-+		}
-+	}
-+
-+	ctx->req_done += io_len;
-+	cache_key_cutfront(key, io_len);
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+
-+static int read_walk_finally(struct cbd_cache_tree_walk_ctx *ctx)
-+{
-+	struct cbd_request *backing_req, *next_req;
-+	struct cbd_cache_key *key = ctx->key;
-+	int ret;
-+
-+	if (key->len) {
-+		ret = send_backing_req(ctx->cache, ctx->cbd_req, ctx->req_done, key->len, true);
-+		if (ret)
-+			goto out;
-+		ctx->req_done += key->len;
-+	}
-+
-+	list_for_each_entry_safe(backing_req, next_req, ctx->submit_req_list, inflight_reqs_node) {
-+		list_del_init(&backing_req->inflight_reqs_node);
-+		submit_backing_req(ctx->cache, backing_req);
-+	}
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+static bool read_walk_done(struct cbd_cache_tree_walk_ctx *ctx)
-+{
-+	return (ctx->req_done >= ctx->cbd_req->data_len);
-+}
-+
-+static int cache_read(struct cbd_cache *cache, struct cbd_request *cbd_req)
-+{
-+	struct cbd_cache_key key_data = { .off = cbd_req->off, .len = cbd_req->data_len };
-+	struct cbd_cache_tree *cache_tree;
-+	struct cbd_cache_key *key_tmp = NULL, *key_next;
-+	struct rb_node *prev_node = NULL;
-+	struct cbd_cache_key *key = &key_data;
-+	struct cbd_cache_tree_walk_ctx walk_ctx = { 0 };
-+	LIST_HEAD(delete_key_list);
-+	LIST_HEAD(submit_req_list);
-+	int ret;
-+
-+	walk_ctx.cache = cache;
-+	walk_ctx.req_done = 0;
-+	walk_ctx.cbd_req = cbd_req;
-+	walk_ctx.before = read_before;
-+	walk_ctx.overlap_tail = read_overlap_tail;
-+	walk_ctx.overlap_head = read_overlap_head;
-+	walk_ctx.overlap_contain = read_overlap_contain;
-+	walk_ctx.overlap_contained = read_overlap_contained;
-+	walk_ctx.walk_finally = read_walk_finally;
-+	walk_ctx.walk_done = read_walk_done;
-+	walk_ctx.delete_key_list = &delete_key_list;
-+	walk_ctx.submit_req_list = &submit_req_list;
-+
-+next_tree:
-+	key->off = cbd_req->off + walk_ctx.req_done;
-+	key->len = cbd_req->data_len - walk_ctx.req_done;
-+	if (key->len > CBD_CACHE_TREE_SIZE - (key->off & CBD_CACHE_TREE_SIZE_MASK))
-+		key->len = CBD_CACHE_TREE_SIZE - (key->off & CBD_CACHE_TREE_SIZE_MASK);
-+	cache_tree = get_cache_tree(cache, key->off);
-+	spin_lock(&cache_tree->tree_lock);
-+search:
-+	prev_node = cache_tree_search(cache_tree, key, NULL, NULL, &delete_key_list);
-+
-+cleanup_tree:
-+	if (!list_empty(&delete_key_list)) {
-+		list_for_each_entry_safe(key_tmp, key_next, &delete_key_list, list_node) {
-+			list_del_init(&key_tmp->list_node);
-+			cache_key_delete(key_tmp);
-+		}
-+		goto search;
-+	}
-+
-+	walk_ctx.start_node = prev_node;
-+	walk_ctx.key = key;
-+
-+	ret = cache_tree_walk(cache, &walk_ctx);
-+	if (ret == -EINVAL)
-+		goto cleanup_tree;
-+	else if (ret)
-+		goto out;
-+
-+	spin_unlock(&cache_tree->tree_lock);
-+
-+	if (walk_ctx.req_done < cbd_req->data_len)
-+		goto next_tree;
-+
-+	return 0;
-+out:
-+	spin_unlock(&cache_tree->tree_lock);
-+
-+	return ret;
-+}
-+
-+/* cache write */
-+static int cache_write(struct cbd_cache *cache, struct cbd_request *cbd_req)
-+{
-+	struct cbd_cache_tree *cache_tree;
-+	struct cbd_cache_key *key;
-+	u64 offset = cbd_req->off;
-+	u32 length = cbd_req->data_len;
-+	u32 io_done = 0;
-+	int ret;
-+
-+	while (true) {
-+		if (io_done >= length)
-+			break;
-+
-+		key = cache_key_alloc(cache);
-+		if (!key) {
-+			ret = -ENOMEM;
 +			goto err;
-+		}
-+
-+		key->off = offset + io_done;
-+		key->len = length - io_done;
-+		if (key->len > CBD_CACHE_TREE_SIZE - (key->off & CBD_CACHE_TREE_SIZE_MASK))
-+			key->len = CBD_CACHE_TREE_SIZE - (key->off & CBD_CACHE_TREE_SIZE_MASK);
-+
-+		ret = cache_data_alloc(cache, key, cbd_req->cbdq->index);
-+		if (ret) {
-+			cache_key_put(key);
-+			goto err;
-+		}
-+
-+		if (!key->len) {
-+			cache_seg_put(key->cache_pos.cache_seg);
-+			cache_key_put(key);
-+			continue;
-+		}
-+
-+		BUG_ON(!key->cache_pos.cache_seg);
-+		cache_copy_from_req_bio(cache, key, cbd_req, io_done);
-+
-+		cache_tree = get_cache_tree(cache, key->off);
-+		spin_lock(&cache_tree->tree_lock);
-+		ret = cache_insert_key(cache, key, true);
-+		if (ret) {
-+			cache_key_put(key);
-+			goto put_seg;
-+		}
-+
-+		ret = cache_key_append(cache, key);
-+		if (ret) {
-+			cache_key_delete(key);
-+			goto put_seg;
-+		}
-+
-+		io_done += key->len;
-+		spin_unlock(&cache_tree->tree_lock);
 +	}
 +
 +	return 0;
-+put_seg:
-+	cache_seg_put(key->cache_pos.cache_seg);
-+	spin_unlock(&cache_tree->tree_lock);
++err:
++	cbd_blkdev_destroy_queues(cbd_blkdev);
++	return ret;
++}
++
++static int disk_start(struct cbd_blkdev *cbd_blkdev)
++{
++	struct gendisk *disk;
++	struct queue_limits lim = {
++		.max_hw_sectors			= BIO_MAX_VECS * PAGE_SECTORS,
++		.io_min				= 4096,
++		.io_opt				= 4096,
++		.max_segments			= USHRT_MAX,
++		.max_segment_size		= UINT_MAX,
++		.discard_granularity		= 0,
++		.max_hw_discard_sectors		= 0,
++		.max_write_zeroes_sectors	= 0
++	};
++	int ret;
++
++	memset(&cbd_blkdev->tag_set, 0, sizeof(cbd_blkdev->tag_set));
++	cbd_blkdev->tag_set.ops = &cbd_mq_ops;
++	cbd_blkdev->tag_set.queue_depth = 128;
++	cbd_blkdev->tag_set.numa_node = NUMA_NO_NODE;
++	cbd_blkdev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_NO_SCHED;
++	cbd_blkdev->tag_set.nr_hw_queues = cbd_blkdev->num_queues;
++	cbd_blkdev->tag_set.cmd_size = sizeof(struct cbd_request);
++	cbd_blkdev->tag_set.timeout = 0;
++	cbd_blkdev->tag_set.driver_data = cbd_blkdev;
++
++	ret = blk_mq_alloc_tag_set(&cbd_blkdev->tag_set);
++	if (ret) {
++		cbd_blk_err(cbd_blkdev, "failed to alloc tag set %d", ret);
++		goto err;
++	}
++
++	disk = blk_mq_alloc_disk(&cbd_blkdev->tag_set, &lim, cbd_blkdev);
++	if (IS_ERR(disk)) {
++		ret = PTR_ERR(disk);
++		cbd_blk_err(cbd_blkdev, "failed to alloc disk");
++		goto out_tag_set;
++	}
++
++	snprintf(disk->disk_name, sizeof(disk->disk_name), "cbd%d",
++		 cbd_blkdev->mapped_id);
++
++	disk->major = cbd_major;
++	disk->first_minor = cbd_blkdev->mapped_id << CBD_PART_SHIFT;
++	disk->minors = (1 << CBD_PART_SHIFT);
++
++	disk->fops = &cbd_bd_ops;
++	disk->private_data = cbd_blkdev;
++
++	/* Tell the block layer that this is not a rotational device */
++	blk_queue_flag_set(QUEUE_FLAG_NONROT, disk->queue);
++
++	cbd_blkdev->disk = disk;
++
++	cbdt_add_blkdev(cbd_blkdev->cbdt, cbd_blkdev);
++	cbd_blkdev->blkdev_info->mapped_id = cbd_blkdev->blkdev_id;
++	cbd_blkdev->blkdev_info->state = cbd_blkdev_state_running;
++
++	set_capacity(cbd_blkdev->disk, cbd_blkdev->dev_size);
++
++	set_disk_ro(cbd_blkdev->disk, false);
++	blk_queue_write_cache(cbd_blkdev->disk->queue, false, false);
++
++	ret = add_disk(cbd_blkdev->disk);
++	if (ret)
++		goto put_disk;
++
++	ret = sysfs_create_link(&disk_to_dev(cbd_blkdev->disk)->kobj,
++				&cbd_blkdev->blkdev_dev->dev.kobj, "cbd_blkdev");
++	if (ret)
++		goto del_disk;
++
++	return 0;
++
++del_disk:
++	del_gendisk(cbd_blkdev->disk);
++put_disk:
++	put_disk(cbd_blkdev->disk);
++out_tag_set:
++	blk_mq_free_tag_set(&cbd_blkdev->tag_set);
 +err:
 +	return ret;
 +}
 +
-+/* cache flush */
-+static int cache_flush(struct cbd_cache *cache)
++int cbd_blkdev_start(struct cbd_transport *cbdt, u32 backend_id, u32 queues)
 +{
-+	struct cbd_cache_kset *kset;
-+	u32 i, ret;
++	struct cbd_blkdev *cbd_blkdev;
++	struct cbd_backend_info *backend_info;
++	u64 dev_size;
++	int ret;
 +
-+	for (i = 0; i < cache->n_ksets; i++) {
-+		kset = get_kset(cache, i);
++	backend_info = cbdt_get_backend_info(cbdt, backend_id);
++	if (backend_info->blkdev_count == CBDB_BLKDEV_COUNT_MAX)
++		return -EBUSY;
 +
-+		spin_lock(&kset->kset_lock);
-+		ret = cache_kset_close(cache, kset);
-+		spin_unlock(&kset->kset_lock);
-+		if (ret)
-+			return ret;
++	if (!cbd_backend_info_is_alive(backend_info)) {
++		cbdt_err(cbdt, "backend %u is not alive\n", backend_id);
++		return -EINVAL;
 +	}
 +
++	dev_size = backend_info->dev_size;
++
++	cbd_blkdev = kzalloc(sizeof(struct cbd_blkdev), GFP_KERNEL);
++	if (!cbd_blkdev)
++		return -ENOMEM;
++
++	mutex_init(&cbd_blkdev->lock);
++
++	if (backend_info->host_id == cbdt->host->host_id)
++		cbd_blkdev->backend = cbdt_get_backend(cbdt, backend_id);
++
++	ret = cbdt_get_empty_blkdev_id(cbdt, &cbd_blkdev->blkdev_id);
++	if (ret < 0)
++		goto blkdev_free;
++
++	cbd_blkdev->mapped_id = ida_simple_get(&cbd_mapped_id_ida, 0,
++					 minor_to_cbd_mapped_id(1 << MINORBITS),
++					 GFP_KERNEL);
++	if (cbd_blkdev->mapped_id < 0) {
++		ret = -ENOENT;
++		goto blkdev_free;
++	}
++
++	cbd_blkdev->task_wq = alloc_workqueue("cbdt%d-d%u",  WQ_UNBOUND | WQ_MEM_RECLAIM,
++					0, cbdt->id, cbd_blkdev->mapped_id);
++	if (!cbd_blkdev->task_wq) {
++		ret = -ENOMEM;
++		goto ida_remove;
++	}
++
++	INIT_LIST_HEAD(&cbd_blkdev->node);
++	cbd_blkdev->cbdt = cbdt;
++	cbd_blkdev->backend_id = backend_id;
++	cbd_blkdev->num_queues = queues;
++	cbd_blkdev->dev_size = dev_size;
++	cbd_blkdev->blkdev_info = cbdt_get_blkdev_info(cbdt, cbd_blkdev->blkdev_id);
++	cbd_blkdev->blkdev_dev = &cbdt->cbd_blkdevs_dev->blkdev_devs[cbd_blkdev->blkdev_id];
++
++	cbd_blkdev->blkdev_info->backend_id = backend_id;
++	cbd_blkdev->blkdev_info->host_id = cbdt->host->host_id;
++	cbd_blkdev->blkdev_info->state = cbd_blkdev_state_running;
++
++
++	if (cbd_backend_cache_on(backend_info)) {
++		struct cbd_cache_opts cache_opts = { 0 };
++
++		cache_opts.cache_info = &backend_info->cache_info;
++		cache_opts.alloc_segs = false;
++		cache_opts.start_writeback = false;
++		cache_opts.start_gc = true;
++		cache_opts.init_keys = true;
++		cache_opts.dev_size = dev_size;
++		cache_opts.n_paral = cbd_blkdev->num_queues;
++		cbd_blkdev->cbd_cache = cbd_cache_alloc(cbdt, &cache_opts);
++		if (!cbd_blkdev->cbd_cache) {
++			ret = -ENOMEM;
++			goto destroy_wq;
++		}
++	}
++
++	ret = cbd_blkdev_create_queues(cbd_blkdev);
++	if (ret < 0)
++		goto destroy_cache;
++
++	backend_info->blkdev_count++;
++
++	INIT_DELAYED_WORK(&cbd_blkdev->hb_work, blkdev_hb_workfn);
++	queue_delayed_work(cbd_wq, &cbd_blkdev->hb_work, 0);
++
++	ret = disk_start(cbd_blkdev);
++	if (ret < 0)
++		goto destroy_queues;
 +	return 0;
-+}
 +
-+/* This function is the cache request entry */
-+int cbd_cache_handle_req(struct cbd_cache *cache, struct cbd_request *cbd_req)
-+{
-+	switch (cbd_req->op) {
-+	case CBD_OP_FLUSH:
-+		return cache_flush(cache);
-+	case CBD_OP_WRITE:
-+		return cache_write(cache, cbd_req);
-+	case CBD_OP_READ:
-+		return cache_read(cache, cbd_req);
-+	default:
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+/* cache replay */
-+static void cache_pos_encode(struct cbd_cache *cache,
-+			     struct cbd_cache_pos_onmedia *pos_onmedia,
-+			     struct cbd_cache_pos *pos)
-+{
-+	pos_onmedia->cache_seg_id = pos->cache_seg->cache_seg_id;
-+	pos_onmedia->seg_off = pos->seg_off;
-+}
-+
-+static void cache_pos_decode(struct cbd_cache *cache,
-+			     struct cbd_cache_pos_onmedia *pos_onmedia,
-+			     struct cbd_cache_pos *pos)
-+{
-+	pos->cache_seg = &cache->segments[pos_onmedia->cache_seg_id];
-+	pos->seg_off = pos_onmedia->seg_off;
-+}
-+
-+static int cache_replay(struct cbd_cache *cache)
-+{
-+	struct cbd_cache_pos pos_tail;
-+	struct cbd_cache_pos *pos;
-+	struct cbd_cache_kset_onmedia *kset_onmedia;
-+	struct cbd_cache_key_onmedia *key_onmedia;
-+	struct cbd_cache_key *key = NULL;
-+	int ret = 0;
-+	void *addr;
-+	int i;
-+
-+	cache_pos_copy(&pos_tail, &cache->key_tail);
-+	pos = &pos_tail;
-+
-+	set_bit(pos->cache_seg->cache_seg_id, cache->seg_map);
-+
-+	while (true) {
-+		addr = cache_pos_addr(pos);
-+
-+		kset_onmedia = (struct cbd_cache_kset_onmedia *)addr;
-+		if (kset_onmedia->magic != CBD_KSET_MAGIC ||
-+				kset_onmedia->crc != cache_kset_crc(kset_onmedia)) {
-+			break;
-+		}
-+
-+		for (i = 0; i < kset_onmedia->key_num; i++) {
-+			key_onmedia = &kset_onmedia->data[i];
-+
-+			key = cache_key_alloc(cache);
-+			if (!key) {
-+				ret = -ENOMEM;
-+				goto out;
-+			}
-+
-+			cache_key_decode(key_onmedia, key);
-+#ifdef CONFIG_CBD_CRC
-+			if (key->data_crc != cache_key_data_crc(key)) {
-+				cbd_cache_debug(cache, "key: %llu:%u seg %u:%u data_crc error: %x, expected: %x\n",
-+						key->off, key->len, key->cache_pos.cache_seg->cache_seg_id,
-+						key->cache_pos.seg_off, cache_key_data_crc(key), key->data_crc);
-+				ret = -EIO;
-+				cache_key_put(key);
-+				goto out;
-+			}
-+#endif
-+			set_bit(key->cache_pos.cache_seg->cache_seg_id, cache->seg_map);
-+
-+			if (key->seg_gen < key->cache_pos.cache_seg->cache_seg_info->gen) {
-+				cache_key_put(key);
-+			} else {
-+				ret = cache_insert_key(cache, key, true);
-+				if (ret) {
-+					cache_key_put(key);
-+					goto out;
-+				}
-+			}
-+
-+			cache_seg_get(key->cache_pos.cache_seg);
-+		}
-+
-+		cache_pos_advance(pos, get_kset_onmedia_size(kset_onmedia), false);
-+
-+		if (kset_onmedia->flags & CBD_KSET_FLAGS_LAST) {
-+			struct cbd_cache_segment *cur_seg, *next_seg;
-+
-+			cur_seg = pos->cache_seg;
-+			next_seg = cache_seg_get_next(cur_seg);
-+			if (!next_seg)
-+				break;
-+			pos->cache_seg = next_seg;
-+			pos->seg_off = 0;
-+			set_bit(pos->cache_seg->cache_seg_id, cache->seg_map);
-+			continue;
-+		}
-+	}
-+
-+#ifdef CONFIG_CBD_DEBUG
-+	dump_cache(cache);
-+#endif
-+
-+	spin_lock(&cache->key_head_lock);
-+	cache_pos_copy(&cache->key_head, pos);
-+	cache->cache_info->used_segs++;
-+	spin_unlock(&cache->key_head_lock);
-+
-+out:
++destroy_queues:
++	cancel_delayed_work_sync(&cbd_blkdev->hb_work);
++	cbd_blkdev_destroy_queues(cbd_blkdev);
++destroy_cache:
++	if (cbd_blkdev->cbd_cache)
++		cbd_cache_destroy(cbd_blkdev->cbd_cache);
++destroy_wq:
++	cbd_blkdev->blkdev_info->state = cbd_blkdev_state_none;
++	destroy_workqueue(cbd_blkdev->task_wq);
++ida_remove:
++	ida_simple_remove(&cbd_mapped_id_ida, cbd_blkdev->mapped_id);
++blkdev_free:
++	kfree(cbd_blkdev);
 +	return ret;
 +}
 +
-+/* Writeback */
-+static bool no_more_dirty(struct cbd_cache *cache)
++static void disk_stop(struct cbd_blkdev *cbd_blkdev)
 +{
-+	struct cbd_cache_kset_onmedia *kset_onmedia;
-+	struct cbd_cache_pos *pos;
-+	void *addr;
++	sysfs_remove_link(&disk_to_dev(cbd_blkdev->disk)->kobj, "cbd_blkdev");
++	del_gendisk(cbd_blkdev->disk);
++	put_disk(cbd_blkdev->disk);
++	blk_mq_free_tag_set(&cbd_blkdev->tag_set);
++}
 +
-+	pos = &cache->dirty_tail;
++int cbd_blkdev_stop(struct cbd_transport *cbdt, u32 devid, bool force)
++{
++	struct cbd_blkdev *cbd_blkdev;
++	struct cbd_backend_info *backend_info;
 +
-+	if (cache_seg_wb_done(pos->cache_seg)) {
-+		cbd_cache_debug(cache, "seg %u wb done\n", pos->cache_seg->cache_seg_id);
-+		return !cache_seg_has_next(pos->cache_seg);
++	cbd_blkdev = cbdt_get_blkdev(cbdt, devid);
++	if (!cbd_blkdev)
++		return -EINVAL;
++
++	mutex_lock(&cbd_blkdev->lock);
++	if (cbd_blkdev->open_count > 0 && !force) {
++		mutex_unlock(&cbd_blkdev->lock);
++		return -EBUSY;
 +	}
 +
-+	addr = cache_pos_addr(pos);
-+	kset_onmedia = (struct cbd_cache_kset_onmedia *)addr;
-+	if (kset_onmedia->magic != CBD_KSET_MAGIC) {
-+		cbd_cache_debug(cache, "dirty_tail: %u:%u magic: %llx, not expected: %llx\n",
-+				pos->cache_seg->cache_seg_id, pos->seg_off,
-+				kset_onmedia->magic, CBD_KSET_MAGIC);
++	cbdt_del_blkdev(cbdt, cbd_blkdev);
++	mutex_unlock(&cbd_blkdev->lock);
++
++	cbd_blkdev_stop_queues(cbd_blkdev);
++	disk_stop(cbd_blkdev);
++	kfree(cbd_blkdev->queues);
++
++	cancel_delayed_work_sync(&cbd_blkdev->hb_work);
++	cbd_blkdev->blkdev_info->state = cbd_blkdev_state_none;
++
++	drain_workqueue(cbd_blkdev->task_wq);
++	destroy_workqueue(cbd_blkdev->task_wq);
++	ida_simple_remove(&cbd_mapped_id_ida, cbd_blkdev->mapped_id);
++	backend_info = cbdt_get_backend_info(cbdt, cbd_blkdev->backend_id);
++
++	if (cbd_blkdev->cbd_cache)
++		cbd_cache_destroy(cbd_blkdev->cbd_cache);
++
++	kfree(cbd_blkdev);
++
++	backend_info->blkdev_count--;
++
++	return 0;
++}
++
++int cbd_blkdev_clear(struct cbd_transport *cbdt, u32 devid)
++{
++	struct cbd_blkdev_info *blkdev_info;
++
++	blkdev_info = cbdt_get_blkdev_info(cbdt, devid);
++	if (cbd_blkdev_info_is_alive(blkdev_info)) {
++		cbdt_err(cbdt, "blkdev %u is still alive\n", devid);
++		return -EBUSY;
++	}
++
++	if (blkdev_info->state == cbd_blkdev_state_none)
++		return 0;
++
++	blkdev_info->state = cbd_blkdev_state_none;
++
++	return 0;
++}
++
++int cbd_blkdev_init(void)
++{
++	cbd_major = register_blkdev(0, "cbd");
++	if (cbd_major < 0)
++		return cbd_major;
++
++	return 0;
++}
++
++void cbd_blkdev_exit(void)
++{
++	unregister_blkdev(cbd_major, "cbd");
++}
+diff --git a/drivers/block/cbd/cbd_queue.c b/drivers/block/cbd/cbd_queue.c
+new file mode 100644
+index 000000000000..cd40574d4a48
+--- /dev/null
++++ b/drivers/block/cbd/cbd_queue.c
+@@ -0,0 +1,574 @@
++#include "cbd_internal.h"
++
++static inline struct cbd_se *get_submit_entry(struct cbd_queue *cbdq)
++{
++	return (struct cbd_se *)(cbdq->channel.submr + cbdq->channel_info->submr_head);
++}
++
++static inline struct cbd_se *get_oldest_se(struct cbd_queue *cbdq)
++{
++	if (cbdq->channel_info->submr_tail == cbdq->channel_info->submr_head)
++		return NULL;
++
++	return (struct cbd_se *)(cbdq->channel.submr + cbdq->channel_info->submr_tail);
++}
++
++static inline struct cbd_ce *get_complete_entry(struct cbd_queue *cbdq)
++{
++	if (cbdq->channel_info->compr_tail == cbdq->channel_info->compr_head)
++		return NULL;
++
++	return (struct cbd_ce *)(cbdq->channel.compr + cbdq->channel_info->compr_tail);
++}
++
++static void cbd_req_init(struct cbd_queue *cbdq, enum cbd_op op, struct request *rq)
++{
++	struct cbd_request *cbd_req = blk_mq_rq_to_pdu(rq);
++
++	cbd_req->req = rq;
++	cbd_req->cbdq = cbdq;
++	cbd_req->op = op;
++
++	if (req_op(rq) == REQ_OP_READ || req_op(rq) == REQ_OP_WRITE)
++		cbd_req->data_len = blk_rq_bytes(rq);
++	else
++		cbd_req->data_len = 0;
++
++	cbd_req->bio = rq->bio;
++	cbd_req->off = (u64)blk_rq_pos(rq) << SECTOR_SHIFT;
++}
++
++static bool cbd_req_nodata(struct cbd_request *cbd_req)
++{
++	switch (cbd_req->op) {
++	case CBD_OP_WRITE:
++	case CBD_OP_READ:
++		return false;
++	case CBD_OP_FLUSH:
 +		return true;
++	default:
++		BUG();
++	}
++}
++
++static void queue_req_se_init(struct cbd_request *cbd_req)
++{
++	struct cbd_se	*se;
++	u64 offset = cbd_req->off;
++	u32 length = cbd_req->data_len;
++
++	se = get_submit_entry(cbd_req->cbdq);
++	memset(se, 0, sizeof(struct cbd_se));
++	se->op = cbd_req->op;
++
++	se->req_tid = cbd_req->req_tid;
++	se->offset = offset;
++	se->len = length;
++
++	if (cbd_req->op == CBD_OP_READ || cbd_req->op == CBD_OP_WRITE) {
++		se->data_off = cbd_req->cbdq->channel.data_head;
++		se->data_len = length;
 +	}
 +
-+	if (kset_onmedia->crc != cache_kset_crc(kset_onmedia)) {
-+		cbd_cache_debug(cache, "dirty_tail: %u:%u crc: %x, not expected: %x\n",
-+				pos->cache_seg->cache_seg_id, pos->seg_off,
-+				cache_kset_crc(kset_onmedia), kset_onmedia->crc);
++	cbd_req->se = se;
++}
++
++static bool data_space_enough(struct cbd_queue *cbdq, struct cbd_request *cbd_req)
++{
++	struct cbd_channel *channel = &cbdq->channel;
++	u32 space_available = channel->data_size;
++	u32 space_needed;
++
++	if (channel->data_head > channel->data_tail) {
++		space_available = channel->data_size - channel->data_head;
++		space_available += channel->data_tail;
++	} else if (channel->data_head < channel->data_tail) {
++		space_available = channel->data_tail - channel->data_head;
++	}
++
++	space_needed = round_up(cbd_req->data_len, CBDC_DATA_ALIGH);
++
++	if (space_available - CBDC_DATA_RESERVED < space_needed)
++		return false;
++
++	return true;
++}
++
++static bool submit_ring_full(struct cbd_queue *cbdq)
++{
++	u32 space_available = cbdq->channel.submr_size;
++	struct cbd_channel_info *info = cbdq->channel_info;
++
++	if (info->submr_head > info->submr_tail) {
++		space_available = cbdq->channel.submr_size - info->submr_head;
++		space_available += info->submr_tail;
++	} else if (info->submr_head < info->submr_tail) {
++		space_available = info->submr_tail - info->submr_head;
++	}
++
++	/* There is a SUBMR_RESERVED we dont use to prevent the ring to be used up */
++	if (space_available - CBDC_SUBMR_RESERVED < sizeof(struct cbd_se))
++		return true;
++
++	return false;
++}
++
++static void queue_req_data_init(struct cbd_request *cbd_req)
++{
++	struct cbd_queue *cbdq = cbd_req->cbdq;
++	struct bio *bio = cbd_req->bio;
++
++	if (cbd_req->op == CBD_OP_READ)
++		goto advance_data_head;
++
++	cbdc_copy_from_bio(&cbdq->channel, cbd_req->data_off, cbd_req->data_len, bio, cbd_req->bio_off);
++
++advance_data_head:
++	cbdq->channel.data_head = round_up(cbdq->channel.data_head + cbd_req->data_len, PAGE_SIZE);
++	cbdq->channel.data_head %= cbdq->channel.data_size;
++}
++
++#ifdef CONFIG_CBD_CRC
++static void cbd_req_crc_init(struct cbd_request *cbd_req)
++{
++	struct cbd_queue *cbdq = cbd_req->cbdq;
++	struct cbd_se *se = cbd_req->se;
++
++	if (cbd_req->op == CBD_OP_WRITE)
++		se->data_crc = cbd_channel_crc(&cbdq->channel,
++					       cbd_req->data_off,
++					       cbd_req->data_len);
++
++	se->se_crc = cbd_se_crc(se);
++}
++#endif
++
++static void end_req(struct kref *ref)
++{
++	struct cbd_request *cbd_req = container_of(ref, struct cbd_request, ref);
++	struct request *req = cbd_req->req;
++	int ret = cbd_req->ret;
++
++	if (cbd_req->end_req)
++		cbd_req->end_req(cbd_req, cbd_req->priv_data);
++
++	if (req) {
++		if (ret == -ENOMEM || ret == -EBUSY)
++			blk_mq_requeue_request(req, true);
++		else
++			blk_mq_end_request(req, errno_to_blk_status(ret));
++	}
++
++}
++
++void cbd_req_get(struct cbd_request *cbd_req)
++{
++	kref_get(&cbd_req->ref);
++}
++
++void cbd_req_put(struct cbd_request *cbd_req, int ret)
++{
++	struct cbd_request *parent = cbd_req->parent;
++
++	if (ret && !cbd_req->ret)
++		cbd_req->ret = ret;
++
++	if (kref_put(&cbd_req->ref, end_req) && parent)
++		cbd_req_put(parent, ret);
++}
++
++static void complete_inflight_req(struct cbd_queue *cbdq, struct cbd_request *cbd_req, int ret);
++int cbd_queue_req_to_backend(struct cbd_request *cbd_req)
++{
++	struct cbd_queue *cbdq = cbd_req->cbdq;
++	size_t command_size;
++	int ret;
++
++	spin_lock(&cbdq->inflight_reqs_lock);
++	if (atomic_read(&cbdq->state) == cbd_queue_state_removing) {
++		spin_unlock(&cbdq->inflight_reqs_lock);
++		ret = -EIO;
++		goto err;
++	}
++	list_add_tail(&cbd_req->inflight_reqs_node, &cbdq->inflight_reqs);
++	spin_unlock(&cbdq->inflight_reqs_lock);
++
++	command_size = sizeof(struct cbd_se);
++
++	spin_lock(&cbdq->channel.submr_lock);
++	if (cbd_req->op == CBD_OP_WRITE || cbd_req->op == CBD_OP_READ)
++		cbd_req->data_off = cbdq->channel.data_head;
++	else
++		cbd_req->data_off = -1;
++
++	if (submit_ring_full(cbdq) ||
++			!data_space_enough(cbdq, cbd_req)) {
++		spin_unlock(&cbdq->channel.submr_lock);
++
++		/* remove request from inflight_reqs */
++		spin_lock(&cbdq->inflight_reqs_lock);
++		list_del_init(&cbd_req->inflight_reqs_node);
++		spin_unlock(&cbdq->inflight_reqs_lock);
++
++		/* return ocuppied space */
++		cbd_req->data_len = 0;
++
++		ret = -ENOMEM;
++		goto err;
++	}
++
++	cbd_req->req_tid = ++cbdq->req_tid;
++	queue_req_se_init(cbd_req);
++
++	if (!cbd_req_nodata(cbd_req))
++		queue_req_data_init(cbd_req);
++
++	cbd_req_get(cbd_req);
++#ifdef CONFIG_CBD_CRC
++	cbd_req_crc_init(cbd_req);
++#endif
++	CBDC_UPDATE_SUBMR_HEAD(cbdq->channel_info->submr_head,
++			sizeof(struct cbd_se),
++			cbdq->channel.submr_size);
++	spin_unlock(&cbdq->channel.submr_lock);
++
++	if (cbdq->cbd_blkdev->backend)
++		cbd_backend_notify(cbdq->cbd_blkdev->backend, cbdq->channel.seg_id);
++	queue_delayed_work(cbdq->cbd_blkdev->task_wq, &cbdq->complete_work, 0);
++
++	return 0;
++
++err:
++	return ret;
++}
++
++static void queue_req_end_req(struct cbd_request *cbd_req, void *priv_data);
++static void cbd_queue_req(struct cbd_queue *cbdq, struct cbd_request *cbd_req)
++{
++	int ret;
++
++	if (cbdq->cbd_blkdev->cbd_cache) {
++		ret = cbd_cache_handle_req(cbdq->cbd_blkdev->cbd_cache, cbd_req);
++		goto end;
++	}
++
++	cbd_req->end_req = queue_req_end_req;
++
++	ret = cbd_queue_req_to_backend(cbd_req);
++end:
++	cbd_req_put(cbd_req, ret);
++}
++
++static void advance_subm_ring(struct cbd_queue *cbdq)
++{
++	struct cbd_se *se;
++again:
++	se = get_oldest_se(cbdq);
++	if (!se)
++		goto out;
++
++	if (cbd_se_flags_test(se, CBD_SE_FLAGS_DONE)) {
++		CBDC_UPDATE_SUBMR_TAIL(cbdq->channel_info->submr_tail,
++				sizeof(struct cbd_se),
++				cbdq->channel.submr_size);
++		goto again;
++	}
++out:
++	return;
++}
++
++static bool __advance_data_tail(struct cbd_queue *cbdq, u32 data_off, u32 data_len)
++{
++	if (data_off == cbdq->channel.data_tail) {
++		cbdq->released_extents[data_off / PAGE_SIZE] = 0;
++		cbdq->channel.data_tail += data_len;
++		cbdq->channel.data_tail %= cbdq->channel.data_size;
 +		return true;
 +	}
 +
 +	return false;
 +}
 +
-+static void cache_writeback_exit(struct cbd_cache *cache)
++static void advance_data_tail(struct cbd_queue *cbdq, u32 data_off, u32 data_len)
 +{
-+	if (!cache->bioset)
-+		return;
++	data_off %= cbdq->channel.data_size;
++	cbdq->released_extents[data_off / PAGE_SIZE] = data_len;
 +
-+	cache_flush(cache);
-+
-+	while (!no_more_dirty(cache))
-+		msleep(100);
-+
-+	cancel_delayed_work_sync(&cache->writeback_work);
-+	bioset_exit(cache->bioset);
-+	kfree(cache->bioset);
-+}
-+
-+static int cache_writeback_init(struct cbd_cache *cache)
-+{
-+	int ret;
-+
-+	cache->bioset = kzalloc(sizeof(*cache->bioset), GFP_KERNEL);
-+	if (!cache->bioset) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+
-+	ret = bioset_init(cache->bioset, 256, 0, BIOSET_NEED_BVECS);
-+	if (ret) {
-+		kfree(cache->bioset);
-+		cache->bioset = NULL;
-+		goto err;
-+	}
-+
-+	queue_delayed_work(cache->cache_wq, &cache->writeback_work, 0);
-+
-+	return 0;
-+
-+err:
-+	return ret;
-+}
-+
-+static int cache_key_writeback(struct cbd_cache *cache, struct cbd_cache_key *key)
-+{
-+	struct cbd_cache_pos *pos;
-+	void *addr;
-+	ssize_t written;
-+	struct cbd_cache_segment *cache_seg;
-+	struct cbd_segment *segment;
-+	u32 seg_remain;
-+	u64 off;
-+
-+	if (cache_key_clean(key))
-+		return 0;
-+
-+	pos = &key->cache_pos;
-+
-+	cache_seg = pos->cache_seg;
-+	BUG_ON(!cache_seg);
-+
-+	segment = &cache_seg->segment;
-+	seg_remain = segment->data_size - pos->seg_off;
-+	/* all data in one key should be int the same segment */
-+	BUG_ON(seg_remain < key->len);
-+
-+	addr = cache_pos_addr(pos);
-+	off = key->off;
-+
-+	/* Here write is in sync way, because it should consider
-+	 * the sequence of overwrites. E.g, K1 writes A at 0-4K,
-+	 * K2 after K1 writes B to 0-4K, we have to ensure K1
-+	 * to be written back before K2.
-+	 */
-+	written = kernel_write(cache->bdev_file, addr, key->len, &off);
-+	if (written != key->len)
-+		return -EIO;
-+
-+	return 0;
-+}
-+
-+static void writeback_fn(struct work_struct *work)
-+{
-+	struct cbd_cache *cache = container_of(work, struct cbd_cache, writeback_work.work);
-+	struct cbd_cache_pos *pos;
-+	struct cbd_cache_kset_onmedia *kset_onmedia;
-+	struct cbd_cache_key_onmedia *key_onmedia;
-+	struct cbd_cache_key *key = NULL;
-+	int ret = 0;
-+	void *addr;
-+	int i;
-+
-+	while (true) {
-+		if (no_more_dirty(cache)) {
-+			queue_delayed_work(cache->cache_wq, &cache->writeback_work, 1 * HZ);
-+			return;
-+		}
-+
-+		pos = &cache->dirty_tail;
-+		if (cache_seg_wb_done(pos->cache_seg))
-+			goto next_seg;
-+
-+		addr = cache_pos_addr(pos);
-+		kset_onmedia = (struct cbd_cache_kset_onmedia *)addr;
-+#ifdef CONFIG_CBD_CRC
-+		/* check the data crc */
-+		for (i = 0; i < kset_onmedia->key_num; i++) {
-+			struct cbd_cache_key key_tmp = { 0 };
-+
-+			key = &key_tmp;
-+
-+			kref_init(&key->ref);
-+			key->cache = cache;
-+			INIT_LIST_HEAD(&key->list_node);
-+
-+			key_onmedia = &kset_onmedia->data[i];
-+
-+			cache_key_decode(key_onmedia, key);
-+			if (key->data_crc != cache_key_data_crc(key)) {
-+				cbd_cache_debug(cache, "key: %llu:%u data crc(%x) is not expected(%x), wait for data ready.\n",
-+						key->off, key->len, cache_key_data_crc(key), key->data_crc);
-+				queue_delayed_work(cache->cache_wq, &cache->writeback_work, 1 * HZ);
-+				return;
-+			}
-+		}
-+#endif
-+		for (i = 0; i < kset_onmedia->key_num; i++) {
-+			key_onmedia = &kset_onmedia->data[i];
-+
-+			key = cache_key_alloc(cache);
-+			if (!key) {
-+				cbd_cache_err(cache, "writeback error failed to alloc key\n");
-+				queue_delayed_work(cache->cache_wq, &cache->writeback_work, 1 * HZ);
-+				return;
-+			}
-+
-+			cache_key_decode(key_onmedia, key);
-+			ret = cache_key_writeback(cache, key);
-+			cache_key_put(key);
-+
-+			if (ret) {
-+				cbd_cache_err(cache, "writeback error: %d\n", ret);
-+				queue_delayed_work(cache->cache_wq, &cache->writeback_work, 1 * HZ);
-+				return;
-+			}
-+		}
-+
-+		vfs_fsync(cache->bdev_file, 1);
-+
-+		cache_pos_advance(pos, get_kset_onmedia_size(kset_onmedia), false);
-+		cache_pos_encode(cache, &cache->cache_info->dirty_tail_pos, &cache->dirty_tail);
-+
-+		if (kset_onmedia->flags & CBD_KSET_FLAGS_LAST) {
-+			struct cbd_cache_segment *cur_seg, *next_seg;
-+
-+			pos->cache_seg->cache_seg_info->flags |= CBD_CACHE_SEG_FLAGS_WB_DONE;
-+next_seg:
-+			cur_seg = pos->cache_seg;
-+			next_seg = cache_seg_get_next(cur_seg);
-+			if (!next_seg)
-+				continue;
-+			pos->cache_seg = next_seg;
-+			pos->seg_off = 0;
-+			cache_pos_encode(cache, &cache->cache_info->dirty_tail_pos, &cache->dirty_tail);
-+		}
++	while (__advance_data_tail(cbdq, data_off, data_len)) {
++		data_off += data_len;
++		data_off %= cbdq->channel.data_size;
++		data_len = cbdq->released_extents[data_off / PAGE_SIZE];
++		if (!data_len)
++			break;
 +	}
 +}
 +
-+/* gc */
-+static bool need_gc(struct cbd_cache *cache)
++void cbd_queue_advance(struct cbd_queue *cbdq, struct cbd_request *cbd_req)
 +{
-+	void *dirty_addr, *key_addr;
-+
-+	cache_pos_decode(cache, &cache->cache_info->dirty_tail_pos, &cache->dirty_tail);
-+
-+	dirty_addr = cache_pos_addr(&cache->dirty_tail);
-+	key_addr = cache_pos_addr(&cache->key_tail);
-+
-+	if (dirty_addr == key_addr)
-+		return false;
-+
-+	if (bitmap_weight(cache->seg_map, cache->n_segs) < (cache->n_segs / 100 * cache->cache_info->gc_percent))
-+		return false;
-+
-+	return true;
++	spin_lock(&cbdq->channel.submr_lock);
++	advance_subm_ring(cbdq);
++	if (!cbd_req_nodata(cbd_req) && cbd_req->data_len)
++		advance_data_tail(cbdq, cbd_req->data_off, round_up(cbd_req->data_len, PAGE_SIZE));
++	spin_unlock(&cbdq->channel.submr_lock);
 +}
 +
-+static void gc_fn(struct work_struct *work)
++static void queue_req_end_req(struct cbd_request *cbd_req, void *priv_data)
 +{
-+	struct cbd_cache *cache = container_of(work, struct cbd_cache, gc_work.work);
-+	struct cbd_cache_pos *pos;
-+	struct cbd_cache_kset_onmedia *kset_onmedia;
-+	struct cbd_cache_key_onmedia *key_onmedia;
-+	struct cbd_cache_key *key = NULL;
-+	void *addr;
-+	int i;
-+
-+	while (true) {
-+		if (cache->state == cbd_cache_state_stopping)
-+			return;
-+
-+		if (!need_gc(cache)) {
-+			queue_delayed_work(cache->cache_wq, &cache->gc_work, 1 * HZ);
-+			return;
-+		}
-+
-+		pos = &cache->key_tail;
-+		if (cache_seg_gc_done(pos->cache_seg))
-+			goto next_seg;
-+
-+		addr = cache_pos_addr(pos);
-+		kset_onmedia = (struct cbd_cache_kset_onmedia *)addr;
-+		if (kset_onmedia->magic != CBD_KSET_MAGIC) {
-+			cbd_cache_err(cache, "gc error magic is not expected. magic: %llx, expected: %llx\n",
-+									kset_onmedia->magic, CBD_KSET_MAGIC);
-+			queue_delayed_work(cache->cache_wq, &cache->gc_work, 1 * HZ);
-+			return;
-+		}
-+
-+		if (kset_onmedia->crc != cache_kset_crc(kset_onmedia)) {
-+			cbd_cache_err(cache, "gc error crc is not expected. crc: %x, expected: %x\n",
-+						cache_kset_crc(kset_onmedia), kset_onmedia->crc);
-+			queue_delayed_work(cache->cache_wq, &cache->gc_work, 1 * HZ);
-+			return;
-+		}
-+
-+		for (i = 0; i < kset_onmedia->key_num; i++) {
-+			key_onmedia = &kset_onmedia->data[i];
-+
-+			key = cache_key_alloc(cache);
-+			if (!key) {
-+				cbd_cache_err(cache, "gc error failed to alloc key\n");
-+				queue_delayed_work(cache->cache_wq, &cache->gc_work, 1 * HZ);
-+				return;
-+			}
-+
-+			cache_key_decode(key_onmedia, key);
-+			cache_key_gc(cache, key);
-+			cache_key_put(key);
-+		}
-+
-+		cache_pos_advance(pos, get_kset_onmedia_size(kset_onmedia), false);
-+		cache_pos_encode(cache, &cache->cache_info->key_tail_pos, &cache->key_tail);
-+
-+		if (kset_onmedia->flags & CBD_KSET_FLAGS_LAST) {
-+			struct cbd_cache_segment *cur_seg, *next_seg;
-+
-+			pos->cache_seg->cache_seg_info->flags |= CBD_CACHE_SEG_FLAGS_GC_DONE;
-+next_seg:
-+			cache_pos_decode(cache, &cache->cache_info->dirty_tail_pos, &cache->dirty_tail);
-+			/* dont move next segment if dirty_tail has not move */
-+			if (cache->dirty_tail.cache_seg == pos->cache_seg)
-+				continue;
-+			cur_seg = pos->cache_seg;
-+			next_seg = cache_seg_get_next(cur_seg);
-+			if (!next_seg)
-+				continue;
-+			pos->cache_seg = next_seg;
-+			pos->seg_off = 0;
-+			cache_pos_encode(cache, &cache->cache_info->key_tail_pos, &cache->key_tail);
-+			cbd_cache_debug(cache, "gc kset seg: %u\n", cur_seg->cache_seg_id);
-+
-+			spin_lock(&cache->seg_map_lock);
-+			clear_bit(cur_seg->cache_seg_id, cache->seg_map);
-+			cache->cache_info->used_segs--;
-+			spin_unlock(&cache->seg_map_lock);
-+		}
-+	}
++	cbd_queue_advance(cbd_req->cbdq, cbd_req);
 +}
 +
-+/*
-+ * function for flush_work, flush_work is queued in cache_key_append(). When key append
-+ * to kset, if this kset is full, then the kset will be closed immediately, if this kset
-+ * is not full, cache_key_append() will queue a kset->flush_work to close this kset later.
-+ */
-+static void kset_flush_fn(struct work_struct *work)
++static inline void complete_inflight_req(struct cbd_queue *cbdq, struct cbd_request *cbd_req, int ret)
 +{
-+	struct cbd_cache_kset *kset = container_of(work, struct cbd_cache_kset, flush_work.work);
-+	struct cbd_cache *cache = kset->cache;
-+	int ret;
++	spin_lock(&cbdq->inflight_reqs_lock);
++	list_del_init(&cbd_req->inflight_reqs_node);
++	spin_unlock(&cbdq->inflight_reqs_lock);
 +
-+	spin_lock(&kset->kset_lock);
-+	ret = cache_kset_close(cache, kset);
-+	spin_unlock(&kset->kset_lock);
++	cbd_se_flags_set(cbd_req->se, CBD_SE_FLAGS_DONE);
 +
-+	if (ret) {
-+		/* Failed to flush kset, retry it. */
-+		queue_delayed_work(cache->cache_wq, &kset->flush_work, 0);
-+	}
++	cbd_req_put(cbd_req, ret);
 +}
 +
-+/* function to clean_work, clean work would be queued after a cache_segment to be invalidated
-+ * in cache gc, then it will clean up the invalid keys from cache_tree in backgroud.
-+ *
-+ * As this clean need to spin_lock(&cache_tree->tree_lock), we unlock after
-+ * CBD_CLEAN_KEYS_MAX keys deleted and start another round for clean.
-+ */
-+static void clean_fn(struct work_struct *work)
++static struct cbd_request *find_inflight_req(struct cbd_queue *cbdq, u64 req_tid)
 +{
-+	struct cbd_cache *cache = container_of(work, struct cbd_cache, clean_work);
-+	struct cbd_cache_tree *cache_tree;
-+	struct rb_node *node;
-+	struct cbd_cache_key *key;
-+	int i, count;
++	struct cbd_request *req;
++	bool found = false;
 +
-+	for (i = 0; i < cache->n_trees; i++) {
-+		cache_tree = &cache->cache_trees[i];
-+
-+again:
-+		if (cache->state == cbd_cache_state_stopping)
-+			return;
-+
-+		/* delete at most CBD_CLEAN_KEYS_MAX a round */
-+		count = 0;
-+		spin_lock(&cache_tree->tree_lock);
-+		node = rb_first(&cache_tree->root);
-+		while (node) {
-+			key = CACHE_KEY(node);
-+			node = rb_next(node);
-+			if (cache_key_invalid(key)) {
-+				count++;
-+				cache_key_delete(key);
-+			}
-+
-+			if (count >= CBD_CLEAN_KEYS_MAX) {
-+				spin_unlock(&cache_tree->tree_lock);
-+				usleep_range(1000, 2000);
-+				goto again;
-+			}
-+		}
-+		spin_unlock(&cache_tree->tree_lock);
-+
-+	}
-+}
-+
-+struct cbd_cache *cbd_cache_alloc(struct cbd_transport *cbdt,
-+				  struct cbd_cache_opts *opts)
-+{
-+	struct cbd_cache_info *cache_info;
-+	struct cbd_backend_info *backend_info;
-+	struct cbd_segment_info *prev_seg_info = NULL;
-+	struct cbd_cache *cache;
-+	u32 seg_id;
-+	u32 backend_id;
-+	int ret;
-+	int i;
-+
-+	/* options sanitize */
-+	if (opts->n_paral > CBD_CACHE_PARAL_MAX) {
-+		cbdt_err(cbdt, "n_paral too large (max %u).\n",
-+			 CBD_CACHE_PARAL_MAX);
-+		return NULL;
-+	}
-+
-+	cache_info = opts->cache_info;
-+	backend_info = container_of(cache_info, struct cbd_backend_info, cache_info);
-+	backend_id = get_backend_id(cbdt, backend_info);
-+
-+	if (opts->n_paral * CBD_CACHE_SEGS_EACH_PARAL > cache_info->n_segs) {
-+		cbdt_err(cbdt, "n_paral %u requires cache size (%llu), more than current (%llu).",
-+				opts->n_paral, opts->n_paral * CBD_CACHE_SEGS_EACH_PARAL * (u64)CBDT_SEG_SIZE,
-+				cache_info->n_segs * (u64)CBDT_SEG_SIZE);
-+		return NULL;
-+	}
-+
-+	cache = kzalloc(struct_size(cache, segments, cache_info->n_segs), GFP_KERNEL);
-+	if (!cache)
-+		return NULL;
-+
-+	cache->cache_id = backend_id;
-+
-+	cache->seg_map = bitmap_zalloc(cache_info->n_segs, GFP_KERNEL);
-+	if (!cache->seg_map) {
-+		ret = -ENOMEM;
-+		goto destroy_cache;
-+	}
-+
-+	cache->key_cache = KMEM_CACHE(cbd_cache_key, 0);
-+	if (!cache->key_cache) {
-+		ret = -ENOMEM;
-+		goto destroy_cache;
-+	}
-+
-+	cache->req_cache = KMEM_CACHE(cbd_request, 0);
-+	if (!cache->req_cache) {
-+		ret = -ENOMEM;
-+		goto destroy_cache;
-+	}
-+
-+	cache->cache_wq = alloc_workqueue("cbdt%d-c%u",  WQ_UNBOUND | WQ_MEM_RECLAIM,
-+					0, cbdt->id, cache->cache_id);
-+	if (!cache->cache_wq) {
-+		ret = -ENOMEM;
-+		goto destroy_cache;
-+	}
-+
-+	cache->cbdt = cbdt;
-+	cache->cache_info = cache_info;
-+	cache->n_segs = cache_info->n_segs;
-+	spin_lock_init(&cache->seg_map_lock);
-+	cache->bdev_file = opts->bdev_file;
-+	cache->cache_info->gc_percent = CBD_CACHE_GC_PERCENT_DEFAULT;
-+
-+	spin_lock_init(&cache->key_head_lock);
-+	spin_lock_init(&cache->miss_read_reqs_lock);
-+	INIT_LIST_HEAD(&cache->miss_read_reqs);
-+
-+	INIT_DELAYED_WORK(&cache->writeback_work, writeback_fn);
-+	INIT_DELAYED_WORK(&cache->gc_work, gc_fn);
-+	INIT_WORK(&cache->clean_work, clean_fn);
-+	INIT_WORK(&cache->miss_read_end_work, miss_read_end_work_fn);
-+
-+	cache->dev_size = opts->dev_size;
-+
-+	for (i = 0; i < cache_info->n_segs; i++) {
-+		if (opts->alloc_segs) {
-+			ret = cbdt_get_empty_segment_id(cbdt, &seg_id);
-+			if (ret)
-+				goto destroy_cache;
-+
-+			if (prev_seg_info)
-+				prev_seg_info->next_seg = seg_id;
-+			else
-+				cache_info->seg_id = seg_id;
-+
-+		} else {
-+			if (prev_seg_info)
-+				seg_id = prev_seg_info->next_seg;
-+			else
-+				seg_id = cache_info->seg_id;
-+		}
-+
-+		cache_seg_init(cache, seg_id, i);
-+		prev_seg_info = cbdt_get_segment_info(cbdt, seg_id);
-+	}
-+
-+	cache_pos_decode(cache, &cache_info->key_tail_pos, &cache->key_tail);
-+	cache_pos_decode(cache, &cache_info->dirty_tail_pos, &cache->dirty_tail);
-+
-+	cache->state = cbd_cache_state_running;
-+
-+	if (opts->init_keys) {
-+		cache->init_keys = 1;
-+
-+		cache->n_trees = DIV_ROUND_UP(cache->dev_size << SECTOR_SHIFT, CBD_CACHE_TREE_SIZE);
-+		cache->cache_trees = kvcalloc(cache->n_trees, sizeof(struct cbd_cache_tree), GFP_KERNEL);
-+		if (!cache->cache_trees) {
-+			ret = -ENOMEM;
-+			goto destroy_cache;
-+		}
-+
-+		for (i = 0; i < cache->n_trees; i++) {
-+			struct cbd_cache_tree *cache_tree;
-+
-+			cache_tree = &cache->cache_trees[i];
-+			cache_tree->root = RB_ROOT;
-+			spin_lock_init(&cache_tree->tree_lock);
-+		}
-+
-+		ret = cache_replay(cache);
-+		if (ret) {
-+			cbd_cache_err(cache, "failed to replay keys\n");
-+			goto destroy_cache;
-+		}
-+
-+		cache->n_ksets = opts->n_paral;
-+		cache->ksets = kcalloc(cache->n_ksets, CBD_KSET_SIZE, GFP_KERNEL);
-+		if (!cache->ksets) {
-+			ret = -ENOMEM;
-+			goto destroy_cache;
-+		}
-+
-+		for (i = 0; i < cache->n_ksets; i++) {
-+			struct cbd_cache_kset *kset;
-+
-+			kset = get_kset(cache, i);
-+
-+			kset->cache = cache;
-+			spin_lock_init(&kset->kset_lock);
-+			INIT_DELAYED_WORK(&kset->flush_work, kset_flush_fn);
-+		}
-+
-+		/* Init caceh->data_heads */
-+		cache->n_heads = opts->n_paral;
-+		cache->data_heads = kcalloc(cache->n_heads, sizeof(struct cbd_cache_data_head), GFP_KERNEL);
-+		if (!cache->data_heads) {
-+			ret = -ENOMEM;
-+			goto destroy_cache;
-+		}
-+
-+		for (i = 0; i < cache->n_heads; i++) {
-+			struct cbd_cache_data_head *data_head;
-+
-+			data_head = &cache->data_heads[i];
-+			spin_lock_init(&data_head->data_head_lock);
++	list_for_each_entry(req, &cbdq->inflight_reqs, inflight_reqs_node) {
++		if (req->req_tid == req_tid) {
++			found = true;
++			break;
 +		}
 +	}
 +
-+	/* start writeback */
-+	if (opts->start_writeback) {
-+		cache->start_writeback = 1;
-+		ret = cache_writeback_init(cache);
-+		if (ret)
-+			goto destroy_cache;
-+	}
-+
-+	/* start gc */
-+	if (opts->start_gc) {
-+		cache->start_gc = 1;
-+		queue_delayed_work(cache->cache_wq, &cache->gc_work, 0);
-+	}
-+
-+	return cache;
-+
-+destroy_cache:
-+	cbd_cache_destroy(cache);
++	if (found)
++		return req;
 +
 +	return NULL;
 +}
 +
-+void cbd_cache_destroy(struct cbd_cache *cache)
++static void copy_data_from_cbdreq(struct cbd_request *cbd_req)
 +{
-+	int i;
++	struct bio *bio = cbd_req->bio;
++	struct cbd_queue *cbdq = cbd_req->cbdq;
 +
-+	cache->state = cbd_cache_state_stopping;
++	spin_lock(&cbd_req->lock);
++	cbdc_copy_to_bio(&cbdq->channel, cbd_req->data_off, cbd_req->data_len, bio, cbd_req->bio_off);
++	spin_unlock(&cbd_req->lock);
++}
 +
-+	if (cache->start_gc) {
-+		cancel_delayed_work_sync(&cache->gc_work);
-+		flush_work(&cache->clean_work);
++static void complete_work_fn(struct work_struct *work)
++{
++	struct cbd_queue *cbdq = container_of(work, struct cbd_queue, complete_work.work);
++	struct cbd_ce *ce;
++	struct cbd_request *cbd_req;
++
++again:
++	/* compr_head would be updated by backend handler */
++	spin_lock(&cbdq->channel.compr_lock);
++	ce = get_complete_entry(cbdq);
++	spin_unlock(&cbdq->channel.compr_lock);
++	if (!ce)
++		goto miss;
++
++	spin_lock(&cbdq->inflight_reqs_lock);
++	cbd_req = find_inflight_req(cbdq, ce->req_tid);
++	spin_unlock(&cbdq->inflight_reqs_lock);
++	if (!cbd_req) {
++		cbd_queue_err(cbdq, "inflight request not found: %llu.", ce->req_tid);
++		goto miss;
 +	}
 +
-+	if (cache->start_writeback)
-+		cache_writeback_exit(cache);
++#ifdef CONFIG_CBD_CRC
++	if (ce->ce_crc != cbd_ce_crc(ce)) {
++		cbd_queue_err(cbdq, "ce crc bad 0x%x != 0x%x(expected)",
++				cbd_ce_crc(ce), ce->ce_crc);
++		goto miss;
++	}
 +
-+	if (cache->init_keys) {
-+#ifdef CONFIG_CBD_DEBUG
-+		dump_cache(cache);
++	if (cbd_req->op == CBD_OP_READ &&
++		ce->data_crc != cbd_channel_crc(&cbdq->channel,
++					       cbd_req->data_off,
++					       cbd_req->data_len)) {
++		cbd_queue_err(cbdq, "ce data_crc bad 0x%x != 0x%x(expected)",
++				cbd_channel_crc(&cbdq->channel,
++						cbd_req->data_off,
++						cbd_req->data_len),
++				ce->data_crc);
++		goto miss;
++	}
 +#endif
-+		for (i = 0; i < cache->n_trees; i++) {
-+			struct cbd_cache_tree *cache_tree;
-+			struct rb_node *node;
-+			struct cbd_cache_key *key;
 +
-+			cache_tree = &cache->cache_trees[i];
++	cbdwc_hit(&cbdq->complete_worker_cfg);
++	CBDC_UPDATE_COMPR_TAIL(cbdq->channel_info->compr_tail,
++			       sizeof(struct cbd_ce),
++			       cbdq->channel.compr_size);
 +
-+			spin_lock(&cache_tree->tree_lock);
-+			node = rb_first(&cache_tree->root);
-+			while (node) {
-+				key = CACHE_KEY(node);
-+				node = rb_next(node);
-+
-+				cache_key_delete(key);
-+			}
-+			spin_unlock(&cache_tree->tree_lock);
-+		}
-+
-+		for (i = 0; i < cache->n_ksets; i++) {
-+			struct cbd_cache_kset *kset;
-+
-+			kset = get_kset(cache, i);
-+			cancel_delayed_work_sync(&kset->flush_work);
-+		}
-+
-+		cache_flush(cache);
++	if (cbd_req->op == CBD_OP_READ) {
++		spin_lock(&cbdq->channel.submr_lock);
++		copy_data_from_cbdreq(cbd_req);
++		spin_unlock(&cbdq->channel.submr_lock);
 +	}
 +
-+	if (cache->cache_wq) {
-+		drain_workqueue(cache->cache_wq);
-+		destroy_workqueue(cache->cache_wq);
++	complete_inflight_req(cbdq, cbd_req, ce->result);
++
++	goto again;
++
++miss:
++	if (cbdwc_need_retry(&cbdq->complete_worker_cfg))
++		goto again;
++
++	spin_lock(&cbdq->inflight_reqs_lock);
++	if (list_empty(&cbdq->inflight_reqs)) {
++		spin_unlock(&cbdq->inflight_reqs_lock);
++		cbdwc_init(&cbdq->complete_worker_cfg);
++		return;
++	}
++	spin_unlock(&cbdq->inflight_reqs_lock);
++	cbdwc_miss(&cbdq->complete_worker_cfg);
++
++	cpu_relax();
++	queue_delayed_work(cbdq->cbd_blkdev->task_wq, &cbdq->complete_work, 0);
++}
++
++static blk_status_t cbd_queue_rq(struct blk_mq_hw_ctx *hctx,
++		const struct blk_mq_queue_data *bd)
++{
++	struct request *req = bd->rq;
++	struct cbd_queue *cbdq = hctx->driver_data;
++	struct cbd_request *cbd_req = blk_mq_rq_to_pdu(bd->rq);
++
++	memset(cbd_req, 0, sizeof(struct cbd_request));
++	INIT_LIST_HEAD(&cbd_req->inflight_reqs_node);
++	kref_init(&cbd_req->ref);
++	spin_lock_init(&cbd_req->lock);
++
++	blk_mq_start_request(bd->rq);
++
++	switch (req_op(bd->rq)) {
++	case REQ_OP_FLUSH:
++		cbd_req_init(cbdq, CBD_OP_FLUSH, req);
++		break;
++	case REQ_OP_WRITE:
++		cbd_req_init(cbdq, CBD_OP_WRITE, req);
++		break;
++	case REQ_OP_READ:
++		cbd_req_init(cbdq, CBD_OP_READ, req);
++		break;
++	default:
++		return BLK_STS_IOERR;
 +	}
 +
-+	kmem_cache_destroy(cache->req_cache);
-+	kmem_cache_destroy(cache->key_cache);
++	cbd_queue_req(cbdq, cbd_req);
 +
-+	if (cache->seg_map)
-+		bitmap_free(cache->seg_map);
++	return BLK_STS_OK;
++}
 +
-+	for (i = 0; i < cache->n_segs; i++)
-+		cache_seg_exit(&cache->segments[i]);
++static int cbd_init_hctx(struct blk_mq_hw_ctx *hctx, void *driver_data,
++			unsigned int hctx_idx)
++{
++	struct cbd_blkdev *cbd_blkdev = driver_data;
++	struct cbd_queue *cbdq;
 +
-+	kfree(cache->data_heads);
-+	kfree(cache->ksets);
++	cbdq = &cbd_blkdev->queues[hctx_idx];
++	hctx->driver_data = cbdq;
 +
-+	if (cache->cache_trees)
-+		kvfree(cache->cache_trees);
++	return 0;
++}
 +
-+	kfree(cache);
++const struct blk_mq_ops cbd_mq_ops = {
++	.queue_rq	= cbd_queue_rq,
++	.init_hctx	= cbd_init_hctx,
++};
++
++static int cbd_queue_channel_init(struct cbd_queue *cbdq, u32 channel_id)
++{
++	struct cbd_blkdev *cbd_blkdev = cbdq->cbd_blkdev;
++	struct cbd_transport *cbdt = cbd_blkdev->cbdt;
++
++	cbd_channel_init(&cbdq->channel, cbdt, channel_id);
++	cbdq->channel_info = cbdq->channel.channel_info;
++
++	if (!cbd_blkdev->backend)
++		cbdq->channel_info->polling = true;
++
++	cbdq->channel.data_head = cbdq->channel.data_tail = 0;
++	cbdq->channel_info->submr_tail = cbdq->channel_info->submr_head = 0;
++	cbdq->channel_info->compr_tail = cbdq->channel_info->compr_head = 0;
++
++	cbdq->channel_info->backend_id = cbd_blkdev->backend_id;
++	cbdq->channel_info->blkdev_id = cbd_blkdev->blkdev_id;
++	cbdq->channel_info->blkdev_state = cbdc_blkdev_state_running;
++
++	return 0;
++}
++
++int cbd_queue_start(struct cbd_queue *cbdq)
++{
++	struct cbd_transport *cbdt = cbdq->cbd_blkdev->cbdt;
++	u32 channel_id;
++	int ret;
++
++	ret = cbd_get_empty_channel_id(cbdt, &channel_id);
++	if (ret < 0) {
++		cbdt_err(cbdt, "failed find available channel_id.\n");
++		goto err;
++	}
++
++	ret = cbd_queue_channel_init(cbdq, channel_id);
++	if (ret) {
++		cbdt_err(cbdt, "failed to init dev channel_info: %d.", ret);
++		goto err;
++	}
++
++	INIT_LIST_HEAD(&cbdq->inflight_reqs);
++	spin_lock_init(&cbdq->inflight_reqs_lock);
++	cbdq->req_tid = 0;
++	INIT_DELAYED_WORK(&cbdq->complete_work, complete_work_fn);
++	cbdwc_init(&cbdq->complete_worker_cfg);
++
++	cbdq->released_extents = kzalloc(sizeof(u64) * (CBDC_DATA_SIZE >> PAGE_SHIFT), GFP_KERNEL);
++	if (!cbdq->released_extents) {
++		ret = -ENOMEM;
++		goto channel_exit;
++	}
++
++	queue_delayed_work(cbdq->cbd_blkdev->task_wq, &cbdq->complete_work, 0);
++
++	atomic_set(&cbdq->state, cbd_queue_state_running);
++
++	return 0;
++
++channel_exit:
++	cbdq->channel_info->blkdev_state = cbdc_blkdev_state_none;
++	cbd_channel_exit(&cbdq->channel);
++err:
++	return ret;
++}
++
++void cbd_queue_stop(struct cbd_queue *cbdq)
++{
++	LIST_HEAD(tmp_list);
++	struct cbd_request *cbd_req;
++
++	if (atomic_read(&cbdq->state) != cbd_queue_state_running)
++		return;
++
++	atomic_set(&cbdq->state, cbd_queue_state_removing);
++	cancel_delayed_work_sync(&cbdq->complete_work);
++
++	spin_lock(&cbdq->inflight_reqs_lock);
++	list_splice_init(&cbdq->inflight_reqs, &tmp_list);
++	spin_unlock(&cbdq->inflight_reqs_lock);
++
++	while (!list_empty(&tmp_list)) {
++		cbd_req = list_first_entry(&tmp_list,
++				struct cbd_request, inflight_reqs_node);
++		list_del_init(&cbd_req->inflight_reqs_node);
++		cancel_work_sync(&cbd_req->work);
++		cbd_req_put(cbd_req, -EIO);
++	}
++
++	kfree(cbdq->released_extents);
++	cbdq->channel_info->blkdev_state = cbdc_blkdev_state_none;
++	cbd_channel_exit(&cbdq->channel);
 +}
 -- 
 2.34.1
