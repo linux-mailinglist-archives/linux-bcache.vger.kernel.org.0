@@ -1,158 +1,90 @@
-Return-Path: <linux-bcache+bounces-734-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-735-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A9E9849BB
-	for <lists+linux-bcache@lfdr.de>; Tue, 24 Sep 2024 18:35:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE78984CDF
+	for <lists+linux-bcache@lfdr.de>; Tue, 24 Sep 2024 23:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9162D1C22F3D
-	for <lists+linux-bcache@lfdr.de>; Tue, 24 Sep 2024 16:35:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7501B1F24B05
+	for <lists+linux-bcache@lfdr.de>; Tue, 24 Sep 2024 21:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182FE1AB6D3;
-	Tue, 24 Sep 2024 16:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13D3146A97;
+	Tue, 24 Sep 2024 21:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zj88v0t1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GSpF9X1a"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F711A4F22;
-	Tue, 24 Sep 2024 16:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D4E13E043;
+	Tue, 24 Sep 2024 21:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727195738; cv=none; b=HknWXG4eDwe1vs2arivJMImLOmCuYYDeowqhI/R0P/zHCfMqgiVRo111cooYKGKLmjVOovxj/1bInHFjUQjqjK2R13KF5pA34gyB9uJEaG32A31QG6KKJX/eBZv+cSi1dXp8naWov5rTeAT9HOoaxxwXBfMQTra79B596hKsYR4=
+	t=1727213089; cv=none; b=K1L4zOW9TJh6a0DiN1ENwiN0pvSpwTAlqD+H3RnNFdFJSpk5xOYHNmStoKQKiAFznWNAu/fyrBDQsYfT87Mt1QPzZuKifmMyQhp4u/ZUYogt1mWmEyEJx0CMsKjvp6egLuhkGNnnduNGdO5XKeJRlupECqsxSeIAaHV4GayN4/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727195738; c=relaxed/simple;
-	bh=Lqr9ttKdTWKFzSzmRe08yrAUPtUn/VpHz6sP7K7/I7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZF2wwPdNyjqccWMDbZQJ7feghKU/JZQE8K3hdrRXxuktb/NIpc4Wci9P2KazCDp0W8yLRs8DPjjS9E6Fkqda67wmtncHhCCMpZXhFkLttc92FCdy7MaeAZwWpZWw/yOhK+l9QcmjniQs67CW8FXvJXGX3qX69Ux4NVqbp3tiBfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Zj88v0t1; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=Wh1jAzeffZYy009nI33+/VcSQcTAyr6o4mJKc/jsMzk=; b=Zj88v0t1MY08AC1fTc/e1M+d67
-	0X+U4pGIrLH13AWv4CZQ39nUVuYW2aHHa+eIIePpw1hOmKPxjq6S68fzMe1HgZa1Un3GOjXALczmh
-	nz8KrbXP0IwG0LwcPjLCnVO628IgSgIIJ6DUbdPS/13i7cS+sUv/aXHEPVeZjtSLgjEWBXPKbb1Zo
-	N/8UlA1tme5VRGmt5FZ+DCRmOOuRhLzy/doIAqh848NvNjm/Y0zHJDl15W2LpPAL/wDrJJ2MJkKKR
-	tM5tFNfHqwPoa+NLI8JrAOfBlr5Dr1DiGmINErkgWPaM8freDCpJSI36yGk0oueuRX5U7zjE7NfzX
-	q0RS5uNw==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1st8VW-00000001reU-3Eva;
-	Tue, 24 Sep 2024 16:35:23 +0000
-Message-ID: <27bf8cff-83b6-4a41-923a-7713a847f979@infradead.org>
-Date: Tue, 24 Sep 2024 09:35:18 -0700
+	s=arc-20240116; t=1727213089; c=relaxed/simple;
+	bh=Se2SeyxPn1YF8ln96fxH093MbqW12GotKj2gD9ytgGE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BtQyR3xG3L4KIgISzBJi8pdqFz/pQJdqBwil59yLXZXWl8ozeUX1V+2THHj0zGa1fHaQfJ4XGlz4WouvZsQC8CRidO5FWM1ni2t7dVjHRaqF9XvGmut1/O/cDZvGv7a7pHWQcZVMZcSUEaVzqXBfJEEr2b2aNTU9nTbqMRDqswM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GSpF9X1a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4994AC4AF0D;
+	Tue, 24 Sep 2024 21:24:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727213089;
+	bh=Se2SeyxPn1YF8ln96fxH093MbqW12GotKj2gD9ytgGE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GSpF9X1aEP5ShwEMMdwzFGiXnTFSHDwRhYQxUZDvuKGB/nIhnq2QKeyZ9+FgwI3J1
+	 MzQ6/uVcTfvB3PunJtfDAdrckXJdkweDYmb75mBHb+PiQZz0P+vQ4oTcdHPV7I8PTQ
+	 U/OXAIrJR/DibW16WO9FY8cpcYnDJSZcIbo5quVX2XOjRmUmk4o4s5pMKCl090hgck
+	 VFknEatVJilOvb8vOgbZF0SwLEHhhvQ039Asq0/OE/krJKYdA+DKDq/OEJ6mKWkxFs
+	 +BQHRQqBvW70ZPVC34LghNYRoq02iWd5vrnHO9uhOXdzqEfb6ghfw1gJ1vxAslohq2
+	 LyrgXavyywJ3g==
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a046d4c465so19598485ab.3;
+        Tue, 24 Sep 2024 14:24:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWMG3gCgnoh2ApWXsrulmFYAh8ELLf9pr7p9li1YtpeIu++rqwpyeH89XT7FXCUzimkw/UUd4l8KwwxMw==@vger.kernel.org, AJvYcCWMcsn0ym0ta8u8VP8HfomgOi03Hheord3pwi+i/za5a1S3FXtTIf9sWKeZZx7al8vERcc+NP0MoX8cpDFj@vger.kernel.org, AJvYcCWSrXYeVYYmqsGG6hj4m/FOYru4ezU665TP8WshYKYe4mP55+hAVfmJt5V1tmZACFWNxaw47jnsNH7uhaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb5O+pJeUXcVkUYFJH406R7EFZXmVYnfqP83hDVajnptsZ06Z/
+	QhrTsec0142rSb2kQERjfIlu0ITRPnuAMK5eFVpxfkUs5rSo2JM0BSCI1i7nwPAJY8nBNkzi+nz
+	RqW9t1xN6vbRMTb0iz5MnOUhZE68=
+X-Google-Smtp-Source: AGHT+IGDkW7WD2/JzFxCpyUwRB5/+sUMgv4hqELdvS0oE8C8Gvs3vzZAdADEd3f3M3MN9EO5an1dEVTf2Q18Yg4o5dM=
+X-Received: by 2002:a05:6e02:174a:b0:3a0:aa15:3497 with SMTP id
+ e9e14a558f8ab-3a26d6d97acmr10177795ab.1.1727213088499; Tue, 24 Sep 2024
+ 14:24:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/8] block: Init for CBD(CXL Block Device) module
-To: Dongsheng Yang <dongsheng.yang@linux.dev>, axboe@kernel.dk,
- dan.j.williams@intel.com, gregory.price@memverge.com, John@groves.net,
- Jonathan.Cameron@Huawei.com, bbhushan2@marvell.com, chaitanyak@nvidia.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-bcache@vger.kernel.org
-References: <20240918101821.681118-1-dongsheng.yang@linux.dev>
- <20240918101821.681118-9-dongsheng.yang@linux.dev>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240918101821.681118-9-dongsheng.yang@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240924091733.8370-1-shenlichuan@vivo.com> <d95d7419-7bac-802f-a5d6-456900539c32@redhat.com>
+In-Reply-To: <d95d7419-7bac-802f-a5d6-456900539c32@redhat.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 24 Sep 2024 14:24:37 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW51S=WfyNoP_cWvNVq3rPW0+iBrhzRVaKK=q3PLRA94UA@mail.gmail.com>
+Message-ID: <CAPhsuW51S=WfyNoP_cWvNVq3rPW0+iBrhzRVaKK=q3PLRA94UA@mail.gmail.com>
+Subject: Re: [PATCH v1] md: Correct typos in multiple comments across various files
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Shen Lichuan <shenlichuan@vivo.com>, colyli@suse.de, kent.overstreet@linux.dev, 
+	agk@redhat.com, snitzer@kernel.org, yukuai3@huawei.com, 
+	linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dm-devel@lists.linux.dev, linux-raid@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi.
+Hi Mikulas,
 
-On 9/18/24 3:18 AM, Dongsheng Yang wrote:
-> diff --git a/drivers/block/cbd/Kconfig b/drivers/block/cbd/Kconfig
-> new file mode 100644
-> index 000000000000..16ffcca058c5
-> --- /dev/null
-> +++ b/drivers/block/cbd/Kconfig
-> @@ -0,0 +1,45 @@
-> +config BLK_DEV_CBD
-> +	tristate "CXL Block Device (Experimental)"
-> +	depends on DEV_DAX && FS_DAX
-> +	help
-> +	  CBD allows you to register a persistent memory device as a CBD transport.
-> +	  You can use this persistent memory as a data cache to improve your block
-> +	  device performance. Additionally, if you enable CBD_MULTIHOST, cbd allows
+On Tue, Sep 24, 2024 at 6:30=E2=80=AFAM Mikulas Patocka <mpatocka@redhat.co=
+m> wrote:
+>
+> Hi
+>
+> I've applied the device mapper part of the patch.
 
-s/cbd/CBD/ for consistency. Or does 'cbd' here explicitly refer to the loadable module
-name?
+Would you mind taking the whole patch instead? You can add
 
-> +	  you to access block devices on a remote host as if they were local disks.
-> +
-> +	  Select 'y' to build this module directly into the kernel.
-> +	  Select 'm' to build this module as a loadable kernel module.
-  +	  The module will be called cbd.
+Acked-by: Song Liu <song@kernel.org>
 
-> +
-> +	  If unsure say 'N'.
-> +
-> +config CBD_CRC
-> +	bool "Enable CBD checksum"
-> +	default N
-
-We usually omit 'default N' since that is the default default.
-
-> +	depends on BLK_DEV_CBD
-> +	help
-> +	  When CBD_CRC is enabled, all data sent by CBD will include
-> +	  a checksum. This includes a data checksum, a submit entry checksum,
-> +	  and a completion entry checksum. This ensures the integrity of the
-> +	  data transmitted through the CXL memory device.
-> +
-> +config CBD_DEBUG
-> +	bool "Enable CBD debug"
-> +	default N
-
-Ditto.
-
-> +	depends on BLK_DEV_CBD
-> +	help
-> +	  When CBD_DEBUG is enabled, cbd module will print more messages
-> +	  for debugging. But that will affact performance, so do not use it
-
-	                               affect
-
-> +	  in production case.
-> +
-> +config CBD_MULTIHOST
-> +	bool "multi-hosts CXL Dlock Device"
-
-	                      Block
-
-> +	default N
-
-drop default line.
-
-> +	depends on BLK_DEV_CBD
-> +	help
-> +	  When CBD_MULTIHOST is enabled, cbd allows the use of a shared memory device
-
-cbd or CBD?
-
-> +	  as a cbd transport. In this mode, the blkdev and backends on different
-
-ditto.
-
-> +	  hosts can be connected through the shared memory device, enabling cross-node
-> +	  disk access.
-> +
-> +	  IMPORTANT: This Require your shared memory device support Hardware-consistency
-
-	                  requires                          supports
-
-> +	  as CXL 3.0 described.
-
-	  as described in CXL 3.0.
-
+Thanks,
+Song
 
