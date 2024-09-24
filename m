@@ -1,389 +1,262 @@
-Return-Path: <linux-bcache+bounces-731-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-732-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A8497E4B2
-	for <lists+linux-bcache@lfdr.de>; Mon, 23 Sep 2024 03:55:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C35D19841E2
+	for <lists+linux-bcache@lfdr.de>; Tue, 24 Sep 2024 11:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E663C1F21236
-	for <lists+linux-bcache@lfdr.de>; Mon, 23 Sep 2024 01:55:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528441F2157F
+	for <lists+linux-bcache@lfdr.de>; Tue, 24 Sep 2024 09:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE581372;
-	Mon, 23 Sep 2024 01:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5A415624C;
+	Tue, 24 Sep 2024 09:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hcSs0gg6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uCj0OBI5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hcSs0gg6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uCj0OBI5"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="TtkNOkpB"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011030.outbound.protection.outlook.com [52.101.129.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4996184
-	for <linux-bcache@vger.kernel.org>; Mon, 23 Sep 2024 01:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727056543; cv=none; b=GkDR9qnpiwDVc57IPw2vDq79zz2EKyn3y0/atR8id6v1IqZG3pkWLmqUwbBjBz/ul+8QnWlYHcMcKjU+HI7nRS4lmjt1pV6ccPM1+DKUcuw3KEcM3lesiP6e77eUyyxF8c5tprKaR2L6EBVKv/15eSfd+peXnlOgLQz+anwxLdY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727056543; c=relaxed/simple;
-	bh=m7LHeUStWcr8pGomzS/n+zJySvjohPNIsPxUu0mA0q4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=O566qabE2RENVoZyBDvQp9kuRdZyjnBWRXjLbj9ulrhtVLrzZxRwAyRJbsSyFexLxUbCqIHsQ8vufWU8LmikOfhiatnBWB2j2ctgWDOjxxAAakXRoeYbbsT6rzitl2gEhNDigE2empjHNnG7ovFTfyeR9OrjkTU4LmfBzA50+sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hcSs0gg6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uCj0OBI5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hcSs0gg6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uCj0OBI5; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3B3491F79B;
-	Mon, 23 Sep 2024 01:55:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727056533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6/bVuVAMz/A6cJfro8R5Xlahuv4QgNmXaF1DLkU7FCE=;
-	b=hcSs0gg6KKBqqA4LUybCuQJm1QGqd4uxPVND1OX3qX1J2Q21EmuxTwQzb8P8VbjoGUw91d
-	/QeAlelyEGXHlZBskHWlAWEseVP3jSLfsvdil00lKcujJE1HOdcrqRNfWaLptaXbJ+a0+g
-	qppkAIxxpU++AdSHPafcVH98BWgHf50=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727056533;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6/bVuVAMz/A6cJfro8R5Xlahuv4QgNmXaF1DLkU7FCE=;
-	b=uCj0OBI51en6raJVkYOLTzORoJLSpUgfN4CFL2RVnI+oc7ZjMrYDbWTA3VAIf3wBXeri6n
-	VwgpFtIhzWxEnLBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727056533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6/bVuVAMz/A6cJfro8R5Xlahuv4QgNmXaF1DLkU7FCE=;
-	b=hcSs0gg6KKBqqA4LUybCuQJm1QGqd4uxPVND1OX3qX1J2Q21EmuxTwQzb8P8VbjoGUw91d
-	/QeAlelyEGXHlZBskHWlAWEseVP3jSLfsvdil00lKcujJE1HOdcrqRNfWaLptaXbJ+a0+g
-	qppkAIxxpU++AdSHPafcVH98BWgHf50=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727056533;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6/bVuVAMz/A6cJfro8R5Xlahuv4QgNmXaF1DLkU7FCE=;
-	b=uCj0OBI51en6raJVkYOLTzORoJLSpUgfN4CFL2RVnI+oc7ZjMrYDbWTA3VAIf3wBXeri6n
-	VwgpFtIhzWxEnLBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5CAD9132C7;
-	Mon, 23 Sep 2024 01:55:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vOn4BpTK8GbECwAAD6G6ig
-	(envelope-from <colyli@suse.de>); Mon, 23 Sep 2024 01:55:32 +0000
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C506155326;
+	Tue, 24 Sep 2024 09:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727169478; cv=fail; b=s8Ca+dqe9YHl9EunJ7T9EX4d+he03BhoqnGsxVK5LdCx2Xw8fLky0f44GSfbp5mHRhd0x4qo46c4LU6AT5F2mMKm69haarrAexSZ87tEOaRVDYZdd5JzxXdTju48ATrq72yZndEcUqqH4aeekJdfVfVrCoZR+qIv6pT4+eNAyWk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727169478; c=relaxed/simple;
+	bh=PzKGdT9r68X2St2Yl/ux5REatpWcTG8HjQasN04VWdA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=t8HrzZdnkj5YhB57xDbOFss+lgQpp9KSxFgrhXI8Z0PXgAn85emk9Fe89Bderzgj6zEh75KQqwqFHAYbdJzD8SqHKX4RYya9afMcqy3oVouGZdgZ4V++u0rApvW/2rvcE5aaQKbcu4ZgB+pQhtMYMVJ5EnRmiVoXNSxb6EuddDs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=TtkNOkpB; arc=fail smtp.client-ip=52.101.129.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wmWg/+4uyTSwDEPmOZYsgr2ClM85BSn82in5Fe50hjiXSHGrAPa+T1yCNuvDgMZGG7RD2rnhaIqPaj3oUvF6hve1qBpXhB4opXBTg1gpGVWbJpKYsK5QWwTDvPBEuOM4Q7Eb2JZBbXkdllBelX1jYzBFB1QKZ/gYbG1g3rc5VUMpx1e2jCyINV8fgXgmEUHWfrgOxAV9LgohgRRA403DVbDcF8qw10OOsFr8zmqf2IAUdDAsouC326MNHq8XQwA17qJsseN5j+zpTd4T5KOTTsru2j4xVEmNSbpihT0ZdTsv5DHM6WgyvSrcQw42vTCQQPOAdYvUZ0CcEQWwYCYUTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NfwcUBTRkZmUI6hc4EOtU2psigqzW+B6iMtqkgf2Nx4=;
+ b=ZRfP6wWUioks4UAxD+tBqGvdXZ8CY7tNKv9lyVstocjtMZ+LMltwRJLWFzhi1rN4dhZynl7Qe/XlqlBegoBxQyvdl/yOWbAUkkHpEpXSCceduwupTjV8iI2ZRyKTdnRHhE+A89p4a7HBUcbtyAjKg2IEoPOPj6UwO12TrRCWBgeG9PK2ltp7G7lkfiMJvDzOwX228NLs62jgsVuUewOe/zl861zlSa285qLp8V+40ckfjFYX9GGmqNTH+y3fW+CKIH8yn4FSwDx9O70CoQFeCgS305fZ+YIX2Bo9bfzn9okJllGpmH8gh4pjm2WliQIR6nz7naYi2gwYEmWpoJTGRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NfwcUBTRkZmUI6hc4EOtU2psigqzW+B6iMtqkgf2Nx4=;
+ b=TtkNOkpB9mLxxfxvFqVV7VManyDFvsZ+7XsVwy0avFaSCH28YWDsyewWaYEzLKIeD8BiEItuGM5RPenx0OGYXH7GTMYm3yRtRJuprYPcy+qiyh2YFl091jFVYV2e2G63Da04AnY3jzDixYcUVXda4ZU2W7kRG8VAfICqMy5Hc3MEh8SnqfRaBsisxACejJaE6gfF7fLAwFS2AJw4+nn1JT/YAPx3+DiI3AsEn7gsW+sWvgrQeyGE7wplbRO3+NtHZ3JrPQtI0/scAGZESfaBJq11u7ymjM/H9ySN/gvw/NveKcoiEiYSd/BmyWy/UmFMypvZwd3xxtumyAHIsGXpOg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
+ by TYUPR06MB6123.apcprd06.prod.outlook.com (2603:1096:400:352::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Tue, 24 Sep
+ 2024 09:17:48 +0000
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
+ 09:17:48 +0000
+From: Shen Lichuan <shenlichuan@vivo.com>
+To: colyli@suse.de,
+	kent.overstreet@linux.dev,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com,
+	song@kernel.org
+Cc: yukuai3@huawei.com,
+	linux-bcache@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-raid@vger.kernel.org,
+	Shen Lichuan <shenlichuan@vivo.com>
+Subject: [PATCH v1] md: Correct typos in multiple comments across various files
+Date: Tue, 24 Sep 2024 17:17:33 +0800
+Message-Id: <20240924091733.8370-1-shenlichuan@vivo.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: TYCPR01CA0120.jpnprd01.prod.outlook.com
+ (2603:1096:405:4::36) To SEZPR06MB5899.apcprd06.prod.outlook.com
+ (2603:1096:101:e3::16)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: multipath'd bcache device
-From: Coly Li <colyli@suse.de>
-In-Reply-To: <CAG2GFaGTxtm8TUPtbyssdnvW5bF77VHPPiBGkTUJPsWYMCDe9w@mail.gmail.com>
-Date: Mon, 23 Sep 2024 09:55:16 +0800
-Cc: Bcache Linux <linux-bcache@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <EDDD3F26-805D-43CD-BD8C-01C760290B07@suse.de>
-References: <CAG2GFaH3_Ux=Ewi_SOqpiDhF=qVDkX-sTBB8z75mm8LOd03tfw@mail.gmail.com>
- <08E9CAFD-1ECC-4B46-8F0D-7124716E76EF@suse.de>
- <CAG2GFaFQBkzhOJZedHPVdZLYRvU_XMs4MZ-4KKPkDUfbU9AfVg@mail.gmail.com>
- <BD613445-66A6-4B29-A62E-2340C97D831A@suse.de>
- <CAG2GFaGFBGJwvK2hvQ-rgn3_vBHeapNzG9uSRHdagab3s8F9og@mail.gmail.com>
- <63707B6C-C735-4706-98E4-40C061F3FDB6@suse.de>
- <CAG2GFaHiznZrFP+vqWDhA5NJ2xeM454yS62BR2xbFXA=6oyTWQ@mail.gmail.com>
- <C8501408-19FF-4933-A215-C1D044AB7ADE@suse.de>
- <CAG2GFaE_5dB8pTxODyAEY=RkogtwCRiyv7rCC-cL9PWRkzU9Xw@mail.gmail.com>
- <CAG2GFaGTxtm8TUPtbyssdnvW5bF77VHPPiBGkTUJPsWYMCDe9w@mail.gmail.com>
-To: Mitchell Dzurick <mitchell.dzurick@canonical.com>
-X-Mailer: Apple Mail (2.3776.700.51)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.987];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	APPLE_MAILER_COMMON(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|TYUPR06MB6123:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96346940-5766-47ac-2142-08dcdc79c1ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?YrJQiNBvR9kwHgX4swEuqdlAXFNoSx4Ag0tPD/vD2yeKcZZDikh86GomuJ14?=
+ =?us-ascii?Q?EuSZRw/znCRzDWMjs8qHk9UnT/kL0AOtc4EcGYfYOi8Hcx/XofFZOiBlD5vP?=
+ =?us-ascii?Q?AqRPDzAIA54ps9o6zHpo2GwDGeSAJ/kDbm8yb+f5boFwqvE/xnRRz0kC5b5W?=
+ =?us-ascii?Q?qjGg5bUqUZ21x3oC0XKgek80VLHmCunN7amvbDghvyOJ2nNTo9g2PQkFAPVD?=
+ =?us-ascii?Q?vVBAxSdkbE/uqXXVunplx4/zKWGKsUkTVqR2+t7gC/h/Qckx7y+1yFZIBvIw?=
+ =?us-ascii?Q?WrOV4lRKOR9vQgozMQOSdEMRb7Ig3eG/8oJ/PmWv6OTZpzsmJNzgNwKN/oY3?=
+ =?us-ascii?Q?IUSphA3zLQWJXbQH+0te5kRwycJ2SkfGXBQuB4VmS1GfK4676lKLUYdQlKAX?=
+ =?us-ascii?Q?oDJzHHT+OCQf+7C4JyrrHoZDo5BfeF7RcM9cvY2amHo2Whr7Kmnvcz/fkZ+U?=
+ =?us-ascii?Q?7RJm9uvdO6/7HCrFzUSazSCy1fg/NGQq9/0Ow7zI0AT1FZ99sKCzOVhW6dxe?=
+ =?us-ascii?Q?YeUcnQAM/K5KyVsLmSrXIyFnwbmwYqENZUe2ktYIzxv3BsXUyBXwe7fUfCyR?=
+ =?us-ascii?Q?w9eMbIRMN66ijrSnrqhqMmKWsr/DxxdPShVrLNaeObSBvTv2mC1SImWWfZJs?=
+ =?us-ascii?Q?tKecQeY4zqz9ygPsWkGnz+TPXOvl2yZl0HXUwUxZSR2Ew27hZy9Rn5gZ7zBJ?=
+ =?us-ascii?Q?tWqWDob+MTdnYfPBpkNRC3HHuVuTN2MoH28U6FzC7Z/h6jOr2/13DB7vZ/Bm?=
+ =?us-ascii?Q?CgXqsDrkJp3WrSBTGukwTusTC372i4vtHfVpmFDMS3ZZVUlU+oebBEJQ94C+?=
+ =?us-ascii?Q?L/Hca7+UJcFkl+mncF3ulXAx9QYYCbEXvpN0ZJ8NpdNtj8QYH4zOivJLG+uh?=
+ =?us-ascii?Q?fyrzQWGsPl60XKR6SB1t50QpqDpj+H1TY6l85B179lh5rhZxSI0W/ITwJHBf?=
+ =?us-ascii?Q?gZrMT8EsYlZwPGkGKm7h+1FhbfG3ipGE7bgxP9gNJMeDnsaZWl8Usv7SBeGH?=
+ =?us-ascii?Q?nUiuT4J33+Na2GuUeVQFR+vrRMGb7vWmps47RA4u9rgNzOmsBZ8kq5g+/T5T?=
+ =?us-ascii?Q?Zh00qGnoBw+nwbJuo3O9aq3DSasG0Uby7FCty43rA2fBcbfUawszLeGKPK5p?=
+ =?us-ascii?Q?7CiCOwL+zFyPwRA4yBuWG3Y3AC13OCzGVMC2cQCmEidmy6peHQfYQjafTD7s?=
+ =?us-ascii?Q?dJFeLKVloHsESrnZYE/x07Y/EfdUF9PE7XXSBpmbUzameaYK7m6BElfjXoxo?=
+ =?us-ascii?Q?KMAERkOt4L2udKevvs9uOKcLQ4AoE3gNwQEmHnVKEOsXeXp7u8BxvZxYxd6X?=
+ =?us-ascii?Q?Qd6PxgRHNu71hbx8Ki6Mdw20e/n9SWcBcr3uDRrStnWHJJXvOQsaXEqCXbCG?=
+ =?us-ascii?Q?QX1R3eyKWkpdnZ82vLUuqzG4BoMoOzGhsJoOXYeOG5MDQVkeqA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Z3QOfrjYhDsLxKIb7nBWXCTMUKizkokAaAWSNH3ujDnVVkJMCtnYYuv2LLMi?=
+ =?us-ascii?Q?PbJgfULc+Cfj6GokjTcfSLAixMDW20zlxyjiwAWSy4C2/NmMpW+BmqvhUyj8?=
+ =?us-ascii?Q?63qI3ZLz0xDVNSFug8o8L+LP6Tkqdbztt9UDsE7c6d6Ww9IDoQ6elYWR6J1+?=
+ =?us-ascii?Q?Cds/DEAYF3Stjdi4I3cnrXY7skGZWbOSnOsMCrc+UGcMaDYA+r7QnbMA83nq?=
+ =?us-ascii?Q?JJVpSc1qjVu9qG5btNeVmGsVY/dYRAL2y/cHFysVHqoutL12IvimHp9xice5?=
+ =?us-ascii?Q?ykhCJ7RkEILVq6kEQ6/HhaF22DZj8+UOD5sJKxFQilnWcyz4GpiVifUqZDy+?=
+ =?us-ascii?Q?nyw6g3up48OZysmFQ3CdzbYdydX8yLnpkvT1ElobgTFTcE38ICl7AXjo/HGZ?=
+ =?us-ascii?Q?JYkShEdtfxvyv0tD5XrwDcccQTQHwcPlsGX5U1St/oGzAzoDM+rO8dLTOnyO?=
+ =?us-ascii?Q?eQUSeGfNMscQPzLHGzIwDln73Sv8bM3qCQQsqrSlcfaEIpKqPTVWADtyaQxw?=
+ =?us-ascii?Q?z7chDAyY9p9YnajYLwisCaoDWWU6gSpylfeiYC+2Czz6dlHmON83BE7MxK3X?=
+ =?us-ascii?Q?lKC7CRlW+X6w6PvClGHPNIVcrL8sJsFANtOELmp0hPVA3b2nJ6Y9/AG2PboE?=
+ =?us-ascii?Q?V8XjeKXTMu21Jr3CF4zWiCg9jKn49QKzZLHIZrzC9QeOvzAEEasBSIAR31iv?=
+ =?us-ascii?Q?xKPVeN959Zg+FnXL+b8hexe1ZwlK8Txlz3w7P0JcFOWUHfpMsrfxAXeH5uy6?=
+ =?us-ascii?Q?iO03AykMZf5Dt6ocpQIVbUtzFq2LlbFBltR459MSrGmq4yjAs+wpsVY8Cx+Y?=
+ =?us-ascii?Q?ESdqGj76E0Xo84aWXKn8CzBuRUbh7Ax0aRe3dAO1fIyr7edWcZHjjEPXP5bo?=
+ =?us-ascii?Q?uYzSzPKrfZN2rIEEw09fjLfD+ENTAoA0Zl/pgkoEHHt9OEBThLcqE0TDi26S?=
+ =?us-ascii?Q?pGnsWnVNZkL5VnrwzkXm98QBw3MSsjsGLa3Te/T2UJYVDVAsjVq8yCHKSlUi?=
+ =?us-ascii?Q?W1jidoHpX1X1kCZTJ4Ah/5CKfVopnk0pOJbXtQCUzKvZxQM3KegqgiOMRuO7?=
+ =?us-ascii?Q?cKcjcFvo+HZijxOsb4ZDX69jVlupP0jU/iqFstuj4l5oj0V0lWahRmB896gL?=
+ =?us-ascii?Q?n6UH38K64KU4iwjOuuNhGm/8DtD0VoU1LwVsvTHjxOiBez3ryVI3Ald1ajrp?=
+ =?us-ascii?Q?3wpBEoLJ/L1vi3+beeqD0EgCNpiUuavIZgy20c0uZGIDXymi8/dOzNRqy5kT?=
+ =?us-ascii?Q?GvReNZGu2I/oR4IaHdbZTGWXaxWKxCDgdp/R+cAW1mcbIu9b098fJCrYCjEP?=
+ =?us-ascii?Q?JIPd7Zwt0FRM+RvDBDRUJG85RUrsIfQ5OE4JjFP22JXQVrbI5hhtJE90Xs09?=
+ =?us-ascii?Q?m6DC9wD0igHDGGxXUzkTK6i4vNyND58q/G5iy+BxqfQO62yO3K3wKt9tcr/Q?=
+ =?us-ascii?Q?1+TRU6kGFNjoloKW1IHxJXksQCJTeJ86eKAGDVY2kZ6ee6C/VcQKcJZiIRz+?=
+ =?us-ascii?Q?z2yxHxkc2SLR3BK7Zb4R1Yz2ambg3HTIAfXrtyo28cyrmcnXxpP3MQMC1qc7?=
+ =?us-ascii?Q?wYU2T4OwBV7lY2EtmaF8PysZFlVmf0sUBAoGi5BM?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96346940-5766-47ac-2142-08dcdc79c1ef
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 09:17:48.4280
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1+MIriYZH67y2aND3D/TDU+OYxAY7KUortoH6KUpAHyji40g4dq1uCKHjcmacaZ3QeBz5c19se/N6nh7xWsq+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB6123
 
-Hi Mitchell,
+Fixed some confusing spelling errors that were currently identified,
+the details are as follows:
 
-Yes I can see the log.
+-in the code comments:
+	writeback.c: 124:		overrite	==> overwrite
+	dm-cache-target.c: 1371:	exclussive	==> exclusive
+	dm-raid.c: 2522:		repective	==> respective
+	md-cluster.c: 552:		daemaon		==> daemon
+	md.c: 511:			entred		==> entered
+	raid5-ppl.c: 990:		parial		==> partial
 
-[ 1.226296] device-mapper: multipath service-time: version 0.3.0 loaded
-[ 1.277039] device-mapper: table: 252:1: multipath: error getting device =
-(-EBUSY)
-[ 1.277086] device-mapper: ioctl: error adding target to table
-[ 1.300407] bcache: bch_journal_replay() journal replay done, 0 keys in =
-1 entries, seq 1
-[ 1.301650] bcache: register_cache() registered cache device sdd
-[ 1.301748] bcache: register_cache_worker() error /dev/sdc: fail to =
-register cache device
+Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+---
+ drivers/md/bcache/writeback.c | 2 +-
+ drivers/md/dm-cache-target.c  | 2 +-
+ drivers/md/dm-raid.c          | 2 +-
+ drivers/md/md-cluster.c       | 2 +-
+ drivers/md/md.c               | 2 +-
+ drivers/md/raid5-ppl.c        | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-
-=46rom the above lines, it seems device mapper starts early, but both dm =
-and bcache encounter a busy device.
-Then bcache registered sdd successfully, and not register sdc. But I =
-don=E2=80=99t see other information about how the backing device was =
-registered.=20
-
-=46rom the following message,=20
-[ 4.049395] bcache: register_bcache() error : device already registered
-[ 4.268997] bcache: register_cache_worker() error /dev/sdc: fail to =
-register cache device
-
-I assume sdc is the another path of sdd?
-=46rom the logs, it seems all bcache behaviors are expected, except for =
-no backing device existed/registered.
-
-Also I see multipath rule might execute before bcache one, but explains =
-=E2=80=9C[ 1.277039] device-mapper: table: 252:1: multipath: error =
-getting device (-EBUSY)=E2=80=9D. I don=E2=80=99t know how it happens, =
-but this is a suspicious one.
-
-Do you know why multipath failed to get device 252:1 ?  And why I =
-don=E2=80=99t see backing device of bcache here ?
-
-Thanks.
-
-Coly Li
-
-> 2024=E5=B9=B49=E6=9C=8820=E6=97=A5 21:11=EF=BC=8CMitchell Dzurick =
-<mitchell.dzurick@canonical.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> Coly,
->=20
-> Are you able to view this?
->=20
-> https://gist.github.com/mitchdz/addb44425709fd6df5a6b1b91611b234
->=20
-> -Mitch
->=20
-> On Fri, Sep 20, 2024 at 5:51=E2=80=AFAM Mitchell Dzurick
-> <mitchell.dzurick@canonical.com> wrote:
->>=20
->> You are right, it seems to be something else than the udev rules. Let
->> me paste the boot messages real quick.
->>=20
->> On Fri, Sep 20, 2024 at 5:42=E2=80=AFAM Coly Li <colyli@suse.de> =
-wrote:
->>>=20
->>> On my distribution, I see multipath rules is 56-multipath.rules, it =
-should be executed early than bcache one. I am not an systemd and boot =
-expert, but what is the order of your multipath rules?
->>>=20
->>> Coly Li
->>>=20
->>>> 2024=E5=B9=B49=E6=9C=8820=E6=97=A5 19:24=EF=BC=8CMitchell Dzurick =
-<mitchell.dzurick@canonical.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>>=20
->>>> Coly,
->>>>=20
->>>> Yes, I made that observation in multipath-tools upstream bug[0].
->>>>=20
->>>> Ultimately the issue is that the bcache-tools udev rule runs
->>>> bcache-register on the device and therefore it can't be opened by
->>>> multipath tools.
->>>>=20
->>>> Therefore, the udev rule should wait to run until after multipath =
-has
->>>> a chance to make the maps. I'm not sure if there's any =
-complications
->>>> with moving the rules later into the boot process though, WDYT?
->>>>=20
->>>> -Mitch
->>>>=20
->>>> On Mon, Sep 9, 2024 at 8:56=E2=80=AFAM Coly Li <colyli@suse.de> =
-wrote:
->>>>>=20
->>>>>=20
->>>>>=20
->>>>>> 2024=E5=B9=B49=E6=9C=886=E6=97=A5 07:37=EF=BC=8CMitchell Dzurick =
-<mitchell.dzurick@canonical.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>>>>=20
->>>>>> Thanks for the response Coly!
->>>>>>=20
->>>>>> Apologies on my delay, I was out for a bit and then was sick =3D=3D=
- lots
->>>>>> of catching up to do.
->>>>>>=20
->>>>>> Getting back to this, I do see that we have the bcache KCONFIG =
-value enabled
->>>>>>=20
->>>>>> CONFIG_BCACHE_ASYNC_REGISTRATION=3Dy
->>>>>>=20
->>>>>> I don't believe this is a race condition issue. If I try to =
-reload the
->>>>>> devmap table with multipath-tools well after boot, I see the =
-following
->>>>>> in dmesg:
->>>>>>=20
->>>>>> $ sudo multipath -r
->>>>>> [ 8758.157075] device-mapper: table: 252:3: multipath: error =
-getting
->>>>>> device (-EBUSY)
->>>>>> [ 8758.158039] device-mapper: ioctl: error adding target to table
->>>>>> [ 8758.256206] device-mapper: table: 252:3: multipath: error =
-getting
->>>>>> device (-EBUSY)
->>>>>> [ 8758.256758] device-mapper: ioctl: error adding target to table
->>>>>=20
->>>>> When you see the above kernel message, can you check whether =
-bcache device is initialized already?
->>>>> Or you may post the boot time kernel message as attachment, or =
-past it somewhere, then let me have a look.
->>>>>=20
->>>>> Thanks.
->>>>>=20
->>>>>=20
->>>>> Coly Li
->>>>>=20
->>>>>=20
->>>>>=20
->>>>>=20
->>>>>>=20
->>>>>> FYI - Since I'm not sure if this is a bug in bcache-tools or
->>>>>> multipath-tools, I also made an upstream bug report for
->>>>>> multipath-tools at[0].
->>>>>>=20
->>>>>> If there is anything else you'd like me to try, let me know :)
->>>>>>=20
->>>>>> [0] - https://github.com/opensvc/multipath-tools/issues/96
->>>>>>=20
->>>>>> On Mon, Aug 12, 2024 at 12:17=E2=80=AFAM Coly Li <colyli@suse.de> =
-wrote:
->>>>>>>=20
->>>>>>> Hi Mitchell,
->>>>>>>=20
->>>>>>>=20
->>>>>>> It sounds like a timing issue of the initialization scripts. I =
-assume the cache and backing devices are relative large, so the =
-initialization takes time. And because the storage is not local, the =
-remote link contributes more time to wait for the bcache device being =
-ready.
->>>>>>>=20
->>>>>>> If this is the case, then you have to tune the multipath =
-initialization to wait for longer, or compose a customized script to =
-start services depending on bcache devices.
->>>>>>>=20
->>>>>>> BTW, I assume the bcache Kconfig =E2=80=9CAsynchronous device =
-registration=E2=80=9D is checked/enabled. If not, maybe check it on can =
-be a bit helpful.
->>>>>>>=20
->>>>>>> Just FYI.
->>>>>>>=20
->>>>>>> Coly Li
->>>>>>>=20
->>>>>>>> 2024=E5=B9=B48=E6=9C=8812=E6=97=A5 10:54=EF=BC=8CMitchell =
-Dzurick <mitchell.dzurick@canonical.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>>>>>>=20
->>>>>>>> Thanks for the reply Coly.
->>>>>>>>=20
->>>>>>>> I've been able to reproduce this in Ubuntu Noble and Oracular =
-(24.04
->>>>>>>> && 24.10). It should be an issue in Jammy but haven't tested =
-that yet.
->>>>>>>> The current kernel used in Oracular is 6.8.0-31.31 and the =
-current
->>>>>>>> kernel used in Noble is 6.8.0-40.40.
->>>>>>>>=20
->>>>>>>> Unfortunately you need an account to access pastebin. I can =
-copy that
->>>>>>>> information elsewhere for you if that would be helpful, but I =
-can also
->>>>>>>> just gather any extra information you may want from my testbed.
->>>>>>>>=20
->>>>>>>> I also have some steps in the bug report to reproduce this =
-issue using kvm.
->>>>>>>>=20
->>>>>>>> Lastly, if there's any steps you'd like me to try or look into, =
-I'd be
->>>>>>>> glad to hear :)
->>>>>>>>=20
->>>>>>>> -Mitch
->>>>>>>>=20
->>>>>>>> On Sun, Aug 11, 2024 at 5:31=E2=80=AFAM Coly Li =
-<colyli@suse.de> wrote:
->>>>>>>>>=20
->>>>>>>>>=20
->>>>>>>>>=20
->>>>>>>>>> 2024=E5=B9=B48=E6=9C=888=E6=97=A5 09:21=EF=BC=8CMitchell =
-Dzurick <mitchell.dzurick@canonical.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>>>>>>>>=20
->>>>>>>>>> Hello bcache team.
->>>>>>>>>>=20
->>>>>>>>>> I know this project is done and stable as [0] says, but I =
-have a
->>>>>>>>>> question if anyone is around to answer.
->>>>>>>>>>=20
->>>>>>>>>> Has bcache devices been tested and supported on multipath'd =
-disks? I'm
->>>>>>>>>> looking into an Ubuntu bug[1], where these 2 projects are =
-clashing.
->>>>>>>>>> I'm wondering if there was any consideration or support for
->>>>>>>>>> multipathing when this project was made.
->>>>>>>>>>=20
->>>>>>>>>> Also, your new project, bcachefs, might be hitting the same =
-scenario.
->>>>>>>>>> I haven't had the time to test this though unfortunately.
->>>>>>>>>>=20
->>>>>>>>>> Thanks for your time,
->>>>>>>>>> -Mitch
->>>>>>>>>>=20
->>>>>>>>>> [0] - https://bcache.evilpiepirate.org/#index4h1
->>>>>>>>>> [1] - =
-https://bugs.launchpad.net/ubuntu/+source/bcache-tools/+bug/1887558
->>>>>>>>>>=20
->>>>>>>>>=20
->>>>>>>>> =46rom the Ubuntu bug report, I don=E2=80=99t see the kernel =
-version. After parallel and asynchronous initialization was enabled, the =
-udev rule won=E2=80=99t always occupy the bcache block device for long =
-time.
->>>>>>>>>=20
->>>>>>>>> It might be a bit helpful if you may provide the kernel =
-version and Ubuntu os version. BTW I don=E2=80=99t have ubuntu account =
-and cannot access pastern.canonical.com.
->>>>>>>>>=20
->>>>>>>>> Thanks.
->>>>>>>>>=20
->>>>>>>>> Coly Li
->>>>>>>>=20
->>>>>>>=20
->>>>>>=20
->>>>>=20
->>>=20
->=20
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index c1d28e365910..3354a5cd587c 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -121,7 +121,7 @@ static void __update_writeback_rate(struct cached_dev *dc)
+ 		}
+ 		fps = div_s64(dirty, dirty_buckets) * fp_term;
+ 		if (fragment > 3 && fps > proportional_scaled) {
+-			/* Only overrite the p when fragment > 3 */
++			/* Only overwrite the p when fragment > 3 */
+ 			proportional_scaled = fps;
+ 		}
+ 	}
+diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-target.c
+index 17f0fab1e254..3e8be29c0a5e 100644
+--- a/drivers/md/dm-cache-target.c
++++ b/drivers/md/dm-cache-target.c
+@@ -1368,7 +1368,7 @@ static void mg_copy(struct work_struct *ws)
+ 			 */
+ 			bool rb = bio_detain_shared(mg->cache, mg->op->oblock, mg->overwrite_bio);
+ 
+-			BUG_ON(rb); /* An exclussive lock must _not_ be held for this block */
++			BUG_ON(rb); /* An exclusive lock must _not_ be held for this block */
+ 			mg->overwrite_bio = NULL;
+ 			inc_io_migrations(mg->cache);
+ 			mg_full_copy(ws);
+diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
+index 63682d27fc8d..1e0d3b9b75d6 100644
+--- a/drivers/md/dm-raid.c
++++ b/drivers/md/dm-raid.c
+@@ -2519,7 +2519,7 @@ static int super_validate(struct raid_set *rs, struct md_rdev *rdev)
+ 		rdev->saved_raid_disk = rdev->raid_disk;
+ 	}
+ 
+-	/* Reshape support -> restore repective data offsets */
++	/* Reshape support -> restore respective data offsets */
+ 	rdev->data_offset = le64_to_cpu(sb->data_offset);
+ 	rdev->new_data_offset = le64_to_cpu(sb->new_data_offset);
+ 
+diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+index 6595f89becdb..867af995b767 100644
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -549,7 +549,7 @@ static void process_metadata_update(struct mddev *mddev, struct cluster_msg *msg
+ 
+ 	dlm_lock_sync(cinfo->no_new_dev_lockres, DLM_LOCK_CR);
+ 
+-	/* daemaon thread must exist */
++	/* daemon thread must exist */
+ 	thread = rcu_dereference_protected(mddev->thread, true);
+ 	wait_event(thread->wqueue,
+ 		   (got_lock = mddev_trylock(mddev)) ||
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 179ee4afe937..11078a4e4951 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -508,7 +508,7 @@ static void __mddev_resume(struct mddev *mddev, bool recovery_needed)
+ 		return;
+ 	}
+ 
+-	/* entred the memalloc scope from mddev_suspend() */
++	/* entered the memalloc scope from mddev_suspend() */
+ 	memalloc_noio_restore(mddev->noio_flag);
+ 
+ 	percpu_ref_resurrect(&mddev->active_io);
+diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
+index a70cbec12ed0..5323025e7dd9 100644
+--- a/drivers/md/raid5-ppl.c
++++ b/drivers/md/raid5-ppl.c
+@@ -987,7 +987,7 @@ static int ppl_recover(struct ppl_log *log, struct ppl_header *pplhdr,
+ 		crc = ~0;
+ 		crc_stored = le32_to_cpu(e->checksum);
+ 
+-		/* read parial parity for this entry and calculate its checksum */
++		/* read partial parity for this entry and calculate its checksum */
+ 		while (pp_size) {
+ 			int s = pp_size > PAGE_SIZE ? PAGE_SIZE : pp_size;
+ 
+-- 
+2.17.1
 
 
