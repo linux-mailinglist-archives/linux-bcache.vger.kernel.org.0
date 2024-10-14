@@ -1,62 +1,69 @@
-Return-Path: <linux-bcache+bounces-753-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-754-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB2A99BDA6
-	for <lists+linux-bcache@lfdr.de>; Mon, 14 Oct 2024 04:09:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F4E99C2B9
+	for <lists+linux-bcache@lfdr.de>; Mon, 14 Oct 2024 10:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5569E1F227F9
-	for <lists+linux-bcache@lfdr.de>; Mon, 14 Oct 2024 02:09:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 256B5B20EE6
+	for <lists+linux-bcache@lfdr.de>; Mon, 14 Oct 2024 08:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B10219FC;
-	Mon, 14 Oct 2024 02:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CC514F118;
+	Mon, 14 Oct 2024 08:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="piCSKsWT"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ceH6GsK0"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E15D24B34
-	for <linux-bcache@vger.kernel.org>; Mon, 14 Oct 2024 02:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0312C14AD2E;
+	Mon, 14 Oct 2024 08:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728871735; cv=none; b=RTA9o+sULOB1az0Jh/GJmYYvtRtRXg2EhhAQ3k2l3Erk15Lv/0rOMk/GV775tKZsy1HtzfbPln5kvaDqJjeliFoSBDuHtfaTqEUbm/5PWUHoP5gulMyv+WPnKLW2x6UNQVj80DRvv5RfDutxeFOhTF7TKlWlHBb3V/TT3o/6OCA=
+	t=1728893651; cv=none; b=qEcXD+BmQJQNHL0hUV9WDEzYhJcW6eit4iS5ZZiEXa+31HyKVxwXMgm/SGeaUqsGcqSBKMP7Fs9jWm70GGV+gyZZvqZCVesdR4ad7gUSEywibPXbc04+wspP+IEKioaL/zP/Y1sHGI1bkY5U4hNg1pi1bsvWFRloVqcSIPUQ9mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728871735; c=relaxed/simple;
-	bh=sKoT9ubx2MR3FyeYH9iNNnEYGr/zsGQemIq59egXHpQ=;
+	s=arc-20240116; t=1728893651; c=relaxed/simple;
+	bh=EKD07Qj6JcVqClDp8w5hX4Ow8T50FvUf1cSyUeXs/8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZ2SoN+eAcGuDmMQ6VPrLTqQkfi6Md+JXNVOskvlR/k8166XSXHm8ZsyrrDGiubS7KcugUfR7YEoXYhmtO12JmTaI8nRDj9uHwcGjA0L0QG0EcZgqFERbYucxqO4FHowQIVADsxYDv7rucR99gd1emgQh5cIUEJ6iF/qmUxiQVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=piCSKsWT; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 13 Oct 2024 22:08:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728871726;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wY+ijKXuZt2ojjF9sY4li+YhA/f7UOPAEofiJwS3jCc=;
-	b=piCSKsWTpyYrc56O9Fty31hKyS/UmcAPuHEaFC3yEGAp3Oqj4IHVsd5UhxwApkguAg9jfK
-	mQuwf8cyO0fG3pxjo1ycCwmwZfpoHqO8sBqNH1PvjOdzHU2cobTW/0SSIpHUAVQoWlblsS
-	6HsAREY2u24k+CImBZYk/XmZzIN3OVc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c45AFVKCq7T+Nwk7sDDdi6aFa/C5IEwBLJeztYWvZKV6QIsp/fa3qvSiPHosWXM0ipWl4rcP+az0CQNHQFOi5XLLO7/sFBO3Zy4GTLh14Wdbx6M2ZXC+G55U1kolLj2cwHSM3TNOzSO/zoeONGAjIvPbqoV9byYxH3PyVG107FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ceH6GsK0; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Wk8EcJ/7b4OEG+IFikYEtXUWa6XJYMvqVFBhG68Lv7Q=; b=ceH6GsK0E6q43xq2xtT81K5DtF
+	3Nv2eWGdf1mapppB0kDWQVaJ2UaTYBDWU2VnALi+jCZfOvEhbOubKwj/k5GWwIl5Z/L5pVgoLCA2v
+	fl1ZNnPuY4jH12qm20XvZgXEFuKOj55yxd5DeypDIOTvRr2DLZhLuYgojbFs3ZWKwj8I9vsjhh9Yz
+	t4rN/M1l8bCR4Lb49UiBA46djQowVK5t4LppB3HjTqDLEdGvZA82l15S8xI8ainkw+9UBJvjsk37Z
+	19vllUQfPQ48dNNu2iJMCGmfvBPSlWj5GdivVduMjfRslZoROENMKpnk4b64wT3K3Bi9ieN16NbUp
+	GeSC4EKw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t0GDG-000000012qw-0aZ2;
+	Mon, 14 Oct 2024 08:13:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1C7BB300777; Mon, 14 Oct 2024 10:13:58 +0200 (CEST)
+Date: Mon, 14 Oct 2024 10:13:58 +0200
+From: Peter Zijlstra <peterz@infradead.org>
 To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: colyli@suse.de, msakai@redhat.com, corbet@lwn.net, 
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
-	akpm@linux-foundation.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org, 
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
+Cc: colyli@suse.de, kent.overstreet@linux.dev, msakai@redhat.com,
+	corbet@lwn.net, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, akpm@linux-foundation.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, jserv@ccns.ncku.edu.tw,
+	linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org,
 	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 0/3] Enhance min heap API with non-inline functions and
- optimizations
-Message-ID: <lee342z2tyrmmxuqnqb2mg4i4qem6n3ei6ifnuusivxilouqbe@nsbaqry3lchl>
+Subject: Re: [PATCH 1/3] lib/min_heap: Introduce non-inline versions of min
+ heap API functions
+Message-ID: <20241014081358.GS17263@noisy.programming.kicks-ass.net>
 References: <20241013184703.659652-1-visitorckw@gmail.com>
- <uisaqjn2ttzhohe3a5qrdw4x6m7rhuoxxuhfoz5szufynuz5fz@4wicz52jydwz>
- <ZwxXSje3n6lMTbjj@visitorckw-System-Product-Name>
+ <20241013184703.659652-2-visitorckw@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -65,27 +72,30 @@ List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwxXSje3n6lMTbjj@visitorckw-System-Product-Name>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241013184703.659652-2-visitorckw@gmail.com>
 
-On Mon, Oct 14, 2024 at 07:27:06AM GMT, Kuan-Wei Chiu wrote:
-> On Sun, Oct 13, 2024 at 07:05:38PM -0400, Kent Overstreet wrote:
-> > On Mon, Oct 14, 2024 at 02:47:00AM GMT, Kuan-Wei Chiu wrote:
-> > > Add non-inline versions of the min heap API functions in lib/min_heap.c
-> > > and updates all users outside of kernel/events/core.c to use these
-> > > non-inline versions. Additionally, it micro-optimizes the efficiency of
-> > > the min heap by pre-scaling the counter, following the same approach as
-> > > in lib/sort.c. Documentation for the min heap API has also been added
-> > > to the core-api section.
-> > 
-> > Nice, has it been tested - do you need a CI account?
-> > 
-> > I'd like to start seeing links to CI results in patch postings (and I
-> > need to tweak the CI to add git fetch links, as well).
-> >
-> It would be nice to have a CI account to test my patches. Is there any
-> guide available on how to use it?
+On Mon, Oct 14, 2024 at 02:47:01AM +0800, Kuan-Wei Chiu wrote:
+> All current min heap API functions are marked with '__always_inline'.
+> However, as the number of users increases, inlining these functions
+> everywhere leads to a significant increase in kernel size.
+> 
+> In performance-critical paths, such as when perf events are enabled and
+> min heap functions are called on every context switch, it is important
+> to retain the inline versions for optimal performance. To balance this,
+> the original inline functions are kept, and additional non-inline
+> versions of the functions have been added in lib/min_heap.c.
 
-I give you a config file to edit, it watches your git branch(es), you
-watch dashboard
+The reason it is all __always_inline is because then the whole
+min_heap_callbacks thing can be constant propagated and the func->less()
+etc calls become direct calls.
+
+Doing out of line for this stuff, makes them indirect calls, and
+indirect calls are super retarded expensive ever since spectre. But also
+things like kCFI add significant cost to indirect calls.
+
+Something that would be a trivial subtract instruction becomes this
+giant mess of an indirect function call.
+
+Given the whole min_heap thing is basically a ton of less() and swp()
+calls, I really don't think this trade off makes any kind of sense.
 
