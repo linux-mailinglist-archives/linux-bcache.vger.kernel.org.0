@@ -1,72 +1,72 @@
-Return-Path: <linux-bcache+bounces-768-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-769-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506E29A5240
-	for <lists+linux-bcache@lfdr.de>; Sun, 20 Oct 2024 06:04:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6FC9A5244
+	for <lists+linux-bcache@lfdr.de>; Sun, 20 Oct 2024 06:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9CED1F22DDF
-	for <lists+linux-bcache@lfdr.de>; Sun, 20 Oct 2024 04:04:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027511F22E1E
+	for <lists+linux-bcache@lfdr.de>; Sun, 20 Oct 2024 04:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37C68121F;
-	Sun, 20 Oct 2024 04:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C9EEADA;
+	Sun, 20 Oct 2024 04:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvC1IltM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bqz++SX8"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F9A7DA82;
-	Sun, 20 Oct 2024 04:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826407DA82;
+	Sun, 20 Oct 2024 04:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729396968; cv=none; b=MMzenqhgRobA2TI/hZjLoEdcEjMIf9PZhj5bEvvWCz7Dk0IrXa5S7ylsXXHo0GGNHM/yx09DAmYA+XFIgdWFXKCIAJ+tA7YSADFmi9Xd1MoFNlnoDWHyD3fHcF42I8tWmrm4bvH5Su1p4rodAlI/akTUV5r4lt/h/nnm80zoDfc=
+	t=1729396975; cv=none; b=QkKyaWf7LgZgk67x6DDK0hmvtZvNpx+zpj/3whQ8NjiytNhyiqfMNy2+IUcuzaKAyJzwjKsClhBMvR4Zjcc5USps9G6xLqyGGVt+sPIC+VeMUbf07wgtYiLpXM6gYcAi8S/t55gOOHh1VM03NE+bnPY9FVYf1FqdSUjZx4tdLNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729396968; c=relaxed/simple;
-	bh=gyiMjnOkGCmWLW5uchvMDnKTgZ6y7fEOmN1SFiFPiH4=;
+	s=arc-20240116; t=1729396975; c=relaxed/simple;
+	bh=/9mUaFvmlKksdPlONLh36cpvswwCLSGpPrI0BGH0Huo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qXJ+E1P7KgAYq26apSoLC34bqXyHmcSoJHjI6pSAsK25+INyUv/kv/oB2b8TJPK5xipn+9qszAXYLu9g6RCqQj3LHTqhqku7JCykqNGLew9xHq9/XXczS5ZF3Hx9U2RzXnzqu+hU6BLMMI4sHXAjHHZkmKQ+xZgTlcDh3Asg2jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jvC1IltM; arc=none smtp.client-ip=209.85.216.42
+	 MIME-Version; b=uMsWJrWZ2/kdp8LTWm6s6642d+mVJ+LtYZ7mHLwmtR+3sxdgoxNmHnz7pj2KhEQvCSzxXUq7qe5XxfAYTB1b5Gd1UFZIUtwvk54AmxSS53/kjYZxbMrhziuI/CYJF1WQ/lQ7jPNMr3EaTr1OScQtTZ3FsWUW5SHZrdvefP6V6e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bqz++SX8; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e30db524c2so2522475a91.1;
-        Sat, 19 Oct 2024 21:02:46 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so2789536a91.1;
+        Sat, 19 Oct 2024 21:02:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729396966; x=1730001766; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729396972; x=1730001772; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6iUBoTJj+mB6KW0shlxuElBqdCTCqkeGFMIEQuiMOBQ=;
-        b=jvC1IltMi5UyaN1iQ5EfWbzHrnSeViIljtMxvwezYL5zZ0RhBdBx1vC91Jmg8adFsH
-         2EhMM+1nw7/8/k0JfEV41QSeJxBeAEjPwgD7clnk+yeKsYrdsMJNiHMYzBaozYbxhrtu
-         7eGDBm6kY1zTlQRflroEwu6J4E2aKk04qdXu7G0AqwpxGxbjmr+3HUJaUup0soI7ixYf
-         elaj1iGWsT2Ogn8W5Plt6k8ZVkLBPY/5lWy9cZpXF6219Jx39bRjTGA/MuRgagMs2ENu
-         06UUdhDrGQWIHb5JxlreZ4naFYsrv8eQmvfc82S4GtRufEsj1ASa8Vx3RNI/mIWcBcqx
-         j2Yg==
+        bh=rziSmC5tfzn2cnt/wqwyaZwuuHhuMcA3Csb1Fp91fpY=;
+        b=bqz++SX8QG0mmMXZFez34zqjXHawDgQcVsFTXl3zpIRJLyug8eDowqI8QbE5arzv/T
+         zHY+txYz7iLqcG+vMn4mNZ1KPOpM6mntSzNVGcAS7bEnWucyKaPnZAfRbRwHcbsmJrNO
+         k/ENZtlBfMRo75ywKIcib3vBTo/ss8ZP8d8Q1Ckc8pTIvEop4PbjC/PpGqy4vzofIMx9
+         8oTXcoKw2j0iMeK5nnx6o4VsamPK3qisL1agMSwuGnB5EnkXSCngUh+Ge8ul602lb1ZK
+         nSnt8IBw1B0Y8GoL89OBl5gM+K6q4VGh5LUJj8lde1gvBqHmJYI/9M/zgx/6wudypmT9
+         sy2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729396966; x=1730001766;
+        d=1e100.net; s=20230601; t=1729396972; x=1730001772;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6iUBoTJj+mB6KW0shlxuElBqdCTCqkeGFMIEQuiMOBQ=;
-        b=M5n760EBEYEZ5AK4gSm/laSKFeCFst6ZIrEyZc/+I6Wygc6SLT0t57Xxb65g7l3w5+
-         E0UiTr2nrJLcoHbit9xp+MdrE2AfAXqMvdtiQgQf3UlLs0gnYxzTO6ZnaQXC4HwMupaq
-         BtL8kgCr0nh9wXKnGdkjNPz4ESYURTZY51RaU704E5cvuB3PahleYL8Ik3voihEt7feO
-         xa4P37HOHfOndemegyMUVbRPEr6K7gszUkGWXEg0o8hOcn4xxn0DOqCQggrnfHOu2ZqL
-         h4WimqUoy0xiN5vfN0RrP85tqOHCkI73ZvRZAeJWwNvOVTWge3XbeE17S2L0a/1lr3rv
-         kgMg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1VeG63HfzruYCg2QwXazdyjBIsv8aPS0nNyYblt0UeLBCtFEIUzhbywaNyx3PX1GvLT9B/dIO6ex2iz4Q3Hc=@vger.kernel.org, AJvYcCU4Y57cvJkA6Cw/bqYC3VrNUHRtosYjXnb0e/J7V5pIapG/5GJxzRQwyOUlz9qS4Y1aNWCUbEc/cfie@vger.kernel.org, AJvYcCUScZ2a9ZDuOr9WMJYQzXo9uC1PZ47efxnEoXxLm4xCqbjTQBqslqavk7j3II07gYMOleSuICgPunGbUxk=@vger.kernel.org, AJvYcCUaDlf7xqu1iEhADiHKL6tlnK4zGxkXLtBrq1biznmeWjCwLwOsyfU9LuLfdIvNZ5gu9k0pH84FCm7yZt+k@vger.kernel.org, AJvYcCV8zdy/Vuzhb9trGXx3LGpGQGsGbTNejGOfvoTnOzbBcsYJyIEpV0cpfRHSd3nlrzU00iVjbby5br+zPiW2VlaGLA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUJiNh3uZY2+S6Bv+8/OJQILqvtIHlzJ2imQ8dn5e/v3JzPisG
-	MbF4GxsaYXdA1ryukguI6cRamhoXPHdbMSZMqy0caa8poDE1DpYj
-X-Google-Smtp-Source: AGHT+IFe5P6BuiYtbffd1mimYFoXtDFoEUK324MarnzRvMXI0QJHbhnkpia1+tu9/eVZZvKy7OgAww==
-X-Received: by 2002:a17:90b:4b4a:b0:2e2:b211:a4da with SMTP id 98e67ed59e1d1-2e5616ec45bmr9060331a91.14.1729396966000;
-        Sat, 19 Oct 2024 21:02:46 -0700 (PDT)
+        bh=rziSmC5tfzn2cnt/wqwyaZwuuHhuMcA3Csb1Fp91fpY=;
+        b=B0Zw761pWugZ6E06e0oQRvC5Wy3fNc1cGMBBjotRQBVZxUzJZAhS5xz+pE9PEyNmwM
+         8VjXkouqbOf1+2pNCXqwzqe+u40uKxeacxEPqPFUmxvwDwfY1S8smnnSJvli7q+AN5ff
+         u9IXd3ge/JNyM6R6aLsicRyEX6N3+3TdrzoDPu2XYZSwjDkKE7M2bllov1yi6TuKRIeL
+         dAomajDFZZWAJz4Vsss547vUkOaJ5jwva4S/+tnv7NPkg4ZaMbzPe8xQtbbwVUrZWG8u
+         HttbaBwTX4GAwT36T7mJwOhgW77yikrXZsUA0s9sPHhw0gY+X0S5KKTrPdAnErrALyUD
+         EprA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmZd+XqqCDieDpxwV6Yi8pXQLK2oXiRUbTRJ0JY2JW2Zo3W9R6ZbSwD6oDFroSCN95WxGe1xc5AH3xrSXseGMchg==@vger.kernel.org, AJvYcCV2WoXraTKItwzdN+wP/nHfbCN1HiiZkjCZhS6Gt+PE1DfCMclSY+jrYo1ANdKOOV7PfIC9YvPa0q9Mkf4yZJk=@vger.kernel.org, AJvYcCVSrQb2DqFmkQ7C0vs51cdg+PToFRB/6qkUTA5MQ3s4fFx8OQ/upfDhPAvl2bpg3zxLriDZMaRp2QQd0iZQ@vger.kernel.org, AJvYcCVl4n/4ZZnuPFqUzQhex/6Vr8z3WMqElGaB7k4CP5ec0DHEum8WD26CGH5WG+uU3r/98CQnUhITdUL0MxY=@vger.kernel.org, AJvYcCWfsABFPdN5PjfWj5NAAfY81/H8qchLRHmkQLXZEH4dGPEqoNRl7+cDpFKw9Hnb6Xjmc++7gmDUS62k@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZlK5U5Y2phtjSFjy0XmKALH33h81aJ8xW//kUl8C9SeX6sN0p
+	OZcO4+ETW1LtAvErryDjwZw0gQfsVLnH/X68+CSMxuSLkIl55yeP
+X-Google-Smtp-Source: AGHT+IHMW+qjGNk25MwSR4+vnQ0D8s1Tp6FfxwQfHJa9nSOWn+djBGN5YnBTiCdS6y5VPlsk0p2NZQ==
+X-Received: by 2002:a17:90b:3658:b0:2e2:cd6b:c6ca with SMTP id 98e67ed59e1d1-2e5618f0839mr8748941a91.25.1729396971559;
+        Sat, 19 Oct 2024 21:02:51 -0700 (PDT)
 Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad3678d3sm633668a91.24.2024.10.19.21.02.42
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5ad3678d3sm633668a91.24.2024.10.19.21.02.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Oct 2024 21:02:45 -0700 (PDT)
+        Sat, 19 Oct 2024 21:02:51 -0700 (PDT)
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
 To: colyli@suse.de,
 	kent.overstreet@linux.dev,
@@ -92,9 +92,9 @@ Cc: mark.rutland@arm.com,
 	linux-perf-users@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH v2 05/10] perf/core: Update min_heap_callbacks to use default builtin swap
-Date: Sun, 20 Oct 2024 12:01:55 +0800
-Message-Id: <20241020040200.939973-6-visitorckw@gmail.com>
+Subject: [PATCH v2 06/10] dm vdo: Update min_heap_callbacks to use default builtin swap
+Date: Sun, 20 Oct 2024 12:01:56 +0800
+Message-Id: <20241020040200.939973-7-visitorckw@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241020040200.939973-1-visitorckw@gmail.com>
 References: <20241020040200.939973-1-visitorckw@gmail.com>
@@ -106,40 +106,53 @@ List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-After introducing the default builtin swap implementation, update the
-min_heap_callbacks to replace the swp function pointer with NULL. This
-change allows the min heap to directly utilize the builtin swap,
-simplifying the code.
+Replace the swp function pointer in the min_heap_callbacks of dm-vdo
+with NULL, allowing direct usage of the default builtin swap
+implementation. This modification simplifies the code and improves
+performance by removing unnecessary function indirection.
 
 Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 ---
- kernel/events/core.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/md/dm-vdo/repair.c     |  2 +-
+ drivers/md/dm-vdo/slab-depot.c | 10 +---------
+ 2 files changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index cbf365e67f6e..0e9be5b323e4 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -3778,18 +3778,11 @@ static bool perf_less_group_idx(const void *l, const void *r, void __always_unus
- 	return le->group_index < re->group_index;
- }
+diff --git a/drivers/md/dm-vdo/repair.c b/drivers/md/dm-vdo/repair.c
+index ffff2c999518..8c006fb3afcf 100644
+--- a/drivers/md/dm-vdo/repair.c
++++ b/drivers/md/dm-vdo/repair.c
+@@ -166,7 +166,7 @@ static void swap_mappings(void *item1, void *item2, void __always_unused *args)
  
--static void swap_ptr(void *l, void *r, void __always_unused *args)
--{
--	void **lp = l, **rp = r;
--
--	swap(*lp, *rp);
--}
--
- DEFINE_MIN_HEAP(struct perf_event *, perf_event_min_heap);
- 
- static const struct min_heap_callbacks perf_min_heap = {
- 	.less = perf_less_group_idx,
--	.swp = swap_ptr,
+ static const struct min_heap_callbacks repair_min_heap = {
+ 	.less = mapping_is_less_than,
+-	.swp = swap_mappings,
 +	.swp = NULL,
  };
  
- static void __heap_add(struct perf_event_min_heap *heap, struct perf_event *event)
+ static struct numbered_block_mapping *sort_next_heap_element(struct repair_completion *repair)
+diff --git a/drivers/md/dm-vdo/slab-depot.c b/drivers/md/dm-vdo/slab-depot.c
+index 274f9ccd072f..ccf7b2eac131 100644
+--- a/drivers/md/dm-vdo/slab-depot.c
++++ b/drivers/md/dm-vdo/slab-depot.c
+@@ -3301,17 +3301,9 @@ static bool slab_status_is_less_than(const void *item1, const void *item2,
+ 	return info1->slab_number < info2->slab_number;
+ }
+ 
+-static void swap_slab_statuses(void *item1, void *item2, void __always_unused *args)
+-{
+-	struct slab_status *info1 = item1;
+-	struct slab_status *info2 = item2;
+-
+-	swap(*info1, *info2);
+-}
+-
+ static const struct min_heap_callbacks slab_status_min_heap = {
+ 	.less = slab_status_is_less_than,
+-	.swp = swap_slab_statuses,
++	.swp = NULL,
+ };
+ 
+ /* Inform the slab actor that a action has finished on some slab; used by apply_to_slabs(). */
 -- 
 2.34.1
 
