@@ -1,133 +1,117 @@
-Return-Path: <linux-bcache+bounces-779-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-780-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD969B2518
-	for <lists+linux-bcache@lfdr.de>; Mon, 28 Oct 2024 07:10:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D469BE2D7
+	for <lists+linux-bcache@lfdr.de>; Wed,  6 Nov 2024 10:39:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B02AEB20D42
-	for <lists+linux-bcache@lfdr.de>; Mon, 28 Oct 2024 06:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 580771C22F5A
+	for <lists+linux-bcache@lfdr.de>; Wed,  6 Nov 2024 09:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D079D18DF71;
-	Mon, 28 Oct 2024 06:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gIAErrbr"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFBC1DCB2C;
+	Wed,  6 Nov 2024 09:39:18 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m10140.netease.com (mail-m10140.netease.com [154.81.10.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C6018CC12;
-	Mon, 28 Oct 2024 06:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0C51D9329
+	for <linux-bcache@vger.kernel.org>; Wed,  6 Nov 2024 09:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730095830; cv=none; b=CBGt9AvTJEOqDZJ+30ouLhXh0/nB5VjVwQTcduyjmdQVVPGuEcCU67VJY6USB3b36jvwfzjYjoCJYzGzoCq1n6FDFYIQSUdDp4N6IaPjzebdkWAqYGxkMbrhgrOM4gqtD/il4n1yuuOzCL7azvL+V8nzRPX2rLXjEDZwSuhALSk=
+	t=1730885958; cv=none; b=A0kE0U8GWlvqoxIWtiVnhHHFKhyUu+KMgSLOxLNw56Q9fQJcb66wb0WzInveeonjoB+xkL0UUYZE65IA+kNqwAKpmnPZD+8KcuxyVmaZ9m75stKj3ZgA6mDZBIftvhQTyCJqIQDffJyYIRIj0i/b1cPNtVtvF13yONu6+eMcW94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730095830; c=relaxed/simple;
-	bh=KZQQWIa0NmTXTrvgtfvfI9/FAmsddMyzm4sTOgHcISU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpgTxoNqrnw0OJLFVePpGEZBX8Jum08lwmgQUHSRlfXguH5DwQT4HfBW2DSGyiX2EpouhKEhJ08Mpgf4jolE13BiwvhLLfyojmMyAOlbkttMoQKJvRitJSAIK+1NudAPFGUsfKzsLCaY3XGbuTNQp+4+owITU+/ONF7W6VAD/6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gIAErrbr; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e91403950dso158656a91.3;
-        Sun, 27 Oct 2024 23:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730095828; x=1730700628; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KZQQWIa0NmTXTrvgtfvfI9/FAmsddMyzm4sTOgHcISU=;
-        b=gIAErrbrq/rfW6kpv6cAW1j8ST3mx6kmfQsRWQfhM52jAogG6Tz/b+yZ+yPC8B3cTr
-         RQ3SpzZ8wi8JFa+XZMzVUvqkLstrHh3q1776kmIxNxxZPcQvJ8SbKYcyZcbhAvBeyB2g
-         XWFWl0gcjSGKfXzyxLJXFyd0ex2jUTliasReIqpOU0NtS4hBxu3Eod8GyiP+8Q2l1Wuc
-         YZlaGlCQFqkGO+MqNt+D6NWInQXHvBThgfjZiyOyVyMBiMkkHcOiU6SIFKygGx/Ddrzu
-         HEJYgTRDzUfZCAxO+pW93r3h0+qSBTLjS/5QK+RLC2d3wFrANoE6gc2KsYOiZJ782E0u
-         YENA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730095828; x=1730700628;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KZQQWIa0NmTXTrvgtfvfI9/FAmsddMyzm4sTOgHcISU=;
-        b=AXwrvU4VRjZXJtBO5C/G1fhCMogg9ijeJq2SsvALC0Iizu3TTCO9a/LmEI04terTBr
-         mtDxasaEfGSFSsykhdy2mi5wH5fgaBBnwJxAow0LYB7Ty5uercOK+hnvBBkEYFIx7Ezs
-         8T3y8UBqxdGkhm92O31JtCaF0rUNJE9WI92RUTwU6IMmcYKc7hweLK2z29OjI6TonTnS
-         kzNnmoeSYJTWcFTlmRxMkCaMgkfDN51Nq9SDWRRNCbbtMOfHMzqjlyvRzbMmSAibbn39
-         o43G2TSXdqYVsVlSeDpj/RGaDuVhIiEgdzZ5CFvRxBOtjWNtx+cg7TjnvKEN1+J3ATEL
-         2AKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfAzg2BckHw1+p4tiPuS/gYEBdtUKu2EIMlY47jD249aVSqU171kD+YmRwxapWPRLj7azi/huOdrbqFMxd@vger.kernel.org, AJvYcCVNzZGu6tnx8lVjRY2kJlS41oA6ZX09hm27tHcohU33ZdO6C1/MWPmLUhV1NvxSSpZsP5cKWlCpX5MeDK8=@vger.kernel.org, AJvYcCVumhveR07IHfEiO+X1tnwh4mVgLrqHOlc/jchYJV1PpPY+ikgC7zNiPPILG+PzURVlQ5bekUDWSxaKzM89Teh8tg==@vger.kernel.org, AJvYcCWeqYxmMZ8WY2ZvoFtnAjPNpRn8vxtYNWtdryCGeBAD+OrVcJclADLE8uIMZvrZ6wy0stW2WY9jkzSe@vger.kernel.org, AJvYcCWiAlvBOc4VhiGG9N32r7WZO4SxvcykHKGbUcusRNRciqmOnIuXMMogB/8Oj6V4qpWHjcm1BmJYBvbOzD36Klo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx+aMrw/W5uvIbg1mkdtS5jF/dv1NvnsCuR9wue06bjUKdLHQH
-	3ps+MvgVlTRPri/+sCjcLDgtD1fedhBWYp7sJxBP9xtCfFXoal48
-X-Google-Smtp-Source: AGHT+IGY/C3RpGygdeotrpMgURVeqHdXpqhUm2OR3yBXK+vE2HSGrXjWe+261uWQUYpiIK17xtVVKw==
-X-Received: by 2002:a17:90a:9a8c:b0:2c9:9658:d704 with SMTP id 98e67ed59e1d1-2e8f11dcf62mr7128993a91.40.1730095828058;
-        Sun, 27 Oct 2024 23:10:28 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3572d4esm6331419a91.15.2024.10.27.23.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 23:10:26 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 50A114229D6A; Mon, 28 Oct 2024 13:10:24 +0700 (WIB)
-Date: Mon, 28 Oct 2024 13:10:24 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>, colyli@suse.de,
-	kent.overstreet@linux.dev, msakai@redhat.com, corbet@lwn.net,
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, akpm@linux-foundation.org
-Cc: mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, willy@infradead.org,
-	jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org,
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] Documentation/core-api: Add min heap API
- introduction
-Message-ID: <Zx8q0C6NhVPwqLgG@archie.me>
-References: <20241020040200.939973-1-visitorckw@gmail.com>
- <20241020040200.939973-11-visitorckw@gmail.com>
+	s=arc-20240116; t=1730885958; c=relaxed/simple;
+	bh=VkU3b+1QXBrAsUafZGh1HLfMDAywJynmkJnIK9ipgYY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m1FVuiu5MXyNxTwxlRb7+M2QYWgMASvIF+GCbJ/06TLWoVcS/q5N5poBMYc9hxeq+K0f7h2/pMlFZKBeNAMG/dhewAg5V9qOsuqpVj4tvZO8kejC0zE6EwcmwBLYeRHV0XFMDnXRmp6XYyYU94TP1wx34Wk0gHwMaQZSfqatEXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=154.81.10.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
+Received: from localhost.localdomain (unknown [218.94.118.90])
+	by smtp.qiye.163.com (Hmail) with ESMTP id fcb52bc;
+	Wed, 6 Nov 2024 14:09:46 +0800 (GMT+08:00)
+From: mingzhe.zou@easystack.cn
+To: colyli@suse.de
+Cc: linux-bcache@vger.kernel.org,
+	zoumingzhe@qq.com
+Subject: [PATCH] bcache: fix io error during cache read race
+Date: Wed,  6 Nov 2024 14:09:25 +0800
+Message-Id: <20241106060925.900427-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9FVjYyjZ5YvF0M+J"
-Content-Disposition: inline
-In-Reply-To: <20241020040200.939973-11-visitorckw@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSktDVk0ZHUNCHkJPGB5DSFYVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
+	VKQktLWQY+
+X-HM-Tid: 0a930017e5a6022bkunmfcb52bc
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PUk6ESo4TDceThUtCxYoLwId
+	OB4aCTBVSlVKTEhLQ0xISENMS0lPVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+	C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSUlMTjcG
 
+From: Mingzhe Zou <mingzhe.zou@easystack.cn>
 
---9FVjYyjZ5YvF0M+J
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In our production environment, bcache returned IO_ERROR(errno=-5).
+These errors always happen during 1M read IO under high pressure
+and without any message log. When the error occurred, we stopped
+all reading and writing and used 1M read IO to read the entire disk
+without any errors. Later we found that cache_read_races of cache_set
+is non-zero.
 
-On Sun, Oct 20, 2024 at 12:02:00PM +0800, Kuan-Wei Chiu wrote:
-> Introduce an overview of the min heap API, detailing its usage and
-> functionality. The documentation aims to provide developers with a
-> clear understanding of how to implement and utilize min heaps within
-> the Linux kernel, enhancing the overall accessibility of this data
-> structure.
->=20
+If a large (1M) read bio is split into two or more bios, when one bio
+reads dirty data, s->read_dirty_data will be set to true and remain.
+If the bucket was reused while our subsequent read bio was in flight,
+the read will be unrecoverable(cannot read data from backing).
 
-The doc LGTM, thanks!
+This patch reassigns s->recoverable and s->read_dirty_data before
+each cache read. When a race condition occurs, check whether it can
+read from the backing device.
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/request.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---=20
-An old man doll... just what I always wanted! - Clara
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index af345dc6fde1..e9cb3ad323d4 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -513,6 +513,7 @@ static void bch_cache_read_endio(struct bio *bio)
+ 		s->iop.status = bio->bi_status;
+ 	else if (!KEY_DIRTY(&b->key) &&
+ 		 ptr_stale(s->iop.c, &b->key, 0)) {
++		BUG_ON(s->recoverable && s->read_dirty_data);
+ 		atomic_long_inc(&s->iop.c->cache_read_races);
+ 		s->iop.status = BLK_STS_IOERR;
+ 	}
+@@ -558,8 +559,9 @@ static int cache_lookup_fn(struct btree_op *op, struct btree *b, struct bkey *k)
+ 
+ 	PTR_BUCKET(b->c, k, ptr)->prio = INITIAL_PRIO;
+ 
+-	if (KEY_DIRTY(k))
+-		s->read_dirty_data = true;
++	s->read_dirty_data = KEY_DIRTY(k) ? true : false;
++	/* Cache read errors are recoverable */
++	s->recoverable = true;
+ 
+ 	n = bio_next_split(bio, min_t(uint64_t, INT_MAX,
+ 				      KEY_OFFSET(k) - bio->bi_iter.bi_sector),
+@@ -574,6 +576,7 @@ static int cache_lookup_fn(struct btree_op *op, struct btree *b, struct bkey *k)
+ 	n->bi_end_io	= bch_cache_read_endio;
+ 	n->bi_private	= &s->cl;
+ 
++
+ 	/*
+ 	 * The bucket we're reading from might be reused while our bio
+ 	 * is in flight, and we could then end up reading the wrong
+-- 
+2.34.1
 
---9FVjYyjZ5YvF0M+J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZx8qywAKCRD2uYlJVVFO
-oxK8AQCkweSLHKQum/kN2ZlFuOSI7PY2IFPhUHf7EgVFWMUZ1QD/fIPIofBxwULy
-ZiQmQ7b0Lko4m4TJTzn6NFKQGFQ8tAY=
-=8Dk+
------END PGP SIGNATURE-----
-
---9FVjYyjZ5YvF0M+J--
 
