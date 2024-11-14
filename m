@@ -1,174 +1,200 @@
-Return-Path: <linux-bcache+bounces-786-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-787-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B169C7498
-	for <lists+linux-bcache@lfdr.de>; Wed, 13 Nov 2024 15:41:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004919C8B7A
+	for <lists+linux-bcache@lfdr.de>; Thu, 14 Nov 2024 14:11:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06D1E1F25C0D
-	for <lists+linux-bcache@lfdr.de>; Wed, 13 Nov 2024 14:41:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7956A1F24E57
+	for <lists+linux-bcache@lfdr.de>; Thu, 14 Nov 2024 13:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805D72003A2;
-	Wed, 13 Nov 2024 14:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2E11FAEE3;
+	Thu, 14 Nov 2024 13:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKxggTIX"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-m17242.xmail.ntesmail.com (mail-m17242.xmail.ntesmail.com [45.195.17.242])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8DF4C6C;
-	Wed, 13 Nov 2024 14:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.17.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E983E1F8918;
+	Thu, 14 Nov 2024 13:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731508883; cv=none; b=dvLUb+PNtCyy6thjXBzjiKToTsLRMztTfmz/XskQNQjq2aqRX2SGXvNEPb89hJi9I8F2jA9g8i7yhYvf75wX6bQGBFdnRxkipbSS13Lw6QDNp22m4zctTFeMNaPQ8uBBNv7jcBoEeIF3LIlT3SGRdI5rKoMal0nl5/QAx9zeugQ=
+	t=1731589860; cv=none; b=Jk37FcBvEvB3NwR8A6puR10W3WQATvdFaSQxKH36CjmcmAk45yUKcRRXuH2BTY/sXGVhChiV2/kfVoZcvu/ak5ZnHiOoLp0ElrIKV9203osjiIPC6aGuToZ6ae8KrDl+6+f5xWHZTkcMgOmnm14rmO8xQvpI3UStUflZTxpVOu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731508883; c=relaxed/simple;
-	bh=SrHvkz+EGJs97SlRZaqIXywhQmWPsnJHWlG29ZDkzNQ=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PbQTiC1YPMZ8j7dm2jGZBEZSo7MIQRfB4i4QhzXBCf/s+QJyNHJfVW7uX0WLgf4wxrCbz7FlNweHzGTOj+eHme1HOoaNI3Go9tgB+X0BzkCGsQR4HCOXMYKiY3/0Lg1cKb8+oBAwV7ru3FPQLLQ/C8vQOfGE5Pl0f8OFzbUH/tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=45.195.17.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
-Received: from TYZPR02MB7842.apcprd02.prod.outlook.com (unknown [40.99.94.69])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 15001c1e;
-	Wed, 13 Nov 2024 16:58:11 +0800 (GMT+08:00)
-From: "mingzhe.zou@easystack.cn" <mingzhe.zou@easystack.cn>
-To: liequan che <liequanche@gmail.com>, Coly Li <colyli@suse.de>, Kent
- Overstreet <kent.overstreet@gmail.com>, linux-bcache
-	<linux-bcache@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Subject:
-	=?utf-8?B?5Zue5aSNOiBiY2FjaGU6IGZpeCBvb3BzIGJ1ZyBpbiBjYWNoZV9zZXRfZmx1?=
- =?utf-8?Q?sh?=
-Thread-Topic: bcache: fix oops bug in cache_set_flush
-Thread-Index: AWcwRURi/W4GL1WZ8kuFmwGBwjYz1ugKxLs4
-X-MS-Exchange-MessageSentRepresentingType: 1
-Date: Wed, 13 Nov 2024 08:58:10 +0000
-Message-ID:
-	<TYZPR02MB78424F31FF023102693D2DB2A65A2@TYZPR02MB7842.apcprd02.prod.outlook.com>
-References:
-	<CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
-In-Reply-To:
-	<CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-Exchange-Organization-SCL: -1
-X-MS-TNEF-Correlator:
-X-MS-Exchange-Organization-RecordReviewCfmType: 0
-msip_labels:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1731589860; c=relaxed/simple;
+	bh=7TCW1nEHBuKs8gce/BHqeiS2uS4gFsawmPxDdJf3jnI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dTes4uIeS6hOkJbHdSAEy3Ct8dC2HLiPTXDoG3wLeJZjTkwqq4xxCXxrjGtOO9VuiFy8/NSUlS7v98w35X00SWsQ+gwGtMYVjF2lxCCfYTrGazBIs3IZ8VtnoX0QjR1GqY8cSG5O/xPXSsLOrwMtnILrg6J6xN0ujpvTUXCmt68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKxggTIX; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5ee645cf763so250751eaf.2;
+        Thu, 14 Nov 2024 05:10:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731589858; x=1732194658; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K23ZnxwrTCv6hkGLIEIe2KNWpiMS6jpTwORnNpzQKPo=;
+        b=EKxggTIXywgGjYKO29sS67kl+wbk4bcHPLs8olZnsFqK6PuxorAahiUL3xmwzmkTfP
+         HCXBPtEhhKkpofwARhXBnyj4vUrejotEGdoe6f3ejEHMKItzcpct1wF7K5WgA1CnfS9S
+         MKHtJU2PLY6q9kli0MN+yhxBO4bhHKIS8bGR8gHREuNJmkwNGEMC71cmwczjUvLyDozx
+         U1FO3fCHapGWjeiK5ZYv0omDDcI0j8VT6bMMHLMAqdzWW0/40oy0CKp64X7d1MEXUZ0S
+         VXeZ7QSnj7XiHK2XcEfsSL8S4ItkcN+5u191WFRnEYoCcjWKeEQ4n5ptNbj2p5DgdszF
+         ChVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731589858; x=1732194658;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K23ZnxwrTCv6hkGLIEIe2KNWpiMS6jpTwORnNpzQKPo=;
+        b=Vq/PnHPw9c+Ns0SYVhXboD0JjVoNerjs9H5VNxlDItgO8GS/C6iE+2RGgQR1U6tAmP
+         N+PA3bOJpbHjHqetZ2hhsGP3RCu55W12r5hvBTGy/yjeuCwHmo6r8bG/EVklw3nnCl8C
+         xo6WWPftZhEurUZrLA9usIV87UHBE6JcFcq3Z1IgU+OntcBHTrlzOAn5AEvCrBNZ1zPW
+         YF5d5Pl4qUd5ioHiuUcoPhLoguo8ociGyB39sEPmKPXh8K5GbmUuXqDzBDxcROFew3a/
+         fgojLYOnxiCM1m86+ZCFeucKtuDNQNAAj5icjzDtIN1wowkoNWfn6hpVQT7DvVKCB+3j
+         B4ig==
+X-Forwarded-Encrypted: i=1; AJvYcCVh8z25h8cTk6FSew79KFqAFmpOu6J49vFRk+e0g8TjyzR5r8HygnyA4RZ/q2diFlpy8Q8QdPrGzVuC8zE=@vger.kernel.org, AJvYcCWCc3sMY9Mnni1J5CrJ16VYFa+t0V5rzwHbOGwcAFJXgS5ppQSSgsjdgZIsTWJizlWL+rqiddlIHJNIFLtJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YySAZLqm0tapZAQvLNXFIdJ89LyJ/eaMrKja6GHPW/rk+vvI0fS
+	ElOjWYRuXTHrEePX4jHGAkc/pYekixxQFdFld00brS6RQ7lhszZClVec3KuHOUg9/dBHAhayuLJ
+	M5vsenElx4Db5DM5nQIgfT1TJ0A0=
+X-Google-Smtp-Source: AGHT+IHpQuFEYMip0JhyGeR1GxNXzdf72kfgui3J+vlRuutLYrNPSGVb/18TQoas9LrHX3aSS05MmmlcZ5afICkiYfI=
+X-Received: by 2002:a05:6359:5104:b0:1c3:8c84:e08c with SMTP id
+ e5c5f4694b2df-1c66f13505bmr627284655d.10.1731589857794; Thu, 14 Nov 2024
+ 05:10:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGUwfVh5NQk9MH09DTR0eT1YVFAkWGhdVGRETFh
-	oSFyQUDg9ZV1kYEgtZQVlPS1VCQlVCT1VNQllXWRYaDxIVHRRZQVlPS0hVSktJQkNDTFVKS0tVS1
-	kG
-X-HM-Tid: 0a9324be9cdf022bkunm15001c1e
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MRQ6FCo4CTcfEQMRFDcKCigd
-	AUxPCx9VSlVKTEhKT0NDSUJISEtPVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-	C1lBWU9LVUJCVUJPVU1CWVdZCAFZQUxOSk83Bg++
+References: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
+ <TYZPR02MB78424F31FF023102693D2DB2A65A2@TYZPR02MB7842.apcprd02.prod.outlook.com>
+ <15077D4C-8DE9-4751-9492-51D972B3E4C3@suse.de>
+In-Reply-To: <15077D4C-8DE9-4751-9492-51D972B3E4C3@suse.de>
+From: liequan che <liequanche@gmail.com>
+Date: Thu, 14 Nov 2024 21:10:46 +0800
+Message-ID: <CAAsfc_r_6mZ2HesDOQWU-0F2KXhz=EJ_nHeR4bLanXNnAiduTg@mail.gmail.com>
+Subject: [PATCH] bcache:fix oops in cache_set_flush
+To: Coly Li <colyli@suse.de>
+Cc: "mingzhe.zou@easystack.cn" <mingzhe.zou@easystack.cn>, Kent Overstreet <kent.overstreet@gmail.com>, 
+	linux-bcache <linux-bcache@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGksIGNoZWxpZXF1YW4gYW5kIENvbHk6CgpJIHNhdyBzb21lIGRtZXNnIHByaW50aW5nIGluZm9y
-bWF0aW9uIGZyb20gaHR0cHM6Ly9naXRlZS5jb20vb3BlbmV1bGVyL2tlcm5lbC9pc3N1ZXMvSUIz
-WVFaCgpgYGAKWyAgMzU5LjYxODA1Nl0gYmNhY2hlOiBwcmlvX3JlYWQoKSBiYWQgY3N1bSByZWFk
-aW5nIHByaW9yaXRpZXMKWyAgMzU5LjYyNDg3OF0gYmNhY2hlOiBiY2hfY2FjaGVfc2V0X2Vycm9y
-KCkgZXJyb3Igb24gZjc3NGMxMjItNmMwMi00NjliLWI3OTgtY2E1M2MxMGVmYTc2OiBJTyBlcnJv
-ciByZWFkaW5nIHByaW9yaXRpZXMsIGRpc2FibGluZyBjYWNoaW5nCmBgYAoKV2UgaGF2ZSBlbmNv
-dW50ZXJlZCB0aGUgYmFkIGNzdW0gZXJyb3IgYmVmb3JlLCBidXQgaXQgZGlkIG5vdCBjYXVzZSBh
-IGtlcm5lbCBwYW5pYy4KCkZyb20gdGhlIGNvZGUsIGJjaF9idHJlZV9ub2RlX2dldCBpcyBjYWxs
-ZWQgYWZ0ZXIgcHJpb19yZWFkLCBzbyBjLT5yb290IGlzIGVtcHR5LgoKYGBgCnN0YXRpYyBpbnQg
-cnVuX2NhY2hlX3NldChzdHJ1Y3QgY2FjaGVfc2V0ICpjKQp7CgkJLi4uLi4uCgkJZXJyID0gIklP
-IGVycm9yIHJlYWRpbmcgcHJpb3JpdGllcyI7CgkJaWYgKHByaW9fcmVhZChjYSwgai0+cHJpb19i
-dWNrZXRbY2EtPnNiLm5yX3RoaXNfZGV2XSkpCgkJCWdvdG8gZXJyOwoKCQkvKgoJCSAqIElmIHBy
-aW9fcmVhZCgpIGZhaWxzIGl0J2xsIGNhbGwgY2FjaGVfc2V0X2Vycm9yIGFuZCB3ZSdsbAoJCSAq
-IHRlYXIgZXZlcnl0aGluZyBkb3duIHJpZ2h0IGF3YXksIGJ1dCBpZiB3ZSBwZXJoYXBzIGNoZWNr
-ZWQKCQkgKiBzb29uZXIgd2UgY291bGQgYXZvaWQgam91cm5hbCByZXBsYXkuCgkJICovCgoJCWsg
-PSAmai0+YnRyZWVfcm9vdDsKCgkJZXJyID0gImJhZCBidHJlZSByb290IjsKCQlpZiAoX19iY2hf
-YnRyZWVfcHRyX2ludmFsaWQoYywgaykpCgkJCWdvdG8gZXJyOwoKCQllcnIgPSAiZXJyb3IgcmVh
-ZGluZyBidHJlZSByb290IjsKCQljLT5yb290ID0gYmNoX2J0cmVlX25vZGVfZ2V0KGMsIE5VTEws
-IGssCgkJCQkJICAgICBqLT5idHJlZV9sZXZlbCwKCQkJCQkgICAgIHRydWUsIE5VTEwpOwoJCS4u
-Li4uLgp9CmBgYAoKVGhpcyBpc3N1ZSBzaG91bGQgYmUgY2F1c2VkIGJ5IDAyOGRkY2EoYmNhY2hl
-OiBSZW1vdmUgdW5uZWNlc3NhcnkgTlVMTCBwb2ludCBjaGVjayBpbiBub2RlIGFsbG9jYXRpb25z
-KS4KVGhpcyBwYXRjaCBvbmx5IGZvY3VzZXMgb24gYnVnIGZpeGVzIGZvciBfX2JjaC1idHJlZV9u
-b2RlX2FsbG9jIHdpdGhvdXQgY29uc2lkZXJpbmcgb3RoZXIgY29kZSBicmFuY2hlcy4gCgpGb3Ig
-dGhpcyBrZXJuZWwgcGFuaWMsIHRoZSBmb2xsb3dpbmcgbW9kaWZpY2F0aW9ucyBtYXkgYmUgc3Vm
-ZmljaWVudCB0byBmaXggaXQuIEJ1dCBJJ20gbm90IHN1cmUgaWYgdGhlcmUgYXJlIGFueSBvdGhl
-ciBpc3N1ZXMsCm1heWJlIHdlIG5lZWQgdG8gcmV2ZW50IDAyOGRkY2EoYmNhY2hlOiBSZW1vdmUg
-dW5uZWNlc3NhcnkgTlVMTCBwb2ludCBjaGVjayBpbiBub2RlIGFsbG9jYXRpb25zKS4KCmBgYAot
-wqDCoMKgwqDCoMKgIGlmICghSVNfRVJSKGMtPnJvb3QpKQorwqDCoMKgwqDCoMKgIGlmICghSVNf
-RVJSX09SX05VTEwoYy0+cm9vdCkpIHsKYGBgCgpGcm9tOsKgbGludXgtYmNhY2hlK2JvdW5jZXMt
-NzgxLW1pbmd6aGUuem91PWVhc3lzdGFjay5jbkB2Z2VyLmtlcm5lbC5vcmcgPGxpbnV4LWJjYWNo
-ZStib3VuY2VzLTc4MS1taW5nemhlLnpvdT1lYXN5c3RhY2suY25Admdlci5rZXJuZWwub3JnPiBv
-biBiZWhhbGYgb2YgbGllcXVhbiBjaGUgPGxpZXF1YW5jaGVAZ21haWwuY29tPgpTZW50OsKgV2Vk
-bmVzZGF5LCBOb3ZlbWJlciAxMywgMjAyNCAyOjI1IFBNClRvOsKgQ29seSBMaSA8Y29seWxpQHN1
-c2UuZGU+OyBLZW50IE92ZXJzdHJlZXQgPGtlbnQub3ZlcnN0cmVldEBnbWFpbC5jb20+OyBsaW51
-eC1iY2FjaGUgPGxpbnV4LWJjYWNoZUB2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1rZXJuZWwgPGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+ClN1YmplY3Q6wqBiY2FjaGU6IGZpeCBvb3BzIGJ1
-ZyBpbiBjYWNoZV9zZXRfZmx1c2gKwqAKU2lnbmVkLW9mZi1ieTogY2hlbGllcXVhbiA8Y2hlbGll
-cXVhbkBpbnNwdXIuY29tPgoKwqDCoCBJZiB0aGUgYmNhY2hlIGNhY2hlIGRpc2sgY29udGFpbnMg
-ZGFtYWdlZCBidHJlZSBkYXRhLAp3aGVuIHRoZSBiY2FjaGUgY2FjaGUgZGlzayBwYXJ0aXRpb24g
-aXMgZGlyZWN0bHkgb3BlcmF0ZWQsCnRoZSBzeXN0ZW0tdWRldmQgc2VydmljZSBpcyB0cmlnZ2Vy
-ZWQgdG8gY2FsbCB0aGUgYmNhY2hlLXJlZ2lzdGVyCnByb2dyYW0gdG8gcmVnaXN0ZXIgdGhlIGJj
-YWNoZSBkZXZpY2UscmVzdWx0aW5nIGluIGtlcm5lbCBvb3BzLgoKY3Jhc2g+IGJ0ClBJRDogNzc3
-M8KgwqDCoMKgIFRBU0s6IGZmZmY0OWNjNDRkNjkzNDDCoCBDUFU6IDU3wqDCoCBDT01NQU5EOiAi
-a3dvcmtlci81NzoyIgrCoCMwIFtmZmZmODAwMDQ2MzczODAwXSBtYWNoaW5lX2tleGVjIGF0IGZm
-ZmZiZTUwMzllYjU0YTgKwqAjMSBbZmZmZjgwMDA0NjM3MzliMF0gX19jcmFzaF9rZXhlYyBhdCBm
-ZmZmYmU1MDNhMDUyODI0CsKgIzIgW2ZmZmY4MDAwNDYzNzM5ZTBdIGNyYXNoX2tleGVjIGF0IGZm
-ZmZiZTUwM2EwNTI5Y2MKwqAjMyBbZmZmZjgwMDA0NjM3M2E2MF0gZGllIGF0IGZmZmZiZTUwMzll
-OTQ0NWMKwqAjNCBbZmZmZjgwMDA0NjM3M2FjMF0gZGllX2tlcm5lbF9mYXVsdCBhdCBmZmZmYmU1
-MDM5ZWM2OThjCsKgIzUgW2ZmZmY4MDAwNDYzNzNhZjBdIF9fZG9fa2VybmVsX2ZhdWx0IGF0IGZm
-ZmZiZTUwMzllYzZhMzgKwqAjNiBbZmZmZjgwMDA0NjM3M2IyMF0gZG9fcGFnZV9mYXVsdCBhdCBm
-ZmZmYmU1MDNhYzc2YmE0CsKgIzcgW2ZmZmY4MDAwNDYzNzNiNzBdIGRvX3RyYW5zbGF0aW9uX2Zh
-dWx0IGF0IGZmZmZiZTUwM2FjNzZlYmMKwqAjOCBbZmZmZjgwMDA0NjM3M2I5MF0gZG9fbWVtX2Fi
-b3J0IGF0IGZmZmZiZTUwMzllYzY4YWMKwqAjOSBbZmZmZjgwMDA0NjM3M2JjMF0gZWwxX2Fib3J0
-IGF0IGZmZmZiZTUwM2FjNjY5YmMKIzEwIFtmZmZmODAwMDQ2MzczYmYwXSBlbDFfc3luY19oYW5k
-bGVyIGF0IGZmZmZiZTUwM2FjNjcxZDQKIzExIFtmZmZmODAwMDQ2MzczZDMwXSBlbDFfc3luYyBh
-dCBmZmZmYmU1MDM5ZTgyMjMwCiMxMiBbZmZmZjgwMDA0NjM3M2Q1MF0gY2FjaGVfc2V0X2ZsdXNo
-IGF0IGZmZmZiZTUwMTIxZmE0YzQgW2JjYWNoZV0KIzEzIFtmZmZmODAwMDQ2MzczZGEwXSBwcm9j
-ZXNzX29uZV93b3JrIGF0IGZmZmZiZTUwMzlmNWFmNjgKIzE0IFtmZmZmODAwMDQ2MzczZTAwXSB3
-b3JrZXJfdGhyZWFkIGF0IGZmZmZiZTUwMzlmNWIzYzQKIzE1IFtmZmZmODAwMDQ2MzczZTUwXSBr
-dGhyZWFkIGF0IGZmZmZiZTUwMzlmNjM0YjgKY3Jhc2g+IGRpcyBjYWNoZV9zZXRfZmx1c2grMHg5
-NAoweGZmZmZiZTUwMTIxZmE0YzggPGNhY2hlX3NldF9mbHVzaCsxNDg+OsKgwqDCoMKgwqDCoCBz
-dHLCoMKgwqDCoCB4MjMsIFt4MjAsICM1MTJdCgotLS0KZHJpdmVycy9tZC9iY2FjaGUvc3VwZXIu
-YyB8IDE2ICsrKysrKysrKystLS0tLS0KMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyks
-IDYgZGVsZXRpb25zKC0pCmRpZmYgLS1naXQgYS9kcml2ZXJzL21kL2JjYWNoZS9zdXBlci5jIGIv
-ZHJpdmVycy9tZC9iY2FjaGUvc3VwZXIuYwppbmRleCBmZDk3NzMwNDc5ZDguLjhhNDFkZmNmOWZi
-NiAxMDA2NDQKLS0tIGEvZHJpdmVycy9tZC9iY2FjaGUvc3VwZXIuYworKysgYi9kcml2ZXJzL21k
-L2JjYWNoZS9zdXBlci5jCkBAIC0xNzQxLDggKzE3NDEsMTAgQEAgc3RhdGljIHZvaWQgY2FjaGVf
-c2V0X2ZsdXNoKHN0cnVjdCBjbG9zdXJlICpjbCkKwqDCoMKgwqDCoMKgIGlmICghSVNfRVJSX09S
-X05VTEwoYy0+Z2NfdGhyZWFkKSkKwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBrdGhyZWFk
-X3N0b3AoYy0+Z2NfdGhyZWFkKTsKCi3CoMKgwqDCoMKgwqAgaWYgKCFJU19FUlIoYy0+cm9vdCkp
-Ci3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGxpc3RfYWRkKCZjLT5yb290LT5saXN0LCAm
-Yy0+YnRyZWVfY2FjaGUpOworwqDCoMKgwqDCoMKgIGlmICghSVNfRVJSX09SX05VTEwoYy0+cm9v
-dCkpIHsKK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKCFsaXN0X2VtcHR5KCZjLT5y
-b290LT5saXN0KSkKK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IGxpc3RfYWRkKCZjLT5yb290LT5saXN0LCAmYy0+YnRyZWVfY2FjaGUpOworwqDCoMKgwqDCoMKg
-IH0KCsKgwqDCoMKgwqDCoCAvKgrCoMKgwqDCoMKgwqDCoCAqIEF2b2lkIGZsdXNoaW5nIGNhY2hl
-ZCBub2RlcyBpZiBjYWNoZSBzZXQgaXMgcmV0aXJpbmcKQEAgLTE3NTAsMTAgKzE3NTIsMTIgQEAg
-c3RhdGljIHZvaWQgY2FjaGVfc2V0X2ZsdXNoKHN0cnVjdCBjbG9zdXJlICpjbCkKwqDCoMKgwqDC
-oMKgwqAgKi8KwqDCoMKgwqDCoMKgIGlmICghdGVzdF9iaXQoQ0FDSEVfU0VUX0lPX0RJU0FCTEUs
-ICZjLT5mbGFncykpCsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbGlzdF9mb3JfZWFjaF9l
-bnRyeShiLCAmYy0+YnRyZWVfY2FjaGUsIGxpc3QpIHsKLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIG11dGV4X2xvY2soJmItPndyaXRlX2xvY2spOwotwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKGJ0cmVlX25vZGVfZGly
-dHkoYikpCi3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgX19iY2hfYnRyZWVfbm9kZV93cml0ZShiLCBOVUxMKTsKLcKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG11dGV4X3VubG9jaygmYi0+d3JpdGVf
-bG9jayk7CivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAo
-IUlTX0VSUl9PUl9OVUxMKGIpKSB7CivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbXV0ZXhfbG9jaygmYi0+d3JpdGVfbG9jayk7CivC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgaWYgKGJ0cmVlX25vZGVfZGlydHkoYikpCivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIF9fYmNoX2J0
-cmVlX25vZGVfd3JpdGUoYiwgTlVMTCk7CivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbXV0ZXhfdW5sb2NrKCZiLT53cml0ZV9sb2Nr
-KTsKK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0KwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9CgrCoMKgwqDCoMKgwqAgaWYgKGNhLT5hbGxvY190aHJl
-YWQpCi0tCjIuMzMuMAoKCg==
+Hi colyli and mingzhe.zou:
+  I am trying to reproduce this problem, maybe it is a random problem.
+It is triggered only when IO error reading priorities occurs.
+  The same operation was performed on three servers, replacing the 12T
+disk with a 16T disk. Only one server triggered the bug. The on-site
+operation steps are as follows:
+1. Create a bache device.
+make-bcache -C /dev/nvme2n1p1 -B /dev/sda --writeback --force --wipe-bcache
+/dev/sda is a 12T SATA disk.
+/dev/nvme2n1p1 is the first partition of the nvme disk. The partition
+size is 1024G.
+The partition command is parted -s --align optimal /dev/nvme2n1 mkpart
+primary 2048s 1024GiB
+2. Execute fio test on bcache0
+
+cat /home/script/run-fio-randrw.sh
+bcache_name=3D$1
+if [ -z "${bcache_name}" ];then
+echo bcache_name is empty
+exit -1
+fi
+
+fio --filename=3D/dev/${bcache_name} --ioengine=3Dlibaio --rw=3Drandrw
+--bs=3D4k --size=3D100% --iodepth=3D128 --numjobs=3D4 --direct=3D1 --name=
+=3Drandrw
+--group_reporting --runtime=3D30 --ramp_time=3D5 --lockmem=3D1G | tee -a
+./randrw-iops_k1.log
+Execute bash run-fio-randrw.sh multiple times bcache0
+2. Shutdown
+poweroff
+No bcache data clearing operation was performed
+3. Replace the 12T SATA disk with a 16T SATA disk
+After shutting down, unplug the 12T hard disk and replace it with a
+16T hard disk.
+4. Adjust the size of the nvme2n1 partition to 1536G
+parted -s --align optimal /dev/nvme2n1 mkpart primary 2048s 1536GiB
+Kernel panic occurs after partitioning is completed
+5. Restart the system, but cannot enter the system normally. It is
+always in the restart state.
+6. Enter the rescue mode through the CD, clear the nvme2n1p1 super
+block information. After restarting again, you can enter the system
+normally.
+wipefs -af /dev/nvme2n1p1
+7. Repartition again, triggering kernel panic again.
+parted -s --align optimal /dev/nvme2n1 mkpart primary 2048s 1536GiB
+The same operation was performed on the other two servers, and no
+panic was triggered.
+The server with the problem was able to enter the system normally
+after the root of the cache_set structure was determined to be empty.
+I updated the description of the problem in the link below.
+bugzilla: https://gitee.com/openeuler/kernel/issues/IB3YQZ
+ Your suggestion was correct. I removed the unnecessary btree_cache
+iserr_or_null check.
+  ------------
+  If the bcache cache disk contains damaged data,
+when the bcache cache disk partition is directly operated,
+the system-udevd service is triggered to call the bcache-register
+program to register the bcache device,resulting in kernel oops.
+
+ Signed-off-by: cheliequan  <cheliequan@inspur.com>
+
+---
+ drivers/md/bcache/super.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index fd97730479d8..c72f5576e4da 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1741,8 +1741,10 @@ static void cache_set_flush(struct closure *cl)
+        if (!IS_ERR_OR_NULL(c->gc_thread))
+                kthread_stop(c->gc_thread);
+
+-       if (!IS_ERR(c->root))
+-               list_add(&c->root->list, &c->btree_cache);
++       if (!IS_ERR_OR_NULL(c->root)) {
++               if (!list_empty(&c->root->list))
++                       list_add(&c->root->list, &c->btree_cache);
++       }
+
+        /*
+         * Avoid flushing cached nodes if cache set is retiring
+--=20
+2.33.0
+
+Coly Li <colyli@suse.de> =E4=BA=8E2024=E5=B9=B411=E6=9C=8813=E6=97=A5=E5=91=
+=A8=E4=B8=89 21:54=E5=86=99=E9=81=93=EF=BC=9A
+>
+>
+>
+> > 2024=E5=B9=B411=E6=9C=8813=E6=97=A5 16:58=EF=BC=8Cmingzhe.zou@easystack=
+.cn =E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > Hi, cheliequan and Coly:
+> >
+> > I saw some dmesg printing information from https://gitee.com/openeuler/=
+kernel/issues/IB3YQZ
+> >
+>
+> This is a distribution issue, not upstream bug.
+>
+> The kernel is based on 5.10 kernel. If it can be confirmed to reproduce w=
+ith latest upstream kernel, I can take a look.
+>
+> Thanks.
+>
+> Coly Li
+> >
+> >
+>
+> [snipped]
+>
 
