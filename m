@@ -1,45 +1,45 @@
-Return-Path: <linux-bcache+bounces-797-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-796-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3859D29F3
-	for <lists+linux-bcache@lfdr.de>; Tue, 19 Nov 2024 16:44:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055659D26C4
+	for <lists+linux-bcache@lfdr.de>; Tue, 19 Nov 2024 14:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7788B2E702
-	for <lists+linux-bcache@lfdr.de>; Tue, 19 Nov 2024 15:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAB51282C5E
+	for <lists+linux-bcache@lfdr.de>; Tue, 19 Nov 2024 13:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B604E1D0DF7;
-	Tue, 19 Nov 2024 15:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD851CCB2E;
+	Tue, 19 Nov 2024 13:23:59 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from ec2-44-216-146-176.compute-1.amazonaws.com (ec2-44-216-146-176.compute-1.amazonaws.com [44.216.146.176])
+Received: from mail-m10126.netease.com (mail-m10126.netease.com [154.81.10.126])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310C61D26F6
-	for <linux-bcache@vger.kernel.org>; Tue, 19 Nov 2024 15:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.216.146.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50961514FB
+	for <linux-bcache@vger.kernel.org>; Tue, 19 Nov 2024 13:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.126
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732030655; cv=none; b=TuHM750t9+tmkDr89pN+2KC/9xEd0jnjerZS5OTE4BSQKRdHcseHpDSvRGxnkPPuAYALYoTxzmoKdRV9eAheGTW7dnLvsZ3ZicO4XMcnMQydNswP4nuEDlMjq1X8Fee3l9LH2MHK2E2asUJeIdNgQwwRlct2wdbHhDYBOcQVef0=
+	t=1732022639; cv=none; b=PV86UQKhkbES1QreJs8oQ8NriFJB1OclcYmiVwmblwiwQaCH0piEpl6htK6eUKUQAk7XRBj7S2qfCCU3ttu6ZIQ9dcqb0jt2C3Ovb0SuRk9bVxPfWBD366YSh2VLA8P5SuTHzqsBkLCHP9jov+VM04xprwHwbzocxBncfv8Uzc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732030655; c=relaxed/simple;
-	bh=00ZSA2mbmV9RqyWMU988pEUYldEk6afcm1y3UmnLLVc=;
+	s=arc-20240116; t=1732022639; c=relaxed/simple;
+	bh=8CIhSw1MFOdkUkEPbm+ivFygq7Jn+hQ6O56G4BY5CRc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZBykKH85tYmqeelsE5l5FBgvYA6TwU25zyPvRb8AKAXZpVUFKHdeC9BRRIqEzRIgLEfofd1Wa8GhzZzxFbW8fBmm/5VkReL/mPqtBKXn7ylNMtA/+d0hfFOaMNT6PE3VrdjI+uTDLAJmZF9yiPCwK/xLK5Qk7TTIPF2jP1xFBdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=easystack.cn; spf=none smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=44.216.146.176
+	 MIME-Version; b=g7AN/3hii7VS4GzKKLCgaITp8S3DQY28fKCifm5Q7B/gfX80RW76eskM6H7sXL0r1GiUSjcXEMoQSHzskAAfM6IN+i22CU2NJg4D+hN/0vaumYCYaDFe2l6I1NS2onViJ5XCarAOV7AhT1q7aiL6HLhoscK1dab9EPc4q0mibSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=easystack.cn; spf=none smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=154.81.10.126
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=easystack.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=easystack.cn
 Received: from localhost.localdomain (unknown [218.94.118.90])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 18ebb45f;
-	Tue, 19 Nov 2024 15:40:52 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 18ebb466;
+	Tue, 19 Nov 2024 15:40:53 +0800 (GMT+08:00)
 From: mingzhe.zou@easystack.cn
 To: colyli@suse.de
 Cc: linux-bcache@vger.kernel.org,
 	dongsheng.yang@easystack.cn,
 	zoumingzhe@qq.com
-Subject: [PATCH v2 2/3] bcache: fix io error during cache read race
-Date: Tue, 19 Nov 2024 15:40:30 +0800
-Message-Id: <20241119074031.27340-2-mingzhe.zou@easystack.cn>
+Subject: [PATCH v2 3/3] bcache: remove unused parameters
+Date: Tue, 19 Nov 2024 15:40:31 +0800
+Message-Id: <20241119074031.27340-3-mingzhe.zou@easystack.cn>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241119074031.27340-1-mingzhe.zou@easystack.cn>
 References: <20241119074031.27340-1-mingzhe.zou@easystack.cn>
@@ -51,116 +51,143 @@ List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHR0aVkNISUNIGBpNHR5JH1YVFAkWGhdVGRETFh
-	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09LVUpLS1
-	VLWQY+
-X-HM-Tid: 0a93435dfa9c022bkunm18ebb45f
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCTEhKVh5LS09NTR8YHh1MGVYVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxKVUpLS1
+	VKQktLWQY+
+X-HM-Tid: 0a93435dff9c022bkunm18ebb466
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6N006NSo5GjciTklCHi0rKU5N
-	MjoaCUlVSlVKTEhJS0tJS05IQk9MVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
-	C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBT0tCSTcG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6P0k6Myo6HzcpL0lDDi4NKU8#
+	KiEaCyhVSlVKTEhJS0tJS05PQ0JNVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+	C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBT0tJSDcG
 
 From: Mingzhe Zou <mingzhe.zou@easystack.cn>
 
-In our production environment, bcache returned IO_ERROR(errno=-5).
-These errors always happen during 1M read IO under high pressure
-and without any message log. When the error occurred, we stopped
-all reading and writing and used 1M read IO to read the entire disk
-without any errors. Later we found that cache_read_races of cache_set
-is non-zero.
+We have prevented the bucket in use from being reclaimed and reused.
+So, search->recoverable and search->read_dirty_data are unused.
 
-If a large (1M) read bio is split into two or more bios, when one bio
-reads dirty data, s->read_dirty_data will be set to true and remain.
-If the bucket was reused while our subsequent read bio was in flight,
-the read will be unrecoverable(cannot read data from backing).
-
-This patch increases the count for bucket->pin to prevent the bucket
-from being reclaimed and reused.
+Moreover, we do not need to consider that the bucket is reused during
+cache reading.
 
 Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
 ---
- drivers/md/bcache/request.c | 39 ++++++++++++++++++++++++-------------
- 1 file changed, 26 insertions(+), 13 deletions(-)
+ drivers/md/bcache/request.c | 45 +------------------------------------
+ 1 file changed, 1 insertion(+), 44 deletions(-)
 
 diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index af345dc6fde1..6c41957138e5 100644
+index 6c41957138e5..d9f0e1f08121 100644
 --- a/drivers/md/bcache/request.c
 +++ b/drivers/md/bcache/request.c
-@@ -502,12 +502,8 @@ static void bch_cache_read_endio(struct bio *bio)
- 	struct closure *cl = bio->bi_private;
- 	struct search *s = container_of(cl, struct search, cl);
+@@ -484,9 +484,7 @@ struct search {
+ 	struct bcache_device	*d;
  
--	/*
--	 * If the bucket was reused while our bio was in flight, we might have
--	 * read the wrong data. Set s->error but not error so it doesn't get
--	 * counted against the cache device, but we'll still reread the data
--	 * from the backing device.
--	 */
-+	BUG_ON(ptr_stale(s->iop.c, &b->key, 0)); // bucket should not be reused
-+	atomic_dec(&PTR_BUCKET(s->iop.c, &b->key, 0)->pin);
+ 	unsigned int		insert_bio_sectors;
+-	unsigned int		recoverable:1;
+ 	unsigned int		write:1;
+-	unsigned int		read_dirty_data:1;
+ 	unsigned int		cache_missed:1;
+ 
+ 	struct block_device	*orig_bdev;
+@@ -507,11 +505,6 @@ static void bch_cache_read_endio(struct bio *bio)
  
  	if (bio->bi_status)
  		s->iop.status = bio->bi_status;
-@@ -520,6 +516,8 @@ static void bch_cache_read_endio(struct bio *bio)
+-	else if (!KEY_DIRTY(&b->key) &&
+-		 ptr_stale(s->iop.c, &b->key, 0)) {
+-		atomic_long_inc(&s->iop.c->cache_read_races);
+-		s->iop.status = BLK_STS_IOERR;
+-	}
+ 
  	bch_bbio_endio(s->iop.c, bio, bio->bi_status, "reading from cache");
  }
+@@ -606,7 +599,6 @@ static CLOSURE_CALLBACK(cache_lookup)
+ {
+ 	closure_type(s, struct search, iop.cl);
+ 	struct bio *bio = &s->bio.bio;
+-	struct cached_dev *dc;
+ 	int ret;
  
-+static void backing_request_endio(struct bio *bio);
-+
- /*
-  * Read from a single key, handling the initial cache miss if the key starts in
-  * the middle of the bio
-@@ -529,7 +527,6 @@ static int cache_lookup_fn(struct btree_op *op, struct btree *b, struct bkey *k)
- 	struct search *s = container_of(op, struct search, op);
- 	struct bio *n, *bio = &s->bio.bio;
- 	struct bkey *bio_key;
--	unsigned int ptr;
+ 	bch_btree_op_init(&s->op, -1);
+@@ -630,12 +622,6 @@ static CLOSURE_CALLBACK(cache_lookup)
+ 	 */
+ 	if (ret < 0) {
+ 		BUG_ON(ret == -EINTR);
+-		if (s->d && s->d->c &&
+-				!UUID_FLASH_ONLY(&s->d->c->uuids[s->d->id])) {
+-			dc = container_of(s->d, struct cached_dev, disk);
+-			if (dc && atomic_read(&dc->has_dirty))
+-				s->recoverable = false;
+-		}
+ 		if (!s->iop.status)
+ 			s->iop.status = BLK_STS_IOERR;
+ 	}
+@@ -651,10 +637,7 @@ static void request_endio(struct bio *bio)
  
- 	if (bkey_cmp(k, &KEY(s->iop.inode, bio->bi_iter.bi_sector, 0)) <= 0)
- 		return MAP_CONTINUE;
-@@ -553,20 +550,36 @@ static int cache_lookup_fn(struct btree_op *op, struct btree *b, struct bkey *k)
- 	if (!KEY_SIZE(k))
- 		return MAP_CONTINUE;
+ 	if (bio->bi_status) {
+ 		struct search *s = container_of(cl, struct search, cl);
+-
+ 		s->iop.status = bio->bi_status;
+-		/* Only cache read errors are recoverable */
+-		s->recoverable = false;
+ 	}
  
--	/* XXX: figure out best pointer - for multiple cache devices */
--	ptr = 0;
-+	/*
-+	 * If the bucket was reused while our bio was in flight, we might have
-+	 * read the wrong data. Set s->cache_read_races and reread the data
-+	 * from the backing device.
-+	 */
-+	spin_lock(&PTR_BUCKET(b->c, k, 0)->lock);
-+	if (ptr_stale(s->iop.c, k, 0)) {
-+		spin_unlock(&PTR_BUCKET(b->c, k, 0)->lock);
-+		atomic_long_inc(&s->iop.c->cache_read_races);
-+		pr_warn("%pU cache read race count: %lu", s->iop.c->sb.set_uuid,
-+			atomic_long_read(&s->iop.c->cache_read_races));
+ 	bio_put(bio);
+@@ -684,7 +667,6 @@ static void backing_request_endio(struct bio *bio)
+ 			/* set to orig_bio->bi_status in bio_complete() */
+ 			s->iop.status = bio->bi_status;
+ 		}
+-		s->recoverable = false;
+ 		/* should count I/O error for backing device here */
+ 		bch_count_backing_io_errors(dc, bio);
+ 	}
+@@ -755,9 +737,7 @@ static inline struct search *search_alloc(struct bio *bio,
+ 	s->cache_miss		= NULL;
+ 	s->cache_missed		= 0;
+ 	s->d			= d;
+-	s->recoverable		= 1;
+ 	s->write		= op_is_write(bio_op(bio));
+-	s->read_dirty_data	= 0;
+ 	/* Count on the bcache device */
+ 	s->orig_bdev		= orig_bdev;
+ 	s->start_time		= start_time;
+@@ -802,29 +782,6 @@ static CLOSURE_CALLBACK(cached_dev_read_error_done)
  
--	PTR_BUCKET(b->c, k, ptr)->prio = INITIAL_PRIO;
-+		n->bi_end_io	= backing_request_endio;
-+		n->bi_private	= &s->cl;
-+
-+		/* I/O request sent to backing device */
-+		closure_bio_submit(s->iop.c, n, &s->cl);
-+		return n == bio ? MAP_DONE : MAP_CONTINUE;
-+	}
-+	atomic_inc(&PTR_BUCKET(s->iop.c, k, 0)->pin);
-+	spin_unlock(&PTR_BUCKET(b->c, k, 0)->lock);
+ static CLOSURE_CALLBACK(cached_dev_read_error)
+ {
+-	closure_type(s, struct search, cl);
+-	struct bio *bio = &s->bio.bio;
+-
+-	/*
+-	 * If read request hit dirty data (s->read_dirty_data is true),
+-	 * then recovery a failed read request from cached device may
+-	 * get a stale data back. So read failure recovery is only
+-	 * permitted when read request hit clean data in cache device,
+-	 * or when cache read race happened.
+-	 */
+-	if (s->recoverable && !s->read_dirty_data) {
+-		/* Retry from the backing device: */
+-		trace_bcache_read_retry(s->orig_bio);
+-
+-		s->iop.status = 0;
+-		do_bio_hook(s, s->orig_bio, backing_request_endio);
+-
+-		/* XXX: invalidate cache */
+-
+-		/* I/O request sent to backing device */
+-		closure_bio_submit(s->iop.c, bio, cl);
+-	}
+-
+ 	continue_at(cl, cached_dev_read_error_done, NULL);
+ }
  
--	if (KEY_DIRTY(k))
--		s->read_dirty_data = true;
-+	PTR_BUCKET(b->c, k, 0)->prio = INITIAL_PRIO;
+@@ -870,7 +827,7 @@ static CLOSURE_CALLBACK(cached_dev_read_done)
+ 		s->cache_miss = NULL;
+ 	}
  
- 	n = bio_next_split(bio, min_t(uint64_t, INT_MAX,
- 				      KEY_OFFSET(k) - bio->bi_iter.bi_sector),
- 			   GFP_NOIO, &s->d->bio_split);
+-	if (verify(dc) && s->recoverable && !s->read_dirty_data)
++	if (verify(dc))
+ 		bch_data_verify(dc, s->orig_bio);
  
- 	bio_key = &container_of(n, struct bbio, bio)->key;
--	bch_bkey_copy_single_ptr(bio_key, k, ptr);
-+	bch_bkey_copy_single_ptr(bio_key, k, 0);
- 
- 	bch_cut_front(&KEY(s->iop.inode, n->bi_iter.bi_sector, 0), bio_key);
- 	bch_cut_back(&KEY(s->iop.inode, bio_end_sector(n), 0), bio_key);
+ 	closure_get(&dc->disk.cl);
 -- 
 2.34.1
 
