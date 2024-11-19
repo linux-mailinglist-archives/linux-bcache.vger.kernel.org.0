@@ -1,148 +1,170 @@
-Return-Path: <linux-bcache+bounces-791-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-795-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5FC9D1F29
-	for <lists+linux-bcache@lfdr.de>; Tue, 19 Nov 2024 05:19:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9639D2705
+	for <lists+linux-bcache@lfdr.de>; Tue, 19 Nov 2024 14:35:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0876C282C9D
-	for <lists+linux-bcache@lfdr.de>; Tue, 19 Nov 2024 04:19:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32BC7B28324
+	for <lists+linux-bcache@lfdr.de>; Tue, 19 Nov 2024 13:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347AD13F42F;
-	Tue, 19 Nov 2024 04:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NKB+kUQG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA5F1CCB29;
+	Tue, 19 Nov 2024 13:23:51 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ec2-44-216-146-164.compute-1.amazonaws.com (ec2-44-216-146-164.compute-1.amazonaws.com [44.216.146.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988A920E6;
-	Tue, 19 Nov 2024 04:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9601CC894
+	for <linux-bcache@vger.kernel.org>; Tue, 19 Nov 2024 13:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.216.146.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731989992; cv=none; b=uQLyAW+U27bWvLqPROJw6E/7SIPeuFRzkCBislGGQixjLKCa500xc1sF6qX0Y6IwbucG7VQ6LWXfmiNWthRJ9vQ+Oi6WE2LxRcATc5/GatzNdedaq02Ww5caChQUgg3LWXzaqacGG2ar/TnbEC/+NhT8F09R2Y8sBb71xNHOKWg=
+	t=1732022631; cv=none; b=G8GH0SnevAxAXxixbCaR55Tm9sbTLd/epdYiaWOXQFW/Yk7o8I9GVh2iHGBExLoBCeaogASQLgOoelHJH9E6halFyRjEIVNHzpE41GZGFUf827wUL5yc/4tQonr2IMPJq3MIx+zSCXg0XTVOWT/zqWLAjlUalDOVibwkjZcDKD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731989992; c=relaxed/simple;
-	bh=rSXFAETp2MZhQ8efkwaFIrsiLpbmjHZDvYQ9vnidYGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bQjiecA1c5cUZNtlzGEKneXY4twWEjZs/w4uXzVozQyL3TXMr/+IGuf0hpugSxDXTr4SgQ/6HQhwug5zeKZD4e+n/UHZp2qfeIe/PunZrEcFVDtUCdaktstqnJ8MXmhrWTAmW38ofd0g10qfi1/uIoYihWXvMjkeF5veHwgJse8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NKB+kUQG; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6d40263adbaso31347326d6.0;
-        Mon, 18 Nov 2024 20:19:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731989989; x=1732594789; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=alftURXz0Tze06p7HOwS1rcqp+gUTcrhv5QU892di2M=;
-        b=NKB+kUQGUpBaCYrbRHApSQzyq6lIuqgB7rSNETqxUC0cc18tyE9a553Yfy3N/BAEV+
-         RG+VFqx0+KaCkqwUN4GGBmE5ZcSblsDm8k3PVEITq+Ygch0GxIF7wAQzW5yIOKzwDs4Q
-         WoHAJkiUwFYbYjcgAjiqvyKuwlipxNdFi1t8ZW37h0HeY5bTAJchGxR0HF8N1mOTQXUR
-         6QVbglvAeOQ6xid+wdzb7IFGpjHCjXuM+9CInETz40+WhwBXUc1Y1nH4pt/qm5v7bqs7
-         k6cuvUadoG0W95opUUcJJzRLX3ORms9GpI+I1vAxITobQngsj6fl1m9ayjhu4sHwfzP9
-         2Ahw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731989989; x=1732594789;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=alftURXz0Tze06p7HOwS1rcqp+gUTcrhv5QU892di2M=;
-        b=BFULajzx6EXTSREjhqscFj5nu/m7bR9ugp/hPtKrAiMMf24KHaoQNUScGNHaSYOW7G
-         rVSIGcxM0lAxhlHZj/IF/ybHKa3j2pyfEz5olRv5Oc0/+DfKREVRzL3d+KIGykyGzyXj
-         +6Nk0f6FWzaBfLqhiSIX4E4Xp+8FUTr98lJxDIRHZkehdkjEAFMQQ/DuFKfYz+LfzMiS
-         /dl8E1dMjJIG1ecRqWZctDHCtTQODqEvd0X3c7LDLrByGf4CKk0JlwmGLosqzx/wX4gv
-         7ZEXygjwqlFvt7BE/7qwIeE/v4pqHZSX8ZWEiFguoBfdDA6JlawyI8H7RKSSniGLE9M6
-         fWOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXMIlSSE+1FBeWd8MkFEoGEswFQbxbNIgD+JLZkdnP7kfMZ+r05cOj2YAbPacyLkAYF3ybBQ+cXEtr7aE=@vger.kernel.org, AJvYcCXt74fHRIrusy9BayUK8fXIcImOOw1G+lJwoNFnu4KisVYG8QQJVoG5ZRHoh/XFac+La6deUok//2lRfkYq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4yz2VZG0OX90QiTQZ2AcOO6lz1gWazu2FKlwqH8gdPaN+oZ5H
-	FWBF1S4OA/slKOPmXDJc3oO2ae3GzLXOUhGY4EluUr3G9CAMvPvJ2VOkLJghHGn6dqjZt51KyBU
-	ogp+0W1Jp8R7WfpCiObCxRPa6z/0=
-X-Google-Smtp-Source: AGHT+IHa5tIBWx713nEoyMm1jHBmdBT5AfmYR6C8Wgz6RLJNGhdbT+yTvJXK2VgwALuApKg0iICbydCg/SVRWwF+Ibc=
-X-Received: by 2002:a05:6214:1c08:b0:6d4:10b0:c23c with SMTP id
- 6a1803df08f44-6d410b0c455mr158018776d6.9.1731989989291; Mon, 18 Nov 2024
- 20:19:49 -0800 (PST)
+	s=arc-20240116; t=1732022631; c=relaxed/simple;
+	bh=HUWruPY+fuLwrmOuejFimbT9wfsHEgnGLkgeWIqSY7c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k4wBVShox5vZYBgmftVmEoT23g0Nl91UnhZQw71u2nJ0RHF155gCQqKlJ+rOU+i8PQoNNHNxXnL0QmQh1jutTesHT7aVFYUpWAPxxg5z/GTHTuheTdN0o2gWMfOxBM5eD6MUF3Yv92fp+o02omaSPggIJ1MWC5eR/W+yJS/Xw6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=easystack.cn; spf=none smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=44.216.146.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=easystack.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=easystack.cn
+Received: from localhost.localdomain (unknown [218.94.118.90])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 18ebb455;
+	Tue, 19 Nov 2024 15:40:51 +0800 (GMT+08:00)
+From: mingzhe.zou@easystack.cn
+To: colyli@suse.de
+Cc: linux-bcache@vger.kernel.org,
+	dongsheng.yang@easystack.cn,
+	zoumingzhe@qq.com
+Subject: [PATCH v2 1/3] bcache: avoid invalidating buckets in use
+Date: Tue, 19 Nov 2024 15:40:29 +0800
+Message-Id: <20241119074031.27340-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
- <TYZPR02MB78424F31FF023102693D2DB2A65A2@TYZPR02MB7842.apcprd02.prod.outlook.com>
- <15077D4C-8DE9-4751-9492-51D972B3E4C3@suse.de> <CAAsfc_r_6mZ2HesDOQWU-0F2KXhz=EJ_nHeR4bLanXNnAiduTg@mail.gmail.com>
- <D5D1CBD5-0031-4285-BE12-910D6898B465@suse.de>
-In-Reply-To: <D5D1CBD5-0031-4285-BE12-910D6898B465@suse.de>
-From: liequan che <liequanche@gmail.com>
-Date: Tue, 19 Nov 2024 12:19:38 +0800
-Message-ID: <CAAsfc_oTmE2E8pMctiLSwMngVUbtJa4G=KAozzAfztMMc_RMOQ@mail.gmail.com>
-Subject: Re: [PATCH] bcache:fix oops in cache_set_flush
-To: Coly Li <colyli@suse.de>
-Cc: "mingzhe.zou@easystack.cn" <mingzhe.zou@easystack.cn>, Kent Overstreet <kent.overstreet@gmail.com>, 
-	linux-bcache <linux-bcache@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCTB8aVhgZHUMYSxlJSUoaSFYVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09LVUpLS1
+	VLWQY+
+X-HM-Tid: 0a93435df4ab022bkunm18ebb455
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nhg6IRw*FDcsDUkfQyxJKRU*
+	ASkaFDJVSlVKTEhJS0tJS05JTU1MVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+	C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSE5DTTcG
 
-Hi coly:
->>  The same operation was performed on three servers, replacing the 12T
->> disk with a 16T disk. Only one server triggered the bug. The on-site
+From: Mingzhe Zou <mingzhe.zou@easystack.cn>
 
->What do you mean =E2=80=9Creplacing 12T disk with a 16T disk=E2=80=9D ?
+If the bucket was reused while our bio was in flight, we might
+have read the wrong data. Currently, we will reread the data from
+the backing device. This not only reduces performance, but also
+makes the process more complex.
 
-Use another 16T SATA disk to replace the 12T SATA disk.
-Plan to use the 16T hard disk and the original nvme disk to recreate bcache=
-.
+When the bucket is in use, we hope not to reclaim it.
 
->> No bcache data clearing operation was performed
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/alloc.c  | 32 +++++++++++++++++++++++---------
+ drivers/md/bcache/bcache.h |  3 ++-
+ 2 files changed, 25 insertions(+), 10 deletions(-)
 
->What is the =E2=80=9Cbcache data clearing operation=E2=80=9D here?
-Nothing was done. But I plan to erase the superblock after
-partitioning the nvme disk.
-I plan to discard the original nvme disk data by erasing the
-superblock and wipe-bcache options.
->> 3. Replace the 12T SATA disk with a 16T SATA disk
->> After shutting down, unplug the 12T hard disk and replace it with a
->> 16T hard disk.
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index da50f6661bae..18441aa74229 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -134,25 +134,41 @@ bool bch_can_invalidate_bucket(struct cache *ca, struct bucket *b)
+ 	       !atomic_read(&b->pin) && can_inc_bucket_gen(b));
+ }
+ 
+-void __bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
++bool __bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
+ {
+ 	lockdep_assert_held(&ca->set->bucket_lock);
+ 	BUG_ON(GC_MARK(b) && GC_MARK(b) != GC_MARK_RECLAIMABLE);
+ 
++	if (!spin_trylock(&b->lock))
++		return false;
++
++	/*
++	 * If the bucket was reused while read bio was in flight, it will
++	 * reread the data from the backing device. This will increase latency
++	 * and cause other errors. When b->pin is not 0, do not invalidate
++	 * the bucket.
++	 */
++
++	if (atomic_inc_return(&b->pin) > 1) {
++		atomic_dec(&b->pin);
++		spin_unlock(&b->lock);
++		return false;
++	}
++
+ 	if (GC_SECTORS_USED(b))
+ 		trace_bcache_invalidate(ca, b - ca->buckets);
+ 
+ 	bch_inc_gen(ca, b);
+ 	b->prio = INITIAL_PRIO;
+-	atomic_inc(&b->pin);
+ 	b->reclaimable_in_gc = 0;
++	spin_unlock(&b->lock);
++	return true;
+ }
+ 
+ static void bch_invalidate_one_bucket(struct cache *ca, struct bucket *b)
+ {
+-	__bch_invalidate_one_bucket(ca, b);
+-
+-	fifo_push(&ca->free_inc, b - ca->buckets);
++	if (bch_can_invalidate_bucket(ca, b) && __bch_invalidate_one_bucket(ca, b))
++		fifo_push(&ca->free_inc, b - ca->buckets);
+ }
+ 
+ /*
+@@ -253,8 +269,7 @@ static void invalidate_buckets_fifo(struct cache *ca)
+ 
+ 		b = ca->buckets + ca->fifo_last_bucket++;
+ 
+-		if (bch_can_invalidate_bucket(ca, b))
+-			bch_invalidate_one_bucket(ca, b);
++		bch_invalidate_one_bucket(ca, b);
+ 
+ 		if (++checked >= ca->sb.nbuckets) {
+ 			ca->invalidate_needs_gc = 1;
+@@ -279,8 +294,7 @@ static void invalidate_buckets_random(struct cache *ca)
+ 
+ 		b = ca->buckets + n;
+ 
+-		if (bch_can_invalidate_bucket(ca, b))
+-			bch_invalidate_one_bucket(ca, b);
++		bch_invalidate_one_bucket(ca, b);
+ 
+ 		if (++checked >= ca->sb.nbuckets / 2) {
+ 			ca->invalidate_needs_gc = 1;
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 785b0d9008fa..fc7f10c5f222 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -196,6 +196,7 @@
+ 
+ struct bucket {
+ 	atomic_t	pin;
++	spinlock_t	lock;
+ 	uint16_t	prio;
+ 	uint8_t		gen;
+ 	uint8_t		last_gc; /* Most out of date gen in the btree */
+@@ -981,7 +982,7 @@ uint8_t bch_inc_gen(struct cache *ca, struct bucket *b);
+ void bch_rescale_priorities(struct cache_set *c, int sectors);
+ 
+ bool bch_can_invalidate_bucket(struct cache *ca, struct bucket *b);
+-void __bch_invalidate_one_bucket(struct cache *ca, struct bucket *b);
++bool __bch_invalidate_one_bucket(struct cache *ca, struct bucket *b);
+ 
+ void __bch_bucket_free(struct cache *ca, struct bucket *b);
+ void bch_bucket_free(struct cache_set *c, struct bkey *k);
+-- 
+2.34.1
 
->It seems you did something bcache doesn=E2=80=99t support. Replace the bac=
-king device...
-You are right. I may have done something that bcache does not support.
-But I hope that the wrong operation will not cause the system to panic.
-The consequence I can accept is that the bcache device creation fails.
-The bcache module can give me a chance to erase the superblock again,
-instead of entering the CD rescue mode to erase the superblock.
-
-
->> 7. Repartition again, triggering kernel panic again.
->> parted -s --align optimal /dev/nvme2n1 mkpart primary 2048s 1536GiB
->> The same operation was performed on the other two servers, and no
->> panic was triggered.
-
->I guess this is another undefine operation. I assume the cache device is s=
-till references somewhere. A reboot should follow the wipefs.
-Your guess is correct. In addition, after erasing the superblock
-information in CD rescue mode,
-I rebooted into the system where the original panic kernel was located.
-
->> The server with the problem was able to enter the system normally
->> after the root of the cache_set structure was determined to be empty.
->> I updated the description of the problem in the link below.
-
->No, if you clean up the partition, no cache device will exist. Cache regis=
-tration won=E2=80=99t treat it as a bcache device.
-
->OK, from the above description, I see you replace the backing device (and =
-I don=E2=80=99t know where the previous data was), then you extend the cach=
-e device size. They are all unsupported operations.
-The behavior here is a bit strange. After partitioning, I may have
-recreated the bcache device here,
-which triggered the bcache rigister operation. Then the kernel panicked aga=
-in.
->make-bcache -C /dev/nvme2n1p1 -B /dev/sda --writeback --force --wipe-bcach=
-e
-
-Thanks.
 
