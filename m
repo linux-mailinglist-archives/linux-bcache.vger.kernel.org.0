@@ -1,74 +1,75 @@
-Return-Path: <linux-bcache+bounces-799-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-798-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD6B9D56AE
-	for <lists+linux-bcache@lfdr.de>; Fri, 22 Nov 2024 01:22:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDC79D56AD
+	for <lists+linux-bcache@lfdr.de>; Fri, 22 Nov 2024 01:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0F0E283139
-	for <lists+linux-bcache@lfdr.de>; Fri, 22 Nov 2024 00:22:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50B011F22A6D
+	for <lists+linux-bcache@lfdr.de>; Fri, 22 Nov 2024 00:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6F9BA20;
-	Fri, 22 Nov 2024 00:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B1B2309AC;
+	Fri, 22 Nov 2024 00:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FiBEjfcA"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QVZn1HXv"
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A40C79FE
-	for <linux-bcache@vger.kernel.org>; Fri, 22 Nov 2024 00:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781934C98
+	for <linux-bcache@vger.kernel.org>; Fri, 22 Nov 2024 00:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732234943; cv=none; b=J37qsGKZ7upUxyOfZO2rvi33ME0QxyB3vrPCdOnlsQu3JkXpLiDEkeP3pCka1RTAwBJu44Fb/pev1bcioIVgdxGLR2DJlSHJUDLbfV/k3v8CNzjuGvS7K33R0pYidSeM9tgVA+e9ziDA0eIKXG1Bj8M2BAfHy5rlIRt6dNqbmi8=
+	t=1732234940; cv=none; b=Bqdd+M4RmrLtZDjUQ55Acl3VZjIaaUxKt27iWs7byQvMu6/uLUHGt6dXATaB3Dii5ICpZbE10fMpH1v8/ImVk1eDtvNPwV9YAtND7HgQV9FEwfhGv/ShLfzT2ZTThPsdsKPabWRbYa52WwJg/XVqvwLoB95L7p8fcnQ9/MqtoSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732234943; c=relaxed/simple;
-	bh=6P+eVd0nXKIKZcYe3yzYkx/vRksW06y9OdHpNmrqQ1A=;
+	s=arc-20240116; t=1732234940; c=relaxed/simple;
+	bh=VSV++YL5Bh/VHZUZH2u7wQe0aT4G7y0X5WkEUWEqgik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sPCC15yWe/8m7ShH1wP3W6n7cjGt086745FQayNpcryvLiluKQZ0lGEYHxVY1ua+oh828fxFtvj9A0g87rv2ZkaM6WT0KcGDgMhzARZmHjY2yam/h5Cveebk4XoimbjDB6GoUpZkaVdLvN5fWq8nstXRBA+U0dxCGWS4eGCP/vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FiBEjfcA; arc=none smtp.client-ip=192.198.163.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=eRda0WhE8L8ulQQxeLFBmP78OfDwp3rHbvMJgQvIqg44fwYQwvJ/LKKVEfo3sJuG7ehNqy6jpqSFyEjtfa2R+kClC86irtzkK+jryLrj1XXn7wTt6sTqryOgR7e1hVnSwiJy8Sc2gNGt+f9B0zc2bYyAYT4s0MWSxWG1fjCiwmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QVZn1HXv; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732234942; x=1763770942;
+  t=1732234939; x=1763770939;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=6P+eVd0nXKIKZcYe3yzYkx/vRksW06y9OdHpNmrqQ1A=;
-  b=FiBEjfcAUAcG9UL57pW6ONxP50+0SXMXGaMWsfMxPMzA2evoezt/gZbA
-   AYvwlEkTVM01JP/1FMKw7HcqMlXUJlZqFMZahQiAQiHv6DZXSCzjY2aEI
-   1zFm/WXaLys/NPdXEovNOXwB4GDq9oZLTXHZvk8xevx4GoMCpSKdtwWJh
-   3xM5jBUbUQwMilRSxjJu1Yvn/2y5tKi0jxXTCcHRxqEWCZf1CVyEICPww
-   b+cvwfFJULu535cgWCTSoFXG3Tb6e2siaq2KPof7seG4BTj8I0H8kE2n+
-   IlsNCGY/G5mJhuEjjQ6R4NQdo95RMPud+lpMN7nqDzhowyjuBYepDvz6l
-   Q==;
-X-CSE-ConnectionGUID: zQBuoyYUQxWS+Xqr1Ic3nw==
-X-CSE-MsgGUID: kYP4kJ7rSTSi6SSe6jWLVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="31734594"
+  bh=VSV++YL5Bh/VHZUZH2u7wQe0aT4G7y0X5WkEUWEqgik=;
+  b=QVZn1HXvH1CxZYiOJMuU7i9UtTE0wEaFDbzABLZ6VtIylixAwoE9Mb8V
+   ZUf5QSFIM1zh6zPciFnUr+qcYFoZE1uD4x4J5r3vLJ0zhZhk1WCQpP5z9
+   T1QTe+E5y5qvdKwFbmvd1cXaxdKGuCLx7s8ZmU+2KfeK8nGpTPcuKd206
+   WYg+fkgPyNQFFm8X/UDsgE01WSmSSIwk8Da6gLpiSL2PcksUPFG6geUgf
+   CHBhda+EYT3BxvUrbPEGyo3KhBA985J3LyHsVcOWB4MTMsvn4dK6goe7h
+   wTwefn0V2LpI289Pe4bHjKhrHVwgMDRHRhcxyJdE27FSczuslqkqBA0nU
+   w==;
+X-CSE-ConnectionGUID: OUDTGwI5TCKy9MmIbciAZw==
+X-CSE-MsgGUID: zd7DUqk9TX+ymqwAUPPMqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="31734569"
 X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
-   d="scan'208";a="31734594"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 16:22:21 -0800
-X-CSE-ConnectionGUID: +4IPvABSQwO91B6XmqU2Hg==
-X-CSE-MsgGUID: v4sAPJ4LTfWUQZuqyU8mlw==
+   d="scan'208";a="31734569"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 16:22:18 -0800
+X-CSE-ConnectionGUID: AoY2e9XSRfW+u5qWsOoS2A==
+X-CSE-MsgGUID: KRpEu6biTfaJpnQroIcSRA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
-   d="scan'208";a="90833918"
+   d="scan'208";a="91217963"
 Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 21 Nov 2024 16:22:16 -0800
+  by orviesa008.jf.intel.com with ESMTP; 21 Nov 2024 16:22:16 -0800
 Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tEHR7-0003VT-29;
+	id 1tEHR7-0003VV-2D;
 	Fri, 22 Nov 2024 00:22:13 +0000
-Date: Fri, 22 Nov 2024 08:21:15 +0800
+Date: Fri, 22 Nov 2024 08:21:17 +0800
 From: kernel test robot <lkp@intel.com>
 To: mingzhe.zou@easystack.cn, colyli@suse.de
-Cc: oe-kbuild-all@lists.linux.dev, linux-bcache@vger.kernel.org,
-	dongsheng.yang@easystack.cn, zoumingzhe@qq.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-bcache@vger.kernel.org, dongsheng.yang@easystack.cn,
+	zoumingzhe@qq.com
 Subject: Re: [PATCH 2/3] bcache: fix io error during cache read race
-Message-ID: <202411220800.SWuw4yAb-lkp@intel.com>
+Message-ID: <202411220826.WbtAugHL-lkp@intel.com>
 References: <20241119032852.2511-2-mingzhe.zou@easystack.cn>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
@@ -94,41 +95,30 @@ url:    https://github.com/intel-lab-lkp/linux/commits/mingzhe-zou-easystack-cn/
 base:   next-20241121
 patch link:    https://lore.kernel.org/r/20241119032852.2511-2-mingzhe.zou%40easystack.cn
 patch subject: [PATCH 2/3] bcache: fix io error during cache read race
-config: arc-randconfig-001-20241122 (https://download.01.org/0day-ci/archive/20241122/202411220800.SWuw4yAb-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411220800.SWuw4yAb-lkp@intel.com/reproduce)
+config: arm-randconfig-001-20241122 (https://download.01.org/0day-ci/archive/20241122/202411220826.WbtAugHL-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411220826.WbtAugHL-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411220800.SWuw4yAb-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411220826.WbtAugHL-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   In file included from include/asm-generic/bug.h:22,
-                    from arch/arc/include/asm/bug.h:30,
-                    from include/linux/bug.h:5,
-                    from include/linux/thread_info.h:13,
-                    from include/asm-generic/current.h:6,
-                    from arch/arc/include/asm/current.h:20,
-                    from include/linux/sched.h:12,
-                    from include/linux/mempool.h:8,
-                    from include/linux/bio.h:8,
-                    from drivers/md/bcache/bcache.h:181,
-                    from drivers/md/bcache/request.c:10:
-   drivers/md/bcache/request.c: In function 'cache_lookup_fn':
->> drivers/md/bcache/request.c:573:67: error: 'struct cache_set' has no member named 'sb'
+>> drivers/md/bcache/request.c:573:55: error: no member named 'sb' in 'struct cache_set'
      573 |                 pr_warn("%pU cache read race count: %lu", s->iop.c->sb.set_uuid,
-         |                                                                   ^~
-   include/linux/printk.h:473:33: note: in definition of macro 'printk_index_wrap'
+         |                                                           ~~~~~~~~  ^
+   include/linux/printk.h:554:37: note: expanded from macro 'pr_warn'
+     554 |         printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
+         |                                            ^~~~~~~~~~~
+   include/linux/printk.h:501:60: note: expanded from macro 'printk'
+     501 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
+         |                                                            ^~~~~~~~~~~
+   include/linux/printk.h:473:19: note: expanded from macro 'printk_index_wrap'
      473 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
          |                                 ^~~~~~~~~~~
-   include/linux/printk.h:554:9: note: in expansion of macro 'printk'
-     554 |         printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
-         |         ^~~~~~
-   drivers/md/bcache/request.c:573:17: note: in expansion of macro 'pr_warn'
-     573 |                 pr_warn("%pU cache read race count: %lu", s->iop.c->sb.set_uuid,
-         |                 ^~~~~~~
+   1 error generated.
 
 
 vim +573 drivers/md/bcache/request.c
