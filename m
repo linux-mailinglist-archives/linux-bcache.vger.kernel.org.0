@@ -1,88 +1,86 @@
-Return-Path: <linux-bcache+bounces-818-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-819-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6BB9E1E0D
-	for <lists+linux-bcache@lfdr.de>; Tue,  3 Dec 2024 14:46:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E2FB9E2FB8
+	for <lists+linux-bcache@lfdr.de>; Wed,  4 Dec 2024 00:18:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6E24B29C4F
-	for <lists+linux-bcache@lfdr.de>; Tue,  3 Dec 2024 13:45:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A2C7B28356
+	for <lists+linux-bcache@lfdr.de>; Tue,  3 Dec 2024 22:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0E71F8933;
-	Tue,  3 Dec 2024 13:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5606C1BCA1B;
+	Tue,  3 Dec 2024 22:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LjxLmdEk"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KA3rpXIt"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40641F76AE
-	for <linux-bcache@vger.kernel.org>; Tue,  3 Dec 2024 13:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60831E25E3
+	for <linux-bcache@vger.kernel.org>; Tue,  3 Dec 2024 22:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733233336; cv=none; b=BrEqTwqYiyOebK9+8xxiMINeRLgS/oCM86VwbazygC+4R+Zkee4V2S25CLOKR/SbnSN0ljkhjUGRfkEwUuc+Wl/FXP+q7B4ZqD/J8j/HXRoJARX/T9+SuEUyy3gU4QvVaXG6+lQUbe/6JfatljX4M1RXgXVVpAjDAn+gG2ZtG+k=
+	t=1733266591; cv=none; b=eN0wJRwCOEYle+IJAIZPH3nplVuOJ92TG5IBbAQsseXWbovwl4Ucil9VeVgD0j+/XGtPBIGFDkguSV5bHsdNyU0KCzoFY083fC3TZ18q0PPbGPMAAX0KhhVTdfuPvLcmiDCkZ/psZjV3okAq4JYcoOx4beDO3EwhQwWYaJFPZPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733233336; c=relaxed/simple;
-	bh=BPqo/+vJ9OA99wMkdAF6vWPVOkXo/UQOziFQPIlW/1E=;
+	s=arc-20240116; t=1733266591; c=relaxed/simple;
+	bh=9J3YtjJVaIzs2sqlqTmw9Ioc2v4jB8siZkMzuKRLfIE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=P9NsK3qzrJ/I6iqvSdjcmc0NXHRWouELVBq3vCfgWEzYGnBi7pIWl63QvfIxXDlFxfVdanWDSlXr/Y2ooE+vAJg7OUG6n90ZtoH22es0CD6td2jtPrEtbbzT3rpQR7V03rLuZLOZ1tDMNe/m3UO71yF9Hf/tZqtNjqz/O3wm4ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LjxLmdEk; arc=none smtp.client-ip=209.85.161.41
+	 MIME-Version:Content-Type; b=qYEXK6XVgqVUQ/cto6Bp8A/OVozm6SPLRicBWk7khR6tleZliapVDLdAm4/mXPGUIQisRS8fSI1olqoWdgJl9SZalcmic/9b54HZNI/2Oy6aikM56UMnoeDZ4YJX3lZP3A9n5vTjDVQaljqsISq/MfF+3RbZatKT0WMMWPqPwLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KA3rpXIt; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5f1e7639391so1930805eaf.0
-        for <linux-bcache@vger.kernel.org>; Tue, 03 Dec 2024 05:42:13 -0800 (PST)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7250c199602so5167217b3a.1
+        for <linux-bcache@vger.kernel.org>; Tue, 03 Dec 2024 14:56:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733233333; x=1733838133; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733266589; x=1733871389; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TPziSiz6FIPz1llFZL4/mtv70ocOZmo18hfdyDsh/VQ=;
-        b=LjxLmdEkeOzRdv2LOy8MDnd9IqaiNPf9AwmUCLMdGor82amWTMEVsYs886T7eymnrB
-         zy8yYZDY14DZBsGdWmoreADl7hEbgNxly+iMObL2qjPO96HYxRFEMFESudSPrIrCorcR
-         pN+ddZMBHAZGjOilYlZu3wGLqsmLvLhmRK6B6WTWkWx+Gwg3aJwrbmEcJtGqStUMLWo4
-         5rFsmQDKA5/pJyD9px7Z8bfH1jM8OQvEJy2YnJ5LT9/9tPEaVmlge6SEKDrJKq/Kp095
-         LUHrm3vRacst7YQRSd4WbhxJxCrvuRECNqC0Mq45G8cYccbtqc/wCGNoMVpKdDrOAZVm
-         Qs0g==
+        bh=TNuRSE0qt5OotBDZPQRc+y7yttPjFAS0Rpx1zXr0078=;
+        b=KA3rpXItETAFyjPwew5p1REjVcnq8+5bDecMBk3+CYYzviVr/D9nYIn92Z0ph6XvGg
+         Ir9G5OXm+yT4kHkLIl4QBtv81V1F0z9M3ZFywQEsb2Iu87QkljSExfVAvj+/KVIOoAfR
+         Ey0CgrHQQXA6g1phWixmwgRU1grS9dLN6MWiurHfFPxJhmqFJXD//VrqrlgHfP9eFBvx
+         b1TBY5eXB+VhlkPh1m2AwQhDKQGuWyWc0PTWUaqpdO4mlamOAbQ9hJWqkNINygxqeBgi
+         /nIwn6iUUjq9OzbNqJHxXILXT6aEJ7RD6lXkl4wigSgEGGH26bFoO3ynazxf11cAWLtc
+         JuUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733233333; x=1733838133;
+        d=1e100.net; s=20230601; t=1733266589; x=1733871389;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TPziSiz6FIPz1llFZL4/mtv70ocOZmo18hfdyDsh/VQ=;
-        b=IdHG8XBnLzPIL1K3BkvkP0vLs/YDTDL/ocitngFOLTZK91xUG3aa/oGG2/85giLTtd
-         ZDjlIx8fSm+PUaCMQjbP3IouU4xIii+BqaDmMuFRQQSdM9iyogsceKCIrqnQxPpJ4AYc
-         yy10fJvwdOa3yb/5eWgmAbYDKWjX8YOmzbQiDalDqKD3SwviyjEEYR2EqI9T0lpJcbrn
-         XIGWAkX0HsrvHmfIh6BkXm18BEP9yldCkITAacbnxns+8ncIm+PLqrW3a6sRkzC1bkMM
-         4f+taO01Geo6CvSlaPKuclbpbSTqmBfvBctqf6SdI5OlQfNyfJywQDlrHAVwtGNl8RO+
-         otog==
-X-Forwarded-Encrypted: i=1; AJvYcCXYMKtxL+/hT9yg6gXE6G5cs9tm/PYfLjFjLPO2wvIDCHCtokPOcq8iPPOajX3GKa45ESbOzEow95p2L/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoL7cxAbDycmVIJxEJekdtC4LhB35pyBer5ZibTotVgt+NzHdj
-	5R0gJicgFlhIn9/f82rJSx1ZaYR9QHE95bcTncMwjypJVKPPL9d3CSmwR0dE5KA=
-X-Gm-Gg: ASbGncspE9HMxJNx1uYCGjgdAIWI8U9i68ocqPnVmm4OuOzB3X049GTKp4b1TknZsMg
-	UGCZxu5v8+30I570jFX1Qj5x8np1lYRatfs+vaiJTwm5z1NTjRbT5133oVYFxug7OnZCb7XHAXq
-	dklD1PRYcgwCFnnckQTiBQnUyUku3HIk3z5/1bLIvX5imkDGm6HS2v+65wVDttmaRNp6spstSLG
-	yS3rDMCNfRAL/wgg2jdH7LHg4JzpEdFCb5qP8rHJXL/8A==
-X-Google-Smtp-Source: AGHT+IF3JxViCcZr46UetkoBs9MyylLeqwOA8mylprKsogFh27HKGMF5642pWucfOY8iKk1uqQ4f1w==
-X-Received: by 2002:a05:6820:50c:b0:5ee:d89f:1d2c with SMTP id 006d021491bc7-5f25ad40e71mr1942008eaf.1.1733233333038;
-        Tue, 03 Dec 2024 05:42:13 -0800 (PST)
-Received: from [127.0.0.1] ([130.250.255.163])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5f21a4cd86bsm2782124eaf.29.2024.12.03.05.42.11
+        bh=TNuRSE0qt5OotBDZPQRc+y7yttPjFAS0Rpx1zXr0078=;
+        b=iOdcFnaY5Xnna3Y589nxo588uJjOtZFOzNHy4PKsolUuxfWJ2YVLggdceg0rNrCmX0
+         dVruoPAQoKbr6Zq5cvKib6U2YAK7Z+bNZazbAyyvwftGrqtvf6PM1P601odeBn2kVEk2
+         OscbeJIiv76v5Q15QRg8Zq4P9GkENHCkN4XGlxcCEh4M0Slz6vGyMe3cDcCf7mfcuNbC
+         qnidl179U8cNzBkgAwrIySXsfC+SdEvvBvwVaBz3Su+Z2y6N+k6j8bIdIfgzaVSUKO4I
+         WE11iNDtdrRsGmY5T0SFkxeWmtyo4KuZE/LthPaQNiOiEpJqmtXowYoMs8/USLr/sIp6
+         Hwmg==
+X-Gm-Message-State: AOJu0YwwMZS8+BjlowDZKDl+aXEma12CYJiZ/esO6hGkPxS2QGQhXCW+
+	ZZk0QqI9m+WTIPerJqKNhed9ZLT9qz5QkWbbThIsZ+DUPXDC2bwjvIaremd+ahc=
+X-Gm-Gg: ASbGnctApt+pB3cJdbTNfnFZr+msFP2B6c9O4IaRyI0UEVavfHrw/2xUGtYxxZXnVRV
+	TdgI/yiSi/vvcj6Gyem4u8+ZEWzZQ9LsGcVbxYILRYx9yUbnySHF0KW6IGx79EflFLbS3rU8zQT
+	wFzOLj98oc7sHpqWzBWCRdmMfQyRpaTOWsTgBXGpw6cxi+r/Dp6nYmXDcPmGctoEYWs50fxE8hr
+	kkH0SAJvsBskT3p1NPLS0eU7OkR7fs70vnDePmq9iIBT4o=
+X-Google-Smtp-Source: AGHT+IFwbu5Mn9fY8ujvfbEmhblgpduelrIHva3SSxokjUMLrmvWEB884oPumQCB8f8AE8L3tnBedA==
+X-Received: by 2002:a05:6a00:14d5:b0:71e:60fc:ad11 with SMTP id d2e1a72fcca58-7257fcb04ddmr5761701b3a.16.1733266589105;
+        Tue, 03 Dec 2024 14:56:29 -0800 (PST)
+Received: from [127.0.0.1] ([2600:380:c150:9b72:bfcd:78a4:798a:3876])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541845526sm11049954b3a.171.2024.12.03.14.56.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 05:42:12 -0800 (PST)
+        Tue, 03 Dec 2024 14:56:28 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
-To: John Garry <john.g.garry@oracle.com>
-Cc: haris.iqbal@ionos.com, jinpu.wang@ionos.com, colyli@suse.de, 
- kent.overstreet@linux.dev, agk@redhat.com, snitzer@kernel.org, 
- mpatocka@redhat.com, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org, 
- dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org, hch@lst.de
-In-Reply-To: <20241202111957.2311683-1-john.g.garry@oracle.com>
-References: <20241202111957.2311683-1-john.g.garry@oracle.com>
-Subject: Re: [PATCH 0/2] block: Delete bio_set_prio() and bio_prio()
-Message-Id: <173323333147.59116.15700360793401292347.b4-ty@kernel.dk>
-Date: Tue, 03 Dec 2024 06:42:11 -0700
+To: Coly Li <colyli@suse.de>
+Cc: linux-bcache@vger.kernel.org, linux-block@vger.kernel.org, 
+ Liequan Che <cheliequan@inspur.com>, stable@vger.kernel.org, 
+ Zheng Wang <zyytlz.wz@163.com>, Mingzhe Zou <mingzhe.zou@easystack.cn>
+In-Reply-To: <20241202115638.28957-1-colyli@suse.de>
+References: <20241202115638.28957-1-colyli@suse.de>
+Subject: Re: [PATCH] bcache: revert replacing IS_ERR_OR_NULL with IS_ERR
+ again
+Message-Id: <173326658691.273410.3875499792580275735.b4-ty@kernel.dk>
+Date: Tue, 03 Dec 2024 15:56:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -94,25 +92,24 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3-dev-86319
 
 
-On Mon, 02 Dec 2024 11:19:55 +0000, John Garry wrote:
-> Macros bio_set_prio() and bio_prio() do nothing special in terms of
-> setting and getting the bio io prio member, so just delete them.
+On Mon, 02 Dec 2024 19:56:38 +0800, Coly Li wrote:
+> Commit 028ddcac477b ("bcache: Remove unnecessary NULL point check in
+> node allocations") leads a NULL pointer deference in cache_set_flush().
 > 
-> Prior to commit 43b62ce3ff0a, they would actually encode and decode the
-> prio in the now-deleted bi_rw member.
+> 1721         if (!IS_ERR_OR_NULL(c->root))
+> 1722                 list_add(&c->root->list, &c->btree_cache);
 > 
-> John Garry (2):
->   block: Delete bio_prio()
->   block: Delete bio_set_prio()
+> >From the above code in cache_set_flush(), if previous registration code
+> fails before allocating c->root, it is possible c->root is NULL as what
+> it is initialized. __bch_btree_node_alloc() never returns NULL but
+> c->root is possible to be NULL at above line 1721.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] block: Delete bio_prio()
-      commit: 099d214fc7abc3fec0f38d10bec31ac7acce8d13
-[2/2] block: Delete bio_set_prio()
-      commit: 77cfdf838d8467d3ca44058caff7c1727080efb2
+[1/1] bcache: revert replacing IS_ERR_OR_NULL with IS_ERR again
+      commit: b2e382ae12a63560fca35050498e19e760adf8c0
 
 Best regards,
 -- 
