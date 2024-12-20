@@ -1,87 +1,151 @@
-Return-Path: <linux-bcache+bounces-824-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-825-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2616B9F0512
-	for <lists+linux-bcache@lfdr.de>; Fri, 13 Dec 2024 07:52:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97079F8CD1
+	for <lists+linux-bcache@lfdr.de>; Fri, 20 Dec 2024 07:36:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D80AC283083
-	for <lists+linux-bcache@lfdr.de>; Fri, 13 Dec 2024 06:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82EA9188E980
+	for <lists+linux-bcache@lfdr.de>; Fri, 20 Dec 2024 06:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D6A18D621;
-	Fri, 13 Dec 2024 06:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767C21632DD;
+	Fri, 20 Dec 2024 06:36:33 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from arara2.ipen.br (arara2.ipen.br [200.136.52.33])
+Received: from mail-m12817.netease.com (mail-m12817.netease.com [103.209.128.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D2018DF64
-	for <linux-bcache@vger.kernel.org>; Fri, 13 Dec 2024 06:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=200.136.52.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAEA1531C8
+	for <linux-bcache@vger.kernel.org>; Fri, 20 Dec 2024 06:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.209.128.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734072747; cv=none; b=rgMpSsWZx0maK8atKt5w04Fl+jzA1bYwEqLivG6/a1mu+Q8GjEJXmLOziHXbZSe4QVBtGSysnQzRQY+79AaEqiDfjqnffzxpaGuBNrqtLMxd6CMlKtzDTybJPnk5sKFVD2p0sucWMNynNB1InhGttQiNTCeVGAibwAif5IHUOE8=
+	t=1734676593; cv=none; b=pTMiXPGKfhssJYvabK6FX6CaDUtL1gnt0T4+2DJLOI1VpdzkXXOrDYaWtbGcFlw1En5OJmlXA3Mzf/YW1Hfb3aHG7DDMbvGpFm8aZjAI0LfbmYJ6QVKDWRFHbsOj1O3BjreVzKeRtn1TVUQV2X3Mw5nZIo7ye3kMLT3usv6NHBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734072747; c=relaxed/simple;
-	bh=Cgr97JBiSX1QIcd2ZZZsKVChGTY1ZlWJ/4AhaVFA7Wc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lKWHCfcc+Jd/Gi/vRpnVrxHMRH0AYuGlm4fZHfn7q7ojtFtgfv4dbF7u0256PAJBxTwSlAXSB8YIL74Tx67chxeff+ESnoId4qe6J51oO6Yw75Re2WShHPJZqR4vmXwQB9pwVd1cQHA7vCf2E9xiXzd75HMzOszEdAQMieKFO0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ipen.br; spf=pass smtp.mailfrom=ipen.br; arc=none smtp.client-ip=200.136.52.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ipen.br
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ipen.br
-X-ASG-Debug-ID: 1734072695-055fc729eb148d1c0008-VZtGTT
-Received: from arara.ipen.br (webmail.ipen.br [10.0.10.11]) by arara2.ipen.br with ESMTP id YllKihTwUvW2QCNR for <linux-bcache@vger.kernel.org>; Fri, 13 Dec 2024 03:52:16 -0300 (BRT)
-X-Barracuda-Envelope-From: TCWM178836@ipen.br
-X-Barracuda-RBL-Trusted-Forwarder: 10.0.10.11
-Received: from ipen.br (unknown [102.129.145.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by arara.ipen.br (Postfix) with ESMTPSA id 50A0DFBE465
-	for <linux-bcache@vger.kernel.org>; Fri, 13 Dec 2024 01:24:50 -0300 (-03)
-Reply-To: t.mazowieckie@mazowieckie.org
-X-Barracuda-Effective-Source-IP: UNKNOWN[102.129.145.191]
-X-Barracuda-Apparent-Source-IP: 102.129.145.191
-X-Barracuda-RBL-IP: 102.129.145.191
-From: <TCWM178836@ipen.br>
-To: linux-bcache@vger.kernel.org
-Subject:  I urge you to understand my viewpoint accurately.
-Date: 13 Dec 2024 12:24:50 +0800
-X-ASG-Orig-Subj: I urge you to understand my viewpoint accurately.
-Message-ID: <20241213122450.63AE95F2B7637A1C@ipen.br>
+	s=arc-20240116; t=1734676593; c=relaxed/simple;
+	bh=yfserxXFPGd1h4hw77T725zZQHHetJjKdcxC46QGsxg=;
+	h=Content-Type:Message-ID:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:From:Date; b=PLaevuIOErOEThADeK3Ww0vhJ3kxxVpzZbT7domirF5HKBeZcjbjk/MO4MUgadbacrVoxILLpT/9RW5r7J9srMy7y+X8KDe2WoWawnnsvDVGgApIK3zVKahFWlYlh4qgQIgJQ0E5BhAR53AIcxlLeIMCTCa65mhWbCy5dQ/oT/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=easystack.cn; spf=none smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=103.209.128.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=easystack.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=easystack.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <AMcAQwBHLpIksKhhq8fkdqro.3.1734672038253.Hmail.mingzhe.zou@easystack.cn>
+To: colyli <colyli@suse.de>
+Cc: linux-bcache <linux-bcache@vger.kernel.org>, zoumingzhe <zoumingzhe@qq.com>
+Subject: =?UTF-8?B?UmU6W1BBVENIIHYyIDIvM10gYmNhY2hlOiBmaXggaW8gZXJyb3IgZHVyaW5nIGNhY2hlIHJlYWQgcmFjZQ==?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com Sirius_WEB_WIN_1.46.1
+In-Reply-To: <20241119074031.27340-2-mingzhe.zou@easystack.cn>
+References: <20241119074031.27340-1-mingzhe.zou@easystack.cn> <20241119074031.27340-2-mingzhe.zou@easystack.cn>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Barracuda-Connect: webmail.ipen.br[10.0.10.11]
-X-Barracuda-Start-Time: 1734072736
-X-Barracuda-URL: https://10.40.40.18:443/cgi-mod/mark.cgi
-X-Barracuda-Scan-Msg-Size: 512
-X-Virus-Scanned: by bsmtpd at ipen.br
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-BRTS-Evidence: 34fbb5788938ad5710ad28835fd12206-499-txt
-X-Barracuda-Spam-Score: 0.00
-X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=1000.0 tests=NO_REAL_NAME
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.45577
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
-	0.00 NO_REAL_NAME           From: does not include a real name
+Received: from mingzhe.zou@easystack.cn( [218.94.118.90] ) by ajax-webmail ( [127.0.0.1] ) ; Fri, 20 Dec 2024 13:20:38 +0800 (GMT+08:00)
+From: =?UTF-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>
+Date: Fri, 20 Dec 2024 13:20:38 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDQ0MYVktNHhgeHh8YShpLSVYVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
+	VKQktLWQY+
+X-HM-Tid: 0a93e27f214b0242kunm193d9ab3176
+X-HM-MType: 1
+X-HM-NTES-SC: AL0_4z5B86Wr4Tz9jdMF+bhXMdPGVk+6WUBic5BJK0kLqbiJsCmuG9MdhyqTcq
+	cnmL0IyrvQXLgMHt5crrNISNn5Z/SHUCxzIQKizlqIt1sM+3wGHH0ZqUH3Ts9B/RM7YTTVkQCR6A
+	iNBHpq5gkLqfN30rPlP+Oa6EVDMEC7JGVKlRc=
+X-HM-Sender-Digest: e1kJHlYWEh9ZQUpCTE9PQkhLSENKTTdXWQweGVlBDwkOHldZEh8eFQ9Z
+	QVlHOjYYOioMOTM3CzIQCDATEwpDHRAfCgkUVUhVSkxIT01MSUtIQ0NKSFUzFhoSF1UWEhUcARMe
+	VQEUDjseGggCCA8aGBBVGBVFWVdZEgtZQVlJSkNVQk9VSkpDVUJLWVdZCAFZQU1NQ0M3V1kUCw8S
+	FBUIWUFLNwY+
 
-I am Tomasz Chmielewski, a Portfolio Manager and Chartered=20
-Financial Analyst affiliated with Iwoca Poland Sp. Z OO in=20
-Poland. I have the privilege of working with distinguished=20
-investors who are eager to support your company's current=20
-initiatives, thereby broadening their investment portfolios. If=20
-this proposal aligns with your interests, I invite you to=20
-respond, and I will gladly share more information to assist you.
-
-=20
-Yours sincerely,=20
-Tomasz Chmielewski Warsaw, Mazowieckie,
-=20
-Poland.
+SGksIENvbHk6CgpPdXIgdXNlcnMgaGF2ZSByZXBvcnRlZCB0aGlzIGlzc3VlIHRvIHVzIGluIHRo
+ZWlyIGdlbmVyYXRpb24gZW52aXJvbm1lbnQhCgpQbGVhc2UgcmV2aWV3IHRoZXNlIHBhdGNoZXMg
+YW5kIHByb3ZpZGUgZmVlZGJhY2suCgpUaGFuayB5b3UgdmVyeSBtdWNoLgoKbWluZ3poZQoKT3Jp
+Z2luYWw6CkZyb23vvJptaW5nemhlLnpvdTxtaW5nemhlLnpvdUBlYXN5c3RhY2suY24+CkRhdGXv
+vJoyMDI0LTExLTE5IDE1OjQwOjMwKOS4reWbvSAoR01UKzA4OjAwKSkKVG/vvJpjb2x5bGk8Y29s
+eWxpQHN1c2UuZGU+CkNj77yabGludXgtYmNhY2hlPGxpbnV4LWJjYWNoZUB2Z2VyLmtlcm5lbC5v
+cmc+ICwgZG9uZ3NoZW5nLnlhbmc8ZG9uZ3NoZW5nLnlhbmdAZWFzeXN0YWNrLmNuPiAsIHpvdW1p
+bmd6aGU8em91bWluZ3poZUBxcS5jb20+ClN1YmplY3TvvJpbUEFUQ0ggdjIgMi8zXSBiY2FjaGU6
+IGZpeCBpbyBlcnJvciBkdXJpbmcgY2FjaGUgcmVhZCByYWNlCkZyb206IE1pbmd6aGUgWm91IDxt
+aW5nemhlLnpvdUBlYXN5c3RhY2suY24+CgpJbiBvdXIgcHJvZHVjdGlvbiBlbnZpcm9ubWVudCwg
+YmNhY2hlIHJldHVybmVkIElPX0VSUk9SKGVycm5vPS01KS4KVGhlc2UgZXJyb3JzIGFsd2F5cyBo
+YXBwZW4gZHVyaW5nIDFNIHJlYWQgSU8gdW5kZXIgaGlnaCBwcmVzc3VyZQphbmQgd2l0aG91dCBh
+bnkgbWVzc2FnZSBsb2cuIFdoZW4gdGhlIGVycm9yIG9jY3VycmVkLCB3ZSBzdG9wcGVkCmFsbCBy
+ZWFkaW5nIGFuZCB3cml0aW5nIGFuZCB1c2VkIDFNIHJlYWQgSU8gdG8gcmVhZCB0aGUgZW50aXJl
+IGRpc2sKd2l0aG91dCBhbnkgZXJyb3JzLiBMYXRlciB3ZSBmb3VuZCB0aGF0IGNhY2hlX3JlYWRf
+cmFjZXMgb2YgY2FjaGVfc2V0CmlzIG5vbi16ZXJvLgoKSWYgYSBsYXJnZSAoMU0pIHJlYWQgYmlv
+IGlzIHNwbGl0IGludG8gdHdvIG9yIG1vcmUgYmlvcywgd2hlbiBvbmUgYmlvCnJlYWRzIGRpcnR5
+IGRhdGEsIHMtJmd0O3JlYWRfZGlydHlfZGF0YSB3aWxsIGJlIHNldCB0byB0cnVlIGFuZCByZW1h
+aW4uCklmIHRoZSBidWNrZXQgd2FzIHJldXNlZCB3aGlsZSBvdXIgc3Vic2VxdWVudCByZWFkIGJp
+byB3YXMgaW4gZmxpZ2h0LAp0aGUgcmVhZCB3aWxsIGJlIHVucmVjb3ZlcmFibGUoY2Fubm90IHJl
+YWQgZGF0YSBmcm9tIGJhY2tpbmcpLgoKVGhpcyBwYXRjaCBpbmNyZWFzZXMgdGhlIGNvdW50IGZv
+ciBidWNrZXQtJmd0O3BpbiB0byBwcmV2ZW50IHRoZSBidWNrZXQKZnJvbSBiZWluZyByZWNsYWlt
+ZWQgYW5kIHJldXNlZC4KClNpZ25lZC1vZmYtYnk6IE1pbmd6aGUgWm91IDxtaW5nemhlLnpvdUBl
+YXN5c3RhY2suY24+Ci0tLQogZHJpdmVycy9tZC9iY2FjaGUvcmVxdWVzdC5jIHwgMzkgKysrKysr
+KysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDI2IGluc2Vy
+dGlvbnMoKyksIDEzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWQvYmNhY2hl
+L3JlcXVlc3QuYyBiL2RyaXZlcnMvbWQvYmNhY2hlL3JlcXVlc3QuYwppbmRleCBhZjM0NWRjNmZk
+ZTEuLjZjNDE5NTcxMzhlNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9tZC9iY2FjaGUvcmVxdWVzdC5j
+CisrKyBiL2RyaXZlcnMvbWQvYmNhY2hlL3JlcXVlc3QuYwpAQCAtNTAyLDEyICs1MDIsOCBAQCBz
+dGF0aWMgdm9pZCBiY2hfY2FjaGVfcmVhZF9lbmRpbyhzdHJ1Y3QgYmlvICpiaW8pCiAJc3RydWN0
+IGNsb3N1cmUgKmNsID0gYmlvLSZndDtiaV9wcml2YXRlOwogCXN0cnVjdCBzZWFyY2ggKnMgPSBj
+b250YWluZXJfb2YoY2wsIHN0cnVjdCBzZWFyY2gsIGNsKTsKIAotCS8qCi0JICogSWYgdGhlIGJ1
+Y2tldCB3YXMgcmV1c2VkIHdoaWxlIG91ciBiaW8gd2FzIGluIGZsaWdodCwgd2UgbWlnaHQgaGF2
+ZQotCSAqIHJlYWQgdGhlIHdyb25nIGRhdGEuIFNldCBzLSZndDtlcnJvciBidXQgbm90IGVycm9y
+IHNvIGl0IGRvZXNuJ3QgZ2V0Ci0JICogY291bnRlZCBhZ2FpbnN0IHRoZSBjYWNoZSBkZXZpY2Us
+IGJ1dCB3ZSdsbCBzdGlsbCByZXJlYWQgdGhlIGRhdGEKLQkgKiBmcm9tIHRoZSBiYWNraW5nIGRl
+dmljZS4KLQkgKi8KKwlCVUdfT04ocHRyX3N0YWxlKHMtJmd0O2lvcC5jLCAmYW1wO2ItJmd0O2tl
+eSwgMCkpOyAvLyBidWNrZXQgc2hvdWxkIG5vdCBiZSByZXVzZWQKKwlhdG9taWNfZGVjKCZhbXA7
+UFRSX0JVQ0tFVChzLSZndDtpb3AuYywgJmFtcDtiLSZndDtrZXksIDApLSZndDtwaW4pOwogCiAJ
+aWYgKGJpby0mZ3Q7Ymlfc3RhdHVzKQogCQlzLSZndDtpb3Auc3RhdHVzID0gYmlvLSZndDtiaV9z
+dGF0dXM7CkBAIC01MjAsNiArNTE2LDggQEAgc3RhdGljIHZvaWQgYmNoX2NhY2hlX3JlYWRfZW5k
+aW8oc3RydWN0IGJpbyAqYmlvKQogCWJjaF9iYmlvX2VuZGlvKHMtJmd0O2lvcC5jLCBiaW8sIGJp
+by0mZ3Q7Ymlfc3RhdHVzLCAicmVhZGluZyBmcm9tIGNhY2hlIik7CiB9CiAKK3N0YXRpYyB2b2lk
+IGJhY2tpbmdfcmVxdWVzdF9lbmRpbyhzdHJ1Y3QgYmlvICpiaW8pOworCiAvKgogICogUmVhZCBm
+cm9tIGEgc2luZ2xlIGtleSwgaGFuZGxpbmcgdGhlIGluaXRpYWwgY2FjaGUgbWlzcyBpZiB0aGUg
+a2V5IHN0YXJ0cyBpbgogICogdGhlIG1pZGRsZSBvZiB0aGUgYmlvCkBAIC01MjksNyArNTI3LDYg
+QEAgc3RhdGljIGludCBjYWNoZV9sb29rdXBfZm4oc3RydWN0IGJ0cmVlX29wICpvcCwgc3RydWN0
+IGJ0cmVlICpiLCBzdHJ1Y3QgYmtleSAqaykKIAlzdHJ1Y3Qgc2VhcmNoICpzID0gY29udGFpbmVy
+X29mKG9wLCBzdHJ1Y3Qgc2VhcmNoLCBvcCk7CiAJc3RydWN0IGJpbyAqbiwgKmJpbyA9ICZhbXA7
+cy0mZ3Q7YmlvLmJpbzsKIAlzdHJ1Y3QgYmtleSAqYmlvX2tleTsKLQl1bnNpZ25lZCBpbnQgcHRy
+OwogCiAJaWYgKGJrZXlfY21wKGssICZhbXA7S0VZKHMtJmd0O2lvcC5pbm9kZSwgYmlvLSZndDti
+aV9pdGVyLmJpX3NlY3RvciwgMCkpICZsdDs9IDApCiAJCXJldHVybiBNQVBfQ09OVElOVUU7CkBA
+IC01NTMsMjAgKzU1MCwzNiBAQCBzdGF0aWMgaW50IGNhY2hlX2xvb2t1cF9mbihzdHJ1Y3QgYnRy
+ZWVfb3AgKm9wLCBzdHJ1Y3QgYnRyZWUgKmIsIHN0cnVjdCBia2V5ICprKQogCWlmICghS0VZX1NJ
+WkUoaykpCiAJCXJldHVybiBNQVBfQ09OVElOVUU7CiAKLQkvKiBYWFg6IGZpZ3VyZSBvdXQgYmVz
+dCBwb2ludGVyIC0gZm9yIG11bHRpcGxlIGNhY2hlIGRldmljZXMgKi8KLQlwdHIgPSAwOworCS8q
+CisJICogSWYgdGhlIGJ1Y2tldCB3YXMgcmV1c2VkIHdoaWxlIG91ciBiaW8gd2FzIGluIGZsaWdo
+dCwgd2UgbWlnaHQgaGF2ZQorCSAqIHJlYWQgdGhlIHdyb25nIGRhdGEuIFNldCBzLSZndDtjYWNo
+ZV9yZWFkX3JhY2VzIGFuZCByZXJlYWQgdGhlIGRhdGEKKwkgKiBmcm9tIHRoZSBiYWNraW5nIGRl
+dmljZS4KKwkgKi8KKwlzcGluX2xvY2soJmFtcDtQVFJfQlVDS0VUKGItJmd0O2MsIGssIDApLSZn
+dDtsb2NrKTsKKwlpZiAocHRyX3N0YWxlKHMtJmd0O2lvcC5jLCBrLCAwKSkgeworCQlzcGluX3Vu
+bG9jaygmYW1wO1BUUl9CVUNLRVQoYi0mZ3Q7YywgaywgMCktJmd0O2xvY2spOworCQlhdG9taWNf
+bG9uZ19pbmMoJmFtcDtzLSZndDtpb3AuYy0mZ3Q7Y2FjaGVfcmVhZF9yYWNlcyk7CisJCXByX3dh
+cm4oIiVwVSBjYWNoZSByZWFkIHJhY2UgY291bnQ6ICVsdSIsIHMtJmd0O2lvcC5jLSZndDtzYi5z
+ZXRfdXVpZCwKKwkJCWF0b21pY19sb25nX3JlYWQoJmFtcDtzLSZndDtpb3AuYy0mZ3Q7Y2FjaGVf
+cmVhZF9yYWNlcykpOwogCi0JUFRSX0JVQ0tFVChiLSZndDtjLCBrLCBwdHIpLSZndDtwcmlvID0g
+SU5JVElBTF9QUklPOworCQluLSZndDtiaV9lbmRfaW8JPSBiYWNraW5nX3JlcXVlc3RfZW5kaW87
+CisJCW4tJmd0O2JpX3ByaXZhdGUJPSAmYW1wO3MtJmd0O2NsOworCisJCS8qIEkvTyByZXF1ZXN0
+IHNlbnQgdG8gYmFja2luZyBkZXZpY2UgKi8KKwkJY2xvc3VyZV9iaW9fc3VibWl0KHMtJmd0O2lv
+cC5jLCBuLCAmYW1wO3MtJmd0O2NsKTsKKwkJcmV0dXJuIG4gPT0gYmlvID8gTUFQX0RPTkUgOiBN
+QVBfQ09OVElOVUU7CisJfQorCWF0b21pY19pbmMoJmFtcDtQVFJfQlVDS0VUKHMtJmd0O2lvcC5j
+LCBrLCAwKS0mZ3Q7cGluKTsKKwlzcGluX3VubG9jaygmYW1wO1BUUl9CVUNLRVQoYi0mZ3Q7Yywg
+aywgMCktJmd0O2xvY2spOwogCi0JaWYgKEtFWV9ESVJUWShrKSkKLQkJcy0mZ3Q7cmVhZF9kaXJ0
+eV9kYXRhID0gdHJ1ZTsKKwlQVFJfQlVDS0VUKGItJmd0O2MsIGssIDApLSZndDtwcmlvID0gSU5J
+VElBTF9QUklPOwogCiAJbiA9IGJpb19uZXh0X3NwbGl0KGJpbywgbWluX3QodWludDY0X3QsIElO
+VF9NQVgsCiAJCQkJICAgICAgS0VZX09GRlNFVChrKSAtIGJpby0mZ3Q7YmlfaXRlci5iaV9zZWN0
+b3IpLAogCQkJICAgR0ZQX05PSU8sICZhbXA7cy0mZ3Q7ZC0mZ3Q7YmlvX3NwbGl0KTsKIAogCWJp
+b19rZXkgPSAmYW1wO2NvbnRhaW5lcl9vZihuLCBzdHJ1Y3QgYmJpbywgYmlvKS0mZ3Q7a2V5Owot
+CWJjaF9ia2V5X2NvcHlfc2luZ2xlX3B0cihiaW9fa2V5LCBrLCBwdHIpOworCWJjaF9ia2V5X2Nv
+cHlfc2luZ2xlX3B0cihiaW9fa2V5LCBrLCAwKTsKIAogCWJjaF9jdXRfZnJvbnQoJmFtcDtLRVko
+cy0mZ3Q7aW9wLmlub2RlLCBuLSZndDtiaV9pdGVyLmJpX3NlY3RvciwgMCksIGJpb19rZXkpOwog
+CWJjaF9jdXRfYmFjaygmYW1wO0tFWShzLSZndDtpb3AuaW5vZGUsIGJpb19lbmRfc2VjdG9yKG4p
+LCAwKSwgYmlvX2tleSk7Ci0tIAoyLjM0LjEKCgo8L21pbmd6aGUuem91QGVhc3lzdGFjay5jbj48
+L21pbmd6aGUuem91QGVhc3lzdGFjay5jbj48L3pvdW1pbmd6aGVAcXEuY29tPjwvZG9uZ3NoZW5n
+LnlhbmdAZWFzeXN0YWNrLmNuPjwvbGludXgtYmNhY2hlQHZnZXIua2VybmVsLm9yZz48L2NvbHls
+aUBzdXNlLmRlPjwvbWluZ3poZS56b3VAZWFzeXN0YWNrLmNuPg0KDQo=
 
