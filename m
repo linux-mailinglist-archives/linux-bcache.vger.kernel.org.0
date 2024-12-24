@@ -1,292 +1,175 @@
-Return-Path: <linux-bcache+bounces-826-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-827-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AFD9FA198
-	for <lists+linux-bcache@lfdr.de>; Sat, 21 Dec 2024 17:17:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5859FB8B9
+	for <lists+linux-bcache@lfdr.de>; Tue, 24 Dec 2024 03:44:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9065188E4D0
-	for <lists+linux-bcache@lfdr.de>; Sat, 21 Dec 2024 16:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA3451884920
+	for <lists+linux-bcache@lfdr.de>; Tue, 24 Dec 2024 02:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAC11C32;
-	Sat, 21 Dec 2024 16:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GgdmZ9Hx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XQZEmlFa";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FGDhGrVe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AnrZtlex"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857481E517;
+	Tue, 24 Dec 2024 02:44:04 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m25477.xmail.ntesmail.com (mail-m25477.xmail.ntesmail.com [103.129.254.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CBE84D02
-	for <linux-bcache@vger.kernel.org>; Sat, 21 Dec 2024 16:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED2DEBE
+	for <linux-bcache@vger.kernel.org>; Tue, 24 Dec 2024 02:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.129.254.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734797831; cv=none; b=fUQcGguGG5mTYFdCp4ob7R+b54Jo2OH6cusl0mk9Ujm4ljU+QKpuSSxh8nyc3onORqXGEUYtpTd/ghZxY81zOFI7/DboyVeaHo0vc7QelNCGTEgR/AaSsJC/AurMYVUAV1VgAC8YttmF6OXZB3fGjSY1ZpnUI8oadde5A2HW9aY=
+	t=1735008244; cv=none; b=o4zR6yYHYN6baZmlLFaT7mo3iFEtoyBsq4eejuyEP6s4OOsHGd0AD8ZVT8PVVZgsmrw4aKdW0dnBGDxNNEqVlQTc6hOkiZPKuS86QpjGemOghErXAP2L7xo03tAQKRO4vXrmy/E1qWuON2Hs4FxQGSzIl0XR7Ef9QU0huWg1f78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734797831; c=relaxed/simple;
-	bh=r/bQHyj1zpBEev2fE0HmiZjTW3lNyCdsH0WNFv81G9Y=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=ct8tsnxxVfqA6HTZUy3B4xMYkzGW8LVmgw9xbvNCDXVyo/lSdZMQ4jhM0XEEOr7A94RcEyXRq6muXHqAaTMzqXGEySQJREdQy9Fus93woFcJoOY3HF+O3jMWIlGcG6v1aojRLrG/4zR3pE8hcawvqJ6Pqi3BVv7BfbJnkbnwGZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GgdmZ9Hx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XQZEmlFa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FGDhGrVe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AnrZtlex; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E67E820163;
-	Sat, 21 Dec 2024 16:17:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1734797827; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eNcRIVRx0+TAw7psrqoLwgy0J6HkRXd0aeAaCqHEx5E=;
-	b=GgdmZ9Hx0Mfni11YRpr2ynFO8jf2HZis3o9CqoQmzmDQwXFiIJHxla0EvBWSZgBR19t6bB
-	C4OIHBOtNW9YePSOwgUg3urQerkTFJCv8BAzXatODdP8ivL402vvt531hKI3ch1kSOOlcm
-	NRphbsO0xphg8SjfAbJIL4LKN4WmTAI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1734797827;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eNcRIVRx0+TAw7psrqoLwgy0J6HkRXd0aeAaCqHEx5E=;
-	b=XQZEmlFayuh25seex7BX1Y/vO2hA+G9g+7dUJ5cb30YoO1L1DwsGQrKX8EdldKsJZS6AXO
-	0eapJzhoELAionBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=FGDhGrVe;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=AnrZtlex
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1734797826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eNcRIVRx0+TAw7psrqoLwgy0J6HkRXd0aeAaCqHEx5E=;
-	b=FGDhGrVeY/zT3WtF6EWSzlzbz5r+oHh9wGJdUrFimvWZqp+0HsDRyRIJixMVKIQn1ojqUO
-	7P7SfW4z6RKVOXRA0rjM2LdeOAjhewqQ91FLuTG0DbNO7YXXyAJfdDzXeT4YQJ5DobACH3
-	qHCyBO1NDaLBZkXqyUqy1DqnOZfWnUA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1734797826;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eNcRIVRx0+TAw7psrqoLwgy0J6HkRXd0aeAaCqHEx5E=;
-	b=AnrZtlex1T24O5yqSq1dkakAJ1FjfPCzHHFZk2awevZztXmWSy9nQUTH9QULGmXQnhrCBJ
-	jukOhOOLAwn+HqDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB43A1369C;
-	Sat, 21 Dec 2024 16:17:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 86UkNQLqZmfWOQAAD6G6ig
-	(envelope-from <colyli@suse.de>); Sat, 21 Dec 2024 16:17:06 +0000
+	s=arc-20240116; t=1735008244; c=relaxed/simple;
+	bh=78ZW1pryuOc4WFhINkiAtuFlqjn1blfGGngesh7g8Gw=;
+	h=Content-Type:Message-ID:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:From:Date; b=Q9XQquSrI+HV3ANZ36eEcs6SQ36QQabSMxFb3vl4wwteJGqNBs9Ql7eb44Rt+jfV610sQKCFy5eJQmB98ljJKoG58lPopMlwhSJpFmisAWrmkMNT1/LTNvz08p+Hcon2dSZu2dcST83dDdwDB3uBliUCA3Qt1A0YITXIjW1gKuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=easystack.cn; spf=none smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=103.129.254.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=easystack.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=easystack.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <ADMA2QCeLpIoVdS0XlSUG4rR.3.1735007910885.Hmail.mingzhe.zou@easystack.cn>
+To: colyli  <colyli@suse.de>
+Cc: linux-bcache <linux-bcache@vger.kernel.org>, zoumingzhe <zoumingzhe@qq.com>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MiAyLzNdIGJjYWNoZTogZml4IGlvIGVycm9yIGR1cmluZyBjYWNoZSByZWFkIHJhY2U=?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com Sirius_WEB_WIN_1.46.2
+In-Reply-To: <4da838e985ec3f7263a4ad4a9b307d15@suse.de>
+References: <20241119074031.27340-1-mingzhe.zou@easystack.cn> <20241119074031.27340-2-mingzhe.zou@easystack.cn> <AMcAQwBHLpIksKhhq8fkdqro.3.1734672038253.Hmail.mingzhe.zou@easystack.cn> <4da838e985ec3f7263a4ad4a9b307d15@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 22 Dec 2024 00:17:06 +0800
-From: colyli <colyli@suse.de>
-To: =?UTF-8?Q?=E9=82=B9=E6=98=8E=E5=93=B2?= <mingzhe.zou@easystack.cn>
-Cc: linux-bcache <linux-bcache@vger.kernel.org>, zoumingzhe
- <zoumingzhe@qq.com>
-Subject: Re: [PATCH v2 2/3] bcache: fix io error during cache read race
-In-Reply-To: <AMcAQwBHLpIksKhhq8fkdqro.3.1734672038253.Hmail.mingzhe.zou@easystack.cn>
-References: <20241119074031.27340-1-mingzhe.zou@easystack.cn>
- <20241119074031.27340-2-mingzhe.zou@easystack.cn>
- <AMcAQwBHLpIksKhhq8fkdqro.3.1734672038253.Hmail.mingzhe.zou@easystack.cn>
-User-Agent: Roundcube Webmail
-Message-ID: <4da838e985ec3f7263a4ad4a9b307d15@suse.de>
-X-Sender: colyli@suse.de
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: E67E820163
-X-Spam-Score: -4.50
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[qq.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,qq.com];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Received: from mingzhe.zou@easystack.cn( [122.96.136.62] ) by ajax-webmail ( [127.0.0.1] ) ; Tue, 24 Dec 2024 10:38:30 +0800 (GMT+08:00)
+From: =?UTF-8?B?6YK55piO5ZOy?= <mingzhe.zou@easystack.cn>
+Date: Tue, 24 Dec 2024 10:38:30 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCTxkeVk4aQkJMGE8ZGUMfQlYVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSUlVQk1VSkhNVU1JWVdZFhoPEhUdFFlBWU9LSFVKS0lIQkhCVUpLS1
+	VKQktLWQY+
+X-HM-Tid: 0a93f685fe550242kunm193f34a6243
+X-HM-MType: 1
+X-HM-NTES-SC: AL0_4z5B86Wr4Tz9jdMF+bhXMdPGVk+6WUBic5BJK0kLqbiJsCmuG9MdhyqTcq
+	cnmL0IyrvQXLgMHt5crrNISNn5Z9i8bZjQruLsMPrapiSxI+PNDLofrdtp2HN5EdJ81+JSif7PUb
+	LdfYDeLtLocOrGumCzGAoWVrI5TD8ymDHIg+M=
+X-HM-Sender-Digest: e1kJHlYWEh9ZQUpCQ0lKS01MTkJOTjdXWQweGVlBDwkOHldZEh8eFQ9Z
+	QVlHOj82OkkqOB43CzIULR8oSyMXKC48TwkpVUhVSkxITktLTEJKSk5MSlUzFhoSF1UWEhUcARMe
+	VQEUDjseGggCCA8aGBBVGBVFWVdZEgtZQVlKSUlVQk1VSkhNVU1JWVdZCAFZQUNOTE03V1kUCw8S
+	FBUIWUFLNwY+
 
-在 2024-12-20 13:20，邹明哲 写道：
-> Hi, Coly:
-> 
-> Our users have reported this issue to us in their generation 
-> environment!
-> 
-> Please review these patches and provide feedback.
-> 
-> Thank you very much.
-
-Hi Mingzhe,
-
-Yes it is planed for next week, I will start to look at this series.
-
-BTW, I don't see change log from the v1 to v2 series. Can I assume the 
-v2 series fix warning reported by kernel test robot?
-
-Thanks.
-
-Coly Li
-
-> 
-> mingzhe
-> 
-> Original:
-> From：mingzhe.zou<mingzhe.zou@easystack.cn>
-> Date：2024-11-19 15:40:30(中国 (GMT+08:00))
-> To：colyli<colyli@suse.de>
-> Cc：linux-bcache<linux-bcache@vger.kernel.org> ,
-> dongsheng.yang<dongsheng.yang@easystack.cn> ,
-> zoumingzhe<zoumingzhe@qq.com>
-> Subject：[PATCH v2 2/3] bcache: fix io error during cache read race
-> From: Mingzhe Zou <mingzhe.zou@easystack.cn>
-> 
-> In our production environment, bcache returned IO_ERROR(errno=-5).
-> These errors always happen during 1M read IO under high pressure
-> and without any message log. When the error occurred, we stopped
-> all reading and writing and used 1M read IO to read the entire disk
-> without any errors. Later we found that cache_read_races of cache_set
-> is non-zero.
-> 
-> If a large (1M) read bio is split into two or more bios, when one bio
-> reads dirty data, s-&gt;read_dirty_data will be set to true and remain.
-> If the bucket was reused while our subsequent read bio was in flight,
-> the read will be unrecoverable(cannot read data from backing).
-> 
-> This patch increases the count for bucket-&gt;pin to prevent the bucket
-> from being reclaimed and reused.
-> 
-> Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
-> ---
->  drivers/md/bcache/request.c | 39 ++++++++++++++++++++++++-------------
->  1 file changed, 26 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index af345dc6fde1..6c41957138e5 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -502,12 +502,8 @@ static void bch_cache_read_endio(struct bio *bio)
->  	struct closure *cl = bio-&gt;bi_private;
->  	struct search *s = container_of(cl, struct search, cl);
-> 
-> -	/*
-> -	 * If the bucket was reused while our bio was in flight, we might 
-> have
-> -	 * read the wrong data. Set s-&gt;error but not error so it doesn't 
-> get
-> -	 * counted against the cache device, but we'll still reread the data
-> -	 * from the backing device.
-> -	 */
-> +	BUG_ON(ptr_stale(s-&gt;iop.c, &amp;b-&gt;key, 0)); // bucket should
-> not be reused
-> +	atomic_dec(&amp;PTR_BUCKET(s-&gt;iop.c, &amp;b-&gt;key, 0)-&gt;pin);
-> 
->  	if (bio-&gt;bi_status)
->  		s-&gt;iop.status = bio-&gt;bi_status;
-> @@ -520,6 +516,8 @@ static void bch_cache_read_endio(struct bio *bio)
->  	bch_bbio_endio(s-&gt;iop.c, bio, bio-&gt;bi_status, "reading from 
-> cache");
->  }
-> 
-> +static void backing_request_endio(struct bio *bio);
-> +
->  /*
->   * Read from a single key, handling the initial cache miss if the key 
-> starts in
->   * the middle of the bio
-> @@ -529,7 +527,6 @@ static int cache_lookup_fn(struct btree_op *op,
-> struct btree *b, struct bkey *k)
->  	struct search *s = container_of(op, struct search, op);
->  	struct bio *n, *bio = &amp;s-&gt;bio.bio;
->  	struct bkey *bio_key;
-> -	unsigned int ptr;
-> 
->  	if (bkey_cmp(k, &amp;KEY(s-&gt;iop.inode, bio-&gt;bi_iter.bi_sector,
-> 0)) &lt;= 0)
->  		return MAP_CONTINUE;
-> @@ -553,20 +550,36 @@ static int cache_lookup_fn(struct btree_op *op,
-> struct btree *b, struct bkey *k)
->  	if (!KEY_SIZE(k))
->  		return MAP_CONTINUE;
-> 
-> -	/* XXX: figure out best pointer - for multiple cache devices */
-> -	ptr = 0;
-> +	/*
-> +	 * If the bucket was reused while our bio was in flight, we might 
-> have
-> +	 * read the wrong data. Set s-&gt;cache_read_races and reread the 
-> data
-> +	 * from the backing device.
-> +	 */
-> +	spin_lock(&amp;PTR_BUCKET(b-&gt;c, k, 0)-&gt;lock);
-> +	if (ptr_stale(s-&gt;iop.c, k, 0)) {
-> +		spin_unlock(&amp;PTR_BUCKET(b-&gt;c, k, 0)-&gt;lock);
-> +		atomic_long_inc(&amp;s-&gt;iop.c-&gt;cache_read_races);
-> +		pr_warn("%pU cache read race count: %lu", 
-> s-&gt;iop.c-&gt;sb.set_uuid,
-> +			atomic_long_read(&amp;s-&gt;iop.c-&gt;cache_read_races));
-> 
-> -	PTR_BUCKET(b-&gt;c, k, ptr)-&gt;prio = INITIAL_PRIO;
-> +		n-&gt;bi_end_io	= backing_request_endio;
-> +		n-&gt;bi_private	= &amp;s-&gt;cl;
-> +
-> +		/* I/O request sent to backing device */
-> +		closure_bio_submit(s-&gt;iop.c, n, &amp;s-&gt;cl);
-> +		return n == bio ? MAP_DONE : MAP_CONTINUE;
-> +	}
-> +	atomic_inc(&amp;PTR_BUCKET(s-&gt;iop.c, k, 0)-&gt;pin);
-> +	spin_unlock(&amp;PTR_BUCKET(b-&gt;c, k, 0)-&gt;lock);
-> 
-> -	if (KEY_DIRTY(k))
-> -		s-&gt;read_dirty_data = true;
-> +	PTR_BUCKET(b-&gt;c, k, 0)-&gt;prio = INITIAL_PRIO;
-> 
->  	n = bio_next_split(bio, min_t(uint64_t, INT_MAX,
->  				      KEY_OFFSET(k) - bio-&gt;bi_iter.bi_sector),
->  			   GFP_NOIO, &amp;s-&gt;d-&gt;bio_split);
-> 
->  	bio_key = &amp;container_of(n, struct bbio, bio)-&gt;key;
-> -	bch_bkey_copy_single_ptr(bio_key, k, ptr);
-> +	bch_bkey_copy_single_ptr(bio_key, k, 0);
-> 
->  	bch_cut_front(&amp;KEY(s-&gt;iop.inode, n-&gt;bi_iter.bi_sector, 0), 
-> bio_key);
->  	bch_cut_back(&amp;KEY(s-&gt;iop.inode, bio_end_sector(n), 0), 
-> bio_key);
+SGkgQ29seSBMaQoKWWVzLCBpdCBtYWlubHkgZml4ZXMgdGhlIHdhcm5pbmcgb2Yga2VybmVsIHRl
+c3Qgcm9ib3QuCgptaW5nemhlCgpPcmlnaW5hbDoKRnJvbe+8mmNvbHlsaSA8Y29seWxpQHN1c2Uu
+ZGU+CkRhdGXvvJoyMDI0LTEyLTIyIDAwOjE3OjA2KOS4reWbvSAoR01UKzA4OjAwKSkKVG/vvJrp
+grnmmI7lk7I8bWluZ3poZS56b3VAZWFzeXN0YWNrLmNuPgpDY++8mmxpbnV4LWJjYWNoZSA8bGlu
+dXgtYmNhY2hlQHZnZXIua2VybmVsLm9yZz4gLCB6b3VtaW5nemhlIDx6b3VtaW5nemhlQHFxLmNv
+bT4KU3ViamVjdO+8mlJlOiBbUEFUQ0ggdjIgMi8zXSBiY2FjaGU6IGZpeCBpbyBlcnJvciBkdXJp
+bmcgY2FjaGUgcmVhZCByYWNlCuWcqCAyMDI0LTEyLTIwIDEzOjIw77yM6YK55piO5ZOyIOWGmemB
+k++8mgomZ3Q7IEhpLCBDb2x5OgomZ3Q7IAomZ3Q7IE91ciB1c2VycyBoYXZlIHJlcG9ydGVkIHRo
+aXMgaXNzdWUgdG8gdXMgaW4gdGhlaXIgZ2VuZXJhdGlvbiAKJmd0OyBlbnZpcm9ubWVudCEKJmd0
+OyAKJmd0OyBQbGVhc2UgcmV2aWV3IHRoZXNlIHBhdGNoZXMgYW5kIHByb3ZpZGUgZmVlZGJhY2su
+CiZndDsgCiZndDsgVGhhbmsgeW91IHZlcnkgbXVjaC4KCkhpIE1pbmd6aGUsCgpZZXMgaXQgaXMg
+cGxhbmVkIGZvciBuZXh0IHdlZWssIEkgd2lsbCBzdGFydCB0byBsb29rIGF0IHRoaXMgc2VyaWVz
+LgoKQlRXLCBJIGRvbid0IHNlZSBjaGFuZ2UgbG9nIGZyb20gdGhlIHYxIHRvIHYyIHNlcmllcy4g
+Q2FuIEkgYXNzdW1lIHRoZSAKdjIgc2VyaWVzIGZpeCB3YXJuaW5nIHJlcG9ydGVkIGJ5IGtlcm5l
+bCB0ZXN0IHJvYm90PwoKVGhhbmtzLgoKQ29seSBMaQoKJmd0OyAKJmd0OyBtaW5nemhlCiZndDsg
+CiZndDsgT3JpZ2luYWw6CiZndDsgRnJvbe+8mm1pbmd6aGUuem91PG1pbmd6aGUuem91QGVhc3lz
+dGFjay5jbj4KJmd0OyBEYXRl77yaMjAyNC0xMS0xOSAxNTo0MDozMCjkuK3lm70gKEdNVCswODow
+MCkpCiZndDsgVG/vvJpjb2x5bGk8Y29seWxpQHN1c2UuZGU+CiZndDsgQ2PvvJpsaW51eC1iY2Fj
+aGU8bGludXgtYmNhY2hlQHZnZXIua2VybmVsLm9yZz4gLAomZ3Q7IGRvbmdzaGVuZy55YW5nPGRv
+bmdzaGVuZy55YW5nQGVhc3lzdGFjay5jbj4gLAomZ3Q7IHpvdW1pbmd6aGU8em91bWluZ3poZUBx
+cS5jb20+CiZndDsgU3ViamVjdO+8mltQQVRDSCB2MiAyLzNdIGJjYWNoZTogZml4IGlvIGVycm9y
+IGR1cmluZyBjYWNoZSByZWFkIHJhY2UKJmd0OyBGcm9tOiBNaW5nemhlIFpvdSA8bWluZ3poZS56
+b3VAZWFzeXN0YWNrLmNuPgomZ3Q7IAomZ3Q7IEluIG91ciBwcm9kdWN0aW9uIGVudmlyb25tZW50
+LCBiY2FjaGUgcmV0dXJuZWQgSU9fRVJST1IoZXJybm89LTUpLgomZ3Q7IFRoZXNlIGVycm9ycyBh
+bHdheXMgaGFwcGVuIGR1cmluZyAxTSByZWFkIElPIHVuZGVyIGhpZ2ggcHJlc3N1cmUKJmd0OyBh
+bmQgd2l0aG91dCBhbnkgbWVzc2FnZSBsb2cuIFdoZW4gdGhlIGVycm9yIG9jY3VycmVkLCB3ZSBz
+dG9wcGVkCiZndDsgYWxsIHJlYWRpbmcgYW5kIHdyaXRpbmcgYW5kIHVzZWQgMU0gcmVhZCBJTyB0
+byByZWFkIHRoZSBlbnRpcmUgZGlzawomZ3Q7IHdpdGhvdXQgYW55IGVycm9ycy4gTGF0ZXIgd2Ug
+Zm91bmQgdGhhdCBjYWNoZV9yZWFkX3JhY2VzIG9mIGNhY2hlX3NldAomZ3Q7IGlzIG5vbi16ZXJv
+LgomZ3Q7IAomZ3Q7IElmIGEgbGFyZ2UgKDFNKSByZWFkIGJpbyBpcyBzcGxpdCBpbnRvIHR3byBv
+ciBtb3JlIGJpb3MsIHdoZW4gb25lIGJpbwomZ3Q7IHJlYWRzIGRpcnR5IGRhdGEsIHMtJmd0O3Jl
+YWRfZGlydHlfZGF0YSB3aWxsIGJlIHNldCB0byB0cnVlIGFuZCByZW1haW4uCiZndDsgSWYgdGhl
+IGJ1Y2tldCB3YXMgcmV1c2VkIHdoaWxlIG91ciBzdWJzZXF1ZW50IHJlYWQgYmlvIHdhcyBpbiBm
+bGlnaHQsCiZndDsgdGhlIHJlYWQgd2lsbCBiZSB1bnJlY292ZXJhYmxlKGNhbm5vdCByZWFkIGRh
+dGEgZnJvbSBiYWNraW5nKS4KJmd0OyAKJmd0OyBUaGlzIHBhdGNoIGluY3JlYXNlcyB0aGUgY291
+bnQgZm9yIGJ1Y2tldC0mZ3Q7cGluIHRvIHByZXZlbnQgdGhlIGJ1Y2tldAomZ3Q7IGZyb20gYmVp
+bmcgcmVjbGFpbWVkIGFuZCByZXVzZWQuCiZndDsgCiZndDsgU2lnbmVkLW9mZi1ieTogTWluZ3po
+ZSBab3UgPG1pbmd6aGUuem91QGVhc3lzdGFjay5jbj4KJmd0OyAtLS0KJmd0OyAgZHJpdmVycy9t
+ZC9iY2FjaGUvcmVxdWVzdC5jIHwgMzkgKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0t
+LS0tLQomZ3Q7ICAxIGZpbGUgY2hhbmdlZCwgMjYgaW5zZXJ0aW9ucygrKSwgMTMgZGVsZXRpb25z
+KC0pCiZndDsgCiZndDsgZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWQvYmNhY2hlL3JlcXVlc3QuYyBi
+L2RyaXZlcnMvbWQvYmNhY2hlL3JlcXVlc3QuYwomZ3Q7IGluZGV4IGFmMzQ1ZGM2ZmRlMS4uNmM0
+MTk1NzEzOGU1IDEwMDY0NAomZ3Q7IC0tLSBhL2RyaXZlcnMvbWQvYmNhY2hlL3JlcXVlc3QuYwom
+Z3Q7ICsrKyBiL2RyaXZlcnMvbWQvYmNhY2hlL3JlcXVlc3QuYwomZ3Q7IEBAIC01MDIsMTIgKzUw
+Miw4IEBAIHN0YXRpYyB2b2lkIGJjaF9jYWNoZV9yZWFkX2VuZGlvKHN0cnVjdCBiaW8gKmJpbykK
+Jmd0OyAgCXN0cnVjdCBjbG9zdXJlICpjbCA9IGJpby0mZ3Q7YmlfcHJpdmF0ZTsKJmd0OyAgCXN0
+cnVjdCBzZWFyY2ggKnMgPSBjb250YWluZXJfb2YoY2wsIHN0cnVjdCBzZWFyY2gsIGNsKTsKJmd0
+OyAKJmd0OyAtCS8qCiZndDsgLQkgKiBJZiB0aGUgYnVja2V0IHdhcyByZXVzZWQgd2hpbGUgb3Vy
+IGJpbyB3YXMgaW4gZmxpZ2h0LCB3ZSBtaWdodCAKJmd0OyBoYXZlCiZndDsgLQkgKiByZWFkIHRo
+ZSB3cm9uZyBkYXRhLiBTZXQgcy0mZ3Q7ZXJyb3IgYnV0IG5vdCBlcnJvciBzbyBpdCBkb2Vzbid0
+IAomZ3Q7IGdldAomZ3Q7IC0JICogY291bnRlZCBhZ2FpbnN0IHRoZSBjYWNoZSBkZXZpY2UsIGJ1
+dCB3ZSdsbCBzdGlsbCByZXJlYWQgdGhlIGRhdGEKJmd0OyAtCSAqIGZyb20gdGhlIGJhY2tpbmcg
+ZGV2aWNlLgomZ3Q7IC0JICovCiZndDsgKwlCVUdfT04ocHRyX3N0YWxlKHMtJmd0O2lvcC5jLCAm
+YW1wO2ItJmd0O2tleSwgMCkpOyAvLyBidWNrZXQgc2hvdWxkCiZndDsgbm90IGJlIHJldXNlZAom
+Z3Q7ICsJYXRvbWljX2RlYygmYW1wO1BUUl9CVUNLRVQocy0mZ3Q7aW9wLmMsICZhbXA7Yi0mZ3Q7
+a2V5LCAwKS0mZ3Q7cGluKTsKJmd0OyAKJmd0OyAgCWlmIChiaW8tJmd0O2JpX3N0YXR1cykKJmd0
+OyAgCQlzLSZndDtpb3Auc3RhdHVzID0gYmlvLSZndDtiaV9zdGF0dXM7CiZndDsgQEAgLTUyMCw2
+ICs1MTYsOCBAQCBzdGF0aWMgdm9pZCBiY2hfY2FjaGVfcmVhZF9lbmRpbyhzdHJ1Y3QgYmlvICpi
+aW8pCiZndDsgIAliY2hfYmJpb19lbmRpbyhzLSZndDtpb3AuYywgYmlvLCBiaW8tJmd0O2JpX3N0
+YXR1cywgInJlYWRpbmcgZnJvbSAKJmd0OyBjYWNoZSIpOwomZ3Q7ICB9CiZndDsgCiZndDsgK3N0
+YXRpYyB2b2lkIGJhY2tpbmdfcmVxdWVzdF9lbmRpbyhzdHJ1Y3QgYmlvICpiaW8pOwomZ3Q7ICsK
+Jmd0OyAgLyoKJmd0OyAgICogUmVhZCBmcm9tIGEgc2luZ2xlIGtleSwgaGFuZGxpbmcgdGhlIGlu
+aXRpYWwgY2FjaGUgbWlzcyBpZiB0aGUga2V5IAomZ3Q7IHN0YXJ0cyBpbgomZ3Q7ICAgKiB0aGUg
+bWlkZGxlIG9mIHRoZSBiaW8KJmd0OyBAQCAtNTI5LDcgKzUyNyw2IEBAIHN0YXRpYyBpbnQgY2Fj
+aGVfbG9va3VwX2ZuKHN0cnVjdCBidHJlZV9vcCAqb3AsCiZndDsgc3RydWN0IGJ0cmVlICpiLCBz
+dHJ1Y3QgYmtleSAqaykKJmd0OyAgCXN0cnVjdCBzZWFyY2ggKnMgPSBjb250YWluZXJfb2Yob3As
+IHN0cnVjdCBzZWFyY2gsIG9wKTsKJmd0OyAgCXN0cnVjdCBiaW8gKm4sICpiaW8gPSAmYW1wO3Mt
+Jmd0O2Jpby5iaW87CiZndDsgIAlzdHJ1Y3QgYmtleSAqYmlvX2tleTsKJmd0OyAtCXVuc2lnbmVk
+IGludCBwdHI7CiZndDsgCiZndDsgIAlpZiAoYmtleV9jbXAoaywgJmFtcDtLRVkocy0mZ3Q7aW9w
+Lmlub2RlLCBiaW8tJmd0O2JpX2l0ZXIuYmlfc2VjdG9yLAomZ3Q7IDApKSAmbHQ7PSAwKQomZ3Q7
+ICAJCXJldHVybiBNQVBfQ09OVElOVUU7CiZndDsgQEAgLTU1MywyMCArNTUwLDM2IEBAIHN0YXRp
+YyBpbnQgY2FjaGVfbG9va3VwX2ZuKHN0cnVjdCBidHJlZV9vcCAqb3AsCiZndDsgc3RydWN0IGJ0
+cmVlICpiLCBzdHJ1Y3QgYmtleSAqaykKJmd0OyAgCWlmICghS0VZX1NJWkUoaykpCiZndDsgIAkJ
+cmV0dXJuIE1BUF9DT05USU5VRTsKJmd0OyAKJmd0OyAtCS8qIFhYWDogZmlndXJlIG91dCBiZXN0
+IHBvaW50ZXIgLSBmb3IgbXVsdGlwbGUgY2FjaGUgZGV2aWNlcyAqLwomZ3Q7IC0JcHRyID0gMDsK
+Jmd0OyArCS8qCiZndDsgKwkgKiBJZiB0aGUgYnVja2V0IHdhcyByZXVzZWQgd2hpbGUgb3VyIGJp
+byB3YXMgaW4gZmxpZ2h0LCB3ZSBtaWdodCAKJmd0OyBoYXZlCiZndDsgKwkgKiByZWFkIHRoZSB3
+cm9uZyBkYXRhLiBTZXQgcy0mZ3Q7Y2FjaGVfcmVhZF9yYWNlcyBhbmQgcmVyZWFkIHRoZSAKJmd0
+OyBkYXRhCiZndDsgKwkgKiBmcm9tIHRoZSBiYWNraW5nIGRldmljZS4KJmd0OyArCSAqLwomZ3Q7
+ICsJc3Bpbl9sb2NrKCZhbXA7UFRSX0JVQ0tFVChiLSZndDtjLCBrLCAwKS0mZ3Q7bG9jayk7CiZn
+dDsgKwlpZiAocHRyX3N0YWxlKHMtJmd0O2lvcC5jLCBrLCAwKSkgewomZ3Q7ICsJCXNwaW5fdW5s
+b2NrKCZhbXA7UFRSX0JVQ0tFVChiLSZndDtjLCBrLCAwKS0mZ3Q7bG9jayk7CiZndDsgKwkJYXRv
+bWljX2xvbmdfaW5jKCZhbXA7cy0mZ3Q7aW9wLmMtJmd0O2NhY2hlX3JlYWRfcmFjZXMpOwomZ3Q7
+ICsJCXByX3dhcm4oIiVwVSBjYWNoZSByZWFkIHJhY2UgY291bnQ6ICVsdSIsIAomZ3Q7IHMtJmd0
+O2lvcC5jLSZndDtzYi5zZXRfdXVpZCwKJmd0OyArCQkJYXRvbWljX2xvbmdfcmVhZCgmYW1wO3Mt
+Jmd0O2lvcC5jLSZndDtjYWNoZV9yZWFkX3JhY2VzKSk7CiZndDsgCiZndDsgLQlQVFJfQlVDS0VU
+KGItJmd0O2MsIGssIHB0ciktJmd0O3ByaW8gPSBJTklUSUFMX1BSSU87CiZndDsgKwkJbi0mZ3Q7
+YmlfZW5kX2lvCT0gYmFja2luZ19yZXF1ZXN0X2VuZGlvOwomZ3Q7ICsJCW4tJmd0O2JpX3ByaXZh
+dGUJPSAmYW1wO3MtJmd0O2NsOwomZ3Q7ICsKJmd0OyArCQkvKiBJL08gcmVxdWVzdCBzZW50IHRv
+IGJhY2tpbmcgZGV2aWNlICovCiZndDsgKwkJY2xvc3VyZV9iaW9fc3VibWl0KHMtJmd0O2lvcC5j
+LCBuLCAmYW1wO3MtJmd0O2NsKTsKJmd0OyArCQlyZXR1cm4gbiA9PSBiaW8gPyBNQVBfRE9ORSA6
+IE1BUF9DT05USU5VRTsKJmd0OyArCX0KJmd0OyArCWF0b21pY19pbmMoJmFtcDtQVFJfQlVDS0VU
+KHMtJmd0O2lvcC5jLCBrLCAwKS0mZ3Q7cGluKTsKJmd0OyArCXNwaW5fdW5sb2NrKCZhbXA7UFRS
+X0JVQ0tFVChiLSZndDtjLCBrLCAwKS0mZ3Q7bG9jayk7CiZndDsgCiZndDsgLQlpZiAoS0VZX0RJ
+UlRZKGspKQomZ3Q7IC0JCXMtJmd0O3JlYWRfZGlydHlfZGF0YSA9IHRydWU7CiZndDsgKwlQVFJf
+QlVDS0VUKGItJmd0O2MsIGssIDApLSZndDtwcmlvID0gSU5JVElBTF9QUklPOwomZ3Q7IAomZ3Q7
+ICAJbiA9IGJpb19uZXh0X3NwbGl0KGJpbywgbWluX3QodWludDY0X3QsIElOVF9NQVgsCiZndDsg
+IAkJCQkgICAgICBLRVlfT0ZGU0VUKGspIC0gYmlvLSZndDtiaV9pdGVyLmJpX3NlY3RvciksCiZn
+dDsgIAkJCSAgIEdGUF9OT0lPLCAmYW1wO3MtJmd0O2QtJmd0O2Jpb19zcGxpdCk7CiZndDsgCiZn
+dDsgIAliaW9fa2V5ID0gJmFtcDtjb250YWluZXJfb2Yobiwgc3RydWN0IGJiaW8sIGJpbyktJmd0
+O2tleTsKJmd0OyAtCWJjaF9ia2V5X2NvcHlfc2luZ2xlX3B0cihiaW9fa2V5LCBrLCBwdHIpOwom
+Z3Q7ICsJYmNoX2JrZXlfY29weV9zaW5nbGVfcHRyKGJpb19rZXksIGssIDApOwomZ3Q7IAomZ3Q7
+ICAJYmNoX2N1dF9mcm9udCgmYW1wO0tFWShzLSZndDtpb3AuaW5vZGUsIG4tJmd0O2JpX2l0ZXIu
+Ymlfc2VjdG9yLCAwKSwgCiZndDsgYmlvX2tleSk7CiZndDsgIAliY2hfY3V0X2JhY2soJmFtcDtL
+RVkocy0mZ3Q7aW9wLmlub2RlLCBiaW9fZW5kX3NlY3RvcihuKSwgMCksIAomZ3Q7IGJpb19rZXkp
+OwoKCjwvbWluZ3poZS56b3VAZWFzeXN0YWNrLmNuPjwvbWluZ3poZS56b3VAZWFzeXN0YWNrLmNu
+Pjwvem91bWluZ3poZUBxcS5jb20+PC9kb25nc2hlbmcueWFuZ0BlYXN5c3RhY2suY24+PC9saW51
+eC1iY2FjaGVAdmdlci5rZXJuZWwub3JnPjwvY29seWxpQHN1c2UuZGU+PC9taW5nemhlLnpvdUBl
+YXN5c3RhY2suY24+PC96b3VtaW5nemhlQHFxLmNvbT48L2xpbnV4LWJjYWNoZUB2Z2VyLmtlcm5l
+bC5vcmc+PC9taW5nemhlLnpvdUBlYXN5c3RhY2suY24+PC9jb2x5bGlAc3VzZS5kZT4NCg0K
 
