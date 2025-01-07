@@ -1,47 +1,47 @@
-Return-Path: <linux-bcache+bounces-833-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-834-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38164A03C6A
-	for <lists+linux-bcache@lfdr.de>; Tue,  7 Jan 2025 11:32:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949E4A03C6D
+	for <lists+linux-bcache@lfdr.de>; Tue,  7 Jan 2025 11:32:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D79018871CA
-	for <lists+linux-bcache@lfdr.de>; Tue,  7 Jan 2025 10:32:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C54D160DAD
+	for <lists+linux-bcache@lfdr.de>; Tue,  7 Jan 2025 10:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EB01EC01F;
-	Tue,  7 Jan 2025 10:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44BE1EE00B;
+	Tue,  7 Jan 2025 10:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="esaULRTP"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vZjivCIT"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969431EBFE6
-	for <linux-bcache@vger.kernel.org>; Tue,  7 Jan 2025 10:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB961EC00B
+	for <linux-bcache@vger.kernel.org>; Tue,  7 Jan 2025 10:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736245882; cv=none; b=j7YM7gdfWMWtYujDD/kn4tp4XC+6PE5ms/kdWBe4ObYtmWfOpbjjIgVkF8oBoZQyfA1uwifGsxRSqzlv6OjcGWtRGX2bvA1NWWBaocZg/hZwe4/WG0WhEtD2RMVLWs2CbQw1e/4hTP94u6MrlEd96TLBShsbtJHNT5/IiwYaVwc=
+	t=1736245892; cv=none; b=sxgm6YhEaKbeyiF7+s3JxxvRHdV3eL3o9zYSEj1HRAsg/WMFzxBi/hpxdlU0AReOVc+sw1YyL6YXv1S8hiu389maMNnVwrV7jegKptMY1oeenAWOamc1a9gcizooUjvVKL6SHR5M+a12wK8sDR8tpEQxTQyQo3ynPnoJ97WVp1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736245882; c=relaxed/simple;
-	bh=E56oakjwiQ67S9pbo62qwFkHgJ/xiM5ptlG6WQZQdfE=;
+	s=arc-20240116; t=1736245892; c=relaxed/simple;
+	bh=D548V7hh0U46rF7q+LXm4bbB87LYBjBii1yPiOSqpGc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZcFllGj5zlGeKQvOoixK11L1oLan24ZCilvUDTAGDXf/aHwCMXESKDU5hxrT1MJabb4A0H1eaAD+ceSy8cdtoE6PX/SCn/lU36CJuDOGFce31LNe9wX9K9jJql+fzssOsen+4isANIVDkob7aGlVyMfIsCc1bBH/UCZbOMxUr3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=esaULRTP; arc=none smtp.client-ip=91.218.175.183
+	 MIME-Version; b=i4xPZb5KBqfEK88ncsi0gFTlGKulTEZEFAQ+XP2uyhMgdPlR2kxf2yhmlMxJP2TVeTCJyfXY2DQ1lXv1QI2uHDSRpME9sGRvkrq96nC7PvJ9f6nhRZMsSqUG+cCMi7bw0MT8kzz/f0tpLGH7ZZQC7ypGih/i38pucaRpBw2dLJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vZjivCIT; arc=none smtp.client-ip=91.218.175.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1736245871;
+	t=1736245880;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+xvialgS7HaL5bNGQCJJkq5pWo3rNO6yxp5m4orZsJo=;
-	b=esaULRTPMu3B79TfbfKEvjD+TaDHfJ+fwY/KszEm5wdues6LzLGutwzdeO/EZd3BXHh8Jf
-	SuzEYE2A9Cuni/8yFK8pxLjzNDhqNa8YaOul2H3g3AiswPrTCRg36Oqwn014sFFmpncQzj
-	+sdtXCEuYJeTOQkO755Pcq37daNAQ+M=
+	bh=8q+hOL6iOB+NGsGoQrl03bMceyTd32KNtqiUhx+Q/S0=;
+	b=vZjivCITOU2mJyqBgpRiWGkrCFftJ2SQ+j9t0QDocOfafNluZztL/hPHGNKB7cYeuSYPfl
+	FJahRSLCcqXJmVCJDYHOKBXR2EYaytnBTvLo41H3FW0qZchGoeoGBd98pj93RgZaO2hN9b
+	U3ngGfRTLd/NcliBKR0zDTvkhK+tWuQ=
 From: Dongsheng Yang <dongsheng.yang@linux.dev>
 To: axboe@kernel.dk,
 	dan.j.williams@intel.com,
@@ -56,9 +56,9 @@ Cc: linux-block@vger.kernel.org,
 	linux-cxl@vger.kernel.org,
 	linux-bcache@vger.kernel.org,
 	Dongsheng Yang <dongsheng.yang@linux.dev>
-Subject: [PATCH v3 5/8] cbd: introduce cbd_blkdev
-Date: Tue,  7 Jan 2025 10:30:21 +0000
-Message-Id: <20250107103024.326986-6-dongsheng.yang@linux.dev>
+Subject: [PATCH v3 6/8] cbd: introduce cbd_backend
+Date: Tue,  7 Jan 2025 10:30:22 +0000
+Message-Id: <20250107103024.326986-7-dongsheng.yang@linux.dev>
 In-Reply-To: <20250107103024.326986-1-dongsheng.yang@linux.dev>
 References: <20250107103024.326986-1-dongsheng.yang@linux.dev>
 Precedence: bulk
@@ -70,1497 +70,1453 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-The "cbd_blkdev" represents a virtual block device named "/dev/cbdX". It
-corresponds to a backend. The "blkdev" interacts with upper-layer users
-and accepts IO requests from them. A "blkdev" includes multiple
-"cbd_queues", each of which requires a "cbd_channel" to
-interact with the backend's handler. The "cbd_queue" forwards IO
-requests from the upper layer to the backend's handler through the
-channel.
+The "cbd_backend" is responsible for exposing a local block device (such
+as "/dev/sda") through the "cbd_transport" to other hosts.
+
+Any host that registers this transport can map this backend to a local
+"cbd device"(such as "/dev/cbd0"). All reads and writes to "cbd0" are
+transmitted through the channel inside the transport to the backend. The handler
+inside the backend is responsible for processing these read and write
+requests, converting them into read and write requests corresponding to
+"sda".
 
 Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
 ---
- drivers/block/cbd/cbd_blkdev.c | 551 +++++++++++++++++++++++++++++++++
- drivers/block/cbd/cbd_blkdev.h |  92 ++++++
- drivers/block/cbd/cbd_queue.c  | 516 ++++++++++++++++++++++++++++++
- drivers/block/cbd/cbd_queue.h  | 288 +++++++++++++++++
- 4 files changed, 1447 insertions(+)
- create mode 100644 drivers/block/cbd/cbd_blkdev.c
- create mode 100644 drivers/block/cbd/cbd_blkdev.h
- create mode 100644 drivers/block/cbd/cbd_queue.c
- create mode 100644 drivers/block/cbd/cbd_queue.h
+ drivers/block/cbd/cbd_backend.c | 730 ++++++++++++++++++++++++++++++++
+ drivers/block/cbd/cbd_backend.h | 137 ++++++
+ drivers/block/cbd/cbd_handler.c | 468 ++++++++++++++++++++
+ drivers/block/cbd/cbd_handler.h |  66 +++
+ 4 files changed, 1401 insertions(+)
+ create mode 100644 drivers/block/cbd/cbd_backend.c
+ create mode 100644 drivers/block/cbd/cbd_backend.h
+ create mode 100644 drivers/block/cbd/cbd_handler.c
+ create mode 100644 drivers/block/cbd/cbd_handler.h
 
-diff --git a/drivers/block/cbd/cbd_blkdev.c b/drivers/block/cbd/cbd_blkdev.c
+diff --git a/drivers/block/cbd/cbd_backend.c b/drivers/block/cbd/cbd_backend.c
 new file mode 100644
-index 000000000000..664fe7daeb9f
+index 000000000000..e576658c237c
 --- /dev/null
-+++ b/drivers/block/cbd/cbd_blkdev.c
-@@ -0,0 +1,551 @@
++++ b/drivers/block/cbd/cbd_backend.c
+@@ -0,0 +1,730 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
++
 +#include "cbd_internal.h"
-+#include "cbd_blkdev.h"
-+
-+static ssize_t backend_id_show(struct device *dev,
-+			       struct device_attribute *attr,
-+			       char *buf)
-+{
-+	struct cbd_blkdev_device *blkdev_dev;
-+	struct cbd_blkdev_info *blkdev_info;
-+
-+	blkdev_dev = container_of(dev, struct cbd_blkdev_device, dev);
-+	blkdev_info = cbdt_blkdev_info_read(blkdev_dev->cbdt, blkdev_dev->id);
-+	if (!blkdev_info)
-+		return 0;
-+
-+	if (blkdev_info->state == CBD_BLKDEV_STATE_NONE)
-+		return 0;
-+
-+	return sprintf(buf, "%u\n", blkdev_info->backend_id);
-+}
-+static DEVICE_ATTR_ADMIN_RO(backend_id);
++#include "cbd_transport.h"
++#include "cbd_host.h"
++#include "cbd_segment.h"
++#include "cbd_channel.h"
++#include "cbd_cache/cbd_cache.h"
++#include "cbd_handler.h"
++#include "cbd_backend.h"
 +
 +static ssize_t host_id_show(struct device *dev,
 +			    struct device_attribute *attr,
 +			    char *buf)
 +{
-+	struct cbd_blkdev_device *blkdev_dev;
-+	struct cbd_blkdev_info *blkdev_info;
++	struct cbd_backend_device *backend;
++	struct cbd_backend_info *latest_info;
 +
-+	blkdev_dev = container_of(dev, struct cbd_blkdev_device, dev);
-+	blkdev_info = cbdt_blkdev_info_read(blkdev_dev->cbdt, blkdev_dev->id);
-+	if (!blkdev_info)
++	backend = container_of(dev, struct cbd_backend_device, dev);
++	latest_info = cbdt_backend_info_read(backend->cbdt, backend->id);
++	if (!latest_info || latest_info->state == CBD_BACKEND_STATE_NONE)
 +		return 0;
 +
-+	if (blkdev_info->state == CBD_BLKDEV_STATE_NONE)
-+		return 0;
-+
-+	return sprintf(buf, "%u\n", blkdev_info->host_id);
++	return sprintf(buf, "%u\n", latest_info->host_id);
 +}
 +static DEVICE_ATTR_ADMIN_RO(host_id);
 +
-+static ssize_t mapped_id_show(struct device *dev,
-+			      struct device_attribute *attr,
-+			      char *buf)
++static ssize_t path_show(struct device *dev,
++			 struct device_attribute *attr,
++			 char *buf)
 +{
-+	struct cbd_blkdev_device *blkdev_dev;
-+	struct cbd_blkdev_info *blkdev_info;
++	struct cbd_backend_device *backend;
++	struct cbd_backend_info *latest_info;
 +
-+	blkdev_dev = container_of(dev, struct cbd_blkdev_device, dev);
-+	blkdev_info = cbdt_blkdev_info_read(blkdev_dev->cbdt, blkdev_dev->id);
-+	if (!blkdev_info)
++	backend = container_of(dev, struct cbd_backend_device, dev);
++	latest_info = cbdt_backend_info_read(backend->cbdt, backend->id);
++	if (!latest_info || latest_info->state == CBD_BACKEND_STATE_NONE)
 +		return 0;
 +
-+	if (blkdev_info->state == CBD_BLKDEV_STATE_NONE)
++	return sprintf(buf, "%s\n", latest_info->path);
++}
++static DEVICE_ATTR_ADMIN_RO(path);
++
++/* sysfs for cache */
++static ssize_t cache_segs_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
++{
++	struct cbd_backend_device *backend;
++	struct cbd_backend_info *latest_info;
++
++	backend = container_of(dev, struct cbd_backend_device, dev);
++	latest_info = cbdt_backend_info_read(backend->cbdt, backend->id);
++	if (!latest_info || latest_info->state == CBD_BACKEND_STATE_NONE)
 +		return 0;
 +
-+	return sprintf(buf, "%u\n", blkdev_info->mapped_id);
++	return sprintf(buf, "%u\n", latest_info->cache_info.n_segs);
 +}
-+static DEVICE_ATTR_ADMIN_RO(mapped_id);
++static DEVICE_ATTR_ADMIN_RO(cache_segs);
 +
-+static void blkdev_info_write(struct cbd_blkdev *blkdev)
++static ssize_t cache_used_segs_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
 +{
-+	mutex_lock(&blkdev->info_lock);
-+	blkdev->blkdev_info.alive_ts = ktime_get_real();
-+	cbdt_blkdev_info_write(blkdev->cbdt, &blkdev->blkdev_info,
-+			       sizeof(struct cbd_blkdev_info),
-+			       blkdev->blkdev_id);
-+	mutex_unlock(&blkdev->info_lock);
-+}
++	struct cbd_backend_device *backend;
++	struct cbd_backend_info *latest_info;
++	u32 used_segs = 0;
 +
-+static void cbd_blkdev_hb(struct cbd_blkdev *blkdev)
++	backend = container_of(dev, struct cbd_backend_device, dev);
++	latest_info = cbdt_backend_info_read(backend->cbdt, backend->id);
++	if (!latest_info || latest_info->state == CBD_BACKEND_STATE_NONE)
++		return 0;
++
++	if (!latest_info->cache_info.n_segs)
++		goto out;
++
++	used_segs = cache_info_used_segs(backend->cbdt, &latest_info->cache_info);
++out:
++	return sprintf(buf, "%u\n", used_segs);
++}
++static DEVICE_ATTR_ADMIN_RO(cache_used_segs);
++
++static ssize_t cache_gc_percent_show(struct device *dev,
++			       struct device_attribute *attr,
++			       char *buf)
 +{
-+	blkdev_info_write(blkdev);
-+}
-+CBD_OBJ_HEARTBEAT(blkdev);
++	struct cbd_backend_device *backend;
++	struct cbd_backend_info *latest_info;
 +
-+static struct attribute *cbd_blkdev_attrs[] = {
-+	&dev_attr_mapped_id.attr,
++	backend = container_of(dev, struct cbd_backend_device, dev);
++	latest_info = cbdt_backend_info_read(backend->cbdt, backend->id);
++	if (!latest_info || latest_info->state == CBD_BACKEND_STATE_NONE)
++		return 0;
++
++	return sprintf(buf, "%u\n", latest_info->cache_info.gc_percent);
++}
++
++static void __backend_info_write(struct cbd_backend *cbdb);
++static ssize_t cache_gc_percent_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf,
++				size_t size)
++{
++	struct cbd_backend_device *backend;
++	struct cbd_backend *cbdb;
++	unsigned long val;
++	int ret;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	backend = container_of(dev, struct cbd_backend_device, dev);
++	ret = kstrtoul(buf, 10, &val);
++	if (ret)
++		return ret;
++
++	if (val < CBD_CACHE_GC_PERCENT_MIN ||
++	    val > CBD_CACHE_GC_PERCENT_MAX)
++		return -EINVAL;
++
++	cbdb = cbdt_get_backend(backend->cbdt, backend->id);
++	if (!cbdb) {
++		cbdt_err(backend->cbdt, "gc_percent is only allowed to set in backend node.\n");
++		return -EINVAL;
++	}
++
++	mutex_lock(&cbdb->info_lock);
++	if (cbdb->backend_info.cache_info.n_segs == 0) {
++		mutex_unlock(&cbdb->info_lock);
++		return -EINVAL;
++	}
++
++	cbdb->backend_info.cache_info.gc_percent = val;
++	__backend_info_write(cbdb);
++	mutex_unlock(&cbdb->info_lock);
++
++	return size;
++}
++static DEVICE_ATTR_ADMIN_RW(cache_gc_percent);
++
++static void cbd_backend_hb(struct cbd_backend *cbdb)
++{
++	cbd_backend_info_write(cbdb);
++}
++CBD_OBJ_HEARTBEAT(backend);
++
++static struct attribute *cbd_backend_attrs[] = {
++	&dev_attr_path.attr,
 +	&dev_attr_host_id.attr,
-+	&dev_attr_backend_id.attr,
 +	&dev_attr_alive.attr,
++	&dev_attr_cache_segs.attr,
++	&dev_attr_cache_gc_percent.attr,
++	&dev_attr_cache_used_segs.attr,
 +	NULL
 +};
 +
-+static struct attribute_group cbd_blkdev_attr_group = {
-+	.attrs = cbd_blkdev_attrs,
++static struct attribute_group cbd_backend_attr_group = {
++	.attrs = cbd_backend_attrs,
 +};
 +
-+static const struct attribute_group *cbd_blkdev_attr_groups[] = {
-+	&cbd_blkdev_attr_group,
++static const struct attribute_group *cbd_backend_attr_groups[] = {
++	&cbd_backend_attr_group,
 +	NULL
 +};
 +
-+static void cbd_blkdev_release(struct device *dev)
++static void cbd_backend_release(struct device *dev)
 +{
 +}
 +
-+const struct device_type cbd_blkdev_type = {
-+	.name		= "cbd_blkdev",
-+	.groups		= cbd_blkdev_attr_groups,
-+	.release	= cbd_blkdev_release,
++const struct device_type cbd_backend_type = {
++	.name		= "cbd_backend",
++	.groups		= cbd_backend_attr_groups,
++	.release	= cbd_backend_release,
 +};
 +
-+const struct device_type cbd_blkdevs_type = {
-+	.name		= "cbd_blkdevs",
-+	.release	= cbd_blkdev_release,
++const struct device_type cbd_backends_type = {
++	.name		= "cbd_backends",
++	.release	= cbd_backend_release,
 +};
 +
-+
-+static int cbd_major;
-+static DEFINE_IDA(cbd_mapped_id_ida);
-+
-+static int minor_to_cbd_mapped_id(int minor)
++int cbdb_add_handler(struct cbd_backend *cbdb, struct cbd_handler *handler)
 +{
-+	return minor >> CBD_PART_SHIFT;
-+}
-+
-+
-+static int cbd_open(struct gendisk *disk, blk_mode_t mode)
-+{
-+	struct cbd_blkdev *cbd_blkdev = disk->private_data;
-+
-+	mutex_lock(&cbd_blkdev->lock);
-+	cbd_blkdev->open_count++;
-+	mutex_unlock(&cbd_blkdev->lock);
-+
-+	return 0;
-+}
-+
-+static void cbd_release(struct gendisk *disk)
-+{
-+	struct cbd_blkdev *cbd_blkdev = disk->private_data;
-+
-+	mutex_lock(&cbd_blkdev->lock);
-+	cbd_blkdev->open_count--;
-+	mutex_unlock(&cbd_blkdev->lock);
-+}
-+
-+static const struct block_device_operations cbd_bd_ops = {
-+	.owner			= THIS_MODULE,
-+	.open			= cbd_open,
-+	.release		= cbd_release,
-+};
-+
-+/**
-+ * cbd_blkdev_destroy_queues - Stop and free the queues associated with the block device
-+ * @cbd_blkdev: Pointer to the block device structure
-+ *
-+ * Note: The cbd_queue_stop function checks the state of each queue before attempting
-+ *       to stop it. If a queue's state is not running, it will return immediately,
-+ *       ensuring that only running queues are affected by this operation.
-+ */
-+static void cbd_blkdev_destroy_queues(struct cbd_blkdev *cbd_blkdev)
-+{
-+	int i;
-+
-+	/* Stop each queue associated with the block device */
-+	for (i = 0; i < cbd_blkdev->num_queues; i++)
-+		cbd_queue_stop(&cbd_blkdev->queues[i]);
-+
-+	/* Free the memory allocated for the queues */
-+	kfree(cbd_blkdev->queues);
-+}
-+
-+/**
-+ * cbd_blkdev_create_queues - Create and initialize queues for the block device
-+ * @cbd_blkdev: Pointer to the block device structure
-+ * @channels: Array of channel identifiers for each queue
-+ *
-+ * Note: The cbd_blkdev_destroy_queues function checks the state of each queue.
-+ *       Only queues that have been started will be stopped in the error path.
-+ *       Therefore, any queues that were not started will not be affected.
-+ */
-+static int cbd_blkdev_create_queues(struct cbd_blkdev *cbd_blkdev, u32 *channels)
-+{
-+	int i;
-+	int ret;
-+	struct cbd_queue *cbdq;
-+
-+	cbd_blkdev->queues = kcalloc(cbd_blkdev->num_queues, sizeof(struct cbd_queue), GFP_KERNEL);
-+	if (!cbd_blkdev->queues)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < cbd_blkdev->num_queues; i++) {
-+		cbdq = &cbd_blkdev->queues[i];
-+		cbdq->cbd_blkdev = cbd_blkdev;
-+		cbdq->index = i;
-+
-+		ret = cbd_queue_start(cbdq, channels[i]);
-+		if (ret)
-+			goto err;
-+	}
-+
-+	return 0;
-+
-+err:
-+	cbd_blkdev_destroy_queues(cbd_blkdev);
-+	return ret;
-+}
-+
-+static int disk_start(struct cbd_blkdev *cbd_blkdev)
-+{
-+	struct gendisk *disk;
-+	struct queue_limits lim = {
-+		.max_hw_sectors			= BIO_MAX_VECS * PAGE_SECTORS,
-+		.io_min				= 4096,
-+		.io_opt				= 4096,
-+		.max_segments			= USHRT_MAX,
-+		.max_segment_size		= UINT_MAX,
-+		.discard_granularity		= 0,
-+		.max_hw_discard_sectors		= 0,
-+		.max_write_zeroes_sectors	= 0
-+	};
-+	int ret;
-+
-+	memset(&cbd_blkdev->tag_set, 0, sizeof(cbd_blkdev->tag_set));
-+	cbd_blkdev->tag_set.ops = &cbd_mq_ops;
-+	cbd_blkdev->tag_set.queue_depth = 128;
-+	cbd_blkdev->tag_set.numa_node = NUMA_NO_NODE;
-+	cbd_blkdev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_NO_SCHED;
-+	cbd_blkdev->tag_set.nr_hw_queues = cbd_blkdev->num_queues;
-+	cbd_blkdev->tag_set.cmd_size = sizeof(struct cbd_request);
-+	cbd_blkdev->tag_set.timeout = 0;
-+	cbd_blkdev->tag_set.driver_data = cbd_blkdev;
-+
-+	ret = blk_mq_alloc_tag_set(&cbd_blkdev->tag_set);
-+	if (ret) {
-+		cbd_blk_err(cbd_blkdev, "failed to alloc tag set %d", ret);
-+		goto err;
-+	}
-+
-+	disk = blk_mq_alloc_disk(&cbd_blkdev->tag_set, &lim, cbd_blkdev);
-+	if (IS_ERR(disk)) {
-+		ret = PTR_ERR(disk);
-+		cbd_blk_err(cbd_blkdev, "failed to alloc disk");
-+		goto out_tag_set;
-+	}
-+
-+	snprintf(disk->disk_name, sizeof(disk->disk_name), "cbd%d",
-+		 cbd_blkdev->mapped_id);
-+
-+	disk->major = cbd_major;
-+	disk->first_minor = cbd_blkdev->mapped_id << CBD_PART_SHIFT;
-+	disk->minors = (1 << CBD_PART_SHIFT);
-+	disk->fops = &cbd_bd_ops;
-+	disk->private_data = cbd_blkdev;
-+
-+	cbd_blkdev->disk = disk;
-+	cbdt_add_blkdev(cbd_blkdev->cbdt, cbd_blkdev);
-+	cbd_blkdev->blkdev_info.mapped_id = cbd_blkdev->blkdev_id;
-+
-+	set_capacity(cbd_blkdev->disk, cbd_blkdev->dev_size);
-+	set_disk_ro(cbd_blkdev->disk, false);
-+
-+	/* Register the disk with the system */
-+	ret = add_disk(cbd_blkdev->disk);
-+	if (ret)
-+		goto put_disk;
-+
-+	/* Create a symlink to the block device */
-+	ret = sysfs_create_link(&disk_to_dev(cbd_blkdev->disk)->kobj,
-+				&cbd_blkdev->blkdev_dev->dev.kobj, "cbd_blkdev");
-+	if (ret)
-+		goto del_disk;
-+
-+	return 0;
-+
-+del_disk:
-+	del_gendisk(cbd_blkdev->disk);
-+put_disk:
-+	put_disk(cbd_blkdev->disk);
-+out_tag_set:
-+	blk_mq_free_tag_set(&cbd_blkdev->tag_set);
-+err:
-+	return ret;
-+}
-+
-+static void disk_stop(struct cbd_blkdev *cbd_blkdev)
-+{
-+	sysfs_remove_link(&disk_to_dev(cbd_blkdev->disk)->kobj, "cbd_blkdev");
-+	del_gendisk(cbd_blkdev->disk);
-+	put_disk(cbd_blkdev->disk);
-+	blk_mq_free_tag_set(&cbd_blkdev->tag_set);
-+}
-+
-+/**
-+ * If *queues is 0, it defaults to backend_info->n_handlers, matching the backend's
-+ * handler capacity.
-+ */
-+static int blkdev_start_validate(struct cbd_transport *cbdt, struct cbd_backend_info *backend_info,
-+			     u32 backend_id, u32 *queues)
-+{
-+	struct cbd_blkdev_info *blkdev_info;
-+	u32 backend_blkdevs = 0;
-+	u32 i;
-+
-+	if (!backend_info || !cbd_backend_info_is_alive(backend_info)) {
-+		cbdt_err(cbdt, "backend %u is not alive\n", backend_id);
-+		return -EINVAL;
-+	}
-+
-+	cbd_for_each_blkdev_info(cbdt, i, blkdev_info) {
-+		if (!blkdev_info || blkdev_info->state != CBD_BLKDEV_STATE_RUNNING)
-+			continue;
-+
-+		if (blkdev_info->backend_id == backend_id)
-+			backend_blkdevs++;
-+	}
-+
-+	if (backend_blkdevs >= CBDB_BLKDEV_COUNT_MAX) {
-+		cbdt_err(cbdt, "too many(%u) blkdevs connected to backend %u.\n", backend_blkdevs, backend_id);
-+		return -EBUSY;
-+	}
-+
-+	if (*queues == 0)
-+		*queues = backend_info->n_handlers;
-+
-+	if (*queues > backend_info->n_handlers) {
-+		cbdt_err(cbdt, "invalid queues: %u, larger than backend handlers: %u\n",
-+				*queues, backend_info->n_handlers);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct cbd_blkdev *blkdev_alloc(struct cbd_transport *cbdt)
-+{
-+	struct cbd_blkdev *cbd_blkdev;
-+	int ret;
-+
-+	cbd_blkdev = kzalloc(sizeof(struct cbd_blkdev), GFP_KERNEL);
-+	if (!cbd_blkdev)
-+		return NULL;
-+
-+	cbd_blkdev->cbdt = cbdt;
-+	mutex_init(&cbd_blkdev->lock);
-+	mutex_init(&cbd_blkdev->info_lock);
-+	INIT_LIST_HEAD(&cbd_blkdev->node);
-+	INIT_DELAYED_WORK(&cbd_blkdev->hb_work, blkdev_hb_workfn);
-+
-+	ret = cbdt_get_empty_blkdev_id(cbdt, &cbd_blkdev->blkdev_id);
-+	if (ret < 0)
-+		goto blkdev_free;
-+
-+	cbd_blkdev->mapped_id = ida_simple_get(&cbd_mapped_id_ida, 0,
-+					 minor_to_cbd_mapped_id(1 << MINORBITS),
-+					 GFP_KERNEL);
-+	if (cbd_blkdev->mapped_id < 0) {
-+		ret = -ENOENT;
-+		goto blkdev_free;
-+	}
-+
-+	cbd_blkdev->task_wq = alloc_workqueue("cbdt%d-d%u",  WQ_UNBOUND | WQ_MEM_RECLAIM,
-+					0, cbdt->id, cbd_blkdev->mapped_id);
-+	if (!cbd_blkdev->task_wq) {
-+		ret = -ENOMEM;
-+		goto ida_remove;
-+	}
-+
-+	return cbd_blkdev;
-+
-+ida_remove:
-+	ida_simple_remove(&cbd_mapped_id_ida, cbd_blkdev->mapped_id);
-+blkdev_free:
-+	kfree(cbd_blkdev);
-+
-+	return NULL;
-+}
-+
-+static void blkdev_free(struct cbd_blkdev *cbd_blkdev)
-+{
-+	drain_workqueue(cbd_blkdev->task_wq);
-+	destroy_workqueue(cbd_blkdev->task_wq);
-+	ida_simple_remove(&cbd_mapped_id_ida, cbd_blkdev->mapped_id);
-+	kfree(cbd_blkdev);
-+}
-+
-+static int blkdev_cache_init(struct cbd_blkdev *cbd_blkdev)
-+{
-+	struct cbd_transport *cbdt = cbd_blkdev->cbdt;
-+	struct cbd_cache_opts cache_opts = { 0 };
-+
-+	cache_opts.cache_info = &cbd_blkdev->cache_info;
-+	cache_opts.cache_id = cbd_blkdev->backend_id;
-+	cache_opts.owner = NULL;
-+	cache_opts.new_cache = false;
-+	cache_opts.start_writeback = false;
-+	cache_opts.start_gc = true;
-+	cache_opts.init_req_keys = true;
-+	cache_opts.dev_size = cbd_blkdev->dev_size;
-+	cache_opts.n_paral = cbd_blkdev->num_queues;
-+
-+	cbd_blkdev->cbd_cache = cbd_cache_alloc(cbdt, &cache_opts);
-+	if (!cbd_blkdev->cbd_cache)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+static void blkdev_cache_destroy(struct cbd_blkdev *cbd_blkdev)
-+{
-+	if (cbd_blkdev->cbd_cache)
-+		cbd_cache_destroy(cbd_blkdev->cbd_cache);
-+}
-+
-+static int blkdev_init(struct cbd_blkdev *cbd_blkdev, struct cbd_backend_info *backend_info,
-+			u32 backend_id, u32 queues)
-+{
-+	struct cbd_transport *cbdt = cbd_blkdev->cbdt;
-+	int ret;
-+
-+	cbd_blkdev->backend_id = backend_id;
-+	cbd_blkdev->num_queues = queues;
-+	cbd_blkdev->dev_size = backend_info->dev_size;
-+	cbd_blkdev->blkdev_dev = &cbdt->cbd_blkdevs_dev->blkdev_devs[cbd_blkdev->blkdev_id];
-+
-+	/* Get the backend if it is hosted on the same machine */
-+	if (backend_info->host_id == cbdt->host->host_id)
-+		cbd_blkdev->backend = cbdt_get_backend(cbdt, backend_id);
-+
-+	cbd_blkdev->blkdev_info.backend_id = backend_id;
-+	cbd_blkdev->blkdev_info.host_id = cbdt->host->host_id;
-+	cbd_blkdev->blkdev_info.state = CBD_BLKDEV_STATE_RUNNING;
-+
-+	ret = cbd_blkdev_create_queues(cbd_blkdev, backend_info->handler_channels);
-+	if (ret < 0)
-+		goto err;
-+
-+	if (cbd_backend_cache_on(backend_info)) {
-+		ret = blkdev_cache_init(cbd_blkdev);
-+		if (ret)
-+			goto destroy_queues;
-+	}
-+
-+	return 0;
-+destroy_queues:
-+	cbd_blkdev_destroy_queues(cbd_blkdev);
-+err:
-+	return ret;
-+}
-+
-+static void blkdev_destroy(struct cbd_blkdev *cbd_blkdev)
-+{
-+	cancel_delayed_work_sync(&cbd_blkdev->hb_work);
-+	blkdev_cache_destroy(cbd_blkdev);
-+	cbd_blkdev_destroy_queues(cbd_blkdev);
-+}
-+
-+int cbd_blkdev_start(struct cbd_transport *cbdt, u32 backend_id, u32 queues)
-+{
-+	struct cbd_blkdev *cbd_blkdev;
-+	struct cbd_backend_info *backend_info;
-+	int ret;
-+
-+	backend_info = cbdt_backend_info_read(cbdt, backend_id);
-+	if (!backend_info) {
-+		cbdt_err(cbdt, "cant read backend info for backend%u.\n", backend_id);
-+		return -ENOENT;
-+	}
-+
-+	ret = blkdev_start_validate(cbdt, backend_info, backend_id, &queues);
-+	if (ret)
-+		return ret;
-+
-+	cbd_blkdev = blkdev_alloc(cbdt);
-+	if (!cbd_blkdev)
-+		return -ENOMEM;
-+
-+	ret = blkdev_init(cbd_blkdev, backend_info, backend_id, queues);
-+	if (ret)
-+		goto blkdev_free;
-+
-+	ret = disk_start(cbd_blkdev);
-+	if (ret < 0)
-+		goto blkdev_destroy;
-+
-+	blkdev_info_write(cbd_blkdev);
-+	queue_delayed_work(cbd_wq, &cbd_blkdev->hb_work, 0);
-+
-+	return 0;
-+
-+blkdev_destroy:
-+	blkdev_destroy(cbd_blkdev);
-+blkdev_free:
-+	blkdev_free(cbd_blkdev);
-+	return ret;
-+}
-+
-+int cbd_blkdev_stop(struct cbd_transport *cbdt, u32 devid)
-+{
-+	struct cbd_blkdev *cbd_blkdev;
-+
-+	cbd_blkdev = cbdt_get_blkdev(cbdt, devid);
-+	if (!cbd_blkdev)
-+		return -EINVAL;
-+
-+	mutex_lock(&cbd_blkdev->lock);
-+	if (cbd_blkdev->open_count > 0) {
-+		mutex_unlock(&cbd_blkdev->lock);
-+		return -EBUSY;
-+	}
-+
-+	cbdt_del_blkdev(cbdt, cbd_blkdev);
-+	mutex_unlock(&cbd_blkdev->lock);
-+
-+	disk_stop(cbd_blkdev);
-+	blkdev_destroy(cbd_blkdev);
-+	blkdev_free(cbd_blkdev);
-+	cbdt_blkdev_info_clear(cbdt, devid);
-+
-+	return 0;
-+}
-+
-+int cbd_blkdev_clear(struct cbd_transport *cbdt, u32 devid)
-+{
-+	struct cbd_blkdev_info *blkdev_info;
-+
-+	blkdev_info = cbdt_blkdev_info_read(cbdt, devid);
-+	if (!blkdev_info) {
-+		cbdt_err(cbdt, "all blkdev_info in blkdev_id: %u are corrupted.\n", devid);
-+		return -EINVAL;
-+	}
-+
-+	if (cbd_blkdev_info_is_alive(blkdev_info)) {
-+		cbdt_err(cbdt, "blkdev %u is still alive\n", devid);
-+		return -EBUSY;
-+	}
-+
-+	if (blkdev_info->state == CBD_BLKDEV_STATE_NONE)
-+		return 0;
-+
-+	cbdt_blkdev_info_clear(cbdt, devid);
-+
-+	return 0;
-+}
-+
-+int cbd_blkdev_init(void)
-+{
-+	cbd_major = register_blkdev(0, "cbd");
-+	if (cbd_major < 0)
-+		return cbd_major;
-+
-+	return 0;
-+}
-+
-+void cbd_blkdev_exit(void)
-+{
-+	unregister_blkdev(cbd_major, "cbd");
-+}
-diff --git a/drivers/block/cbd/cbd_blkdev.h b/drivers/block/cbd/cbd_blkdev.h
-new file mode 100644
-index 000000000000..5fd54e555abc
---- /dev/null
-+++ b/drivers/block/cbd/cbd_blkdev.h
-@@ -0,0 +1,92 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+#ifndef _CBD_BLKDEV_H
-+#define _CBD_BLKDEV_H
-+
-+#include <linux/blk-mq.h>
-+
-+#include "cbd_internal.h"
-+#include "cbd_transport.h"
-+#include "cbd_channel.h"
-+#include "cbd_cache/cbd_cache.h"
-+#include "cbd_handler.h"
-+#include "cbd_backend.h"
-+#include "cbd_queue.h"
-+
-+#define cbd_blk_err(dev, fmt, ...)						\
-+	cbdt_err(dev->cbdt, "cbd%d: " fmt,					\
-+		 dev->mapped_id, ##__VA_ARGS__)
-+#define cbd_blk_info(dev, fmt, ...)						\
-+	cbdt_info(dev->cbdt, "cbd%d: " fmt,					\
-+		 dev->mapped_id, ##__VA_ARGS__)
-+#define cbd_blk_debug(dev, fmt, ...)						\
-+	cbdt_debug(dev->cbdt, "cbd%d: " fmt,					\
-+		 dev->mapped_id, ##__VA_ARGS__)
-+
-+/* cbd_blkdev */
-+CBD_DEVICE(blkdev);
-+
-+#define CBD_BLKDEV_STATE_NONE		0
-+#define CBD_BLKDEV_STATE_RUNNING	1
-+
-+struct cbd_blkdev_info {
-+	struct cbd_meta_header meta_header;
-+	u8	state;
-+	u64	alive_ts;
-+	u32	backend_id;
-+	u32	host_id;
-+	u32	mapped_id;
-+};
-+
-+struct cbd_blkdev {
-+	u32			blkdev_id; /* index in transport blkdev area */
-+	u32			backend_id;
-+	int			mapped_id; /* id in block device such as: /dev/cbd0 */
-+
-+	struct cbd_backend	*backend; /* reference to backend if blkdev and backend on the same host */
-+
-+	int			major;		/* blkdev assigned major */
-+	int			minor;
-+	struct gendisk		*disk;		/* blkdev's gendisk and rq */
-+
-+	struct mutex		lock;
-+	unsigned long		open_count;	/* protected by lock */
-+
-+	struct list_head	node;
-+	struct delayed_work	hb_work; /* heartbeat work */
-+
-+	/* Block layer tags. */
-+	struct blk_mq_tag_set	tag_set;
-+
-+	uint32_t		num_queues;
-+	struct cbd_queue	*queues;
-+
-+	u64			dev_size;
-+
-+	struct workqueue_struct	*task_wq;
-+
-+	struct cbd_blkdev_device *blkdev_dev;
-+	struct cbd_blkdev_info	blkdev_info;
-+	struct mutex		info_lock;
-+
-+	struct cbd_transport *cbdt;
-+
-+	struct cbd_cache_info	cache_info;
-+	struct cbd_cache	*cbd_cache;
-+};
-+
-+int cbd_blkdev_init(void);
-+void cbd_blkdev_exit(void);
-+int cbd_blkdev_start(struct cbd_transport *cbdt, u32 backend_id, u32 queues);
-+int cbd_blkdev_stop(struct cbd_transport *cbdt, u32 devid);
-+int cbd_blkdev_clear(struct cbd_transport *cbdt, u32 devid);
-+bool cbd_blkdev_info_is_alive(struct cbd_blkdev_info *info);
-+
-+extern struct workqueue_struct	*cbd_wq;
-+
-+#define cbd_for_each_blkdev_info(cbdt, i, blkdev_info)					\
-+	for (i = 0;									\
-+	     i < cbdt->transport_info.blkdev_num &&					\
-+	     (blkdev_info = cbdt_blkdev_info_read(cbdt, i));				\
-+	     i++)
-+
-+#endif /* _CBD_BLKDEV_H */
-diff --git a/drivers/block/cbd/cbd_queue.c b/drivers/block/cbd/cbd_queue.c
-new file mode 100644
-index 000000000000..c80dccfe3719
---- /dev/null
-+++ b/drivers/block/cbd/cbd_queue.c
-@@ -0,0 +1,516 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+#include "cbd_queue.h"
-+
-+/**
-+ * end_req - Finalize a CBD request and handle its completion.
-+ * @ref: Pointer to the kref structure that manages the reference count of the CBD request.
-+ *
-+ * This function is called when the reference count of the cbd_request reaches zero. It
-+ * contains two key operations:
-+ *
-+ * (1) If the end_req callback is set in the cbd_request, this callback will be invoked.
-+ *     This allows different cbd_requests to perform specific operations upon completion.
-+ *     For example, in the case of a backend request sent in the cache miss reading, it may require
-+ *     cache-related operations, such as storing data retrieved during a miss read.
-+ *
-+ * (2) If cbd_req->req is not NULL, it indicates that this cbd_request corresponds to a
-+ *     block layer request. The function will finalize the block layer request accordingly.
-+ */
-+static void end_req(struct kref *ref)
-+{
-+	struct cbd_request *cbd_req = container_of(ref, struct cbd_request, ref);
-+	struct request *req = cbd_req->req;
-+	int ret = cbd_req->ret;
-+
-+	/* Call the end_req callback if it is set */
-+	if (cbd_req->end_req)
-+		cbd_req->end_req(cbd_req, cbd_req->priv_data);
-+
-+	if (req) {
-+		/* Complete the block layer request based on the return status */
-+		if (ret == -ENOMEM || ret == -EBUSY)
-+			blk_mq_requeue_request(req, true);
-+		else
-+			blk_mq_end_request(req, errno_to_blk_status(ret));
-+	}
-+}
-+
-+void cbd_req_get(struct cbd_request *cbd_req)
-+{
-+	kref_get(&cbd_req->ref);
-+}
-+
-+/**
-+ * This function decreases the reference count of the specified cbd_request. If the
-+ * reference count reaches zero, the end_req function is called to finalize the request.
-+ * Additionally, if the cbd_request has a parent and if the current request is being
-+ * finalized (i.e., the reference count reaches zero), the parent request will also
-+ * be put, potentially propagating the return status up the hierarchy.
-+ */
-+void cbd_req_put(struct cbd_request *cbd_req, int ret)
-+{
-+	struct cbd_request *parent = cbd_req->parent;
-+
-+	/* Set the return status if it is not already set */
-+	if (ret && !cbd_req->ret)
-+		cbd_req->ret = ret;
-+
-+	/* Decrease the reference count and finalize the request if it reaches zero */
-+	if (kref_put(&cbd_req->ref, end_req) && parent)
-+		cbd_req_put(parent, ret);
-+}
-+
-+/**
-+ * When a submission entry is completed, it is marked with the CBD_SE_FLAGS_DONE flag.
-+ * If the entry is the oldest one in the submission queue, the tail of the submission ring
-+ * can be advanced. If it is not the oldest, the function will wait until all previous
-+ * entries have been completed before advancing the tail.
-+ */
-+static void advance_subm_ring(struct cbd_queue *cbdq)
-+{
-+	struct cbd_se *se;
-+again:
-+	se = get_oldest_se(cbdq);
-+	if (!se)
-+		goto out;
-+
-+	if (cbd_se_flags_test(se, CBD_SE_FLAGS_DONE)) {
-+		cbdc_submr_tail_advance(&cbdq->channel, sizeof(struct cbd_se));
-+		goto again;
-+	}
-+out:
-+	return;
-+}
-+
-+/**
-+ * This function checks if the specified data offset corresponds to the current
-+ * data tail. If it does, the function releases the corresponding extent by
-+ * setting the value in the released_extents array to zero and advances the
-+ * data tail by the specified length. The data tail is wrapped around if it
-+ * exceeds the channel's data size.
-+ */
-+static bool __advance_data_tail(struct cbd_queue *cbdq, u32 data_off, u32 data_len)
-+{
-+	if (data_off == cbdq->channel.data_tail) {
-+		cbdq->released_extents[data_off / PAGE_SIZE] = 0;
-+		cbdq->channel.data_tail += data_len;
-+		cbdq->channel.data_tail %= cbdq->channel.data_size;
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+/**
-+ * This function attempts to advance the data tail in the CBD queue by processing
-+ * the released extents. It first normalizes the data offset with respect to the
-+ * channel's data size. It then marks the released extent and attempts to advance
-+ * the data tail by repeatedly checking if the next extent can be released.
-+ */
-+static void advance_data_tail(struct cbd_queue *cbdq, u32 data_off, u32 data_len)
-+{
-+	data_off %= cbdq->channel.data_size;
-+	cbdq->released_extents[data_off / PAGE_SIZE] = data_len;
-+
-+	while (__advance_data_tail(cbdq, data_off, data_len)) {
-+		data_off += data_len;
-+		data_off %= cbdq->channel.data_size;
-+		data_len = cbdq->released_extents[data_off / PAGE_SIZE];
-+		/*
-+		 * if data_len in released_extents is zero, means this extent is not released,
-+		 * break and wait it to be released.
-+		 */
-+		if (!data_len)
-+			break;
-+	}
-+}
-+
-+void cbd_queue_advance(struct cbd_queue *cbdq, struct cbd_request *cbd_req)
-+{
-+	spin_lock(&cbdq->channel.submr_lock);
-+	advance_subm_ring(cbdq);
-+
-+	if (!cbd_req_nodata(cbd_req) && cbd_req->data_len)
-+		advance_data_tail(cbdq, cbd_req->data_off, round_up(cbd_req->data_len, PAGE_SIZE));
-+	spin_unlock(&cbdq->channel.submr_lock);
-+}
-+
-+static int queue_ce_verify(struct cbd_queue *cbdq, struct cbd_request *cbd_req,
-+			   struct cbd_ce *ce)
-+{
-+#ifdef CONFIG_CBD_CHANNEL_CRC
-+	if (ce->ce_crc != cbd_ce_crc(ce)) {
-+		cbd_queue_err(cbdq, "ce crc bad 0x%x != 0x%x(expected)",
-+				cbd_ce_crc(ce), ce->ce_crc);
-+		return -EIO;
-+	}
-+#endif
-+
-+#ifdef CONFIG_CBD_CHANNEL_DATA_CRC
-+	if (cbd_req->op == CBD_OP_READ &&
-+		ce->data_crc != cbd_channel_crc(&cbdq->channel,
-+					       cbd_req->data_off,
-+					       cbd_req->data_len)) {
-+		cbd_queue_err(cbdq, "ce data_crc bad 0x%x != 0x%x(expected)",
-+				cbd_channel_crc(&cbdq->channel,
-+						cbd_req->data_off,
-+						cbd_req->data_len),
-+				ce->data_crc);
-+		return -EIO;
-+	}
-+#endif
-+	return 0;
-+}
-+
-+static int complete_miss(struct cbd_queue *cbdq)
-+{
-+	if (cbdwc_need_retry(&cbdq->complete_worker_cfg))
-+		return -EAGAIN;
-+
-+	if (inflight_reqs_empty(cbdq)) {
-+		cbdwc_init(&cbdq->complete_worker_cfg);
++	int ret = 0;
++
++	spin_lock(&cbdb->lock);
++	if (cbdb->backend_info.state == CBD_BACKEND_STATE_STOPPING) {
++		ret = -EFAULT;
 +		goto out;
 +	}
-+
-+	cbdwc_miss(&cbdq->complete_worker_cfg);
-+
-+	cpu_relax();
-+	queue_delayed_work(cbdq->cbd_blkdev->task_wq, &cbdq->complete_work, 0);
++	hash_add(cbdb->handlers_hash, &handler->hash_node, handler->channel.seg_id);
 +out:
-+	return 0;
-+}
-+
-+static void complete_work_fn(struct work_struct *work)
-+{
-+	struct cbd_queue *cbdq = container_of(work, struct cbd_queue, complete_work.work);
-+	struct cbd_request *cbd_req;
-+	struct cbd_ce *ce;
-+	int ret;
-+again:
-+	/* compr_head would be updated by backend handler */
-+	spin_lock(&cbdq->channel.compr_lock);
-+	ce = get_complete_entry(cbdq);
-+	spin_unlock(&cbdq->channel.compr_lock);
-+	if (!ce)
-+		goto miss;
-+
-+	cbd_req = find_inflight_req(cbdq, ce->req_tid);
-+	if (!cbd_req) {
-+		cbd_queue_err(cbdq, "inflight request not found: %llu.", ce->req_tid);
-+		goto miss;
-+	}
-+
-+	ret = queue_ce_verify(cbdq, cbd_req, ce);
-+	if (ret)
-+		goto miss;
-+
-+	cbdwc_hit(&cbdq->complete_worker_cfg);
-+	cbdc_compr_tail_advance(&cbdq->channel, sizeof(struct cbd_ce));
-+	complete_inflight_req(cbdq, cbd_req, ce->result);
-+	goto again;
-+miss:
-+	ret = complete_miss(cbdq);
-+	/* -EAGAIN means we need retry according to the complete_worker_cfg */
-+	if (ret == -EAGAIN)
-+		goto again;
-+}
-+
-+static void cbd_req_init(struct cbd_queue *cbdq, u8 op, struct request *rq)
-+{
-+	struct cbd_request *cbd_req = blk_mq_rq_to_pdu(rq);
-+
-+	cbd_req->req = rq;
-+	cbd_req->cbdq = cbdq;
-+	cbd_req->op = op;
-+
-+	if (!cbd_req_nodata(cbd_req))
-+		cbd_req->data_len = blk_rq_bytes(rq);
-+	else
-+		cbd_req->data_len = 0;
-+
-+	cbd_req->bio = rq->bio;
-+	cbd_req->off = (u64)blk_rq_pos(rq) << SECTOR_SHIFT;
-+}
-+
-+static void queue_req_se_init(struct cbd_request *cbd_req)
-+{
-+	struct cbd_se	*se;
-+	u64 offset = cbd_req->off;
-+	u32 length = cbd_req->data_len;
-+
-+	se = get_submit_entry(cbd_req->cbdq);
-+	memset(se, 0, sizeof(struct cbd_se));
-+
-+	se->op = cbd_req->op;
-+	se->req_tid = cbd_req->req_tid;
-+	se->offset = offset;
-+	se->len = length;
-+
-+	if (!cbd_req_nodata(cbd_req)) {
-+		se->data_off = cbd_req->cbdq->channel.data_head;
-+		se->data_len = length;
-+	}
-+	cbd_req->se = se;
-+}
-+
-+static void cbd_req_crc_init(struct cbd_request *cbd_req)
-+{
-+#ifdef CONFIG_CBD_CHANNEL_DATA_CRC
-+	struct cbd_queue *cbdq = cbd_req->cbdq;
-+
-+	if (cbd_req->op == CBD_OP_WRITE)
-+		cbd_req->se->data_crc = cbd_channel_crc(&cbdq->channel,
-+					       cbd_req->data_off,
-+					       cbd_req->data_len);
-+#endif
-+
-+#ifdef CONFIG_CBD_CHANNEL_CRC
-+	cbd_req->se->se_crc = cbd_se_crc(cbd_req->se);
-+#endif
-+}
-+
-+static void queue_req_channel_init(struct cbd_request *cbd_req)
-+{
-+	struct cbd_queue *cbdq = cbd_req->cbdq;
-+	struct bio *bio = cbd_req->bio;
-+
-+	cbd_req->req_tid = cbdq->req_tid++;
-+	queue_req_se_init(cbd_req);
-+
-+	if (cbd_req_nodata(cbd_req))
-+		goto crc_init;
-+
-+	cbd_req->data_off = cbdq->channel.data_head;
-+	if (cbd_req->op == CBD_OP_WRITE)
-+		cbdc_copy_from_bio(&cbdq->channel, cbd_req->data_off,
-+				   cbd_req->data_len, bio, cbd_req->bio_off);
-+
-+	cbdq->channel.data_head = round_up(cbdq->channel.data_head + cbd_req->data_len, PAGE_SIZE);
-+	cbdq->channel.data_head %= cbdq->channel.data_size;
-+crc_init:
-+	cbd_req_crc_init(cbd_req);
-+}
-+
-+int cbd_queue_req_to_backend(struct cbd_request *cbd_req)
-+{
-+	struct cbd_queue *cbdq = cbd_req->cbdq;
-+	int ret;
-+
-+	spin_lock(&cbdq->channel.submr_lock);
-+	/* Check if the submission ring is full or if there is enough data space */
-+	if (submit_ring_full(cbdq) ||
-+			!data_space_enough(cbdq, cbd_req)) {
-+		spin_unlock(&cbdq->channel.submr_lock);
-+		cbd_req->data_len = 0;
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+
-+	/* Get a reference before submission, it will be put in cbd_req completion */
-+	cbd_req_get(cbd_req);
-+
-+	inflight_add_req(cbdq, cbd_req);
-+	queue_req_channel_init(cbd_req);
-+
-+	cbdc_submr_head_advance(&cbdq->channel, sizeof(struct cbd_se));
-+	spin_unlock(&cbdq->channel.submr_lock);
-+
-+	if (cbdq->cbd_blkdev->backend)
-+		cbd_backend_notify(cbdq->cbd_blkdev->backend, cbdq->channel.seg_id);
-+	queue_delayed_work(cbdq->cbd_blkdev->task_wq, &cbdq->complete_work, 0);
-+
-+	return 0;
-+err:
++	spin_unlock(&cbdb->lock);
 +	return ret;
 +}
 +
-+static void queue_req_end_req(struct cbd_request *cbd_req, void *priv_data)
++void cbdb_del_handler(struct cbd_backend *cbdb, struct cbd_handler *handler)
 +{
-+	cbd_queue_advance(cbd_req->cbdq, cbd_req);
-+}
-+
-+static void cbd_queue_req(struct cbd_queue *cbdq, struct cbd_request *cbd_req)
-+{
-+	int ret;
-+
-+	if (cbdq->cbd_blkdev->cbd_cache) {
-+		ret = cbd_cache_handle_req(cbdq->cbd_blkdev->cbd_cache, cbd_req);
-+		goto end;
-+	}
-+	cbd_req->end_req = queue_req_end_req;
-+	ret = cbd_queue_req_to_backend(cbd_req);
-+end:
-+	cbd_req_put(cbd_req, ret);
-+}
-+
-+static blk_status_t cbd_queue_rq(struct blk_mq_hw_ctx *hctx,
-+		const struct blk_mq_queue_data *bd)
-+{
-+	struct request *req = bd->rq;
-+	struct cbd_queue *cbdq = hctx->driver_data;
-+	struct cbd_request *cbd_req = blk_mq_rq_to_pdu(bd->rq);
-+
-+	memset(cbd_req, 0, sizeof(struct cbd_request));
-+	INIT_LIST_HEAD(&cbd_req->inflight_reqs_node);
-+	kref_init(&cbd_req->ref);
-+	spin_lock_init(&cbd_req->lock);
-+
-+	blk_mq_start_request(bd->rq);
-+
-+	switch (req_op(bd->rq)) {
-+	case REQ_OP_FLUSH:
-+		cbd_req_init(cbdq, CBD_OP_FLUSH, req);
-+		break;
-+	case REQ_OP_WRITE:
-+		cbd_req_init(cbdq, CBD_OP_WRITE, req);
-+		break;
-+	case REQ_OP_READ:
-+		cbd_req_init(cbdq, CBD_OP_READ, req);
-+		break;
-+	default:
-+		return BLK_STS_IOERR;
-+	}
-+
-+	cbd_queue_req(cbdq, cbd_req);
-+
-+	return BLK_STS_OK;
-+}
-+
-+static int cbd_init_hctx(struct blk_mq_hw_ctx *hctx, void *driver_data,
-+			unsigned int hctx_idx)
-+{
-+	struct cbd_blkdev *cbd_blkdev = driver_data;
-+	struct cbd_queue *cbdq;
-+
-+	cbdq = &cbd_blkdev->queues[hctx_idx];
-+	hctx->driver_data = cbdq;
-+
-+	return 0;
-+}
-+
-+const struct blk_mq_ops cbd_mq_ops = {
-+	.queue_rq	= cbd_queue_rq,
-+	.init_hctx	= cbd_init_hctx,
-+};
-+
-+#define CBDQ_RESET_CHANNEL_WAIT_INTERVAL	(HZ / 10)
-+#define CBDQ_RESET_CHANNEL_WAIT_COUNT		300
-+
-+/**
-+ * queue_reset_channel - Sends a reset command to the management layer for a cbd_queue.
-+ * @cbdq: Pointer to the cbd_queue structure to be reset.
-+ *
-+ * This function initiates a channel reset by sending a management command to the
-+ * corresponding channel control structure. It waits for the reset operation to
-+ * complete, polling the status and allowing for a timeout to avoid indefinite blocking.
-+ *
-+ * Returns 0 on success, or a negative error code on failure (e.g., -ETIMEDOUT).
-+ */
-+static int queue_reset_channel(struct cbd_queue *cbdq)
-+{
-+	u8 cmd_ret;
-+	u16 count = 0;
-+	int ret;
-+
-+	ret = cbdc_mgmt_cmd_op_send(cbdq->channel_ctrl, CBDC_MGMT_CMD_RESET);
-+	if (ret) {
-+		cbd_queue_err(cbdq, "send reset mgmt cmd error: %d\n", ret);
-+		return ret;
-+	}
-+
-+	if (cbdq->cbd_blkdev->backend)
-+		cbd_backend_mgmt_notify(cbdq->cbd_blkdev->backend, cbdq->channel.seg_id);
-+
-+	while (true) {
-+		if (cbdc_mgmt_completed(cbdq->channel_ctrl))
-+			break;
-+
-+		if (count++ > CBDQ_RESET_CHANNEL_WAIT_COUNT) {
-+			ret = -ETIMEDOUT;
-+			goto err;
-+		}
-+		schedule_timeout_uninterruptible(CBDQ_RESET_CHANNEL_WAIT_INTERVAL);
-+	}
-+	cmd_ret = cbdc_mgmt_cmd_ret_get(cbdq->channel_ctrl);
-+	return cbdc_mgmt_cmd_ret_to_errno(cmd_ret);
-+err:
-+	return ret;
-+}
-+
-+static int queue_channel_init(struct cbd_queue *cbdq, u32 channel_id)
-+{
-+	struct cbd_blkdev *cbd_blkdev = cbdq->cbd_blkdev;
-+	struct cbd_transport *cbdt = cbd_blkdev->cbdt;
-+	struct cbd_channel_init_options init_opts = { 0 };
-+	int ret;
-+
-+	init_opts.cbdt = cbdt;
-+	init_opts.backend_id = cbdq->cbd_blkdev->backend_id;
-+	init_opts.seg_id = channel_id;
-+	init_opts.new_channel = false;
-+	ret = cbd_channel_init(&cbdq->channel, &init_opts);
-+	if (ret)
-+		return ret;
-+
-+	cbdq->channel_ctrl = cbdq->channel.ctrl;
-+	if (!cbd_blkdev->backend)
-+		cbd_channel_flags_set_bit(cbdq->channel_ctrl, CBDC_FLAGS_POLLING);
-+
-+	ret = queue_reset_channel(cbdq);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int queue_init(struct cbd_queue *cbdq, u32 channel_id)
-+{
-+	int ret;
-+
-+	INIT_LIST_HEAD(&cbdq->inflight_reqs);
-+	spin_lock_init(&cbdq->inflight_reqs_lock);
-+	cbdq->req_tid = 0;
-+	INIT_DELAYED_WORK(&cbdq->complete_work, complete_work_fn);
-+	cbdwc_init(&cbdq->complete_worker_cfg);
-+
-+	ret = queue_channel_init(cbdq, channel_id);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+int cbd_queue_start(struct cbd_queue *cbdq, u32 channel_id)
-+{
-+	int ret;
-+
-+	cbdq->released_extents = kzalloc(sizeof(u64) * (CBDC_DATA_SIZE >> PAGE_SHIFT),
-+					 GFP_KERNEL);
-+	if (!cbdq->released_extents) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	ret = queue_init(cbdq, channel_id);
-+	if (ret)
-+		goto free_extents;
-+
-+	atomic_set(&cbdq->state, cbd_queue_state_running);
-+
-+	return 0;
-+
-+free_extents:
-+	kfree(cbdq->released_extents);
-+out:
-+	return ret;
-+}
-+
-+void cbd_queue_stop(struct cbd_queue *cbdq)
-+{
-+	if (atomic_read(&cbdq->state) != cbd_queue_state_running)
++	if (hlist_unhashed(&handler->hash_node))
 +		return;
 +
-+	cancel_delayed_work_sync(&cbdq->complete_work);
-+	kfree(cbdq->released_extents);
-+}
-diff --git a/drivers/block/cbd/cbd_queue.h b/drivers/block/cbd/cbd_queue.h
-new file mode 100644
-index 000000000000..6f774ceb57f9
---- /dev/null
-+++ b/drivers/block/cbd/cbd_queue.h
-@@ -0,0 +1,288 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+#ifndef _CBD_QUEUE_H
-+#define _CBD_QUEUE_H
-+
-+#include "cbd_channel.h"
-+#include "cbd_blkdev.h"
-+
-+#define cbd_queue_err(queue, fmt, ...)						\
-+	cbd_blk_err(queue->cbd_blkdev, "queue%d: " fmt,				\
-+		     queue->channel.seg_id, ##__VA_ARGS__)
-+#define cbd_queue_info(queue, fmt, ...)						\
-+	cbd_blk_info(queue->cbd_blkdev, "queue%d: " fmt,			\
-+		     queue->channel.seg_id, ##__VA_ARGS__)
-+#define cbd_queue_debug(queue, fmt, ...)					\
-+	cbd_blk_debug(queue->cbd_blkdev, "queue%d: " fmt,			\
-+		     queue->channel.seg_id, ##__VA_ARGS__)
-+
-+struct cbd_request {
-+	struct cbd_queue	*cbdq;
-+
-+	struct cbd_se		*se;
-+	struct cbd_ce		*ce;
-+	struct request		*req;
-+
-+	u64			off;
-+	struct bio		*bio;
-+	u32			bio_off;
-+	spinlock_t		lock; /* race between cache and complete_work to access bio */
-+
-+	u8			op;
-+	u64			req_tid;
-+	struct list_head	inflight_reqs_node;
-+
-+	u32			data_off;
-+	u32			data_len;
-+
-+	struct work_struct	work;
-+
-+	struct kref		ref;
-+	int			ret;
-+	struct cbd_request	*parent;
-+
-+	void			*priv_data;
-+	void (*end_req)(struct cbd_request *cbd_req, void *priv_data);
-+};
-+
-+struct cbd_cache_req {
-+	struct cbd_cache	*cache;
-+	u8			op;
-+	struct work_struct	work;
-+};
-+
-+#define CBD_SE_FLAGS_DONE	1
-+
-+static inline bool cbd_se_flags_test(struct cbd_se *se, u32 bit)
-+{
-+	return (se->flags & bit);
++	spin_lock(&cbdb->lock);
++	hash_del(&handler->hash_node);
++	spin_unlock(&cbdb->lock);
 +}
 +
-+static inline void cbd_se_flags_set(struct cbd_se *se, u32 bit)
++static struct cbd_handler *cbdb_get_handler(struct cbd_backend *cbdb, u32 seg_id)
 +{
-+	se->flags |= bit;
-+}
-+
-+enum cbd_queue_state {
-+	cbd_queue_state_none    = 0,
-+	cbd_queue_state_running
-+};
-+
-+struct cbd_queue {
-+	struct cbd_blkdev	*cbd_blkdev;
-+	u32			index;
-+	struct list_head	inflight_reqs;
-+	spinlock_t		inflight_reqs_lock;
-+	u64			req_tid;
-+
-+	u64			*released_extents;
-+
-+	struct cbd_channel_seg_info	*channel_info;
-+	struct cbd_channel	channel;
-+	struct cbd_channel_ctrl	*channel_ctrl;
-+
-+	atomic_t                state;
-+
-+	struct delayed_work	complete_work;
-+	struct cbd_worker_cfg	complete_worker_cfg;
-+};
-+
-+int cbd_queue_start(struct cbd_queue *cbdq, u32 channel_id);
-+void cbd_queue_stop(struct cbd_queue *cbdq);
-+extern const struct blk_mq_ops cbd_mq_ops;
-+int cbd_queue_req_to_backend(struct cbd_request *cbd_req);
-+void cbd_req_get(struct cbd_request *cbd_req);
-+void cbd_req_put(struct cbd_request *cbd_req, int ret);
-+void cbd_queue_advance(struct cbd_queue *cbdq, struct cbd_request *cbd_req);
-+
-+static inline struct cbd_se *get_submit_entry(struct cbd_queue *cbdq)
-+{
-+	return (struct cbd_se *)(cbdq->channel.submr + cbdc_submr_head_get(&cbdq->channel));
-+}
-+
-+static inline struct cbd_se *get_oldest_se(struct cbd_queue *cbdq)
-+{
-+	if (cbdc_submr_tail_get(&cbdq->channel) == cbdc_submr_head_get(&cbdq->channel))
-+		return NULL;
-+
-+	return (struct cbd_se *)(cbdq->channel.submr + cbdc_submr_tail_get(&cbdq->channel));
-+}
-+
-+static inline bool queue_subm_ring_empty(struct cbd_queue *cbdq)
-+{
-+	return (cbdc_submr_tail_get(&cbdq->channel) == cbdc_submr_head_get(&cbdq->channel));
-+}
-+
-+static inline struct cbd_ce *get_complete_entry(struct cbd_queue *cbdq)
-+{
-+	u32 ce_head = cbdc_compr_head_get(&cbdq->channel);
-+
-+	if (unlikely(ce_head > (cbdq->channel.compr_size - sizeof(struct cbd_ce))))
-+		return NULL;
-+
-+	if (cbdc_compr_tail_get(&cbdq->channel) == cbdc_compr_head_get(&cbdq->channel))
-+		return NULL;
-+
-+	return (struct cbd_ce *)(cbdq->channel.compr + cbdc_compr_tail_get(&cbdq->channel));
-+}
-+
-+static inline bool cbd_req_nodata(struct cbd_request *cbd_req)
-+{
-+	switch (cbd_req->op) {
-+	case CBD_OP_WRITE:
-+	case CBD_OP_READ:
-+		return false;
-+	case CBD_OP_FLUSH:
-+		return true;
-+	default:
-+		BUG();
-+	}
-+}
-+
-+static inline int copy_data_from_cbdreq(struct cbd_request *cbd_req)
-+{
-+	struct bio *bio = cbd_req->bio;
-+	struct cbd_queue *cbdq = cbd_req->cbdq;
-+	int ret;
-+
-+	spin_lock(&cbd_req->lock);
-+	ret = cbdc_copy_to_bio(&cbdq->channel, cbd_req->data_off, cbd_req->data_len, bio, cbd_req->bio_off);
-+	spin_unlock(&cbd_req->lock);
-+
-+	return ret;
-+}
-+
-+static inline bool inflight_reqs_empty(struct cbd_queue *cbdq)
-+{
-+	bool empty;
-+
-+	spin_lock(&cbdq->inflight_reqs_lock);
-+	empty = list_empty(&cbdq->inflight_reqs);
-+	spin_unlock(&cbdq->inflight_reqs_lock);
-+
-+	return empty;
-+}
-+
-+static inline void inflight_add_req(struct cbd_queue *cbdq, struct cbd_request *cbd_req)
-+{
-+	spin_lock(&cbdq->inflight_reqs_lock);
-+	list_add_tail(&cbd_req->inflight_reqs_node, &cbdq->inflight_reqs);
-+	spin_unlock(&cbdq->inflight_reqs_lock);
-+}
-+
-+static inline void complete_inflight_req(struct cbd_queue *cbdq, struct cbd_request *cbd_req, int ret)
-+{
-+	if (cbd_req->op == CBD_OP_READ) {
-+		int copy_ret = 0;
-+
-+		spin_lock(&cbdq->channel.submr_lock);
-+		copy_ret = copy_data_from_cbdreq(cbd_req);
-+		spin_unlock(&cbdq->channel.submr_lock);
-+
-+		if (!ret && copy_ret)
-+			ret = copy_ret;
-+	}
-+
-+	spin_lock(&cbdq->inflight_reqs_lock);
-+	list_del_init(&cbd_req->inflight_reqs_node);
-+	spin_unlock(&cbdq->inflight_reqs_lock);
-+
-+	cbd_se_flags_set(cbd_req->se, CBD_SE_FLAGS_DONE);
-+	cbd_req_put(cbd_req, ret);
-+}
-+
-+static inline struct cbd_request *find_inflight_req(struct cbd_queue *cbdq, u64 req_tid)
-+{
-+	struct cbd_request *req;
++	struct cbd_handler *handler;
 +	bool found = false;
 +
-+	spin_lock(&cbdq->inflight_reqs_lock);
-+	list_for_each_entry(req, &cbdq->inflight_reqs, inflight_reqs_node) {
-+		if (req->req_tid == req_tid) {
++	spin_lock(&cbdb->lock);
++	hash_for_each_possible(cbdb->handlers_hash, handler,
++			       hash_node, seg_id) {
++		if (handler->channel.seg_id == seg_id) {
 +			found = true;
 +			break;
 +		}
 +	}
-+	spin_unlock(&cbdq->inflight_reqs_lock);
++	spin_unlock(&cbdb->lock);
 +
 +	if (found)
-+		return req;
++		return handler;
 +
 +	return NULL;
 +}
 +
-+/**
-+ * data_space_enough - Check if there is sufficient data space available in the cbd_queue.
-+ * @cbdq: Pointer to the cbd_queue structure to check space in.
-+ * @cbd_req: Pointer to the cbd_request structure for which space is needed.
-+ *
-+ * This function evaluates whether the cbd_queue has enough available data space
-+ * to accommodate the data length required by the given cbd_request.
-+ *
-+ * The available space is calculated based on the current positions of the data_head
-+ * and data_tail. If data_head is ahead of data_tail, it indicates that the space
-+ * wraps around; otherwise, it calculates the space linearly.
-+ *
-+ * The space needed is rounded up according to the defined data alignment.
-+ *
-+ * If the available space minus the reserved space is less than the required space,
-+ * the function returns false, indicating insufficient space. Otherwise, it returns true.
-+ */
-+static inline bool data_space_enough(struct cbd_queue *cbdq, struct cbd_request *cbd_req)
++static void destroy_handlers(struct cbd_backend *cbdb)
 +{
-+	struct cbd_channel *channel = &cbdq->channel;
-+	u32 space_available = channel->data_size;
-+	u32 space_needed;
++	struct cbd_handler *handler;
++	struct hlist_node *tmp;
++	int i;
 +
-+	if (channel->data_head > channel->data_tail) {
-+		space_available = channel->data_size - channel->data_head;
-+		space_available += channel->data_tail;
-+	} else if (channel->data_head < channel->data_tail) {
-+		space_available = channel->data_tail - channel->data_head;
++	hash_for_each_safe(cbdb->handlers_hash, i, tmp, handler, hash_node) {
++		hash_del(&handler->hash_node);
++		cbd_handler_destroy(handler);
++	}
++}
++
++static int create_handlers(struct cbd_backend *cbdb, bool new_backend)
++{
++	struct cbd_backend_info *backend_info;
++	u32 channel_id;
++	int ret;
++	int i;
++
++	backend_info = &cbdb->backend_info;
++
++	for (i = 0; i < backend_info->n_handlers; i++) {
++		if (new_backend) {
++			ret = cbdt_get_empty_segment_id(cbdb->cbdt, &channel_id);
++			if (ret < 0) {
++				cbdb_err(cbdb, "failed find available channel_id.\n");
++				goto destroy_handlers;
++			}
++			/* clear all channel segment before using it */
++			cbd_segment_clear(cbdb->cbdt, channel_id);
++			backend_info->handler_channels[i] = channel_id;
++		} else {
++			channel_id = backend_info->handler_channels[i];
++		}
++
++		ret = cbd_handler_create(cbdb, channel_id, new_backend);
++		if (ret) {
++			cbdb_err(cbdb, "failed to create handler: %d\n", ret);
++			goto destroy_handlers;
++		}
 +	}
 +
-+	space_needed = round_up(cbd_req->data_len, CBDC_DATA_ALIGN);
++	return 0;
 +
-+	if (space_available - CBDC_DATA_RESERVED < space_needed)
-+		return false;
++destroy_handlers:
++	destroy_handlers(cbdb);
++
++	return ret;
++}
++
++static int backend_open_bdev(struct cbd_backend *cbdb, bool new_backend)
++{
++	int ret;
++
++	cbdb->bdev_file = bdev_file_open_by_path(cbdb->backend_info.path,
++			BLK_OPEN_READ | BLK_OPEN_WRITE, cbdb, NULL);
++	if (IS_ERR(cbdb->bdev_file)) {
++		cbdb_err(cbdb, "failed to open bdev: %d", (int)PTR_ERR(cbdb->bdev_file));
++		ret = PTR_ERR(cbdb->bdev_file);
++		goto err;
++	}
++
++	cbdb->bdev = file_bdev(cbdb->bdev_file);
++
++	if (new_backend) {
++		cbdb->backend_info.dev_size = bdev_nr_sectors(cbdb->bdev);
++	} else {
++		if (cbdb->backend_info.dev_size != bdev_nr_sectors(cbdb->bdev)) {
++			cbdb_err(cbdb, "Unexpected backend size: %llu, expected: %llu\n",
++				 bdev_nr_sectors(cbdb->bdev), cbdb->backend_info.dev_size);
++			ret = -EINVAL;
++			goto close_file;
++		}
++	}
++
++	return 0;
++
++close_file:
++	fput(cbdb->bdev_file);
++err:
++	return ret;
++}
++
++static void backend_close_bdev(struct cbd_backend *cbdb)
++{
++	fput(cbdb->bdev_file);
++}
++
++static int backend_cache_init(struct cbd_backend *cbdb, u32 cache_segs, bool new_backend)
++{
++	struct cbd_cache_opts cache_opts = { 0 };
++	int ret;
++
++	cache_opts.cache_info = &cbdb->backend_info.cache_info;
++	cache_opts.cache_id = cbdb->backend_id;
++	cache_opts.owner = cbdb;
++	cache_opts.n_segs = cache_segs;
++	cache_opts.n_paral = cbdb->backend_info.n_handlers;
++	cache_opts.new_cache = new_backend;
++	cache_opts.start_writeback = true;
++	cache_opts.start_gc = false;
++	cache_opts.init_req_keys = false;
++	cache_opts.bdev_file = cbdb->bdev_file;
++	cache_opts.dev_size = cbdb->backend_info.dev_size;
++
++	/* Allocate the cache with specified options. */
++	cbdb->cbd_cache = cbd_cache_alloc(cbdb->cbdt, &cache_opts);
++	if (!cbdb->cbd_cache) {
++		ret = -ENOMEM;
++		goto err;
++	}
++
++	return 0;
++
++err:
++	return ret;
++}
++
++static void backend_cache_destroy(struct cbd_backend *cbdb)
++{
++	if (cbdb->cbd_cache)
++		cbd_cache_destroy(cbdb->cbd_cache);
++}
++
++static int cbd_backend_info_init(struct cbd_backend *cbdb, char *path,
++				 u32 handlers, u32 cache_segs)
++{
++	struct cbd_transport *cbdt = cbdb->cbdt;
++	u32 backend_id;
++	int ret;
++
++	ret = cbdt_get_empty_backend_id(cbdt, &backend_id);
++	if (ret)
++		goto err;
++
++	cbdb->backend_id = backend_id;
++	cbdb->backend_info.meta_header.version = 0;
++	cbdb->backend_info.host_id = cbdb->host_id;
++	cbdb->backend_info.n_handlers = handlers;
++
++	strscpy(cbdb->backend_info.path, path, CBD_PATH_LEN);
++
++	cbd_cache_info_init(&cbdb->backend_info.cache_info, cache_segs);
++
++	return 0;
++err:
++	return ret;
++}
++
++static int cbd_backend_info_load(struct cbd_backend *cbdb, u32 backend_id);
++static int cbd_backend_init(struct cbd_backend *cbdb, char *path, u32 backend_id,
++			    u32 handlers, u32 cache_segs)
++{
++	struct cbd_transport *cbdt = cbdb->cbdt;
++	bool new_backend = false;
++	int ret;
++
++	if (backend_id == U32_MAX)
++		new_backend = true;
++
++	if (new_backend) {
++		/* new backend */
++		ret = cbd_backend_info_init(cbdb, path, handlers, cache_segs);
++		if (ret)
++			goto err;
++	} else {
++		/* attach backend, this could happen after an unexpected power off */
++		cbdt_info(cbdt, "attach backend to backend_id: %u\n", backend_id);
++		cbdb->backend_id = backend_id;
++		ret = cbd_backend_info_load(cbdb, cbdb->backend_id);
++		if (ret)
++			goto err;
++	}
++
++	cbdb->backend_device = &cbdt->cbd_backends_dev->backend_devs[cbdb->backend_id];
++
++	ret = backend_open_bdev(cbdb, new_backend);
++	if (ret)
++		goto err;
++
++	ret = create_handlers(cbdb, new_backend);
++	if (ret)
++		goto close_bdev;
++
++	if (cbdb->backend_info.cache_info.n_segs) {
++		ret = backend_cache_init(cbdb, cbdb->backend_info.cache_info.n_segs, new_backend);
++		if (ret)
++			goto destroy_handlers;
++	}
++
++	cbdb->backend_info.state = CBD_BACKEND_STATE_RUNNING;
++	cbdt_add_backend(cbdt, cbdb);
++
++	return 0;
++
++destroy_handlers:
++	destroy_handlers(cbdb);
++close_bdev:
++	backend_close_bdev(cbdb);
++err:
++	return ret;
++}
++
++static void cbd_backend_destroy(struct cbd_backend *cbdb)
++{
++	struct cbd_transport *cbdt = cbdb->cbdt;
++
++	cbdt_del_backend(cbdt, cbdb);
++	backend_cache_destroy(cbdb);
++	destroy_handlers(cbdb);
++	backend_close_bdev(cbdb);
++}
++
++static void __backend_info_write(struct cbd_backend *cbdb)
++{
++	cbdb->backend_info.alive_ts = ktime_get_real();
++	cbdt_backend_info_write(cbdb->cbdt, &cbdb->backend_info, sizeof(struct cbd_backend_info),
++				cbdb->backend_id);
++}
++
++void cbd_backend_info_write(struct cbd_backend *cbdb)
++{
++	mutex_lock(&cbdb->info_lock);
++	__backend_info_write(cbdb);
++	mutex_unlock(&cbdb->info_lock);
++}
++
++static int cbd_backend_info_load(struct cbd_backend *cbdb, u32 backend_id)
++{
++	struct cbd_backend_info *backend_info;
++	int ret = 0;
++
++	mutex_lock(&cbdb->info_lock);
++	backend_info = cbdt_backend_info_read(cbdb->cbdt, backend_id);
++	if (!backend_info) {
++		cbdt_err(cbdb->cbdt, "can't read info from backend id %u.\n",
++				cbdb->backend_id);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	if (cbd_backend_info_is_alive(backend_info)) {
++		cbdt_err(cbdb->cbdt, "backend %u is alive\n", backend_id);
++		ret = -EBUSY;
++		goto out;
++	}
++
++	if (backend_info->host_id != cbdb->host_id) {
++		cbdt_err(cbdb->cbdt, "backend_id: %u is on host %u but not on host %u\n",
++				cbdb->backend_id, backend_info->host_id, cbdb->host_id);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	memcpy(&cbdb->backend_info, backend_info, sizeof(struct cbd_backend_info));
++out:
++	mutex_unlock(&cbdb->info_lock);
++	return ret;
++}
++
++static struct cbd_backend *cbd_backend_alloc(struct cbd_transport *cbdt)
++{
++	struct cbd_backend *cbdb;
++
++	cbdb = kzalloc(sizeof(*cbdb), GFP_KERNEL);
++	if (!cbdb)
++		return NULL;
++
++	cbdb->backend_io_cache = KMEM_CACHE(cbd_backend_io, 0);
++	if (!cbdb->backend_io_cache)
++		goto free_cbdb;
++
++	cbdb->task_wq = alloc_workqueue("cbdt%d-b%u",  WQ_UNBOUND | WQ_MEM_RECLAIM,
++					0, cbdt->id, cbdb->backend_id);
++	if (!cbdb->task_wq)
++		goto destroy_io_cache;
++
++	cbdb->cbdt = cbdt;
++	cbdb->host_id = cbdt->host->host_id;
++
++	mutex_init(&cbdb->info_lock);
++	INIT_LIST_HEAD(&cbdb->node);
++	INIT_DELAYED_WORK(&cbdb->hb_work, backend_hb_workfn);
++	hash_init(cbdb->handlers_hash);
++	spin_lock_init(&cbdb->lock);
++
++	return cbdb;
++
++destroy_io_cache:
++	kmem_cache_destroy(cbdb->backend_io_cache);
++free_cbdb:
++	kfree(cbdb);
++	return NULL;
++}
++
++static void cbd_backend_free(struct cbd_backend *cbdb)
++{
++	drain_workqueue(cbdb->task_wq);
++	destroy_workqueue(cbdb->task_wq);
++	kmem_cache_destroy(cbdb->backend_io_cache);
++	kfree(cbdb);
++}
++
++static int backend_validate(struct cbd_transport *cbdt, char *path,
++			    u32 *backend_id, u32 handlers, u32 cache_segs)
++{
++	u32 host_id = cbdt->host->host_id;
++	int ret;
++
++	/* Check if path starts with "/dev/" */
++	if (strncmp(path, "/dev/", 5) != 0)
++		return -EINVAL;
++
++	/* Validate backend_id */
++	if (*backend_id == U32_MAX) {
++		ret = cbd_backend_find_id_by_path(cbdt, host_id, path, backend_id);
++		if (!ret)
++			cbdt_info(cbdt, "found backend_id: %u for host_id: %u, path: %s\n",
++					*backend_id, host_id, path);
++	} else {
++		u32 backend_id_tmp;
++
++		if (*backend_id != U32_MAX && *backend_id >= cbdt->transport_info.backend_num)
++			return -EINVAL;
++
++		ret = cbd_backend_find_id_by_path(cbdt, host_id, path, &backend_id_tmp);
++		if (!ret && (*backend_id != backend_id_tmp)) {
++			cbdt_err(cbdt, "duplicated backend path: %s with backend_id: %u\n",
++					path, backend_id_tmp);
++			return -EINVAL;
++		}
++	}
++
++	/* Ensure handlers count is within valid range */
++	if (handlers == 0 || handlers >= CBD_HANDLERS_MAX)
++		return -EINVAL;
++
++	/* All checks passed */
++	return 0;
++}
++
++int cbd_backend_start(struct cbd_transport *cbdt, char *path, u32 backend_id,
++		      u32 handlers, u32 cache_segs)
++{
++	struct cbd_backend *cbdb;
++	int ret;
++
++	ret = backend_validate(cbdt, path, &backend_id, handlers, cache_segs);
++	if (ret)
++		return ret;
++
++	cbdb = cbd_backend_alloc(cbdt);
++	if (!cbdb)
++		return -ENOMEM;
++
++	ret = cbd_backend_init(cbdb, path, backend_id, handlers, cache_segs);
++	if (ret)
++		goto destroy_cbdb;
++
++	cbd_backend_info_write(cbdb);
++	queue_delayed_work(cbd_wq, &cbdb->hb_work, CBD_HB_INTERVAL);
++
++	return 0;
++
++destroy_cbdb:
++	cbd_backend_free(cbdb);
++
++	return ret;
++}
++
++static bool backend_blkdevs_stopped(struct cbd_transport *cbdt, u32 backend_id)
++{
++	struct cbd_blkdev_info *blkdev_info;
++	int i;
++
++	cbd_for_each_blkdev_info(cbdt, i, blkdev_info) {
++		if (!blkdev_info)
++			continue;
++
++		if (blkdev_info->state != CBD_BLKDEV_STATE_RUNNING)
++			continue;
++
++		if (blkdev_info->backend_id == backend_id) {
++			cbdt_err(cbdt, "blkdev %u is connected to backend %u\n",
++					i, backend_id);
++			return false;
++		}
++	}
 +
 +	return true;
 +}
 +
-+/**
-+ * submit_ring_full - Check if the submission ring is full.
-+ * @cbdq: Pointer to the cbd_queue structure representing the submission queue.
-+ *
-+ * This function determines whether the submission ring buffer for the cbd_queue
-+ * has enough available space to accept new entries.
-+ *
-+ * The available space is calculated based on the current positions of the
-+ * submission ring head and tail. If the head is ahead of the tail, it indicates
-+ * that the ring wraps around; otherwise, the available space is calculated
-+ * linearly.
-+ *
-+ * A reserved space is maintained at the end of the ring to prevent it from
-+ * becoming completely filled, ensuring that there is always some space available
-+ * for processing. If the available space minus the reserved space is less than
-+ * the size of a submission entry (cbd_se), the function returns true, indicating
-+ * the ring is full. Otherwise, it returns false.
-+ */
-+static inline bool submit_ring_full(struct cbd_queue *cbdq)
++int cbd_backend_stop(struct cbd_transport *cbdt, u32 backend_id)
 +{
-+	u32 space_available = cbdq->channel.submr_size;
-+	struct cbd_channel *channel = &cbdq->channel;
++	struct cbd_backend *cbdb;
 +
-+	if (cbdc_submr_head_get(channel) > cbdc_submr_tail_get(channel)) {
-+		space_available = cbdq->channel.submr_size - cbdc_submr_head_get(channel);
-+		space_available += cbdc_submr_tail_get(channel);
-+	} else if (cbdc_submr_head_get(channel) < cbdc_submr_tail_get(channel)) {
-+		space_available = cbdc_submr_tail_get(channel) - cbdc_submr_head_get(channel);
++	cbdb = cbdt_get_backend(cbdt, backend_id);
++	if (!cbdb)
++		return -ENOENT;
++
++	if (!backend_blkdevs_stopped(cbdt, backend_id))
++		return -EBUSY;
++
++	spin_lock(&cbdb->lock);
++	if (cbdb->backend_info.state == CBD_BACKEND_STATE_STOPPING) {
++		spin_unlock(&cbdb->lock);
++		return -EBUSY;
 +	}
 +
-+	/* There is a SUBMR_RESERVED we dont use to prevent the ring to be used up */
-+	if (space_available - CBDC_SUBMR_RESERVED < sizeof(struct cbd_se))
-+		return true;
++	cbdb->backend_info.state = CBD_BACKEND_STATE_STOPPING;
++	spin_unlock(&cbdb->lock);
 +
-+	return false;
++	cancel_delayed_work_sync(&cbdb->hb_work);
++	cbd_backend_destroy(cbdb);
++	cbd_backend_free(cbdb);
++
++	cbdt_backend_info_clear(cbdt, backend_id);
++
++	return 0;
 +}
 +
-+#endif /* _CBD_QUEUE_H */
++static void backend_segs_clear(struct cbd_transport *cbdt, u32 backend_id)
++{
++	struct cbd_segment_info *seg_info;
++	u32 i;
++
++	cbd_for_each_segment_info(cbdt, i, seg_info) {
++		if (!seg_info)
++			continue;
++
++		if (seg_info->backend_id == backend_id)
++			cbdt_segment_info_clear(cbdt, i);
++	}
++}
++
++int cbd_backend_clear(struct cbd_transport *cbdt, u32 backend_id)
++{
++	struct cbd_backend_info *backend_info;
++
++	backend_info = cbdt_backend_info_read(cbdt, backend_id);
++	if (!backend_info) {
++		cbdt_err(cbdt, "all backend_info in backend_id: %u are corrupted.\n", backend_id);
++		return -EINVAL;
++	}
++
++	if (cbd_backend_info_is_alive(backend_info)) {
++		cbdt_err(cbdt, "backend %u is still alive\n", backend_id);
++		return -EBUSY;
++	}
++
++	if (backend_info->state == CBD_BACKEND_STATE_NONE)
++		return 0;
++
++	if (!backend_blkdevs_stopped(cbdt, backend_id))
++		return -EBUSY;
++
++	backend_segs_clear(cbdt, backend_id);
++	cbdt_backend_info_clear(cbdt, backend_id);
++
++	return 0;
++}
++
++bool cbd_backend_cache_on(struct cbd_backend_info *backend_info)
++{
++	return (backend_info->cache_info.n_segs != 0);
++}
++
++/**
++ * cbd_backend_notify - Notify the backend to handle an I/O request.
++ * @cbdb: Pointer to the cbd_backend structure.
++ * @seg_id: Segment ID associated with the request.
++ *
++ * This function is called in a single-host scenario after a block device
++ * sends an I/O request. It retrieves the corresponding handler for the
++ * given segment ID and, if the handler is ready, notifies it to proceed
++ * with handling the request. If the handler is not ready, the function
++ * returns immediately, allowing the handler to queue the handle_work
++ * while being created.
++ */
++void cbd_backend_notify(struct cbd_backend *cbdb, u32 seg_id)
++{
++	struct cbd_handler *handler;
++
++	handler = cbdb_get_handler(cbdb, seg_id);
++	/*
++	 * If the handler is not ready, return directly and
++	 * wait for the handler to queue the handle_work during creation.
++	 */
++	if (!handler)
++		return;
++
++	cbd_handler_notify(handler);
++}
++
++void cbd_backend_mgmt_notify(struct cbd_backend *cbdb, u32 seg_id)
++{
++	struct cbd_handler *handler;
++
++	handler = cbdb_get_handler(cbdb, seg_id);
++	if (!handler)
++		return;
++
++	cbd_handler_mgmt_notify(handler);
++}
+diff --git a/drivers/block/cbd/cbd_backend.h b/drivers/block/cbd/cbd_backend.h
+new file mode 100644
+index 000000000000..82de238000bb
+--- /dev/null
++++ b/drivers/block/cbd/cbd_backend.h
+@@ -0,0 +1,137 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#ifndef _CBD_BACKEND_H
++#define _CBD_BACKEND_H
++
++#include <linux/hashtable.h>
++
++#include "cbd_internal.h"
++#include "cbd_transport.h"
++#include "cbd_host.h"
++#include "cbd_cache/cbd_cache.h"
++#include "cbd_handler.h"
++#include "cbd_blkdev.h"
++
++#define cbdb_err(backend, fmt, ...)						\
++	cbdt_err(backend->cbdt, "backend%d: " fmt,				\
++		 backend->backend_id, ##__VA_ARGS__)
++#define cbdb_info(backend, fmt, ...)						\
++	cbdt_info(backend->cbdt, "backend%d: " fmt,				\
++		 backend->backend_id, ##__VA_ARGS__)
++#define cbdb_debug(backend, fmt, ...)						\
++	cbdt_debug(backend->cbdt, "backend%d: " fmt,				\
++		 backend->backend_id, ##__VA_ARGS__)
++
++/* cbd_backend */
++CBD_DEVICE(backend);
++
++extern const struct device_type cbd_cache_type;
++
++#define CBD_BACKEND_STATE_NONE		0
++#define CBD_BACKEND_STATE_RUNNING	1
++#define CBD_BACKEND_STATE_STOPPING	2
++
++#define CBDB_BLKDEV_COUNT_MAX	1
++
++struct cbd_backend_info {
++	struct cbd_meta_header	meta_header;
++	u8			state;
++	u8			res;
++
++	u16			res1;
++	u32			host_id;
++
++	u64			alive_ts;
++	u64			dev_size; /* nr_sectors */
++
++	char			path[CBD_PATH_LEN];
++
++	u32			n_handlers;
++	u32			handler_channels[CBD_HANDLERS_MAX];
++
++	struct cbd_cache_info	cache_info;
++};
++
++struct cbd_backend_io {
++	struct cbd_se		*se;
++	u64			off;
++	u32			len;
++	struct bio		*bio;
++	struct cbd_handler	*handler;
++};
++
++#define CBD_BACKENDS_HANDLER_BITS	7
++
++struct cbd_backend {
++	u32			backend_id;
++	struct cbd_transport	*cbdt;
++	spinlock_t		lock;
++
++	struct cbd_backend_info	backend_info;
++	struct mutex		info_lock;
++
++	u32			host_id;
++
++	struct block_device	*bdev;
++	struct file		*bdev_file;
++
++	struct workqueue_struct	*task_wq;
++	struct delayed_work	hb_work; /* heartbeat work */
++
++	struct list_head	node; /* cbd_transport->backends */
++	DECLARE_HASHTABLE(handlers_hash, CBD_BACKENDS_HANDLER_BITS);
++
++	struct cbd_backend_device *backend_device;
++	struct kmem_cache	*backend_io_cache;
++
++	struct cbd_cache	*cbd_cache;
++};
++
++int cbd_backend_start(struct cbd_transport *cbdt, char *path, u32 backend_id,
++		      u32 handlers, u32 cache_segs);
++int cbd_backend_stop(struct cbd_transport *cbdt, u32 backend_id);
++int cbd_backend_clear(struct cbd_transport *cbdt, u32 backend_id);
++int cbdb_add_handler(struct cbd_backend *cbdb, struct cbd_handler *handler);
++void cbdb_del_handler(struct cbd_backend *cbdb, struct cbd_handler *handler);
++bool cbd_backend_info_is_alive(struct cbd_backend_info *info);
++bool cbd_backend_cache_on(struct cbd_backend_info *backend_info);
++void cbd_backend_notify(struct cbd_backend *cbdb, u32 seg_id);
++void cbd_backend_mgmt_notify(struct cbd_backend *cbdb, u32 seg_id);
++void cbd_backend_info_write(struct cbd_backend *cbdb);
++
++static inline u32 cbd_backend_info_crc(struct cbd_backend_info *backend_info)
++{
++	return crc32(0, (void *)backend_info + 4, sizeof(*backend_info) - 4);
++}
++
++#define cbd_for_each_backend_info(cbdt, i, backend_info)				\
++	for (i = 0;									\
++	     i < cbdt->transport_info.backend_num &&					\
++	     (backend_info = cbdt_backend_info_read(cbdt, i));				\
++	     i++)
++
++static inline int cbd_backend_find_id_by_path(struct cbd_transport *cbdt,
++					      u32 host_id, char *path,
++					      u32 *backend_id)
++{
++	struct cbd_backend_info *backend_info;
++	u32 i;
++
++	cbd_for_each_backend_info(cbdt, i, backend_info) {
++		if (!backend_info)
++			continue;
++
++		if (backend_info->host_id != host_id)
++			continue;
++
++		if (strcmp(backend_info->path, path) == 0) {
++			*backend_id = i;
++			goto found;
++		}
++	}
++
++	return -ENOENT;
++found:
++	return 0;
++}
++
++#endif /* _CBD_BACKEND_H */
+diff --git a/drivers/block/cbd/cbd_handler.c b/drivers/block/cbd/cbd_handler.c
+new file mode 100644
+index 000000000000..0b32a1628753
+--- /dev/null
++++ b/drivers/block/cbd/cbd_handler.c
+@@ -0,0 +1,468 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++#include <linux/blkdev.h>
++
++#include "cbd_handler.h"
++
++static inline void complete_cmd(struct cbd_handler *handler, struct cbd_se *se, int ret)
++{
++	struct cbd_ce *ce;
++	unsigned long flags;
++
++	spin_lock_irqsave(&handler->compr_lock, flags);
++	ce = get_compr_head(handler);
++
++	memset(ce, 0, sizeof(*ce));
++	ce->req_tid = se->req_tid;
++	ce->result = ret;
++
++#ifdef CONFIG_CBD_CHANNEL_DATA_CRC
++	if (se->op == CBD_OP_READ)
++		ce->data_crc = cbd_channel_crc(&handler->channel, se->data_off, se->data_len);
++#endif
++
++#ifdef CONFIG_CBD_CHANNEL_CRC
++	ce->ce_crc = cbd_ce_crc(ce);
++#endif
++	cbdc_compr_head_advance(&handler->channel, sizeof(struct cbd_ce));
++	spin_unlock_irqrestore(&handler->compr_lock, flags);
++}
++
++static void backend_bio_end(struct bio *bio)
++{
++	struct cbd_backend_io *backend_io = bio->bi_private;
++	struct cbd_se *se = backend_io->se;
++	struct cbd_handler *handler = backend_io->handler;
++	struct cbd_backend *cbdb = handler->cbdb;
++
++	complete_cmd(handler, se, bio->bi_status);
++
++	bio_put(bio);
++	kmem_cache_free(cbdb->backend_io_cache, backend_io);
++	atomic_dec(&handler->inflight_cmds);
++}
++
++static struct cbd_backend_io *backend_prepare_io(struct cbd_handler *handler,
++						 struct cbd_se *se, blk_opf_t opf)
++{
++	struct cbd_backend_io *backend_io;
++	struct cbd_backend *cbdb = handler->cbdb;
++
++	backend_io = kmem_cache_zalloc(cbdb->backend_io_cache, GFP_KERNEL);
++	if (!backend_io)
++		return NULL;
++
++	backend_io->bio = bio_alloc_bioset(cbdb->bdev,
++				DIV_ROUND_UP(se->len, PAGE_SIZE),
++				opf, GFP_KERNEL, &handler->bioset);
++	if (!backend_io->bio)
++		goto free_backend_io;
++
++	backend_io->se = se;
++	backend_io->handler = handler;
++	backend_io->bio->bi_iter.bi_sector = se->offset >> SECTOR_SHIFT;
++	backend_io->bio->bi_iter.bi_size = 0;
++	backend_io->bio->bi_private = backend_io;
++	backend_io->bio->bi_end_io = backend_bio_end;
++
++	atomic_inc(&handler->inflight_cmds);
++
++	return backend_io;
++
++free_backend_io:
++	kmem_cache_free(cbdb->backend_io_cache, backend_io);
++
++	return NULL;
++}
++
++static int handle_backend_cmd(struct cbd_handler *handler, struct cbd_se *se)
++{
++	struct cbd_backend *cbdb = handler->cbdb;
++	struct cbd_backend_io *backend_io = NULL;
++	int ret;
++
++	/* Check if command has already been completed */
++	if (cbd_se_flags_test(se, CBD_SE_FLAGS_DONE))
++		return 0;
++
++	/* Process command based on operation type */
++	switch (se->op) {
++	case CBD_OP_READ:
++		backend_io = backend_prepare_io(handler, se, REQ_OP_READ);
++		break;
++	case CBD_OP_WRITE:
++		backend_io = backend_prepare_io(handler, se, REQ_OP_WRITE);
++		break;
++	case CBD_OP_FLUSH:
++		ret = blkdev_issue_flush(cbdb->bdev);
++		goto complete_cmd;
++	default:
++		cbd_handler_err(handler, "unrecognized op: 0x%x", se->op);
++		ret = -EIO;
++		goto complete_cmd;
++	}
++
++	/* Check for memory allocation failure in backend I/O */
++	if (!backend_io)
++		return -ENOMEM;
++
++	/*
++	 * Map channel data pages directly into bio, reusing the channel's data space
++	 * instead of allocating new memory. This enables efficient data transfer by
++	 * using the preallocated buffer associated with the channel.
++	 */
++	ret = cbdc_map_pages(&handler->channel, backend_io->bio, se->data_off, se->data_len);
++	if (ret) {
++		kmem_cache_free(cbdb->backend_io_cache, backend_io);
++		return ret;
++	}
++
++	/* Submit bio to initiate the I/O operation on the backend device */
++	submit_bio(backend_io->bio);
++
++	return 0;
++
++complete_cmd:
++	/* Finalize command by generating a completion entry */
++	complete_cmd(handler, se, ret);
++	return 0;
++}
++
++/**
++ * cbd_handler_notify - Notify the backend to process a new submission element (SE).
++ * @handler: Pointer to the `cbd_handler` structure for handling SEs.
++ *
++ * This function is called in a single-host setup when a new SE is submitted
++ * from the block device (blkdev) side. After submission, the backend must be
++ * notified to start processing the SE. The backend locates the handler through
++ * the channel ID, then calls `cbd_handler_notify` to schedule immediate
++ * execution of `handle_work`, which will process the SE in the backend's
++ * work queue.
++ */
++void cbd_handler_notify(struct cbd_handler *handler)
++{
++	queue_delayed_work(handler->cbdb->task_wq, &handler->handle_work, 0);
++}
++
++void cbd_handler_mgmt_notify(struct cbd_handler *handler)
++{
++	cancel_delayed_work(&handler->handle_mgmt_work);
++	queue_delayed_work(handler->cbdb->task_wq, &handler->handle_mgmt_work, 0);
++}
++
++static bool req_tid_valid(struct cbd_handler *handler, u64 req_tid)
++{
++	/* New handler or reattach scenario */
++	if (handler->req_tid_expected == U64_MAX)
++		return true;
++
++	return (req_tid == handler->req_tid_expected);
++}
++
++/**
++ * handler_reset - Reset the state of a handler's channel and control information.
++ * @handler: Pointer to the `cbd_handler` structure managing the channel.
++ *
++ * This function is called to reset the channel's state in scenarios where a block
++ * device (blkdev) is connecting to the backend. There are two main cases where
++ * this reset is required:
++ * 1. A new backend and new blkdev are both being initialized, necessitating a fresh
++ *    start for the channel.
++ * 2. The backend has been continuously running, but a previously connected blkdev
++ *    disconnected and is now being replaced by a newly connected blkdev. In this
++ *    scenario, the state of the channel is reset to ensure it can handle requests
++ *    from the new blkdev.
++ *
++ * In both cases, the blkdev sends a mgmt_cmd of reset into channel_ctrl->mgmt_cmd to
++ * indicate that it requires a channel reset. This function clears all the channel
++ * counters and control pointers, including `submr` and `compr` heads and tails,
++ * resetting them to zero.
++ *
++ * After the reset is complete, the handler sends a cmd_ret of the reset cmd, signaling
++ * to the blkdev that it can begin using the channel for data requests.
++ *
++ * Return: 0 on success, or a negative error code if the reset fails.
++ *         -EBUSY if there are inflight commands indicating the channel is busy.
++ */
++static int handler_reset(struct cbd_handler *handler)
++{
++	int ret;
++
++	/* Check if there are any inflight commands; if so, the channel is busy */
++	if (atomic_read(&handler->inflight_cmds)) {
++		cbd_handler_err(handler, "channel is busy, can't be reset\n");
++		return -EBUSY;
++	}
++
++	spin_lock(&handler->submr_lock);
++	/* Reset expected request transaction ID and handle count */
++	handler->req_tid_expected = U64_MAX;
++	handler->se_to_handle = 0;
++
++	cbd_channel_reset(&handler->channel);
++	spin_unlock(&handler->submr_lock);
++
++	/* Send a success response for the reset command */
++	ret = cbdc_mgmt_cmd_ret_send(handler->channel_ctrl, CBDC_MGMT_CMD_RET_OK);
++	if (ret)
++		return ret;
++
++	/* Queue the handler work to process any subsequent operations */
++	queue_delayed_work(handler->cbdb->task_wq, &handler->handle_work, 0);
++	queue_delayed_work(handler->cbdb->task_wq, &handler->handle_mgmt_work, 0);
++
++	return 0;
++}
++
++static inline int channel_se_verify(struct cbd_handler *handler, struct cbd_se *se)
++{
++#ifdef CONFIG_CBD_CHANNEL_CRC
++	if (se->se_crc != cbd_se_crc(se)) {
++		cbd_handler_err(handler, "se crc(0x%x) is not expected(0x%x)",
++				cbd_se_crc(se), se->se_crc);
++		return -EIO;
++	}
++#endif
++
++#ifdef CONFIG_CBD_CHANNEL_DATA_CRC
++	if (se->op == CBD_OP_WRITE &&
++		se->data_crc != cbd_channel_crc(&handler->channel,
++						se->data_off,
++						se->data_len)) {
++		cbd_handler_err(handler, "data crc(0x%x) is not expected(0x%x)",
++				cbd_channel_crc(&handler->channel, se->data_off, se->data_len),
++				se->data_crc);
++		return -EIO;
++	}
++#endif
++	return 0;
++}
++
++static int handle_mgmt_cmd(struct cbd_handler *handler)
++{
++	u8 cmd_op;
++	int ret;
++
++	cmd_op = cbdc_mgmt_cmd_op_get(handler->channel_ctrl);
++	switch (cmd_op) {
++	case CBDC_MGMT_CMD_NONE:
++		ret = 0;
++		break;
++	case CBDC_MGMT_CMD_RESET:
++		ret = handler_reset(handler);
++		break;
++	default:
++		ret = -EIO;
++	}
++
++	return ret;
++}
++
++/**
++ * handle_mgmt_work_fn - Handle management work for the CBD channel.
++ * @work: Pointer to the work_struct associated with this management work.
++ *
++ * This function is the main function for handling management work related to the
++ * CBD channel. It continuously checks if there are new management commands (mgmt_cmd)
++ * to be processed in the management plane of the CBD channel.
++ *
++ * If a new mgmt_cmd is detected, it will be processed; if none are available, the function
++ * will end this work iteration. The execution cycle of handle_mgmt_work is set to 1 second.
++ */
++static void handle_mgmt_work_fn(struct work_struct *work)
++{
++	struct cbd_handler *handler = container_of(work, struct cbd_handler,
++						   handle_mgmt_work.work);
++	int ret;
++again:
++	/* Check if the current mgmt_cmd has been completed */
++	if (!cbdc_mgmt_completed(handler->channel_ctrl)) {
++		/* Process the management command */
++		ret = handle_mgmt_cmd(handler);
++		if (ret)
++			goto out;
++		goto again;
++	}
++
++out:
++	/* Re-queue the work to run again after 1 second */
++	queue_delayed_work(handler->cbdb->task_wq, &handler->handle_mgmt_work, HZ);
++}
++
++/**
++ * handle_work_fn - Main handler function to process SEs in the channel.
++ * @work: pointer to the work_struct associated with the handler.
++ *
++ * This function is repeatedly called to handle incoming SEs (Submission Entries)
++ * from the channel's control structure.
++ *
++ * In a multi-host environment, this function operates in a polling mode
++ * to retrieve new SEs. For single-host cases, it mainly waits for
++ * blkdev notifications.
++ */
++static void handle_work_fn(struct work_struct *work)
++{
++	struct cbd_handler *handler = container_of(work, struct cbd_handler,
++						   handle_work.work);
++	struct cbd_se *se_head;
++	struct cbd_se *se;
++	u64 req_tid;
++	int ret;
++
++again:
++	/* Retrieve new SE from channel control */
++	spin_lock(&handler->submr_lock);
++	se_head = get_se_head(handler);
++	if (!se_head) {
++		spin_unlock(&handler->submr_lock);
++		goto miss;
++	}
++
++	se = get_se_to_handle(handler);
++	if (se == se_head) {
++		spin_unlock(&handler->submr_lock);
++		goto miss;
++	}
++	spin_unlock(&handler->submr_lock);
++
++	req_tid = se->req_tid;
++	if (!req_tid_valid(handler, req_tid)) {
++		cbd_handler_err(handler, "req_tid (%llu) is not expected (%llu)",
++				req_tid, handler->req_tid_expected);
++		goto miss;
++	}
++
++	ret = channel_se_verify(handler, se);
++	if (ret)
++		goto miss;
++
++	cbdwc_hit(&handler->handle_worker_cfg);
++
++	ret = handle_backend_cmd(handler, se);
++	if (!ret) {
++		/* Successful SE handling */
++		handler->req_tid_expected = req_tid + 1;
++		handler->se_to_handle = (handler->se_to_handle + sizeof(struct cbd_se)) %
++							handler->channel.submr_size;
++	}
++
++	goto again;
++
++miss:
++	/* No more SEs to handle in this round */
++	if (cbdwc_need_retry(&handler->handle_worker_cfg))
++		goto again;
++
++	cbdwc_miss(&handler->handle_worker_cfg);
++
++	/* Queue next work based on polling status */
++	if (cbd_channel_flags_get(handler->channel_ctrl) & CBDC_FLAGS_POLLING) {
++		cpu_relax();
++		queue_delayed_work(handler->cbdb->task_wq, &handler->handle_work, 0);
++	}
++}
++
++static struct cbd_handler *handler_alloc(struct cbd_backend *cbdb)
++{
++	struct cbd_handler *handler;
++	int ret;
++
++	handler = kzalloc(sizeof(struct cbd_handler), GFP_KERNEL);
++	if (!handler)
++		return NULL;
++
++	ret = bioset_init(&handler->bioset, 256, 0, BIOSET_NEED_BVECS);
++	if (ret)
++		goto free_handler;
++
++	handler->cbdb = cbdb;
++
++	return handler;
++free_handler:
++	kfree(handler);
++	return NULL;
++}
++
++static void handler_free(struct cbd_handler *handler)
++{
++	bioset_exit(&handler->bioset);
++	kfree(handler);
++}
++
++static void handler_channel_init(struct cbd_handler *handler, u32 channel_id, bool new_channel)
++{
++	struct cbd_transport *cbdt = handler->cbdb->cbdt;
++	struct cbd_channel_init_options init_opts = { 0 };
++
++	init_opts.cbdt = cbdt;
++	init_opts.backend_id = handler->cbdb->backend_id;
++	init_opts.seg_id = channel_id;
++	init_opts.new_channel = new_channel;
++	cbd_channel_init(&handler->channel, &init_opts);
++
++	handler->channel_ctrl = handler->channel.ctrl;
++	handler->req_tid_expected = U64_MAX;
++	atomic_set(&handler->inflight_cmds, 0);
++	spin_lock_init(&handler->compr_lock);
++	spin_lock_init(&handler->submr_lock);
++	INIT_DELAYED_WORK(&handler->handle_work, handle_work_fn);
++	INIT_DELAYED_WORK(&handler->handle_mgmt_work, handle_mgmt_work_fn);
++	cbdwc_init(&handler->handle_worker_cfg);
++
++	if (new_channel) {
++		handler->channel.data_head = handler->channel.data_tail = 0;
++		handler->channel_ctrl->submr_tail = handler->channel_ctrl->submr_head = 0;
++		handler->channel_ctrl->compr_tail = handler->channel_ctrl->compr_head = 0;
++
++		cbd_channel_flags_clear_bit(handler->channel_ctrl, ~0ULL);
++	}
++
++	handler->se_to_handle = cbdc_submr_tail_get(&handler->channel);
++
++	/* this should be after channel_init, as we need channel.seg_id in backend->handlers_hash */
++	cbdb_add_handler(handler->cbdb, handler);
++}
++
++static void handler_channel_destroy(struct cbd_handler *handler)
++{
++	cbdb_del_handler(handler->cbdb, handler);
++	cbd_channel_destroy(&handler->channel);
++}
++
++/* handler start and stop */
++static void handler_start(struct cbd_handler *handler)
++{
++	struct cbd_backend *cbdb = handler->cbdb;
++
++	queue_delayed_work(cbdb->task_wq, &handler->handle_work, 0);
++	queue_delayed_work(cbdb->task_wq, &handler->handle_mgmt_work, 0);
++}
++
++static void handler_stop(struct cbd_handler *handler)
++{
++	cancel_delayed_work_sync(&handler->handle_mgmt_work);
++	cancel_delayed_work_sync(&handler->handle_work);
++
++	while (atomic_read(&handler->inflight_cmds))
++		schedule_timeout(HZ);
++}
++
++int cbd_handler_create(struct cbd_backend *cbdb, u32 channel_id, bool new_channel)
++{
++	struct cbd_handler *handler;
++
++	handler = handler_alloc(cbdb);
++	if (!handler)
++		return -ENOMEM;
++
++	handler_channel_init(handler, channel_id, new_channel);
++	handler_start(handler);
++
++	return 0;
++};
++
++void cbd_handler_destroy(struct cbd_handler *handler)
++{
++	handler_stop(handler);
++	handler_channel_destroy(handler);
++	handler_free(handler);
++}
+diff --git a/drivers/block/cbd/cbd_handler.h b/drivers/block/cbd/cbd_handler.h
+new file mode 100644
+index 000000000000..7b24236e7886
+--- /dev/null
++++ b/drivers/block/cbd/cbd_handler.h
+@@ -0,0 +1,66 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#ifndef _CBD_HANDLER_H
++#define _CBD_HANDLER_H
++
++#include "cbd_channel.h"
++#include "cbd_backend.h"
++
++#define cbd_handler_err(handler, fmt, ...)					\
++	cbdb_err(handler->cbdb, "handler%d: " fmt,				\
++		 handler->channel.seg_id, ##__VA_ARGS__)
++#define cbd_handler_info(handler, fmt, ...)					\
++	cbdb_info(handler->cbdb, "handler%d: " fmt,				\
++		 handler->channel.seg_id, ##__VA_ARGS__)
++#define cbd_handler_debug(handler, fmt, ...)					\
++	cbdb_debug(handler->cbdb, "handler%d: " fmt,				\
++		 handler->channel.seg_id, ##__VA_ARGS__)
++
++/* cbd_handler */
++struct cbd_handler {
++	struct cbd_backend	*cbdb;
++
++	struct cbd_channel	channel;
++	struct cbd_channel_ctrl	*channel_ctrl;
++	spinlock_t		compr_lock;
++	spinlock_t		submr_lock;
++
++	u32			se_to_handle;
++	u64			req_tid_expected;
++
++	struct delayed_work	handle_work;
++	struct cbd_worker_cfg	handle_worker_cfg;
++
++	struct delayed_work	handle_mgmt_work;
++
++	atomic_t		inflight_cmds;
++
++	struct hlist_node	hash_node;
++	struct bio_set		bioset;
++};
++
++void cbd_handler_destroy(struct cbd_handler *handler);
++int cbd_handler_create(struct cbd_backend *cbdb, u32 seg_id, bool init_channel);
++void cbd_handler_notify(struct cbd_handler *handler);
++void cbd_handler_mgmt_notify(struct cbd_handler *handler);
++
++static inline struct cbd_se *get_se_head(struct cbd_handler *handler)
++{
++	u32 se_head = cbdc_submr_head_get(&handler->channel);
++
++	if (unlikely(se_head > (handler->channel.submr_size - sizeof(struct cbd_se))))
++		return NULL;
++
++	return (struct cbd_se *)(handler->channel.submr + se_head);
++}
++
++static inline struct cbd_se *get_se_to_handle(struct cbd_handler *handler)
++{
++	return (struct cbd_se *)(handler->channel.submr + handler->se_to_handle);
++}
++
++static inline struct cbd_ce *get_compr_head(struct cbd_handler *handler)
++{
++	return (struct cbd_ce *)(handler->channel.compr + cbdc_compr_head_get(&handler->channel));
++}
++
++#endif /* _CBD_HANDLER_H */
 -- 
 2.34.1
 
