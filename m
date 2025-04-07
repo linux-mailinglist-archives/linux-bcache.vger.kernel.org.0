@@ -1,237 +1,195 @@
-Return-Path: <linux-bcache+bounces-849-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-850-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28534A4228A
-	for <lists+linux-bcache@lfdr.de>; Mon, 24 Feb 2025 15:12:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17ED8A7DE9A
+	for <lists+linux-bcache@lfdr.de>; Mon,  7 Apr 2025 15:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 955291890E42
-	for <lists+linux-bcache@lfdr.de>; Mon, 24 Feb 2025 14:07:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31820188B3FC
+	for <lists+linux-bcache@lfdr.de>; Mon,  7 Apr 2025 13:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EB02561AD;
-	Mon, 24 Feb 2025 14:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3QVej+E"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB4A2512FD;
+	Mon,  7 Apr 2025 13:12:21 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m3270.qiye.163.com (mail-m3270.qiye.163.com [220.197.32.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5842561A3;
-	Mon, 24 Feb 2025 14:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A4520E6FB
+	for <linux-bcache@vger.kernel.org>; Mon,  7 Apr 2025 13:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740405887; cv=none; b=ds/6bdu9krUJXXNqL4OnOLP1r+HTLgzXgPob17Arn6Ir0zfNhuMr0LdKk9nPzy8K/RNAfgkuKjWTu2y9woLMLtT7ElQXsPtU5qUtYWnRBmm6Gz3vacetge7hMGa5Nml9ge+yST1xOwlInmijxSE8PVpcM1tbzhjVCL9tacniuaU=
+	t=1744031541; cv=none; b=JwBz0NhKAmAY6gb5rIwa7nL2ZjoMNiQ5hkbaE15t5QNXDBP8LNE61pdjI6LGbTF2vQ3nywasIXIsZCZRHO52LhTJJP07Gpv1lCQzpRZy7mDlXHVnbphg6qnPV/5QaKgXJEEv/w5B8z2rkKAZmX4lkHwDDCTRGyHN5ut1UxR1xzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740405887; c=relaxed/simple;
-	bh=wt1dZX2Kgz4k5MbqpHvvb55cRgHsD3fZPjdzvbscas0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMZ/j3A8COCykRWl7UzKvL2tEsZOBzjLkROGlQOP8aKS9qbOkLFHVt1+oB6US//Nhd3YsRFKHuv7sLtv7vKJt7mF4tP+2dtRq5Fou/aCqa4fVM9wCq3TSsJu2rs0Qg65pvKO5Da3N9XKz1aygUIW36Bohff6T6WVtmoW9Vz78kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3QVej+E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C613FC4CEEB;
-	Mon, 24 Feb 2025 14:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740405886;
-	bh=wt1dZX2Kgz4k5MbqpHvvb55cRgHsD3fZPjdzvbscas0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L3QVej+ElgkWSmoU2923NLDFfdOwosVNkseVwHcEvtNvwP8EaiMSCIFMb1YcZRXcH
-	 vWr+8A+HIfjdV+w4lM6Hw96mNeu77eX/fAhXdd3E+Nf08J1+XOzhATP1JfhGZriEUi
-	 1Cc1pXbRrxLnlBY9kgLaqlR9Jb4UzlWN2RUCod2iG34rksF7CvOQDxYM81GIHeSdo9
-	 VbxN9tOzVRm5i7TMSMK00qSgyB2jntWbhh2JghPZriu0qa58itKAHUz4Sjw1voubuV
-	 lUiNH1BwPRl4RBQ0JqVBAVSS0kcjahGxGUcoYboO5MbYEMyhgK/FAH5LtX3h3rYtUZ
-	 HXEUOs9T5+2Aw==
-Date: Mon, 24 Feb 2025 22:04:41 +0800
-From: Coly Li <colyli@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 8/8][next] bcache: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <5pauuhdlh2jaeqixofoips7f4zjl7pcyeykkglkmihsko3cnjy@4cbebl2x3qod>
-References: <cover.1739957534.git.gustavoars@kernel.org>
- <f9f20ad9362972ef920dd9aecd7b98ab345ee866.1739957534.git.gustavoars@kernel.org>
+	s=arc-20240116; t=1744031541; c=relaxed/simple;
+	bh=UVSoFUDrIxNDLMlRWRjWkhs94iOkZT4/W0511xH00Mc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FirDv0bqP3Qvxz6S/7vCLP06fQqNWmuGqMZeS+AdqHZjxUzdaXN06jhdUniHNiX5dzCIPIXiLQShkdr50zTPcjQU/mcq1wwRqMhUHK6OImfBtfmseYd9ybQ9BaTBrBGstWcV/SI7uF/S4fWir1utxEqTrzXcfCQMtMjib39c8vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=220.197.32.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
+Received: from localhost.localdomain (unknown [218.94.118.90])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 7d7469cc;
+	Mon, 7 Apr 2025 20:56:48 +0800 (GMT+08:00)
+From: mingzhe.zou@easystack.cn
+To: colyli@suse.de
+Cc: linux-bcache@vger.kernel.org,
+	dongsheng.yang@easystack.cn,
+	zoumingzhe@qq.com
+Subject: [PATCH] bcache: fix NULL pointer in cache_set_flush()
+Date: Mon,  7 Apr 2025 20:56:25 +0800
+Message-Id: <20250407125625.270827-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f9f20ad9362972ef920dd9aecd7b98ab345ee866.1739957534.git.gustavoars@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaHx1DVh9NTxgdGUtLGhlOQ1YVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
+	VKQktLWQY+
+X-HM-Tid: 0a9610532b5c022bkunm7d7469cc
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MlE6Gjo*FTcLOA5DEylJTkMu
+	C0kKFA9VSlVKTE9PS0hLTUtDQk5PVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+	C1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTUhDTjcG
 
-On Mon, Feb 24, 2025 at 08:31:26PM +0800, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Change the type of the middle struct members currently causing trouble
-> from `struct bio` to `struct bio_hdr`.
-> 
-> We also use `container_of()` whenever we need to retrieve a pointer to
-> the flexible structure `struct bio`, through which we can access the
-> flexible-array member in it, if necessary.
-> 
-> With these changes fix 112 of the following warnings:
-> 
-> drivers/md/bcache/bcache.h:233:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/bcache.h:241:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/bcache.h:242:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/bcache.h:308:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/bcache.h:422:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/bcache.h:639:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/journal.h:152:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/journal.h:156:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+From: Linggang Zeng <linggang.zeng@easystack.cn>
 
-Hi Gustavo,
+1. LINE#1794 - LINE#1887 is some codes about function of
+   bch_cache_set_alloc().
+2. LINE#2078 - LINE#2142 is some codes about function of
+   register_cache_set().
+3. register_cache_set() will call bch_cache_set_alloc() in LINE#2098.
 
-each struct bio followed by a struct bio_vec at the location where
-struct bio is embedded into middle of a structure. So the general
-flex-array-in-middle issue doesn't exist here indeed.
+ 1794 struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+ 1795 {
+ ...
+ 1860         if (!(c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL)) ||
+ 1861             mempool_init_slab_pool(&c->search, 32, bch_search_cache) ||
+ 1862             mempool_init_kmalloc_pool(&c->bio_meta, 2,
+ 1863                                 sizeof(struct bbio) + sizeof(struct bio_vec) *
+ 1864                                 bucket_pages(c)) ||
+ 1865             mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size) ||
+ 1866             bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
+ 1867                         BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER) ||
+ 1868             !(c->uuids = alloc_bucket_pages(GFP_KERNEL, c)) ||
+ 1869             !(c->moving_gc_wq = alloc_workqueue("bcache_gc",
+ 1870                                                 WQ_MEM_RECLAIM, 0)) ||
+ 1871             bch_journal_alloc(c) ||
+ 1872             bch_btree_cache_alloc(c) ||
+ 1873             bch_open_buckets_alloc(c) ||
+ 1874             bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages)))
+ 1875                 goto err;
+                      ^^^^^^^^
+ 1876
+ ...
+ 1883         return c;
+ 1884 err:
+ 1885         bch_cache_set_unregister(c);
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 1886         return NULL;
+ 1887 }
+ ...
+ 2078 static const char *register_cache_set(struct cache *ca)
+ 2079 {
+ ...
+ 2098         c = bch_cache_set_alloc(&ca->sb);
+ 2099         if (!c)
+ 2100                 return err;
+                      ^^^^^^^^^^
+ ...
+ 2128         ca->set = c;
+ 2129         ca->set->cache[ca->sb.nr_this_dev] = ca;
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ ...
+ 2138         return NULL;
+ 2139 err:
+ 2140         bch_cache_set_unregister(c);
+ 2141         return err;
+ 2142 }
 
-I don't suggest to introduce extra complication in bcache code.
+(1) If LINE#1860 - LINE#1874 is true, then do 'goto err'(LINE#1875) and
+    call bch_cache_set_unregister()(LINE#1885).
+(2) As (1) return NULL(LINE#1886), LINE#2098 - LINE#2100 would return.
+(3) As (2) has returned, LINE#2128 - LINE#2129 would do *not* give the
+    value to c->cache[], it means that c->cache[] is NULL.
 
-How about to improve the checking script, if there is no following
-struct bio_vec after struct bio, then that should be something really
-suspicious.
+LINE#1624 - LINE#1665 is some codes about function of cache_set_flush().
+As (1), in LINE#1885 call
+bch_cache_set_unregister()
+---> bch_cache_set_stop()
+     ---> closure_queue()
+          -.-> cache_set_flush() (as below LINE#1624)
 
-Thanks.
+ 1624 static void cache_set_flush(struct closure *cl)
+ 1625 {
+ ...
+ 1654         for_each_cache(ca, c, i)
+ 1655                 if (ca->alloc_thread)
+                          ^^
+ 1656                         kthread_stop(ca->alloc_thread);
+ ...
+ 1665 }
 
-Coly Li
+(4) In LINE#1655 ca is NULL(see (3)) in cache_set_flush() then the
+    kernel crash occurred as below:
+[  846.712887] bcache: register_cache() error drbd6: cannot allocate memory
+[  846.713242] bcache: register_bcache() error : failed to register device
+[  846.713336] bcache: cache_set_free() Cache set 2f84bdc1-498a-4f2f-98a7-01946bf54287 unregistered
+[  846.713768] BUG: unable to handle kernel NULL pointer dereference at 00000000000009f8
+[  846.714790] PGD 0 P4D 0
+[  846.715129] Oops: 0000 [#1] SMP PTI
+[  846.715472] CPU: 19 PID: 5057 Comm: kworker/19:16 Kdump: loaded Tainted: G           OE    --------- -  - 4.18.0-147.5.1.el8_1.5es.3.x86_64 #1
+[  846.716082] Hardware name: ESPAN GI-25212/X11DPL-i, BIOS 2.1 06/15/2018
+[  846.716451] Workqueue: events cache_set_flush [bcache]
+[  846.716808] RIP: 0010:cache_set_flush+0xc9/0x1b0 [bcache]
+[  846.717155] Code: 00 4c 89 a5 b0 03 00 00 48 8b 85 68 f6 ff ff a8 08 0f 84 88 00 00 00 31 db 66 83 bd 3c f7 ff ff 00 48 8b 85 48 ff ff ff 74 28 <48> 8b b8 f8 09 00 00 48 85 ff 74 05 e8 b6 58 a2 e1 0f b7 95 3c f7
+[  846.718026] RSP: 0018:ffffb56dcf85fe70 EFLAGS: 00010202
+[  846.718372] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+[  846.718725] RDX: 0000000000000001 RSI: 0000000040000001 RDI: 0000000000000000
+[  846.719076] RBP: ffffa0ccc0f20df8 R08: ffffa0ce1fedb118 R09: 000073746e657665
+[  846.719428] R10: 8080808080808080 R11: 0000000000000000 R12: ffffa0ce1fee8700
+[  846.719779] R13: ffffa0ccc0f211a8 R14: ffffa0cd1b902840 R15: ffffa0ccc0f20e00
+[  846.720132] FS:  0000000000000000(0000) GS:ffffa0ce1fec0000(0000) knlGS:0000000000000000
+[  846.720726] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  846.721073] CR2: 00000000000009f8 CR3: 00000008ba00a005 CR4: 00000000007606e0
+[  846.721426] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  846.721778] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  846.722131] PKRU: 55555554
+[  846.722467] Call Trace:
+[  846.722814]  process_one_work+0x1a7/0x3b0
+[  846.723157]  worker_thread+0x30/0x390
+[  846.723501]  ? create_worker+0x1a0/0x1a0
+[  846.723844]  kthread+0x112/0x130
+[  846.724184]  ? kthread_flush_work_fn+0x10/0x10
+[  846.724535]  ret_from_fork+0x35/0x40
 
-> ---
->  drivers/md/bcache/bcache.h  |  4 ++--
->  drivers/md/bcache/journal.c | 10 +++++-----
->  drivers/md/bcache/journal.h |  4 ++--
->  drivers/md/bcache/super.c   |  8 +++++---
->  4 files changed, 14 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 785b0d9008fa..328023e90eb2 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -305,7 +305,7 @@ struct cached_dev {
->  
->  	struct cache_sb		sb;
->  	struct cache_sb_disk	*sb_disk;
-> -	struct bio		sb_bio;
-> +	struct bio_hdr		sb_bio;
->  	struct bio_vec		sb_bv[1];
->  	struct closure		sb_write;
->  	struct semaphore	sb_write_mutex;
-> @@ -419,7 +419,7 @@ struct cache {
->  	struct cache_set	*set;
->  	struct cache_sb		sb;
->  	struct cache_sb_disk	*sb_disk;
-> -	struct bio		sb_bio;
-> +	struct bio_hdr		sb_bio;
->  	struct bio_vec		sb_bv[1];
->  
->  	struct kobject		kobj;
-> diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-> index 7ff14bd2feb8..2ead129f7758 100644
-> --- a/drivers/md/bcache/journal.c
-> +++ b/drivers/md/bcache/journal.c
-> @@ -36,7 +36,7 @@ static int journal_read_bucket(struct cache *ca, struct list_head *list,
->  			       unsigned int bucket_index)
->  {
->  	struct journal_device *ja = &ca->journal;
-> -	struct bio *bio = &ja->bio;
-> +	struct bio *bio = container_of(&ja->bio, struct bio, __hdr);
->  
->  	struct journal_replay *i;
->  	struct jset *j, *data = ca->set->journal.w[0].data;
-> @@ -571,7 +571,7 @@ static void btree_flush_write(struct cache_set *c)
->  static void journal_discard_endio(struct bio *bio)
->  {
->  	struct journal_device *ja =
-> -		container_of(bio, struct journal_device, discard_bio);
-> +		container_of(&bio->__hdr, struct journal_device, discard_bio);
->  	struct cache *ca = container_of(ja, struct cache, journal);
->  
->  	atomic_set(&ja->discard_in_flight, DISCARD_DONE);
-> @@ -585,13 +585,13 @@ static void journal_discard_work(struct work_struct *work)
->  	struct journal_device *ja =
->  		container_of(work, struct journal_device, discard_work);
->  
-> -	submit_bio(&ja->discard_bio);
-> +	submit_bio(container_of(&ja->discard_bio, struct bio, __hdr));
->  }
->  
->  static void do_journal_discard(struct cache *ca)
->  {
->  	struct journal_device *ja = &ca->journal;
-> -	struct bio *bio = &ja->discard_bio;
-> +	struct bio *bio = container_of(&ja->discard_bio, struct bio, __hdr);
->  
->  	if (!ca->discard) {
->  		ja->discard_idx = ja->last_idx;
-> @@ -787,7 +787,7 @@ static CLOSURE_CALLBACK(journal_write_unlocked)
->  
->  	for (i = 0; i < KEY_PTRS(k); i++) {
->  		ca = c->cache;
-> -		bio = &ca->journal.bio;
-> +		bio = container_of(&ca->journal.bio, struct bio, __hdr);
->  
->  		atomic_long_add(sectors, &ca->meta_sectors_written);
->  
-> diff --git a/drivers/md/bcache/journal.h b/drivers/md/bcache/journal.h
-> index cd316b4a1e95..b4ff5269aee3 100644
-> --- a/drivers/md/bcache/journal.h
-> +++ b/drivers/md/bcache/journal.h
-> @@ -149,11 +149,11 @@ struct journal_device {
->  	atomic_t		discard_in_flight;
->  
->  	struct work_struct	discard_work;
-> -	struct bio		discard_bio;
-> +	struct bio_hdr		discard_bio;
->  	struct bio_vec		discard_bv;
->  
->  	/* Bio for journal reads/writes to this device */
-> -	struct bio		bio;
-> +	struct bio_hdr		bio;
->  	struct bio_vec		bv[8];
->  };
->  
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index e42f1400cea9..cd1342355cf2 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -337,7 +337,7 @@ static CLOSURE_CALLBACK(bch_write_bdev_super_unlock)
->  void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent)
->  {
->  	struct closure *cl = &dc->sb_write;
-> -	struct bio *bio = &dc->sb_bio;
-> +	struct bio *bio = container_of(&dc->sb_bio, struct bio, __hdr);
->  
->  	down(&dc->sb_write_mutex);
->  	closure_init(cl, parent);
-> @@ -374,7 +374,7 @@ void bcache_write_super(struct cache_set *c)
->  {
->  	struct closure *cl = &c->sb_write;
->  	struct cache *ca = c->cache;
-> -	struct bio *bio = &ca->sb_bio;
-> +	struct bio *bio = container_of(&ca->sb_bio, struct bio, __hdr);
->  	unsigned int version = BCACHE_SB_VERSION_CDEV_WITH_UUID;
->  
->  	down(&c->sb_write_mutex);
-> @@ -2230,7 +2230,9 @@ static int cache_alloc(struct cache *ca)
->  	__module_get(THIS_MODULE);
->  	kobject_init(&ca->kobj, &bch_cache_ktype);
->  
-> -	bio_init(&ca->journal.bio, NULL, ca->journal.bio.bi_inline_vecs, 8, 0);
-> +	bio_init(container_of(&ca->journal.bio, struct bio, __hdr), NULL,
-> +		 container_of(&ca->journal.bio, struct bio, __hdr)->bi_inline_vecs,
-> +		 8, 0);
->  
->  	/*
->  	 * when ca->sb.njournal_buckets is not zero, journal exists,
-> -- 
-> 2.43.0
-> 
+Now, check whether that ca is NULL in LINE#1655 to fix the issue.
 
+Signed-off-by: Linggang Zeng <linggang.zeng@easystack.cn>
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index e42f1400cea9..7f07712580fe 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1733,7 +1733,7 @@ static CLOSURE_CALLBACK(cache_set_flush)
+ 			mutex_unlock(&b->write_lock);
+ 		}
+ 
+-	if (ca->alloc_thread)
++	if (ca && ca->alloc_thread)
+ 		kthread_stop(ca->alloc_thread);
+ 
+ 	if (c->journal.cur) {
 -- 
-Coly Li
+2.34.1
+
 
