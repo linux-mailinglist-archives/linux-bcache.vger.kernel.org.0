@@ -1,47 +1,47 @@
-Return-Path: <linux-bcache+bounces-871-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-872-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A6EA87580
-	for <lists+linux-bcache@lfdr.de>; Mon, 14 Apr 2025 03:47:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882ADA87583
+	for <lists+linux-bcache@lfdr.de>; Mon, 14 Apr 2025 03:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEF3C1889F7D
-	for <lists+linux-bcache@lfdr.de>; Mon, 14 Apr 2025 01:47:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42530188AEAA
+	for <lists+linux-bcache@lfdr.de>; Mon, 14 Apr 2025 01:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD481A9B24;
-	Mon, 14 Apr 2025 01:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA4B1ACEC9;
+	Mon, 14 Apr 2025 01:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gswPM67S"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KwUmYwgt"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23FC1A5B94
-	for <linux-bcache@vger.kernel.org>; Mon, 14 Apr 2025 01:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881C51AAA2C
+	for <linux-bcache@vger.kernel.org>; Mon, 14 Apr 2025 01:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744595158; cv=none; b=TvmMqjYqNAdkdLJqtisdsaqyhdLWU1ZP4BQK4+WDUE+xeS2f8H/icyskQMYQK+b+iH+IQ00A4QmT4gtYisa0R1ty+SBFalJ0Nthq5CPXthkmScCUowz4Zcby0DXiydw+e6AE0zhj4MHU7v7Z8Ayyh5yXYTDtRER9v6635KtFQuc=
+	t=1744595162; cv=none; b=f4qKRfrqKa6wddYYstdeX3htchCI7iEMuYmeT7Xndbzm8poAFCYSC2+i2hGG44UDFheeRYE2JGpYtO5aiV46CHTXcTlEamZtmfXiP3jO3SGfgX8otJg4KVnrPWLteMyztfaFeGTHN4SR24KRjPRZzqFMzYoK8w692DQ9NnYLMMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744595158; c=relaxed/simple;
-	bh=tLv86KSjsFfVqnow6fhzxdZE5kdFw9ZoErl23cQxr/M=;
+	s=arc-20240116; t=1744595162; c=relaxed/simple;
+	bh=sxmCPdxrpKlqtCvPbykqVOQ/y6mE9HQZwVV5lIA/aSo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QKtBgfOgen1XaN7sgxNlxx8/kn+OeOwXWv0tQJqmudHwZpz7QkPZU2x6jfLB/7fYvbfKgEC2Fy9ZdTzOEAiM+5vvlgs37q9U7mL3PfW+AjZkigDEJyYOa/5oyVqpHRNpPfJ1SjbDdo0T34C1sZw7WKsWxvCjX7FBUhMx0nJWZ0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gswPM67S; arc=none smtp.client-ip=95.215.58.183
+	 MIME-Version; b=KYvq4/tu/3TpMo6I/t029pKmiBehuqNtD/L57IntUdzOe9x/s95r1KSwEi1xaVQRB4wPrbelBl1AqwxJiPm5e3t8wQNMnpqfR0uxfPF0OlugMQZvsFRnMAfMclyGtpspmuaaQ1y/EDjSRBhHhekyq/sRfZaQnQxLKbIywwlYFtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KwUmYwgt; arc=none smtp.client-ip=95.215.58.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744595154;
+	t=1744595158;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dxDMoRtSRWuK/H8EUpRueay0Al8ARSlmVenBnsLAI9A=;
-	b=gswPM67S55W8LkRc8FaC+f9Cw6lPkaL8ApGqMV9R47LFz9KdL9KMsqP53+PJwa20KrJjbu
-	8bL9Qh7ipFiZznI06Tm3bNp2kkv4e4b313/XwwdiZbViSFJ4VNYjurZkAfbKznrT4A9zXl
-	ThuBgRhL5GTehz/HEvl2jSNIbYDbQI8=
+	bh=RZZFggpY+ZKiLRCW/hYI9LKJVuoQ9jFBC+b9AKHIz1M=;
+	b=KwUmYwgtosbaDS2/8TrCmlHqVJ3D7yYuhAQg3OO/6UeE8K7rn2BAvf9eDDcrYdR9gMiLEq
+	TNvwyNRTFdHp+3L/kFGKvdugeQ7hzydd0eneMxFKUo5raRCCHPHgYwsn1idWRQMw2Dph8E
+	lsI+17sA3tcpUauYu4KDVRkhk63ZMAs=
 From: Dongsheng Yang <dongsheng.yang@linux.dev>
 To: axboe@kernel.dk,
 	hch@lst.de,
@@ -58,9 +58,9 @@ Cc: linux-block@vger.kernel.org,
 	linux-bcache@vger.kernel.org,
 	nvdimm@lists.linux.dev,
 	Dongsheng Yang <dongsheng.yang@linux.dev>
-Subject: [RFC PATCH 08/11] pcache: implement request processing and cache I/O path in cache_req
-Date: Mon, 14 Apr 2025 01:45:02 +0000
-Message-Id: <20250414014505.20477-9-dongsheng.yang@linux.dev>
+Subject: [RFC PATCH 09/11] pcache: introduce logic block device and request handling
+Date: Mon, 14 Apr 2025 01:45:03 +0000
+Message-Id: <20250414014505.20477-10-dongsheng.yang@linux.dev>
 In-Reply-To: <20250414014505.20477-1-dongsheng.yang@linux.dev>
 References: <20250414014505.20477-1-dongsheng.yang@linux.dev>
 Precedence: bulk
@@ -72,849 +72,481 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-This patch introduces the core request processing logic, which
-handles all I/O operations for the PCACHE system, including read, write, and flush.
+This patch introduces the logic block device layer (`pcache_logic_dev`), which
+connects pcache to the kernel block layer through a standard gendisk interface.
+It implements the infrastructure to expose the cache as a Linux block device
+(e.g., /dev/pcache0), enabling I/O submission via standard block device APIs.
 
-Read operations walk the in-memory cache tree to locate cached ranges. Missing
-ranges are submitted to the backing device through asynchronous requests, optionally
-inserting empty placeholder keys to prevent redundant reads. The traversal logic
-carefully handles all possible overlapping conditions between requested and cached
-ranges.
+Key components added:
 
-Write operations allocate space from per-queue data heads, copy data into persistent
-memory segments, and append corresponding keys into the current kset for persistence.
+- pcache_logic_dev:
+  Represents the logical block device and encapsulates associated state,
+  such as queues, gendisk, tag set, and open count tracking.
 
-Flush operations traverse all active ksets and ensure any accumulated keys are written
-to persistent memory. Each kset is flushed atomically, allowing the cache metadata to
-remain consistent even in the event of a crash.
+- Block I/O path:
+  Implements `pcache_queue_rq()` to translate block layer requests into
+  internal `pcache_request` objects. Handles data reads, writes, and flushes
+  by dispatching them to `pcache_cache_handle_req()` and completing them
+  via `pcache_req_put()`.
 
-This patch lays the foundation for the entire cache I/O path, ensuring that cache
-operations are efficient and crash-safe.
+- Queue management:
+  Initializes per-hctx queues and associates them with `pcache_queue`.
+  Ensures multi-queue support by allocating queues according to the backing
+  device's configuration.
+
+- Device lifecycle:
+  Provides `logic_dev_start()` and `logic_dev_stop()` to manage device
+  creation, queue setup, and gendisk registration/unregistration.
+  Tracks open_count to ensure safe teardown.
+
+- blkdev integration:
+  Adds `pcache_blkdev_init()` and `pcache_blkdev_exit()` to register/unregister
+  the pcache major number.
+
+This forms the upper layer of pcache's I/O path and makes the cache visible
+as a standard Linux block device.
 
 Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
 ---
- drivers/block/pcache/cache_req.c | 812 +++++++++++++++++++++++++++++++
- 1 file changed, 812 insertions(+)
- create mode 100644 drivers/block/pcache/cache_req.c
+ drivers/block/pcache/logic_dev.c | 348 +++++++++++++++++++++++++++++++
+ drivers/block/pcache/logic_dev.h |  73 +++++++
+ 2 files changed, 421 insertions(+)
+ create mode 100644 drivers/block/pcache/logic_dev.c
+ create mode 100644 drivers/block/pcache/logic_dev.h
 
-diff --git a/drivers/block/pcache/cache_req.c b/drivers/block/pcache/cache_req.c
+diff --git a/drivers/block/pcache/logic_dev.c b/drivers/block/pcache/logic_dev.c
 new file mode 100644
-index 000000000000..9d0bce55caed
+index 000000000000..02917bac2210
 --- /dev/null
-+++ b/drivers/block/pcache/cache_req.c
-@@ -0,0 +1,812 @@
++++ b/drivers/block/pcache/logic_dev.c
+@@ -0,0 +1,348 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
-+
++#include "pcache_internal.h"
 +#include "cache.h"
 +#include "backing_dev.h"
 +#include "logic_dev.h"
 +
-+static int cache_data_head_init(struct pcache_cache *cache, u32 head_index)
++static int pcache_major;
++static DEFINE_IDA(pcache_mapped_id_ida);
++
++static int minor_to_pcache_mapped_id(int minor)
 +{
-+	struct pcache_cache_segment *next_seg;
-+	struct pcache_cache_data_head *data_head;
++	return minor >> PCACHE_PART_SHIFT;
++}
 +
-+	data_head = get_data_head(cache, head_index);
-+	next_seg = get_cache_segment(cache);
-+	if (!next_seg)
-+		return -EBUSY;
++static int logic_dev_open(struct gendisk *disk, blk_mode_t mode)
++{
++	struct pcache_logic_dev *logic_dev = disk->private_data;
 +
-+	cache_seg_get(next_seg);
-+	data_head->head_pos.cache_seg = next_seg;
-+	data_head->head_pos.seg_off = 0;
++	mutex_lock(&logic_dev->lock);
++	logic_dev->open_count++;
++	mutex_unlock(&logic_dev->lock);
 +
 +	return 0;
 +}
 +
-+/*
-+ * cache_data_alloc - Allocate data for a cache key.
-+ * @cache: Pointer to the cache structure.
-+ * @key: Pointer to the cache key to allocate data for.
-+ * @head_index: Index of the data head to use for allocation.
-+ *
-+ * This function tries to allocate space from the cache segment specified by the
-+ * data head. If the remaining space in the segment is insufficient to allocate
-+ * the requested length for the cache key, it will allocate whatever is available
-+ * and adjust the key's length accordingly. This function does not allocate
-+ * space that crosses segment boundaries.
-+ */
-+static int cache_data_alloc(struct pcache_cache *cache, struct pcache_cache_key *key, u32 head_index)
++static void logic_dev_release(struct gendisk *disk)
 +{
-+	struct pcache_cache_data_head *data_head;
-+	struct pcache_cache_pos *head_pos;
-+	struct pcache_cache_segment *cache_seg;
-+	u32 seg_remain;
-+	u32 allocated = 0, to_alloc;
-+	int ret = 0;
++	struct pcache_logic_dev *logic_dev = disk->private_data;
 +
-+	data_head = get_data_head(cache, head_index);
-+
-+	spin_lock(&data_head->data_head_lock);
-+again:
-+	if (!data_head->head_pos.cache_seg) {
-+		seg_remain = 0;
-+	} else {
-+		cache_pos_copy(&key->cache_pos, &data_head->head_pos);
-+		key->seg_gen = key->cache_pos.cache_seg->gen;
-+
-+		head_pos = &data_head->head_pos;
-+		cache_seg = head_pos->cache_seg;
-+		seg_remain = cache_seg_remain(head_pos);
-+		to_alloc = key->len - allocated;
-+	}
-+
-+	if (seg_remain > to_alloc) {
-+		/* If remaining space in segment is sufficient for the cache key, allocate it. */
-+		cache_pos_advance(head_pos, to_alloc);
-+		allocated += to_alloc;
-+		cache_seg_get(cache_seg);
-+	} else if (seg_remain) {
-+		/* If remaining space is not enough, allocate the remaining space and adjust the cache key length. */
-+		cache_pos_advance(head_pos, seg_remain);
-+		key->len = seg_remain;
-+
-+		/* Get for key: obtain a reference to the cache segment for the key. */
-+		cache_seg_get(cache_seg);
-+		/* Put for head_pos->cache_seg: release the reference for the current head's segment. */
-+		cache_seg_put(head_pos->cache_seg);
-+		head_pos->cache_seg = NULL;
-+	} else {
-+		/* Initialize a new data head if no segment is available. */
-+		ret = cache_data_head_init(cache, head_index);
-+		if (ret)
-+			goto out;
-+
-+		goto again;
-+	}
-+
-+out:
-+	spin_unlock(&data_head->data_head_lock);
-+
-+	return ret;
++	mutex_lock(&logic_dev->lock);
++	logic_dev->open_count--;
++	mutex_unlock(&logic_dev->lock);
 +}
 +
-+static void cache_copy_from_req_bio(struct pcache_cache *cache, struct pcache_cache_key *key,
-+				struct pcache_request *pcache_req, u32 bio_off)
++static const struct block_device_operations logic_dev_bd_ops = {
++	.owner			= THIS_MODULE,
++	.open			= logic_dev_open,
++	.release		= logic_dev_release,
++};
++
++static inline bool pcache_req_nodata(struct pcache_request *pcache_req)
 +{
-+	struct pcache_cache_pos *pos = &key->cache_pos;
-+	struct pcache_segment *segment;
-+
-+	segment = &pos->cache_seg->segment;
-+
-+	segment_copy_from_bio(segment, pos->seg_off, key->len, pcache_req->req->bio, bio_off);
++	switch (pcache_req->op) {
++	case REQ_OP_WRITE:
++	case REQ_OP_READ:
++		return false;
++	case REQ_OP_FLUSH:
++		return true;
++	default:
++		BUG();
++	}
 +}
 +
-+static int cache_copy_to_req_bio(struct pcache_cache *cache, struct pcache_request *pcache_req,
-+			    u32 bio_off, u32 len, struct pcache_cache_pos *pos, u64 key_gen)
++static blk_status_t pcache_queue_rq(struct blk_mq_hw_ctx *hctx,
++		const struct blk_mq_queue_data *bd)
 +{
-+	struct pcache_cache_segment *cache_seg = pos->cache_seg;
-+	struct pcache_segment *segment = &cache_seg->segment;
++	struct request *req = bd->rq;
++	struct pcache_queue *queue = hctx->driver_data;
++	struct pcache_logic_dev *logic_dev = queue->logic_dev;
++	struct pcache_request *pcache_req = blk_mq_rq_to_pdu(bd->rq);
 +	int ret;
 +
-+	spin_lock(&cache_seg->gen_lock);
-+	if (key_gen < cache_seg->gen) {
-+		spin_unlock(&cache_seg->gen_lock);
-+		return -EINVAL;
-+	}
++	memset(pcache_req, 0, sizeof(struct pcache_request));
++	kref_init(&pcache_req->ref);
++	blk_mq_start_request(bd->rq);
 +
-+	ret = segment_copy_to_bio(segment, pos->seg_off, len, pcache_req->req->bio, bio_off);
-+	spin_unlock(&cache_seg->gen_lock);
++	pcache_req->queue = queue;
++	pcache_req->req = req;
++	pcache_req->op = req_op(bd->rq);
++	pcache_req->off = (u64)blk_rq_pos(bd->rq) << SECTOR_SHIFT;
++	if (!pcache_req_nodata(pcache_req))
++		pcache_req->data_len = blk_rq_bytes(bd->rq);
++	else
++		pcache_req->data_len = 0;
 +
-+	return ret;
-+}
-+
-+/**
-+ * miss_read_end_req - Handle the end of a miss read request.
-+ * @cache: Pointer to the cache structure.
-+ * @pcache_req: Pointer to the request structure.
-+ *
-+ * This function is called when a backing request to read data from
-+ * the backing_dev is completed. If the key associated with the request
-+ * is empty (a placeholder), it allocates cache space for the key,
-+ * copies the data read from the bio into the cache, and updates
-+ * the key's status. If the key has been overwritten by a write
-+ * request during this process, it will be deleted from the cache
-+ * tree and no further action will be taken.
-+ */
-+static void miss_read_end_req(struct pcache_backing_dev_req *backing_req, int ret)
-+{
-+	void *priv_data = backing_req->priv_data;
-+	struct pcache_request *pcache_req = backing_req->upper_req;
-+	struct pcache_cache *cache = backing_req->backing_dev->cache;
-+
-+	if (priv_data) {
-+		struct pcache_cache_key *key;
-+		struct pcache_cache_subtree *cache_subtree;
-+
-+		key = (struct pcache_cache_key *)priv_data;
-+		cache_subtree = key->cache_subtree;
-+
-+		/* if this key was deleted from cache_subtree by a write, key->flags should be cleared,
-+		 * so if cache_key_empty() return true, this key is still in cache_subtree
-+		 */
-+		spin_lock(&cache_subtree->tree_lock);
-+		if (cache_key_empty(key)) {
-+			/* Check if the backing request was successful. */
-+			if (ret) {
-+				cache_key_delete(key);
-+				goto unlock;
-+			}
-+
-+			/* Allocate cache space for the key and copy data from the backing_dev. */
-+			ret = cache_data_alloc(cache, key, pcache_req->queue->index);
-+			if (ret) {
-+				cache_key_delete(key);
-+				goto unlock;
-+			}
-+			cache_copy_from_req_bio(cache, key, pcache_req, backing_req->bio_off);
-+			key->flags &= ~PCACHE_CACHE_KEY_FLAGS_EMPTY;
-+			key->flags |= PCACHE_CACHE_KEY_FLAGS_CLEAN;
-+
-+			/* Append the key to the cache. */
-+			ret = cache_key_append(cache, key);
-+			if (ret) {
-+				cache_seg_put(key->cache_pos.cache_seg);
-+				cache_key_delete(key);
-+				goto unlock;
-+			}
-+		}
-+unlock:
-+		spin_unlock(&cache_subtree->tree_lock);
-+		cache_key_put(key);
-+	}
-+
++	ret = pcache_cache_handle_req(logic_dev->backing_dev->cache, pcache_req);
 +	pcache_req_put(pcache_req, ret);
++
++	return BLK_STS_OK;
 +}
 +
-+/**
-+ * submit_cache_miss_req - Submit a backing request when cache data is missing
-+ * @cache: The cache context that manages cache operations
-+ * @pcache_req: The cache request containing information about the read request
-+ *
-+ * This function is used to handle cases where a cache read request cannot locate
-+ * the required data in the cache. When such a miss occurs during `cache_subtree_walk`,
-+ * it triggers a backing read request to fetch data from the backing storage.
-+ *
-+ * If `pcache_req->priv_data` is set, it points to a `pcache_cache_key`, representing
-+ * a new cache key to be inserted into the cache. The function calls `cache_key_insert`
-+ * to attempt adding the key. On insertion failure, it releases the key reference and
-+ * clears `priv_data` to avoid further processing.
-+ */
-+static void submit_cache_miss_req(struct pcache_cache *cache, struct pcache_backing_dev_req *backing_req)
++static int pcache_init_hctx(struct blk_mq_hw_ctx *hctx, void *driver_data,
++			unsigned int hctx_idx)
 +{
-+	int ret;
++	struct pcache_logic_dev *logic_dev = driver_data;
 +
-+	if (backing_req->priv_data) {
-+		struct pcache_cache_key *key;
-+
-+		/* Attempt to insert the key into the cache if priv_data is set */
-+		key = (struct pcache_cache_key *)backing_req->priv_data;
-+		ret = cache_key_insert(&cache->req_key_tree, key, true);
-+		if (ret) {
-+			/* Release the key if insertion fails */
-+			cache_key_put(key);
-+			backing_req->priv_data = NULL;
-+			backing_req->ret = ret;
-+			backing_dev_req_end(backing_req);
-+			return;
-+		}
-+	}
-+	backing_dev_req_submit(backing_req);
-+}
-+
-+/**
-+ * create_cache_miss_req - Create a backing read request for a cache miss
-+ * @cache: The cache structure that manages cache operations
-+ * @parent: The parent request structure initiating the miss read
-+ * @off: Offset in the parent request to read from
-+ * @len: Length of data to read from the backing_dev
-+ * @insert_key: Determines whether to insert a placeholder empty key in the cache tree
-+ *
-+ * This function generates a new backing read request when a cache miss occurs. The
-+ * `insert_key` parameter controls whether a placeholder (empty) cache key should be
-+ * added to the cache tree to prevent multiple backing requests for the same missing
-+ * data. Generally, when the miss read occurs in a cache segment that doesn't contain
-+ * the requested data, a placeholder key is created and inserted.
-+ *
-+ * However, if the cache tree already has an empty key at the location for this
-+ * read, there is no need to create another. Instead, this function just send the
-+ * new request without adding a duplicate placeholder.
-+ *
-+ * Returns:
-+ * A pointer to the newly created request structure on success, or NULL on failure.
-+ * If an empty key is created, it will be released if any errors occur during the
-+ * process to ensure proper cleanup.
-+ */
-+static struct pcache_backing_dev_req *create_cache_miss_req(struct pcache_cache *cache, struct pcache_request *parent,
-+					u32 off, u32 len, bool insert_key)
-+{
-+	struct pcache_backing_dev *backing_dev = cache->backing_dev;
-+	struct pcache_backing_dev_req *backing_req;
-+	struct pcache_cache_key *key = NULL;
-+
-+	backing_req = backing_dev_req_create(backing_dev, parent, off, len, miss_read_end_req);
-+	if (!backing_req)
-+		goto out;
-+
-+	/* Allocate a new empty key if insert_key is set */
-+	if (insert_key) {
-+		key = cache_key_alloc(&cache->req_key_tree);
-+		if (!key) {
-+			backing_req->ret = -ENOMEM;
-+			goto end_req;
-+		}
-+
-+		/* Initialize the empty key with offset, length, and empty flag */
-+		key->off = parent->off + off;
-+		key->len = len;
-+		key->flags |= PCACHE_CACHE_KEY_FLAGS_EMPTY;
-+	}
-+
-+	/* Attach the empty key to the request if it was created */
-+	if (key) {
-+		cache_key_get(key);
-+		backing_req->priv_data = key;
-+	}
-+
-+	return backing_req;
-+
-+end_req:
-+	backing_dev_req_end(backing_req);
-+out:
-+	return NULL;
-+}
-+
-+static int send_cache_miss_req(struct pcache_cache *cache, struct pcache_request *pcache_req,
-+			    u32 off, u32 len, bool insert_key)
-+{
-+	struct pcache_backing_dev_req *backing_req;
-+
-+	backing_req = create_cache_miss_req(cache, pcache_req, off, len, insert_key);
-+	if (!backing_req)
-+		return -ENOMEM;
-+
-+	submit_cache_miss_req(cache, backing_req);
++	hctx->driver_data = &logic_dev->queues[hctx_idx];
 +
 +	return 0;
 +}
 +
-+/*
-+ * In the process of walking the cache tree to locate cached data, this
-+ * function handles the situation where the requested data range lies
-+ * entirely before an existing cache node (`key_tmp`). This outcome
-+ * signifies that the target data is absent from the cache (cache miss).
-+ *
-+ * To fulfill this portion of the read request, the function creates a
-+ * backing request (`backing_req`) for the missing data range represented
-+ * by `key`. It then appends this request to the submission list in the
-+ * `ctx`, which will later be processed to retrieve the data from backing
-+ * storage. After setting up the backing request, `req_done` in `ctx` is
-+ * updated to reflect the length of the handled range, and the range
-+ * in `key` is adjusted by trimming off the portion that is now handled.
-+ *
-+ * The scenario handled here:
-+ *
-+ *	  |--------|			  key_tmp (existing cached range)
-+ * |====|					   key (requested range, preceding key_tmp)
-+ *
-+ * Since `key` is before `key_tmp`, it signifies that the requested data
-+ * range is missing in the cache (cache miss) and needs retrieval from
-+ * backing storage.
-+ */
-+static int read_before(struct pcache_cache_key *key, struct pcache_cache_key *key_tmp,
-+		struct pcache_cache_subtree_walk_ctx *ctx)
++const struct blk_mq_ops logic_dev_mq_ops = {
++	.queue_rq	= pcache_queue_rq,
++	.init_hctx	= pcache_init_hctx,
++};
++
++static int disk_start(struct pcache_logic_dev *logic_dev)
 +{
-+	struct pcache_backing_dev_req *backing_req;
++	struct gendisk *disk;
++	struct queue_limits lim = {
++		.max_hw_sectors			= BIO_MAX_VECS * PAGE_SECTORS,
++		.io_min				= 4096,
++		.io_opt				= 4096,
++		.max_segments			= BIO_MAX_VECS,
++		.max_segment_size		= PAGE_SIZE,
++		.discard_granularity		= 0,
++		.max_hw_discard_sectors		= 0,
++		.max_write_zeroes_sectors	= 0
++	};
 +	int ret;
 +
-+	/*
-+	 * In this scenario, `key` represents a range that precedes `key_tmp`,
-+	 * meaning the requested data range is missing from the cache tree
-+	 * and must be retrieved from the backing_dev.
-+	 */
-+	backing_req = create_cache_miss_req(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done, key->len, true);
-+	if (!backing_req) {
-+		ret = -ENOMEM;
-+		goto out;
++	memset(&logic_dev->tag_set, 0, sizeof(logic_dev->tag_set));
++	logic_dev->tag_set.ops = &logic_dev_mq_ops;
++	logic_dev->tag_set.queue_depth = 128;
++	logic_dev->tag_set.numa_node = NUMA_NO_NODE;
++	logic_dev->tag_set.nr_hw_queues = logic_dev->num_queues;
++	logic_dev->tag_set.cmd_size = sizeof(struct pcache_request);
++	logic_dev->tag_set.timeout = 0;
++	logic_dev->tag_set.driver_data = logic_dev;
++
++	ret = blk_mq_alloc_tag_set(&logic_dev->tag_set);
++	if (ret) {
++		logic_dev_err(logic_dev, "failed to alloc tag set %d", ret);
++		goto err;
 +	}
 +
-+	list_add(&backing_req->node, ctx->submit_req_list);
-+	ctx->req_done += key->len;
-+	cache_key_cutfront(key, key->len);
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+
-+/*
-+ * During cache_subtree_walk, this function manages a scenario where part of the
-+ * requested data range overlaps with an existing cache node (`key_tmp`).
-+ *
-+ *	 |----------------|  key_tmp (existing cached range)
-+ * |===========|		   key (requested range, overlapping the tail of key_tmp)
-+ */
-+static int read_overlap_tail(struct pcache_cache_key *key, struct pcache_cache_key *key_tmp,
-+		struct pcache_cache_subtree_walk_ctx *ctx)
-+{
-+	struct pcache_backing_dev_req *backing_req;
-+	u32 io_len;
-+	int ret;
-+
-+	/*
-+	 * Calculate the length of the non-overlapping portion of `key`
-+	 * before `key_tmp`, representing the data missing in the cache.
-+	 */
-+	io_len = cache_key_lstart(key_tmp) - cache_key_lstart(key);
-+	if (io_len) {
-+		backing_req = create_cache_miss_req(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done, io_len, true);
-+		if (!backing_req) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+
-+		list_add(&backing_req->node, ctx->submit_req_list);
-+		ctx->req_done += io_len;
-+		cache_key_cutfront(key, io_len);
++	disk = blk_mq_alloc_disk(&logic_dev->tag_set, &lim, logic_dev);
++	if (IS_ERR(disk)) {
++		ret = PTR_ERR(disk);
++		logic_dev_err(logic_dev, "failed to alloc disk");
++		goto out_tag_set;
 +	}
 +
-+	/*
-+	 * Handle the overlapping portion by calculating the length of
-+	 * the remaining data in `key` that coincides with `key_tmp`.
-+	 */
-+	io_len = cache_key_lend(key) - cache_key_lstart(key_tmp);
-+	if (cache_key_empty(key_tmp)) {
-+		ret = send_cache_miss_req(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done, io_len, false);
-+		if (ret)
-+			goto out;
-+	} else {
-+		ret = cache_copy_to_req_bio(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done,
-+					io_len, &key_tmp->cache_pos, key_tmp->seg_gen);
-+		if (ret) {
-+			list_add(&key_tmp->list_node, ctx->delete_key_list);
-+			goto out;
-+		}
-+	}
++	snprintf(disk->disk_name, sizeof(disk->disk_name), "pcache%d",
++		 logic_dev->mapped_id);
 +
-+	ctx->req_done += io_len;
-+	cache_key_cutfront(key, io_len);
++	disk->major = pcache_major;
++	disk->first_minor = logic_dev->mapped_id << PCACHE_PART_SHIFT;
++	disk->minors = (1 << PCACHE_PART_SHIFT);
++	disk->fops = &logic_dev_bd_ops;
++	disk->private_data = logic_dev;
++
++	logic_dev->disk = disk;
++
++	set_capacity(logic_dev->disk, logic_dev->dev_size);
++	set_disk_ro(logic_dev->disk, false);
++
++	/* Register the disk with the system */
++	ret = add_disk(logic_dev->disk);
++	if (ret)
++		goto put_disk;
 +
 +	return 0;
 +
-+out:
-+	return ret;
-+}
-+
-+/**
-+ * The scenario handled here:
-+ *
-+ *    |----|          key_tmp (existing cached range)
-+ * |==========|       key (requested range)
-+ */
-+static int read_overlap_contain(struct pcache_cache_key *key, struct pcache_cache_key *key_tmp,
-+		struct pcache_cache_subtree_walk_ctx *ctx)
-+{
-+	struct pcache_backing_dev_req *backing_req;
-+	u32 io_len;
-+	int ret;
-+
-+	/*
-+	 * Calculate the non-overlapping part of `key` before `key_tmp`
-+	 * to identify the missing data length.
-+	 */
-+	io_len = cache_key_lstart(key_tmp) - cache_key_lstart(key);
-+	if (io_len) {
-+		backing_req = create_cache_miss_req(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done, io_len, true);
-+		if (!backing_req) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+		list_add(&backing_req->node, ctx->submit_req_list);
-+
-+		ctx->req_done += io_len;
-+		cache_key_cutfront(key, io_len);
-+	}
-+
-+	/*
-+	 * Handle the overlapping portion between `key` and `key_tmp`.
-+	 */
-+	io_len = key_tmp->len;
-+	if (cache_key_empty(key_tmp)) {
-+		ret = send_cache_miss_req(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done, io_len, false);
-+		if (ret)
-+			goto out;
-+	} else {
-+		ret = cache_copy_to_req_bio(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done,
-+					io_len, &key_tmp->cache_pos, key_tmp->seg_gen);
-+		if (ret) {
-+			list_add(&key_tmp->list_node, ctx->delete_key_list);
-+			goto out;
-+		}
-+	}
-+
-+	ctx->req_done += io_len;
-+	cache_key_cutfront(key, io_len);
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+
-+/*
-+ *	 |-----------|		key_tmp (existing cached range)
-+ *	   |====|			key (requested range, fully within key_tmp)
-+ *
-+ * If `key_tmp` contains valid cached data, this function copies the relevant
-+ * portion to the request's bio. Otherwise, it sends a backing request to
-+ * fetch the required data range.
-+ */
-+static int read_overlap_contained(struct pcache_cache_key *key, struct pcache_cache_key *key_tmp,
-+		struct pcache_cache_subtree_walk_ctx *ctx)
-+{
-+	struct pcache_cache_pos pos;
-+	int ret;
-+
-+	/*
-+	 * Check if `key_tmp` is empty, indicating a miss. If so, initiate
-+	 * a backing request to fetch the required data for `key`.
-+	 */
-+	if (cache_key_empty(key_tmp)) {
-+		ret = send_cache_miss_req(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done, key->len, false);
-+		if (ret)
-+			goto out;
-+	} else {
-+		cache_pos_copy(&pos, &key_tmp->cache_pos);
-+		cache_pos_advance(&pos, cache_key_lstart(key) - cache_key_lstart(key_tmp));
-+
-+		ret = cache_copy_to_req_bio(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done,
-+					key->len, &pos, key_tmp->seg_gen);
-+		if (ret) {
-+			list_add(&key_tmp->list_node, ctx->delete_key_list);
-+			goto out;
-+		}
-+	}
-+
-+	ctx->req_done += key->len;
-+	cache_key_cutfront(key, key->len);
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+
-+/*
-+ *	 |--------|		  key_tmp (existing cached range)
-+ *	   |==========|	  key (requested range, overlapping the head of key_tmp)
-+ */
-+static int read_overlap_head(struct pcache_cache_key *key, struct pcache_cache_key *key_tmp,
-+		struct pcache_cache_subtree_walk_ctx *ctx)
-+{
-+	struct pcache_cache_pos pos;
-+	u32 io_len;
-+	int ret;
-+
-+	io_len = cache_key_lend(key_tmp) - cache_key_lstart(key);
-+
-+	if (cache_key_empty(key_tmp)) {
-+		ret = send_cache_miss_req(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done, io_len, false);
-+		if (ret)
-+			goto out;
-+	} else {
-+		cache_pos_copy(&pos, &key_tmp->cache_pos);
-+		cache_pos_advance(&pos, cache_key_lstart(key) - cache_key_lstart(key_tmp));
-+
-+		ret = cache_copy_to_req_bio(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done,
-+					io_len, &pos, key_tmp->seg_gen);
-+		if (ret) {
-+			list_add(&key_tmp->list_node, ctx->delete_key_list);
-+			goto out;
-+		}
-+	}
-+
-+	ctx->req_done += io_len;
-+	cache_key_cutfront(key, io_len);
-+
-+	return 0;
-+out:
-+	return ret;
-+}
-+
-+/*
-+ * read_walk_finally - Finalizes the cache read tree walk by submitting any
-+ *					 remaining backing requests
-+ * @ctx:	   Context structure holding information about the cache,
-+ *			 read request, and submission list
-+ *
-+ * This function is called at the end of the `cache_subtree_walk` during a
-+ * cache read operation. It completes the walk by checking if any data
-+ * requested by `key` was not found in the cache tree, and if so, it sends
-+ * a backing request to retrieve that data. Then, it iterates through the
-+ * submission list of backing requests created during the walk, removing
-+ * each request from the list and submitting it.
-+ *
-+ * The scenario managed here includes:
-+ * - Sending a backing request for the remaining length of `key` if it was
-+ *   not fulfilled by existing cache entries.
-+ * - Iterating through `ctx->submit_req_list` to submit each backing request
-+ *   enqueued during the walk.
-+ *
-+ * This ensures all necessary backing requests for cache misses are submitted
-+ * to the backing storage to retrieve any data that could not be found in
-+ * the cache.
-+ */
-+static int read_walk_finally(struct pcache_cache_subtree_walk_ctx *ctx)
-+{
-+	struct pcache_backing_dev_req *backing_req, *next_req;
-+	struct pcache_cache_key *key = ctx->key;
-+	int ret;
-+
-+	if (key->len) {
-+		ret = send_cache_miss_req(ctx->cache_tree->cache, ctx->pcache_req, ctx->req_done, key->len, true);
-+		if (ret)
-+			goto out;
-+		ctx->req_done += key->len;
-+	}
-+
-+	list_for_each_entry_safe(backing_req, next_req, ctx->submit_req_list, node) {
-+		list_del_init(&backing_req->node);
-+		submit_cache_miss_req(ctx->cache_tree->cache, backing_req);
-+	}
-+
-+	return 0;
-+
-+out:
-+	return ret;
-+}
-+
-+/*
-+ * This function is used within `cache_subtree_walk` to determine whether the
-+ * read operation has covered the requested data length. It compares the
-+ * amount of data processed (`ctx->req_done`) with the total data length
-+ * specified in the original request (`ctx->pcache_req->data_len`).
-+ *
-+ * If `req_done` meets or exceeds the required data length, the function
-+ * returns `true`, indicating the walk is complete. Otherwise, it returns `false`,
-+ * signaling that additional data processing is needed to fulfill the request.
-+ */
-+static bool read_walk_done(struct pcache_cache_subtree_walk_ctx *ctx)
-+{
-+	return (ctx->req_done >= ctx->pcache_req->data_len);
-+}
-+
-+/*
-+ * cache_read - Process a read request by traversing the cache tree
-+ * @cache:	 Cache structure holding cache trees and related configurations
-+ * @pcache_req:   Request structure with information about the data to read
-+ *
-+ * This function attempts to fulfill a read request by traversing the cache tree(s)
-+ * to locate cached data for the requested range. If parts of the data are missing
-+ * in the cache, backing requests are generated to retrieve the required segments.
-+ *
-+ * The function operates by initializing a key for the requested data range and
-+ * preparing a context (`walk_ctx`) to manage the cache tree traversal. The context
-+ * includes pointers to functions (e.g., `read_before`, `read_overlap_tail`) that handle
-+ * specific conditions encountered during the traversal. The `walk_finally` and `walk_done`
-+ * functions manage the end stages of the traversal, while the `delete_key_list` and
-+ * `submit_req_list` lists track any keys to be deleted or requests to be submitted.
-+ *
-+ * The function first calculates the requested range and checks if it fits within the
-+ * current cache tree (based on the tree's size limits). It then locks the cache tree
-+ * and performs a search to locate any matching keys. If there are outdated keys,
-+ * these are deleted, and the search is restarted to ensure accurate data retrieval.
-+ *
-+ * If the requested range spans multiple cache trees, the function moves on to the
-+ * next tree once the current range has been processed. This continues until the
-+ * entire requested data length has been handled.
-+ */
-+static int cache_read(struct pcache_cache *cache, struct pcache_request *pcache_req)
-+{
-+	struct pcache_cache_key key_data = { .off = pcache_req->off, .len = pcache_req->data_len };
-+	struct pcache_cache_subtree *cache_subtree;
-+	struct pcache_cache_key *key_tmp = NULL, *key_next;
-+	struct rb_node *prev_node = NULL;
-+	struct pcache_cache_key *key = &key_data;
-+	struct pcache_cache_subtree_walk_ctx walk_ctx = { 0 };
-+	LIST_HEAD(delete_key_list);
-+	LIST_HEAD(submit_req_list);
-+	int ret;
-+
-+	walk_ctx.cache_tree = &cache->req_key_tree;
-+	walk_ctx.req_done = 0;
-+	walk_ctx.pcache_req = pcache_req;
-+	walk_ctx.before = read_before;
-+	walk_ctx.overlap_tail = read_overlap_tail;
-+	walk_ctx.overlap_head = read_overlap_head;
-+	walk_ctx.overlap_contain = read_overlap_contain;
-+	walk_ctx.overlap_contained = read_overlap_contained;
-+	walk_ctx.walk_finally = read_walk_finally;
-+	walk_ctx.walk_done = read_walk_done;
-+	walk_ctx.delete_key_list = &delete_key_list;
-+	walk_ctx.submit_req_list = &submit_req_list;
-+
-+next_tree:
-+	key->off = pcache_req->off + walk_ctx.req_done;
-+	key->len = pcache_req->data_len - walk_ctx.req_done;
-+	if (key->len > PCACHE_CACHE_SUBTREE_SIZE - (key->off & PCACHE_CACHE_SUBTREE_SIZE_MASK))
-+		key->len = PCACHE_CACHE_SUBTREE_SIZE - (key->off & PCACHE_CACHE_SUBTREE_SIZE_MASK);
-+
-+	cache_subtree = get_subtree(&cache->req_key_tree, key->off);
-+	spin_lock(&cache_subtree->tree_lock);
-+
-+search:
-+	prev_node = cache_subtree_search(cache_subtree, key, NULL, NULL, &delete_key_list);
-+
-+cleanup_tree:
-+	if (!list_empty(&delete_key_list)) {
-+		list_for_each_entry_safe(key_tmp, key_next, &delete_key_list, list_node) {
-+			list_del_init(&key_tmp->list_node);
-+			cache_key_delete(key_tmp);
-+		}
-+		goto search;
-+	}
-+
-+	walk_ctx.start_node = prev_node;
-+	walk_ctx.key = key;
-+
-+	ret = cache_subtree_walk(&walk_ctx);
-+	if (ret == -EINVAL)
-+		goto cleanup_tree;
-+	else if (ret)
-+		goto out;
-+
-+	spin_unlock(&cache_subtree->tree_lock);
-+
-+	if (walk_ctx.req_done < pcache_req->data_len)
-+		goto next_tree;
-+
-+	return 0;
-+out:
-+	spin_unlock(&cache_subtree->tree_lock);
-+
-+	return ret;
-+}
-+
-+static int cache_write(struct pcache_cache *cache, struct pcache_request *pcache_req)
-+{
-+	struct pcache_cache_subtree *cache_subtree;
-+	struct pcache_cache_key *key;
-+	u64 offset = pcache_req->off;
-+	u32 length = pcache_req->data_len;
-+	u32 io_done = 0;
-+	int ret;
-+
-+	while (true) {
-+		if (io_done >= length)
-+			break;
-+
-+		key = cache_key_alloc(&cache->req_key_tree);
-+		if (!key) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
-+
-+		key->off = offset + io_done;
-+		key->len = length - io_done;
-+		if (key->len > PCACHE_CACHE_SUBTREE_SIZE - (key->off & PCACHE_CACHE_SUBTREE_SIZE_MASK))
-+			key->len = PCACHE_CACHE_SUBTREE_SIZE - (key->off & PCACHE_CACHE_SUBTREE_SIZE_MASK);
-+
-+		ret = cache_data_alloc(cache, key, pcache_req->queue->index);
-+		if (ret) {
-+			cache_key_put(key);
-+			goto err;
-+		}
-+
-+		if (!key->len) {
-+			cache_seg_put(key->cache_pos.cache_seg);
-+			cache_key_put(key);
-+			continue;
-+		}
-+
-+		cache_copy_from_req_bio(cache, key, pcache_req, io_done);
-+
-+		cache_subtree = get_subtree(&cache->req_key_tree, key->off);
-+		spin_lock(&cache_subtree->tree_lock);
-+		ret = cache_key_insert(&cache->req_key_tree, key, true);
-+		if (ret) {
-+			cache_seg_put(key->cache_pos.cache_seg);
-+			cache_key_put(key);
-+			goto unlock;
-+		}
-+
-+		ret = cache_key_append(cache, key);
-+		if (ret) {
-+			cache_seg_put(key->cache_pos.cache_seg);
-+			cache_key_delete(key);
-+			goto unlock;
-+		}
-+
-+		io_done += key->len;
-+		spin_unlock(&cache_subtree->tree_lock);
-+	}
-+
-+	return 0;
-+unlock:
-+	spin_unlock(&cache_subtree->tree_lock);
++put_disk:
++	put_disk(logic_dev->disk);
++out_tag_set:
++	blk_mq_free_tag_set(&logic_dev->tag_set);
 +err:
 +	return ret;
 +}
 +
-+/**
-+ * cache_flush - Flush all ksets to persist any pending cache data
-+ * @cache: Pointer to the cache structure
-+ *
-+ * This function iterates through all ksets associated with the provided `cache`
-+ * and ensures that any data marked for persistence is written to media. For each
-+ * kset, it acquires the kset lock, then invokes `cache_kset_close`, which handles
-+ * the persistence logic for that kset.
-+ *
-+ * If `cache_kset_close` encounters an error, the function exits immediately with
-+ * the respective error code, preventing the flush operation from proceeding to
-+ * subsequent ksets.
-+ */
-+int cache_flush(struct pcache_cache *cache)
++static void disk_stop(struct pcache_logic_dev *logic_dev)
 +{
-+	struct pcache_cache_kset *kset;
-+	u32 i, ret;
++	del_gendisk(logic_dev->disk);
++	put_disk(logic_dev->disk);
++	blk_mq_free_tag_set(&logic_dev->tag_set);
++}
 +
-+	for (i = 0; i < cache->n_ksets; i++) {
-+		kset = get_kset(cache, i);
++static struct pcache_logic_dev *logic_dev_alloc(struct pcache_backing_dev *backing_dev)
++{
++	struct pcache_logic_dev *logic_dev;
++	int ret;
 +
-+		spin_lock(&kset->kset_lock);
-+		ret = cache_kset_close(cache, kset);
-+		spin_unlock(&kset->kset_lock);
++	logic_dev = kzalloc(sizeof(struct pcache_logic_dev), GFP_KERNEL);
++	if (!logic_dev)
++		return NULL;
 +
-+		if (ret)
-+			return ret;
++	logic_dev->backing_dev = backing_dev;
++	mutex_init(&logic_dev->lock);
++	INIT_LIST_HEAD(&logic_dev->node);
++
++	logic_dev->mapped_id = ida_simple_get(&pcache_mapped_id_ida, 0,
++					 minor_to_pcache_mapped_id(1 << MINORBITS),
++					 GFP_KERNEL);
++	if (logic_dev->mapped_id < 0) {
++		ret = -ENOENT;
++		goto logic_dev_free;
++	}
++
++	return logic_dev;
++
++logic_dev_free:
++	kfree(logic_dev);
++
++	return NULL;
++}
++
++static void logic_dev_free(struct pcache_logic_dev *logic_dev)
++{
++	ida_simple_remove(&pcache_mapped_id_ida, logic_dev->mapped_id);
++	kfree(logic_dev);
++}
++
++static void logic_dev_destroy_queues(struct pcache_logic_dev *logic_dev)
++{
++	struct pcache_queue *queue;
++	int i;
++
++	/* Stop each queue associated with the block device */
++	for (i = 0; i < logic_dev->num_queues; i++) {
++		queue = &logic_dev->queues[i];
++		if (queue->state == PCACHE_QUEUE_STATE_NONE)
++			continue;
++	}
++
++	/* Free the memory allocated for the queues */
++	kfree(logic_dev->queues);
++}
++
++static int logic_dev_create_queues(struct pcache_logic_dev *logic_dev)
++{
++	int i;
++	struct pcache_queue *queue;
++
++	logic_dev->queues = kcalloc(logic_dev->num_queues, sizeof(struct pcache_queue), GFP_KERNEL);
++	if (!logic_dev->queues)
++		return -ENOMEM;
++
++	for (i = 0; i < logic_dev->num_queues; i++) {
++		queue = &logic_dev->queues[i];
++		queue->logic_dev = logic_dev;
++		queue->index = i;
++
++		queue->state = PCACHE_QUEUE_STATE_RUNNING;
 +	}
 +
 +	return 0;
 +}
 +
-+/**
-+ * pcache_cache_handle_req - Entry point for handling cache requests
-+ * @cache: Pointer to the cache structure
-+ * @pcache_req: Pointer to the request structure containing operation and data details
-+ *
-+ * This function serves as the main entry for cache operations, directing
-+ * requests based on their operation type. Depending on the operation (`op`)
-+ * specified in `pcache_req`, the function calls the appropriate helper function
-+ * to process the request.
-+ */
-+int pcache_cache_handle_req(struct pcache_cache *cache, struct pcache_request *pcache_req)
++static int logic_dev_init(struct pcache_logic_dev *logic_dev, u32 queues)
 +{
-+	switch (pcache_req->op) {
-+	case REQ_OP_FLUSH:
-+		return cache_flush(cache);
-+	case REQ_OP_WRITE:
-+		return cache_write(cache, pcache_req);
-+	case REQ_OP_READ:
-+		return cache_read(cache, pcache_req);
-+	default:
-+		return -EIO;
++	int ret;
++
++	logic_dev->num_queues = queues;
++	logic_dev->dev_size = logic_dev->dev_size;
++
++	ret = logic_dev_create_queues(logic_dev);
++	if (ret < 0)
++		goto err;
++
++	return 0;
++err:
++	return ret;
++}
++
++static void logic_dev_destroy(struct pcache_logic_dev *logic_dev)
++{
++	logic_dev_destroy_queues(logic_dev);
++}
++
++int logic_dev_start(struct pcache_backing_dev *backing_dev, u32 queues)
++{
++	struct pcache_logic_dev *logic_dev;
++	int ret;
++
++	logic_dev = logic_dev_alloc(backing_dev);
++	if (!logic_dev)
++		return -ENOMEM;
++
++	logic_dev->dev_size = backing_dev->dev_size;
++	ret = logic_dev_init(logic_dev, queues);
++	if (ret)
++		goto logic_dev_free;
++
++	backing_dev->logic_dev = logic_dev;
++
++	ret = disk_start(logic_dev);
++	if (ret < 0)
++		goto logic_dev_destroy;
++
++	return 0;
++
++logic_dev_destroy:
++	logic_dev_destroy(logic_dev);
++logic_dev_free:
++	logic_dev_free(logic_dev);
++	return ret;
++}
++
++int logic_dev_stop(struct pcache_logic_dev *logic_dev)
++{
++	mutex_lock(&logic_dev->lock);
++	if (logic_dev->open_count > 0) {
++		mutex_unlock(&logic_dev->lock);
++		return -EBUSY;
 +	}
++	mutex_unlock(&logic_dev->lock);
++
++	disk_stop(logic_dev);
++	logic_dev_destroy(logic_dev);
++	logic_dev_free(logic_dev);
 +
 +	return 0;
 +}
++
++int pcache_blkdev_init(void)
++{
++	pcache_major = register_blkdev(0, "pcache");
++	if (pcache_major < 0)
++		return pcache_major;
++
++	return 0;
++}
++
++void pcache_blkdev_exit(void)
++{
++	unregister_blkdev(pcache_major, "pcache");
++}
++
++static void end_req(struct kref *ref)
++{
++	struct pcache_request *pcache_req = container_of(ref, struct pcache_request, ref);
++	struct request *req = pcache_req->req;
++	int ret = pcache_req->ret;
++
++	if (req) {
++		/* Complete the block layer request based on the return status */
++		if (ret == -ENOMEM || ret == -EBUSY)
++			blk_mq_requeue_request(req, true);
++		else
++			blk_mq_end_request(req, errno_to_blk_status(ret));
++	}
++}
++
++void pcache_req_get(struct pcache_request *pcache_req)
++{
++	kref_get(&pcache_req->ref);
++}
++
++void pcache_req_put(struct pcache_request *pcache_req, int ret)
++{
++	/* Set the return status if it is not already set */
++	if (ret && !pcache_req->ret)
++		pcache_req->ret = ret;
++
++	kref_put(&pcache_req->ref, end_req);
++}
+diff --git a/drivers/block/pcache/logic_dev.h b/drivers/block/pcache/logic_dev.h
+new file mode 100644
+index 000000000000..2a8de0b02369
+--- /dev/null
++++ b/drivers/block/pcache/logic_dev.h
+@@ -0,0 +1,73 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#ifndef _PCACHE_LOGIC_DEV_H
++#define _PCACHE_LOGIC_DEV_H
++
++#include <linux/blk-mq.h>
++
++#include "pcache_internal.h"
++
++#define logic_dev_err(logic_dev, fmt, ...)							\
++	cache_dev_err(logic_dev->backing_dev->cache_dev, "logic_dev%d: " fmt,			\
++		 logic_dev->mapped_id, ##__VA_ARGS__)
++#define logic_dev_info(logic_dev, fmt, ...)							\
++	cache_dev_info(logic_dev->backing_dev->cache_dev, "logic_dev%d: " fmt,			\
++		 logic_dev->mapped_id, ##__VA_ARGS__)
++#define logic_dev_debug(logic_dev, fmt, ...)							\
++	cache_dev_debug(logic_dev->backing_dev->cache_dev, "logic_dev%d: " fmt,			\
++		 logic_dev->mapped_id, ##__VA_ARGS__)
++
++#define PCACHE_QUEUE_STATE_NONE			0
++#define PCACHE_QUEUE_STATE_RUNNING		1
++
++struct pcache_queue {
++	struct pcache_logic_dev	*logic_dev;
++	u32			index;
++
++	u8	                state;
++};
++
++struct pcache_request {
++	struct pcache_queue	*queue;
++	struct request		*req;
++
++	u64			off;
++	u32			data_len;
++
++	u8			op;
++
++	struct kref		ref;
++	int			ret;
++};
++
++struct pcache_logic_dev {
++	int				mapped_id; /* id in block device such as: /dev/pcache0 */
++
++	struct pcache_backing_dev	*backing_dev;
++
++	int				major;		/* blkdev assigned major */
++	int				minor;
++	struct gendisk			*disk;		/* blkdev's gendisk and rq */
++
++	struct mutex			lock;
++	unsigned long			open_count;	/* protected by lock */
++
++	struct list_head		node;
++
++	/* Block layer tags. */
++	struct blk_mq_tag_set		tag_set;
++
++	uint32_t			num_queues;
++	struct pcache_queue		*queues;
++
++	u64				dev_size;
++};
++
++int logic_dev_start(struct pcache_backing_dev *backing_dev, u32 queues);
++int logic_dev_stop(struct pcache_logic_dev *logic_dev);
++
++void pcache_req_get(struct pcache_request *pcache_req);
++void pcache_req_put(struct pcache_request *pcache_req, int ret);
++
++int pcache_blkdev_init(void);
++void pcache_blkdev_exit(void);
++#endif /* _PCACHE_LOGIC_DEV_H */
 -- 
 2.34.1
 
