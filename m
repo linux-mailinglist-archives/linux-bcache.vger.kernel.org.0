@@ -1,146 +1,100 @@
-Return-Path: <linux-bcache+bounces-889-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-890-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7B7A90DE7
-	for <lists+linux-bcache@lfdr.de>; Wed, 16 Apr 2025 23:41:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CA0A90E5B
+	for <lists+linux-bcache@lfdr.de>; Thu, 17 Apr 2025 00:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9021904344
-	for <lists+linux-bcache@lfdr.de>; Wed, 16 Apr 2025 21:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD133A86AA
+	for <lists+linux-bcache@lfdr.de>; Wed, 16 Apr 2025 22:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77ED423D296;
-	Wed, 16 Apr 2025 21:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43409231C9C;
+	Wed, 16 Apr 2025 22:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZVMQ/Jmh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcFbSWtI"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E823233729
-	for <linux-bcache@vger.kernel.org>; Wed, 16 Apr 2025 21:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C0E2236F8;
+	Wed, 16 Apr 2025 22:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744839660; cv=none; b=EUSupk1vFzPXhKKh/ZgOm4VvyQR5gEtUe7ZQvWAEfBjqcUcdeJDg2FKA/5LnqaCcgWB7+HaYi4d1pIJxaUC0deXdlYLc7bnqEcXmb5niIpjryI9NfWL7anC2rtA9jgHF3rhbrHWOi/eoQf0Q1I8u9lVG+ElAUTryo8NPzIBBScY=
+	t=1744840900; cv=none; b=AZAE9fVDKrtXTUbHO2sUWmbL5RUuyctXbH+P6YaZG0q20ftsO26/QFkB+foaWzWirZJd7w8n/oT0tYjdsjpy7wYsnbla4phHfK9suq7vfh0mvHifTofJnVqQjkgjkXLoM3KQm/1etZQH8kydiJ8QgTEWr6KFSlDoBXoA16lLuVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744839660; c=relaxed/simple;
-	bh=Akuhkguz9lZ7ogV7BZwatXKI1L5hSvQMKf9rfWq+EjY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HJvBgJXrxqA95Tgd/h9WDffxBiwqy9mCGZXtsurZ/suDUV/8/duTpQ5Va9L9XsqO7g+KNLRwEqHtWMu9cj8t2gIDvi7xGRXJpW3Of48e6ioOmghdbpWsPzsRESpcWSpjho/DpG72aNhjgb0UTka1XKQtpARMt5c0+7GhH3RbrTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZVMQ/Jmh; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <235030ca-93a4-4666-93f8-93f8d81ff650@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744839643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2gOdc+K/KW6LG2lJV2OfaDngWl4h/oV6BdYZhgh8d5M=;
-	b=ZVMQ/Jmhj/6fVk1TZaMu4zk0rK4L/5c8VUb5YiJ3v6Bhp9vz36HOMXyXbSzeu+BSD/SnGa
-	WXxl5wyCDtJLteOBzlJOaIUqPn9Ald2m0CcX29tmfwt8C3KCCZLZ8f1/vD+gZqZOTaLtRO
-	I6JLeES2NCsrJFdnD4VW2tJN/pns55I=
-Date: Thu, 17 Apr 2025 05:40:35 +0800
+	s=arc-20240116; t=1744840900; c=relaxed/simple;
+	bh=GKy1K6eDKAaPaa5kKmwg7ZIYcTdUhp7FDnOYinSy8EQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b6wHBtegNYjpynLLSH/CRq9en2hOVKhc8JpYhRCXJugG6PS9xXt6/yHjh9o1xS4DI8Q6ZdvckWXz+rTzltXpIRe7qw0K2kFgvjKN8QHW3SLQ31W9lQelfLJUP65n2MJAFbtKmelED3LkQxsk3kN/dTZ9JZ9DmR9MF6/3AZ2O3gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcFbSWtI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AF38C4CEE4;
+	Wed, 16 Apr 2025 22:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744840899;
+	bh=GKy1K6eDKAaPaa5kKmwg7ZIYcTdUhp7FDnOYinSy8EQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZcFbSWtISa1Wzxw4kPKrtcyvhn0fnbRrUEBjMrTLV/vST7ilLL9RawCBdg0i+gXF4
+	 nTGwFhOqmMOBDyNrpmcx6vLpj6Bvvncx+GV1nTgw9TiedOhqq+TNTy3EwdoYI0cAhl
+	 Tzf9belqrfrhix6MfDN5KGGtsgLAESW+xAlhJ2g1K3RH+YetSfhT70BQjEtQ+mymfo
+	 RwpW2SGpK0TCbj5xMRao4KmkX3XFkKdRZ22vvZ5/0P6YBdfIQHfIDl5rBQwqkAaVih
+	 xpwxPStEbaymyGZBxlP8mpw4nLaYSkQDNTYxMAcSAaxPhjP3NvatLyG7gk2x3+HVJ9
+	 v1QNw5cTybJ1g==
+From: Kees Cook <kees@kernel.org>
+To: Coly Li <colyli@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcache@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] md/bcache: Mark __nonstring look-up table
+Date: Wed, 16 Apr 2025 15:01:36 -0700
+Message-Id: <20250416220135.work.394-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC PATCH 00/11] pcache: Persistent Memory Cache for Block
- Devices
-To: Jens Axboe <axboe@kernel.dk>, Dan Williams <dan.j.williams@intel.com>,
- hch@lst.de, gregory.price@memverge.com, John@groves.net,
- Jonathan.Cameron@huawei.com, bbhushan2@marvell.com, chaitanyak@nvidia.com,
- rdunlap@infradead.org, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-bcache@vger.kernel.org,
- nvdimm@lists.linux.dev, dm-devel@lists.linux.dev
-References: <20250414014505.20477-1-dongsheng.yang@linux.dev>
- <67fe9ea2850bc_71fe294d8@dwillia2-xfh.jf.intel.com.notmuch>
- <15e2151a-d788-48eb-8588-1d9a930c64dd@kernel.dk>
- <07f93a57-6459-46e2-8ee3-e0328dd67967@linux.dev>
- <d3231630-9445-4c17-9151-69fe5ae94a0d@kernel.dk>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Dongsheng Yang <dongsheng.yang@linux.dev>
-In-Reply-To: <d3231630-9445-4c17-9151-69fe5ae94a0d@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1492; i=kees@kernel.org; h=from:subject:message-id; bh=GKy1K6eDKAaPaa5kKmwg7ZIYcTdUhp7FDnOYinSy8EQ=; b=owGbwMvMwCVmps19z/KJym7G02pJDBkMGvs5qgM9k90DpvYKfZMPUpqXYXj0TdMz5z2TV0xaq L2jgPl8RykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwER6XjD8LxNsjz7kJD+d0/5A itCnvdJOXBd8uc1uun6yfPfzVDD3H4Z/RvX33u5PmsDnso6F8cKr7YlRHZoNGWzRqy+8mnhRnN2 DGQA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-+ccing md-devel
+GCC 15's new -Wunterminated-string-initialization notices that the 16
+character lookup table "zero_uuid" (which is not used as a C-String)
+needs to be marked as "nonstring":
 
-On 2025/4/16 23:10, Jens Axboe wrote:
-> On 4/16/25 12:08 AM, Dongsheng Yang wrote:
->> On 2025/4/16 9:04, Jens Axboe wrote:
->>> On 4/15/25 12:00 PM, Dan Williams wrote:
->>>> Thanks for making the comparison chart. The immediate question this
->>>> raises is why not add "multi-tree per backend", "log structured
->>>> writeback", "readcache", and "CRC" support to dm-writecache?
->>>> device-mapper is everywhere, has a long track record, and enhancing it
->>>> immediately engages a community of folks in this space.
->>> Strongly agree.
->>
->> Hi Dan and Jens,
->> Thanks for your reply, that's a good question.
->>
->>      1. Why not optimize within dm-writecache?
->>  From my perspective, the design goal of dm-writecache is to be a
->> minimal write cache. It achieves caching by dividing the cache device
->> into n blocks, each managed by a wc_entry, using a very simple
->> management mechanism. On top of this design, it's quite difficult to
->> implement features like multi-tree structures, CRC, or log-structured
->> writeback. Moreover, adding such optimizations?especially a read
->> cache?would deviate from the original semantics of dm-writecache. So,
->> we didn't consider optimizing dm-writecache to meet our goals.
->>
->>      2. Why not optimize within bcache or dm-cache?
->> As mentioned above, dm-writecache is essentially a minimal write
->> cache. So, why not build on bcache or dm-cache, which are more
->> complete caching systems? The truth is, it's also quite difficult.
->> These systems were designed with traditional SSDs/NVMe in mind, and
->> many of their design assumptions no longer hold true in the context of
->> PMEM. Every design targets a specific scenario, which is why, even
->> with dm-cache available, dm-writecache emerged to support DAX-capable
->> PMEM devices.
->>
->>      3. Then why not implement a full PMEM cache within the dm framework?
->> In high-performance IO scenarios?especially with PMEM hardware?adding
->> an extra DM layer in the IO stack is often unnecessary. For example,
->> DM performs a bio clone before calling __map_bio(clone) to invoke the
->> target operation, which introduces overhead.
->>
->> Thank you again for the suggestion. I absolutely agree that leveraging
->> existing frameworks would be helpful in terms of code review, and
->> merging. I, more than anyone, hope more people can help review the
->> code or join in this work. However, I believe that in the long run,
->> building a standalone pcache module is a better choice.
-> I think we'd need much stronger reasons for NOT adopting some kind of dm
-> approach for this, this is really the place to do it. If dm-writecache
-> etc aren't a good fit, add a dm-whatevercache for it? If dm is
-> unnecessarily cloning bios when it doesn't need to, then that seems like
-> something that would be worthwhile fixing in the first place, or at
-> least eliminate for cases that don't need it. That'd benefit everyone,
-> and we would not be stuck with a new stack to manage.
->
-> Would certainly be worth exploring with the dm folks.
+drivers/md/bcache/super.c: In function 'uuid_find_empty':
+drivers/md/bcache/super.c:549:43: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (17 chars into 16 available) [-Wunterminated-string-initialization]
+  549 |         static const char zero_uuid[16] = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-well, introducing dm-pcache (assuming we use this name) could, on one 
-hand, attract more users and developers from the device-mapper community 
-to pay attention to this project, and on the other hand, serve as a way 
-to validate or improve the dm framework’s performance in 
-high-performance I/O scenarios. If necessary, we can enhance the dm 
-framework instead of bypassing it entirely. This indeed sounds like 
-something that would “benefit everyone.”
+Add the annotation to silence the GCC warning.
 
-Hmm, I will seriously consider this approach.
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Coly Li <colyli@kernel.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcache@vger.kernel.org
+---
+ drivers/md/bcache/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi Alasdair, Mike, Mikulas,  Do you have any suggestions?
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index e42f1400cea9..577d048170fe 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -546,7 +546,7 @@ static struct uuid_entry *uuid_find(struct cache_set *c, const char *uuid)
+ 
+ static struct uuid_entry *uuid_find_empty(struct cache_set *c)
+ {
+-	static const char zero_uuid[16] = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
++	static const char zero_uuid[] __nonstring = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+ 
+ 	return uuid_find(c, zero_uuid);
+ }
+-- 
+2.34.1
 
-Thanx
-
->
 
