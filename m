@@ -1,48 +1,48 @@
-Return-Path: <linux-bcache+bounces-942-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-943-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50EA1A9A0D9
-	for <lists+linux-bcache@lfdr.de>; Thu, 24 Apr 2025 08:07:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8538BA9A0FE
+	for <lists+linux-bcache@lfdr.de>; Thu, 24 Apr 2025 08:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 405175A10E2
-	for <lists+linux-bcache@lfdr.de>; Thu, 24 Apr 2025 06:06:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A923619460EF
+	for <lists+linux-bcache@lfdr.de>; Thu, 24 Apr 2025 06:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F353A1C863D;
-	Thu, 24 Apr 2025 06:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCC61C84B9;
+	Thu, 24 Apr 2025 06:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+4zHtGA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMHxCcfw"
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4C61C5F07;
-	Thu, 24 Apr 2025 06:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A933198A11;
+	Thu, 24 Apr 2025 06:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745474810; cv=none; b=V9TIKHmUOODiRjYyktEh7W+wp5TGexorgU565xHdBlZtqLldtzI+sPT3CYmaTYiZjbqjxWBuDTFje8RQnb45zhobDLCrVSP3yi64bk/5c8aFc5DRlhKjq17ANdn51mNY969UBDVRzRLwrWIHK0rvZaVnymRNlTSDpuhDXH45PI4=
+	t=1745474951; cv=none; b=aARwI3VAtm3ADO6OAU00utPn9Tf2KLykvfajlRM2JassP2Sn94FEcQcgkuvxFInLueyljhtG66Eli3fbpmVsT3i6iuhurzot+CiopT66Q51FgFlNfKD3ee3ynvHmcqwcnl10RnpqVz7hgDdjH5w2NyhtPkoVXuUUqF2gBLKoAWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745474810; c=relaxed/simple;
-	bh=WGK9E7/qaLTf787QCZsaNhWUfFJ8XGt+6uy2r0LT8Og=;
+	s=arc-20240116; t=1745474951; c=relaxed/simple;
+	bh=BVSDkYQ8LVV8v1ugx4BRXNcVyN6sGUsK5pW+EQhOZWQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bp0sD4CVXDvgXR+JxWRJ7wEZlSkL2I1InYX6fE9aaCpStmju991itJBXlMUT7Mwaow7lxstPshQIxitg17ln2Z/WLp9W7hNht6+7Otii/1WOJP0D/feCRAkXGxftIMxnxAqQQAj+WRwaLAhsANDMtAVu3mIrlcNeTHs50j1+6DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+4zHtGA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D79CC4CEE3;
-	Thu, 24 Apr 2025 06:06:46 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=DODZewcgCipCeCqcaQOTbfHoxM/aA0vGagPd4CNFLJl4I0oWwdKWZHQbmXEpea5FBHYljPL2AAO/Ejg41nuAJpPvVtpoX1cobB6mUF0qVmesKVcnTPKLXtlAkT8oppvFjnnAYuJ2aUZx3//QnfOlBf/lPWv9WbHhnzPNpBk+34Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMHxCcfw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B8AC4CEE3;
+	Thu, 24 Apr 2025 06:09:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745474810;
-	bh=WGK9E7/qaLTf787QCZsaNhWUfFJ8XGt+6uy2r0LT8Og=;
+	s=k20201202; t=1745474950;
+	bh=BVSDkYQ8LVV8v1ugx4BRXNcVyN6sGUsK5pW+EQhOZWQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E+4zHtGAwh2YipSe0jaYUgQ5H6OYyWEwKBjrcpWRICjFaAu7dJ9Ogb3J+uMOdRku8
-	 IuciCbR2YacS6raxRq50hZlEfDQ962/ts8yv4RwVJaFoOZZ7pcXOVx7ZVJVUZcWwE/
-	 eMO32ScbVm7F292ufsS9GQWV8JRzesehXUYL2rb1XjCj1rO6fMpFg1SNzgCb6vliOR
-	 RZsP8CteQ0Rv7N2NoyDFAszSt6vcAgekOceEeeAOIapdL580FGv5fF/l0gW1i/T0wY
-	 NQPwdyD6g0n1MdPaVvad3o1lS1Z4ZV5gWBKAc5pPTMwUoddkJXfonpCS3EqscOd2gn
-	 V3Oh+HruZVAxA==
-Message-ID: <3f860c62-6285-4462-b3de-932fa2888168@kernel.org>
-Date: Thu, 24 Apr 2025 15:06:45 +0900
+	b=tMHxCcfwGUElwKdVK9BNrBksnQ686Yz9pwgkuWQPytujvQEVhW4kJnPFlsn46/sQD
+	 DFIdOpftAC+w5d1JGqVsf5HwbbQujiKFokXecKwtH9NTtR80hUgXbMU4uvl9ZbA7by
+	 dfGAcOp0hUx+HUjB3x1qa86YcEhDJGdE8e1wv5hghfJ7o0yL/WUVQ6cliv4FLugKz1
+	 PjuynclPQLjRkeub+Jo/WN/B+/O9qgngBcIqgJeCpgV4+oYSME2cJlupCVreZeXHAc
+	 4M9P/yB4ZxcdT+IeSnA7Pf6eVonx4GANnsdmAfLm2v3+i/Y4F6+LCBYlPNDj1X2tIn
+	 qL4y8fEh5J33A==
+Message-ID: <7a56f76c-7916-42ac-ae5c-6e30c3dbd643@kernel.org>
+Date: Thu, 24 Apr 2025 15:09:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/17] block: add a bio_add_vmalloc helper
+Subject: Re: [PATCH 04/17] block: remove the q argument from blk_rq_map_kern
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
  Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>,
@@ -66,121 +66,21 @@ Cc: linux-block@vger.kernel.org, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
  linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
  linux-pm@vger.kernel.org
 References: <20250422142628.1553523-1-hch@lst.de>
- <20250422142628.1553523-4-hch@lst.de>
+ <20250422142628.1553523-5-hch@lst.de>
 Content-Language: en-US
 From: Damien Le Moal <dlemoal@kernel.org>
 Organization: Western Digital Research
-In-Reply-To: <20250422142628.1553523-4-hch@lst.de>
+In-Reply-To: <20250422142628.1553523-5-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 4/22/25 23:26, Christoph Hellwig wrote:
-> Add a helper to add a vmalloc region to a bio, abstracting away the
-> vmalloc addresses from the underlying pages.  Also add a helper to
-> calculate how many segments need to be allocated for a vmalloc region.
+> Remove the q argument from blk_rq_map_kern and the internal helpers
+> called by it as the queue can trivially be derived from the request.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  block/bio.c         | 27 +++++++++++++++++++++++++++
->  include/linux/bio.h | 17 +++++++++++++++++
->  2 files changed, 44 insertions(+)
-> 
-> diff --git a/block/bio.c b/block/bio.c
-> index a6a867a432cf..3cc93bbdeeb9 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -1058,6 +1058,33 @@ bool bio_add_folio(struct bio *bio, struct folio *folio, size_t len,
->  }
->  EXPORT_SYMBOL(bio_add_folio);
->  
-> +/**
-> + * bio_add_vmalloc - add a vmalloc region to a bio
-> + * @bio: destination bio
-> + * @vaddr: virtual address to add
-> + * @len: total length of the data to add
-
-Nit: to be consistent in the wording...
-
- * @vaddr: address of the vmalloc region to add
- * @len: total length of the vmalloc region to add
-
-> + *
-> + * Add the data at @vaddr to @bio and return how much was added.  This can an
-
-s/an/and
-
-or may be simply:
-
-This may be less than the amount originally asked.
-
-> + * usually is less than the amount originally asked.  Returns 0 if no data could
-> + * be added to the bio.
-> + *
-> + * This helper calls flush_kernel_vmap_range() for the range added.  For reads,
-> + * the caller still needs to manually call invalidate_kernel_vmap_range() in
-> + * the completion handler.
-> + */
-> +unsigned int bio_add_vmalloc(struct bio *bio, void *vaddr, unsigned len)
-> +{
-> +	unsigned int offset = offset_in_page(vaddr);
-> +
-> +	len = min(len, PAGE_SIZE - offset);
-> +	if (bio_add_page(bio, vmalloc_to_page(vaddr), len, offset) < len)
-> +		return 0;
-> +	if (op_is_write(bio_op(bio)))
-> +		flush_kernel_vmap_range(vaddr, len);
-> +	return len;
-> +}
-> +EXPORT_SYMBOL_GPL(bio_add_vmalloc);
-> +
->  void __bio_release_pages(struct bio *bio, bool mark_dirty)
->  {
->  	struct folio_iter fi;
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 17a10220c57d..c4069422fd0a 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -433,6 +433,23 @@ static inline void bio_add_virt_nofail(struct bio *bio, void *vaddr,
->  	__bio_add_page(bio, virt_to_page(vaddr), len, offset_in_page(vaddr));
->  }
->  
-> +/**
-> + * bio_vmalloc_max_vecs - number of segments needed to map vmalloc data
-
-Nit: number of BIO segments needed to add a vmalloc-ed region to a BIO ?
-
-> + * @vaddr: address to map
-> + * @len: length to map
-
-Nit:
-
- * @vaddr: address of the vmalloc region to add
- * @len: total length of the vmalloc region to add
-
-> + *
-> + * Calculate how many bio segments need to be allocated to map the vmalloc/vmap
-
-s/to map/to add ?
-
-> + * range in [@addr:@len].  This could be an overestimation if the vmalloc area
-> + * is backed by large folios.
-> + */
-> +static inline unsigned int bio_vmalloc_max_vecs(void *vaddr, unsigned int len)
-> +{
-> +	return DIV_ROUND_UP(offset_in_page(vaddr) + len, PAGE_SIZE);
-> +}
-> +
-> +unsigned int __must_check bio_add_vmalloc(struct bio *bio, void *vaddr,
-> +		unsigned len);
-> +
->  int submit_bio_wait(struct bio *bio);
->  int bdev_rw_virt(struct block_device *bdev, sector_t sector, void *data,
->  		size_t len, enum req_op op);
-
-Other than these wording nits, looks OK to me.
 
 Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-
 
 -- 
 Damien Le Moal
