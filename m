@@ -1,149 +1,129 @@
-Return-Path: <linux-bcache+bounces-939-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-940-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC98A9976D
-	for <lists+linux-bcache@lfdr.de>; Wed, 23 Apr 2025 20:03:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552F3A9A0AA
+	for <lists+linux-bcache@lfdr.de>; Thu, 24 Apr 2025 07:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3DFB3ACD4B
-	for <lists+linux-bcache@lfdr.de>; Wed, 23 Apr 2025 18:02:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 914FC4453A9
+	for <lists+linux-bcache@lfdr.de>; Thu, 24 Apr 2025 05:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D7728D85A;
-	Wed, 23 Apr 2025 18:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CF51C8634;
+	Thu, 24 Apr 2025 05:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WKzXkeLy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9UM6IWk"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A2728CF7C
-	for <linux-bcache@vger.kernel.org>; Wed, 23 Apr 2025 18:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147AE2701B8;
+	Thu, 24 Apr 2025 05:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745431352; cv=none; b=CmCU0eUACV/ebonAYxO+B8GMzKlv95hZmBHSuAhsU30J21gKdeSS8sFthMZIZHty4eJwGRAdBW/3+yNAIyYsTPAWYb0kW+v27KtjXAfXxHtUiF2n7qg/pM6A+umw5A67DGRjP2eJGEiF4BIpg0N2yz4ElEjAqirE0OgEoNcE0x0=
+	t=1745474168; cv=none; b=IW8aKDmO6D2zuN8L+3kPH9SuNSJS8+awnrva5rolkc63Eaq3dy6PGPnDKc2E80CZJmi7x03wzbGpILKCYlHWB6DWRQY7vXzkkTfwOVsfa35PPTd99k7GAey2Z61EF9UoRggG8AksDweq6/8BTc3RLY+xUWbzMZKLnjGRXNwi1yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745431352; c=relaxed/simple;
-	bh=BSV2S5axVk3jR2Dj4hy0PRdYG9l3BhCOacRqX+is/5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pf9c2okQiYOOuQczpufw5W5h5YWQYmct/PScbv9CRL6qRK8JuDT3MBPe8dysJVPE7KkqUSezSfPlPI44oYcwS6J+3WHO0YbXC8A5QyN4Yw2PmQ8hjU0fWJ1JsndeMQiLohCUGoMwTsmy1EpOCyZoScEhnz4Tzp0j4RwnQI4tUrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WKzXkeLy; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 23 Apr 2025 14:02:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745431337;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8BS6PilBZgvTDPZhVhVWu7ww97sBPTJLkhr1PmWiCpA=;
-	b=WKzXkeLyNYDwk/eCKuYZUCO+ERfNfkrsogpUfK8yviZk5KF8v/jUkJdnJU+r8oZr+ubgz5
-	x6V9oP+fLmYCwLsnSZd82pB9eEkKHjvuhiG4VRWZPCOzP6wYwxgwjmy1iiuNhSzk9iSRcj
-	k8plvwA+ho8NM7aL2D7SLNCO8wUepbA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
-	"Md. Haris Iqbal" <haris.iqbal@ionos.com>, Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>, 
-	Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, Chris Mason <clm@fb.com>, 
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, Carlos Maiolino <cem@kernel.org>, 
-	Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
-	Johannes Thumshirn <jth@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev, 
-	linux-btrfs@vger.kernel.org, gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: add more bio helper
-Message-ID: <q53k4x5nshvr2zatrgyhygxouv7ijyepe6cj2pfooemi6gbu4y@lpxxcvozazzu>
-References: <20250422142628.1553523-1-hch@lst.de>
- <jetduw7zshrmp4gl7zfpwqjweycwesxiod7xvtnxqwqekgtvdf@idwnvfzvhgik>
- <20250423093621.GA2578@lst.de>
- <sl4oibdxpjygqfpy6llq237zuckz7ym4fmzcfvxn2raofr37a5@hvevbcgm5trn>
- <20250423160733.GA656@lst.de>
+	s=arc-20240116; t=1745474168; c=relaxed/simple;
+	bh=oZkKhqQBMZiuxEgfsDNa+7Jj1Ykre8OoNXuKqazZy5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LImwnOK7j0dDVy1RCYFNIW9nJt7MgCPNH/xnnUGr9NEg49KdE3rw5XvzhkxyBYCUYxppYD09nXJ8QBdl177gFS40U7/6Pjv23J0jMhjBV9qBNbdSZoOUHCCK828DK2RTvibPpcINJLjI2gpe37IuCkbn1h+geVUOautjm7TASqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9UM6IWk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76836C4CEE3;
+	Thu, 24 Apr 2025 05:56:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745474167;
+	bh=oZkKhqQBMZiuxEgfsDNa+7Jj1Ykre8OoNXuKqazZy5A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=C9UM6IWkGpHgQ+AreIBAsDT6ksEGQHQZZLCZsWdCyVQfO9nywdqHCUFjE4dnkjI4v
+	 XjwT4dxTcJefuR2CauB5szxf7RIwFHdXejZCq9gKa51uan+cutuS6QPoPKoMvfOfHX
+	 viTKKxlMSYuTjlkQQ8a4QM6r9dmCDn5wJHMxFffRBNFwPHC9ovp9rghiQ+n3rqG7w9
+	 /eOI2+NXP5UiKDmcT6ZE1Czqp5V/3OeE1UA4WvmhYaFaFL3055xw2vqszd2+WSXqeB
+	 rKr0QrvQGCT4XQyAacZPGEhSVzlCEVg6JPbxNn3WhZ7kwSC4rLnrK3Z10YXty5CqgI
+	 ddFLOfbA38xDA==
+Message-ID: <98fcbf51-b91c-4211-98d2-a987bdc09f49@kernel.org>
+Date: Thu, 24 Apr 2025 14:56:03 +0900
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423160733.GA656@lst.de>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/17] block: add a bio_add_virt_nofail helper
+To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+ Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, Andreas Gruenbacher <agruenba@redhat.com>,
+ Carlos Maiolino <cem@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>,
+ Johannes Thumshirn <jth@kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-btrfs@vger.kernel.org, gfs2@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20250422142628.1553523-1-hch@lst.de>
+ <20250422142628.1553523-2-hch@lst.de>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250422142628.1553523-2-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 23, 2025 at 06:07:33PM +0200, Christoph Hellwig wrote:
-> On Wed, Apr 23, 2025 at 06:37:41AM -0400, Kent Overstreet wrote:
-> > > It also don't support bio chaining or error handling and requires a
-> > > single bio that is guaranteed to fit the required number of vectors.
-> > 
-> > Why would bio chaining ever be required? The caller allocates both the
-> > buf and the bio, I've never seen an instance where you'd want that; just
-> > allocate a bio with the correct number of vecs, which your
-> > bio_vmalloc_max_vecs() helps with.
+On 4/22/25 23:26, Christoph Hellwig wrote:
+> Add a helper to add a directly mapped kernel virtual address to a
+> bio so that callers don't have to convert to pages or folios.
 > 
-> If you go beyond 1MB I/O for vmalloc you need it because a single
-> bio can't hold enough page size chunks.  That is unless you want
-> to use your own allocation for it and call bio_init which has various
-> other downsides.
-
-Allocating your own bio doesn't allow you to safely exceed the
-BIO_MAX_VECS limit - there's places in the io path that need to bounce,
-and they all use biosets.
-
-That may be an issue even for non vmalloc bios, unless everything that
-bounces has been converted to bounce to a folio of the same order.
-
-> > The "abstract over vmalloc and normal physically contigious allocations"
-> > bit that bch2_bio_map() does is the important part.
-> > 
-> > It's not uncommon to prefer physically contiguous allocations but have a
-> > vmalloc fallback; bcachefs does, and  xfs does with a clever "try the
-> > big allocation if it's cheap, fall back to vmalloc to avoid waiting on
-> > compaction" that I might steal.
-> > 
-> > is_vmalloc_addr() is also cheap, it's just a pointer comparison (and it
-> > really should be changed to a static inline).
+> For now only the _nofail variant is provided as that is what all the
+> obvious callers want.
 > 
-> The problem with transparent vmalloc handling is that it's not possible.
-> The magic handling for virtually indexed caches can be hidden on the
-> submission side, but the completion side also needs to call
-> invalidate_kernel_vmap_range for reads.  Requiring the caller to know
-> they deal vmalloc is a way to at least keep that on the radar.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  include/linux/bio.h | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index cafc7c215de8..0678b67162ee 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -417,6 +417,23 @@ void __bio_add_page(struct bio *bio, struct page *page,
+>  		unsigned int len, unsigned int off);
+>  void bio_add_folio_nofail(struct bio *bio, struct folio *folio, size_t len,
+>  			  size_t off);
+> +
+> +/**
+> + * bio_add_virt_nofail - add data in the diret kernel mapping to a bio
 
-yeesh, that's a landmine.
+s/diret/direct
 
-having a separate bio_add_vmalloc as a hint is still a really bad
-"solution", unfortunately. And since this is something we don't have
-sanitizers or debug code for, and it only shows up on some archs -
-that's nasty.
+With that, looks good to me.
 
-> The other benefit is that by forcing different calls it is much
-> easier to pick the optimal number of bvecs (1) for the non-vmalloc
-> path, although that is of course also possible without it.
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-Your bio_vmalloc_max_vecs() could trivially handle both vmalloc and non
-vmalloc addresses.
+> + * @bio: destination bio
+> + * @vaddr: data to add
+> + * @len: length of the data to add, may cross pages
+> + *
+> + * Add the data at @vaddr to @bio.  The caller must have ensure a segment
+> + * is available for the added data.  No merging into an existing segment
+> + * will be performed.
+> + */
+> +static inline void bio_add_virt_nofail(struct bio *bio, void *vaddr,
+> +		unsigned len)
+> +{
+> +	__bio_add_page(bio, virt_to_page(vaddr), len, offset_in_page(vaddr));
+> +}
+> +
+>  int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter);
+>  void bio_iov_bvec_set(struct bio *bio, const struct iov_iter *iter);
+>  void __bio_release_pages(struct bio *bio, bool mark_dirty);
 
-> Not for a purely synchronous helper we could handle both, but so far
-> I've not seen anything but the xfs log recovery code that needs it,
-> and we'd probably get into needing to pass a bio_set to avoid
-> deadlock when used deeper in the stack, etc.  I can look into that
-> if we have more than a single user, but for now it doesn't seem
-> worth it.
 
-bcache and bcachefs btree buffers can also be vmalloc backed. Possibly
-also the prio_set path in bcache, for reading/writing bucket gens, but
-I'd have to check.
-
-> Having a common helper for vmalloc and the kernel direct mapping
-> is actually how I started, but then I ran into all the issues with
-> it and with the extremely simple helpers for the direct mapping
-> which are used a lot, and the more complicated version for vmalloc
-> which just has a few users instead.
-
-*nod*
-
-What else did you run into? invalidate_kernel_vmap_range() seems like
-the only problematic one, given that is_vmalloc_addr() is cheap.
+-- 
+Damien Le Moal
+Western Digital Research
 
