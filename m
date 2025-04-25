@@ -1,371 +1,178 @@
-Return-Path: <linux-bcache+bounces-964-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-965-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFCBA9BE1F
-	for <lists+linux-bcache@lfdr.de>; Fri, 25 Apr 2025 07:46:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5557A9C0D6
+	for <lists+linux-bcache@lfdr.de>; Fri, 25 Apr 2025 10:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BEC7166F35
-	for <lists+linux-bcache@lfdr.de>; Fri, 25 Apr 2025 05:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A81CD1BA692B
+	for <lists+linux-bcache@lfdr.de>; Fri, 25 Apr 2025 08:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4931581EE;
-	Fri, 25 Apr 2025 05:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtdSGj7q"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F409023535A;
+	Fri, 25 Apr 2025 08:19:25 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DBB10957;
-	Fri, 25 Apr 2025 05:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8C3233714;
+	Fri, 25 Apr 2025 08:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745559992; cv=none; b=N6ox30gu1W1TJsnq2jiczV6sGPYXxjayStjdMK0KceYgzaSzkyyrpmMg1Xv1d8SHkFUy1mu+PXGHohubM1kU0WJuTZOhqjvF+xXmoPJXq4lum/tXHLTZn+7Qqqmssat5pS9vTknlBAS5XY+7epJZ0v0ZyTRwZh00aIJP1yKDiao=
+	t=1745569165; cv=none; b=idplphziRTbLb80McYsxH08Ef/1EVbWOUpYodXOJterYkoi70O3WGcrBVDIXJr2Wwgx+zMnu6DGcpOtekrtzWSncXHpTY0kYaWRnzLnSpRCsLZPv18EY1TI5oqrGvnU9E7VURTv1LKYj/FfEq690Rj/FLjpqXpkVbEfGCV3a1LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745559992; c=relaxed/simple;
-	bh=sDVXspGyyoyMVwq3rjp3VZVC/oLgFQDcBOXE4fzGneM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aJL8rx7labpelo2oBgL79B8Z2aLTtcnehyFfwM0G4b/017yenLZGv0VlnQSrO5+Cq0TzPznnYUuLyo73rR6rxhpdlHDIg8Z3YP7rWNefV+o7zIOTWAmRjpYAW/A8aKt5DnIX4AFjid+3EB94NdVAUK9587AM/HCX78ig1SMlzdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtdSGj7q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9422FC4CEE4;
-	Fri, 25 Apr 2025 05:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745559992;
-	bh=sDVXspGyyoyMVwq3rjp3VZVC/oLgFQDcBOXE4fzGneM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dtdSGj7qzfeM3V+ymwnIcF+Mn94PTGxWdmOcbbbgNmCJA4fOHw+umQKAhV4Nq2PXU
-	 fdN7L/DHYDWMZ+WfGvsbUml2RS5BqiJwhsZhYjA0CniPNXJsq7iyOVFXwrddUQ5kSY
-	 ZMNnN9eNpqvy53nU7ZjnsQnd3fNtbHSlMKXAYQgWdiuZrl+5o3FH7xflOVhXbv+ITO
-	 tIzNBuWHDzvAOI9n+vAPomXR5nEoOa0mSsVjOiS23CeFWVmnVAJvTjGcLtDK0S1vFZ
-	 sM4Ax5sg0GMzHrNjCqwKCxZL2NT0hxFWq5fC0LvZyaOGl84Hwrpqwc3d8sbLyVEvf2
-	 erARNFA0/U9Ag==
-Date: Fri, 25 Apr 2025 13:46:26 +0800
-From: Coly Li <colyli@kernel.org>
-To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
-Cc: kent.overstreet@linux.dev, linux-bcache@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, xiahua@kylinos.com.cn, dengwangbo@kylinos.com.cn
-Subject: Re: [PATCH] bcache: add the deferred_flush IO processing path in the
- writeback mode
-Message-ID: <ug3sqyn42af4bjsp3l5d5ymiabtc767oaoud3ddzv6jnw2eh27@4gcxqaq5tatf>
-References: <20250425035021.921-1-zhoujifeng@kylinos.com.cn>
+	s=arc-20240116; t=1745569165; c=relaxed/simple;
+	bh=x0Dg4cKMR6D3ekKFVIOe036+2dyX+Mba05yp4rdNq6c=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=bc3UEU7MEn8XPhkWCjdoTxqlLNFjtyw/AB5mfD+P0CkANQDGtXqMIO1b7Du0FkbzqPC5OZKpbqQtAZSkVER7runZVNnvcI1/zeDsDnuIwqboUTghz3GELvl7ZbT7+fhEKCXgLlvofj7YLYQDoRCVKSFlZ30raEo3hn2+AvuMnhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn; spf=pass smtp.mailfrom=kylinos.com.cn; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.com.cn
+EX-QQ-RecipientCnt: 6
+X-QQ-GoodBg: 2
+X-QQ-SSF: 00400000000000F0
+X-QQ-FEAT: D4aqtcRDiqQGDUD8fynKBHI8JZ5u7mlQpiu4kXxDrxM=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: 7x1qqKu5pJafhq4/ckMwMEHoaGuzSeakJOUqYa8gIII=
+X-QQ-STYLE: 
+X-QQ-mid: lv3sz3a-2t1745569122t4bf4d3aa
+From: "=?utf-8?B?WmhvdSBKaWZlbmc=?=" <zhoujifeng@kylinos.com.cn>
+To: "=?utf-8?B?Q29seSBMaQ==?=" <colyli@kernel.org>
+Cc: "=?utf-8?B?a2VudC5vdmVyc3RyZWV0?=" <kent.overstreet@linux.dev>, "=?utf-8?B?bGludXgtYmNhY2hl?=" <linux-bcache@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?5aSP5Y2O?=" <xiahua@kylinos.com.cn>, "=?utf-8?B?6YKT5pe65rOi?=" <dengwangbo@kylinos.com.cn>
+Subject: Re: [PATCH] bcache: add the deferred_flush IO processing path in the writeback mode
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250425035021.921-1-zhoujifeng@kylinos.com.cn>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Fri, 25 Apr 2025 16:18:41 +0800
+X-Priority: 3
+Message-ID: <tencent_5EFAC84160EC2688341D1A8F@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20250425035021.921-1-zhoujifeng@kylinos.com.cn>
+	<ug3sqyn42af4bjsp3l5d5ymiabtc767oaoud3ddzv6jnw2eh27@4gcxqaq5tatf>
+In-Reply-To: <ug3sqyn42af4bjsp3l5d5ymiabtc767oaoud3ddzv6jnw2eh27@4gcxqaq5tatf>
+X-QQ-ReplyHash: 3140873376
+X-BIZMAIL-ID: 5531191572345201483
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Fri, 25 Apr 2025 16:18:42 +0800 (CST)
+Feedback-ID: lv:kylinos.com.cn:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: OIl0qrssdEn92V9lHBMqVtpskG1A5mh41ubbIJmC2oESmhZ1ukmcyUX5
+	LvvIkL9PV6lyU2rLeVU+bkt7TVELQHhxMisOhXe3xsMamigHXBeUa1neZKdB8i1AryqV1q9
+	iwMg5om2G7/SOOXXSxOshXh3yC2nljhlwRsXpJ6sJhkOaFVpxRo9TpLmz4b0shuD1UXPZHk
+	UeWY1ApLe8aywM2W+BAtkc0YU8vqvdsyCts1chqmwF307MhhC+c99B1we6gPcQxycARTwzC
+	vNlLtniXFJyL83N5nY42DGp+couA+3IeQTTg8xzlAijZXa3cAxAnK2P5oQbrb/pUyGzlYy4
+	UWVQSDbVILvF4LoPyx61vM/oaUg47nx5+JscZC4tIXh6ovyO5RCfx/Muc/hJ0SOz8WjGYr5
+	MD9mkxttLbt7GH3GETVbxGg+niI/2MxNlquD7/heg3N3O8h4MJXXukVnVxrcqi6fSjH1hfH
+	Shy0rSeJJfE/7aAA88ko7GwXqj/FXG2jGjOUGBhZ2zJfnh6pqlmwv8zZ6yMi4wcMGdoidrw
+	SXpleH4AOU3Ufqj1dz5f9ZxepXgVgS74yH6aPYNOg3Y+9Nkk5G6KbiuRuy3bouO4QtvJZMW
+	Btas53WHp2JJWSGAzvBB0dXfnxsj3/2b19URtbGGopPFDOBcilZukpoAkuxSI3dAOP/YPGb
+	2qZunLOaBN+NiUA8O6ltlcZ3nbqE5kbjF3lgY8CHxjGemZvMswE72Mmbylo8WRIOXffKKA/
+	wR2qHHNhr5cdwvbcMpp74XAXdqDi9MEFuS1BTGLCbOJJ4bC3zgjEToAfzu/wJS17ft5C2ua
+	Gk/6Pw4WLZrE804k7pKh2TCLjrarKhohm0Z4iRb8z3ujKzrdFd4bfouQZDdlOJVpm28T4Cc
+	VRh/E+xy1oE0KgmAmb+ZHA+IXdd8KtA/k5Zy8ywEDny297VptqrXUbIG8YtCy/DRnlvF0NC
+	dW8jbU4DWMiMLSjGJdLVWX0W13ZH28NBHEfQNf0DLwySkyUu5AqagFbt6+3GcBSeJQSzNRp
+	S9zQTA8uQvFRfpduv9UP5luxJ1EP4=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-Hi Jifeng,
+SGkgQ29seSBMaSwNClRoYW5rIHlvdSBmb3IgeW91ciByZXBseSBhbmQgeW91ciBxdWVzdGlv
+bi4NCg0KT24gRnJpLCAyNSBBcHIgMjAyNSBhdCAxMzo0NiwgQ29seSBMaSA8Y29seWxpQGtl
+cm5lbC5vcmc+IHdyb3RlOg0KPg0KPiBIaSBKaWZlbmcsDQo+DQo+IFRoYW5rcyBmb3IgcG9z
+dGluZyB0aGUgcGF0Y2guDQo+DQo+IE9uIEZyaSwgQXByIDI1LCAyMDI1IGF0IDExOjUwOjIx
+QU0gKzA4MDAsIFpob3UgSmlmZW5nIHdyb3RlOg0KPiA+IEluIHNvbWUgc2NlbmFyaW9zIHdp
+dGggaGlnaCByZXF1aXJlbWVudHMgZm9yIGJvdGggZGF0YSByZWxpYWJpbGl0eSBhbmQNCj4g
+PiB3cml0ZSBwZXJmb3JtYW5jZSwgdGhlIHZhcmlvdXMgY2FjaGUgbW9kZXMgb2YgdGhlIGN1
+cnJlbnQgYmNhY2hlIGNhbm5vdA0KPg0KPiBDb3VsZCB5b3UgcHJvdmlkZSB0aGUgZGV0YWls
+IHdvcmtsb2FkIG9yIGNpcmN1bXN0YW5jZSB3aGljaCByZXF1aXJlcyBib3RoDQo+IGRhdGEg
+cmVsaWFiaWxpdHkgYW5kIHdyaXRlIHBlcmZvcm1hbmNlIHRoYXQgY3VycmVudCBiY2FjaGUg
+Y2Fubm90IHNlcnZlPw0KDQpGb3IgZXhhbXBsZSwgaW4gc29tZSBkYXRhYmFzZSBhcHBsaWNh
+dGlvbiBzY2VuYXJpb3MsIHRoZSByZXF1aXJlbWVudHMgZm9yIGRhdGENCnNlY3VyaXR5IGFy
+ZSByZWxhdGl2ZWx5IGhpZ2guIFdoZW4gd3JpdGluZyBmcmVxdWVudGx5LCBmbHVzaCBpcyBj
+YWxsZWQgbW9yZSBvZnRlbiwNCmFuZCB0aGUgcGVyZm9ybWFuY2Ugb2Ygd3JpdGUgZHN5bmMg
+aXMgb2YgZ3JlYXQgY29uY2Vybi4gVGhlIG9wZXJhdGlvbmFsIHBlcmZvcm1hbmNlDQpvZiBz
+ZXZlcmFsIGNhY2hlIG1vZGVzIG9mIGJjYWNoZSBpbiBzdWNoIHNjZW5hcmlvcyBhdCBwcmVz
+ZW50Og0Kbm9uZTogVGhlIGNhY2hlIGRvZXMgbm90IHdvcmsgYW5kIGlzIG9mIG5vIGhlbHAg
+dG8gcGVyZm9ybWFuY2UuIFRoZSBwZXJmb3JtYW5jZSBpcw0KdGhlIHNhbWUgYXMgdGhhdCBv
+ZiB0aGUgYmFja2luZyBkZXZpY2UgYW5kIGNhbm5vdCBtZWV0IHRoZSBwZXJmb3JtYW5jZSBy
+ZXF1aXJlbWVudHMuDQp3cml0ZXJvdW5kIGFuZCB3cml0ZXRocm91Z2g6IFRoZXkgYXJlIG5v
+dCBoZWxwZnVsIGZvciB3cml0ZSBwZXJmb3JtYW5jZS4gVGhlIHdyaXRlDQpwZXJmb3JtYW5j
+ZSBpcyB0aGUgc2FtZSBhcyB0aGF0IG9mIHRoZSBiYWNraW5nIGRldmljZSBhbmQgY2Fubm90
+IG1lZXQgdGhlIHdyaXRlDQpwZXJmb3JtYW5jZSByZXF1aXJlbWVudHMuDQp3cml0ZWJhY2s6
+IFNpbmNlIHdoZW4gaXQgd3JpdGVzIGJhY2sgZGlydHkgZGF0YSwgaXQgb25seSBtYXJrcyBi
+aW8gYXMgUkVRX09QX1dSSVRFLA0KdGhlcmUgaXMgYSByaXNrIG9mIGRhdGEgbG9zcyBkdWUg
+dG8gcG93ZXIgZmFpbHVyZS4gSW4gYWRkaXRpb24sIHNpbmNlIGl0IG5lZWRzIHRvIHNlbmQg
+YQ0KZmx1c2ggcmVxdWVzdCB0byB0aGUgYmFja2luZyBkZXZpY2Ugd2hlbiBoYW5kbGluZyBy
+ZXF1ZXN0cyB3aXRoIHRoZSBmbHVzaCBtYXJrLCBpdCB3aWxsDQphZmZlY3QgdGhlIHdyaXRl
+IHBlcmZvcm1hbmNlLg0KDQo+ID4gZnVsbHkgbWF0Y2ggdGhlIHJlcXVpcmVtZW50cy4gZGVm
+ZXJyZWRfZmx1c2ggYWltcyB0byBpbmNyZWFzZSB0aGUNCj4gPiByZWxpYWJpbGl0eSBvZiB3
+cml0ZWJhY2sgd3JpdGUtYmFjay4gQW5kIHJlZHVjZSB0aGUgc2VuZGluZyBvZiBQUkVGTFVT
+SA0KPiA+IHJlcXVlc3RzIHRvIHRoZSBiYWNraW5nIGRldmljZSB0byBlbmhhbmNlIGRhdGEg
+c2VjdXJpdHkgYW5kIGRzeW5jIHdyaXRlDQo+ID4gcGVyZm9ybWFuY2UgaW4gd3JpZWJhY2sg
+bW9kZS4NCj4NCj4gSSdkIGxpa2UgdG8gc2VlIHRoZSBkZXRhaWxlZCBkZXNjcmlwdGlvbiBv
+biBob3cgZGVmZXJyZWQgZmx1c2ggaXMgZGVmaW5lZCwNCj4gYW5kIGhvdyBpdCB3b3Jrcy4g
+QW5kIHdoeSBkZWZlcnJlZCBmbHVzaCBtYXkgcHJvdmlkZSB0aGUgZGF0YSByZWxpYWJpbGl0
+eQ0KPiBhbmQgcGVyZm9ybWFuY2UgYmV0dGVyIHRoYW4gY3VycmVudCBiY2FjaGUgY29kZS4N
+Cg0KZGVmZXJyZWQgZmx1c2g6IFdoZW4gZGF0YSBpcyBwcm9jZXNzZWQgdGhyb3VnaCB0aGUg
+d3JpdGViYWNrIHBhdGgsIGl0IHdpbGwgZGV0ZXJtaW5lDQp3aGV0aGVyIGEgUFJFRkxVU0gg
+bmVlZHMgdG8gYmUgc2VudCB0byB0aGUgYmFja2luZyBkZXZpY2UuIFRoZSBqdWRnbWVudCBj
+cml0ZXJpb24NCmlzIHdoZXRoZXIgYSB3cml0ZSByZXF1ZXN0IGhhcyBiZWVuIHNlbnQgdGhy
+b3VnaCBieXBhc3Mgb3Igd3JpdGV0aHJvdWdoIGJlZm9yZS4gSWYgbm90LA0KaXQgaXMgbm90
+IG5lY2Vzc2FyeS4gUHV0IHRoZSBQUkVGTFVTSCBzZW1hbnRpY3MgaW50byB0aGUgZGlydHkg
+ZGF0YSB3cml0ZS1iYWNrIHN0YWdlDQp0byBlbnN1cmUgdGhlIHJlbGlhYmlsaXR5IG9mIHRo
+ZSBkaXJ0eSBkYXRhIHdyaXRlLWJhY2suIEhlcmUsIGJ5IHJlZHVjaW5nIHRoZSBzZW5kaW5n
+IG9mDQpQUkVMVVNIIHRvIHRoZSBiYWNraW5nIGRldmljZSwgdGhlIGRlbGF5IGZvciB0aGUg
+YmFja2luZyBkZXZpY2UgdG8gcHJvY2VzcyBQUkVMVVNIDQppcyBkZWNyZWFzZWQsIHRoZXJl
+YnkgaW1wcm92aW5nIHRoZSBwZXJmb3JtYW5jZSBvZiBkc3luYyB3cml0ZSByZXF1ZXN0cyB3
+aGVuIHRoZQ0KY2FjaGUgc3BhY2UgaXMgYWJ1bmRhbnQuIER1cmluZyB0aGUgZGlydHkgZGF0
+YSB3cml0ZS1iYWNrIHN0YWdlLCB0aGUgRlVBIG1ldGhvZCBpcw0KYWRvcHRlZCB0byBlbnN1
+cmUgdGhhdCB0aGUgZGlydHkgZGF0YSB3aWxsIG5vdCBiZSBsb3N0IGR1ZSB0byBmYWN0b3Jz
+IHN1Y2ggYXMgcG93ZXIgZmFpbHVyZS4NCg0KPiBJIGRvbid0IGxvb2sgaW50byB0aGUgcGF0
+Y2ggeWV0LCBqdXN0IHdpdGggbXkgaW50dWl0aW9uIHRoZSBvdmVyYWxsDQo+IHBlcmZvcm1h
+bmNlIHdvbid0IGJlIHF1aXRlIG9wdGltaXplZCBieSBzZXR0aW5nIEZVQSBvbiB3cml0ZWJh
+Y2sgSS9Pcy4NCg0KVXNpbmcgdGhlIEZVQSBtZXRob2QgdG8gd3JpdGUgYmFjayBkaXJ0eSBk
+YXRhIGRvZXMgaW5kZWVkIGhhdmUgYW4gaW1wYWN0IG9uIHRoZSBzcGVlZA0Kb2Ygd3JpdGlu
+ZyBiYWNrIGRpcnR5IGRhdGEuIEluIGEgdGVzdCB3aGVyZSBJL08gaXMgd3JpdHRlbiByYW5k
+b21seSBhdCA0SywgdGhlIHNwZWVkIG9mDQp3cml0aW5nIGJhY2sgZGlydHkgZGF0YSBpcyBh
+cHByb3hpbWF0ZWx5IGhhbGYgdGhhdCBvZiB0aGUgbm9uLUZVQSBtZXRob2QuIEhvd2V2ZXIs
+DQpjb25zaWRlcmluZyB0aGF0IHRoZSBkYXRhIGlzIG5vdCB3cml0dGVuIGF0IGEgaGlnaCBp
+bnRlbnNpdHkgY29udGludW91c2x5LCB0aGlzIHByb3ZpZGVzIHNvbWUNCmJ1ZmZlciB0aW1l
+IGZvciB3cml0aW5nIGJhY2sgZGlydHkgZGF0YS4gSW4gZXh0cmVtZSBjYXNlcywgd2hlbiB0
+aGUgZWZmZWN0aXZlIHNwYWNlIG9mIHRoZQ0KY2FjaGUgaXMgdGlnaHQsIGl0cyB3cml0ZSBl
+ZmZpY2llbmN5IGlzIG5vdCBsb3dlciB0aGFuIHRoZSBwZXJmb3JtYW5jZSBvZiB0aGUgYmFj
+a2luZyBkZXZpY2UuDQpUaGVyZWZvcmUsIGVuYWJsaW5nIGRlZmVycmVkX2ZsdXNoIGlzIGVm
+ZmVjdGl2ZSBpbiBsb3ctY29zdCBkZXBsb3ltZW50IHNvbHV0aW9ucyB0aGF0IHJlcXVpcmUN
+CnRoZSB1c2Ugb2YgU1NEIHRvIGFjY2VsZXJhdGUgdGhlIHBlcmZvcm1hbmNlIG9mIGRzeW5j
+Lg0KDQo+IEFuZCB0aGUgY2FjaGUgbW9kZSBjYW4gc3d0aWNoIGFyYml0YXJpbHkgaW4gcnVu
+IHRpbWUsIGlmIGNhY2hlIG1vZGUgd2FzIG5vbmUNCj4gb3Igd3JpdGV0aG91Z2gsIHRoZW4g
+c3dpdGNoIHRvIHdyaXRlYmFjaywgSSBkb24ndCBzZWUgeW91ciBwYXRjaCBoYW5kbGVzDQo+
+IHN1Y2ggc2l0dWF0aW9uLg0KDQpXaGVuIHN3aXRjaGluZyBmcm9tIG90aGVyIGNhY2hlIG1v
+ZGVzIHRvIHdyaXRlYmFjayBhbmQgc2ltdWx0YW5lb3VzbHkgZW5hYmxpbmcgDQpkZWZlcnJl
+ZF9mbHVzaCwgYSBSRVFfUFJFRkxVU0ggcmVxdWVzdCB3aWxsIGJlIHNlbnQgdG8gdGhlIGJh
+Y2tpbmcgZGV2aWNlLg0KQ29kZSBsb2NhdGlvbiBpbiB0aGUgcGF0Y2g6DQorICAgaWYgKGF0
+dHIgPT0gJnN5c2ZzX2RlZmVycmVkX2ZsdXNoKSB7DQorICAgICAgIHYgPSBfX3N5c2ZzX21h
+dGNoX3N0cmluZyhiY2hfZGVmZXJyZWRfZmx1c2gsIC0xLCBidWYpOw0KKyAgICAgICBpZiAo
+diA8IDApDQorICAgICAgICAgICByZXR1cm4gdjsNCisNCisgICAgICAgaWYgKCh1bnNpZ25l
+ZCBpbnQpIHYgIT0gQkRFVl9ERUZFUlJFRF9GTFVTSCgmZGMtPnNiKSkgew0KKyAgICAgICAg
+ICAgaWYgKHYgJiYgKEJERVZfQ0FDSEVfTU9ERSgmZGMtPnNiKSAhPSBDQUNIRV9NT0RFX1dS
+SVRFQkFDSykpIHsNCisgICAgICAgICAgICAgICBwcl9lcnIoIkl0J3Mgbm90IHRoZSB3cml0
+ZWJhY2sgbW9kZSB0aGF0IGNhbid0IGVuYWJsZSBkZWZlcnJlZF9mbHVzaC5cbiIpOw0KKyAg
+ICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0KKyAgICAgICAgICAgfQ0KKw0KKyAgICAg
+ICAgICAgU0VUX0JERVZfREVGRVJSRURfRkxVU0goJmRjLT5zYiwgdik7DQorICAgICAgICAg
+ICBiY2hfd3JpdGVfYmRldl9zdXBlcihkYywgTlVMTCk7DQorICAgICAgICAgICBpZiAodikg
+ew0KKyAgICAgICAgICAgICAgIGJpb19pbml0KCZmbHVzaCwgZGMtPmJkZXYsIE5VTEwsIDAs
+IFJFUV9PUF9XUklURSB8IFJFUV9QUkVGTFVTSCk7DQorICAgICAgICAgICAgICAgLyogSS9P
+IHJlcXVlc3Qgc2VudCB0byBiYWNraW5nIGRldmljZSAqLw0KKyAgICAgICAgICAgICAgIHN1
+Ym1pdF9iaW9fd2FpdCgmZmx1c2gpOw0KKyAgICAgICAgICAgfQ0KKyAgICAgICB9DQorICAg
+fQ0KDQpUaGFua3Mu
 
-Thanks for posting the patch.
-
-On Fri, Apr 25, 2025 at 11:50:21AM +0800, Zhou Jifeng wrote:
-> In some scenarios with high requirements for both data reliability and
-> write performance, the various cache modes of the current bcache cannot
-
-Could you provide the detail workload or circumstance which requires both
-data reliability and write performance that current bcache cannot serve?
-
-
-> fully match the requirements. deferred_flush aims to increase the
-> reliability of writeback write-back. And reduce the sending of PREFLUSH
-> requests to the backing device to enhance data security and dsync write
-> performance in wrieback mode.
-
-I'd like to see the detailed description on how deferred flush is defined,
-and how it works. And why deferred flush may provide the data reliability
-and performance better than current bcache code.
-
-And a explicit and clear benchmakr for general workload is quite helpful
-for me to understand your idea and how it works better.
-
-I don't look into the patch yet, just with my intuition the overall
-performance won't be quite optimized by setting FUA on writeback I/Os.
-
-And the cache mode can swtich arbitarily in run time, if cache mode was none
-or writethough, then switch to writeback, I don't see your patch handles
-such situation.
-
-Anyway, for performance optimization patch, an explicit markbench is
-helpful. If the result is ideal, I'd like to reproduce it on my side.
-
-Thanks.
-
-Coly Li
-
-
- 
-> deferred_flush supports three selectable modes:
-> none: do nothing (default )
-> normal: sequential I/O bypasses the cache disk
-> force: sequential I/O cannot bypass the cache disk
-> 
-> Signed-off-by: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
-> ---
->  drivers/md/bcache/bcache.h        |  6 ++++
->  drivers/md/bcache/bcache_ondisk.h |  5 +++
->  drivers/md/bcache/request.c       | 32 ++++++++++++++++--
->  drivers/md/bcache/sysfs.c         | 54 +++++++++++++++++++++++++++++++
->  drivers/md/bcache/writeback.c     |  7 ++++
->  drivers/md/bcache/writeback.h     |  4 +++
->  6 files changed, 106 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 785b0d9008fa..d2654c449d1c 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -405,6 +405,12 @@ struct cached_dev {
->  	 */
->  #define BCH_WBRATE_UPDATE_MAX_SKIPS	15
->  	unsigned int		rate_update_retry;
-> +
-> +	/*
-> +	 * In the deferred flush mode, 0 indicates that there is no
-> +	 * need to send flush to the backing device.
-> +	 */
-> +	atomic_t		need_flush;
->  };
->  
->  enum alloc_reserve {
-> diff --git a/drivers/md/bcache/bcache_ondisk.h b/drivers/md/bcache/bcache_ondisk.h
-> index 6620a7f8fffc..822dcdc0caaf 100644
-> --- a/drivers/md/bcache/bcache_ondisk.h
-> +++ b/drivers/md/bcache/bcache_ondisk.h
-> @@ -294,6 +294,11 @@ BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
->  #define CACHE_MODE_WRITEBACK		1U
->  #define CACHE_MODE_WRITEAROUND		2U
->  #define CACHE_MODE_NONE			3U
-> +BITMASK(BDEV_DEFERRED_FLUSH,		struct cache_sb, flags, 4, 3);
-> +#define DEFERRED_FLUSH_NONE		0U
-> +#define DEFERRED_FLUSH_NORMAL		1U
-> +#define DEFERRED_FLUSH_FORCE		2U
-> +
->  BITMASK(BDEV_STATE,			struct cache_sb, flags, 61, 2);
->  #define BDEV_STATE_NONE			0U
->  #define BDEV_STATE_CLEAN		1U
-> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index af345dc6fde1..8dc17d9c5f75 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -1026,16 +1026,28 @@ static void cached_dev_write(struct cached_dev *dc, struct search *s)
->  		bio->bi_end_io = backing_request_endio;
->  		closure_bio_submit(s->iop.c, bio, cl);
->  
-> +		if (BDEV_DEFERRED_FLUSH(&dc->sb))
-> +			atomic_set(&dc->need_flush, 1);
-> +
->  	} else if (s->iop.writeback) {
->  		bch_writeback_add(dc);
->  		s->iop.bio = bio;
->  
->  		if (bio->bi_opf & REQ_PREFLUSH) {
-> +			struct bio *flush;
-> +
-> +			/*
-> +			 * When DEFERRED_FLUSH is enabled, if need_flush is 0,
-> +			 * there is no need to send a flush to the backing device.
-> +			 */
-> +			if (BDEV_DEFERRED_FLUSH(&dc->sb) &&
-> +				 (!atomic_cmpxchg(&dc->need_flush, 1, 0)))
-> +				goto insert_data;
-> +
->  			/*
->  			 * Also need to send a flush to the backing
->  			 * device.
->  			 */
-> -			struct bio *flush;
->  
->  			flush = bio_alloc_bioset(bio->bi_bdev, 0,
->  						 REQ_OP_WRITE | REQ_PREFLUSH,
-> @@ -1050,6 +1062,9 @@ static void cached_dev_write(struct cached_dev *dc, struct search *s)
->  			closure_bio_submit(s->iop.c, flush, cl);
->  		}
->  	} else {
-> +		if (BDEV_DEFERRED_FLUSH(&dc->sb))
-> +			atomic_set(&dc->need_flush, 1);
-> +
->  		s->iop.bio = bio_alloc_clone(bio->bi_bdev, bio, GFP_NOIO,
->  					     &dc->disk.bio_split);
->  		/* I/O request sent to backing device */
-> @@ -1066,14 +1081,27 @@ static CLOSURE_CALLBACK(cached_dev_nodata)
->  {
->  	closure_type(s, struct search, cl);
->  	struct bio *bio = &s->bio.bio;
-> +	struct cached_dev *dc = container_of(s->d, struct cached_dev, disk);
->  
-> -	if (s->iop.flush_journal)
-> +	if (s->iop.flush_journal) {
->  		bch_journal_meta(s->iop.c, cl);
->  
-> +		/*
-> +		 * When deferred flush is enabled, it is necessary to determine
-> +		 * whether the flush request can be sent to the backing device.
-> +		 */
-> +		if (BDEV_DEFERRED_FLUSH(&dc->sb) &&
-> +				 (!atomic_cmpxchg(&dc->need_flush, 1, 0))) {
-> +			s->iop.status = BLK_STS_OK;
-> +			goto end;
-> +		}
-> +	}
-> +
->  	/* If it's a flush, we send the flush to the backing device too */
->  	bio->bi_end_io = backing_request_endio;
->  	closure_bio_submit(s->iop.c, bio, cl);
->  
-> +end:
->  	continue_at(cl, cached_dev_bio_complete, NULL);
->  }
->  
-> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> index e8f696cb58c0..3f343fba2f96 100644
-> --- a/drivers/md/bcache/sysfs.c
-> +++ b/drivers/md/bcache/sysfs.c
-> @@ -28,6 +28,25 @@ static const char * const bch_cache_modes[] = {
->  	NULL
->  };
->  
-> +/*
-> + * Deferred flush: In writeback mode, reduce unnecessary PREFLUSH
-> + * passed to the backend disk to speed up the performance of dsync
-> + * requests.Enhance data writeback security through FUA when dirty
-> + * data is written back
-> + *
-> + * Default is 0 ("none")
-> + * none: Do nothing
-> + * normal: Sequential I/O bypasses the cache disk
-> + * force: Sequential I/O cannot bypass the cache disk
-> + */
-> +static const char * const bch_deferred_flush[] = {
-> +	"none",
-> +	"normal",
-> +	"force",
-> +	NULL
-> +};
-> +
-> +
->  static const char * const bch_reada_cache_policies[] = {
->  	"all",
->  	"meta-only",
-> @@ -151,6 +170,7 @@ rw_attribute(copy_gc_enabled);
->  rw_attribute(idle_max_writeback_rate);
->  rw_attribute(gc_after_writeback);
->  rw_attribute(size);
-> +rw_attribute(deferred_flush);
->  
->  static ssize_t bch_snprint_string_list(char *buf,
->  				       size_t size,
-> @@ -283,6 +303,11 @@ SHOW(__bch_cached_dev)
->  		return strlen(buf);
->  	}
->  
-> +	if (attr == &sysfs_deferred_flush)
-> +		return bch_snprint_string_list(buf, PAGE_SIZE,
-> +					       bch_deferred_flush,
-> +					       BDEV_DEFERRED_FLUSH(&dc->sb));
-> +
->  #undef var
->  	return 0;
->  }
-> @@ -295,6 +320,7 @@ STORE(__cached_dev)
->  	ssize_t v;
->  	struct cache_set *c;
->  	struct kobj_uevent_env *env;
-> +	struct bio flush;
->  
->  	/* no user space access if system is rebooting */
->  	if (bcache_is_reboot)
-> @@ -383,6 +409,12 @@ STORE(__cached_dev)
->  			SET_BDEV_CACHE_MODE(&dc->sb, v);
->  			bch_write_bdev_super(dc, NULL);
->  		}
-> +
-> +		/* It's not the writeback mode that can't enable deferred_flush */
-> +		if (BDEV_DEFERRED_FLUSH(&dc->sb) && ((unsigned int) v != CACHE_MODE_WRITEBACK)) {
-> +			SET_BDEV_DEFERRED_FLUSH(&dc->sb, 0);
-> +			bch_write_bdev_super(dc, NULL);
-> +		}
->  	}
->  
->  	if (attr == &sysfs_readahead_cache_policy) {
-> @@ -451,6 +483,27 @@ STORE(__cached_dev)
->  	if (attr == &sysfs_stop)
->  		bcache_device_stop(&dc->disk);
->  
-> +	if (attr == &sysfs_deferred_flush) {
-> +		v = __sysfs_match_string(bch_deferred_flush, -1, buf);
-> +		if (v < 0)
-> +			return v;
-> +
-> +		if ((unsigned int) v != BDEV_DEFERRED_FLUSH(&dc->sb)) {
-> +			if (v && (BDEV_CACHE_MODE(&dc->sb) != CACHE_MODE_WRITEBACK)) {
-> +				pr_err("It's not the writeback mode that can't enable deferred_flush.\n");
-> +				return -EINVAL;
-> +			}
-> +
-> +			SET_BDEV_DEFERRED_FLUSH(&dc->sb, v);
-> +			bch_write_bdev_super(dc, NULL);
-> +			if (v) {
-> +				bio_init(&flush, dc->bdev, NULL, 0, REQ_OP_WRITE | REQ_PREFLUSH);
-> +				/* I/O request sent to backing device */
-> +				submit_bio_wait(&flush);
-> +			}
-> +		}
-> +	}
-> +
->  	return size;
->  }
->  
-> @@ -541,6 +594,7 @@ static struct attribute *bch_cached_dev_attrs[] = {
->  #endif
->  	&sysfs_backing_dev_name,
->  	&sysfs_backing_dev_uuid,
-> +	&sysfs_deferred_flush,
->  	NULL
->  };
->  ATTRIBUTE_GROUPS(bch_cached_dev);
-> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-> index 453efbbdc8ee..68bf655f3b96 100644
-> --- a/drivers/md/bcache/writeback.c
-> +++ b/drivers/md/bcache/writeback.c
-> @@ -435,6 +435,13 @@ static CLOSURE_CALLBACK(write_dirty)
->  	if (KEY_DIRTY(&w->key)) {
->  		dirty_init(w);
->  		io->bio.bi_opf = REQ_OP_WRITE;
-> +
-> +		/* When DEFERRED_FLUSH is enabled, you need to ensure that
-> +		 * data is flushed to disk.
-> +		 */
-> +		if (BDEV_DEFERRED_FLUSH(&dc->sb))
-> +			io->bio.bi_opf |= REQ_FUA | REQ_SYNC | REQ_PREFLUSH;
-> +
->  		io->bio.bi_iter.bi_sector = KEY_START(&w->key);
->  		bio_set_dev(&io->bio, io->dc->bdev);
->  		io->bio.bi_end_io	= dirty_endio;
-> diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
-> index 31df716951f6..0c92a607a875 100644
-> --- a/drivers/md/bcache/writeback.h
-> +++ b/drivers/md/bcache/writeback.h
-> @@ -117,6 +117,10 @@ static inline bool should_writeback(struct cached_dev *dc, struct bio *bio,
->  				    bio_sectors(bio)))
->  		return true;
->  
-> +	/* Prevent IO from bypassing the cache disk */
-> +	if (BDEV_DEFERRED_FLUSH(&dc->sb) == DEFERRED_FLUSH_FORCE)
-> +		return true;
-> +
->  	if (would_skip)
->  		return false;
->  
-> -- 
-> 2.18.1
-> 
-> 
-
--- 
-Coly Li
 
