@@ -1,178 +1,237 @@
-Return-Path: <linux-bcache+bounces-965-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-966-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5557A9C0D6
-	for <lists+linux-bcache@lfdr.de>; Fri, 25 Apr 2025 10:21:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1363FA9E064
+	for <lists+linux-bcache@lfdr.de>; Sun, 27 Apr 2025 09:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A81CD1BA692B
-	for <lists+linux-bcache@lfdr.de>; Fri, 25 Apr 2025 08:21:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BA7B17D954
+	for <lists+linux-bcache@lfdr.de>; Sun, 27 Apr 2025 07:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F409023535A;
-	Fri, 25 Apr 2025 08:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A86245022;
+	Sun, 27 Apr 2025 07:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="PgqdcOqV"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+Received: from mail38.out.titan.email (mail38.out.titan.email [209.209.25.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8C3233714;
-	Fri, 25 Apr 2025 08:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119B410E0
+	for <linux-bcache@vger.kernel.org>; Sun, 27 Apr 2025 07:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.209.25.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745569165; cv=none; b=idplphziRTbLb80McYsxH08Ef/1EVbWOUpYodXOJterYkoi70O3WGcrBVDIXJr2Wwgx+zMnu6DGcpOtekrtzWSncXHpTY0kYaWRnzLnSpRCsLZPv18EY1TI5oqrGvnU9E7VURTv1LKYj/FfEq690Rj/FLjpqXpkVbEfGCV3a1LE=
+	t=1745738777; cv=none; b=MVdyCk3J0QHAxIzfCM/2azYNKYNL2vWq/VKLCa9giJeEGr2KsvJlGYeRQ4GLh0b8qvYcoiIVdQuYlMlE5HKe6OkPKmap+zau+becB70hs6yysD3G+xiDuzA936861Vm26EXYqiaR5Y23suEVbT+HQtAzVdPQOZyyN7Y0AfMHv/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745569165; c=relaxed/simple;
-	bh=x0Dg4cKMR6D3ekKFVIOe036+2dyX+Mba05yp4rdNq6c=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
-	 References:In-Reply-To; b=bc3UEU7MEn8XPhkWCjdoTxqlLNFjtyw/AB5mfD+P0CkANQDGtXqMIO1b7Du0FkbzqPC5OZKpbqQtAZSkVER7runZVNnvcI1/zeDsDnuIwqboUTghz3GELvl7ZbT7+fhEKCXgLlvofj7YLYQDoRCVKSFlZ30raEo3hn2+AvuMnhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn; spf=pass smtp.mailfrom=kylinos.com.cn; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.com.cn
-EX-QQ-RecipientCnt: 6
-X-QQ-GoodBg: 2
-X-QQ-SSF: 00400000000000F0
-X-QQ-FEAT: D4aqtcRDiqQGDUD8fynKBHI8JZ5u7mlQpiu4kXxDrxM=
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-Originating-IP: 7x1qqKu5pJafhq4/ckMwMEHoaGuzSeakJOUqYa8gIII=
-X-QQ-STYLE: 
-X-QQ-mid: lv3sz3a-2t1745569122t4bf4d3aa
-From: "=?utf-8?B?WmhvdSBKaWZlbmc=?=" <zhoujifeng@kylinos.com.cn>
-To: "=?utf-8?B?Q29seSBMaQ==?=" <colyli@kernel.org>
-Cc: "=?utf-8?B?a2VudC5vdmVyc3RyZWV0?=" <kent.overstreet@linux.dev>, "=?utf-8?B?bGludXgtYmNhY2hl?=" <linux-bcache@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?5aSP5Y2O?=" <xiahua@kylinos.com.cn>, "=?utf-8?B?6YKT5pe65rOi?=" <dengwangbo@kylinos.com.cn>
-Subject: Re: [PATCH] bcache: add the deferred_flush IO processing path in the writeback mode
+	s=arc-20240116; t=1745738777; c=relaxed/simple;
+	bh=SnKDtn9vNNEvBK7+Ork9k+3FMuZ/BPGhOp5jL12zxrg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=UEtiIgitelcwyyHZT7yIwQLi/BkmT3/aI/3bWPGE5H11mqVVDMmMq4sfEPIzTRejt/wyvXHUlw7HyC76GqZdRsMQpGkYW2nugb5D3k8ZbuRmrNDj7+4JKs4Vz1q/716oygYVGcZ33Up8NCpsIFZshzJTe0mROiJx8duLP5OWPyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=PgqdcOqV; arc=none smtp.client-ip=209.209.25.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
+Received: from localhost (localhost [127.0.0.1])
+	by smtp-out.flockmail.com (Postfix) with ESMTP id CCDA060044;
+	Sun, 27 Apr 2025 06:48:15 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=bQYeXUX70C/rw//HG2eTPdfBxl6JMtsEVq9jZKgzyKc=;
+	c=relaxed/relaxed; d=t12smtp-sign004.email;
+	h=from:to:subject:cc:references:mime-version:in-reply-to:date:message-id:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1745736495; v=1;
+	b=PgqdcOqVqt+jjQSSE7o6p7HfsCdoMUDlzBggVwEqnpHlCqGJmf5HxriVcC1vdVauXKCp1JfL
+	euNNMmfRDdxuilG2f82OsJ0ZbWcF/NJso/ZEpDlvMkAyHhOf0BV9DB6KJXXigw3+TOHbTj7WWlH
+	iEvIlCgfDt0N6TRMAdtLeFWs=
+Received: from smtpclient.apple (v133-18-227-172.vir.kagoya.net [133.18.227.172])
+	by smtp-out.flockmail.com (Postfix) with ESMTPA id ED03360110;
+	Sun, 27 Apr 2025 06:48:12 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Fri, 25 Apr 2025 16:18:41 +0800
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [PATCH] bcache: add the deferred_flush IO processing path in the
+ writeback mode
+Feedback-ID: :i@coly.li:coly.li:flockmailId
+From: Coly Li <i@coly.li>
 X-Priority: 3
-Message-ID: <tencent_5EFAC84160EC2688341D1A8F@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
+In-Reply-To: <tencent_5EFAC84160EC2688341D1A8F@qq.com>
+Date: Sun, 27 Apr 2025 14:47:59 +0800
+Cc: Coly Li <colyli@kernel.org>,
+ "kent.overstreet" <kent.overstreet@linux.dev>,
+ linux-bcache <linux-bcache@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ =?utf-8?B?5aSP5Y2O?= <xiahua@kylinos.com.cn>,
+ =?utf-8?B?6YKT5pe65rOi?= <dengwangbo@kylinos.com.cn>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DEAB3741-AF2F-4CD3-B715-EBC3AB9B394E@coly.li>
 References: <20250425035021.921-1-zhoujifeng@kylinos.com.cn>
-	<ug3sqyn42af4bjsp3l5d5ymiabtc767oaoud3ddzv6jnw2eh27@4gcxqaq5tatf>
-In-Reply-To: <ug3sqyn42af4bjsp3l5d5ymiabtc767oaoud3ddzv6jnw2eh27@4gcxqaq5tatf>
-X-QQ-ReplyHash: 3140873376
-X-BIZMAIL-ID: 5531191572345201483
-X-QQ-SENDSIZE: 520
-Received: from qq.com (unknown [127.0.0.1])
-	by smtp.qq.com (ESMTP) with SMTP
-	id ; Fri, 25 Apr 2025 16:18:42 +0800 (CST)
-Feedback-ID: lv:kylinos.com.cn:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: OIl0qrssdEn92V9lHBMqVtpskG1A5mh41ubbIJmC2oESmhZ1ukmcyUX5
-	LvvIkL9PV6lyU2rLeVU+bkt7TVELQHhxMisOhXe3xsMamigHXBeUa1neZKdB8i1AryqV1q9
-	iwMg5om2G7/SOOXXSxOshXh3yC2nljhlwRsXpJ6sJhkOaFVpxRo9TpLmz4b0shuD1UXPZHk
-	UeWY1ApLe8aywM2W+BAtkc0YU8vqvdsyCts1chqmwF307MhhC+c99B1we6gPcQxycARTwzC
-	vNlLtniXFJyL83N5nY42DGp+couA+3IeQTTg8xzlAijZXa3cAxAnK2P5oQbrb/pUyGzlYy4
-	UWVQSDbVILvF4LoPyx61vM/oaUg47nx5+JscZC4tIXh6ovyO5RCfx/Muc/hJ0SOz8WjGYr5
-	MD9mkxttLbt7GH3GETVbxGg+niI/2MxNlquD7/heg3N3O8h4MJXXukVnVxrcqi6fSjH1hfH
-	Shy0rSeJJfE/7aAA88ko7GwXqj/FXG2jGjOUGBhZ2zJfnh6pqlmwv8zZ6yMi4wcMGdoidrw
-	SXpleH4AOU3Ufqj1dz5f9ZxepXgVgS74yH6aPYNOg3Y+9Nkk5G6KbiuRuy3bouO4QtvJZMW
-	Btas53WHp2JJWSGAzvBB0dXfnxsj3/2b19URtbGGopPFDOBcilZukpoAkuxSI3dAOP/YPGb
-	2qZunLOaBN+NiUA8O6ltlcZ3nbqE5kbjF3lgY8CHxjGemZvMswE72Mmbylo8WRIOXffKKA/
-	wR2qHHNhr5cdwvbcMpp74XAXdqDi9MEFuS1BTGLCbOJJ4bC3zgjEToAfzu/wJS17ft5C2ua
-	Gk/6Pw4WLZrE804k7pKh2TCLjrarKhohm0Z4iRb8z3ujKzrdFd4bfouQZDdlOJVpm28T4Cc
-	VRh/E+xy1oE0KgmAmb+ZHA+IXdd8KtA/k5Zy8ywEDny297VptqrXUbIG8YtCy/DRnlvF0NC
-	dW8jbU4DWMiMLSjGJdLVWX0W13ZH28NBHEfQNf0DLwySkyUu5AqagFbt6+3GcBSeJQSzNRp
-	S9zQTA8uQvFRfpduv9UP5luxJ1EP4=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+ <ug3sqyn42af4bjsp3l5d5ymiabtc767oaoud3ddzv6jnw2eh27@4gcxqaq5tatf>
+ <tencent_5EFAC84160EC2688341D1A8F@qq.com>
+To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1745736495701004276.5242.6327280174020665267@prod-use1-smtp-out1001.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=O7TDvA9W c=1 sm=1 tr=0 ts=680dd32f
+	a=mj4eMbsE5mSnrU54dbyulA==:117 a=mj4eMbsE5mSnrU54dbyulA==:17
+	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=2g-bObx1AAAA:8 a=VwQbUJbxAAAA:8
+	a=fA3rBA8wnNJP-tMNtCUA:9 a=QEXdDO2ut3YA:10 a=2vxvtA42U9rPmyYw9DsL:22
 
-SGkgQ29seSBMaSwNClRoYW5rIHlvdSBmb3IgeW91ciByZXBseSBhbmQgeW91ciBxdWVzdGlv
-bi4NCg0KT24gRnJpLCAyNSBBcHIgMjAyNSBhdCAxMzo0NiwgQ29seSBMaSA8Y29seWxpQGtl
-cm5lbC5vcmc+IHdyb3RlOg0KPg0KPiBIaSBKaWZlbmcsDQo+DQo+IFRoYW5rcyBmb3IgcG9z
-dGluZyB0aGUgcGF0Y2guDQo+DQo+IE9uIEZyaSwgQXByIDI1LCAyMDI1IGF0IDExOjUwOjIx
-QU0gKzA4MDAsIFpob3UgSmlmZW5nIHdyb3RlOg0KPiA+IEluIHNvbWUgc2NlbmFyaW9zIHdp
-dGggaGlnaCByZXF1aXJlbWVudHMgZm9yIGJvdGggZGF0YSByZWxpYWJpbGl0eSBhbmQNCj4g
-PiB3cml0ZSBwZXJmb3JtYW5jZSwgdGhlIHZhcmlvdXMgY2FjaGUgbW9kZXMgb2YgdGhlIGN1
-cnJlbnQgYmNhY2hlIGNhbm5vdA0KPg0KPiBDb3VsZCB5b3UgcHJvdmlkZSB0aGUgZGV0YWls
-IHdvcmtsb2FkIG9yIGNpcmN1bXN0YW5jZSB3aGljaCByZXF1aXJlcyBib3RoDQo+IGRhdGEg
-cmVsaWFiaWxpdHkgYW5kIHdyaXRlIHBlcmZvcm1hbmNlIHRoYXQgY3VycmVudCBiY2FjaGUg
-Y2Fubm90IHNlcnZlPw0KDQpGb3IgZXhhbXBsZSwgaW4gc29tZSBkYXRhYmFzZSBhcHBsaWNh
-dGlvbiBzY2VuYXJpb3MsIHRoZSByZXF1aXJlbWVudHMgZm9yIGRhdGENCnNlY3VyaXR5IGFy
-ZSByZWxhdGl2ZWx5IGhpZ2guIFdoZW4gd3JpdGluZyBmcmVxdWVudGx5LCBmbHVzaCBpcyBj
-YWxsZWQgbW9yZSBvZnRlbiwNCmFuZCB0aGUgcGVyZm9ybWFuY2Ugb2Ygd3JpdGUgZHN5bmMg
-aXMgb2YgZ3JlYXQgY29uY2Vybi4gVGhlIG9wZXJhdGlvbmFsIHBlcmZvcm1hbmNlDQpvZiBz
-ZXZlcmFsIGNhY2hlIG1vZGVzIG9mIGJjYWNoZSBpbiBzdWNoIHNjZW5hcmlvcyBhdCBwcmVz
-ZW50Og0Kbm9uZTogVGhlIGNhY2hlIGRvZXMgbm90IHdvcmsgYW5kIGlzIG9mIG5vIGhlbHAg
-dG8gcGVyZm9ybWFuY2UuIFRoZSBwZXJmb3JtYW5jZSBpcw0KdGhlIHNhbWUgYXMgdGhhdCBv
-ZiB0aGUgYmFja2luZyBkZXZpY2UgYW5kIGNhbm5vdCBtZWV0IHRoZSBwZXJmb3JtYW5jZSBy
-ZXF1aXJlbWVudHMuDQp3cml0ZXJvdW5kIGFuZCB3cml0ZXRocm91Z2g6IFRoZXkgYXJlIG5v
-dCBoZWxwZnVsIGZvciB3cml0ZSBwZXJmb3JtYW5jZS4gVGhlIHdyaXRlDQpwZXJmb3JtYW5j
-ZSBpcyB0aGUgc2FtZSBhcyB0aGF0IG9mIHRoZSBiYWNraW5nIGRldmljZSBhbmQgY2Fubm90
-IG1lZXQgdGhlIHdyaXRlDQpwZXJmb3JtYW5jZSByZXF1aXJlbWVudHMuDQp3cml0ZWJhY2s6
-IFNpbmNlIHdoZW4gaXQgd3JpdGVzIGJhY2sgZGlydHkgZGF0YSwgaXQgb25seSBtYXJrcyBi
-aW8gYXMgUkVRX09QX1dSSVRFLA0KdGhlcmUgaXMgYSByaXNrIG9mIGRhdGEgbG9zcyBkdWUg
-dG8gcG93ZXIgZmFpbHVyZS4gSW4gYWRkaXRpb24sIHNpbmNlIGl0IG5lZWRzIHRvIHNlbmQg
-YQ0KZmx1c2ggcmVxdWVzdCB0byB0aGUgYmFja2luZyBkZXZpY2Ugd2hlbiBoYW5kbGluZyBy
-ZXF1ZXN0cyB3aXRoIHRoZSBmbHVzaCBtYXJrLCBpdCB3aWxsDQphZmZlY3QgdGhlIHdyaXRl
-IHBlcmZvcm1hbmNlLg0KDQo+ID4gZnVsbHkgbWF0Y2ggdGhlIHJlcXVpcmVtZW50cy4gZGVm
-ZXJyZWRfZmx1c2ggYWltcyB0byBpbmNyZWFzZSB0aGUNCj4gPiByZWxpYWJpbGl0eSBvZiB3
-cml0ZWJhY2sgd3JpdGUtYmFjay4gQW5kIHJlZHVjZSB0aGUgc2VuZGluZyBvZiBQUkVGTFVT
-SA0KPiA+IHJlcXVlc3RzIHRvIHRoZSBiYWNraW5nIGRldmljZSB0byBlbmhhbmNlIGRhdGEg
-c2VjdXJpdHkgYW5kIGRzeW5jIHdyaXRlDQo+ID4gcGVyZm9ybWFuY2UgaW4gd3JpZWJhY2sg
-bW9kZS4NCj4NCj4gSSdkIGxpa2UgdG8gc2VlIHRoZSBkZXRhaWxlZCBkZXNjcmlwdGlvbiBv
-biBob3cgZGVmZXJyZWQgZmx1c2ggaXMgZGVmaW5lZCwNCj4gYW5kIGhvdyBpdCB3b3Jrcy4g
-QW5kIHdoeSBkZWZlcnJlZCBmbHVzaCBtYXkgcHJvdmlkZSB0aGUgZGF0YSByZWxpYWJpbGl0
-eQ0KPiBhbmQgcGVyZm9ybWFuY2UgYmV0dGVyIHRoYW4gY3VycmVudCBiY2FjaGUgY29kZS4N
-Cg0KZGVmZXJyZWQgZmx1c2g6IFdoZW4gZGF0YSBpcyBwcm9jZXNzZWQgdGhyb3VnaCB0aGUg
-d3JpdGViYWNrIHBhdGgsIGl0IHdpbGwgZGV0ZXJtaW5lDQp3aGV0aGVyIGEgUFJFRkxVU0gg
-bmVlZHMgdG8gYmUgc2VudCB0byB0aGUgYmFja2luZyBkZXZpY2UuIFRoZSBqdWRnbWVudCBj
-cml0ZXJpb24NCmlzIHdoZXRoZXIgYSB3cml0ZSByZXF1ZXN0IGhhcyBiZWVuIHNlbnQgdGhy
-b3VnaCBieXBhc3Mgb3Igd3JpdGV0aHJvdWdoIGJlZm9yZS4gSWYgbm90LA0KaXQgaXMgbm90
-IG5lY2Vzc2FyeS4gUHV0IHRoZSBQUkVGTFVTSCBzZW1hbnRpY3MgaW50byB0aGUgZGlydHkg
-ZGF0YSB3cml0ZS1iYWNrIHN0YWdlDQp0byBlbnN1cmUgdGhlIHJlbGlhYmlsaXR5IG9mIHRo
-ZSBkaXJ0eSBkYXRhIHdyaXRlLWJhY2suIEhlcmUsIGJ5IHJlZHVjaW5nIHRoZSBzZW5kaW5n
-IG9mDQpQUkVMVVNIIHRvIHRoZSBiYWNraW5nIGRldmljZSwgdGhlIGRlbGF5IGZvciB0aGUg
-YmFja2luZyBkZXZpY2UgdG8gcHJvY2VzcyBQUkVMVVNIDQppcyBkZWNyZWFzZWQsIHRoZXJl
-YnkgaW1wcm92aW5nIHRoZSBwZXJmb3JtYW5jZSBvZiBkc3luYyB3cml0ZSByZXF1ZXN0cyB3
-aGVuIHRoZQ0KY2FjaGUgc3BhY2UgaXMgYWJ1bmRhbnQuIER1cmluZyB0aGUgZGlydHkgZGF0
-YSB3cml0ZS1iYWNrIHN0YWdlLCB0aGUgRlVBIG1ldGhvZCBpcw0KYWRvcHRlZCB0byBlbnN1
-cmUgdGhhdCB0aGUgZGlydHkgZGF0YSB3aWxsIG5vdCBiZSBsb3N0IGR1ZSB0byBmYWN0b3Jz
-IHN1Y2ggYXMgcG93ZXIgZmFpbHVyZS4NCg0KPiBJIGRvbid0IGxvb2sgaW50byB0aGUgcGF0
-Y2ggeWV0LCBqdXN0IHdpdGggbXkgaW50dWl0aW9uIHRoZSBvdmVyYWxsDQo+IHBlcmZvcm1h
-bmNlIHdvbid0IGJlIHF1aXRlIG9wdGltaXplZCBieSBzZXR0aW5nIEZVQSBvbiB3cml0ZWJh
-Y2sgSS9Pcy4NCg0KVXNpbmcgdGhlIEZVQSBtZXRob2QgdG8gd3JpdGUgYmFjayBkaXJ0eSBk
-YXRhIGRvZXMgaW5kZWVkIGhhdmUgYW4gaW1wYWN0IG9uIHRoZSBzcGVlZA0Kb2Ygd3JpdGlu
-ZyBiYWNrIGRpcnR5IGRhdGEuIEluIGEgdGVzdCB3aGVyZSBJL08gaXMgd3JpdHRlbiByYW5k
-b21seSBhdCA0SywgdGhlIHNwZWVkIG9mDQp3cml0aW5nIGJhY2sgZGlydHkgZGF0YSBpcyBh
-cHByb3hpbWF0ZWx5IGhhbGYgdGhhdCBvZiB0aGUgbm9uLUZVQSBtZXRob2QuIEhvd2V2ZXIs
-DQpjb25zaWRlcmluZyB0aGF0IHRoZSBkYXRhIGlzIG5vdCB3cml0dGVuIGF0IGEgaGlnaCBp
-bnRlbnNpdHkgY29udGludW91c2x5LCB0aGlzIHByb3ZpZGVzIHNvbWUNCmJ1ZmZlciB0aW1l
-IGZvciB3cml0aW5nIGJhY2sgZGlydHkgZGF0YS4gSW4gZXh0cmVtZSBjYXNlcywgd2hlbiB0
-aGUgZWZmZWN0aXZlIHNwYWNlIG9mIHRoZQ0KY2FjaGUgaXMgdGlnaHQsIGl0cyB3cml0ZSBl
-ZmZpY2llbmN5IGlzIG5vdCBsb3dlciB0aGFuIHRoZSBwZXJmb3JtYW5jZSBvZiB0aGUgYmFj
-a2luZyBkZXZpY2UuDQpUaGVyZWZvcmUsIGVuYWJsaW5nIGRlZmVycmVkX2ZsdXNoIGlzIGVm
-ZmVjdGl2ZSBpbiBsb3ctY29zdCBkZXBsb3ltZW50IHNvbHV0aW9ucyB0aGF0IHJlcXVpcmUN
-CnRoZSB1c2Ugb2YgU1NEIHRvIGFjY2VsZXJhdGUgdGhlIHBlcmZvcm1hbmNlIG9mIGRzeW5j
-Lg0KDQo+IEFuZCB0aGUgY2FjaGUgbW9kZSBjYW4gc3d0aWNoIGFyYml0YXJpbHkgaW4gcnVu
-IHRpbWUsIGlmIGNhY2hlIG1vZGUgd2FzIG5vbmUNCj4gb3Igd3JpdGV0aG91Z2gsIHRoZW4g
-c3dpdGNoIHRvIHdyaXRlYmFjaywgSSBkb24ndCBzZWUgeW91ciBwYXRjaCBoYW5kbGVzDQo+
-IHN1Y2ggc2l0dWF0aW9uLg0KDQpXaGVuIHN3aXRjaGluZyBmcm9tIG90aGVyIGNhY2hlIG1v
-ZGVzIHRvIHdyaXRlYmFjayBhbmQgc2ltdWx0YW5lb3VzbHkgZW5hYmxpbmcgDQpkZWZlcnJl
-ZF9mbHVzaCwgYSBSRVFfUFJFRkxVU0ggcmVxdWVzdCB3aWxsIGJlIHNlbnQgdG8gdGhlIGJh
-Y2tpbmcgZGV2aWNlLg0KQ29kZSBsb2NhdGlvbiBpbiB0aGUgcGF0Y2g6DQorICAgaWYgKGF0
-dHIgPT0gJnN5c2ZzX2RlZmVycmVkX2ZsdXNoKSB7DQorICAgICAgIHYgPSBfX3N5c2ZzX21h
-dGNoX3N0cmluZyhiY2hfZGVmZXJyZWRfZmx1c2gsIC0xLCBidWYpOw0KKyAgICAgICBpZiAo
-diA8IDApDQorICAgICAgICAgICByZXR1cm4gdjsNCisNCisgICAgICAgaWYgKCh1bnNpZ25l
-ZCBpbnQpIHYgIT0gQkRFVl9ERUZFUlJFRF9GTFVTSCgmZGMtPnNiKSkgew0KKyAgICAgICAg
-ICAgaWYgKHYgJiYgKEJERVZfQ0FDSEVfTU9ERSgmZGMtPnNiKSAhPSBDQUNIRV9NT0RFX1dS
-SVRFQkFDSykpIHsNCisgICAgICAgICAgICAgICBwcl9lcnIoIkl0J3Mgbm90IHRoZSB3cml0
-ZWJhY2sgbW9kZSB0aGF0IGNhbid0IGVuYWJsZSBkZWZlcnJlZF9mbHVzaC5cbiIpOw0KKyAg
-ICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0KKyAgICAgICAgICAgfQ0KKw0KKyAgICAg
-ICAgICAgU0VUX0JERVZfREVGRVJSRURfRkxVU0goJmRjLT5zYiwgdik7DQorICAgICAgICAg
-ICBiY2hfd3JpdGVfYmRldl9zdXBlcihkYywgTlVMTCk7DQorICAgICAgICAgICBpZiAodikg
-ew0KKyAgICAgICAgICAgICAgIGJpb19pbml0KCZmbHVzaCwgZGMtPmJkZXYsIE5VTEwsIDAs
-IFJFUV9PUF9XUklURSB8IFJFUV9QUkVGTFVTSCk7DQorICAgICAgICAgICAgICAgLyogSS9P
-IHJlcXVlc3Qgc2VudCB0byBiYWNraW5nIGRldmljZSAqLw0KKyAgICAgICAgICAgICAgIHN1
-Ym1pdF9iaW9fd2FpdCgmZmx1c2gpOw0KKyAgICAgICAgICAgfQ0KKyAgICAgICB9DQorICAg
-fQ0KDQpUaGFua3Mu
 
+
+> 2025=E5=B9=B44=E6=9C=8825=E6=97=A5 16:18=EF=BC=8CZhou Jifeng =
+<zhoujifeng@kylinos.com.cn> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> Hi Coly Li,
+> Thank you for your reply and your question.
+>=20
+> On Fri, 25 Apr 2025 at 13:46, Coly Li <colyli@kernel.org> wrote:
+>>=20
+>> Hi Jifeng,
+>>=20
+>> Thanks for posting the patch.
+>>=20
+>> On Fri, Apr 25, 2025 at 11:50:21AM +0800, Zhou Jifeng wrote:
+>>> In some scenarios with high requirements for both data reliability =
+and
+>>> write performance, the various cache modes of the current bcache =
+cannot
+>>=20
+>> Could you provide the detail workload or circumstance which requires =
+both
+>> data reliability and write performance that current bcache cannot =
+serve?
+>=20
+> For example, in some database application scenarios, the requirements =
+for data
+> security are relatively high. When writing frequently, flush is called =
+more often,
+> and the performance of write dsync is of great concern. The =
+operational performance
+> of several cache modes of bcache in such scenarios at present:
+> none: The cache does not work and is of no help to performance. The =
+performance is
+> the same as that of the backing device and cannot meet the performance =
+requirements.
+> writeround and writethrough: They are not helpful for write =
+performance. The write
+> performance is the same as that of the backing device and cannot meet =
+the write
+> performance requirements.
+> writeback: Since when it writes back dirty data, it only marks bio as =
+REQ_OP_WRITE,
+> there is a risk of data loss due to power failure. In addition, since =
+it needs to send a
+> flush request to the backing device when handling requests with the =
+flush mark, it will
+> affect the write performance.
+>=20
+>>> fully match the requirements. deferred_flush aims to increase the
+>>> reliability of writeback write-back. And reduce the sending of =
+PREFLUSH
+>>> requests to the backing device to enhance data security and dsync =
+write
+>>> performance in wrieback mode.
+>>=20
+>> I'd like to see the detailed description on how deferred flush is =
+defined,
+>> and how it works. And why deferred flush may provide the data =
+reliability
+>> and performance better than current bcache code.
+>=20
+> deferred flush: When data is processed through the writeback path, it =
+will determine
+> whether a PREFLUSH needs to be sent to the backing device. The =
+judgment criterion
+> is whether a write request has been sent through bypass or =
+writethrough before. If not,
+> it is not necessary. Put the PREFLUSH semantics into the dirty data =
+write-back stage
+> to ensure the reliability of the dirty data write-back. Here, by =
+reducing the sending of
+> PRELUSH to the backing device, the delay for the backing device to =
+process PRELUSH
+> is decreased, thereby improving the performance of dsync write =
+requests when the
+> cache space is abundant. During the dirty data write-back stage, the =
+FUA method is
+> adopted to ensure that the dirty data will not be lost due to factors =
+such as power failure.
+>=20
+>> I don't look into the patch yet, just with my intuition the overall
+>> performance won't be quite optimized by setting FUA on writeback =
+I/Os.
+>=20
+> Using the FUA method to write back dirty data does indeed have an =
+impact on the speed
+> of writing back dirty data. In a test where I/O is written randomly at =
+4K, the speed of
+> writing back dirty data is approximately half that of the non-FUA =
+method. However,
+> considering that the data is not written at a high intensity =
+continuously, this provides some
+> buffer time for writing back dirty data. In extreme cases, when the =
+effective space of the
+> cache is tight, its write efficiency is not lower than the performance =
+of the backing device.
+> Therefore, enabling deferred_flush is effective in low-cost deployment =
+solutions that require
+> the use of SSD to accelerate the performance of dsync.
+
+I am not sure whether the situation you stated is acceptable or not for =
+most of users.
+
+I hope to see more testing data.
+
+>=20
+>> And the cache mode can swtich arbitarily in run time, if cache mode =
+was none
+>> or writethough, then switch to writeback, I don't see your patch =
+handles
+>> such situation.
+>=20
+> When switching from other cache modes to writeback and simultaneously =
+enabling=20
+> deferred_flush, a REQ_PREFLUSH request will be sent to the backing =
+device.
+> Code location in the patch:
+> +   if (attr =3D=3D &sysfs_deferred_flush) {
+> +       v =3D __sysfs_match_string(bch_deferred_flush, -1, buf);
+> +       if (v < 0)
+> +           return v;
+> +
+> +       if ((unsigned int) v !=3D BDEV_DEFERRED_FLUSH(&dc->sb)) {
+> +           if (v && (BDEV_CACHE_MODE(&dc->sb) !=3D =
+CACHE_MODE_WRITEBACK)) {
+> +               pr_err("It's not the writeback mode that can't enable =
+deferred_flush.\n");
+> +               return -EINVAL;
+> +           }
+> +
+> +           SET_BDEV_DEFERRED_FLUSH(&dc->sb, v);
+> +           bch_write_bdev_super(dc, NULL);
+> +           if (v) {
+> +               bio_init(&flush, dc->bdev, NULL, 0, REQ_OP_WRITE | =
+REQ_PREFLUSH);
+> +               /* I/O request sent to backing device */
+> +               submit_bio_wait(&flush);
+> +           }
+> +       }
+> +   }
+
+And when read/write congestion happen, part of read/write requests will =
+directly from/to hard drive and bypass cache device.
+
+Anyway, long time high load testing result is necessary. I assume this =
+patch will decrease general write back throughput and result higher =
+pressure for cache device garbage collection load triggered by =
+allocator.
+Maybe I am wrong, I=E2=80=99d like to learn from your benchmark results.
+
+Thanks.
+
+Coly Li=
 
