@@ -1,41 +1,50 @@
-Return-Path: <linux-bcache+bounces-988-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-989-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97016AA0BB9
-	for <lists+linux-bcache@lfdr.de>; Tue, 29 Apr 2025 14:31:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9888AA0FAD
+	for <lists+linux-bcache@lfdr.de>; Tue, 29 Apr 2025 16:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9FC3BBAEF
-	for <lists+linux-bcache@lfdr.de>; Tue, 29 Apr 2025 12:31:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B36CA4A2916
+	for <lists+linux-bcache@lfdr.de>; Tue, 29 Apr 2025 14:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA452C17A3;
-	Tue, 29 Apr 2025 12:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F63221B90F;
+	Tue, 29 Apr 2025 14:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tsxr6no2"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAA11B86EF;
-	Tue, 29 Apr 2025 12:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A29E21A42C;
+	Tue, 29 Apr 2025 14:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745929898; cv=none; b=Lpj6WV0y8oPuQoGGh5EMLqe2L6CrMBLTejyMv7My9XnztpdmAvhpKyjt8hvEWpLgST4w3IdLqNsbvPq7xvOd2Kv5oli3hrkIDoUusWqJxe9BiaYKvp3rzZaRPSRwIdeefK9VuN6h00kqrHCWZktifZvfaK5r8iQ0712bW7f59RY=
+	t=1745938406; cv=none; b=INP8ZVwo1Jaw6LiKbt0kAZwudVdoX/ygSObRjsTwAD3vjlbuTpAFhLDQMChP5tDMGdmDnCspWqNYC/0xd+CmMyV4F2lv8rPmFL6ydw8kbs2rEg5LPUB9/F00Vii4MFqKvIECKGVD/wTc6WdkIAOwVjE96BQG35Yzqw3LPkaP/PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745929898; c=relaxed/simple;
-	bh=NCsbwKXyyfYV4qTDFg8sloKEXBMtv45aPB6AJTXz1aw=;
+	s=arc-20240116; t=1745938406; c=relaxed/simple;
+	bh=vubdbnsnHfKy+rIrOM3B9U3Uq8p9rxcHh2wPGFm5ZmU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OJhuE69bZGVYCSqawvRUhrekcPpDGtLUjiKocIoirImDJpzhvgFJ+XvvsN8LUx0mcFg6+5bQVO/cz4rw7c3ibrD0P23kiqqZGu4/MpqliPrmrhGZ5vZ4Wf1wXLKwJ1JkqTo4hz9KG8+pF1OlQjFnWQ5y4CHKOMKzO709oJ4sodA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 21BD168B05; Tue, 29 Apr 2025 14:31:31 +0200 (CEST)
-Date: Tue, 29 Apr 2025 14:31:30 +0200
-From: hch <hch@lst.de>
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc: hch <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/86A4bHyjEj+C/C2KkMJCQHOGN8y3TcDixe/7H6+bJbu+S5IWBIkwpmDmlqrnv3IPWk5XamEOmTgrQpCV7+IVWNB0JRErPuVFH7fkqWpxJXn7+9jDj+0VP34mF2WWu+an2exQQAOTCoTCuREReRGcxu8SyCyka8lrfE7sMd7iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tsxr6no2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3A8DC4CEE3;
+	Tue, 29 Apr 2025 14:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745938405;
+	bh=vubdbnsnHfKy+rIrOM3B9U3Uq8p9rxcHh2wPGFm5ZmU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tsxr6no2sqTig7DfKnBSZWaq1XBwKiz+sJmah/Z64xNs2Tq56YK1KROWuxvk/bL49
+	 FgMKfP2HBFad1ql/hzUNqi43pVeXqTe+UbaSTSufCq289q0dfSKir5ZOwtmiJ8R2P5
+	 UeUUWZ8TLwsWx9HKvqhTDR8D/hzV4vdfp6WtgbWaSmauaIG35WJ1RcmGvcZUVS0dvI
+	 VA8murp+5LwoUyTNHQAhQHTLsic2ifDHk8mz1wXHg4T/E7KkO9fIc132VRb+pQXsGA
+	 tioUtpiP0LHEfgtTwcTbIoOOmuy1zSR82LEJOs8YoPYCDJletRdEgLwGLwyJyhdV6C
+	 ALA2ZO+ITTUog==
+Date: Tue, 29 Apr 2025 07:53:25 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
 	"Md. Haris Iqbal" <haris.iqbal@ionos.com>,
 	Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>,
 	Kent Overstreet <kent.overstreet@linux.dev>,
@@ -45,20 +54,17 @@ Cc: hch <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
 	Andreas Gruenbacher <agruenba@redhat.com>,
 	Carlos Maiolino <cem@kernel.org>,
 	Damien Le Moal <dlemoal@kernel.org>,
-	Naohiro Aota <Naohiro.Aota@wdc.com>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
 	Johannes Thumshirn <jth@kernel.org>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	"linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-	"dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>,
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-	"gfs2@lists.linux.dev" <gfs2@lists.linux.dev>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 16/17] zonefs: use bdev_rw_virt in zonefs_read_super
-Message-ID: <20250429123130.GB12807@lst.de>
-References: <20250422142628.1553523-1-hch@lst.de> <20250422142628.1553523-17-hch@lst.de> <1116a2c2-9f33-4a2a-8d59-6b1d0a644949@wdc.com>
+	Pavel Machek <pavel@kernel.org>, linux-bcache@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-btrfs@vger.kernel.org,
+	gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 11/17] xfs: simplify xfs_buf_submit_bio
+Message-ID: <20250429145325.GV25675@frogsfrogsfrogs>
+References: <20250422142628.1553523-1-hch@lst.de>
+ <20250422142628.1553523-12-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -67,22 +73,76 @@ List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1116a2c2-9f33-4a2a-8d59-6b1d0a644949@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250422142628.1553523-12-hch@lst.de>
 
-On Tue, Apr 29, 2025 at 11:44:37AM +0000, Johannes Thumshirn wrote:
-> On 22.04.25 16:31, Christoph Hellwig wrote:
-> > +	super = kmalloc(PAGE_SIZE, GFP_KERNEL);
-> > +	if (!super)
+On Tue, Apr 22, 2025 at 04:26:12PM +0200, Christoph Hellwig wrote:
+> Convert the __bio_add_page(..., virt_to_page(), ...) pattern to the
+> bio_add_virt_nofail helper implementing it and use bio_add_vmalloc
+> to insulate xfs from the details of adding vmalloc memory to a bio.
 > 
-> [...]
-> 
-> > +	ret = bdev_rw_virt(sb->s_bdev, 0, super, PAGE_SIZE, REQ_OP_READ);
-> 
-> Can we change these two PAGE_SIZE into ZONEFS_SUPER_SIZE which is 
-> semantically more correct?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-I'd like to keep this change mechanical, even if I'm in violent agreement
-about using the right constants.
+That reads much more cleanly now :)
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
+--D
+
+> ---
+>  fs/xfs/xfs_buf.c | 27 ++++++++-------------------
+>  1 file changed, 8 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index 1a2b3f06fa71..042a738b7fda 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -1339,37 +1339,26 @@ xfs_buf_submit_bio(
+>  
+>  	if (is_vmalloc_addr(bp->b_addr)) {
+>  		unsigned int	size = BBTOB(bp->b_length);
+> -		unsigned int	alloc_size = roundup(size, PAGE_SIZE);
+>  		void		*data = bp->b_addr;
+> +		unsigned int	added;
+>  
+> -		bio = bio_alloc(bp->b_target->bt_bdev, alloc_size >> PAGE_SHIFT,
+> -				xfs_buf_bio_op(bp), GFP_NOIO);
+> +		bio = bio_alloc(bp->b_target->bt_bdev,
+> +				howmany(size, PAGE_SIZE), xfs_buf_bio_op(bp),
+> +				GFP_NOIO);
+>  
+>  		do {
+> -			unsigned int	len = min(size, PAGE_SIZE);
+> -
+> -			ASSERT(offset_in_page(data) == 0);
+> -			__bio_add_page(bio, vmalloc_to_page(data), len, 0);
+> -			data += len;
+> -			size -= len;
+> +			added = bio_add_vmalloc(bio, data, size);
+> +			data += added;
+> +			size -= added;
+>  		} while (size);
+> -
+> -		flush_kernel_vmap_range(bp->b_addr, alloc_size);
+>  	} else {
+>  		/*
+>  		 * Single folio or slab allocation.  Must be contiguous and thus
+>  		 * only a single bvec is needed.
+> -		 *
+> -		 * This uses the page based bio add helper for now as that is
+> -		 * the lowest common denominator between folios and slab
+> -		 * allocations.  To be replaced with a better block layer
+> -		 * helper soon (hopefully).
+>  		 */
+>  		bio = bio_alloc(bp->b_target->bt_bdev, 1, xfs_buf_bio_op(bp),
+>  				GFP_NOIO);
+> -		__bio_add_page(bio, virt_to_page(bp->b_addr),
+> -				BBTOB(bp->b_length),
+> -				offset_in_page(bp->b_addr));
+> +		bio_add_virt_nofail(bio, bp->b_addr, BBTOB(bp->b_length));
+>  	}
+>  
+>  	bio->bi_private = bp;
+> -- 
+> 2.47.2
+> 
+> 
 
