@@ -1,157 +1,128 @@
-Return-Path: <linux-bcache+bounces-990-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-992-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F76AA0FAB
-	for <lists+linux-bcache@lfdr.de>; Tue, 29 Apr 2025 16:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B29B1AA56C1
+	for <lists+linux-bcache@lfdr.de>; Wed, 30 Apr 2025 23:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D855A18879FD
-	for <lists+linux-bcache@lfdr.de>; Tue, 29 Apr 2025 14:54:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504D11C237D6
+	for <lists+linux-bcache@lfdr.de>; Wed, 30 Apr 2025 21:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5564721A92F;
-	Tue, 29 Apr 2025 14:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC592D4B60;
+	Wed, 30 Apr 2025 21:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHrYG0LS"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EbcXvme0"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A48218EAB;
-	Tue, 29 Apr 2025 14:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD3F2D0261;
+	Wed, 30 Apr 2025 21:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745938431; cv=none; b=bI9JJ7y3oNEPtJCJ8ZfC7hUawfvjm+etilBL10whtHQaoGw4jxGprtbuOlkc/Bb9dtvevbSQPgyA9/ZOqwPInrUjiYpv5HWdnTSqHJ9YgPdcn9hBaYGVlQ9wpPdO9FtS3TrV2zDDF+EVZXOZjjLkzASg3cw6VHvQ8+JEdpRxnwM=
+	t=1746048128; cv=none; b=O/1Ot/bqoMxcERxthcsZaO5IKbHfHYAR0jE6/CITfYwTV8j/klVqJgLwDkNx2lzv/U0LbnexhyPDQ9iyybyq3txQ//irMVe4H6yuGklIsHrWiGyBI+5yqeGH9bx2g+DlXIzbEAVEgfDYp+j9MQNTM7hK49aSEP9H/cZIHUQsuGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745938431; c=relaxed/simple;
-	bh=80oIUsHpv+Tf57N6ZwfsoIQUoCwZ9ddJyskhAtcRR5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iXXAjLjMJ/Pt/bgoptRUrKmojTyOpeXxmtnjlKhVh8mSKhgmatyeHI8K/ozWfjI3hC6MUZQItOb5lqrJXazINeVWPkUb+q2VgdIkG+kUNs6DkdNeDYZultuZ1UeKVS/9DxeKppq7PdjZQ6TKAgTnCBSdEYnqMo3dO1bj4Y1dtN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHrYG0LS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A55C4CEE3;
-	Tue, 29 Apr 2025 14:53:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745938430;
-	bh=80oIUsHpv+Tf57N6ZwfsoIQUoCwZ9ddJyskhAtcRR5c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PHrYG0LSGsB/fuoyy6PpxGgxDr1vXVUS7IBmNAwJN0px/6XFMrBwK3kvugCVmDmV1
-	 BTVoj/U+pKr1lc0ZnX/fehwYyK6Ag03yivcM33Madc+jd+25LOnl5xRGl5yw/qYPVB
-	 gqJDP83J/6oeK1UCvV0Gw88FLB42SvxFUqvNZSGZQ7wpZSLOJfMyByRKdVJesAYkwN
-	 xbdpq2btXh4NKtvEDRi2TwV/xn1/98a4ooVZo+GDtET4Tg0+lxeu426fyXGUAEIwh7
-	 wDMU6/+5/tOgl2qwiwJYYSfcHOPYbnRzRymuO90DawKK0qHmEV93Ie3xWUK6AsdOJB
-	 W+IWNJ8s6wlYQ==
-Date: Tue, 29 Apr 2025 07:53:50 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	s=arc-20240116; t=1746048128; c=relaxed/simple;
+	bh=aSuIrbsU7iPfmUiQAkVCXhmL6aZYHSF3QTItzix92p0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mS3NRfaSk5H/B/wXlC+fdyM781p0AREenX9TiDPwED7qDUXijwjqU+C/VZBOylImItuA2sfVmGH/QM2T3N7iKOsx9WEXyxtHo6SXIqRLzZctSNl7izHQUzZKTxUm9S7DIm+mV6hM9RKP/P5OyGMhZxkiZSiUdH9eXkMu7GVDP7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EbcXvme0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=j24qsqHxCKaWzZXCgXMBqVsWj3DT0iprynbePLhpEf8=; b=EbcXvme0E0cBsWY54dwvJZZqer
+	uIZ0ovYKY7tb0g5mesAB2Aa53BsNGnyUpr0aIhFwDxVuZ7QEzSrwaB/QpKI2UmZRBwlzldilEkyZE
+	/gsDx6ahG4xHt7dwOn0hsCwoB0wjk12SWjASHgCAhzz+jEdla3bAoVaBllqIGdKmLGe2xlVhivkHV
+	Ybrv4J51tZ1WKFDny0HFc5MJuPRCC6iQACPMdU1mrvbibbspt0NZ93Hw0ygM6ryqYp2i2ZyKZI5jm
+	P548WpXmX+694wfG3IGVmh0RoJ/M6pCAU5mD6ne7Bu67yQMrRCpQKA5GfD8c2V69LUv8UIMW6iNdI
+	9jXs5dKQ==;
+Received: from [206.0.71.65] (helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uAEsT-0000000E2VP-3mpt;
+	Wed, 30 Apr 2025 21:22:02 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org,
 	"Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-	Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>,
+	Jack Wang <jinpu.wang@ionos.com>,
+	Coly Li <colyli@kernel.org>,
 	Kent Overstreet <kent.overstreet@linux.dev>,
 	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
 	Andreas Gruenbacher <agruenba@redhat.com>,
 	Carlos Maiolino <cem@kernel.org>,
 	Damien Le Moal <dlemoal@kernel.org>,
 	Naohiro Aota <naohiro.aota@wdc.com>,
 	Johannes Thumshirn <jth@kernel.org>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, linux-bcache@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-btrfs@vger.kernel.org,
-	gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 12/17] xfs: simplify xfs_rw_bdev
-Message-ID: <20250429145350.GW25675@frogsfrogsfrogs>
-References: <20250422142628.1553523-1-hch@lst.de>
- <20250422142628.1553523-13-hch@lst.de>
+	Pavel Machek <pavel@kernel.org>,
+	slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de,
+	frank.li@vivo.com,
+	linux-bcache@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-btrfs@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: add more bio helpers v2
+Date: Wed, 30 Apr 2025 16:21:30 -0500
+Message-ID: <20250430212159.2865803-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422142628.1553523-13-hch@lst.de>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Apr 22, 2025 at 04:26:13PM +0200, Christoph Hellwig wrote:
-> Delegate to bdev_rw_virt when operating on non-vmalloc memory and use
-> bio_add_vmalloc to insulate xfs from the details of adding vmalloc memory
-> to a bio.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Hi all,
 
-Looks good,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+this series adds more block layer helpers to remove boilerplate code when
+adding memory to a bio or to even do the entire synchronous I/O.
 
---D
+The main aim is to avoid having to convert to a struct page in the caller
+when adding kernel direct mapping or vmalloc memory.
 
-> ---
->  fs/xfs/xfs_bio_io.c | 30 ++++++++++++------------------
->  1 file changed, 12 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_bio_io.c b/fs/xfs/xfs_bio_io.c
-> index fe21c76f75b8..98ad42b0271e 100644
-> --- a/fs/xfs/xfs_bio_io.c
-> +++ b/fs/xfs/xfs_bio_io.c
-> @@ -18,42 +18,36 @@ xfs_rw_bdev(
->  	enum req_op		op)
->  
->  {
-> -	unsigned int		is_vmalloc = is_vmalloc_addr(data);
-> -	unsigned int		left = count;
-> +	unsigned int		done = 0, added;
->  	int			error;
->  	struct bio		*bio;
->  
-> -	if (is_vmalloc && op == REQ_OP_WRITE)
-> -		flush_kernel_vmap_range(data, count);
-> +	op |= REQ_META | REQ_SYNC;
-> +	if (!is_vmalloc_addr(data))
-> +		return bdev_rw_virt(bdev, sector, data, count, op);
->  
-> -	bio = bio_alloc(bdev, bio_max_vecs(left), op | REQ_META | REQ_SYNC,
-> -			GFP_KERNEL);
-> +	bio = bio_alloc(bdev, bio_max_vecs(count), op, GFP_KERNEL);
->  	bio->bi_iter.bi_sector = sector;
->  
->  	do {
-> -		struct page	*page = kmem_to_page(data);
-> -		unsigned int	off = offset_in_page(data);
-> -		unsigned int	len = min_t(unsigned, left, PAGE_SIZE - off);
-> -
-> -		while (bio_add_page(bio, page, len, off) != len) {
-> +		added = bio_add_vmalloc(bio, data + done, count - done);
-> +		if (!added) {
->  			struct bio	*prev = bio;
->  
-> -			bio = bio_alloc(prev->bi_bdev, bio_max_vecs(left),
-> +			bio = bio_alloc(prev->bi_bdev,
-> +					bio_max_vecs(count - done),
->  					prev->bi_opf, GFP_KERNEL);
->  			bio->bi_iter.bi_sector = bio_end_sector(prev);
->  			bio_chain(prev, bio);
-> -
->  			submit_bio(prev);
->  		}
-> -
-> -		data += len;
-> -		left -= len;
-> -	} while (left > 0);
-> +		done += added;
-> +	} while (done < count);
->  
->  	error = submit_bio_wait(bio);
->  	bio_put(bio);
->  
-> -	if (is_vmalloc && op == REQ_OP_READ)
-> +	if (op == REQ_OP_READ)
->  		invalidate_kernel_vmap_range(data, count);
->  	return error;
->  }
-> -- 
-> 2.47.2
-> 
-> 
+Changes since v1:
+ - typo fixes
+ - improve commit messages and kerneldoc comments
+ - move bio_add_virt_nofail out of line
+ - make the number of bio_vecs calculation helper more generic
+ - add another vmalloc helper for the common case
+
+Diffstat:
+ block/bio.c                   |  101 +++++++++++++++++++++++++++++++++++++++++
+ block/blk-map.c               |   92 +++++++++----------------------------
+ drivers/block/pktcdvd.c       |    2 
+ drivers/block/rnbd/rnbd-srv.c |    7 --
+ drivers/block/ublk_drv.c      |    3 -
+ drivers/block/virtio_blk.c    |    4 -
+ drivers/md/bcache/super.c     |    3 -
+ drivers/md/dm-bufio.c         |    2 
+ drivers/md/dm-integrity.c     |   16 ++----
+ drivers/nvme/host/core.c      |    2 
+ drivers/scsi/scsi_ioctl.c     |    2 
+ drivers/scsi/scsi_lib.c       |    3 -
+ fs/btrfs/scrub.c              |   10 ----
+ fs/gfs2/ops_fstype.c          |   24 +++------
+ fs/hfsplus/wrapper.c          |   46 +++---------------
+ fs/xfs/xfs_bio_io.c           |   30 ++++--------
+ fs/xfs/xfs_buf.c              |   43 +++--------------
+ fs/xfs/xfs_log.c              |   32 ++-----------
+ fs/zonefs/super.c             |   34 ++++---------
+ include/linux/bio.h           |   25 +++++++++-
+ include/linux/blk-mq.h        |    4 -
+ kernel/power/swap.c           |  103 ++++++++++++++++++------------------------
+ 22 files changed, 270 insertions(+), 318 deletions(-)
 
