@@ -1,165 +1,205 @@
-Return-Path: <linux-bcache+bounces-1032-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1033-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E19EAAC0D0
-	for <lists+linux-bcache@lfdr.de>; Tue,  6 May 2025 12:05:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632A4AAC603
+	for <lists+linux-bcache@lfdr.de>; Tue,  6 May 2025 15:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8813E1C26DB9
-	for <lists+linux-bcache@lfdr.de>; Tue,  6 May 2025 10:05:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEEA67BA142
+	for <lists+linux-bcache@lfdr.de>; Tue,  6 May 2025 13:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFC127467C;
-	Tue,  6 May 2025 10:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nwj6ZlrZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QlUFc5M7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3OW/QdYO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7pkniqqj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D8628A1C4;
+	Tue,  6 May 2025 13:20:50 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m1973194.qiye.163.com (mail-m1973194.qiye.163.com [220.197.31.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957FA26C381
-	for <linux-bcache@vger.kernel.org>; Tue,  6 May 2025 10:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAE5288C2D
+	for <linux-bcache@vger.kernel.org>; Tue,  6 May 2025 13:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746525907; cv=none; b=J9B41IAjoVax8kf5aGXXIBWPVr3aClwMcxpK80Tn+sgVNT2cJxSNHJVByHIgmJqyLffpKFawX9ckkQB4dtp2G3OBuXXXUjL3/y+Lgf+XwuFV7+PmFahTvxe3Pimm4uSPHf8p5aRK3xuldofZRjCZUXkgPptgzyunqwxBThqFfW8=
+	t=1746537650; cv=none; b=iEHaBuTvbXS5wIn3fcw43IA/D6OGq8SACo97Uo4df0CPzQdsQVw7RFBYqGTyuzKbnl8JEaSBNv5osBwCo91TGuS6U4QYqIk0t0WxeoHVMYLvYcsXEvaaOq8D9U2CFsn+e28Hd6wZ/ttdzbVCqSudVOEREbS8mbfnLibQGGl4uVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746525907; c=relaxed/simple;
-	bh=NYYPUTt20O2TPocnUB7Huf4QETUChDygy6WWv8pAHHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4U6vV8CHZ4Oswsap/l2JhcP1CXGvkF/dqbPgqnMqlChyZ3S2Qv7Ar1LzI+lO8JtdyI50H+fVqpVDXR/7+1GGUo8nV5EQcR0Yg9Mlc4wDsXJhewIh2RdUR4AopbHFUNntM/x5BTB1JfPLvr/3xegilNxleNBAE76w0cD1DRxyOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nwj6ZlrZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QlUFc5M7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3OW/QdYO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7pkniqqj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8EDC81F441;
-	Tue,  6 May 2025 10:05:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746525903;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zk0fDN+7PJwjKDDJ2t6a08GL5EW0lCf5wZyG/z+TpX0=;
-	b=nwj6ZlrZcRjlCYdYReDfiy1eA0rokC3eC7qMNjEzo6jZoP5RYGmCpmqTXYSz+gYSHdcBct
-	1fQ8VGOSfmPR5GUJ3SjIgFC+FmaB6dnOwp3j1YObZqC5vMQp2Gq3UtLJzGZZUm+cO3/6al
-	GgjxAZxybGEM732anF1sYDwIE+KC5qw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746525903;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zk0fDN+7PJwjKDDJ2t6a08GL5EW0lCf5wZyG/z+TpX0=;
-	b=QlUFc5M7P2UMRTf5b8sMNOvsNWpV3EKID+TC1Ny1SOjRGv9mK8BD8XFGHZVSSgbMVHA+e0
-	yZAzBiZGErpa+HCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746525902;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zk0fDN+7PJwjKDDJ2t6a08GL5EW0lCf5wZyG/z+TpX0=;
-	b=3OW/QdYOX0c1xiiAgUgDKH2AcQ7BDVzfTjnX3yBpkGJhMqnt3PY4oT8nBSRc3gigMJWnco
-	XxtBxQtK+j03L3mhgVDyfYkrDkoqyJg4Gfl5zHs1fQzyEJ4AZ/EsldoecJVF9js0IXMSor
-	jEWK1qgIsbJZ7rr6c604gjs56bE4T2k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746525902;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zk0fDN+7PJwjKDDJ2t6a08GL5EW0lCf5wZyG/z+TpX0=;
-	b=7pkniqqj3sMt7dDjl4jgK30iZTiYX4ZtHQwoF9Zs7NawwyLpJYWEWz2IaTq8DDbxyN0L9U
-	R2K4cBWvwD5vRkDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 574EA13687;
-	Tue,  6 May 2025 10:05:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sv0WFc7eGWjjegAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 06 May 2025 10:05:02 +0000
-Date: Tue, 6 May 2025 12:05:01 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	"Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-	Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Johannes Thumshirn <jth@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de, frank.li@vivo.com,
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-btrfs@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Qu Wenruo <wqu@suse.com>
-Subject: Re: [PATCH 18/19] btrfs: use bdev_rw_virt in scrub_one_super
-Message-ID: <20250506100500.GC9140@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250430212159.2865803-1-hch@lst.de>
- <20250430212159.2865803-19-hch@lst.de>
+	s=arc-20240116; t=1746537650; c=relaxed/simple;
+	bh=UIobxMZJLPVjN5gV6HpnE+v9vjJVHYBgK2CvGystyfA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KKoWyGkaMwKlu6je5sCJg0eQIPxzscg/LLbTqEBEcTPtnMYaqc04WztVgg+mFGUkJigy8PmMeAQKXiESlcrBLOv5IApKWwqO4UhzPAwl3tMX4J5weaLMlc3a2Rzaqr5+9GM66hRz8M5GzXGDMl7pnDzCo+3uW5S7zL66RNVnfWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=220.197.31.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
+Received: from localhost.localdomain (unknown [122.96.17.219])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 9453cc79;
+	Tue, 6 May 2025 16:44:43 +0800 (GMT+08:00)
+From: mingzhe.zou@easystack.cn
+To: colyli@kernel.org
+Cc: linux-bcache@vger.kernel.org,
+	linggang.zeng@easystack.cn,
+	zoumingzhe@qq.com
+Subject: [PATCH v2] bcache: fix NULL pointer in cache_set_flush()
+Date: Tue,  6 May 2025 16:44:21 +0800
+Message-Id: <20250506084421.74535-1-mingzhe.zou@easystack.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430212159.2865803-19-hch@lst.de>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	R_RATELIMIT(0.00)[to_ip_from(RLndmnr811gycae4b5bcnms9ur)];
-	RCPT_COUNT_TWELVE(0.00)[31];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,twin.jikos.cz:mid,suse.com:email,lst.de:email,wdc.com:email,suse.cz:replyto];
-	URIBL_BLOCKED(0.00)[suse.com:email];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Score: -4.00
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSxhMVkwfH04aQ0tLS0odHVYVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSUlVQk1VSkxVSUpCWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
+	VKQktLWQY+
+X-HM-Tid: 0a96a4c4cd5c022bkunm9453cc79
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PSo6MTo6OjcNTi0KCS43MEIQ
+	LVYwCjlVSlVKTE9NTklKS0NPT0lNVTMWGhIXVRYSFRwBEx5VARQOOx4aCAIIDxoYEFUYFUVZV1kS
+	C1lBWUpJSVVCTVVKTFVJSkJZV1kIAVlBTU1OTjcG
 
-On Wed, Apr 30, 2025 at 04:21:48PM -0500, Christoph Hellwig wrote:
-> Replace the code building a bio from a kernel direct map address and
-> submitting it synchronously with the bdev_rw_virt helper.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> Reviewed-by: Qu Wenruo <wqu@suse.com>
+From: Linggang Zeng <linggang.zeng@easystack.cn>
 
-Acked-by: David Sterba <dsterba@suse.com>
+1. LINE#1794 - LINE#1887 is some codes about function of
+   bch_cache_set_alloc().
+2. LINE#2078 - LINE#2142 is some codes about function of
+   register_cache_set().
+3. register_cache_set() will call bch_cache_set_alloc() in LINE#2098.
+
+ 1794 struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+ 1795 {
+ ...
+ 1860         if (!(c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL)) ||
+ 1861             mempool_init_slab_pool(&c->search, 32, bch_search_cache) ||
+ 1862             mempool_init_kmalloc_pool(&c->bio_meta, 2,
+ 1863                                 sizeof(struct bbio) + sizeof(struct bio_vec) *
+ 1864                                 bucket_pages(c)) ||
+ 1865             mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size) ||
+ 1866             bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
+ 1867                         BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER) ||
+ 1868             !(c->uuids = alloc_bucket_pages(GFP_KERNEL, c)) ||
+ 1869             !(c->moving_gc_wq = alloc_workqueue("bcache_gc",
+ 1870                                                 WQ_MEM_RECLAIM, 0)) ||
+ 1871             bch_journal_alloc(c) ||
+ 1872             bch_btree_cache_alloc(c) ||
+ 1873             bch_open_buckets_alloc(c) ||
+ 1874             bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages)))
+ 1875                 goto err;
+                      ^^^^^^^^
+ 1876
+ ...
+ 1883         return c;
+ 1884 err:
+ 1885         bch_cache_set_unregister(c);
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 1886         return NULL;
+ 1887 }
+ ...
+ 2078 static const char *register_cache_set(struct cache *ca)
+ 2079 {
+ ...
+ 2098         c = bch_cache_set_alloc(&ca->sb);
+ 2099         if (!c)
+ 2100                 return err;
+                      ^^^^^^^^^^
+ ...
+ 2128         ca->set = c;
+ 2129         ca->set->cache[ca->sb.nr_this_dev] = ca;
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ ...
+ 2138         return NULL;
+ 2139 err:
+ 2140         bch_cache_set_unregister(c);
+ 2141         return err;
+ 2142 }
+
+(1) If LINE#1860 - LINE#1874 is true, then do 'goto err'(LINE#1875) and
+    call bch_cache_set_unregister()(LINE#1885).
+(2) As (1) return NULL(LINE#1886), LINE#2098 - LINE#2100 would return.
+(3) As (2) has returned, LINE#2128 - LINE#2129 would do *not* give the
+    value to c->cache[], it means that c->cache[] is NULL.
+
+LINE#1624 - LINE#1665 is some codes about function of cache_set_flush().
+As (1), in LINE#1885 call
+bch_cache_set_unregister()
+---> bch_cache_set_stop()
+     ---> closure_queue()
+          -.-> cache_set_flush() (as below LINE#1624)
+
+ 1624 static void cache_set_flush(struct closure *cl)
+ 1625 {
+ ...
+ 1654         for_each_cache(ca, c, i)
+ 1655                 if (ca->alloc_thread)
+                          ^^
+ 1656                         kthread_stop(ca->alloc_thread);
+ ...
+ 1665 }
+
+(4) In LINE#1655 ca is NULL(see (3)) in cache_set_flush() then the
+    kernel crash occurred as below:
+[  846.712887] bcache: register_cache() error drbd6: cannot allocate memory
+[  846.713242] bcache: register_bcache() error : failed to register device
+[  846.713336] bcache: cache_set_free() Cache set 2f84bdc1-498a-4f2f-98a7-01946bf54287 unregistered
+[  846.713768] BUG: unable to handle kernel NULL pointer dereference at 00000000000009f8
+[  846.714790] PGD 0 P4D 0
+[  846.715129] Oops: 0000 [#1] SMP PTI
+[  846.715472] CPU: 19 PID: 5057 Comm: kworker/19:16 Kdump: loaded Tainted: G           OE    --------- -  - 4.18.0-147.5.1.el8_1.5es.3.x86_64 #1
+[  846.716082] Hardware name: ESPAN GI-25212/X11DPL-i, BIOS 2.1 06/15/2018
+[  846.716451] Workqueue: events cache_set_flush [bcache]
+[  846.716808] RIP: 0010:cache_set_flush+0xc9/0x1b0 [bcache]
+[  846.717155] Code: 00 4c 89 a5 b0 03 00 00 48 8b 85 68 f6 ff ff a8 08 0f 84 88 00 00 00 31 db 66 83 bd 3c f7 ff ff 00 48 8b 85 48 ff ff ff 74 28 <48> 8b b8 f8 09 00 00 48 85 ff 74 05 e8 b6 58 a2 e1 0f b7 95 3c f7
+[  846.718026] RSP: 0018:ffffb56dcf85fe70 EFLAGS: 00010202
+[  846.718372] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+[  846.718725] RDX: 0000000000000001 RSI: 0000000040000001 RDI: 0000000000000000
+[  846.719076] RBP: ffffa0ccc0f20df8 R08: ffffa0ce1fedb118 R09: 000073746e657665
+[  846.719428] R10: 8080808080808080 R11: 0000000000000000 R12: ffffa0ce1fee8700
+[  846.719779] R13: ffffa0ccc0f211a8 R14: ffffa0cd1b902840 R15: ffffa0ccc0f20e00
+[  846.720132] FS:  0000000000000000(0000) GS:ffffa0ce1fec0000(0000) knlGS:0000000000000000
+[  846.720726] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  846.721073] CR2: 00000000000009f8 CR3: 00000008ba00a005 CR4: 00000000007606e0
+[  846.721426] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  846.721778] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  846.722131] PKRU: 55555554
+[  846.722467] Call Trace:
+[  846.722814]  process_one_work+0x1a7/0x3b0
+[  846.723157]  worker_thread+0x30/0x390
+[  846.723501]  ? create_worker+0x1a0/0x1a0
+[  846.723844]  kthread+0x112/0x130
+[  846.724184]  ? kthread_flush_work_fn+0x10/0x10
+[  846.724535]  ret_from_fork+0x35/0x40
+
+Now, check whether that ca is NULL in LINE#1655 to fix the issue.
+
+Signed-off-by: Linggang Zeng <linggang.zeng@easystack.cn>
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+
+---
+Changes in v2:
+
+- add code commet
+---
+ drivers/md/bcache/super.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 813b38aec3e4..37f5e31618c0 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1733,7 +1733,12 @@ static CLOSURE_CALLBACK(cache_set_flush)
+ 			mutex_unlock(&b->write_lock);
+ 		}
+ 
+-	if (ca->alloc_thread)
++	/*
++	 * If the register_cache_set() call to bch_cache_set_alloc() failed,
++	 * ca has not been assigned a value and return error.
++	 * So we need check ca is not NULL during bch_cache_set_unregister().
++	 */
++	if (ca && ca->alloc_thread)
+ 		kthread_stop(ca->alloc_thread);
+ 
+ 	if (c->journal.cur) {
+-- 
+2.34.1
+
 
