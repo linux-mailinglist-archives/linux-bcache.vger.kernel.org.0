@@ -1,163 +1,198 @@
-Return-Path: <linux-bcache+bounces-1025-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1026-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51003AA81DA
-	for <lists+linux-bcache@lfdr.de>; Sat,  3 May 2025 19:33:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8226EAABA3A
+	for <lists+linux-bcache@lfdr.de>; Tue,  6 May 2025 09:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB5165A5564
-	for <lists+linux-bcache@lfdr.de>; Sat,  3 May 2025 17:33:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A82506A0E
+	for <lists+linux-bcache@lfdr.de>; Tue,  6 May 2025 07:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646F71E7C12;
-	Sat,  3 May 2025 17:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F36227E83;
+	Tue,  6 May 2025 04:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJ1eRNah"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="F9WSzIdm"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013044.outbound.protection.outlook.com [52.101.127.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5461BC41
-	for <linux-bcache@vger.kernel.org>; Sat,  3 May 2025 17:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746293601; cv=none; b=XE5Rt/RfNm1zmq8FIz1MFyhmq/Yj7tf50wJCM/jO2P0lECrUFutcFdjkTGm53Q5tE21J5BHnFdeffb0xzM7e0UGSwPlO2BrG/nj1GrHz4Wda2XrnGkR/K2o8CVUIX22jVM4Zo4o5BhrMLKGcoyjhTkZkRJsn7IYAn4s0OAD+xI8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746293601; c=relaxed/simple;
-	bh=Rg46lY2DsgGzbb7+eR8IYe11kn/Ta/UsXHInGgmq7F4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLNXjaiWZUkusBj/BOw96iDqUk7w7qpecO0UjWJQZ+TFhLoZjpqMQwSaWizQ9Rd4eRm870K9dskxL+FwBSL2RQN69lkVqxslwtfinwzJf0dy9DVhaRn1L5L+r0fYahlDiUtzW34zQCfXFM47/6mCMfcwGotrEXjRkVNhBhRXp/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJ1eRNah; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A587C4CEE3;
-	Sat,  3 May 2025 17:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746293600;
-	bh=Rg46lY2DsgGzbb7+eR8IYe11kn/Ta/UsXHInGgmq7F4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dJ1eRNahSim/oDlTTmp/9mFZG5XQsThBmzgdHD73W2gMa0ZfZgeh5QrJ+cwnw2VIA
-	 gFmY79+wrIoxsYKGkAbSVdVXZEnkJjU5C6W55K2XlgueJuQy7UMQwOOFQOLtSL5eIp
-	 gv/OMws1B0RDg1Og5cCOZghDegeeNDZV+FShU5FifoQHBvW7W+So58DreWZ54nt+B+
-	 3sdaxvM8Qp41Tcla9fgn+pziUFNBDzik8yyZq/+pELmQ94U2HapF1H09VTlSr7uUf4
-	 FMHfuATKtH9mnCHx9AoRup0iOX7GyoK2HeCxNeQoV1bZi86VD8CnltpUvZ8HIIvD9a
-	 Vx6UOYT19WcIQ==
-Date: Sun, 4 May 2025 01:33:16 +0800
-From: Coly Li <colyli@kernel.org>
-To: Robert Pang <robertpang@google.com>
-Cc: Coly Li <i@coly.li>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-bcache@vger.kernel.org, Mingzhe Zou <mingzhe.zou@easystack.cn>
-Subject: Re: [PATCH 0/1] bcache: reduce front IO latency during GC
-Message-ID: <pxfu7dxykuj2qnw4m2hyjohmwdyq562zlwnvdphqdbwvttztki@dyx4sa553clx>
-References: <20250414224415.77926-1-robertpang@google.com>
- <75D48114-A5BD-4AC6-9370-D61456FD4FD2@coly.li>
- <CAJhEC07JauBGfqmEaYbV9XuLUkCdbart-gnbuMWYE7JwzG4CsA@mail.gmail.com>
- <CAJhEC04Po-OtwDe2Uxo2w-0yhgcemo5sn816sT7jNhnEdRxY4Q@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93CD2505CE;
+	Tue,  6 May 2025 04:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746506374; cv=fail; b=cGBjEOg73PuB3/kixRnnWYoV7FyH0EfA0d+da8gHakpIaMAylafwpT+dm82H7tUwpZzivH0QiOGGmeqDIY2fYs+tMqgdWvnMFDgatbNEPOmCEYymeAA2LaoFvDtFrgwk/zv0UU6pBnzaj9U2m91VOu+oASMJ7ZOtJuvegbpWXSE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746506374; c=relaxed/simple;
+	bh=gX4Wgft9usfSaXxspipyYfrhVmDQBwPa/yxvsVGrvmM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ae6eSXfO87rDLjnjn8XDNaYrZIFPCzodw0x3c2vsKz5zM37HaoOwB/IT1qbOiY4Sk97SOrr3TIK18pETU9QvKBlRCPWdqmsELxJeZswAgIthKmLJc4aK//d2VvYoUalFyiFU12C2yTsIvLIMSfH3MdHpruB7HwJgunllJ1fUkUw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=F9WSzIdm; arc=fail smtp.client-ip=52.101.127.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v66arFDX3uI7znTtYGZMBAU3GRCwfRBdT+hMIPmp7SYPDT2cGi7MdnH7RRpWSkwfkHBZh8/XxOqRwWc+CXfW2+Q+ri+iwjHoFhWCEpGSzZacZBPeA+4Zji1Wm2zX/WEuSFgiDJC2SBYba7QtNfXXKvYTpRzjC73jBIbJUyJeET1Xbvsz0to20aPvPYmzhN6AN4AusOEYvVouYWIntWcpTLt85Q9gG4H3ZLLOkQcmSAoSrZLtKYHBjlv6HgCfQhdllxeT83+A8aXFCi9BNuywMMiZ4KguLbuQZzUHm5eOG/DJNdfjcV779GukXgjCUNZ+Tg4ViRsPT1KEqJWPaBgKuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gX4Wgft9usfSaXxspipyYfrhVmDQBwPa/yxvsVGrvmM=;
+ b=tM9vrMROACThX2k4QV8HYR5kI2443V6QKsRTxcPAXB3w4TyHMpW8H77UgsAYAdXUex7Ou4WxKyo/kePMnBmapNg+WjNU9EP6SzCWo4FehQ5TQmxyvxNzaCP9jvDPxrqhzJrj8+Sj4rb+Zo3VxbN3BZ2boG+Puar3gbevq2EIPoh6RcD8hEO+hvUqVqx4RSACX18XkbzinwVsl/drQ/hS8YbKylcnWETxmPH6V4Fp+BKU5CrRbogFz7g7AQBhhZeG0PXko7fUYUWaWsz6hE//Z386woq/wyXJiSJDKTDX8IewPKXZCmCGA2wpB3SqQChdURfgsL+9yreTlLSuCOUXvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gX4Wgft9usfSaXxspipyYfrhVmDQBwPa/yxvsVGrvmM=;
+ b=F9WSzIdmC3mtS4Rc6BN8/eb3Lkdka6Y9cUA9hCGrgHJGHvCivlGhMgff9mBZx0BoIFzGMXcw7Y7oIX+2nzs21fkHoxLpgHWZDgbtvl9fhCHSX+VO+vKHWwnKOQSxibyg0TsMusfbpdzCcBUlXB7oOVixSm/AFBGKcH6c/VVEAGBSa+fpF+SlGF35TGloFIcdwGFp9MyLvjjVgZJ/bdOyIihKXX+t8G//ARxOjsjam66nWXM4mbhVC3MFV5AA5nC7JxZNwBxmaX5S2PnfN8E1EVHzUus7FC/s9IRfOdl0lxIgNd/CJaJoFU+lyXwBKwCKXWgIua2ORxSoVv6Nkcpkjg==
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by SEZPR06MB6139.apcprd06.prod.outlook.com (2603:1096:101:ea::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.25; Tue, 6 May
+ 2025 04:39:26 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535%4]) with mapi id 15.20.8699.021; Tue, 6 May 2025
+ 04:39:25 +0000
+From: =?gb2312?B?wO7R7+i6?= <frank.li@vivo.com>
+To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "Md. Haris
+ Iqbal" <haris.iqbal@ionos.com>, Jack Wang <jinpu.wang@ionos.com>, Coly Li
+	<colyli@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, Mike
+ Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, Chris
+ Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba
+	<dsterba@suse.com>, Andreas Gruenbacher <agruenba@redhat.com>, Carlos
+ Maiolino <cem@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota
+	<naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	"slava@dubeyko.com" <slava@dubeyko.com>, "glaubitz@physik.fu-berlin.de"
+	<glaubitz@physik.fu-berlin.de>, "linux-bcache@vger.kernel.org"
+	<linux-bcache@vger.kernel.org>, "dm-devel@lists.linux.dev"
+	<dm-devel@lists.linux.dev>, "linux-btrfs@vger.kernel.org"
+	<linux-btrfs@vger.kernel.org>, "gfs2@lists.linux.dev" <gfs2@lists.linux.dev>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Johannes Thumshirn
+	<johannes.thumshirn@wdc.com>
+Subject:
+ =?gb2312?B?u9i4tDogW1BBVENIIDE5LzE5XSBoZnNwbHVzOiB1c2UgYmRldl9yd192aXJ0?=
+ =?gb2312?B?IGluIGhmc3BsdXNfc3VibWl0X2Jpbw==?=
+Thread-Topic: [PATCH 19/19] hfsplus: use bdev_rw_virt in hfsplus_submit_bio
+Thread-Index: AQHbuhYRDNJlPWw5UECiKvCJdMfVCrPFCobQ
+Date: Tue, 6 May 2025 04:39:25 +0000
+Message-ID:
+ <SEZPR06MB526957D0F35531E2D9B9EA2BE8892@SEZPR06MB5269.apcprd06.prod.outlook.com>
+References: <20250430212159.2865803-1-hch@lst.de>
+ <20250430212159.2865803-20-hch@lst.de>
+In-Reply-To: <20250430212159.2865803-20-hch@lst.de>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEZPR06MB5269:EE_|SEZPR06MB6139:EE_
+x-ms-office365-filtering-correlation-id: 0367c651-41e7-459b-af18-08dd8c57fae2
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?NGFTK2lKNUxLNkN4VTA1TG9HVlBTd3RnNnpsbkZEeWxJU1Vwdk9RNVVVek9T?=
+ =?gb2312?B?ZzYvdk41YkVWNzM0WFZML1dRSExkODIvVFdIdVVzeHhIM1Fxa0paOEhTVDgy?=
+ =?gb2312?B?Y3BVQ01RVVhSaEgzS1hRSzVhdDZpcnh5blFoMldYL0szeHhZTUFsaVhyQU1m?=
+ =?gb2312?B?dlpSRkl5UlNmdFozcEdnL2RoREdVV0JoZ25EWUFiNUFIRjArbFRXQnRQRGxK?=
+ =?gb2312?B?Y2ZpOUlXNFBNQ1BIUmpWWFRUc2poZHNneG85NjRVcDMzTG4yN1BqTTAyRkFV?=
+ =?gb2312?B?RHRJT3E2d0QwZmtYaCswWUlGb2svK2FmWjl3L2RSeVplV21oV0tnQXcrMktP?=
+ =?gb2312?B?S0UzTWNEZm5HYmVWUWszdyttaU1XU0lIRmVVcjRtSG5EVm5ycERDWkczUXM0?=
+ =?gb2312?B?cWVoaGFFMjk4Z0hDMDJpT2I3MTVncVhqR2tOejdpTllxT1pPM1BhNVQ2cFNN?=
+ =?gb2312?B?ZTlWSXJnNjlYUjdTMVJRRVNYajEwc0VuOGNWWW9WYWJPdWxlK3Jubm9pMWZx?=
+ =?gb2312?B?bk5XT1B4N2dMMUhPRXYvR3J5eU9sNmJmeDdHQS9nelBFa05KWnk0ODNlZ3cr?=
+ =?gb2312?B?N2dkSXJiN20wMnBjWENNSmViWW9nZ1FZTU1FWHNmcXRZUlY3dXdsNFBvaFQ5?=
+ =?gb2312?B?K0w1Y0JpcWNkTVFBMmdpU2Nra3JlZWU1OHFvWVNGMTByU2pnUG0vNDBiL2tx?=
+ =?gb2312?B?dHNXTmU5UFZqaEY3QWRXUTR3VHUzc0NmUEFuSzV0ak41T1ZKdGNQYStGM0hh?=
+ =?gb2312?B?anFxTFFFdVZjOVZiWlhjektVTlRPSkV0Y2paUEJBMTBuNWxVM3R4R2N0SWsz?=
+ =?gb2312?B?dkFKb3MvM2x6Rlh6VEk5ajJSWHBiR0twL3FsZ3FyUmQ3ZXFiK1hsaG10QkZw?=
+ =?gb2312?B?U3ZWbTh6UzFycmZ3SjlGVlJxSU5lQW96RVAxZ2lRdXE2c2hkcDcyY053THg3?=
+ =?gb2312?B?YnFXYWhZaktCUFV1S1p6TE8rWk5MTS9hU2p4K3JjMy9nSDQ3UUJnb202NkMr?=
+ =?gb2312?B?SnowMDJtdE43Nlg0MS8wN0pra0R0T1Z4QmlHRGVJTjljZGc2eXhPNkNrMUZa?=
+ =?gb2312?B?N2RKVzBPSFpwZ0dkbkkwVmV2L0MrTXVGOGYvUitwK01HTFdvVXpzUnppajAy?=
+ =?gb2312?B?MW1Gck5BWDlodEZwUlEydU1rWHlyeGQ3OFZPM2FKZmFvUVRuaDZXRHorOWM2?=
+ =?gb2312?B?Z2tNUXM1eEhiK1lJWFR4RGVKdlZ5MTk4cjBLZFRpa2wxRzlsRmg4YkR3cTY2?=
+ =?gb2312?B?RzJWQ0FMSC84bS9UWlVjaGIwSGcwZ1I5VXlUYnRJdm9vRHdXcCtsaytxcWQw?=
+ =?gb2312?B?YlRYUEFEWW9OVmNWYnRFeGtqV1UvRGVXQTg1VDVhbFBZMlJMbVQ2WEdrS0wy?=
+ =?gb2312?B?dnk1N0loZTV3WXgyUVFXeTJjWFJtZmZPYTFNcS9NdlRUY3JnV2xhUGJLa2s3?=
+ =?gb2312?B?YTQ3S1F3a01mS2xpSkxBS0orVmk0Yy9BWXVYK0MyY3U1RDRXMmljT1JBTzl4?=
+ =?gb2312?B?blo2Y3N5elVWdXo2NkhuVmNIWmYyMmhxd3YyMTJicTFrMFRQVnBKNy9Ba201?=
+ =?gb2312?B?NUc5S1pUTGg1MzJGRU9haUFHa29KOFNSanFRdU41bGpFSEtMdm1NUDNxYTlY?=
+ =?gb2312?B?bXdiRkJqcW1kNUQwdUZnNkM2Ky9lTU53YUtlZis3SGY3bE5EUHpMNktQVkM2?=
+ =?gb2312?B?Ulpya1p0TmJkR1NiSC83a2k0b0J1R0pMYWlFSkpSZ0N5SWRQUmd5anQ3YnVZ?=
+ =?gb2312?B?NXZpY2k4d2dXdVRrN1F2aEJFYkdSckkvdHhhUEJ3em4vTHdFNmVyZVUrTWMw?=
+ =?gb2312?B?bmxiYkFOdHZlNXB1NnA2Mm11STZIYWJnQnlWcjNkUWhuS3BOSWptcWQ4Q0Vj?=
+ =?gb2312?B?ektScE56RXVFUVBzS09Oa0VMbVhMajdJTGN0eVh3Q0JtYVJDeTErSGh6Q1pB?=
+ =?gb2312?B?Zm5YMnNmNlVKb3g2Z2ZraE9QSnZnaTAzclFlK294ZktJZ0Rid2gzbE9Cd0NP?=
+ =?gb2312?B?WlNrdGozM3FRPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?UmQvVUpJcCtZNnpjdlZtdkNFY1h4bStiTzFFbE5XWkpnUThUUmlrTms2M1NX?=
+ =?gb2312?B?aUUxRDNJaWJaUTB0bGxpVjBobEFIZG9zaWNIemRHSTVhTE9maU04N1dSeDdl?=
+ =?gb2312?B?Y1FiWjc2R3o2NDRMaWdaZ0lIejloSmViRitsUkxLYTRCRk8ydVdKS3RWaXZz?=
+ =?gb2312?B?VEhlQkx3ejM1ZFFMQ2ppNzJHYlhLaGQrL0h3NEU2eEJ1RDZxZEFhNS9mQVBG?=
+ =?gb2312?B?Z2k3eUszNi83cXREYnZPZTg4azBSdHNtK1V0NUxYWkxyT21kT0NsdlRxUUpL?=
+ =?gb2312?B?YkNoYnRUR2huOHVKVjFVQnJNOVIxSmsveVRJVURqdFNCekhTc2YxTWxwWFY0?=
+ =?gb2312?B?YWFWcE56SDY4L3lpRTJjRWpQalJOSjQrTEtOZDR3WlNvbGVQUE5TYjlrSWJF?=
+ =?gb2312?B?bVlQcy84SkpzVnVIMGFZLzdHcFlud2V3Q1ltcDJGNmdCTU5BYXAvR1dUdkxy?=
+ =?gb2312?B?SmNNMjd4UkxpOEF0eFAzTTBqVlNxTnF0VFYxbzRJU3RGYnFvdW4rNVEwQklU?=
+ =?gb2312?B?b3FFVHJIUDNrNVZxR0xrMXY3SWhjbWpXdlFheHM4MHhvem5LR1gyUmUrQ3dO?=
+ =?gb2312?B?dm84WlRaUk1TQUNMNFQ1Q0lnbXZwQkNaMnVxN0g0RHNlOWN1SHVUQ3k3U0Zy?=
+ =?gb2312?B?VU92Ky9wTStSNFJ0TDY5TXFSejlyNjExdWM4VEwvM2pSU2dCaWFoYTJGRUxw?=
+ =?gb2312?B?dVJFS1U3M09wYXhnMngzSVp0QXVBSFljWmFScnFETmw3SGtHdG90R3UrN1B2?=
+ =?gb2312?B?UUhyUlVUcy9SUjEyNjFIRnlDMGxVTWhsVHV2Ulc1TW9RYXg3cG02dGlCQ1k3?=
+ =?gb2312?B?UHN6bmVxMHIxQ01NUHNUaUhSUjdDOFRPRHRRNkdRZ1lhVnpkMklQbHlDOGhs?=
+ =?gb2312?B?Mit6dzhZdnUrcmZtNFRvVy94eE92R3BBK0t2NndlZDBVb1FvYTB5UGRqWDZI?=
+ =?gb2312?B?cnlmNlM1TkY0blRlZGdzcktGUEEvTVYwajJUY1hqT0g2UHgyMUVJdGdRUUZH?=
+ =?gb2312?B?WXh4bGhCL2FGMDUvYS8xVFA5NmRSc040dTZWSTFVZENKQW92d2pBenVnS2d1?=
+ =?gb2312?B?Q0hQMVBaQUlTMkQzczlaWEx3RjJBeXBHWThVeTJtSkdZSjJULy94blNMMFJK?=
+ =?gb2312?B?V0lZb0d0NERVdUk2ZU1ud1pucCsyWVVCUHdYYisyUFhlU1c5L0FBSTUrbXY1?=
+ =?gb2312?B?VWNXaDdJaEI4bmxWSlJ1aUhUZjRCNkY5YWFBY1BIS0kvQ09OVjhvekZ1Y0dD?=
+ =?gb2312?B?dFNUTis4clZmQ0ZnaFpqUTBOT1BwaEVtcWZCMHhvYzZlWjV2eFM4ZnAyOFds?=
+ =?gb2312?B?S3AwOWwzY0hFQ1hhQ2N5dnhMVDFvVVUzRzg2eDVjMXB4cjFpckdBZm9JK095?=
+ =?gb2312?B?Sm5rckFPaGdTczZJd0JaMWlFcENqSUZPSG1waEhLbDJBYkc5bVJ3UERFWERu?=
+ =?gb2312?B?amtoMmpud2xxY2ZzWlZXUlhGZ2tLb2RMWU5kNDVPSFdWYnJsdUVUbkk4T1dl?=
+ =?gb2312?B?Yjh3cngxcWN0clk0MHoyL3dSbGwwZy9zamU3TVpQNzltQm9haXM4MnhDVDI4?=
+ =?gb2312?B?QjV3cEpWYko3QWVzQk5rZkI2c3RYV2NpNitGcW00UnpvMkFuZ05peDdKalR4?=
+ =?gb2312?B?SDBxc0NJOENTbzBadDFLYytzU3JZLytESFhyVkFJcXM5UC9EZ3JvWkhRTVA5?=
+ =?gb2312?B?MFAwdSs1eW94QXlYVjlNSzdLVjJxNEVuNzNkeitCU3hwMHhzaExESms4dXkr?=
+ =?gb2312?B?L0VGem5DTktMY0VUc3huNHBvTkZieVdJRDU3TFZDVSs1L0N4b0IxOUgzUkJ6?=
+ =?gb2312?B?emRHUTB4US9SMlphQVdieUhoYWFQT1V5QWVBRTA1SGt4SENFNjg4citrQ3dI?=
+ =?gb2312?B?cjExZFArL25VelpkSkRnKyt4RUNEMjltcmtiQURWTm1Ic2JrN2VQbjBPanU0?=
+ =?gb2312?B?aE1GeHBwVnBlUDFvVVRJRUpsQkNiOUx0dGFTVHdLejRkUU9DMjBhNCtpM1pT?=
+ =?gb2312?B?eDhQdEtNUEV6OG1YbVIrcWlDK1h4SFBaNjE0MWhNbW9WTTF4OGRUWlZ6dTdp?=
+ =?gb2312?B?cStYQm9EWW9mazRrOGVIZjhYZitJd2NHQzR2eW82VnZpWm53WjlWbEpKcGgz?=
+ =?gb2312?Q?LgRU=3D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJhEC04Po-OtwDe2Uxo2w-0yhgcemo5sn816sT7jNhnEdRxY4Q@mail.gmail.com>
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0367c651-41e7-459b-af18-08dd8c57fae2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 May 2025 04:39:25.5639
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2d+AJjpXIAzIifOltkCoWJgZBtzp1MTw2wp/ELfBgSXv42k3IgA9E/IYKs/+pz1e9EMDSNaP3RQ67S9EyrxiRA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6139
 
-On Thu, May 01, 2025 at 06:01:09PM +0800, Robert Pang wrote:
-> Hi Coly,
-> 
-> Please disregard the test results I shared over a week ago. After digging
-> deeper into the recent latency spikes with various workloads and by
-> instrumenting the garbage collector, I realized that the earlier GC latency
-> patch, "bcache: allow allocator to invalidate bucket in gc" [1], wasn't
-> backported to the Linux 6.6 branch I tested my patch against. This omission
-> explains the much higher latency observed during the extended test because the
-> allocator was blocked for the entire GC. My sincere apologies for the
-> inconsistent results and any confusion this has caused.
-> 
-
-Did you also backport commit 05356938a4be ("bcache: call force_wake_up_gc()
-if necessary in check_should_bypass()") ? Last time when you pushed me to
-add commit a14a68b76954 into mainline kernel, I tested a regression from this
-patch and fixed it. Please add this fix if you didn't, otherwise the testing
-might not be completed.
-
-
-> With patch [1] back-patched and after a 24-hour re-test, the fio results clearly
-> demonstrate that this patch effectively reduces front IO latency during GC due
-> to the smaller incremental GC cycles, while the GC duration increase is still
-> well within bounds.
->
-
-From the performance result in [2], it seems the max latency are reduced,
-but higher latency period are longer. I am not sure whether this is a happy
-result.
-
-Can I have a download link for the whole log? Then I can look at the
-performance numbers more close.
- 
-> Here's a summary of the improved latency:
-> 
-> Before:
-> 
-> Median latency (P50): 210 ms
-> Max latency (P100): 3.5 sec
-> 
-> btree_gc_average_duration_ms:381138
-> btree_gc_average_frequency_sec:3834
-> btree_gc_last_sec:60668
-> btree_gc_max_duration_ms:825228
-> bset_tree_stats:
-> btree nodes: 144330
-> written sets: 283733
-> unwritten sets: 144329
-> written key bytes: 24993783392
-> unwritten key bytes: 11777400
-> floats: 30936844345385
-> failed: 5776
-> 
-> After:
-> 
-> Median latency (P50): 25 ms
-> Max latency (P100): 0.8 sec
-> 
-> btree_gc_average_duration_ms:622274
-> btree_gc_average_frequency_sec:3518
-> btree_gc_last_sec:8931
-> btree_gc_max_duration_ms:953146
-> bset_tree_stats:
-> btree nodes: 175491
-> written sets: 339078
-> unwritten sets: 175488
-> written key bytes: 29821314856
-> unwritten key bytes: 14076504
-> floats: 90520963280544
-> failed: 6462
-> 
-> The complete latency data is available at [2].
-> 
-> I will be glad to run further tests to solidify these findings for the inclusion
-> of this patch in the coming merge window. Let me know if you'd like me to
-> conduct any specific tests.
-
-Yes, more testing are necessary, from 512 Bytes block size to 1 MiB or
-8MiB block size. We need to make sure it won't introduce performance
-regression in other workload or circumstances.
-
-I don't have plan to submit this patch in this merge window, and please don't
-push me. For performance improvement change, I prefer the defalt
-configuration will cover most of work loads, so more testing and perforamce
-data are desired. E.g. the patch you mentioned (commit a14a68b76954 "bcache:
-allow allocator to invalidate bucket in gc"), it had been deployed in Easy
-Stack product environment for 20+ months before it got merged.
-
-Thanks.
-
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a14a68b76954e73031ca6399abace17dcb77c17a
-> [2[ https://gist.github.com/robert-pang/cc7c88f356293ea6d43103e6e5f9180f
-
-[snipped]
-
--- 
-Coly Li
+TEdUTSwNCg0KQWNrZWQtYnk6IFlhbmd0YW8gTGkgPGZyYW5rLmxpQHZpdm8uY29tPg0KDQpUaHgs
+DQpZYW5ndGFvDQo=
 
