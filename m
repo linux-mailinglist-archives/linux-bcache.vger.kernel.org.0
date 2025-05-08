@@ -1,143 +1,183 @@
-Return-Path: <linux-bcache+bounces-1061-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1062-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B88AAFFC6
-	for <lists+linux-bcache@lfdr.de>; Thu,  8 May 2025 17:59:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1545AAB0352
+	for <lists+linux-bcache@lfdr.de>; Thu,  8 May 2025 21:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 881D24C3ECF
-	for <lists+linux-bcache@lfdr.de>; Thu,  8 May 2025 15:59:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F284B3B5A0F
+	for <lists+linux-bcache@lfdr.de>; Thu,  8 May 2025 19:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9994127A931;
-	Thu,  8 May 2025 15:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40826284B25;
+	Thu,  8 May 2025 19:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqVYuR8f"
+	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="TRggdLXE"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail108.out.titan.email (mail108.out.titan.email [44.210.203.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C21227A127;
-	Thu,  8 May 2025 15:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043731E1E1D
+	for <linux-bcache@vger.kernel.org>; Thu,  8 May 2025 19:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.210.203.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746719933; cv=none; b=KwCnJjf1aCA6uGgQ6WiCzvDhy6+ZIS5CDubm3TFyygM0HNAzCOOpZvyo7AletXicjz8PMfOw4YwAhUeIGFM4ff2H+b0+kFAU/o1WgC25cNJ1K0RR4/Ph2yemzWnyFLAFORRXMBGWs3Km0nJ+LJFgn8f6fYQOsjmwffgQ+5T307o=
+	t=1746731104; cv=none; b=uDym/S5P0pw9hfTtUmUqQG5xlJj0OGK7aeArMz0t2DubeYoHqvGCARcuMaK/mjOABjjBwAovt3YqJTOOQLSU4Bg1wm8eD0gwiXbopDhnmXMFm4em5F22If9vBLHz2eo2Tth5KsM5LkwQUTbI98mjaYHLNjyZ93wU8gnfFnpKU8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746719933; c=relaxed/simple;
-	bh=8jYZVX0/2dxdtW2AwtBMm0nQOTU2ozp7HEs7ay7+F5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tWWo5UVwN1fqysG/VeHzbi06yaF9wLFzibHefp6ouh4OzlMrrsTMrLntidxNvTts5Z2wspwkBben28DH4CyPnxVzKJ/p/+ZpEARYhAGe5tFG3voWQK2DeuONSmsRJWoxTQwWdiCWZZI9TQDSybHyiD9QnqcVOOhr1s0dpxexK78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqVYuR8f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA38EC4CEE7;
-	Thu,  8 May 2025 15:58:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746719931;
-	bh=8jYZVX0/2dxdtW2AwtBMm0nQOTU2ozp7HEs7ay7+F5g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QqVYuR8f9MAE6X0M+Ea5uUkt3BwJhEeAVhK5N9Yat9xDZzbF8VVkdoMEn4Goh4A1Z
-	 ZEpAvA5i2+y0R8R7Y2mQRlht2k25qEfWDFexE6AyD/cKh0JaF9+A2sEFf9GzBJXRDj
-	 LrbHXVruSyA5zXfVv9zY2a1GaeGANKjrBwYToBymmz4qY2/i8TgtlydHsrUK/Y9lmw
-	 SCOcIhQXDgFyXLJyxoE+3APIM8l6+JueosfnWznRJVivvQ7K+uHlm4oVs0OB7LHrMr
-	 MN09X8O0PSPGs10h1UKbT9ehMf1v6HI9UUQSgCBHaJVrd7PHL25FswAC/ysHTVSeMJ
-	 d0mobG3Pwsnaw==
-Date: Thu, 8 May 2025 08:58:48 -0700
-From: Kees Cook <kees@kernel.org>
-To: Coly Li <i@coly.li>
-Cc: Coly Li <colyli@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-bcache@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] md/bcache: Mark __nonstring look-up table
-Message-ID: <202505080844.DD7F50F0A@keescook>
-References: <20250418202130.it.887-kees@kernel.org>
- <389A9925-0990-422C-A1B3-0195FAA73288@coly.li>
- <851B250D-A22C-4B47-BBAC-55284B5B5790@coly.li>
+	s=arc-20240116; t=1746731104; c=relaxed/simple;
+	bh=T2DTGsDRdArRCaS2FN2J3QoGWbMHNQsTYpTibzEj6bg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=I47PiuhFOMZBlQ8eF56DlxHfAUWD5Z1ZbIKuuEEBdqYB7HaCwEC/mXh/TohfYmOSepNK1uBL2A7rdCbAN5jeHt02NKQHMxj3yIL/+9HqQr27mPwqeOCQtLePKK5cE+DyqHGeZRn9gWlMfQ6aXZOfQ38isygBIaUPRM9vi9RSoE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=TRggdLXE; arc=none smtp.client-ip=44.210.203.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
+Received: from localhost (localhost [127.0.0.1])
+	by smtp-out.flockmail.com (Postfix) with ESMTP id CAE4EE0107;
+	Thu,  8 May 2025 16:00:00 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=u/FvevRsgL+DZjKgVYLFKDjkbcSxXS1/GItuAGT1qp8=;
+	c=relaxed/relaxed; d=t12smtp-sign004.email;
+	h=to:from:message-id:mime-version:in-reply-to:cc:references:subject:date:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1746720000; v=1;
+	b=TRggdLXEEw7SpF9o7r3kJf1ovOK1sc1y79Qk7u19BT7lneNnSsdiieYhoQ97/5slu6qX1QqK
+	vlaKALallZUUEB7Bk9b1j/y7hzrkfseMleCnghqx07WyIqkJ1FOt35Y+bihMj28C3wTDPkX6R0e
+	m7O0X4FXALP/UhAFXD9Zc7/Q=
+Received: from smtpclient.apple (unknown [141.11.218.23])
+	by smtp-out.flockmail.com (Postfix) with ESMTPA id 2C61FE0314;
+	Thu,  8 May 2025 15:59:56 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <851B250D-A22C-4B47-BBAC-55284B5B5790@coly.li>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [PATCH v2] md/bcache: Mark __nonstring look-up table
+Feedback-ID: :i@coly.li:coly.li:flockmailId
+From: Coly Li <i@coly.li>
+In-Reply-To: <202505080844.DD7F50F0A@keescook>
+Date: Thu, 8 May 2025 23:59:43 +0800
+Cc: Coly Li <colyli@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ linux-bcache@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <02B98CCF-15A9-46EE-AD00-C5EDCAE774F0@coly.li>
+References: <20250418202130.it.887-kees@kernel.org>
+ <389A9925-0990-422C-A1B3-0195FAA73288@coly.li>
+ <851B250D-A22C-4B47-BBAC-55284B5B5790@coly.li>
+ <202505080844.DD7F50F0A@keescook>
+To: Kees Cook <kees@kernel.org>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1746720000629225916.26132.7404258459398680928@prod-use1-smtp-out1004.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=O7TDvA9W c=1 sm=1 tr=0 ts=681cd500
+	a=USBFZE4A2Ag4MGBBroF6Xg==:117 a=USBFZE4A2Ag4MGBBroF6Xg==:17
+	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=VwQbUJbxAAAA:8
+	a=LN1WO8SOcHLxaujQaaAA:9 a=QEXdDO2ut3YA:10 a=K3YW7E1MVtJkPNdb1KoQ:22
 
-On Thu, May 08, 2025 at 11:01:34AM +0800, Coly Li wrote:
-> 
-> > 2025年4月19日 11:55，Coly Li <i@coly.li> 写道：
-> > 
-> > 
-> > 
-> >> 2025年4月19日 04:21，Kees Cook <kees@kernel.org> 写道：
-> >> 
-> >> GCC 15's new -Wunterminated-string-initialization notices that the 16
-> >> character lookup table "zero_uuid" (which is not used as a C-String)
-> >> needs to be marked as "nonstring":
-> >> 
-> >> drivers/md/bcache/super.c: In function 'uuid_find_empty':
-> >> drivers/md/bcache/super.c:549:43: warning: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (17 chars into 16 available) [-Wunterminated-string-initialization]
-> >> 549 |         static const char zero_uuid[16] = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-> >>     |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >> 
-> >> Add the annotation (since it is not used as a C-String), and switch the
-> >> initializer to an array of bytes.
-> >> 
-> >> Signed-off-by: Kees Cook <kees@kernel.org>
-> >> ---
-> >> v2: use byte array initializer (colyli)
-> >> v1: https://lore.kernel.org/all/20250416220135.work.394-kees@kernel.org/
-> >> Cc: Coly Li <colyli@kernel.org>
-> >> Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> >> Cc: Ard Biesheuvel <ardb@kernel.org>
-> >> Cc: linux-bcache@vger.kernel.org
-> >> ---
-> >> drivers/md/bcache/super.c | 3 ++-
-> >> 1 file changed, 2 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> >> index e42f1400cea9..a76ce92502ed 100644
-> >> --- a/drivers/md/bcache/super.c
-> >> +++ b/drivers/md/bcache/super.c
-> >> @@ -546,7 +546,8 @@ static struct uuid_entry *uuid_find(struct cache_set *c, const char *uuid)
-> >> 
-> >> static struct uuid_entry *uuid_find_empty(struct cache_set *c)
-> >> {
-> >> - static const char zero_uuid[16] = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-> >> + static const char zero_uuid[] __nonstring =
-> > 
-> 
-> Hi Kees,
-> 
-> > I notice zero_uuid[16] changes to zero_uuid[], then the element number information is removed.
-> > 
-> > Is it OK for GCC 15 to only add __nonstring and keep zero_uuid[16]?
 
-Either way is fine. I can update the patch to use the "[16]" again if
-you'd like?
 
--Kees
+> 2025=E5=B9=B45=E6=9C=888=E6=97=A5 23:58=EF=BC=8CKees Cook =
+<kees@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On Thu, May 08, 2025 at 11:01:34AM +0800, Coly Li wrote:
+>>=20
+>>> 2025=E5=B9=B44=E6=9C=8819=E6=97=A5 11:55=EF=BC=8CColy Li <i@coly.li> =
+=E5=86=99=E9=81=93=EF=BC=9A
+>>>=20
+>>>=20
+>>>=20
+>>>> 2025=E5=B9=B44=E6=9C=8819=E6=97=A5 04:21=EF=BC=8CKees Cook =
+<kees@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+>>>>=20
+>>>> GCC 15's new -Wunterminated-string-initialization notices that the =
+16
+>>>> character lookup table "zero_uuid" (which is not used as a =
+C-String)
+>>>> needs to be marked as "nonstring":
+>>>>=20
+>>>> drivers/md/bcache/super.c: In function 'uuid_find_empty':
+>>>> drivers/md/bcache/super.c:549:43: warning: initializer-string for =
+array of 'char' truncates NUL terminator but destination lacks =
+'nonstring' attribute (17 chars into 16 available) =
+[-Wunterminated-string-initialization]
+>>>> 549 |         static const char zero_uuid[16] =3D =
+"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+>>>>    |                                           =
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>=20
+>>>> Add the annotation (since it is not used as a C-String), and switch =
+the
+>>>> initializer to an array of bytes.
+>>>>=20
+>>>> Signed-off-by: Kees Cook <kees@kernel.org>
+>>>> ---
+>>>> v2: use byte array initializer (colyli)
+>>>> v1: =
+https://lore.kernel.org/all/20250416220135.work.394-kees@kernel.org/
+>>>> Cc: Coly Li <colyli@kernel.org>
+>>>> Cc: Kent Overstreet <kent.overstreet@linux.dev>
+>>>> Cc: Ard Biesheuvel <ardb@kernel.org>
+>>>> Cc: linux-bcache@vger.kernel.org
+>>>> ---
+>>>> drivers/md/bcache/super.c | 3 ++-
+>>>> 1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>=20
+>>>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+>>>> index e42f1400cea9..a76ce92502ed 100644
+>>>> --- a/drivers/md/bcache/super.c
+>>>> +++ b/drivers/md/bcache/super.c
+>>>> @@ -546,7 +546,8 @@ static struct uuid_entry *uuid_find(struct =
+cache_set *c, const char *uuid)
+>>>>=20
+>>>> static struct uuid_entry *uuid_find_empty(struct cache_set *c)
+>>>> {
+>>>> - static const char zero_uuid[16] =3D =
+"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+>>>> + static const char zero_uuid[] __nonstring =3D
+>>>=20
+>>=20
+>> Hi Kees,
+>>=20
+>>> I notice zero_uuid[16] changes to zero_uuid[], then the element =
+number information is removed.
+>>>=20
+>>> Is it OK for GCC 15 to only add __nonstring and keep zero_uuid[16]?
+>=20
+> Either way is fine. I can update the patch to use the "[16]" again if
+> you'd like?
+>=20
 
-> Ping ?
-> 
-> You are expert here, I need your opinion.
-> 
-> Thanks.
-> 
-> Coly Li
-> 
-> 
-> 
-> >> + { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-> >> 
-> >> return uuid_find(c, zero_uuid);
-> >> }
-> >> -- 
-> >> 2.34.1
-> 
-> 
+Yes please. Thanks in advance.
 
--- 
-Kees Cook
+Coly Li
+
+
+>=20
+>> Ping ?
+>>=20
+>> You are expert here, I need your opinion.
+>>=20
+>> Thanks.
+>>=20
+>> Coly Li
+>>=20
+>>=20
+>>=20
+>>>> + { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+>>>>=20
+>>>> return uuid_find(c, zero_uuid);
+>>>> }
+>>>> --=20
+>>>> 2.34.1
+>>=20
+>>=20
+>=20
+> --=20
+> Kees Cook
+
 
