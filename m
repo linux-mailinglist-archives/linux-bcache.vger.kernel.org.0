@@ -1,167 +1,160 @@
-Return-Path: <linux-bcache+bounces-1056-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1057-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7CF2AAE279
-	for <lists+linux-bcache@lfdr.de>; Wed,  7 May 2025 16:19:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BEAAAF15E
+	for <lists+linux-bcache@lfdr.de>; Thu,  8 May 2025 05:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD864171835
-	for <lists+linux-bcache@lfdr.de>; Wed,  7 May 2025 14:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1DAE3BAB06
+	for <lists+linux-bcache@lfdr.de>; Thu,  8 May 2025 03:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF8F28C030;
-	Wed,  7 May 2025 14:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499B01DFDB8;
+	Thu,  8 May 2025 03:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1HKmWDlG"
+	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="cBzuG33s"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail73.out.titan.email (mail73.out.titan.email [3.216.99.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7133528C2A7
-	for <linux-bcache@vger.kernel.org>; Wed,  7 May 2025 14:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6251F1D63F2
+	for <linux-bcache@vger.kernel.org>; Thu,  8 May 2025 03:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.216.99.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746626557; cv=none; b=YRmlGrIkCKqPjqvgF7Sa4AH2klPEeD+/lSs56iFqxv5zzv/Ze/R8IQQmFqz0G8evqZO7rc8PWBdrXxfBJ+clT3dswySKbEiqltFEN4doNf0hUNi9kGq+BqzUX2sCb3r42in6qVN2xFv36RmMbNu0C8VrrYqtVW4xFAMj/8sXkSM=
+	t=1746673319; cv=none; b=ck65kkTbiqAa0GgI41naJC7fm+Xfcc02HN//WvVyJio7jX/OvCrAaVvyuX0bkG5+6z9gKmfqDAVTcjq+cqNB+N3uZAF8z8/RGRbDDd0sm5JNGmrOH1r8uXtXUE5aKgdJIYK6z6KKlifugbILQxVSeIUWpCjyA8GMH7f1OSv0ZKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746626557; c=relaxed/simple;
-	bh=u1WvrSapMzjyS9qZrw1hKIGsBWOqDhnGPCP10gYW6Cg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kTbCkUdW305YWhZUE6g4gZlr80xI0uIjE7cGojrX14GkYvtHfu+H/Ys8uz2WhzTaL46xSshwS84PFdQSaKz+h8Zo0BE17KIf4AUPhIdu6nX1+oKkn9uZvRF3sAn0tY719KmNvS6XFK2wFYneVRi4aZKsFzfe0I5w0SNh/ooNrhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1HKmWDlG; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-85de3e8d0adso141801439f.1
-        for <linux-bcache@vger.kernel.org>; Wed, 07 May 2025 07:02:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1746626553; x=1747231353; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n/e69eX7rTdQU3DebRyniOro00nTR+2O7+QHGV+7EO0=;
-        b=1HKmWDlGP1KCCRSjfqPmBaSpOt1CBsEgQpKoWwDUVaN0gyl6NGwfs5VjGk2xnhJis1
-         u34XJvh4Bmes1tQ2KTwnZ95jhXL7aokCG9u/RMZDUjEbYop1TF22da7g6pjuqEUYczu+
-         d1pz0WTYMFZA11dRGyowDn7f+X2MsYHswZku0n7nlS61uznlPqOUwe+Pm4QanMX3wy9b
-         jThqhrhGorfJ6Hbrlv1L7M5XJ0kgsaSK/1P5s9ulCCu9ph7VWmGYJL4JEFTVH0QDt1wv
-         t6fxZn1SVBvfebsDzwLkCRDj2bIuic/bAiM2pkQE4CwQ8nXWX0G+ijU9bSBS0x5KfXSA
-         6/bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746626553; x=1747231353;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n/e69eX7rTdQU3DebRyniOro00nTR+2O7+QHGV+7EO0=;
-        b=FKzWGh7Bkw6phYg3nemUXcXRIWFCKjae17kicqb8dcErIKosc+D3bTjA3xN6jk0ZDb
-         Yu02oeoML9FyqK2tW0yVftGPa9VKchK4Rdje/LuFC+3irWeZ0cPo7te3KIrVeTWfr2qc
-         yaa6cl7r9BE3xleIAWr+TrvvMGQ39Ymf5yJeF7Eklmjxd3E+LlNwyGOox3zgDOXUtBxz
-         5j1/6DqVhzsJmbfROTlwgRBqkUEt/AMRvchmsftfThbn5RuddaKQFyhkMM9NHbS/8+Q9
-         umt0q1ZZHatEdycFLaqCZytYwbVK/6Aw4g65ICIaPflP2sTeYFmsR9oFx+zIn3yIOrN1
-         9XcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVExCrX/X0lme7xf1wX2tzW91u/eoWZSQosqfSO2ozUchw0et5/SQsataobopBRWjxP0BRZyBtnfSm8gd4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe4ng0dq4qNZ8YQwkLAaPYfw0gDRCphaEGnImRjQfdcriiNMAu
-	9Ptv7KodIPoK0fon8FXigGowuSAZ6TnAHuDbWBX+3D7CVeUe+ZL082jhojaTRoM=
-X-Gm-Gg: ASbGncumaHjHyc+PTjhGyFYdrC7MTQ61fggkiOQTyxiY4hi3SJGUkajf9bSkuMd5juD
-	25Lb9AKHwi9/fXiE+q3aobmDfE3hvIEYCXHb0iBcE9ktG/gp53zOadGGk4po9z57rY2z4ZrrsXo
-	bbxqIM0rpFeojgm2O4NSQJ6fGm5aLlQ0NhF2+qZbXypLr+PnpKmhRo78H2lPLtx3wMXKpSwmJ3K
-	fBYUGO31uVz6OQwIo3O9cXOYn0rnJlClJkrKzvrZPYpqohXQ4UvUBGU0MHaMqrf6RwpG09dmrvh
-	dp+AzrLMijvvZb9NLlfvCJ8oTXX5bVw=
-X-Google-Smtp-Source: AGHT+IFKzirCN+Eb4LryiVuePRi35iU9q8ScKrI1anbroM0TMHPbhux4iOi4irCSUABdP/WxjlqB7w==
-X-Received: by 2002:a05:6602:6d0e:b0:85b:505a:7e01 with SMTP id ca18e2360f4ac-8674727e70dmr348656939f.5.1746626544084;
-        Wed, 07 May 2025 07:02:24 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f9fc6bb606sm642485173.18.2025.05.07.07.02.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 07:02:23 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-block@vger.kernel.org, "Md. Haris Iqbal" <haris.iqbal@ionos.com>, 
- Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>, 
- Kent Overstreet <kent.overstreet@linux.dev>, 
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, 
- Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
- David Sterba <dsterba@suse.com>, Andreas Gruenbacher <agruenba@redhat.com>, 
- Carlos Maiolino <cem@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, 
- Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- slava@dubeyko.com, glaubitz@physik.fu-berlin.de, frank.li@vivo.com, 
- linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev, 
- linux-btrfs@vger.kernel.org, gfs2@lists.linux.dev, 
- linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
- linux-pm@vger.kernel.org
-In-Reply-To: <20250507120451.4000627-1-hch@lst.de>
-References: <20250507120451.4000627-1-hch@lst.de>
-Subject: Re: add more bio helpers v3
-Message-Id: <174662654265.1844963.5765833717643625363.b4-ty@kernel.dk>
-Date: Wed, 07 May 2025 08:02:22 -0600
+	s=arc-20240116; t=1746673319; c=relaxed/simple;
+	bh=7Tf1EqFD545JHpAWZXvSjHa28oRZjVWMUVk79TF5iA8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=PDRcCdw1OakS9PNcvOUEMx/UiuDbp8JrDKnIpTAt0uuoR9U/OOsIagAN2+7OWzTrD29BW2eZ+DKxgowvrARxpaJf/pmnzKMhF15X7KqmZKKRloL07FVsi3iaYQoaObNUn2KXfVaFzGMhiAYZLrpo00Rm3nPQkS7EoRHIhoF84cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=cBzuG33s; arc=none smtp.client-ip=3.216.99.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
+Received: from localhost (localhost [127.0.0.1])
+	by smtp-out.flockmail.com (Postfix) with ESMTP id 2A42E60360;
+	Thu,  8 May 2025 03:01:50 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=RCzvqplp+4SerGTRkXu4/iLMKYFITxB7gCQ/kktCJrU=;
+	c=relaxed/relaxed; d=t12smtp-sign004.email;
+	h=cc:from:references:to:mime-version:in-reply-to:date:subject:message-id:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1746673310; v=1;
+	b=cBzuG33sSgGRIR9ebvPLQtox5qhT95Arw3IlLbP4nMW+4EdBFxOjc2NDYRwEz6hzb6JMTjFu
+	Of1gRa4Qu8Vy+3pFXkGX/ItJWp19nRzdxSap3pwl2L4Mml1kuZ6xiFwBGukL08ph3nUqlvqQnDZ
+	0Qfi+ucJ+FxSoRHS18NuInfc=
+Received: from smtpclient.apple (unknown [141.11.218.23])
+	by smtp-out.flockmail.com (Postfix) with ESMTPA id 1E03E60363;
+	Thu,  8 May 2025 03:01:46 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-7b9b9
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [PATCH v2] md/bcache: Mark __nonstring look-up table
+Feedback-ID: :i@coly.li:coly.li:flockmailId
+From: Coly Li <i@coly.li>
+In-Reply-To: <389A9925-0990-422C-A1B3-0195FAA73288@coly.li>
+Date: Thu, 8 May 2025 11:01:34 +0800
+Cc: Coly Li <colyli@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ linux-bcache@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <851B250D-A22C-4B47-BBAC-55284B5B5790@coly.li>
+References: <20250418202130.it.887-kees@kernel.org>
+ <389A9925-0990-422C-A1B3-0195FAA73288@coly.li>
+To: Kees Cook <kees@kernel.org>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1746673310016857733.5242.3433233303003199658@prod-use1-smtp-out1001.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=fZxXy1QF c=1 sm=1 tr=0 ts=681c1e9e
+	a=USBFZE4A2Ag4MGBBroF6Xg==:117 a=USBFZE4A2Ag4MGBBroF6Xg==:17
+	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=VwQbUJbxAAAA:8
+	a=41P4AONiiAATRugwBd4A:9 a=QEXdDO2ut3YA:10 a=ZImdrWQ-kMQFOr_krkRP:22
 
 
-On Wed, 07 May 2025 14:04:24 +0200, Christoph Hellwig wrote:
-> this series adds more block layer helpers to remove boilerplate code when
-> adding memory to a bio or to even do the entire synchronous I/O.
-> 
-> The main aim is to avoid having to convert to a struct page in the caller
-> when adding kernel direct mapping or vmalloc memory.
-> 
-> Changes since v2:
->  - rebase on top of the latest block for-next branch to resolve
->    conflicts with the bonuce buffering removal
-> 
-> [...]
 
-Applied, thanks!
+> 2025=E5=B9=B44=E6=9C=8819=E6=97=A5 11:55=EF=BC=8CColy Li <i@coly.li> =
+=E5=86=99=E9=81=93=EF=BC=9A
+>=20
+>=20
+>=20
+>> 2025=E5=B9=B44=E6=9C=8819=E6=97=A5 04:21=EF=BC=8CKees Cook =
+<kees@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+>>=20
+>> GCC 15's new -Wunterminated-string-initialization notices that the 16
+>> character lookup table "zero_uuid" (which is not used as a C-String)
+>> needs to be marked as "nonstring":
+>>=20
+>> drivers/md/bcache/super.c: In function 'uuid_find_empty':
+>> drivers/md/bcache/super.c:549:43: warning: initializer-string for =
+array of 'char' truncates NUL terminator but destination lacks =
+'nonstring' attribute (17 chars into 16 available) =
+[-Wunterminated-string-initialization]
+>> 549 |         static const char zero_uuid[16] =3D =
+"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+>>     |                                           =
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>=20
+>> Add the annotation (since it is not used as a C-String), and switch =
+the
+>> initializer to an array of bytes.
+>>=20
+>> Signed-off-by: Kees Cook <kees@kernel.org>
+>> ---
+>> v2: use byte array initializer (colyli)
+>> v1: =
+https://lore.kernel.org/all/20250416220135.work.394-kees@kernel.org/
+>> Cc: Coly Li <colyli@kernel.org>
+>> Cc: Kent Overstreet <kent.overstreet@linux.dev>
+>> Cc: Ard Biesheuvel <ardb@kernel.org>
+>> Cc: linux-bcache@vger.kernel.org
+>> ---
+>> drivers/md/bcache/super.c | 3 ++-
+>> 1 file changed, 2 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+>> index e42f1400cea9..a76ce92502ed 100644
+>> --- a/drivers/md/bcache/super.c
+>> +++ b/drivers/md/bcache/super.c
+>> @@ -546,7 +546,8 @@ static struct uuid_entry *uuid_find(struct =
+cache_set *c, const char *uuid)
+>>=20
+>> static struct uuid_entry *uuid_find_empty(struct cache_set *c)
+>> {
+>> - static const char zero_uuid[16] =3D =
+"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+>> + static const char zero_uuid[] __nonstring =3D
+>=20
 
-[01/19] block: add a bio_add_virt_nofail helper
-        commit: 850e210d5ad21b94b55b97d4d82b4cdeb0bb05df
-[02/19] block: add a bdev_rw_virt helper
-        commit: 10b1e59cdadabff16fc78eb2ca4c341b1502293c
-[03/19] block: add a bio_add_max_vecs helper
-        commit: 75f88659e47dc570bdebddf77d7a3cd5f0845612
-[04/19] block: add a bio_add_vmalloc helpers
-        commit: 8dd16f5e34693aa0aa6a4ed48427045008097e64
-[05/19] block: remove the q argument from blk_rq_map_kern
-        commit: af78428ed3f3eebad7be9d0463251046e9582cf6
-[06/19] block: pass the operation to bio_{map,copy}_kern
-        commit: fddbc51dc290f834f520ce89c00a0fce38260c16
-[07/19] block: simplify bio_map_kern
-        commit: 6ff54f456671415e101e671a7dfa1fe13a31bdb5
-[08/19] bcache: use bio_add_virt_nofail
-        commit: 23f5d69dfa993cb6d17e619fff5e623e76b9b17f
-[09/19] rnbd-srv: use bio_add_virt_nofail
-        commit: a216081323a1391991c9073fed2459265bfc7f5c
-[10/19] gfs2: use bdev_rw_virt in gfs2_read_super
-        commit: 65f8e62593e64f6991ece4f08ab9e147e62df488
-[11/19] zonefs: use bdev_rw_virt in zonefs_read_super
-        commit: b2f676efe601586360e5f7461f6d36981ac1e6c9
-[12/19] PM: hibernate: split and simplify hib_submit_io
-        commit: 0cb8c299f81591699e908d1a6ad2dba6df642e25
-[13/19] dm-bufio: use bio_add_virt_nofail
-        commit: 9134124ce1bac3d5228ee1b1fc7a879422ff74f6
-[14/19] dm-integrity: use bio_add_virt_nofail
-        commit: bd4e709b32ac932aee3b337969cbb1b57faf84bd
-[15/19] xfs: simplify xfs_buf_submit_bio
-        commit: 9dccf2aa6ed5fa6ee92c8d71868bf3762ae85bda
-[16/19] xfs: simplify xfs_rw_bdev
-        commit: d486bbecc90d86e0292071bd06322543f8f5f658
-[17/19] xfs: simplify building the bio in xlog_write_iclog
-        commit: 5ced480d4886b12e6a2058ac3ebd749b0ff14573
-[18/19] btrfs: use bdev_rw_virt in scrub_one_super
-        commit: 760aa1818b040c8ec6a1ee9cea1ea8cac0735ce3
-[19/19] hfsplus: use bdev_rw_virt in hfsplus_submit_bio
-        commit: 15c9d5f6235d66ebc130da9602b1cd7692bcf85d
+Hi Kees,
 
-Best regards,
--- 
-Jens Axboe
+> I notice zero_uuid[16] changes to zero_uuid[], then the element number =
+information is removed.
+>=20
+> Is it OK for GCC 15 to only add __nonstring and keep zero_uuid[16]?
 
+Ping ?
+
+You are expert here, I need your opinion.
+
+Thanks.
+
+Coly Li
+
+
+
+>> + { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+>>=20
+>> return uuid_find(c, zero_uuid);
+>> }
+>> --=20
+>> 2.34.1
 
 
 
