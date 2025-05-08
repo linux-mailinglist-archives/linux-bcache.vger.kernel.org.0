@@ -1,160 +1,103 @@
-Return-Path: <linux-bcache+bounces-1057-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1058-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BEAAAF15E
-	for <lists+linux-bcache@lfdr.de>; Thu,  8 May 2025 05:02:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42423AAFA89
+	for <lists+linux-bcache@lfdr.de>; Thu,  8 May 2025 14:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1DAE3BAB06
-	for <lists+linux-bcache@lfdr.de>; Thu,  8 May 2025 03:01:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93A851894FA6
+	for <lists+linux-bcache@lfdr.de>; Thu,  8 May 2025 12:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499B01DFDB8;
-	Thu,  8 May 2025 03:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19692224AF3;
+	Thu,  8 May 2025 12:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="cBzuG33s"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rksiu0jY"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail73.out.titan.email (mail73.out.titan.email [3.216.99.53])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6251F1D63F2
-	for <linux-bcache@vger.kernel.org>; Thu,  8 May 2025 03:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.216.99.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5E620C477;
+	Thu,  8 May 2025 12:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746673319; cv=none; b=ck65kkTbiqAa0GgI41naJC7fm+Xfcc02HN//WvVyJio7jX/OvCrAaVvyuX0bkG5+6z9gKmfqDAVTcjq+cqNB+N3uZAF8z8/RGRbDDd0sm5JNGmrOH1r8uXtXUE5aKgdJIYK6z6KKlifugbILQxVSeIUWpCjyA8GMH7f1OSv0ZKk=
+	t=1746708788; cv=none; b=BkahYy9XBWfLByHmaIfPlndCDLEw9/HGDJ4gGZhw/qTcYzmIC3F5m1oYCI4/cc6KxLLCfO5OkPsKP4ib315DtAGxjXYA4x5ryhmwlMbP5XpqcPNIQKld0q1g8FtYB/YMBlZFljVuCXsOyR/kUQws2SVNwlVt2WPEdrvKLyMhObs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746673319; c=relaxed/simple;
-	bh=7Tf1EqFD545JHpAWZXvSjHa28oRZjVWMUVk79TF5iA8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=PDRcCdw1OakS9PNcvOUEMx/UiuDbp8JrDKnIpTAt0uuoR9U/OOsIagAN2+7OWzTrD29BW2eZ+DKxgowvrARxpaJf/pmnzKMhF15X7KqmZKKRloL07FVsi3iaYQoaObNUn2KXfVaFzGMhiAYZLrpo00Rm3nPQkS7EoRHIhoF84cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=cBzuG33s; arc=none smtp.client-ip=3.216.99.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
-Received: from localhost (localhost [127.0.0.1])
-	by smtp-out.flockmail.com (Postfix) with ESMTP id 2A42E60360;
-	Thu,  8 May 2025 03:01:50 +0000 (UTC)
-DKIM-Signature: a=rsa-sha256; bh=RCzvqplp+4SerGTRkXu4/iLMKYFITxB7gCQ/kktCJrU=;
-	c=relaxed/relaxed; d=t12smtp-sign004.email;
-	h=cc:from:references:to:mime-version:in-reply-to:date:subject:message-id:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-	q=dns/txt; s=titan1; t=1746673310; v=1;
-	b=cBzuG33sSgGRIR9ebvPLQtox5qhT95Arw3IlLbP4nMW+4EdBFxOjc2NDYRwEz6hzb6JMTjFu
-	Of1gRa4Qu8Vy+3pFXkGX/ItJWp19nRzdxSap3pwl2L4Mml1kuZ6xiFwBGukL08ph3nUqlvqQnDZ
-	0Qfi+ucJ+FxSoRHS18NuInfc=
-Received: from smtpclient.apple (unknown [141.11.218.23])
-	by smtp-out.flockmail.com (Postfix) with ESMTPA id 1E03E60363;
-	Thu,  8 May 2025 03:01:46 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1746708788; c=relaxed/simple;
+	bh=+OKsmWIqirjLNLgB/OYgCox2giTsrvgb9T9Fw9gcsb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VVfj6Jo61vhWh6XyM87zKhADxWD+nHOZqo95/oFg4hsAXH2yI+vFWvfEUBqko5dLiwBIKtO/CWF0+fvrrEIiht1lwSkiC/pN4dD7kZ+xDpfMN9yCtWKKPhHO3RyzpO7pzhPKY754+eZcaom3jSh+ItlX1PYGlRzMxx1SYdmxkbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Rksiu0jY; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sXoi1TJFyjujTc+R9sDMTKQcOlnSzSlkhjvJHe++WoE=; b=Rksiu0jYbK/kyu9WBhj1U8uRIr
+	Hbg7hQOIJyghpic1Pu0xqwRyNRLN5ddzJKn1WebxVtuURQooQecIBTNOlBUgHJD+8fw/VNFcHGrlC
+	ROC0wEQsNw1P8/wr+QzblVBip28zJFoPX4Fl+AZoxIQnESbByvXfG90d7+I0jXbv6uQ0cJgELkN0I
+	WWOSz7P8ZfaMim5ZcY8GQKipIGPu/9KVsP6TzFzXcunTFpDjS9f3a0ZnPPnvuhj+s6817ynS9DLIh
+	qC8kPSk0DFsuAfQFSnR1aoiYC5+yU68Pta7RdEtlvpzYxKrscUppRR148A6ys4iYFv+sqhfnW40mZ
+	/BlITmyA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uD0kF-00000000WaK-1eHN;
+	Thu, 08 May 2025 12:52:59 +0000
+Date: Thu, 8 May 2025 13:52:59 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org,
+	"Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+	Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <jth@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>, slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de, frank.li@vivo.com,
+	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-btrfs@vger.kernel.org, gfs2@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-pm@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH 02/19] block: add a bdev_rw_virt helper
+Message-ID: <aBypK_nunRy92bi5@casper.infradead.org>
+References: <20250507120451.4000627-1-hch@lst.de>
+ <20250507120451.4000627-3-hch@lst.de>
+ <a789a0bd-3eaf-46de-9349-f19a3712a37c@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
-Subject: Re: [PATCH v2] md/bcache: Mark __nonstring look-up table
-Feedback-ID: :i@coly.li:coly.li:flockmailId
-From: Coly Li <i@coly.li>
-In-Reply-To: <389A9925-0990-422C-A1B3-0195FAA73288@coly.li>
-Date: Thu, 8 May 2025 11:01:34 +0800
-Cc: Coly Li <colyli@kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Ard Biesheuvel <ardb@kernel.org>,
- linux-bcache@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <851B250D-A22C-4B47-BBAC-55284B5B5790@coly.li>
-References: <20250418202130.it.887-kees@kernel.org>
- <389A9925-0990-422C-A1B3-0195FAA73288@coly.li>
-To: Kees Cook <kees@kernel.org>
-X-Mailer: Apple Mail (2.3826.500.181.1.5)
-X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1746673310016857733.5242.3433233303003199658@prod-use1-smtp-out1001.
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=fZxXy1QF c=1 sm=1 tr=0 ts=681c1e9e
-	a=USBFZE4A2Ag4MGBBroF6Xg==:117 a=USBFZE4A2Ag4MGBBroF6Xg==:17
-	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=VwQbUJbxAAAA:8
-	a=41P4AONiiAATRugwBd4A:9 a=QEXdDO2ut3YA:10 a=ZImdrWQ-kMQFOr_krkRP:22
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a789a0bd-3eaf-46de-9349-f19a3712a37c@kernel.dk>
 
+On Wed, May 07, 2025 at 08:01:52AM -0600, Jens Axboe wrote:
+> On 5/7/25 6:04 AM, Christoph Hellwig wrote:
+> > +int bdev_rw_virt(struct block_device *bdev, sector_t sector, void *data,
+> > +		size_t len, enum req_op op)
+> 
+> I applied the series, but did notice a lot of these - I know some parts
+> like to use the 2-tab approach, but I still very much like to line these
+> up. Just a style note for future patches, let's please have it remain
+> consistent and not drift towards that.
 
+The problem with "line it up" is that if we want to make it return
+void or add __must_check to it or ... then we either have to reindent
+(and possibly reflow) all trailing lines which makes the patch review
+harder than it needs to be.  Or the trailing arguments then don't line
+up the paren, getting to the situation we don't want.
 
-> 2025=E5=B9=B44=E6=9C=8819=E6=97=A5 11:55=EF=BC=8CColy Li <i@coly.li> =
-=E5=86=99=E9=81=93=EF=BC=9A
->=20
->=20
->=20
->> 2025=E5=B9=B44=E6=9C=8819=E6=97=A5 04:21=EF=BC=8CKees Cook =
-<kees@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
->>=20
->> GCC 15's new -Wunterminated-string-initialization notices that the 16
->> character lookup table "zero_uuid" (which is not used as a C-String)
->> needs to be marked as "nonstring":
->>=20
->> drivers/md/bcache/super.c: In function 'uuid_find_empty':
->> drivers/md/bcache/super.c:549:43: warning: initializer-string for =
-array of 'char' truncates NUL terminator but destination lacks =
-'nonstring' attribute (17 chars into 16 available) =
-[-Wunterminated-string-initialization]
->> 549 |         static const char zero_uuid[16] =3D =
-"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
->>     |                                           =
-^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>=20
->> Add the annotation (since it is not used as a C-String), and switch =
-the
->> initializer to an array of bytes.
->>=20
->> Signed-off-by: Kees Cook <kees@kernel.org>
->> ---
->> v2: use byte array initializer (colyli)
->> v1: =
-https://lore.kernel.org/all/20250416220135.work.394-kees@kernel.org/
->> Cc: Coly Li <colyli@kernel.org>
->> Cc: Kent Overstreet <kent.overstreet@linux.dev>
->> Cc: Ard Biesheuvel <ardb@kernel.org>
->> Cc: linux-bcache@vger.kernel.org
->> ---
->> drivers/md/bcache/super.c | 3 ++-
->> 1 file changed, 2 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
->> index e42f1400cea9..a76ce92502ed 100644
->> --- a/drivers/md/bcache/super.c
->> +++ b/drivers/md/bcache/super.c
->> @@ -546,7 +546,8 @@ static struct uuid_entry *uuid_find(struct =
-cache_set *c, const char *uuid)
->>=20
->> static struct uuid_entry *uuid_find_empty(struct cache_set *c)
->> {
->> - static const char zero_uuid[16] =3D =
-"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
->> + static const char zero_uuid[] __nonstring =3D
->=20
-
-Hi Kees,
-
-> I notice zero_uuid[16] changes to zero_uuid[], then the element number =
-information is removed.
->=20
-> Is it OK for GCC 15 to only add __nonstring and keep zero_uuid[16]?
-
-Ping ?
-
-You are expert here, I need your opinion.
-
-Thanks.
-
-Coly Li
-
-
-
->> + { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
->>=20
->> return uuid_find(c, zero_uuid);
->> }
->> --=20
->> 2.34.1
-
-
+I can't wait until we're using rust and the argument goes away because
+it's just "whatever rustfmt says".
 
