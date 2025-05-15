@@ -1,140 +1,134 @@
-Return-Path: <linux-bcache+bounces-1064-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1065-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B338CAB7AD2
-	for <lists+linux-bcache@lfdr.de>; Thu, 15 May 2025 03:05:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12281AB7E8C
+	for <lists+linux-bcache@lfdr.de>; Thu, 15 May 2025 09:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0674C4A6B25
-	for <lists+linux-bcache@lfdr.de>; Thu, 15 May 2025 01:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5821BA36AD
+	for <lists+linux-bcache@lfdr.de>; Thu, 15 May 2025 07:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85B2239E8A;
-	Thu, 15 May 2025 01:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813B9234963;
+	Thu, 15 May 2025 07:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ITlM9HhO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RE8zObek"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C995721ABDC
-	for <linux-bcache@vger.kernel.org>; Thu, 15 May 2025 01:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DBE282F1
+	for <linux-bcache@vger.kernel.org>; Thu, 15 May 2025 07:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747271108; cv=none; b=HF/qN0zpapDNfIsP0R5NWRE+8hOEufulZ65lDMh2xAt8iSa/qzPwocDTZ0a3jWoQVFU/19Wpvo25qMB5GU/15t6c2oK4SYVe9oNs0kSftiR0+Om1mJx4XNffSdNZEEYlD8y2Ipf+IHQu4y0dthJ4dQh3Vil41NU0ooYOShCQ1BQ=
+	t=1747293133; cv=none; b=lCxPZgteGPqZFnlgOxY8ALNCdaCk7tiY0BVKKpmHInI4C1Gp0BmZtqtiQx4kaCPQPqFvA2agtmay0zUxAWqjUiFnuLEcgpBZdZSTVPn9pbUVmrJlO/oiedJjvCiv61tarGKd4ILZ7bo4HNcs6K2d4on6JlHkKtNzuZBPCd6AnY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747271108; c=relaxed/simple;
-	bh=mQHRA3C4kNNUPtoBkjU/8j9PZHgrIKCSH7nrD+80RVQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=irnZKUuMX3g9PYCk2uZpoL91Xr/DPqUFApOESGjFXNlZOrH5OA/PSheSHNVGaaV8/ov6VugPOtR920VqJjnzEfCYlFEF4S/AmLBEfc9ztXd/FDYmYJAOwzejMkl+8br+tA3XrV8V4lEIqYU3OI9XoV6kNuHX9oRsHzCgueEdgAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ITlM9HhO; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5fce6c7598bso4964a12.0
-        for <linux-bcache@vger.kernel.org>; Wed, 14 May 2025 18:05:06 -0700 (PDT)
+	s=arc-20240116; t=1747293133; c=relaxed/simple;
+	bh=05yiA47SwwwChBhlAxd/kStWbUeLI19QKh5gi2kU39Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F/BTPidrZhAXFXLuYAJjl3rafrT6F3YcdfvXw1kd97Zk1LRzbfdqR0oVLSQVjXRLlU8mnfuU0Cf9AqWLuI0Tqha+9Ti3RyjB8bbzgANSAMoPTCcvpYmaBxv4XBmL0SvTof+O98nlq0+g17BRruzksKP7MKr+J8RT+qVw29o/ogA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RE8zObek; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-30c47918d84so585512a91.3
+        for <linux-bcache@vger.kernel.org>; Thu, 15 May 2025 00:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747271105; x=1747875905; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1jryyScViGwfyr5BFWO+kmIHDngi7cayDlaE6TwoEBI=;
-        b=ITlM9HhONEHN0FJ7j7OmGfqi07X/1r/IFm3CHphNVKDHKewKCtADKa2NDIDJ3e6Itr
-         KRQc5JwGMPLteNmrvl6ks790LFweMzLIMXYK5ErxsAO4ZzbU8aMMC2dyrWTGSj758fCJ
-         vs1hCkK9ROunlF0z7LZa04vAVsGgYCMtxzAfGJ5Qhxs+B2pIGUhxseFGYkMRswdRhAdI
-         o2uCbSECOA/7LGK1SX3ehRJ1Eg6ZRddgNvNf4e3rtBqHaTPJCl5mOB2VnrvedRUR4sEz
-         91U2IO/3GUGl6+6GBxM7LdzlkkzBj+BJx2ryznporkvCPmnLDVtzHfAHHY71N3V+K3u1
-         gErQ==
+        d=gmail.com; s=20230601; t=1747293131; x=1747897931; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KM7CcVQREkupZFRuk/7dQrxgkHnSPuQ+JajX4hGpQy0=;
+        b=RE8zObek2e25SqpdMQ0YQ18FifruVAncx/WYJlnkJvjAcnjOVS9qC/OxstBA4R7TgD
+         aB4Ur9HRAgynUDHjGqQs+Hg1/oDmcFakIK41ekTSBzqaw+TR8iW0ovNO1HNfLsv0clqd
+         OAunHp+kGejAENeFpHh7aJy4F+C9IqwppQFzXQsvr5RAUgWJsnrX5ygTn4lAzALH6li/
+         Aq+HFP1cMs52xZg8jXeuHqSxi7PbwYKvnyI/2bslzfXpfNZPpbhvRKW2HKEFJEY3i5pd
+         iBm7KRNJU939mpv/SuFr8P9OB4dK+uYiK90kWOhG1QCZZrhYXuivbzvUheFNUcA7FDI9
+         GSAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747271105; x=1747875905;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1jryyScViGwfyr5BFWO+kmIHDngi7cayDlaE6TwoEBI=;
-        b=kUoIh4RTdEpxOTH2Q7PErGwyReji8DoYFofiPKdI1T5EZ0ZO3SU6IHyYgdXOay268w
-         beJ5oTlpbW1Ax1hyE7RKyODfbPBnNlrbH7BbL4eUId7t79IpGJBBkQamfgwdzdtnfO3j
-         5PBYZPY/GWQccRCWL2z8bMUqR++YiRavUtYzhfFer1XmDIUQaXCa6MDa9I7gC4NLq6ax
-         UqJ8p0vvS+Ic7fBmSOXb+bDLaJIbUMKYn/QRR4dlgqIrPigkNLjnuNad6FUIo0cKOm98
-         5r8X18RGbSjiw38UDewEBfLgSW0+RbMnkpiQ2N51o36HWJqYH8Wv+PzOdt+YV6/uOkLb
-         Yx/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUBE0LRqE8IxMl5OPQ769fMvNNmkpG8mBTAYf/7JZq4GSkUMEuLja/mq5iPxY2b0Fjt5c6HKlWYGIxTtvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMk/C/M3UoFwQQUFhD0f/OAT7F+BANWROo9IuzPRdgQWp9B45j
-	v1bLnksy2+kFSjuGBx8xslMLeJM5pjGsRUCojI/NDXrw72SwxkMBS24CUPOJyK9g+lNe4xYW8Nr
-	9sOKJax6rfUWuLsA8U7qRhhif3BlwapqQIaX/wcSL
-X-Gm-Gg: ASbGncvhmLBmDgus/GTZDC0VM/DeI0YwotNUFACiZEjMkwWFu78I6DAEKvCL750X/zM
-	Z6xOKKGm6jCGMiKzKgvx64LDpwJZi8iBVlvZRQe6RAWUaU+ZZeeQDe74VpCDwv4/8O4R1yJRbjT
-	FxcEq3SPksZ9+hwEx+6Ex50KJt4d8xbAAd5Dw/PFM+lkpqDpFGSumyi6K0bKBUV5eNDTmr8dNh3
-	Q==
-X-Google-Smtp-Source: AGHT+IGmlcEriAazArYS2n6axPqaGJTlgsvWxUO7ZHzR8373ez3x/XhdZqslVmaiy9KLbqrAKg2h7KR6DVDuCIU57aA=
-X-Received: by 2002:a50:cd19:0:b0:5fc:a9f0:3d15 with SMTP id
- 4fb4d7f45d1cf-5ffce28bb43mr22472a12.1.1747271104792; Wed, 14 May 2025
- 18:05:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747293131; x=1747897931;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KM7CcVQREkupZFRuk/7dQrxgkHnSPuQ+JajX4hGpQy0=;
+        b=C91uqmBF5T2fWHoOBganIS0tzP0wsdKpuv+pPUZKOP87aFxj7/AslWHxHcMZHxb4Ls
+         nIsVbbGXQOFcWQcAdV9cNXWKTzfMTpn7O4i7DsMR3S85hyKLYVi5iXlnSORtqjdj7QMS
+         iu9z70URaH/XAfYyVF7Q3emj+udo6NO8Rc+J9qucZMptVjqtYqksgAbipbcuyDrm0Btp
+         Wvu1pv2nb3WATDVByciUMAdN5nTtaQIhuExj6+R5stUlnjQFZICQri9QHhlyxvOXUByO
+         4Ay7Lw0HzS83TkrXbloLGX8Ty8KBr1OnqeI7QvYASfZx8a8JNfNn39G+nLenA4Iwbf4H
+         cdDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXd/prwvOXTH8Em3tfrOnWopVjsX/EGJnlvyoV4q3HEDpll5YwESORW+p1kj6K6H8igfi3rUOQzKd85PTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoxdSd7jDi0KF5pya5ld11rIviDpZOvB6FTQNfUU84CfmXzZaM
+	K/lV2KHJrjvN+mX/RDBfswNIFHc92sejubrsEY5WPbcDXs0OyNGq
+X-Gm-Gg: ASbGncuzRfmr9y/Hvyz7aCxGrRJsFLUKYTLBxtL6XZpWBjt2dSmkymxGs/9Tw3d8oFV
+	4X/Y42Ifqlh6snL5rRb1joIci8JzzJQul+AJVaLEOUg9+9S81bYrNun/VLph4fvFiCfOVHpuE9q
+	Fr16veoR0hOvASAGEp/IZlhcm4Sk4s6kYjw4PIR0gcXYIYNZP3s7ZHbSmOB/5TVkW7QdjaG0wXD
+	TK0jbd2bhi9SvTGBIH1ioMEzpwHZWDUyx19800JHUUer1GG1tTe1cR1kDVe5Xz15j6G84lLn4Lj
+	XDHP3HBgHLVghsPiZCbpvGFBzk9jCgWMwp426IRByg82o3wsf03F6Ry2cGuYB5DN0WlNqQ5umUg
+	9Xwg=
+X-Google-Smtp-Source: AGHT+IF5Wr+ouhw1ACaIg1GVBTBXWC/JOZo8yEGwe8fh7kSelsoNWzPwWCQj3J+JL87sXCVpPEUIsw==
+X-Received: by 2002:a17:90b:57e6:b0:30a:a50e:349c with SMTP id 98e67ed59e1d1-30e5194739amr2206765a91.30.1747293130698;
+        Thu, 15 May 2025 00:12:10 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e33401731sm2765564a91.1.2025.05.15.00.12.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 May 2025 00:12:10 -0700 (PDT)
+Date: Thu, 15 May 2025 15:12:06 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Robert Pang <robertpang@google.com>
+Cc: Coly Li <colyli@kernel.org>, Coly Li <i@coly.li>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcache@vger.kernel.org,
+	Mingzhe Zou <mingzhe.zou@easystack.cn>
+Subject: Re: [PATCH 0/1] bcache: reduce front IO latency during GC
+Message-ID: <aCWTxp7/t8nnBuzD@visitorckw-System-Product-Name>
+References: <20250414224415.77926-1-robertpang@google.com>
+ <75D48114-A5BD-4AC6-9370-D61456FD4FD2@coly.li>
+ <CAJhEC07JauBGfqmEaYbV9XuLUkCdbart-gnbuMWYE7JwzG4CsA@mail.gmail.com>
+ <CAJhEC04Po-OtwDe2Uxo2w-0yhgcemo5sn816sT7jNhnEdRxY4Q@mail.gmail.com>
+ <pxfu7dxykuj2qnw4m2hyjohmwdyq562zlwnvdphqdbwvttztki@dyx4sa553clx>
+ <CAJhEC06F_AtrPgw2-7CvCqZgeStgCtitbD-ryuPpXQA-JG5XXw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250414224415.77926-1-robertpang@google.com> <75D48114-A5BD-4AC6-9370-D61456FD4FD2@coly.li>
- <CAJhEC07JauBGfqmEaYbV9XuLUkCdbart-gnbuMWYE7JwzG4CsA@mail.gmail.com>
- <CAJhEC04Po-OtwDe2Uxo2w-0yhgcemo5sn816sT7jNhnEdRxY4Q@mail.gmail.com>
- <pxfu7dxykuj2qnw4m2hyjohmwdyq562zlwnvdphqdbwvttztki@dyx4sa553clx> <CAJhEC06F_AtrPgw2-7CvCqZgeStgCtitbD-ryuPpXQA-JG5XXw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <CAJhEC06F_AtrPgw2-7CvCqZgeStgCtitbD-ryuPpXQA-JG5XXw@mail.gmail.com>
-From: Robert Pang <robertpang@google.com>
-Date: Wed, 14 May 2025 18:04:53 -0700
-X-Gm-Features: AX0GCFsdwE0gCPUSFKyTiyIAZUCpsbNnLlxY7rPjy98E49KIeg3yVXUz5pa6qYo
-Message-ID: <CAJhEC05cPVvm0COsy3YDhKR5_epVOQtrQTLzuBDP8h1HGQQKmA@mail.gmail.com>
-Subject: Re: [PATCH 0/1] bcache: reduce front IO latency during GC
-To: Coly Li <colyli@kernel.org>
-Cc: Coly Li <i@coly.li>, Kent Overstreet <kent.overstreet@linux.dev>, linux-bcache@vger.kernel.org, 
-	Mingzhe Zou <mingzhe.zou@easystack.cn>, Kuan-Wei Chiu <visitorckw@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Here is the link to the changes to bcache and invalidate_buckets_lru()
-specifically.
+Hi Robert,
 
-https://lore.kernel.org/linux-bcache/20240524152958.919343-16-visitorckw@gm=
-ail.com/T/#u
-
-On Wed, May 14, 2025 at 5:58=E2=80=AFPM Robert Pang <robertpang@google.com>=
- wrote:
->
+On Wed, May 14, 2025 at 05:58:01PM -0700, Robert Pang wrote:
 > Hi Coly,
->
-> My apologies for the delay in providing this update; comprehensive testin=
-g
+> 
+> My apologies for the delay in providing this update; comprehensive testing
 > takes some time to complete.
->
+> 
 > As you suggested, I conducted extensive tests for 24 hours against the
-> latest 6.14.5 Linux kernel, exploring more configurations to get a comple=
-te
+> latest 6.14.5 Linux kernel, exploring more configurations to get a complete
 > picture:
->
+> 
 > 1. 4KB block size with writethrough mode
 > 2. 4KB block size with writeback mode (70% dirty)
 > 3. 1MB block size with writethrough mode
->
-> The detailed results, available at [1], consistently demonstrate that our=
- patch
-> is effective in significantly reducing latency during garbage collection.=
- This
-> holds true for both the default writethrough mode and the 70% writeback m=
-ode.
-> As anticipated, with 1MB block sizes, we observed no difference in latenc=
-y
+> 
+> The detailed results, available at [1], consistently demonstrate that our patch
+> is effective in significantly reducing latency during garbage collection. This
+> holds true for both the default writethrough mode and the 70% writeback mode.
+> As anticipated, with 1MB block sizes, we observed no difference in latency
 > because the number of btree nodes is much smaller.
->
+> 
 > [1] https://gist.github.com/robert-pang/817fa7c11ece99d25aabc0467a9427d8
->
-> However, during these tests, we've uncovered a new and distinct latency p=
-roblem
-> that appears to be introduced in the recent Linux kernel. This issue mani=
-fests
+> 
+> However, during these tests, we've uncovered a new and distinct latency problem
+> that appears to be introduced in the recent Linux kernel. This issue manifests
 > as frequent and periodic latency spikes that occur outside of garbage
 > collection.
 > Below is a snippet of the latency data illustrating this:
->
+> 
 > time (s)  median (ms)  max (ms)
 > 60810   2.28     679.37
 > 60840   2.32   2,434.24 *
@@ -167,96 +161,121 @@ fests
 > 61650   2.54   1,690.45 *
 > 61680   2.58     679.37
 > 61710   2.78     679.37
->
+> 
 > ** garbage collection
 > * cache replacement
->
-> Based on the consistent periodicity of these spikes, we deduce that they =
-are
-> linked to the invalidate_buckets_lru() function during cache replacement.=
- This
-> function was recently modified to use min heap operations [2]. To confirm=
- our
-> hypothesis, we reverted the relevant commits and re-ran the tests. Result=
-s show
-> that the latency spikes completely disappeared, positively confirming tha=
-t the
-> min heap changes introduce this regression. Furthermore, these changes al=
-so
-> reduce the effectiveness of our GC patch. It appears that the min heap ch=
-anges
+> 
+> Based on the consistent periodicity of these spikes, we deduce that they are
+> linked to the invalidate_buckets_lru() function during cache replacement. This
+> function was recently modified to use min heap operations [2]. To confirm our
+> hypothesis, we reverted the relevant commits and re-ran the tests. Results show
+> that the latency spikes completely disappeared, positively confirming that the
+> min heap changes introduce this regression. Furthermore, these changes also
+> reduce the effectiveness of our GC patch. It appears that the min heap changes
 > reduce heap sort speed somehow in invalidate_buckets_lr() and in GC.
->
-> [2] https://lore.kernel.org/linux-bcache/ZxzkLJmhn3a%2F1ALQ@visitorckw-Sy=
-stem-Product-Name/T/#m0dd24ba0c63615de465d3fec72dc73febb0f7a94
->
+
+Thank you for reporting this regression and for taking the time to
+perform such thorough testing.
+
+My current hypothesis is that the root cause may be related to the
+earlier change where the min heap API was converted from inline to
+non-inline [1]. As a result, the comparison function used by the min
+heap is now invoked via an indirect function call instead of a direct
+one, which introduces significant overhead - especially when
+CONFIG_MITIGATION_RETPOLINE is enabled, as the cost of indirect calls
+can be quite substantial in that case.
+
+I understand that running these tests takes considerable time, but
+could you try the attached diff to see if it addresses the regression?
+
+Regards,
+Kuan-Wei
+
+[1]: https://lore.kernel.org/lkml/20241020040200.939973-2-visitorckw@gmail.com/
+
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index 8998e61efa40..862e7118f81d 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -207,15 +207,15 @@ static void invalidate_buckets_lru(struct cache *ca)
+ 		if (!bch_can_invalidate_bucket(ca, b))
+ 			continue;
+ 
+-		if (!min_heap_full(&ca->heap))
+-			min_heap_push(&ca->heap, &b, &bucket_max_cmp_callback, ca);
++		if (!min_heap_full_inline(&ca->heap))
++			min_heap_push_inline(&ca->heap, &b, &bucket_max_cmp_callback, ca);
+ 		else if (!new_bucket_max_cmp(&b, min_heap_peek(&ca->heap), ca)) {
+ 			ca->heap.data[0] = b;
+-			min_heap_sift_down(&ca->heap, 0, &bucket_max_cmp_callback, ca);
++			min_heap_sift_down_inline(&ca->heap, 0, &bucket_max_cmp_callback, ca);
+ 		}
+ 	}
+ 
+-	min_heapify_all(&ca->heap, &bucket_min_cmp_callback, ca);
++	min_heapify_all_inline(&ca->heap, &bucket_min_cmp_callback, ca);
+ 
+ 	while (!fifo_full(&ca->free_inc)) {
+ 		if (!ca->heap.nr) {
+@@ -227,8 +227,8 @@ static void invalidate_buckets_lru(struct cache *ca)
+ 			wake_up_gc(ca->set);
+ 			return;
+ 		}
+-		b = min_heap_peek(&ca->heap)[0];
+-		min_heap_pop(&ca->heap, &bucket_min_cmp_callback, ca);
++		b = min_heap_peek_inline(&ca->heap)[0];
++		min_heap_pop_inline(&ca->heap, &bucket_min_cmp_callback, ca);
+ 
+ 		bch_invalidate_one_bucket(ca, b);
+ 	}
+
+> 
+> [2] https://lore.kernel.org/linux-bcache/ZxzkLJmhn3a%2F1ALQ@visitorckw-System-Product-Name/T/#m0dd24ba0c63615de465d3fec72dc73febb0f7a94
+> 
 > You may download the full test result data from these links.
->
-> https://gist.github.com/robert-pang/5df1d595ee77756c0a01d6479bdf8e34#file=
--bcache-latency-4kb-no-patch-csv
-> https://gist.github.com/robert-pang/5df1d595ee77756c0a01d6479bdf8e34#file=
--bcache-latency-4kb-with-patch-csv
-> https://gist.github.com/robert-pang/bcc26a3aa90dc95a083799cf4fd48116#file=
--bcache-latency-4kb-wb-no-patch-csv
-> https://gist.github.com/robert-pang/bcc26a3aa90dc95a083799cf4fd48116#file=
--bcache-latency-4kb-wb-with-patch-csv
-> https://gist.github.com/robert-pang/7036b06b66c8de7e958cdbddcd92a3f5#file=
--bcache-latency-1mb-no-patch-csv
-> https://gist.github.com/robert-pang/7036b06b66c8de7e958cdbddcd92a3f5#file=
--bcache-latency-1mb-with-patch-csv
-> https://gist.github.com/robert-pang/40f90afdea2d2a8c3f6e22ff959eff03#file=
--bcache-latency-4kb-no-patch-min-heap-reverted-csv
-> https://gist.github.com/robert-pang/40f90afdea2d2a8c3f6e22ff959eff03#file=
--bcache-latency-4kb-with-patch-min-heap-reverted-csv
->
+> 
+> https://gist.github.com/robert-pang/5df1d595ee77756c0a01d6479bdf8e34#file-bcache-latency-4kb-no-patch-csv
+> https://gist.github.com/robert-pang/5df1d595ee77756c0a01d6479bdf8e34#file-bcache-latency-4kb-with-patch-csv
+> https://gist.github.com/robert-pang/bcc26a3aa90dc95a083799cf4fd48116#file-bcache-latency-4kb-wb-no-patch-csv
+> https://gist.github.com/robert-pang/bcc26a3aa90dc95a083799cf4fd48116#file-bcache-latency-4kb-wb-with-patch-csv
+> https://gist.github.com/robert-pang/7036b06b66c8de7e958cdbddcd92a3f5#file-bcache-latency-1mb-no-patch-csv
+> https://gist.github.com/robert-pang/7036b06b66c8de7e958cdbddcd92a3f5#file-bcache-latency-1mb-with-patch-csv
+> https://gist.github.com/robert-pang/40f90afdea2d2a8c3f6e22ff959eff03#file-bcache-latency-4kb-no-patch-min-heap-reverted-csv
+> https://gist.github.com/robert-pang/40f90afdea2d2a8c3f6e22ff959eff03#file-bcache-latency-4kb-with-patch-min-heap-reverted-csv
+> 
 > Best regards
 > Robert Pang
->
-> On Sat, May 3, 2025 at 10:33=E2=80=AFAM Coly Li <colyli@kernel.org> wrote=
-:
+> 
+> On Sat, May 3, 2025 at 10:33 AM Coly Li <colyli@kernel.org> wrote:
 > >
 > > On Thu, May 01, 2025 at 06:01:09PM +0800, Robert Pang wrote:
 > > > Hi Coly,
 > > >
-> > > Please disregard the test results I shared over a week ago. After dig=
-ging
+> > > Please disregard the test results I shared over a week ago. After digging
 > > > deeper into the recent latency spikes with various workloads and by
-> > > instrumenting the garbage collector, I realized that the earlier GC l=
-atency
-> > > patch, "bcache: allow allocator to invalidate bucket in gc" [1], wasn=
-'t
-> > > backported to the Linux 6.6 branch I tested my patch against. This om=
-ission
-> > > explains the much higher latency observed during the extended test be=
-cause the
+> > > instrumenting the garbage collector, I realized that the earlier GC latency
+> > > patch, "bcache: allow allocator to invalidate bucket in gc" [1], wasn't
+> > > backported to the Linux 6.6 branch I tested my patch against. This omission
+> > > explains the much higher latency observed during the extended test because the
 > > > allocator was blocked for the entire GC. My sincere apologies for the
 > > > inconsistent results and any confusion this has caused.
 > > >
 > >
-> > Did you also backport commit 05356938a4be ("bcache: call force_wake_up_=
-gc()
-> > if necessary in check_should_bypass()") ? Last time when you pushed me =
-to
-> > add commit a14a68b76954 into mainline kernel, I tested a regression fro=
-m this
-> > patch and fixed it. Please add this fix if you didn't, otherwise the te=
-sting
+> > Did you also backport commit 05356938a4be ("bcache: call force_wake_up_gc()
+> > if necessary in check_should_bypass()") ? Last time when you pushed me to
+> > add commit a14a68b76954 into mainline kernel, I tested a regression from this
+> > patch and fixed it. Please add this fix if you didn't, otherwise the testing
 > > might not be completed.
 > >
 > >
-> > > With patch [1] back-patched and after a 24-hour re-test, the fio resu=
-lts clearly
-> > > demonstrate that this patch effectively reduces front IO latency duri=
-ng GC due
-> > > to the smaller incremental GC cycles, while the GC duration increase =
-is still
+> > > With patch [1] back-patched and after a 24-hour re-test, the fio results clearly
+> > > demonstrate that this patch effectively reduces front IO latency during GC due
+> > > to the smaller incremental GC cycles, while the GC duration increase is still
 > > > well within bounds.
 > > >
 > >
-> > From the performance result in [2], it seems the max latency are reduce=
-d,
-> > but higher latency period are longer. I am not sure whether this is a h=
-appy
+> > From the performance result in [2], it seems the max latency are reduced,
+> > but higher latency period are longer. I am not sure whether this is a happy
 > > result.
 > >
 > > Can I have a download link for the whole log? Then I can look at the
@@ -302,34 +321,26 @@ appy
 > > >
 > > > The complete latency data is available at [2].
 > > >
-> > > I will be glad to run further tests to solidify these findings for th=
-e inclusion
-> > > of this patch in the coming merge window. Let me know if you'd like m=
-e to
+> > > I will be glad to run further tests to solidify these findings for the inclusion
+> > > of this patch in the coming merge window. Let me know if you'd like me to
 > > > conduct any specific tests.
 > >
 > > Yes, more testing are necessary, from 512 Bytes block size to 1 MiB or
 > > 8MiB block size. We need to make sure it won't introduce performance
 > > regression in other workload or circumstances.
 > >
-> > I don't have plan to submit this patch in this merge window, and please=
- don't
+> > I don't have plan to submit this patch in this merge window, and please don't
 > > push me. For performance improvement change, I prefer the defalt
-> > configuration will cover most of work loads, so more testing and perfor=
-amce
-> > data are desired. E.g. the patch you mentioned (commit a14a68b76954 "bc=
-ache:
-> > allow allocator to invalidate bucket in gc"), it had been deployed in E=
-asy
+> > configuration will cover most of work loads, so more testing and perforamce
+> > data are desired. E.g. the patch you mentioned (commit a14a68b76954 "bcache:
+> > allow allocator to invalidate bucket in gc"), it had been deployed in Easy
 > > Stack product environment for 20+ months before it got merged.
 > >
 > > Thanks.
 > >
 > > >
-> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t/commit/?id=3Da14a68b76954e73031ca6399abace17dcb77c17a
-> > > [2[ https://gist.github.com/robert-pang/cc7c88f356293ea6d43103e6e5f91=
-80f
+> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a14a68b76954e73031ca6399abace17dcb77c17a
+> > > [2[ https://gist.github.com/robert-pang/cc7c88f356293ea6d43103e6e5f9180f
 > >
 > > [snipped]
 > >
