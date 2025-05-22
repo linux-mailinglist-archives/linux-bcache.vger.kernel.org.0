@@ -1,221 +1,130 @@
-Return-Path: <linux-bcache+bounces-1076-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1077-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3A1ABF7FF
-	for <lists+linux-bcache@lfdr.de>; Wed, 21 May 2025 16:40:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E50FAC0CD4
+	for <lists+linux-bcache@lfdr.de>; Thu, 22 May 2025 15:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1617C8C71E6
-	for <lists+linux-bcache@lfdr.de>; Wed, 21 May 2025 14:40:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7072D16EDB9
+	for <lists+linux-bcache@lfdr.de>; Thu, 22 May 2025 13:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270B51A23BB;
-	Wed, 21 May 2025 14:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6C328C035;
+	Thu, 22 May 2025 13:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UN+USksk"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EaKwX2/I"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867C314A627
-	for <linux-bcache@vger.kernel.org>; Wed, 21 May 2025 14:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABE628C5CA
+	for <linux-bcache@vger.kernel.org>; Thu, 22 May 2025 13:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747838431; cv=none; b=dd0YNmcnwodm++jdQhLXPXwiUZzb6NyasCjf8+mBdIJBTQCC6YJQHz9QDkVW4mWcB3TbElcn6iYCX/lCL9PIh/mUfXoz6ixSvUnrGRFO9IkhTFqFq4QJ16YtgwGy8Y+TZhLD4e6nJPCLlio/XR9KHcYQSdvvwjrR1k94e8bKhwI=
+	t=1747920607; cv=none; b=HNVvcYHliNShgMGqoMD+F8qjdhf652OyGbbJVGFJxAce+8rn1N76FoA+q1cv5E4/FQg/KSj1p1XnQ0EkZiKpoUTcup0K/wqWDWtjm3TO8UJs1wsM8+CN6fbXn9NjMsO6Rb2u+uirT8p75JYzAB/1IlJWj1lP58m9puJsGrjRgMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747838431; c=relaxed/simple;
-	bh=HPqbpXTpX960SO4VqOl9qF7bYXxNIhtkU1X0Fl/8uyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NyBoupu4LAfB87ufELbseyFtGTpE09Qqf7W3sTBiJJFx8h1SEYTbAE5jZ6R69jZ3DE8s1XwDocwKA1aVCnsrQ7GowToE6Dk15uW5LlddJ+BxhfolfpWCbT06id1l5tn7976GmYrcQtRifycSQbnbWZEHA76ra9vJgGLViZ5pCvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UN+USksk; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-742c46611b6so5122442b3a.1
-        for <linux-bcache@vger.kernel.org>; Wed, 21 May 2025 07:40:29 -0700 (PDT)
+	s=arc-20240116; t=1747920607; c=relaxed/simple;
+	bh=NHyEFssMjma0bg2s2drOqDgNRfGG15lqfqeZ7WbrMPo=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WSx0Bur8FBbipaZ8Ag1OefXQoBrajrvd2q9rPanEIUMZ8dQSrAxiMqV5+oWqkNGcmFJ+SktsmYa8eAxj1c8QFOoeNZtC9Jml8V2MtffWHBpXmDBqR7tafwwmEwynl+mCuyOyOelbg1SB0SD4PvbSCiDXamw7v0OOylGLjhAuc0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EaKwX2/I; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4e2b21d1b46so1113873137.3
+        for <linux-bcache@vger.kernel.org>; Thu, 22 May 2025 06:30:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747838429; x=1748443229; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Q9KsS35gm1ptiR9LVXn0dsrOt1QPg+8u8qnwRSOVqmM=;
-        b=UN+USkskeNTGwTJKv+KZQIBXOBeiYRtk/RGgYOp3hjpBl+WeCu4KyEx6FvoIiXfJyr
-         nRvKKSBFoo4ukUHuaTs2KAWSX4H7ro/uOBYS6Fsy9tkFV7HfhhrWw8qTW8KZ95uR9oSM
-         B5X09MMO3/nQIMJnDGxcAuXNgIeJRlwpihukQdL7L5Y19311mszT2A9+IAWcxArN1Fme
-         /wUBusOXGn7jitrEm6OhYlgrmqU0xOi//JCT6jOGaRJKyPoSzkUHwPtSeHXITaJD6ek1
-         Y9PxmIEqC1CCUWXH1KvpWPOU7TE3tpux1vMciN6RPzKCuLR/S1S/It9RfhJ7UsnLLBl9
-         u/lA==
+        d=linaro.org; s=google; t=1747920604; x=1748525404; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tx8vZFDZpMbO+Kg6fLcfBD8qiDuWKhB/aBNAjV7446I=;
+        b=EaKwX2/IRpfkrQbTFAjDRxBJ7OQS0h4443A7c7TDZtCp5KEtCoLMDF2VL4pBqlKL9D
+         tGy2wqY0bMEwsteK6PPwQDpux4qeeGkVA1M3/GC0Z1yiwisxqtcvGhKNl56fDiRaklXJ
+         Qj1IAcmtolJsMM/q6Wb4XxBA+zJGjYzi5EeCneLBeqgsYwiTlFFTmRbDKlg6jY+DPKRB
+         p2BuiGRs5rq96K3SH8Aorr22HY1xB7LLN26xqZh+5XNPkCaw1hILN9ZdkTZZZvvQ0t74
+         QxVwE+/1ogTDWxsWdANY/YYvwzIC6O+ZQkAy1IHshTrevC3cQ+OgZkwKTP5FhW3ZeVyG
+         PxwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747838429; x=1748443229;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q9KsS35gm1ptiR9LVXn0dsrOt1QPg+8u8qnwRSOVqmM=;
-        b=X5peukTAwoPTJJqAXpVToHV1Fy/uamIAycFpJtqDScXZpeaelfinEynU1RIV/Pvxqg
-         JTVUmABoZjfqob+zRQUoajQ69SX7GR9pGuOO/0h0G64FsZfWxzts8JyNQdy5LP/vrEmM
-         VSgGuqu2L1WHRJeq8pNplgHRZAYihPndqkQXGon4irkqrXW87TPR1yVX8hDcOs8HU9KJ
-         NJZhU+FTtCXR1+R9oIEKpKVYVEL/ykNar1aiBi6IgChR0+h3ZjoyJZz1GFeMk0kkscho
-         eG3DrS/fCOnMeN8FfHYKXQ8bRHTHN67zGJfjGJVc6yrMuqjRbmlBrUBJNK1+JPV8HroO
-         jmzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUu1Acsm24Wvf9CBVXaT7TIeobm3WCBQwf5+o/l1HOZLAuPUdUnRu8PnC7sLl4K4KNVNzOLXH5ZXcfEgec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIcALVpPLc1Z8uLr4iem4YtMeMgLXtdGeRLEkJ4deheOR0zNnH
-	05B6bGyIJVutcwYZH5MmzQVdwy8afseMB1P2RISmRtyRpCqhAFvyCgvWoogqLqCM
-X-Gm-Gg: ASbGnctbDRPiSBs1AVSo4i3tfoTtwD084FuwsL3DROrh5Mfr+8eO+tnjXuA8W0TWozj
-	KUYJCOtJOBexJXmjNi145EyLX9F3sUSdwg7EWI4vzj39GoyOlzVw8tmSzODfbDEYGamv5HgHq3Z
-	HSJ9pNxPUIV2rn0XCYvG5VAAZ6ytIY3jaQpL3XzIfMB8e3pn7l1S3NzsIM2QsPdwzxgAU23b5z+
-	OjxprCm8XV0HlD3dDCC2TH0gz4rT5Yqlk+DV/4nP4NaNftmd9kUnXZGdfSVjgeOdPXOC72Q74pa
-	bE13FtpfRODSCK/Y0VAQuffGSk1M9FXuuDQBRpvygPrXtvnzR/GH5I7I2sLWvXNwlLK+98+ywk7
-	m04o=
-X-Google-Smtp-Source: AGHT+IENFeWTlRHBKQfVzrQa3sAbXULaMTWMg2ks+2bFhONO7WfJ5jywPOr2XrJrrjnaoVRIN+OLTQ==
-X-Received: by 2002:a05:6a21:3385:b0:1fa:9819:b064 with SMTP id adf61e73a8af0-2170cb407f7mr29628951637.18.1747838428581;
-        Wed, 21 May 2025 07:40:28 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a98a4755sm9964159b3a.179.2025.05.21.07.40.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 07:40:28 -0700 (PDT)
-Date: Wed, 21 May 2025 22:40:24 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Coly Li <i@coly.li>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Robert Pang <robertpang@google.com>, Coly Li <colyli@kernel.org>,
-	linux-bcache@vger.kernel.org,
-	Mingzhe Zou <mingzhe.zou@easystack.cn>
-Subject: Re: [PATCH 0/1] bcache: reduce front IO latency during GC
-Message-ID: <aC3l2J0zBj/OnKwj@visitorckw-System-Product-Name>
-References: <pxfu7dxykuj2qnw4m2hyjohmwdyq562zlwnvdphqdbwvttztki@dyx4sa553clx>
- <CAJhEC06F_AtrPgw2-7CvCqZgeStgCtitbD-ryuPpXQA-JG5XXw@mail.gmail.com>
- <aCWTxp7/t8nnBuzD@visitorckw-System-Product-Name>
- <CAJhEC04qo8CFcFi6tmn9Y28MpasVB93Duboj1gqR1nfOXO+Z2g@mail.gmail.com>
- <aCdkgzPGWzcjXCrf@visitorckw-System-Product-Name>
- <AD23C0A6-E754-4E43-AF54-BCFF82B19450@coly.li>
- <aCxszsXC1QnHYTzS@visitorckw-System-Product-Name>
- <8CA66E96-4D39-4DB1-967C-6C0EDA73EBC1@coly.li>
- <aCx04pakaHTU5zD4@visitorckw-System-Product-Name>
- <79D96395-FFCF-43F8-8CCE-B1F9706A31DB@coly.li>
+        d=1e100.net; s=20230601; t=1747920604; x=1748525404;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tx8vZFDZpMbO+Kg6fLcfBD8qiDuWKhB/aBNAjV7446I=;
+        b=v/JYTZ3GYmgLf13rZW3EKRuh426o9iQs5XdgjHxUHpga3Ufb3Wdbb5GQXZ9G9RNV7f
+         viLZntYuVjBfXqjQucg3JtGA1swGE9lPFj/9OIdAz20YVnhHcxTl+LC9RWBBZ291JfmJ
+         Du5tFonV7eYJ9HmGbwFRTT5EGC4S2t9ig9gJiF0sqAudp7O7yknmo+clBzzx4bnGMeUD
+         Mv7ivbrjeZ8xS7Hc1RICte3zT97kytkJrQw/syKLN4lNKoaaS74RqedeF12cMHcOQmVI
+         iZSkwHI/YxD6JDoxyU3nLgqokK+Jc2YaNx6bCMLrtjMxOuOK7ft1sAhw3ZktkoeyaHeE
+         sPnw==
+X-Gm-Message-State: AOJu0YzxQSoowntJg6+C6FkqUj038ikdpAfsYvccx0QViTtcOPvV8A6q
+	jvePzfYfuBV8hIbo7R49sienujWhwnCroJWS2IMTmyk+2HGTIbuaxLVvgs2YOd27Qq7PIWhiwL4
+	RHWM/VrThkT4HaUzctfS28Gl6DsDrMC+EUxDQGJRmj/bitlqpXlU2X+Q=
+X-Gm-Gg: ASbGncvoJW8gBDvUeqepQ3GKpj+FE4UDNMRVmtuFHk1zmh5yw2G4bF35Buf5+WWYwng
+	bweX3YRP2ZQMxNjwki/wf9N44vmvmhwmWiRmwB0p3XJAN6dn+Aig1TqmhV8dAf3Sltz1iX21heE
+	6TpqoZFDbKlIl2BEM/AiJO2xsr0dEnliB6UN+t62VxONDLpnSAfx3QCrWkSRQN2EkjuA==
+X-Google-Smtp-Source: AGHT+IGrsi4YeCwF+gsQk3AjFpqFQrgmg+CFW2hddWEvAMNinJZ1EJNY3oA1upi+6Yf3kxEJfATUWZY7yhYbYr2g7fA=
+X-Received: by 2002:a67:e701:0:b0:4da:de8d:9e34 with SMTP id
+ ada2fe7eead31-4dfa6bfc5b9mr25918306137.19.1747920604094; Thu, 22 May 2025
+ 06:30:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <79D96395-FFCF-43F8-8CCE-B1F9706A31DB@coly.li>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 22 May 2025 18:59:53 +0530
+X-Gm-Features: AX0GCFvDM2W9SugJkICsPS9liVtWMt8HZYA63Ym2Osx1MzkHItI7ZrZ35OaG-WU
+Message-ID: <CA+G9fYv08Rbg4f8ZyoZC9qseKdRygy8y86qFvts5D=BoJg888g@mail.gmail.com>
+Subject: riscv gcc-13 allyesconfig error the frame size of 2064 bytes is
+ larger than 2048 bytes [-Werror=frame-larger-than=]
+To: linux-bcache@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: kent.overstreet@linux.dev, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 20, 2025 at 09:13:09PM +0800, Coly Li wrote:
-> 
-> 
-> > 2025年5月20日 20:26，Kuan-Wei Chiu <visitorckw@gmail.com> 写道：
-> > 
-> > On Tue, May 20, 2025 at 08:13:47PM +0800, Coly Li wrote:
-> >> 
-> >> 
-> >>> 2025年5月20日 19:51，Kuan-Wei Chiu <visitorckw@gmail.com> 写道：
-> >>> 
-> >>> On Sat, May 17, 2025 at 07:02:06PM +0800, Coly Li wrote:
-> >>>> 
-> >>>> 
-> >>>>> 2025年5月17日 00:14，Kuan-Wei Chiu <visitorckw@gmail.com> 写道：
-> >>>>> 
-> >>>>> On Thu, May 15, 2025 at 08:58:44PM -0700, Robert Pang wrote:
-> >>>>>> Hi Kuan-Wei,
-> >>>>>> 
-> >>>>>> Thank you for your prompt response. I tested your suggested patch to
-> >>>>>> inline the min heap operations for 8 hours and it is still ongoing.
-> >>>>>> Unfortunately, basing on the results so far, it didn't resolve the
-> >>>>>> regression, suggesting inlining isn't the issue.
-> >>>>>> 
-> >>>>>> After reviewing the commits in lib/min_heap.h, I noticed commit
-> >>>>>> c641722 ("lib min_heap: optimize number of comparisons in
-> >>>>>> min_heapify()") and it looked like a potential candidate. I reverted
-> >>>>>> this commit (below) and ran the tests. While the test is still
-> >>>>>> ongoing, the results for the past 3 hours show that the latency spikes
-> >>>>>> during invalidate_buckets_lru() disappeared after this change,
-> >>>>>> indicating that this commit is likely the root cause of the
-> >>>>>> regression.
-> >>>>>> 
-> >>>>>> My hypothesis is that while commit c641722 was designed to reduce
-> >>>>>> comparisons with randomized input [1], it might inadvertently increase
-> >>>>>> comparisons when the input isn't as random. A scenario where this
-> >>>>>> could happen is within invalidate_buckets_lru() before the cache is
-> >>>>>> fully populated. In such cases, many buckets are unfilled, causing
-> >>>>>> new_bucket_prio() to return zero, leading to more frequent
-> >>>>>> compare-equal operations with other unfilled buckets. In the case when
-> >>>>>> the cache is populated, the bucket priorities fall in a range with
-> >>>>>> many duplicates. How will heap_sift() behave in such cases?
-> >>>>>> 
-> >>>>>> [1] https://lore.kernel.org/linux-bcache/20240121153649.2733274-6-visitorckw@gmail.com/
-> >>>>>> 
-> >>>>> 
-> >>>>> You're very likely correct.
-> >>>>> 
-> >>>>> In scenarios where the majority of elements in the heap are identical,
-> >>>>> the traditional top-down version of heapify finishes after just 2
-> >>>>> comparisons. However, with the bottom-up version introduced by that
-> >>>>> commit, it ends up performing roughly 2 * log₂(n) comparisons in the
-> >>>>> same case.
-> >>>> 
-> >>>> For bcache scenario for ideal circumstances and best performance, the cached data
-> >>>> and following requests should have spatial or temporal locality.
-> >>>> 
-> >>>> I guess it means for the heap usage, the input might not be typical random.
-> >>>> 
-> >>>> 
-> >>>>> 
-> >>>>> That said, reverting the commit would increase the number of
-> >>>>> comparisons by about 2x in cases where all elements in the heap are
-> >>>>> distinct, which was the original motivation for the change. I'm not
-> >>>>> entirely sure what the best way would be to fix this regression without
-> >>>>> negatively impacting the performance of the other use cases.
-> >>>> 
-> >>>> If the data read model are fully sequential or random, bcache cannot help too much.
-> >>>> 
-> >>>> So I guess maybe we still need to old heapify code? The new version is for full random input,
-> >>>> and previous version for not that much random input.
-> >>>> 
-> >>> 
-> >>> I think we have two options here. One is to add a classic heapify
-> >>> function to min_heap.h, allowing users to choose based on whether they
-> >>> expect many duplicate elements in the heap. While having two heapify
-> >>> variants might be confusing from a library design perspective, we could
-> >>> mitigate that with clear kernel-doc comments. The other option is to
-> >>> revert to the old bcache heap code. I'm not sure which approach is
-> >>> better.
-> >>> 
-> >> 
-> >> I prefer to have two min_heap APIs, but how to name them, this is a question from me.
-> >> 
-> >> Also if the full-random min_heap version has no user in kernel, whether to keep it in kernel also is a question.
-> > 
-> > From the perspective of the number of comparisons in heapify, what
-> > matters more is whether the data contains many equal elements, rather
-> > than whether it's truly random. I assume that for most other kernel
-> > users, their use cases don't typically involve a large number of equal
-> > elements?
-> > 
-> 
-> Yes, you are right.  Maybe dm-vdo also has similar I/O pattern?
-> 
-> Deduplication may also have duplicated items in heap I guess.
-> 
+Regressions on riscv allyesconfig build failed with gcc-13 on the Linux next
+tag next-20250516 and next-20250522.
 
-Thanks for pointing out this potential issue.
-I'll check with Matthew to confirm.
+First seen on the next-20250516
+ Good: next-20250515
+ Bad:  next-20250516
 
-Regards,
-Kuan-Wei
+Regressions found on riscv:
+ - build/gcc-13-allyesconfig
 
-> Thanks.
-> 
-> 
-> >> 
-> >> Kent,
-> >> Could you please offer your opinion?
-> >> 
-> >> Thanks.
-> >> 
-> >> Coly Li
-> 
-> 
+Regression Analysis:
+ - New regression? Yes
+ - Reproducible? Yes
+
+Build regression: riscv gcc-13 allyesconfig error the frame size of
+2064 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build log
+fs/bcachefs/data_update.c: In function '__bch2_data_update_index_update':
+fs/bcachefs/data_update.c:464:1: error: the frame size of 2064 bytes
+is larger than 2048 bytes [-Werror=frame-larger-than=]
+  464 | }
+      | ^
+cc1: all warnings being treated as errors
+
+
+## Source
+* Kernel version: 6.15.0-rc7
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git sha: 460178e842c7a1e48a06df684c66eb5fd630bcf7
+* Git describe: next-20250522
+
+## Build
+* Build log: https://qa-reports.linaro.org/api/testruns/28521854/log_file/
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250522/testrun/28521854/suite/build/test/gcc-13-allyesconfig/history/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2xRoAAw5dl69AvvHb8oZ3pL1SFx/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2xRoAAw5dl69AvvHb8oZ3pL1SFx/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
