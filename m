@@ -1,120 +1,104 @@
-Return-Path: <linux-bcache+bounces-1099-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1100-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74CDEAC500E
-	for <lists+linux-bcache@lfdr.de>; Tue, 27 May 2025 15:39:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49958ACFD5E
+	for <lists+linux-bcache@lfdr.de>; Fri,  6 Jun 2025 09:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2134A04AE
-	for <lists+linux-bcache@lfdr.de>; Tue, 27 May 2025 13:38:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18A6116D420
+	for <lists+linux-bcache@lfdr.de>; Fri,  6 Jun 2025 07:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C9C2749CB;
-	Tue, 27 May 2025 13:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A7B1C1F0D;
+	Fri,  6 Jun 2025 07:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YULFVzmm"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cSX8vD0g"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2BC2741BC
-	for <linux-bcache@vger.kernel.org>; Tue, 27 May 2025 13:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776163596A
+	for <linux-bcache@vger.kernel.org>; Fri,  6 Jun 2025 07:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748353114; cv=none; b=nz+Um65Ds7J8C+VibDwlzr/43DHxlc0cV/z8634s3Ibt6/3HaNoMrm+PvIzUt33+YTLraRX8MP/znRttYtfD90iy0iv6XUA+8brc1tWGGJe0AjFkWQZ+nXr8+xPd8ocxhTlY/47AyThvsJvfK3eoUe41K+4HOVShG1+Rt3vgW/w=
+	t=1749194412; cv=none; b=ODkUxoq/b6GH/SHK0wP9gY7MfSsO0YR6x9CWmcUFZF+H1ccVkgFo9UQefkKXmlnLwumCCXI4TemLuLp8K8B/rJEvX3YBixfooIg7mkq+LmaZRMTyTBVFhXrUmwXt+W5NHvXxRqEXed9z7W3tpl59KsHXD5rXIxXLVaczvrrMt2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748353114; c=relaxed/simple;
-	bh=IRnL26yWQubYAmM0trqw8iZN/s8xec1ny+6viPQeVy0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=K/JuMiqvC4i6X3bSB2F1zNDPfUI0vVGeATPjQAi0qKc50o4OBkmxFmITlTdmKf5Zt/LEGP/Ipti0tj8e+9AnLOlwjbS0Ove888g4W+V+rRrCMXA1GxYzp5a4V/vgG4s3VasD53b50vvIUeFCeWGoyuRRNUHzW/SbAAOfZd3BQC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YULFVzmm; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3dc978d5265so12671765ab.0
-        for <linux-bcache@vger.kernel.org>; Tue, 27 May 2025 06:38:32 -0700 (PDT)
+	s=arc-20240116; t=1749194412; c=relaxed/simple;
+	bh=vHbKT1MD1VaoBNh9+BxESHsf/sdK9ht+V6jwPej5ffI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=e2bcMVSuw9N7iN2k24/yzgmhuFi05uWmL1x2LOL6NFFmWgg2byuIJ1h60oplfPWimsA1uqYFpO/NxZZZ06kUDWiqIWXxb7vzUsotoWP4Tms2WKvx1PNpkOMZI3n8zSYlerAHZnn/rqIAbWts6lRQWnE03mRxKpB/21+CrmcxKlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--robertpang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cSX8vD0g; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--robertpang.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-231d13ac4d4so25977235ad.3
+        for <linux-bcache@vger.kernel.org>; Fri, 06 Jun 2025 00:20:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748353112; x=1748957912; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TXdprp2M4n4x/hDHTn7TaL1n02o3UoZxEfZi2MHg6Oo=;
-        b=YULFVzmmBBSBhReT8rBtY/5duSHSFBPe7OthXm6GxkUeQfZKN8xE88n2ojPco/ZA3F
-         kDpwz4Mcm3/ReIUUjhCWfXgTJaDzK7l/XUInlSkfTfGTryCkh5yHzkqs67XNpSG32qnn
-         6Za80s2w0Z7kLGg9ez+zeKPxQV13dLfu3/tUs3URzB7TINszzV9JxcIXq6eWdFy5AumS
-         DDxUub1F+ufYe2IheONEuBhgVmW/9X5oa0FCrp/8TreFYpvai0rW7ABKJeWfKVtJ0cLK
-         /hotddT516MCj1SvsmyerfA8jSrIXJ+e39Rh/2cdqkrmIunEbB0bGp/0ucNZihNptQQl
-         dF1w==
+        d=google.com; s=20230601; t=1749194410; x=1749799210; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SgC8YrGUQDVQj0g4t9I/zb70Y6sizfUJjyOBFiuUq3U=;
+        b=cSX8vD0gaKVS2njwe3jqzswbrFfWFs/1vtxYo3mLtpxr0IT8Th6/+/ILtvVoMykeFM
+         BuEhh0uV6WwQl/HYUBhoqFeLWa3YF6tddpkE8BFiqz7osDnaLP2er/IMgDwLvDqj9GeF
+         GS3fkBaJo8Fxg0rq4tsDgPS1rfmZc+BrXGkzkpxJmwHdr8ZL/kjUIKLVU7yQ3fwAMt6n
+         W0V7oAkVbdTyIlbFrhAdHimGco02ugqm5ZpIwqbweDeMIh1v9MjVjS188qRJsbUOApKu
+         fVrPgfCw6WsR9V/iGVhvE+5XBuVJXKxJBzY6MVzZAFQNSPWhFQ8QkyNmS/bnll3K3pw8
+         B0kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748353112; x=1748957912;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TXdprp2M4n4x/hDHTn7TaL1n02o3UoZxEfZi2MHg6Oo=;
-        b=HmjqHOYdf1yLKAaR0+O3ehDyd4KvyZoW4qpzZLnEqZY6yTdLRhrjFW3FKoQLZ7wxEx
-         semQsNy0rAVAyW2BtzbOT7HeTJ1e72GvVHWgbB0QKg9Y9dOVkl6oqFui3U68s6N3Bo66
-         h6xKtXWh94310kJpa7+2xDw31J1/dTqPa7JjY/spRQVdPfh0qBI4XROtuv/FkLNp+ow7
-         DEA9ZBL0yNR3gkmPQydGzMtdnC1+fqFzwZEKn2IIT/TOChIJLRvMovv1vYcIo/TVT1tA
-         8XPCsc0nd+ssKIUVboZs68nCVg7+1MO+Az8Q7aufDhJ9cnfIT+mds64Sc6CiFR1BrN7m
-         1Cyw==
-X-Gm-Message-State: AOJu0Ywb9Iaoqkf5TEKwlQS72csQUXYs1OLJl1LcDfg3KOvdCPnPHWEQ
-	Tpup3ofdswH/JULXr5kTlojpZ2AjLe+4V28yEyc9NjEU/5QYvapSly8i33JkxNVnmA0JL+gzP8B
-	qc+Gh
-X-Gm-Gg: ASbGncuG/HpCMaRieJrcDtvfb04hHAH2P8gnUKHxHBultCT/pQQRqpRy6zWUFx9QL46
-	riYUEd9aumh2Nj+8zKbbZa2emuNSrymqdUEFdGQ3LRZ+Sy1ETPojCeOso0KxxN/wMSGi1ur09SB
-	g96cyrMpyVrXt71pnaTdpFBGGQBZ8oxm8oBpbpoLxn5LhvmFQDpHjO+pj6s1/NrOdbXlvR+IDzc
-	oNO6F6uGlpXmF7sby7FeqzgzSQBRUA74nHFUuWOCvYHYDJtG5WYYsYE+vG3qCFFxkDhU8OptFSe
-	gpUi8C9d5wdAZZO/dR3ItcqYHbfRIzrl9VF1aVlsTg==
-X-Google-Smtp-Source: AGHT+IGqdnA8GXR4KIorpMW2Y8clpddOdkxA/tTng2GsFFAogRkjTZs38r3zpV0pNXTj8mDhdGeBNw==
-X-Received: by 2002:a05:6e02:12c6:b0:3dc:5be8:9695 with SMTP id e9e14a558f8ab-3dc9b663fccmr113230395ab.3.1748353111711;
-        Tue, 27 May 2025 06:38:31 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dc84ceeca7sm35685895ab.57.2025.05.27.06.38.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 06:38:31 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: colyli@kernel.org
-Cc: linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-In-Reply-To: <20250527051601.74407-1-colyli@kernel.org>
-References: <20250527051601.74407-1-colyli@kernel.org>
-Subject: Re: [PATCH 0/3] bcache-6.16-20250527
-Message-Id: <174835311090.454262.3692110373889951104.b4-ty@kernel.dk>
-Date: Tue, 27 May 2025 07:38:30 -0600
+        d=1e100.net; s=20230601; t=1749194410; x=1749799210;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SgC8YrGUQDVQj0g4t9I/zb70Y6sizfUJjyOBFiuUq3U=;
+        b=eM4BabflcjxueJEPggs4G41MuAJd7f/gqOZMBPhyzV+W2kwNz0c0q/+GMf3qPBX2Hb
+         z2xz2vbZ+41bSq4T+8SO2/MCS84RjyF0ZPH2UyRGt9X1/Y1RLdn7hV9pLb/CEmlfcLFr
+         vsxZcC4yRRy1b+JEoU1TbXcib87V5JURuwnTkovZZZHWVZWXJzUZCyDMzQqw8Zv8h0rI
+         QZ5sGGTTVqlbF6uUWRjwg1kECgLrZWDtEp+xRQw4JAm8Q5KTcHiChM0A2Pk/6045BLmt
+         0DaXM3J0Opp0Wub2HjnPFhqE9hkqu0Hra/2NTLlrv8tAudm0+9AP5wxSYv1Zc7yJ5DiD
+         hUGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4x6ELSl7GsRuEsS1z4ULHvoHbdJzdW425xtQf7lYfz1hFvXvPBxsDBVl0bbvvYCpUhSdAT901PKeMdC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPEDRGjhoNui2re+tjCSd02FU9C8Igll+XkBNisjxCpQf+Hqjy
+	5JaR3EobQqEqKZTqPPJIRdn4WEKKHfA/nQm7GxIqi5VMbkNiF8AEYg1fzZ+ngHU/cf6LahSnN9i
+	7GuPW0ot+wQFc2VEWh3osHQ==
+X-Google-Smtp-Source: AGHT+IG1+wjJ7yrhtZNuquWHE9HuGSagMnLH4mYKY7TfIB9as3412JCt9dU9U1aMasyGztIvZp6BW7uzmFrP67pt
+X-Received: from plsp1.prod.google.com ([2002:a17:902:bd01:b0:235:e981:9ff4])
+ (user=robertpang job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:dac5:b0:234:be9b:539a with SMTP id d9443c01a7336-23601dc02c2mr36100025ad.40.1749194410685;
+ Fri, 06 Jun 2025 00:20:10 -0700 (PDT)
+Date: Fri,  6 Jun 2025 00:19:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-7b9b9
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
+Message-ID: <20250606071959.1685079-1-robertpang@google.com>
+Subject: [PATCH 0/3] bcache: Fix the tail IO latency regression due to the use
+ of lib min_heap
+From: Robert Pang <robertpang@google.com>
+To: Coly Li <colyli@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	linux-bcache@vger.kernel.org
+Cc: Robert Pang <robertpang@google.com>, Kuan-Wei Chiu <visitorckw@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
+This patch series reverts bcache to its original top-down heap sifting strategy
+for LRG cache replacement, which fixes a tail I/O latency regression.
 
-On Tue, 27 May 2025 13:15:58 +0800, colyli@kernel.org wrote:
-> Please consider to take these patches for 6.16. They are generated
-> against linux-block tree for-6.16/block branch.
-> 
-> Linggang and Mingzhe from Easystack contribute two important fixes, the
-> patches are verified in their production environment for quite long
-> time. This time we have a new contributor Robert Pang from Google who
-> posts a code clean patch.
-> 
-> [...]
+Discussion: https://lore.kernel.org/linux-bcache/wtfuhfntbi6yorxqtpcs4vg5w67mvyckp2a6jmxuzt2hvbw65t@gznwsae5653d/T/#me50a9ddd0386ce602b2f17415e02d33b8e29f533
 
-Applied, thanks!
+Robert Pang (3):
+  lib min_heap: refactor min_heap to allow the alternative sift-down
+    function to be used
+  lib min_heap: add alternative APIs that use the conventional top-down
+    strategy to sift down elements
+  bcache: Fix the tail IO latency regression due to the use of lib
+    min_heap
 
-[1/3] bcache: fix NULL pointer in cache_set_flush()
-      commit: 1e46ed947ec658f89f1a910d880cd05e42d3763e
-[2/3] bcache: remove unused constants
-      commit: 5a08e49f2359a14629f27da99aaf0f1c3a68b850
-[3/3] bcache: reserve more RESERVE_BTREE buckets to prevent allocator hang
-      commit: 208c1559c5b18894e3380b3807b6364bd14f7584
+ drivers/md/bcache/alloc.c |  14 ++--
+ include/linux/min_heap.h  | 135 ++++++++++++++++++++++++++++++++------
+ lib/min_heap.c            |  31 ++++++---
+ 3 files changed, 145 insertions(+), 35 deletions(-)
 
-Best regards,
 -- 
-Jens Axboe
-
-
+2.50.0.rc1.591.g9c95f17f64-goog
 
 
