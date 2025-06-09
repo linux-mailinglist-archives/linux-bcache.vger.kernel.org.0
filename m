@@ -1,46 +1,46 @@
-Return-Path: <linux-bcache+bounces-1111-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1112-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C54BAD1FB2
-	for <lists+linux-bcache@lfdr.de>; Mon,  9 Jun 2025 15:48:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170D9AD1FBE
+	for <lists+linux-bcache@lfdr.de>; Mon,  9 Jun 2025 15:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F4C616E043
-	for <lists+linux-bcache@lfdr.de>; Mon,  9 Jun 2025 13:47:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7103B188EDDC
+	for <lists+linux-bcache@lfdr.de>; Mon,  9 Jun 2025 13:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14BB25A350;
-	Mon,  9 Jun 2025 13:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1275C25C6FF;
+	Mon,  9 Jun 2025 13:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqvuFRty"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vG6L+2Eh"
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C690A13CF9C;
-	Mon,  9 Jun 2025 13:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA0E25A337;
+	Mon,  9 Jun 2025 13:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749476817; cv=none; b=hT7hnw0lquuJVc65JluDrqwAe6PTtAhgJ3fRqs85NwMfb7Jg6NSIPZ8KCIbpMjhDdlrbm8SK4L3UPUqv46FMGRfVBmtKpmFZBcTcSRQu0w+6s10UbgWnHIZo+3eZyos4OUayqcnbg/PItq30VHpf7ZIGlgq71ukoWfavip4i13s=
+	t=1749476851; cv=none; b=T8xbBXQvDqamvI8QV6OPqACF203lpwhF/vplrNDDESebX8uyWFFv803Qv7Z8SYu4FbG7HYeVxs3s2Yw8DbjnNNdgiGXnKhN0/njeoMpKWS4v/9gYxpS7JIp7zs5PKI+MbPrX1wbo2TJNNzyfD4j4jUr2QdM63sU+Pbf0ivSSIbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749476817; c=relaxed/simple;
-	bh=g2szcnhIYuY71Df4Doa44QyB7ESsV7z+3jEZWv2XEcc=;
+	s=arc-20240116; t=1749476851; c=relaxed/simple;
+	bh=mhX8fqq7stEA174cUfKOJwLX2fUKutzm3ZH7vRWtOLM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Sl7QBBxadQlggqEjtYqLE7K2jiH0XkEQ8peyWhaT2hgLbo4a3AuBy/dxABxRtGFxn0LP/PgQo93fBmQv63L8/jrWiN4a9S4o9s7c39erQlUmZQUkk1RX2Vvqu79ZgOW+Q0VSHC5H/jIS1CeUVoC4jxtrXtANpTmCSyhwgtaip+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqvuFRty; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4179C4CEED;
-	Mon,  9 Jun 2025 13:46:56 +0000 (UTC)
+	 MIME-Version; b=bN98HgqsAMadcPIyLUYroORzyN8ebmR1RA6sK9KnlCQbmTidmxDu/ZeA2sZ2Kuks76X/rWxf3vY2ePOLgmkVgqAewCjutTgstKL7Wsqx1m9caiDpIsHwb91sNXVHlD1auJpMOE647+w3oCBOBILFmT4E09DlAwo7KTKZA5EmSOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vG6L+2Eh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CBBC4CEED;
+	Mon,  9 Jun 2025 13:47:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749476817;
-	bh=g2szcnhIYuY71Df4Doa44QyB7ESsV7z+3jEZWv2XEcc=;
+	s=k20201202; t=1749476850;
+	bh=mhX8fqq7stEA174cUfKOJwLX2fUKutzm3ZH7vRWtOLM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eqvuFRtyxL5brWMz6MAmgiIasMlguiF2d8X9tuoSev4C7GTXS+xik1bSBks0fnFjQ
-	 LIVQYpV4HpftA8dJaIultxjSdtEkJgF7QygRw1PA2gCCTNI4jCyMWYJJS7u0TO7fdK
-	 u966D7VIFk3d6M+z7KrBYaE87jPYDiSnyex4WF3gPX2N88hTQFL0Y1T1glQs837UTM
-	 uotIJZTk6Bw4tTSwOyhfFihfKXV7zO3UpOUYW0/rFF5ESEMBZaqavCpeg66sr/8PUt
-	 uEreToJKDdlM+kXFe7PVBAaHSVbJHCL5uRxmraBjMSNgsbc4kxbpcR8nGhl2CRj9Bj
-	 /pSOpBHI/wfGA==
+	b=vG6L+2EhT8UUIbqdElguZcnuweSWYEBn6qh7XEWyaKIpwtA01yIpslAuQXqcwipSU
+	 VyZIDGT+TmotX424M7MdoJ19s3xw/wI7WuHxjIXdNxAtYH0/aL/rNMwXVcXzr574A8
+	 P2kBLQ4fLEGtrniObRGBB+T+s56MC+2PG2GTjzEFrRDHoNDDfwqWX+J+e8noApqaD3
+	 ryNkDbZdyAe69d4ItCRAcKXipVKQ+YnWtol0m5jV8ocpBkvAHdacuHH35QDmh0L6SJ
+	 mxaNwa7ZFDctydbffskGOKzXrkPZqSGvIVflfSCQbNnWzuJzTl0V/PsTApHejEJUaa
+	 99yVb9QdEv8BA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -51,12 +51,12 @@ Cc: Linggang Zeng <linggang.zeng@easystack.cn>,
 	Sasha Levin <sashal@kernel.org>,
 	kent.overstreet@linux.dev,
 	linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 03/18] bcache: fix NULL pointer in cache_set_flush()
-Date: Mon,  9 Jun 2025 09:46:37 -0400
-Message-Id: <20250609134652.1344323-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 03/16] bcache: fix NULL pointer in cache_set_flush()
+Date: Mon,  9 Jun 2025 09:47:12 -0400
+Message-Id: <20250609134725.1344921-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250609134652.1344323-1-sashal@kernel.org>
-References: <20250609134652.1344323-1-sashal@kernel.org>
+In-Reply-To: <20250609134725.1344921-1-sashal@kernel.org>
+References: <20250609134725.1344921-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.93
+X-stable-base: Linux 6.1.141
 Content-Transfer-Encoding: 8bit
 
 From: Linggang Zeng <linggang.zeng@easystack.cn>
@@ -298,10 +298,10 @@ backports.
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 8440b56e385d5..b9dfebaa9eae5 100644
+index 1ddae5c972398..2c7b3c8673de2 100644
 --- a/drivers/md/bcache/super.c
 +++ b/drivers/md/bcache/super.c
-@@ -1739,7 +1739,12 @@ static void cache_set_flush(struct closure *cl)
+@@ -1741,7 +1741,12 @@ static void cache_set_flush(struct closure *cl)
  			mutex_unlock(&b->write_lock);
  		}
  
