@@ -1,321 +1,199 @@
-Return-Path: <linux-bcache+bounces-1114-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1115-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B157FAD1FED
-	for <lists+linux-bcache@lfdr.de>; Mon,  9 Jun 2025 15:50:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62561AD376C
+	for <lists+linux-bcache@lfdr.de>; Tue, 10 Jun 2025 14:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9DC1885FFC
-	for <lists+linux-bcache@lfdr.de>; Mon,  9 Jun 2025 13:49:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7820E188F2CE
+	for <lists+linux-bcache@lfdr.de>; Tue, 10 Jun 2025 12:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6EA25CC50;
-	Mon,  9 Jun 2025 13:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3AB2989AA;
+	Tue, 10 Jun 2025 12:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+DQULvp"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A6Cltho/"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B5C25CC47;
-	Mon,  9 Jun 2025 13:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81547299936
+	for <linux-bcache@vger.kernel.org>; Tue, 10 Jun 2025 12:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749476904; cv=none; b=j9FQiA21AfRDJLrmFhS5EqBVBYcFOWO9QHhe7otb+Yt385PiDnaZJfDOqr+YxEd4Q8WZ5elALVlnnsctusWUZH4BV8jA+I5MtlS1MgHwKvqVlOTB7tPgU1QMa4Aiv2WxwPATUjThJHmF29NE6mHl9hZtUSyO/Ho9w13HI5Flh9o=
+	t=1749559496; cv=none; b=Lrg1IiLZyDEl3NnJ+rDda5Rr17qzKRLz9pFporQNNNFgjDdvIeXPF/p/87d/yOuVVE1+ws8BCjwLLyPg/EAC41vu4gOXWMc/+f35KaVHTb902oFT7b/EttbAQcynPctmuY72cU1xvw4ZypPvArMQ1WawTeusbpSbAdN5OSn8WVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749476904; c=relaxed/simple;
-	bh=BRGWclNVgx3NjptM7DuRWBU42Pfcz0dGLO9IaMXrF0Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G4mE3DN37y+Z0RhhYhTItfwQx2gG+oCh2tBGBFiv4zgkHwL6UktGtLvQ6TaBoe8vRIozy7vJvv5Pg5V2gPkSQIEr3L4RffFyGBsxvuitjazIdvgrUvhm5Ins5vANkZgEYXt1oLlIFUVUi25kryWAjGGuIHfI5CBhuWC7ugv5KQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+DQULvp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F5CC4CEF4;
-	Mon,  9 Jun 2025 13:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749476903;
-	bh=BRGWclNVgx3NjptM7DuRWBU42Pfcz0dGLO9IaMXrF0Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l+DQULvpDeN2ZhgEcvbZdSZB+lAEJwZd5ehCDsm1GGNfczkItD+0oSADneTM/AAkI
-	 tfJA/K217mitaGuMMCJnb23u+yW7bHVnCnYuC3GBTrTjNsz0Xb+6i+WhAZkKOkCjEt
-	 rDDO+15yRcywpMrQwnyHZlhnSpqrOmIQw63/DbO0OfDDozaxrOiHY9O/+E+ddVe4lD
-	 02PBHT6gFFj2hr6uF10EA5AtVdMRZFI4yxx1Qj7YgvzY3p34RxeswaKPDfylXfuK1M
-	 nF/waU9HJtX4ED5P1Ecsv3UwE1d6ytonrxhrTP0kLwvK9Sf62maa0QY6m7lPpDo3y2
-	 nuXiCW0DH8ePA==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Linggang Zeng <linggang.zeng@easystack.cn>,
-	Mingzhe Zou <mingzhe.zou@easystack.cn>,
-	Coly Li <colyli@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	kent.overstreet@linux.dev,
-	linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 2/9] bcache: fix NULL pointer in cache_set_flush()
-Date: Mon,  9 Jun 2025 09:48:13 -0400
-Message-Id: <20250609134820.1345562-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250609134820.1345562-1-sashal@kernel.org>
-References: <20250609134820.1345562-1-sashal@kernel.org>
+	s=arc-20240116; t=1749559496; c=relaxed/simple;
+	bh=5NZ8fvANuTshXHR+1mhzA2pnJZJFpCdsX8vCqxtphTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AUdJgQ6uFynMtv8Kk84zam5SYbMa+rDAIcWRsztJ5fh2xiPPkpe5RYc54LPK5M/cxzbrog015JLU/R2W4notrK6TFoRTTQvmrOk9uK4WJ9Ys/lTP69yEqr/LoC8tC2OKBRdZiVZwH1nYF9cKuBC5jb+QWFzL0vIRxU7ERhcD5qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A6Cltho/; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a5ac8fae12so292391cf.0
+        for <linux-bcache@vger.kernel.org>; Tue, 10 Jun 2025 05:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749559493; x=1750164293; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fpw+yS+Dw1/BevpFldXsTlHsyXa8rqC9UDFW/ZY7v+0=;
+        b=A6Cltho/3kKvBXCxYjH4qoc9yQQR4Smno5M4jf7wHNkyriJildIkdPoH0p/p5s1VSy
+         ic88Xk5kq/XbSQP6ZYuyxs3XiAZDAIM1Sl9psyRCaZpFW/3v9gZAL1IyJCZSKgllWngA
+         xEREGTeQVp1ay9IRL5p/5SJNAv+vGspOcG6PmMxv8ImNFWaXNsVki1dNK4mMpm+vciB4
+         8h8tCL5t5FAgf+bVGIyO5D+2BcycvdE/7/VZNrMK9EHjmlvtCpJymeqdMzQUWNm411++
+         cZVZU5U2i+kB/MVZfgpwj46AxJBRhxlJOLdaVMFUQe3fvxR3WMgQ8mQk3w44YBc5AuSK
+         6/sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749559493; x=1750164293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fpw+yS+Dw1/BevpFldXsTlHsyXa8rqC9UDFW/ZY7v+0=;
+        b=V5Dxw5ABH8nHcaH0jFllHuZVn15QMypRFOUrrTK6rP4sJFmg0js5TGLbi8/msjlnCw
+         eyLC7tI5ANKub1ddXDZ5aqMktJ9ynD+UN3fzEnrqAvXn7DERDqu/OzUhaszcKSC0/XbE
+         COCMNpMVbTKvbbb6VSwVaRIPq0c1JW92QD7yaS/0yBA7A9oFkQiZu9Svf4ciS8vonj6n
+         6mb50M+OhxmhyuxwnBUcYGdDu9I9q1o8ilGuufcLcmvXECWreik92NitTd0LhxzXgwbT
+         pIXqLoNt4jzhp2kFH2o32XJ31SlKxEDyUtEU/TJCCNVxHirihAjfCmK1TDC6CDsZl7C1
+         Re5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVeTOmaEKowgaIL3i01tG3/pccUbGF/QijTtr/JhpTR0gv3kztP5alrc8DMa5ZbVFlVVQ7wovjdGntxClk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+vll127o9HfWQRqYCKxCaiXJ8LTIKStUfZCb43j4LmpBb2CSM
+	f7ILavWulT3+HiIc0/BP5kaqZ0wnSAmZZ4YO6iNkLotAax3VJbZoHoO4Z2xAsn9GKf9lHO0l5W2
+	EE4JVGS/Adh5/xhTVmwKZfNdv+2ELHAmi7bvmaOK3
+X-Gm-Gg: ASbGncscL6zvhYZr4a86x7WjFehyJ3BPWWl23jFJvRqdLislYXvfqdDll9xBNh7lA7e
+	nEUaWLMprbx6+6AvVxYhgpMVLEIa/9zcGziu47ovEq4fFDIa61N8BCGGNrqTrZA/zv+8N1+hRkv
+	3jeL5SL1XHM1TZW6Kth3d9YlJCFdfNKxWifJ0X4NAZYKE0
+X-Google-Smtp-Source: AGHT+IEh6TL0OuiIcvh66cLqV6sW8Fj7pXHRuiFjkwoBa1gzunfNDH3NZcBTyNdb3Bn2v05fW7Xkr/fkDsGZSAuIJa8=
+X-Received: by 2002:a05:622a:3d1:b0:4a6:fda0:748f with SMTP id
+ d75a77b69052e-4a6fda077a0mr8099251cf.7.1749559492936; Tue, 10 Jun 2025
+ 05:44:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.238
-Content-Transfer-Encoding: 8bit
+References: <20250606071959.1685079-1-robertpang@google.com>
+ <20250606071959.1685079-4-robertpang@google.com> <aELmvZ4Mm7gwGqhj@visitorckw-System-Product-Name>
+In-Reply-To: <aELmvZ4Mm7gwGqhj@visitorckw-System-Product-Name>
+From: Robert Pang <robertpang@google.com>
+Date: Tue, 10 Jun 2025 21:44:40 +0900
+X-Gm-Features: AX0GCFvfEGDMLol2b2Ohr8zA_nT8w9My6vANUbl3mNgS21IlZ11A_a1v_mhOgsA
+Message-ID: <CAJhEC05LRVKHBVYL1UrA2-iZGkMaQSNVKj4bEpqWxjhDaexkPA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] bcache: Fix the tail IO latency regression due to the
+ use of lib min_heap
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: Coly Li <colyli@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Linggang Zeng <linggang.zeng@easystack.cn>
+When I tested this patch series initially, merely switching to the
+traditional top-down sift-down alone did not resolve the latency
+regression fully. It requires both the top-down sift-down plus
+inlining together to match the original latency numbers before the
+migration to lib/min_heap API. As I understand, the
+invalidate_buckets_lru() is performance-critical and requires both
+optimizations.
 
-[ Upstream commit 1e46ed947ec658f89f1a910d880cd05e42d3763e ]
+Best regards
+Robert
 
-1. LINE#1794 - LINE#1887 is some codes about function of
-   bch_cache_set_alloc().
-2. LINE#2078 - LINE#2142 is some codes about function of
-   register_cache_set().
-3. register_cache_set() will call bch_cache_set_alloc() in LINE#2098.
-
- 1794 struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
- 1795 {
- ...
- 1860         if (!(c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL)) ||
- 1861             mempool_init_slab_pool(&c->search, 32, bch_search_cache) ||
- 1862             mempool_init_kmalloc_pool(&c->bio_meta, 2,
- 1863                                 sizeof(struct bbio) + sizeof(struct bio_vec) *
- 1864                                 bucket_pages(c)) ||
- 1865             mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size) ||
- 1866             bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
- 1867                         BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER) ||
- 1868             !(c->uuids = alloc_bucket_pages(GFP_KERNEL, c)) ||
- 1869             !(c->moving_gc_wq = alloc_workqueue("bcache_gc",
- 1870                                                 WQ_MEM_RECLAIM, 0)) ||
- 1871             bch_journal_alloc(c) ||
- 1872             bch_btree_cache_alloc(c) ||
- 1873             bch_open_buckets_alloc(c) ||
- 1874             bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages)))
- 1875                 goto err;
-                      ^^^^^^^^
- 1876
- ...
- 1883         return c;
- 1884 err:
- 1885         bch_cache_set_unregister(c);
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 1886         return NULL;
- 1887 }
- ...
- 2078 static const char *register_cache_set(struct cache *ca)
- 2079 {
- ...
- 2098         c = bch_cache_set_alloc(&ca->sb);
- 2099         if (!c)
- 2100                 return err;
-                      ^^^^^^^^^^
- ...
- 2128         ca->set = c;
- 2129         ca->set->cache[ca->sb.nr_this_dev] = ca;
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- ...
- 2138         return NULL;
- 2139 err:
- 2140         bch_cache_set_unregister(c);
- 2141         return err;
- 2142 }
-
-(1) If LINE#1860 - LINE#1874 is true, then do 'goto err'(LINE#1875) and
-    call bch_cache_set_unregister()(LINE#1885).
-(2) As (1) return NULL(LINE#1886), LINE#2098 - LINE#2100 would return.
-(3) As (2) has returned, LINE#2128 - LINE#2129 would do *not* give the
-    value to c->cache[], it means that c->cache[] is NULL.
-
-LINE#1624 - LINE#1665 is some codes about function of cache_set_flush().
-As (1), in LINE#1885 call
-bch_cache_set_unregister()
----> bch_cache_set_stop()
-     ---> closure_queue()
-          -.-> cache_set_flush() (as below LINE#1624)
-
- 1624 static void cache_set_flush(struct closure *cl)
- 1625 {
- ...
- 1654         for_each_cache(ca, c, i)
- 1655                 if (ca->alloc_thread)
-                          ^^
- 1656                         kthread_stop(ca->alloc_thread);
- ...
- 1665 }
-
-(4) In LINE#1655 ca is NULL(see (3)) in cache_set_flush() then the
-    kernel crash occurred as below:
-[  846.712887] bcache: register_cache() error drbd6: cannot allocate memory
-[  846.713242] bcache: register_bcache() error : failed to register device
-[  846.713336] bcache: cache_set_free() Cache set 2f84bdc1-498a-4f2f-98a7-01946bf54287 unregistered
-[  846.713768] BUG: unable to handle kernel NULL pointer dereference at 00000000000009f8
-[  846.714790] PGD 0 P4D 0
-[  846.715129] Oops: 0000 [#1] SMP PTI
-[  846.715472] CPU: 19 PID: 5057 Comm: kworker/19:16 Kdump: loaded Tainted: G           OE    --------- -  - 4.18.0-147.5.1.el8_1.5es.3.x86_64 #1
-[  846.716082] Hardware name: ESPAN GI-25212/X11DPL-i, BIOS 2.1 06/15/2018
-[  846.716451] Workqueue: events cache_set_flush [bcache]
-[  846.716808] RIP: 0010:cache_set_flush+0xc9/0x1b0 [bcache]
-[  846.717155] Code: 00 4c 89 a5 b0 03 00 00 48 8b 85 68 f6 ff ff a8 08 0f 84 88 00 00 00 31 db 66 83 bd 3c f7 ff ff 00 48 8b 85 48 ff ff ff 74 28 <48> 8b b8 f8 09 00 00 48 85 ff 74 05 e8 b6 58 a2 e1 0f b7 95 3c f7
-[  846.718026] RSP: 0018:ffffb56dcf85fe70 EFLAGS: 00010202
-[  846.718372] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-[  846.718725] RDX: 0000000000000001 RSI: 0000000040000001 RDI: 0000000000000000
-[  846.719076] RBP: ffffa0ccc0f20df8 R08: ffffa0ce1fedb118 R09: 000073746e657665
-[  846.719428] R10: 8080808080808080 R11: 0000000000000000 R12: ffffa0ce1fee8700
-[  846.719779] R13: ffffa0ccc0f211a8 R14: ffffa0cd1b902840 R15: ffffa0ccc0f20e00
-[  846.720132] FS:  0000000000000000(0000) GS:ffffa0ce1fec0000(0000) knlGS:0000000000000000
-[  846.720726] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  846.721073] CR2: 00000000000009f8 CR3: 00000008ba00a005 CR4: 00000000007606e0
-[  846.721426] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  846.721778] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  846.722131] PKRU: 55555554
-[  846.722467] Call Trace:
-[  846.722814]  process_one_work+0x1a7/0x3b0
-[  846.723157]  worker_thread+0x30/0x390
-[  846.723501]  ? create_worker+0x1a0/0x1a0
-[  846.723844]  kthread+0x112/0x130
-[  846.724184]  ? kthread_flush_work_fn+0x10/0x10
-[  846.724535]  ret_from_fork+0x35/0x40
-
-Now, check whether that ca is NULL in LINE#1655 to fix the issue.
-
-Signed-off-by: Linggang Zeng <linggang.zeng@easystack.cn>
-Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
-Signed-off-by: Coly Li <colyli@kernel.org>
-Link: https://lore.kernel.org/r/20250527051601.74407-2-colyli@kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-**YES**
-
-This commit should be backported to stable kernel trees. Here's my
-extensive analysis:
-
-## Bug Severity and Impact
-
-This commit fixes a **NULL pointer dereference** in the bcache subsystem
-that causes a kernel crash. The crash trace shows:
-
-```
-BUG: unable to handle kernel NULL pointer dereference at
-00000000000009f8
-```
-
-The crash occurs during cache set registration failure in an out-of-
-memory (OOM) condition, which is a real-world scenario that can happen
-in production systems under memory pressure.
-
-## Root Cause Analysis
-
-The commit message provides excellent debugging information showing the
-precise execution flow:
-
-1. In `bch_cache_set_alloc()`, if memory allocation fails (lines
-   1860-1874), it goes to the error path which calls
-   `bch_cache_set_unregister()` and returns NULL
-2. In `register_cache_set()`, when `bch_cache_set_alloc()` returns NULL,
-   the function returns early (line 2100)
-3. Because of the early return, `ca->set` is never assigned (lines
-   2128-2129), leaving `c->cache[]` as NULL
-4. When `cache_set_flush()` is called via the closure mechanism, it
-   tries to access `ca->alloc_thread` where `ca` is NULL, causing the
-   crash
-
-## Code Change Analysis
-
-The fix is minimal and surgical:
-
-```diff
-- if (ca->alloc_thread)
-+       /*
-+        * If the register_cache_set() call to bch_cache_set_alloc()
-failed,
-+        * ca has not been assigned a value and return error.
-+        * So we need check ca is not NULL during
-bch_cache_set_unregister().
-+        */
-+       if (ca && ca->alloc_thread)
-                kthread_stop(ca->alloc_thread);
-```
-
-This adds a NULL check before dereferencing `ca`, which is a defensive
-programming practice that prevents the crash.
-
-## Comparison with Similar Commits
-
-Looking at the similar commits with "Backport Status: YES":
-
-1. **Similar commits #1, #2, #3**: All fix NULL pointer dereferences in
-   bcache during OOM conditions
-2. **Similar commits #4, #5**: Fix potential NULL pointer issues in
-   btree node allocation
-3. All these commits share characteristics:
-   - Fix real crashes with clear reproducers
-   - Minimal code changes (often just adding NULL checks)
-   - No architectural changes
-   - No new features
-   - Clear bug fixes in error paths
-
-## Stable Tree Criteria Assessment
-
-This commit meets all the stable tree criteria:
-
-1. **Fixes a real bug**: Yes - NULL pointer dereference causing kernel
-   crash
-2. **Already in Linus' tree**: Yes - has been merged by Jens Axboe
-3. **Small and contained**: Yes - single line change adding NULL check
-4. **No new features**: Correct - purely a bug fix
-5. **Minimal risk**: Very low risk - adds defensive NULL check
-6. **Clear issue**: The crash trace and detailed analysis make the issue
-   crystal clear
-
-## Additional Considerations
-
-- The bug occurs in an error path during OOM conditions, which might be
-  considered rare but is definitely possible in production
-- The fix prevents a kernel crash, which is always high priority for
-  stable backports
-- The bcache subsystem is used in production systems for caching, making
-  stability critical
-- The fix pattern (adding NULL checks in error paths) is well-
-  established and safe
-
-## Conclusion
-
-This commit is an excellent candidate for stable backporting. It fixes a
-real kernel crash with a minimal, safe change that adds proper NULL
-checking in an error path. The detailed commit message with line-by-line
-analysis demonstrates thorough understanding of the issue, and the fix
-follows established patterns seen in other successful bcache stable
-backports.
-
- drivers/md/bcache/super.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 85569bd253b2c..a80de1cfbbd07 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1765,7 +1765,12 @@ static void cache_set_flush(struct closure *cl)
- 			mutex_unlock(&b->write_lock);
- 		}
- 
--	if (ca->alloc_thread)
-+	/*
-+	 * If the register_cache_set() call to bch_cache_set_alloc() failed,
-+	 * ca has not been assigned a value and return error.
-+	 * So we need check ca is not NULL during bch_cache_set_unregister().
-+	 */
-+	if (ca && ca->alloc_thread)
- 		kthread_stop(ca->alloc_thread);
- 
- 	if (c->journal.cur) {
--- 
-2.39.5
-
+On Fri, Jun 6, 2025 at 10:01=E2=80=AFPM Kuan-Wei Chiu <visitorckw@gmail.com=
+> wrote:
+>
+> On Fri, Jun 06, 2025 at 12:19:45AM -0700, Robert Pang wrote:
+> > In commit "lib/min_heap: introduce non-inline versions of min heap API =
+functions"
+> > (92a8b22), bcache migrates to the generic lib min_heap for all heap ope=
+rations.
+> > This causes sizeable the tail IO latency regression during the cache re=
+placement.
+>
+> Nit: According to the documentation, I'd prefer referencing the commit
+> like this:
+>
+> 92a8b224b833 ("lib/min_heap: introduce non-inline versions of min heap
+> API functions")
+> https://docs.kernel.org/process/submitting-patches.html#describe-your-cha=
+nges
+>
+> Also, if the regression is caused by the heapify method, shouldn't the
+> commit that introduced it be 866898efbb25 ("bcache: remove heap-related
+> macros and switch to generic min_heap") ?
+>
+> >
+> > This commit updates invalidate_buckets_lru() to use the alternative API=
+s that
+> > sift down elements using the top-down approach like bcache's own origin=
+al heap
+> > implementation.
+> >
+> > [1] https://lore.kernel.org/linux-bcache/wtfuhfntbi6yorxqtpcs4vg5w67mvy=
+ckp2a6jmxuzt2hvbw65t@gznwsae5653d/T/#me50a9ddd0386ce602b2f17415e02d33b8e29f=
+533
+> >
+> > Signed-off-by: Robert Pang <robertpang@google.com>
+> > ---
+> >  drivers/md/bcache/alloc.c | 14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+> > index 8998e61efa40..547d1cd0c7c2 100644
+> > --- a/drivers/md/bcache/alloc.c
+> > +++ b/drivers/md/bcache/alloc.c
+> > @@ -207,15 +207,15 @@ static void invalidate_buckets_lru(struct cache *=
+ca)
+> >               if (!bch_can_invalidate_bucket(ca, b))
+> >                       continue;
+> >
+> > -             if (!min_heap_full(&ca->heap))
+> > -                     min_heap_push(&ca->heap, &b, &bucket_max_cmp_call=
+back, ca);
+> > -             else if (!new_bucket_max_cmp(&b, min_heap_peek(&ca->heap)=
+, ca)) {
+> > +             if (!min_heap_full_inline(&ca->heap))
+> > +                     min_heap_push_inline(&ca->heap, &b, &bucket_max_c=
+mp_callback, ca);
+>
+> If the regression is caused by the heapify method rather than the
+> inline vs non-inline change, is it necessary to switch to the
+> non-inline version here?
+>
+> Regards,
+> Kuan-Wei
+>
+> > +             else if (!new_bucket_max_cmp(&b, min_heap_peek_inline(&ca=
+->heap), ca)) {
+> >                       ca->heap.data[0] =3D b;
+> > -                     min_heap_sift_down(&ca->heap, 0, &bucket_max_cmp_=
+callback, ca);
+> > +                     min_heap_sift_down_top_down_inline(&ca->heap, 0, =
+&bucket_max_cmp_callback, ca);
+> >               }
+> >       }
+> >
+> > -     min_heapify_all(&ca->heap, &bucket_min_cmp_callback, ca);
+> > +     min_heapify_all_top_down_inline(&ca->heap, &bucket_min_cmp_callba=
+ck, ca);
+> >
+> >       while (!fifo_full(&ca->free_inc)) {
+> >               if (!ca->heap.nr) {
+> > @@ -227,8 +227,8 @@ static void invalidate_buckets_lru(struct cache *ca=
+)
+> >                       wake_up_gc(ca->set);
+> >                       return;
+> >               }
+> > -             b =3D min_heap_peek(&ca->heap)[0];
+> > -             min_heap_pop(&ca->heap, &bucket_min_cmp_callback, ca);
+> > +             b =3D min_heap_peek_inline(&ca->heap)[0];
+> > +             min_heap_pop_top_down_inline(&ca->heap, &bucket_min_cmp_c=
+allback, ca);
+> >
+> >               bch_invalidate_one_bucket(ca, b);
+> >       }
+> > --
+> > 2.50.0.rc1.591.g9c95f17f64-goog
+> >
 
