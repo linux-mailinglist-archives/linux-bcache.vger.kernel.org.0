@@ -1,199 +1,140 @@
-Return-Path: <linux-bcache+bounces-1115-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1116-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62561AD376C
-	for <lists+linux-bcache@lfdr.de>; Tue, 10 Jun 2025 14:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 193FAAD4519
+	for <lists+linux-bcache@lfdr.de>; Tue, 10 Jun 2025 23:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7820E188F2CE
-	for <lists+linux-bcache@lfdr.de>; Tue, 10 Jun 2025 12:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB66F188674A
+	for <lists+linux-bcache@lfdr.de>; Tue, 10 Jun 2025 21:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3AB2989AA;
-	Tue, 10 Jun 2025 12:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D52283138;
+	Tue, 10 Jun 2025 21:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A6Cltho/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJLuQHBd"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81547299936
-	for <linux-bcache@vger.kernel.org>; Tue, 10 Jun 2025 12:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173871401C;
+	Tue, 10 Jun 2025 21:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749559496; cv=none; b=Lrg1IiLZyDEl3NnJ+rDda5Rr17qzKRLz9pFporQNNNFgjDdvIeXPF/p/87d/yOuVVE1+ws8BCjwLLyPg/EAC41vu4gOXWMc/+f35KaVHTb902oFT7b/EttbAQcynPctmuY72cU1xvw4ZypPvArMQ1WawTeusbpSbAdN5OSn8WVA=
+	t=1749592543; cv=none; b=a5/+BcdJo4Zw8dc80sHZpQDDHyWbMRwA46UugD1KNm0VcmyM0iGXt6Q/B/rgZZPX3/j0nfttxc0gUJIvoxGhclccc2881aidcT/Tk0zBsb/ce1ULvHR2tcV+c/qqAA5w1l/aDx531xxTOLi9WFUi1KgQBj3b/8p+yWfmkuFxX60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749559496; c=relaxed/simple;
-	bh=5NZ8fvANuTshXHR+1mhzA2pnJZJFpCdsX8vCqxtphTw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AUdJgQ6uFynMtv8Kk84zam5SYbMa+rDAIcWRsztJ5fh2xiPPkpe5RYc54LPK5M/cxzbrog015JLU/R2W4notrK6TFoRTTQvmrOk9uK4WJ9Ys/lTP69yEqr/LoC8tC2OKBRdZiVZwH1nYF9cKuBC5jb+QWFzL0vIRxU7ERhcD5qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A6Cltho/; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a5ac8fae12so292391cf.0
-        for <linux-bcache@vger.kernel.org>; Tue, 10 Jun 2025 05:44:54 -0700 (PDT)
+	s=arc-20240116; t=1749592543; c=relaxed/simple;
+	bh=7Kw7leYwnoZRD3Gzqb3C7xpXxDTPa1VJVS79XfwnghE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fngjOYrUhxqPYcMr2N+Myp4DbgJV/oFA1d0jo9RscyZsvpgfZbRgAhaoSC0jFQbrXmL/w/kg9imIuuhjwYV7ry52ahMB1ERXascPYILv5em8qQ5zNNje2wdcuHMQNxnfsornK10rCTHlhHBhPM8K+pB3SFnR2zznOUqckfTf53Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJLuQHBd; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7485bcb8b7cso1595119b3a.1;
+        Tue, 10 Jun 2025 14:55:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749559493; x=1750164293; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fpw+yS+Dw1/BevpFldXsTlHsyXa8rqC9UDFW/ZY7v+0=;
-        b=A6Cltho/3kKvBXCxYjH4qoc9yQQR4Smno5M4jf7wHNkyriJildIkdPoH0p/p5s1VSy
-         ic88Xk5kq/XbSQP6ZYuyxs3XiAZDAIM1Sl9psyRCaZpFW/3v9gZAL1IyJCZSKgllWngA
-         xEREGTeQVp1ay9IRL5p/5SJNAv+vGspOcG6PmMxv8ImNFWaXNsVki1dNK4mMpm+vciB4
-         8h8tCL5t5FAgf+bVGIyO5D+2BcycvdE/7/VZNrMK9EHjmlvtCpJymeqdMzQUWNm411++
-         cZVZU5U2i+kB/MVZfgpwj46AxJBRhxlJOLdaVMFUQe3fvxR3WMgQ8mQk3w44YBc5AuSK
-         6/sg==
+        d=gmail.com; s=20230601; t=1749592541; x=1750197341; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xzzLX0zigjvsXV7HMCJnSlWCkuAr80/vdNSBICliE+E=;
+        b=KJLuQHBdv/SpBc5OLkf4ayJcyCdiH32l31DZp3ouTwgcgvQ8Q4bjUpRVf5bOrJIqbj
+         q5vY7OVU36v6z5ymXS6+If0toqaRihCRWkHyaZmzSBe911H8Rr8gHgOphWXeB2UReDw7
+         YMrsy4T03vWgEINnEPHMJQpUD7skz5+DmiX1xUZoFZfXP0TDNJK01tqlQyMSPxMtfl3a
+         +pbm05ZYpnJIj1W71TFCmB3rmiH3D3JVqTtGJVv7IAvmVFJ6md69qZeVI3fAoTbU1o3H
+         0J2E/d9cv4dyuBrDrfslP6d68+CpaWZvfcvxSZP/UxLBpHx+5nvgYfRcZBO8h1lCi7mJ
+         hrAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749559493; x=1750164293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fpw+yS+Dw1/BevpFldXsTlHsyXa8rqC9UDFW/ZY7v+0=;
-        b=V5Dxw5ABH8nHcaH0jFllHuZVn15QMypRFOUrrTK6rP4sJFmg0js5TGLbi8/msjlnCw
-         eyLC7tI5ANKub1ddXDZ5aqMktJ9ynD+UN3fzEnrqAvXn7DERDqu/OzUhaszcKSC0/XbE
-         COCMNpMVbTKvbbb6VSwVaRIPq0c1JW92QD7yaS/0yBA7A9oFkQiZu9Svf4ciS8vonj6n
-         6mb50M+OhxmhyuxwnBUcYGdDu9I9q1o8ilGuufcLcmvXECWreik92NitTd0LhxzXgwbT
-         pIXqLoNt4jzhp2kFH2o32XJ31SlKxEDyUtEU/TJCCNVxHirihAjfCmK1TDC6CDsZl7C1
-         Re5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVeTOmaEKowgaIL3i01tG3/pccUbGF/QijTtr/JhpTR0gv3kztP5alrc8DMa5ZbVFlVVQ7wovjdGntxClk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+vll127o9HfWQRqYCKxCaiXJ8LTIKStUfZCb43j4LmpBb2CSM
-	f7ILavWulT3+HiIc0/BP5kaqZ0wnSAmZZ4YO6iNkLotAax3VJbZoHoO4Z2xAsn9GKf9lHO0l5W2
-	EE4JVGS/Adh5/xhTVmwKZfNdv+2ELHAmi7bvmaOK3
-X-Gm-Gg: ASbGncscL6zvhYZr4a86x7WjFehyJ3BPWWl23jFJvRqdLislYXvfqdDll9xBNh7lA7e
-	nEUaWLMprbx6+6AvVxYhgpMVLEIa/9zcGziu47ovEq4fFDIa61N8BCGGNrqTrZA/zv+8N1+hRkv
-	3jeL5SL1XHM1TZW6Kth3d9YlJCFdfNKxWifJ0X4NAZYKE0
-X-Google-Smtp-Source: AGHT+IEh6TL0OuiIcvh66cLqV6sW8Fj7pXHRuiFjkwoBa1gzunfNDH3NZcBTyNdb3Bn2v05fW7Xkr/fkDsGZSAuIJa8=
-X-Received: by 2002:a05:622a:3d1:b0:4a6:fda0:748f with SMTP id
- d75a77b69052e-4a6fda077a0mr8099251cf.7.1749559492936; Tue, 10 Jun 2025
- 05:44:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749592541; x=1750197341;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xzzLX0zigjvsXV7HMCJnSlWCkuAr80/vdNSBICliE+E=;
+        b=TRunw+TaGERP3ZCXawe8c4iZhy7ci7/Xa62flxIbXMPFeiKVdzYxvru9+kFu5Ep/vP
+         2X+H/h6nmjrAhuoO3WJyE9qmuhhXQIusr4x1Y/FO3cn40oR4Yr7DOFAdhTYECzQkFGpN
+         sFxWN/orMF3Z8RJFhYc7RmtNQFm5at1ml0hXduziq5sVHtTIyj7PTBIiZPViBJnAuxcy
+         yYw2AAhCvhobXpgr3oEJXfqxgAOAP5kb4cwEKTFaivfGeWkDRS0BQ3YxKBhRyiV1cUUx
+         RLbcq1l1UyZYSP91BiE5lnK36YrgNbV7JZ+npxxPymyvz+vRErgxPCWJZ6AmucYso4Qt
+         vPbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmPvuNFjwo4MW2nONTHFylFwRLrgKrGo7npBv3r4ib154v0EeIpqXIqXtKExDv/HarYH0M5BWI@vger.kernel.org, AJvYcCXbXaNzBGh2UBAV/Q15aiEdPMgXrKoUPUMLgrRNOZ9BYk3jHN6K0xjWv8oSRFQ7TeG9iTzvLiokksxAiHs=@vger.kernel.org, AJvYcCXpvfpUoCNiAusxKSmPj7vACyYS/Yy8mTMLp24YXsqdXOO6tStU8sKghtv02/BLRUldOS+A0iv1PBiD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVVmuXgn1vWRgQnO/F+/vk7rQtWseVDQYDczFDUNzhiyRiyYTW
+	d6RWzhImPviYWg9NBDs3v3Ov3PaGUX/5Okj4S9ubSj9swZ91IEwE3g9I
+X-Gm-Gg: ASbGncs+8KxcroLpbldCCPppbL+7gQvpZZ5y4/AGYjI6TJdDiAe2XYrNn5MK3/6M5ne
+	emX/Lb54mLou+9oi0+SJPemEI2PQibLC4nKfYmF0LdiMK+zmL9tFg8ye7ciVYp+GqE6d+kWQ/KA
+	LsMjM5C+HmvziBSSBdjZuNGyRV4s74JVEcnuiQCKu3CcTLRpCdn1/mOTPHjzdLTe1O2NrKqUoRp
+	fVCUHUk3XPqinmsRMN3FCngC3ySBC406dpOWQB1Nz/wpxlXQKe0iq7ATftzYB4raevC+gwyLok+
+	zKW92ReGqh3FgVOKfHCN2PkVAhu42+qo7wt/n4vUBU9ZxQ1gg6VyX1IJJNH0w8oMvpYQdzdfGCU
+	kRYMDwx6DartYECZO
+X-Google-Smtp-Source: AGHT+IHuaOXKKB2sK17JiPq7MI/MRGPzkTbmX/Mg57tFKCaQI1mtQ9m3NGGKdrDgKrP2VcZJMKOXkQ==
+X-Received: by 2002:a05:6a00:1951:b0:746:227c:a808 with SMTP id d2e1a72fcca58-7486ce3ba0bmr1660168b3a.24.1749592541250;
+        Tue, 10 Jun 2025 14:55:41 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482af3a165sm8173936b3a.11.2025.06.10.14.55.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 14:55:40 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: corbet@lwn.net,
+	colyli@kernel.org,
+	kent.overstreet@linux.dev,
+	akpm@linux-foundation.org,
+	robertpang@google.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-bcache@vger.kernel.org,
+	jserv@ccns.ncku.edu.tw,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 0/8] Fix bcache regression with equality-aware heap APIs
+Date: Wed, 11 Jun 2025 05:55:08 +0800
+Message-Id: <20250610215516.1513296-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606071959.1685079-1-robertpang@google.com>
- <20250606071959.1685079-4-robertpang@google.com> <aELmvZ4Mm7gwGqhj@visitorckw-System-Product-Name>
-In-Reply-To: <aELmvZ4Mm7gwGqhj@visitorckw-System-Product-Name>
-From: Robert Pang <robertpang@google.com>
-Date: Tue, 10 Jun 2025 21:44:40 +0900
-X-Gm-Features: AX0GCFvfEGDMLol2b2Ohr8zA_nT8w9My6vANUbl3mNgS21IlZ11A_a1v_mhOgsA
-Message-ID: <CAJhEC05LRVKHBVYL1UrA2-iZGkMaQSNVKj4bEpqWxjhDaexkPA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] bcache: Fix the tail IO latency regression due to the
- use of lib min_heap
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: Coly Li <colyli@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-bcache@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-When I tested this patch series initially, merely switching to the
-traditional top-down sift-down alone did not resolve the latency
-regression fully. It requires both the top-down sift-down plus
-inlining together to match the original latency numbers before the
-migration to lib/min_heap API. As I understand, the
-invalidate_buckets_lru() is performance-critical and requires both
-optimizations.
+This patch series introduces equality-aware variants of the min heap
+API that use a top-down heapify strategy to improve performance when
+many elements are equal under the comparison function. It also updates
+the documentation accordingly and modifies bcache to use the new APIs
+to fix a performance regression caused by the switch to the generic min
+heap library.
 
-Best regards
-Robert
+In particular, invalidate_buckets_lru() in bcache suffered from
+increased comparison overhead due to the bottom-up strategy introduced
+in commit 866898efbb25 ("bcache: remove heap-related macros and switch
+to generic min_heap"). The regression is addressed by switching to the
+equality-aware variants and using the inline versions to avoid function
+call overhead in this hot path.
 
-On Fri, Jun 6, 2025 at 10:01=E2=80=AFPM Kuan-Wei Chiu <visitorckw@gmail.com=
-> wrote:
->
-> On Fri, Jun 06, 2025 at 12:19:45AM -0700, Robert Pang wrote:
-> > In commit "lib/min_heap: introduce non-inline versions of min heap API =
-functions"
-> > (92a8b22), bcache migrates to the generic lib min_heap for all heap ope=
-rations.
-> > This causes sizeable the tail IO latency regression during the cache re=
-placement.
->
-> Nit: According to the documentation, I'd prefer referencing the commit
-> like this:
->
-> 92a8b224b833 ("lib/min_heap: introduce non-inline versions of min heap
-> API functions")
-> https://docs.kernel.org/process/submitting-patches.html#describe-your-cha=
-nges
->
-> Also, if the regression is caused by the heapify method, shouldn't the
-> commit that introduced it be 866898efbb25 ("bcache: remove heap-related
-> macros and switch to generic min_heap") ?
->
-> >
-> > This commit updates invalidate_buckets_lru() to use the alternative API=
-s that
-> > sift down elements using the top-down approach like bcache's own origin=
-al heap
-> > implementation.
-> >
-> > [1] https://lore.kernel.org/linux-bcache/wtfuhfntbi6yorxqtpcs4vg5w67mvy=
-ckp2a6jmxuzt2hvbw65t@gznwsae5653d/T/#me50a9ddd0386ce602b2f17415e02d33b8e29f=
-533
-> >
-> > Signed-off-by: Robert Pang <robertpang@google.com>
-> > ---
-> >  drivers/md/bcache/alloc.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-> > index 8998e61efa40..547d1cd0c7c2 100644
-> > --- a/drivers/md/bcache/alloc.c
-> > +++ b/drivers/md/bcache/alloc.c
-> > @@ -207,15 +207,15 @@ static void invalidate_buckets_lru(struct cache *=
-ca)
-> >               if (!bch_can_invalidate_bucket(ca, b))
-> >                       continue;
-> >
-> > -             if (!min_heap_full(&ca->heap))
-> > -                     min_heap_push(&ca->heap, &b, &bucket_max_cmp_call=
-back, ca);
-> > -             else if (!new_bucket_max_cmp(&b, min_heap_peek(&ca->heap)=
-, ca)) {
-> > +             if (!min_heap_full_inline(&ca->heap))
-> > +                     min_heap_push_inline(&ca->heap, &b, &bucket_max_c=
-mp_callback, ca);
->
-> If the regression is caused by the heapify method rather than the
-> inline vs non-inline change, is it necessary to switch to the
-> non-inline version here?
->
-> Regards,
-> Kuan-Wei
->
-> > +             else if (!new_bucket_max_cmp(&b, min_heap_peek_inline(&ca=
-->heap), ca)) {
-> >                       ca->heap.data[0] =3D b;
-> > -                     min_heap_sift_down(&ca->heap, 0, &bucket_max_cmp_=
-callback, ca);
-> > +                     min_heap_sift_down_top_down_inline(&ca->heap, 0, =
-&bucket_max_cmp_callback, ca);
-> >               }
-> >       }
-> >
-> > -     min_heapify_all(&ca->heap, &bucket_min_cmp_callback, ca);
-> > +     min_heapify_all_top_down_inline(&ca->heap, &bucket_min_cmp_callba=
-ck, ca);
-> >
-> >       while (!fifo_full(&ca->free_inc)) {
-> >               if (!ca->heap.nr) {
-> > @@ -227,8 +227,8 @@ static void invalidate_buckets_lru(struct cache *ca=
-)
-> >                       wake_up_gc(ca->set);
-> >                       return;
-> >               }
-> > -             b =3D min_heap_peek(&ca->heap)[0];
-> > -             min_heap_pop(&ca->heap, &bucket_min_cmp_callback, ca);
-> > +             b =3D min_heap_peek_inline(&ca->heap)[0];
-> > +             min_heap_pop_top_down_inline(&ca->heap, &bucket_min_cmp_c=
-allback, ca);
-> >
-> >               bch_invalidate_one_bucket(ca, b);
-> >       }
-> > --
-> > 2.50.0.rc1.591.g9c95f17f64-goog
-> >
+Cc: stable@vger.kernel.org
+---
+
+To avoid duplicated effort and expedite resolution, Robert kindly
+agreed that I should submit my already-completed series instead. Many
+thanks to him for his cooperation and support.
+
+Kuan-Wei Chiu (8):
+  lib min_heap: Add equal-elements-aware sift_down variant
+  lib min_heap: Add typedef for sift_down function pointer
+  lib min_heap: add eqaware variant of min_heapify_all()
+  lib min_heap: add eqaware variant of min_heap_pop()
+  lib min_heap: add eqaware variant of min_heap_pop_push()
+  lib min_heap: add eqaware variant of min_heap_del()
+  Documentation/core-api: min_heap: Document _eqaware variants of
+    min-heap APIs
+  bcache: Fix the tail IO latency regression by using equality-aware min
+    heap API
+
+ Documentation/core-api/min_heap.rst |  20 +++++
+ drivers/md/bcache/alloc.c           |  15 ++--
+ include/linux/min_heap.h            | 131 +++++++++++++++++++++++-----
+ lib/min_heap.c                      |  23 +++--
+ 4 files changed, 154 insertions(+), 35 deletions(-)
+
+-- 
+2.34.1
+
 
