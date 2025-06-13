@@ -1,109 +1,147 @@
-Return-Path: <linux-bcache+bounces-1131-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1132-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49D2AD941E
-	for <lists+linux-bcache@lfdr.de>; Fri, 13 Jun 2025 20:04:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2564AD9579
+	for <lists+linux-bcache@lfdr.de>; Fri, 13 Jun 2025 21:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7F231E0FE5
-	for <lists+linux-bcache@lfdr.de>; Fri, 13 Jun 2025 18:04:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87A267AA6ED
+	for <lists+linux-bcache@lfdr.de>; Fri, 13 Jun 2025 19:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7BE23182D;
-	Fri, 13 Jun 2025 18:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9853B293C55;
+	Fri, 13 Jun 2025 19:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cgCTvs0W"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RqsPkmAd"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C2E22F774;
-	Fri, 13 Jun 2025 18:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5BE293C44;
+	Fri, 13 Jun 2025 19:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749837857; cv=none; b=iyFIy+eWKVI5+sfXV/sFTQcxR+rmAtXtYPXFLIHj4WEsrAFR9JPIk5F1zZs5w7WEfbwSev6ufvsJHXsqyxbAgyLvfXMn5AYXbQMpkgbaZ0ydjGus5YT568tBGFqmx7Df0DfbgqGpdSBrxB0PXuQvsUGe2SZDISgC5b67LDxp7Fo=
+	t=1749842389; cv=none; b=K58kenm948/DSiNeI/ZhDATPRzhHykeJgRnErX6HjeUj98nakmuUPI12S3+80bfeFLt9zxd2dppzKdP0ZsIuVeWKMhnijM2m++DbEXH7POEtls2PDaWmGdqoRcVpU1HZVx/vBaryR6djM1HGC/A9s5me4nDzB3k0Lc0yCrP3BJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749837857; c=relaxed/simple;
-	bh=k06ojrMVttfbbL990yVC8yu59w25ry+eDhakMB1d0nc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=U+acKQ3ghwqi285kA8dUu9pbpoQzY+NirgLHUtcBCuh+49rIXW5EFbT1631+5MVEYCV4HGlYKetdcE0difC6tG7EX5mEn0TzLYULTSOs9Vj1yl7e7bZtXzedbOtgHBEBrioGtnbET7Gd6p+p8iIrbt01QkbbxSX6Kq+JsMa7OC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cgCTvs0W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD822C4CEE3;
-	Fri, 13 Jun 2025 18:04:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1749837856;
-	bh=k06ojrMVttfbbL990yVC8yu59w25ry+eDhakMB1d0nc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cgCTvs0WGSJL7LwUsZCaLwKpZ/QUfJB9UWn5PKrCpwOSwZZMC97VKX9gEGwZfGLUW
-	 iM+3bkXTFbJzcjQ/ChQP5shRXwJjgCTakHlo9wuQ3VyMZgBMHChWQfuLmqhv3mzyyy
-	 EFSr6Cyuj5A5J6D/DjAPOjwH6/ufUeKVQAC8FjEQ=
-Date: Fri, 13 Jun 2025 11:04:15 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Robert Pang <robertpang@google.com>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, corbet@lwn.net, colyli@kernel.org,
- kent.overstreet@linux.dev, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-bcache@vger.kernel.org,
- jserv@ccns.ncku.edu.tw, stable@vger.kernel.org
-Subject: Re: [PATCH 0/8] Fix bcache regression with equality-aware heap APIs
-Message-Id: <20250613110415.b898c62c7c09ff6e8b0149e9@linux-foundation.org>
-In-Reply-To: <CAJhEC05+0S69z+3+FB2Cd0hD+pCRyWTKLEOsc8BOmH73p1m+KQ@mail.gmail.com>
-References: <20250610215516.1513296-1-visitorckw@gmail.com>
-	<20250611184817.bf9fee25d6947a9bcf60b6f9@linux-foundation.org>
-	<aEvCHUcNOe1YPv37@visitorckw-System-Product-Name>
-	<CAJhEC05+0S69z+3+FB2Cd0hD+pCRyWTKLEOsc8BOmH73p1m+KQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749842389; c=relaxed/simple;
+	bh=n2BDf5mMcnBKVe5dxBtOScq6uwxcfsr7fsdeqTPatNI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PTIIv8565Wc56uQdYw3neNYmye1dcFfMIwiHf4gZHu7oaCPmCQl74Z+3jIV4fkThJAmpkos74UXum4BuwYXlCr3mXmMXCxvCvYO7bsBNfMplMrKj7n35/NwjJ8EJuQlO5DffWmdqDBJdbbwvZEc5fEKPCOdMlxtvC10KRqNbtc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RqsPkmAd; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=TkOFbauvzCXJHwA0lhC4SCDt9ja1fwf0WBrjpXqNJPQ=; b=RqsPkmAdtdKYrHJLBDSu5+zm+h
+	uGK0oV1C7UKQcWF7PYpK95kJcT/1RnytI1KUhlGTFrVrQdB6m4raUZqXs8EK0e00ac+LklOHgOX8K
+	pExcWT57uG4i6BComDySKqGVTtxLa+2cASmaZDQ+68gDauE9yRnqVP62IoU8+N3OT9EULlK6mywWx
+	YdR+C6/Ddd9+H8Mg2MRBOlmdlRbZ7xKajKu3EOKwbLHk8OvIOSubcE3+cvPcMgeZDpgOr7VcpZGtX
+	ExrMRKPvsAUPx8UASeASX80OHiJG4OLxReWR4FDnZlAXq602zGhFKfUVbG/xwJV6xBvvrVYanqwXX
+	nC2UpO7g==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uQ9wH-0000000DIaz-381b;
+	Fri, 13 Jun 2025 19:19:45 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Coly Li <colyli@kernel.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-bcache@vger.kernel.org,
+	dm-devel@lists.linux.dev
+Subject: [PATCH] bcache: Use a folio
+Date: Fri, 13 Jun 2025 20:19:39 +0100
+Message-ID: <20250613191942.3169727-1-willy@infradead.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 13 Jun 2025 23:26:33 +0900 Robert Pang <robertpang@google.com> wrote:
+Retrieve a folio from the page cache instead of a page.  Removes a
+hidden call to compound_head().  Then be sure to call folio_put()
+instead of put_page() to release it.  That doesn't save any calls
+to compound_head(), just moves them around.
 
-> Hi Andrew
-> 
-> Bcache is designed to boost the I/O performance of slower storage
-> (HDDs, network-attached storage) by leveraging fast SSDs as a block
-> cache. This functionality is critical in significantly reducing I/O
-> latency. Therefore, any notable increase in bcache's latency severely
-> diminishes its value. For instance, our tests show a P100 (max)
-> latency spike from 600 ms to 2.4 seconds every 5 minutes due to this
-> regression. In real-world environments, this  increase will cause
-> frequent timeouts and stalls in end-user applications that rely on
-> bcache's latency improvements, highlighting the urgent need to address
-> this issue.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ drivers/md/bcache/super.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-Great, thanks.  Let's please incorporate this into the v2 changelogging.
-
-> > > Also, if we are to address this regression in -stable kernels then
-> > > reverting 866898efbb25 is an obvious way - it is far far safer.  So
-> > > please also tell us why the proposed patchset is a better way for us to
-> > > go.
-> > >
-> > I agree that reverting 866898efbb25 is a much safer and smaller change
-> > for backporting. In fact, I previously raised the discussion of whether
-> > we should revert the commit or instead introduce an equality-aware API
-> > and use it. The bcache maintainer preferred the latter, and I also
-> > believe that it is a more forward-looking approach. Given that bcache
-> > has run into this issue, it's likely that other users with similar use
-> > cases may encounter it as well. We wouldn't want those users to
-> > continue relying on the current default heapify behavior. So, although
-> > reverting may be more suitable for stable in isolation, adding an
-> > equality-aware API could better serve a broader set of use cases going
-> > forward.
-
-"much safer and smaller" is very desirable for backporting, please. 
-After all, 866898efbb25 didn't really fix anything and reverting that
-takes us back to a known-to-work implementation.
-
-I of course have no problem making the changes in this patchset for
-"going forward"!
-
-So if agreeable, please prepare a patch which reverts 866898efbb25. 
-Robert's words above are a great basis for that patch's description.
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 1efb768b2890..83c786a5cc47 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -168,14 +168,14 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
+ {
+ 	const char *err;
+ 	struct cache_sb_disk *s;
+-	struct page *page;
++	struct folio *folio;
+ 	unsigned int i;
+ 
+-	page = read_cache_page_gfp(bdev->bd_mapping,
+-				   SB_OFFSET >> PAGE_SHIFT, GFP_KERNEL);
+-	if (IS_ERR(page))
++	folio = mapping_read_folio_gfp(bdev->bd_mapping,
++			SB_OFFSET >> PAGE_SHIFT, GFP_KERNEL);
++	if (IS_ERR(folio))
+ 		return "IO error";
+-	s = page_address(page) + offset_in_page(SB_OFFSET);
++	s = folio_address(folio) + offset_in_folio(folio, SB_OFFSET);
+ 
+ 	sb->offset		= le64_to_cpu(s->offset);
+ 	sb->version		= le64_to_cpu(s->version);
+@@ -272,7 +272,7 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
+ 	*res = s;
+ 	return NULL;
+ err:
+-	put_page(page);
++	folio_put(folio);
+ 	return err;
+ }
+ 
+@@ -1366,7 +1366,7 @@ static CLOSURE_CALLBACK(cached_dev_free)
+ 	mutex_unlock(&bch_register_lock);
+ 
+ 	if (dc->sb_disk)
+-		put_page(virt_to_page(dc->sb_disk));
++		folio_put(virt_to_folio(dc->sb_disk));
+ 
+ 	if (dc->bdev_file)
+ 		fput(dc->bdev_file);
+@@ -2215,7 +2215,7 @@ void bch_cache_release(struct kobject *kobj)
+ 		free_fifo(&ca->free[i]);
+ 
+ 	if (ca->sb_disk)
+-		put_page(virt_to_page(ca->sb_disk));
++		folio_put(virt_to_folio(ca->sb_disk));
+ 
+ 	if (ca->bdev_file)
+ 		fput(ca->bdev_file);
+@@ -2592,7 +2592,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 	if (!holder) {
+ 		ret = -ENOMEM;
+ 		err = "cannot allocate memory";
+-		goto out_put_sb_page;
++		goto out_put_sb_folio;
+ 	}
+ 
+ 	/* Now reopen in exclusive mode with proper holder */
+@@ -2666,8 +2666,8 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 
+ out_free_holder:
+ 	kfree(holder);
+-out_put_sb_page:
+-	put_page(virt_to_page(sb_disk));
++out_put_sb_folio:
++	folio_put(virt_to_folio(sb_disk));
+ out_blkdev_put:
+ 	if (bdev_file)
+ 		fput(bdev_file);
+-- 
+2.47.2
 
 
