@@ -1,52 +1,52 @@
-Return-Path: <linux-bcache+bounces-1142-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1143-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460C4ADA81B
-	for <lists+linux-bcache@lfdr.de>; Mon, 16 Jun 2025 08:19:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E99BAE1A5D
+	for <lists+linux-bcache@lfdr.de>; Fri, 20 Jun 2025 13:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C51516E190
-	for <lists+linux-bcache@lfdr.de>; Mon, 16 Jun 2025 06:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E9AD1BC2B8C
+	for <lists+linux-bcache@lfdr.de>; Fri, 20 Jun 2025 11:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5F61CF5C6;
-	Mon, 16 Jun 2025 06:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E29264A6E;
+	Fri, 20 Jun 2025 11:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioQACaDt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/nXUE54"
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B56156228;
-	Mon, 16 Jun 2025 06:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA4F223DFA;
+	Fri, 20 Jun 2025 11:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750054774; cv=none; b=awNituYnq8ywRXiI1LA9RvhLvftSZXmqEW0WIql4RBnLJPfrjr2RHyJEVKXG9G89xWg/5Sl/G+ng/TNmRvr7zCy9Rm0SPnJ5uCcP4MpgiajX7Bjz7KLzvVWialou8HTrfOEX+i2XSeWr8zRcLikw2szXT1Mfp6I1uB//aTAPnOA=
+	t=1750420742; cv=none; b=GL9hsC34J4g+kSsD+bdCZkEbTg6l8htQ8B8x6RyRqDCxTx6vWG61k6M56Z6t9YIMbODVGN6UDG4xUPGCCeVSyKdPcvV24EKft2baCUABU1wSkYeRy2XA4WQ6iN074Our3hyagJHnVpj7+54r3dK+g/TkN8DcSQ6owv+4rmOSJIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750054774; c=relaxed/simple;
-	bh=PwoDpo6CtYxteSGqWYWEaQGKGibhDwIXR2Zxa4oPxo4=;
+	s=arc-20240116; t=1750420742; c=relaxed/simple;
+	bh=Mi/AJLT7ejPY7tX/YpmXZttTM0u1iSXMtpI3Vg9vOOc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E2nu6nMSMWQdR/B12F7bnCY0KcnGevSmN8oU8V9SQNK1sxyh5q18oSLWdownLvTLC2a5h1aGvN8bWWmOV4TRyfcuNYHQj7aSv1w5RFGr8WaH5EnWUjlROh0FAFWZy67jYDj9QgoJCSCt/vPxPn7aaRIrRozAA1WJeJmw8dPiOD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioQACaDt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD9A6C4CEEA;
-	Mon, 16 Jun 2025 06:19:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lvZDLOZ6osu8AmyRjiaw9TAkpII5V3L1qG0Dz3LMjnbj+6MusdZ1f0QdXrxsRO4WnuZkeE/3vMebnDDAa/bmfTwmHbsxJl0rLKuNi42bbbwGRwWYVnv5MEs3NknoLmxbs/LeKln0V2X1KUrvOyIVjtRB4Dv0aQ98bDaUeogDwZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/nXUE54; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0A82C4CEE3;
+	Fri, 20 Jun 2025 11:58:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750054773;
-	bh=PwoDpo6CtYxteSGqWYWEaQGKGibhDwIXR2Zxa4oPxo4=;
+	s=k20201202; t=1750420741;
+	bh=Mi/AJLT7ejPY7tX/YpmXZttTM0u1iSXMtpI3Vg9vOOc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ioQACaDtrf3y5MSDYBB7beyei/Vf5Psf0PmG2W/6PAFfGejuiV8RaOyCLSSuWGEnf
-	 9Xa16tOdt//OkKWvozRLPHK2W7glD0TJ2wnrlTHI33ITFRZHfhpfup2agZlDWZuzkw
-	 OQQ9hxmULMzh3FDxPvsH+2j0vD4PdlrhCVj8rLujmzzy7d77hGbO2dltXzy8H19MPw
-	 KThXIKMngxKGTJuWOs/rju4X1Q/uSNrN9JRKbEwLEY2ilpsAo14lilzNvFihD9Z+HN
-	 Dckt5rfuHIjOzC0zekz7OxJ16l539kCTlZ9WLzpEoxDAMd+m7Ogdm1fXXtE7GSJ6NQ
-	 OteQY296MQNmA==
-Date: Mon, 16 Jun 2025 14:19:30 +0800
+	b=r/nXUE544Z2r07TDbn08l3r39svAZ84NQZ4LNKAqKs3SqcWLCy54MdVOTwB5UDe6s
+	 Ge28OzFOUFUBs3DJdhyy+xtMqrFOnHQAAhBGSKKi3jN3H7H7wS4oRafsK50oU3ann0
+	 Q2D+zGTuDcHiVwwJVrTOPXPPScNAerPK9SkJECkODZJ2s8cm0bA+Ko8RQDYiwfttFh
+	 B14cUAfw0Qi9Zz7l3ye+oz66ZrwokehooNQwEegSLJ+SBdQSOxpA8SNaKpFvMznwLq
+	 vfUQNXoZo4onjbdzlsOMXOy//IbkUpSB+TEkFSKKJTbJTu6/7nhQPs11lCDqgI8Kfe
+	 6nAolBoRl0cTA==
+Date: Fri, 20 Jun 2025 19:58:56 +0800
 From: Coly Li <colyli@kernel.org>
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc: linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev
 Subject: Re: [PATCH] bcache: Use a folio
-Message-ID: <4h542zrzxd2cdetymvw7txrgdpony452cxej26msqprcfpu23h@kxgiywm76dwt>
+Message-ID: <avp5ecscfzz2ekasr3qr6fvyhxwijkwn5k3z6lq5emrcdagpyc@qvzxjtc3uetx>
 References: <20250613191942.3169727-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
@@ -66,9 +66,12 @@ On Fri, Jun 13, 2025 at 08:19:39PM +0800, Matthew Wilcox (Oracle) wrote:
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Hi Matthew,
+Acked-back: Coly Li <colyli@kernel.org>
 
-Overall the patch is fine to me. I will reply you after doing some basic testing.
+The patch looks fine and works well. If you want this patch to go upstream
+by your path, please add my Acked-by.
+
+Otherwise I can submit it to Jens with my Signed-off-by.
 
 Thanks.
 
@@ -152,5 +155,6 @@ Coly Li
 >  		fput(bdev_file);
 > -- 
 > 2.47.2
+> 
 > 
 
