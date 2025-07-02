@@ -1,112 +1,123 @@
-Return-Path: <linux-bcache+bounces-1149-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1150-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037D4AF5A12
-	for <lists+linux-bcache@lfdr.de>; Wed,  2 Jul 2025 15:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C34FAAF5E61
+	for <lists+linux-bcache@lfdr.de>; Wed,  2 Jul 2025 18:19:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B1753A9E57
-	for <lists+linux-bcache@lfdr.de>; Wed,  2 Jul 2025 13:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A315C3A69B1
+	for <lists+linux-bcache@lfdr.de>; Wed,  2 Jul 2025 16:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EEB2749E6;
-	Wed,  2 Jul 2025 13:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4412D372C;
+	Wed,  2 Jul 2025 16:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zc7cxcWd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQzdi4h9"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6001E2609D6
-	for <linux-bcache@vger.kernel.org>; Wed,  2 Jul 2025 13:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDE9272E60;
+	Wed,  2 Jul 2025 16:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751464163; cv=none; b=q6aWgLcZhW1N1nUT3WFsZ/6al/1gd7z6JZqN6kxr5aidpbhCUWR3w2SKDzByjOtv4Q8QBWJOTRIf/qkamind0irvhkUz/9RbuflPcQgyvirLHDSttbALw19LWx12VniR1gM1225a2sTK7Q5cdsvkiq3rDpk2qiPFAYGeCi2ypak=
+	t=1751473185; cv=none; b=niKY0f0DuqQd3LIyLxVGi7CMNo0lL6lOv5kzbopsvw73PHaEG0+AXRlDe5olAhdDYpepEIGml3QAFjHOLH9LLeUCCqkovB4o+XiEL+FF06G9rnBVyV2I8urfeb9xYnQNORtAdjbiMCgocSIQJVCSQ4vgIE9lxlbhatB6NSvqWG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751464163; c=relaxed/simple;
-	bh=3dtWvOnwECnar+aU1A/C7ljCMWXFm3411P17BEniXz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SE+PQKiBhwDjhAJaVAR6phPar55cok8yGwZQgWWdlzPevjD7sLF+EDi80o50h0oun2xvGQ+jd7/k+0eO2andpYC1nU0IT5bM9/MBP+tYwC5FoG6XLSuFIn4EvW1HRvKMDjh2yqAANe30PP8S33oWv0Z+5yx6viKHW0c05k03M1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zc7cxcWd; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3ddb4a7ac19so24992575ab.3
-        for <linux-bcache@vger.kernel.org>; Wed, 02 Jul 2025 06:49:22 -0700 (PDT)
+	s=arc-20240116; t=1751473185; c=relaxed/simple;
+	bh=eJHOQtqA3xF7mK33ylDHVOemht94RK//ALIurEx23uY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=VCes2aBYbUcpUWsFduv9Tnn2A4xu6a8TUa3VZ1v0wP4p3uQbb9QShhiNOTRuSbFitjCQ6VK8+2rQyLTDgBgUKqaoY6yoNWhX2WlERaKdh3uMhe2zojfn237zM+GslcXMA6JcuEYb0Wbco9hm3y/nXYvZ1kLUk8QaTEDvHALRbVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQzdi4h9; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-236470b2dceso40329085ad.0;
+        Wed, 02 Jul 2025 09:19:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751464161; x=1752068961; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UmKPSiA+DMe0y1oOP3u6y81S9PUYI+S3s8c9kqvPo70=;
-        b=zc7cxcWd9yJJbPxfge2cGndAqoL7RkjmWUWiK8Wi8DMHfPlYBo4u9fYaryc/7DC7R4
-         y8xvar8boyh5utrHyJOYZ5yFc0eyctLlxW38c6B9AuV5dntf/ZHoopIfwjfuNfaW2ZqV
-         SL12NUZNNO2usPD19ub+KJmJ6NuPJfs3bb3mwNQYBKQK19aXU6Mn+PLo4IggQ7J+Q+Ye
-         K47IwYe0LYKBCWie0wxnqo075lhJRZNfuchS8rJKegITzyK0FlLFH8T4f+9jEwNUKMfH
-         9nc1LdklAf5vd+RTHgQN9yM0OyyYJzSxJP9Cc4qk2UWzMMBUAGYOObLNt1tlRw67pAHR
-         Nd3w==
+        d=gmail.com; s=20230601; t=1751473183; x=1752077983; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UvuwG1BeX3SmP91n5grjnwtkYnE0lIY3xyC/GFoKlQU=;
+        b=MQzdi4h9Sty2K3fxtd2fOmFgSizS4WYruof66bpOp9nJ6nb5sxra15trxKaY4wfD++
+         G4TRnUvc83cm41s71RAYRxC6YWGK6NPVAA/WASIIIRZljcMGP/8XhJ1iPRoVufIUp/Hz
+         pCLvIQWlZaO/8Z375Yit7Z9WKzTEjYSvoAlUEyiW8Y9ofAbSTMBRpaUzA9muIfmxetre
+         JWDmNc/02IM5v7e9Wu0vcnsSZJ0pvv1nOzxV7VapqapDitt0O0ZI0fXefZnHAcXFLtEe
+         dFNgyUZW8l0Lj5sctlfeR6Gx1alSzbUT8jZ+SbufFrpIPxpqkixNAM8221EbEJB4mN6b
+         0F7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751464161; x=1752068961;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UmKPSiA+DMe0y1oOP3u6y81S9PUYI+S3s8c9kqvPo70=;
-        b=ht+t0hxRmPvlAWvhBw0QGakf9/JIDvMRKqVfv9VDItUFgFlyRqwGkp+M8uDiLwSWV0
-         6egJmy6JlD77jHacGn9tnHK4Ynfr3H5uVRdzzHZkPi7MzcT80b9ZGKyjGtqu08/lzq6i
-         O6LHzNNUOwC4rgJLE8yaxFusuprhCk3Ae74fJ84KyhBjU6B+BtWxtzLR93v86r/+jF1r
-         ukphMS8qGoxIzYRes2DcBxeDAeBf7jzgci8K9grSpMn2V6PuIfG8r3qFtlA/ts2W9+SM
-         rAzHiEjgsTdOKRdN8MLIuhzbtKltGnlTCtWw895lLeKQWM3UDrrth/uWS1I9beQrUlhQ
-         t7qA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Nv6QjguktPr8uzKiX9fRhAyeASVH5KZ14behbTI0CORRkKqKsLxNfMQ22DzYAXONOuS5w5/ZqpcDy8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuaHhsUCcWQByw5J0FCUF+Bg2ACpawnTeiBDGe45q5FLjJhpXx
-	QPgFVifxmTBbhr/agU3lfEm3zYN9jwjWnLOWLXets71g0DCvDGFye2ALGDtNjAkBbYI=
-X-Gm-Gg: ASbGncs3jIHCbcOeQAb7b4LWCAe+Fe5DPzdd6mBdhMwTVWa9GlQwjmZK1uJmOnXyvEd
-	ZlDfL/8cCLtXUP5qUMOGIM1RVzPvryIcEI2soC+RQ5mLQfWGxiZ8vYz3hLRIl2CRMMGNt5hIE8F
-	xeoV9H5qt5SlzlIxTgea0WM6E2UGI5uJRBmE4wZUKQIeO6abg8RblTCUkI7TLX0nFvWfOus4ByS
-	Jd3pfrBQzFnvrXDyAp816eNcgwcfxCoyJSmEL4CzSB/VKU+N22RRqq8tTcg1caHS3GL/aPuugpA
-	C9PT+c9kUJKQyWEkYWodGRK30ZZocN5yKHjnE0kpYY5z36S/SaAzjdRvuA4=
-X-Google-Smtp-Source: AGHT+IFoDMrG3sdUp3ZtKwsQ1EnFvJM6JH+Yf5SDSq0ZsPF51vMD1as1g7Edv8aN1+I52eNLTGcTDA==
-X-Received: by 2002:a92:c26b:0:b0:3df:45bc:14d1 with SMTP id e9e14a558f8ab-3e0549f47c0mr29766485ab.13.1751464161401;
-        Wed, 02 Jul 2025 06:49:21 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50204861386sm2972565173.16.2025.07.02.06.49.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 06:49:20 -0700 (PDT)
-Message-ID: <a741131f-b06c-4565-974a-f2c1a45d44c6@kernel.dk>
-Date: Wed, 2 Jul 2025 07:49:20 -0600
+        d=1e100.net; s=20230601; t=1751473183; x=1752077983;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UvuwG1BeX3SmP91n5grjnwtkYnE0lIY3xyC/GFoKlQU=;
+        b=irr0oEDgQKiYiLjAXi2CHQ51k7w6gF9m6M4baBO5LtXm4UpMYpzq3niRPU5o7FqikD
+         5ur8/UX0tC+fQewiH0iObYnviv3iSdtr86O08JrVcBXGLJp4x5W3uz9Xn//+D0CyYXwu
+         1HsYXYjyI75NQpwKjExyXVwAGQ6pAXzXOR3Vj7Fr8As/L3npFlWgatUuq98KN0cEWOqS
+         Dn93YVTYP31DhFdqg4FNxiwnmoWP+GcIxtbCDmTiOFi+X4sZ0bkujHqzvQlYhzAE3cr8
+         OMkzbg+gqqQjQ9wFYD94pqTT663IOXyiN+yrVNneNxzX8nmA+6OBNzoZFhjQR25FZbB+
+         7XvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6GlkCjg8pW5GgmYBlDUiNAbr1N10AojahPuIeli+RvaF8MAOkvi70T/mGbj/02QTPb1+at/Cw7wLplhY=@vger.kernel.org, AJvYcCWfeqlay0S9l8vh/Tw+jw6hVqxAI8xZeJvl7OX3ZB6KNWL7JxfHILlh1yTa5WqqyLPWjX7jCf9CoWVt7fE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY1twGUk+n1nGaDLU82JE+KrVwmzGJayuTDE3ScEjHJP1g6ZDV
+	vL16G0kbk6ZumXoFMF8oyU4XQ7RelrdRPBkgeoy2S2iiEMl3ha9vnaTl6A2tP9kb
+X-Gm-Gg: ASbGncvwqNd08jgwLt14z4Me48REKwKUbP4QuZqJANVYrBaZ8LzL+iM7VyImQCz5I1a
+	uSVaTUWNtPKVQPS/pJxJIgrCwjj4utk+W3yao0bkswcVyELCWWBN5+iKacOChpQJirxzMo1k2UM
+	T8eKndcARAGtBTvVSOPOsY10WgoCL5Kacx4HIppnR8vj6ZND5ALpPFHiFP4wdFgFP59ujgitwt6
+	dnnKvnJIhj/pwEY5s9oWJZJ0aUN7KA3Ia9pqlAGBDXp4e+wOE7n1nVzEd6ZosipciuUObYyHg5A
+	zUuV87WMTdyo3nBj2xnh4L1S6p8AONo3d2LwMWX1lGJaecqGIg0gVQRiEJ/2+kt8a9VzpZRd90V
+	aqEo7fT9e4fHKCbPG
+X-Google-Smtp-Source: AGHT+IEVAZYCl6bKVOdoOvyjbF2Fqsrp72OI8nq/SHLXyB6iz0D6CrSxMKthrj96isA6mCbUNOGG/A==
+X-Received: by 2002:a17:902:d487:b0:234:ef42:5d69 with SMTP id d9443c01a7336-23c6e5007ecmr51878625ad.13.1751473182906;
+        Wed, 02 Jul 2025 09:19:42 -0700 (PDT)
+Received: from smtpclient.apple (n218103205009.netvigator.com. [218.103.205.9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2e39besm141816475ad.13.2025.07.02.09.19.41
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 02 Jul 2025 09:19:42 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
 Subject: Re: [PATCH] bcache: Use a folio
-To: colyli@kernel.org, axboe@kernel.org
-Cc: linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+From: Coly Li <colyli@gmail.com>
+In-Reply-To: <a741131f-b06c-4565-974a-f2c1a45d44c6@kernel.dk>
+Date: Thu, 3 Jul 2025 00:19:27 +0800
+Cc: colyli@kernel.org,
+ axboe@kernel.org,
+ linux-block@vger.kernel.org,
+ linux-bcache@vger.kernel.org,
  Matthew Wilcox <willy@infradead.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DFCB60F9-C0A5-4E89-A0F1-8B48575CDED3@gmail.com>
 References: <20250702024848.343370-1-colyli@kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <20250702024848.343370-1-colyli@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <a741131f-b06c-4565-974a-f2c1a45d44c6@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
 
-On 7/1/25 8:48 PM, colyli@kernel.org wrote:
-> From: Matthew Wilcox (Oracle) <willy@infradead.org>
-> 
-> Retrieve a folio from the page cache instead of a page.  Removes a
-> hidden call to compound_head().  Then be sure to call folio_put()
-> instead of put_page() to release it.  That doesn't save any calls
-> to compound_head(), just moves them around.
 
-Really needs a better subject line... I can do that while applying,
-however. How about:
 
-bcache: switch from pages to folios in read_super()
+> 2025=E5=B9=B47=E6=9C=882=E6=97=A5 21:49=EF=BC=8CJens Axboe =
+<axboe@kernel.dk> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On 7/1/25 8:48 PM, colyli@kernel.org wrote:
+>> From: Matthew Wilcox (Oracle) <willy@infradead.org>
+>>=20
+>> Retrieve a folio from the page cache instead of a page.  Removes a
+>> hidden call to compound_head().  Then be sure to call folio_put()
+>> instead of put_page() to release it.  That doesn't save any calls
+>> to compound_head(), just moves them around.
+>=20
+> Really needs a better subject line... I can do that while applying,
+> however. How about:
+>=20
+> bcache: switch from pages to folios in read_super()
 
-or something like that.
+Yeah, this subject is good IMHO.
 
--- 
-Jens Axboe
+Thanks.
+
+Coly Li=
 
