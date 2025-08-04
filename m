@@ -1,199 +1,146 @@
-Return-Path: <linux-bcache+bounces-1168-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1169-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7EFCB19A8C
-	for <lists+linux-bcache@lfdr.de>; Mon,  4 Aug 2025 05:48:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B4EB19AB3
+	for <lists+linux-bcache@lfdr.de>; Mon,  4 Aug 2025 06:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB471176724
-	for <lists+linux-bcache@lfdr.de>; Mon,  4 Aug 2025 03:48:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCFBD7AB027
+	for <lists+linux-bcache@lfdr.de>; Mon,  4 Aug 2025 04:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B767260D;
-	Mon,  4 Aug 2025 03:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCBE2236E3;
+	Mon,  4 Aug 2025 04:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VsnnaUqE"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7982E3705;
-	Mon,  4 Aug 2025 03:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C051E521D
+	for <linux-bcache@vger.kernel.org>; Mon,  4 Aug 2025 04:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754279333; cv=none; b=pbQ3yDg6viUNpQ3K29MEXrZ2DEojT/CEBRgvPsNrKyILVpU617e7mHBSvf4oQv5rSwMNIoI61z4Ns3wQEluy7+VGWMHOtN2he/ZHYTVNQW61gzXRW4Af12uomFfkoR+NqpTKKh3PS8699OG7SUVzBHozDH61GhToMYVpb+79cJI=
+	t=1754281061; cv=none; b=tyMZwh76lWAKmQp7ArDcT0eDz/p7wcPmdsm4pkSUIqlBRzqF9NeohF4v163H20upQjw6NTefZ9f5EQvE2bbq04l43tAELRgpHhnivOvldIZKYzRq3hrTPfS3+Gr5V7Z9CgrQVHSrQnyQ48G1YfrU1ERUginVTKM3yWRDDNa5T0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754279333; c=relaxed/simple;
-	bh=SEqJ3XzsflOSaNrtQ+/ew97S1OnGTYxZSYXzMuS9+pQ=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
-	 References:In-Reply-To; b=Jogd2BjDvJnOLQXuZcBM03GdZKrvZ9n/nWwwOZwtClmnbdNN47vzCOIuaoM+yX7oBkX+/wKchbgyq2lcYrIip6vQh1+DdfVUeThVWCs1GlDwm7Q+BXVu/wE/b279B/pAa0rUbIJFn/cgKc5/NE1L1Mh+/QwmHYsMph7jliNXbxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn; spf=pass smtp.mailfrom=kylinos.com.cn; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.com.cn
-EX-QQ-RecipientCnt: 4
-X-QQ-GoodBg: 2
-X-QQ-SSF: 00400000000000F0
-X-QQ-FEAT: D4aqtcRDiqSYbfq2fqToiGQ640EZkclUqGZucf6tfws=
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-Originating-IP: 6d6deF6vSc7h7lN3yZkMY+O6nZnUO5BPGf1Cm9CwLUg=
-X-QQ-STYLE: 
-X-QQ-mid: lv3sz3a-2t1754279278t6c9d9b9f
-From: "=?utf-8?B?WmhvdSBKaWZlbmc=?=" <zhoujifeng@kylinos.com.cn>
-To: "=?utf-8?B?Q29seSBMaQ==?=" <colyli@kernel.org>
-Cc: "=?utf-8?B?a2VudC5vdmVyc3RyZWV0?=" <kent.overstreet@linux.dev>, "=?utf-8?B?bGludXgtYmNhY2hl?=" <linux-bcache@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1754281061; c=relaxed/simple;
+	bh=UkP0E4UfHWs27GLjO5NJjuLdapDhGCFyUrRQBUuueiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jfTSwKizZLyrCEeHgxF07jvt8koIFfzXyO3fK9WkLd9Mqi+ATpBMkVp+eIAz/gj9TX+DzN/iDcJ4bJgS82sUoS3X7cTEI+HdvTFwHnLyqaCkbzCUJMZhY/EZkGSOniEZOBFn84iUzNVxigk+Jww/CAZCsB+0B7AEx0QQ1yC4Pqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VsnnaUqE; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 4 Aug 2025 00:17:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754281054;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P0M9ZvKP4fwKl6JlW8sauGJ2yeG2JB9awxi8njeECQk=;
+	b=VsnnaUqEhrQ9L8sGioT23frPZd8q3eDn0SYmzAcd454+0ya5AgDX9OCnCje3/rpkVipuTa
+	ijh1z7iqX1knxWf3RmcsCDdCRveglPr1vDKWQGsK6RDVUdeF7IQy0JVMcqGInLIEVjvpHn
+	FGGFvuWAkzveG4/QUbn1PvuTm/dbRyI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+Cc: Coly Li <colyli@kernel.org>, 
+	linux-bcache <linux-bcache@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
+Message-ID: <c2awlgl4ih23npqa3k2ilbrbhciv3nfd7wg5xnsjjxikcmednb@nwn3qc7aqhou>
+References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
+ <etlu4r6gxbe2jc3eemj3n4slg6xraxtxxydvxvmhv77xv42uss@7aw3yxbdgrdl>
+ <tencent_656F159830BC538C2D26CD68@qq.com>
+ <zcxdklyr2ugq7cfbed4olcsfcboy3nksxtpjs2g76bauvef5cq@4akbspw3ydiw>
+ <tencent_22DE1AC52BA931BD442CE823@qq.com>
+ <wxyamy7fkf7of4olnvqju2ldflnpj3k5u6qsufvesb3mtoaxwb@fuu5brsbgjwf>
+ <tencent_6FE47FFD5A5D8EF818ACD926@qq.com>
+ <p4uhjrka2rdj67ph5puvaixxhstcyfitzq63pwrafdwtabtjwn@fbie2x77lqee>
+ <tencent_31215CC45AD29EC835D34AD8@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Mon, 4 Aug 2025 11:47:57 +0800
-X-Priority: 3
-Message-ID: <tencent_31215CC45AD29EC835D34AD8@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
-	<etlu4r6gxbe2jc3eemj3n4slg6xraxtxxydvxvmhv77xv42uss@7aw3yxbdgrdl>
-	<tencent_656F159830BC538C2D26CD68@qq.com>
-	<zcxdklyr2ugq7cfbed4olcsfcboy3nksxtpjs2g76bauvef5cq@4akbspw3ydiw>
-	<tencent_22DE1AC52BA931BD442CE823@qq.com>
-	<wxyamy7fkf7of4olnvqju2ldflnpj3k5u6qsufvesb3mtoaxwb@fuu5brsbgjwf>
-	<tencent_6FE47FFD5A5D8EF818ACD926@qq.com>
-	<p4uhjrka2rdj67ph5puvaixxhstcyfitzq63pwrafdwtabtjwn@fbie2x77lqee>
-In-Reply-To: <p4uhjrka2rdj67ph5puvaixxhstcyfitzq63pwrafdwtabtjwn@fbie2x77lqee>
-X-QQ-ReplyHash: 3470049193
-X-BIZMAIL-ID: 12932941576564702108
-X-QQ-SENDSIZE: 520
-Received: from qq.com (unknown [127.0.0.1])
-	by smtp.qq.com (ESMTP) with SMTP
-	id ; Mon, 04 Aug 2025 11:47:58 +0800 (CST)
-Feedback-ID: lv:kylinos.com.cn:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: Npt1576yUpSCmZIOX3Qk7SZe3aBoIH11c3e1yGT3sysMKAynzQd1NFhH
-	X8el/4vjhWTN2VcoSR+Ik3Onpq/cekp4YPwZqAdSWYeCFgM/Bf/Y+jlpyKa7EgQBxjDqbzU
-	IMERDVqmI12kuOx5OfbqVB/ErGqAurxeLFBIoQamQehFLUdnxioJ3fB+OpA+dRICVlqc1Xa
-	s1n+/6loOSWMQr5Fq/kIrFFlbloH0YG2DuRMZF0wvzjS1i5CwMRTtBAGtRWLa3KDly7tvRQ
-	7ItqDrvtBpj1f6q/IZp7ltX3zq0gkCJStLibjezpFP3K1MZ3uTV2EQLVc0O3kRCkx3u1Sqt
-	xV733w+Qpho4qFb0q9TQ45F+CDGgDCvsslepOOXVe5nzesozkvM4fziwdu6JbBVLdEd9t0M
-	YMEhkjcFZq62nxNvQkXM4TQJNJ5conybOdIKlzslMaKtAgEIrwBz8QjTMIhJWL9E9dU5gWe
-	JCr5x/lnnJb9uQOBTaX+bzcs5DHFKK4uD7gL3/EmgFKm1IpYWCYq+yqlx3EGtdaw297i9pI
-	OaaUJ9r3DljYg+BwXF6teGpXbu/VAA+nsE0GHubn8z3pDiY+3CHpoxPWnKOpPBq0CXV//gG
-	+ae8LhoL6gzJZyeOlnHqrrLFuIhmIDI3ykNsl1a5mKRlik4kfL/xobnilqa9prupUSPizbb
-	6IbzSVbayNQRgzBPUDpudEI4P7FlWcQzgRSCD+qELwPq0vY7w9J/WhNq+LGbG6X/gh4tjLZ
-	skn5AhmJoc/5B4xfAvyjcG7PJQsWmV4O4hfE6v6SyLq7SdP12gZU/DWZuPSTM1wxfeQrb0p
-	K07d8azdgiik47DSa9AwvagnWpG+SyNsYuhYo3F+SjZUrKpmV7k0C+pZ7VKVPJXCdrfzEVJ
-	XGns4E8xnR9qe1Vw7iMRFevESqK1gT+38Ok8DW/V1qE4+hJm4L/afILoD9kkF3oF2ZYPWKW
-	qcxGXnQ4EOKOBbhFwkzZwyONTFOQtyjXI4Wt8s1/HPyijD+gBc0Wa7FB4aVthiRwWUlOqKB
-	oYMcDBwgViHLC9tC+NvCrFLqbAP6i9peY7PKZInQCTo8gWl4rdUzRCWsI1uWFPKnf7Xj815
-	JrtKDrQSu7V
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_31215CC45AD29EC835D34AD8@qq.com>
+X-Migadu-Flow: FLOW_OUT
 
-T24gU3VuLCAzIEF1ZyAyMDI1IGF0IDAxOjMwLCBDb2x5IExpIDxjb2x5bGlAa2VybmVsLm9y
-Zz4gd3JvdGU6DQo+DQo+IE9uIEZyaSwgQXVnIDAxLCAyMDI1IGF0IDAyOjEwOjEyUE0gKzA4
-MDAsIFpob3UgSmlmZW5nIHdyb3RlOg0KPiA+IE9uIEZyaSwgMSBBdWcgMjAyNSBhdCAxMTo0
-MiwgS2VudCBPdmVyc3RyZWV0IDxrZW50Lm92ZXJzdHJlZXRAbGludXguZGV2PiB3cm90ZToN
-Cj4gPiA+DQo+ID4gPiBPbiBGcmksIEF1ZyAwMSwgMjAyNSBhdCAxMTozMDo0M0FNICswODAw
-LCBaaG91IEppZmVuZyB3cm90ZToNCj4gPiA+ID4gT24gRnJpLCAxIEF1ZyAyMDI1IGF0IDEw
-OjM3LCBLZW50IE92ZXJzdHJlZXQgPGtlbnQub3ZlcnN0cmVldEBsaW51eC5kZXY+IHdyb3Rl
-Og0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gT24gRnJpLCBBdWcgMDEsIDIwMjUgYXQgMTA6Mjc6
-MjFBTSArMDgwMCwgWmhvdSBKaWZlbmcgd3JvdGU6DQo+ID4gPiA+ID4gPiBJbiB0aGUgd3Jp
-dGViYWNrIG1vZGUsIHRoZSBjdXJyZW50IGJjYWNoZSBjb2RlIHVzZXMgdGhlDQo+ID4gPiA+
-ID4gPiBSRVFfT1BfV1JJVEUgb3BlcmF0aW9uIHRvIGhhbmRsZSBkaXJ0eSBkYXRhLCBhbmQg
-Y2xlYXJzIHRoZSBia2V5DQo+ID4gPiA+ID4gPiBkaXJ0eSBmbGFnIGluIHRoZSBidHJlZSBk
-dXJpbmcgdGhlIGJpbyBjb21wbGV0aW9uIGNhbGxiYWNrLiBJIHRoaW5rDQo+ID4gPiA+ID4g
-PiB0aGVyZSBtaWdodCBiZSBhIHBvdGVudGlhbCByaXNrOiBpZiBpbiB0aGUgZXZlbnQgb2Yg
-YW4gdW5leHBlY3RlZA0KPiA+ID4gPiA+ID4gcG93ZXIgb3V0YWdlLCB0aGUgZGF0YSBpbiB0
-aGUgSEREIGhhcmR3YXJlIGNhY2hlIG1heSBub3QgaGF2ZQ0KPiA+ID4gPiA+ID4gaGFkIHRp
-bWUgdG8gYmUgcGVyc2lzdGVkLCB0aGVuIHRoZSBkYXRhIGluIHRoZSBIREQgaGFyZHdhcmUg
-Y2FjaGUNCj4gPiA+ID4gPiA+IHRoYXQgaXMgcGVuZGluZyBwcm9jZXNzaW5nIG1heSBiZSBs
-b3N0LiBTaW5jZSBhdCB0aGlzIHRpbWUgdGhlIGJrZXkNCj4gPiA+ID4gPiA+IGRpcnR5IGZs
-YWcgaW4gdGhlIGJ0cmVlIGhhcyBiZWVuIGNsZWFyZWQsIHRoZSBkYXRhIHN0YXR1cyByZWNv
-cmRlZA0KPiA+ID4gPiA+ID4gYnkgdGhlIGJrZXkgZG9lcyBub3QgbWF0Y2ggdGhlIGFjdHVh
-bCBzaXR1YXRpb24gb2YgdGhlIFNTRCBhbmQNCj4gPiA+ID4gPiA+IEhERC4NCj4gPiA+ID4g
-PiA+IEFtIEkgdW5kZXJzdGFuZGluZyB0aGlzIGNvcnJlY3RseT8NCj4gPiA+ID4gPg0KPiA+
-ID4gPiA+IEZvciB3aGF0IHlvdSdyZSBkZXNjcmliaW5nLCB3ZSBuZWVkIHRvIG1ha2Ugc3Vy
-ZSB0aGUgYmFja2luZyBkZXZpY2UgaXMNCj4gPiA+ID4gPiBmbHVzaGVkIHdoZW4gd2UncmUg
-Zmx1c2hpbmcgdGhlIGpvdXJuYWwuDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBJdCdzIHBvc3Np
-YmxlIHRoYXQgdGhpcyBpc24ndCBoYW5kbGVkIGNvcnJlY3RseSBpbiBiY2FjaGU7IGJjYWNo
-ZWZzDQo+ID4gPiA+ID4gZG9lcywgYW5kIEkgd3JvdGUgdGhhdCBjb2RlIGFmdGVyIGJjYWNo
-ZSAtIGJ1dCB0aGUgYmNhY2hlIHZlcnNpb24gd291bGQNCj4gPiA+ID4gPiBsb29rIHF1aXRl
-IGRpZmZlcmVudC4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFlvdSd2ZSByZWFkIHRoYXQgY29k
-ZSBtb3JlIHJlY2VudGx5IHRoYW4gSSBoYXZlIC0gaGF2ZSB5b3UgY2hlY2tlZCBmb3INCj4g
-PiA+ID4gPiB0aGF0Pw0KPiA+ID4gPg0KPiA+ID4gPiBJbiB0aGUgYHdyaXRlX2RpcnR5X2Zp
-bmlzaGAgZnVuY3Rpb24sIHRoZXJlIGlzIGFuIGF0dGVtcHQgdG8gdXBkYXRlIHRoZQ0KPiA+
-ID4gPiBgYmtleWAgc3RhdHVzLCBidXQgSSBkaWQgbm90IG9ic2VydmUgYW55IGxvZ2dpbmcg
-d3JpdGluZyBwcm9jZXNzLiBJbiB0aGUNCj4gPiA+ID4gY29yZSBmdW5jdGlvbiBgam91cm5h
-bF93cml0ZV91bmxvY2tlZGAgb2YgYmNhY2hlIGZvciB3cml0aW5nIGxvZ3MsIEkNCj4gPiA+
-ID4gYWxzbyBjb3VsZG4ndCBmaW5kIHRoZSBjb2RlIGxvZ2ljIGZvciBzZW5kaW5nIGEgRkxV
-U0ggY29tbWFuZCB0byB0aGUNCj4gPiA+ID4gYmFja2VuZCBIREQuDQo+ID4gPg0KPiA+ID4g
-VGhlIHJpZ2h0IHBsYWNlIGZvciBpdCB3b3VsZCBiZSBpbiB0aGUgam91cm5hbCBjb2RlOiBi
-ZWZvcmUgZG9pbmcgYQ0KPiA+ID4gam91cm5hbCB3cml0ZSwgaXNzdWUgZmx1c2hlcyB0byB0
-aGUgYmFja2luZyBkZXZpY2VzLg0KPiA+ID4NCj4gPiA+IENhbiB5b3UgY2hlY2sgZm9yIHRo
-YXQ/DQo+ID4gPg0KPiA+DQo+ID4gSSBjaGVja2VkIGFuZCBmb3VuZCB0aGF0IHRoZXJlIHdh
-cyBubyBjb2RlIGZvciBzZW5kaW5nIGEgZmx1c2ggcmVxdWVzdA0KPiA+IHRvIHRoZSBiYWNr
-ZW5kIGRldmljZSBiZWZvcmUgdGhlIGV4ZWN1dGlvbiBsb2cgd2FzIHdyaXR0ZW4uIEFkZGl0
-aW9uYWxseSwNCj4gPiBpbiB0aGUgY2FsbGJhY2sgZnVuY3Rpb24gYWZ0ZXIgdGhlIGRpcnR5
-IGRhdGEgd2FzIHdyaXR0ZW4gYmFjaywgd2hlbiBpdA0KPiA+IHVwZGF0ZWQgdGhlIGJrZXks
-IGl0IGRpZCBub3QgaW5zZXJ0IHRoaXMgdXBkYXRlIGludG8gdGhlIGxvZy4NCj4gPg0KPg0K
-PiBJdCBkb2Vzbid0IGhhdmUgdG8uIElmIHRoZSBwcmV2aW91cyBkaXJ0eSB2ZXJzaW9uIG9m
-IHRoZSBrZXkgaXMgb24gY2FjaGUgZGV2aWNlDQo+IGFscmVhZHksIGFuZCBwb3dlciBvZmYg
-aGFwcGVucywgZXZlbiB0aGUgY2xlYW4gdmVyc2lvbiBvZiB0aGUga2V5IGlzIGdvbmUsIHRo
-ZQ0KPiBkaXJ0eSB2ZXJzaW9uIGFuZCBpdHMgZGF0YSBhcmUgYWxsIHZhbGlkLiBJZiB0aGUg
-TEJBIHJhbmdlIG9mIHRoaXMga2V5IGlzDQo+IGFsbG9jYXRlZCB0byBhIG5ldyBrZXksIGEg
-R0MgbXVzdCBoYXZlIGFscmFkeSBoYXBwZW5lZCwgYW5kIHRoZSBkaXJ0eSBrZXkgaXMNCj4g
-aW52YWxpZCBkdWUgdG8gYnVja2V0IGdlbmVyYXRpb24gaW5jcmVhc2VkLiBTbyBkb24ndCB3
-b3JyeSwgdGhlIGNsZWFuIGtleSBpcw0KPiB1bm5jZXNzYXJ5IHRvIGdvIGludG8gam91cm5h
-bCBpbiB0aGUgd3JpdGViYWNrIHNjZW5hcmlvLg0KPg0KPiBJTUhPLCB5b3UgbWF5IHRyeSB0
-byBmbHVzaCBiYWNraW5nIGRldmljZSBpbiBhIGt3b3JrZXIgYmVmb3JlIGNhbGxpbmcNCj4g
-c2V0X2djX3NlY3RvcnMoKSBpbiBiY2hfZ2NfdGhyZWFkKCkuIFRoZSBkaXNrIGNhY2hlIGNh
-biBiZSBmbHVzaGVkIGluIHRpbWUNCj4gYmVmb3JlIHRoZSBzdGlsbC1kaXJ0eS1vbi1kaXNr
-IGtleXMgYXJlIGludmFsaWRhdGVkIGJ5IGluY3JlYXNlIGJ1Y2tldCBrZXkNCj4gZ2VuLiBB
-bmQgYWxzbyBmbHVzaGluZyBiYWNraW5nIGRldmljZSBhZnRlciBzZWFyY2hlZF9mdWxsX2lu
-ZGV4IGJlY29tZXMNCj4gdHJ1ZSBpbiB0aGUgd3JpdGViYWNrIHRocmVhZCBtYWluIGxvb3Ag
-KGFzIHlvdSBkaWQgbm93KS4NCj4NCg0KVGhlICJmbHVzaCIgY29tbWFuZCBwcmV2aW91c2x5
-IGlzc3VlZCBieSBHQyB3YXMgc3VwcG9zZWQgdG8gYWxsZXZpYXRlDQp0aGUgcHJvYmxlbXMg
-aW4gc29tZSBzY2VuYXJpb3MuIEhvd2V2ZXIsIEkgdGhvdWdodCBvZiBhIHNpdHVhdGlvbiB3
-aGVyZQ0KdGhpcyAiZmx1c2giIGNvbW1hbmQgaXNzdWVkIGJlZm9yZSBHQyBtaWdodCBub3Qg
-YmUgc3VmZmljaWVudCB0byBzb2x2ZQ0KdGhlIGlzc3VlLg0KDQpTdXBwb3NlIHN1Y2ggYSBz
-Y2VuYXJpbzogYWZ0ZXIgYSBwb3dlciBmYWlsdXJlLCBzb21lIGhhcmR3YXJlIGNhY2hlIGRh
-dGENCmluIHRoZSBIREQgaXMgbG9zdCwgd2hpbGUgdGhlIGNvcnJlc3BvbmRpbmcgYmtleSh3
-aXRoIHRoZSBkaXJ0eSBmbGFnIGNsZWFyZWQpDQp1cGRhdGUgaW4gdGhlIFNTRCBoYXMgYmVl
-biBwZXJzaXN0ZWQuIEFmdGVyIHRoZSBwb3dlciBpcyByZXN0b3JlZCwgaWYNCmJjYWNoZSBz
-ZW5kcyBhIGZsdXNoIGJlZm9yZSBHQywgd2lsbCB0aGlzIGNhdXNlIGRhdGEgbG9zcz8NCg0K
-PiBGbHVzaGluZyBiYWNraW5nIGRldmljZSBhZnRlciByZWFkX2RpcnR5KCkgcmV0dXJucyBp
-cyB0b28gaGVhdnksIGV2ZW50IHdpdGgNCj4gdGhlIGZsdXNoIGhpbnQga2V5cy4gQW5kIHRo
-ZSBmbHVzaGluZyBvcGVyYXRpb25zIGFyZSB1bm5lY2Vzc2FyeSBiZWZvcmUgdGhlDQo+IGtl
-eXMgYXJlIHJlY2xhaW1lZCBieSBnYXJiYWdlIGNvbGxhY3Rpb24uDQo+DQo+IEp1c3QgbXkg
-c3VnZ2VzdGlvbiBmb3IgeW91ciBjb25zaWRlcmF0aW9uLg0KPg0KPiBUaGFua3MuDQo+DQo+
-IENvbHkgTGkNCj4NCj4NCj4gPiBUaGUgZm9sbG93aW5nIGNhbGxiYWNrIGZ1bmN0aW9uIGFm
-dGVyIGRpcnR5IGRhdGEgaXMgd3JpdHRlbiBiYWNrIG9ubHkNCj4gPiB1cGRhdGVzIHRoZSBi
-a2V5LCB3aXRob3V0IHJlY29yZGluZyB0aGUgaW5zZXJ0ZWQgYmtleSBpbiB0aGUgam91cm5h
-bDoNCj4gPiBzdGF0aWMgQ0xPU1VSRV9DQUxMQkFDSyh3cml0ZV9kaXJ0eV9maW5pc2gpDQo+
-ID4gew0KPiA+ICAgICBjbG9zdXJlX3R5cGUoaW8sIHN0cnVjdCBkaXJ0eV9pbywgY2wpOw0K
-PiA+ICAgICBzdHJ1Y3Qga2V5YnVmX2tleSAqdyA9IGlvLT5iaW8uYmlfcHJpdmF0ZTsNCj4g
-PiAgICAgc3RydWN0IGNhY2hlZF9kZXYgKmRjID0gaW8tPmRjOw0KPiA+DQo+ID4gICAgIGJp
-b19mcmVlX3BhZ2VzKCZpby0+YmlvKTsNCj4gPg0KPiA+ICAgICAvKiBUaGlzIGlzIGtpbmQg
-b2YgYSBkdW1iIHdheSBvZiBzaWduYWxsaW5nIGVycm9ycy4gKi8NCj4gPiAgICAgaWYgKEtF
-WV9ESVJUWSgmdy0+a2V5KSkgew0KPiA+ICAgICAgICAgaW50IHJldDsNCj4gPiAgICAgICAg
-IHVuc2lnbmVkIGludCBpOw0KPiA+ICAgICAgICAgc3RydWN0IGtleWxpc3Qga2V5czsNCj4g
-Pg0KPiA+ICAgICAgICAgYmNoX2tleWxpc3RfaW5pdCgma2V5cyk7DQo+ID4NCj4gPiAgICAg
-ICAgIGJrZXlfY29weShrZXlzLnRvcCwgJnctPmtleSk7DQo+ID4gICAgICAgICBTRVRfS0VZ
-X0RJUlRZKGtleXMudG9wLCBmYWxzZSk7DQo+ID4gICAgICAgICBiY2hfa2V5bGlzdF9wdXNo
-KCZrZXlzKTsNCj4gPg0KPiA+ICAgICAgICAgZm9yIChpID0gMDsgaSA8IEtFWV9QVFJTKCZ3
-LT5rZXkpOyBpKyspDQo+ID4gICAgICAgICAgICAgYXRvbWljX2luYygmUFRSX0JVQ0tFVChk
-Yy0+ZGlzay5jLCAmdy0+a2V5LCBpKS0+cGluKTsNCj4gPg0KPiA+ICAgICAgICAgcmV0ID0g
-YmNoX2J0cmVlX2luc2VydChkYy0+ZGlzay5jLCAma2V5cywgTlVMTCwgJnctPmtleSk7DQo+
-ID4NCj4gPiAgICAgICAgIGlmIChyZXQpDQo+ID4gICAgICAgICAgICAgdHJhY2VfYmNhY2hl
-X3dyaXRlYmFja19jb2xsaXNpb24oJnctPmtleSk7DQo+ID4NCj4gPiAgICAgICAgIGF0b21p
-Y19sb25nX2luYyhyZXQNCj4gPiAgICAgICAgICAgICAgICAgPyAmZGMtPmRpc2suYy0+d3Jp
-dGViYWNrX2tleXNfZmFpbGVkDQo+ID4gICAgICAgICAgICAgICAgIDogJmRjLT5kaXNrLmMt
-PndyaXRlYmFja19rZXlzX2RvbmUpOw0KPiA+ICAgICB9DQo+ID4NCj4gPiAgICAgYmNoX2tl
-eWJ1Zl9kZWwoJmRjLT53cml0ZWJhY2tfa2V5cywgdyk7DQo+ID4gICAgIHVwKCZkYy0+aW5f
-ZmxpZ2h0KTsNCj4gPg0KPiA+ICAgICBjbG9zdXJlX3JldHVybl93aXRoX2Rlc3RydWN0b3Io
-Y2wsIGRpcnR5X2lvX2Rlc3RydWN0b3IpOw0KPiA+IH0NCj4NCj4NCj4=
+On Mon, Aug 04, 2025 at 11:47:57AM +0800, Zhou Jifeng wrote:
+> On Sun, 3 Aug 2025 at 01:30, Coly Li <colyli@kernel.org> wrote:
+> >
+> > On Fri, Aug 01, 2025 at 02:10:12PM +0800, Zhou Jifeng wrote:
+> > > On Fri, 1 Aug 2025 at 11:42, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > > >
+> > > > On Fri, Aug 01, 2025 at 11:30:43AM +0800, Zhou Jifeng wrote:
+> > > > > On Fri, 1 Aug 2025 at 10:37, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > > > > >
+> > > > > > On Fri, Aug 01, 2025 at 10:27:21AM +0800, Zhou Jifeng wrote:
+> > > > > > > In the writeback mode, the current bcache code uses the
+> > > > > > > REQ_OP_WRITE operation to handle dirty data, and clears the bkey
+> > > > > > > dirty flag in the btree during the bio completion callback. I think
+> > > > > > > there might be a potential risk: if in the event of an unexpected
+> > > > > > > power outage, the data in the HDD hardware cache may not have
+> > > > > > > had time to be persisted, then the data in the HDD hardware cache
+> > > > > > > that is pending processing may be lost. Since at this time the bkey
+> > > > > > > dirty flag in the btree has been cleared, the data status recorded
+> > > > > > > by the bkey does not match the actual situation of the SSD and
+> > > > > > > HDD.
+> > > > > > > Am I understanding this correctly?
+> > > > > >
+> > > > > > For what you're describing, we need to make sure the backing device is
+> > > > > > flushed when we're flushing the journal.
+> > > > > >
+> > > > > > It's possible that this isn't handled correctly in bcache; bcachefs
+> > > > > > does, and I wrote that code after bcache - but the bcache version would
+> > > > > > look quite different.
+> > > > > >
+> > > > > > You've read that code more recently than I have - have you checked for
+> > > > > > that?
+> > > > >
+> > > > > In the `write_dirty_finish` function, there is an attempt to update the
+> > > > > `bkey` status, but I did not observe any logging writing process. In the
+> > > > > core function `journal_write_unlocked` of bcache for writing logs, I
+> > > > > also couldn't find the code logic for sending a FLUSH command to the
+> > > > > backend HDD.
+> > > >
+> > > > The right place for it would be in the journal code: before doing a
+> > > > journal write, issue flushes to the backing devices.
+> > > >
+> > > > Can you check for that?
+> > > >
+> > >
+> > > I checked and found that there was no code for sending a flush request
+> > > to the backend device before the execution log was written. Additionally,
+> > > in the callback function after the dirty data was written back, when it
+> > > updated the bkey, it did not insert this update into the log.
+> > >
+> >
+> > It doesn't have to. If the previous dirty version of the key is on cache device
+> > already, and power off happens, even the clean version of the key is gone, the
+> > dirty version and its data are all valid. If the LBA range of this key is
+> > allocated to a new key, a GC must have alrady happened, and the dirty key is
+> > invalid due to bucket generation increased. So don't worry, the clean key is
+> > unncessary to go into journal in the writeback scenario.
+> >
+> > IMHO, you may try to flush backing device in a kworker before calling
+> > set_gc_sectors() in bch_gc_thread(). The disk cache can be flushed in time
+> > before the still-dirty-on-disk keys are invalidated by increase bucket key
+> > gen. And also flushing backing device after searched_full_index becomes
+> > true in the writeback thread main loop (as you did now).
+> >
+> 
+> The "flush" command previously issued by GC was supposed to alleviate
+> the problems in some scenarios. However, I thought of a situation where
+> this "flush" command issued before GC might not be sufficient to solve
+> the issue.
+> 
+> Suppose such a scenario: after a power failure, some hardware cache data
+> in the HDD is lost, while the corresponding bkey(with the dirty flag cleared)
+> update in the SSD has been persisted. After the power is restored, if
+> bcache sends a flush before GC, will this cause data loss?
 
+Yes.
 
