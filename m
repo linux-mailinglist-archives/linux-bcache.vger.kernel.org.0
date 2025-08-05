@@ -1,564 +1,456 @@
-Return-Path: <linux-bcache+bounces-1176-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1177-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E731FB1AD50
-	for <lists+linux-bcache@lfdr.de>; Tue,  5 Aug 2025 06:57:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95579B1B152
+	for <lists+linux-bcache@lfdr.de>; Tue,  5 Aug 2025 11:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12C5116EAB2
-	for <lists+linux-bcache@lfdr.de>; Tue,  5 Aug 2025 04:57:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD81E7A3FFC
+	for <lists+linux-bcache@lfdr.de>; Tue,  5 Aug 2025 09:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2A721771A;
-	Tue,  5 Aug 2025 04:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZ8F29UM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A09B25FA10;
+	Tue,  5 Aug 2025 09:38:41 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63247288DB;
-	Tue,  5 Aug 2025 04:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D3225A626;
+	Tue,  5 Aug 2025 09:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754369870; cv=none; b=LNWD/Lbsbpz5iUoY41HGjbBWqH6Fv2p/wjqUpAySwxujbI4JaxRvdfcChobc0PfhIoy0X3ajMFJxkEnDQMvqBhG6Eww3DcPD1s3LHQd44nMP0I0Ce2a0Ecx1Ho6jm7P2+XoT5Ls0jYUwBOduUki7eGh+DgggCHnhjCi/tHTvak0=
+	t=1754386721; cv=none; b=piU4eGcZXV+AGA8Jg8COojsV7DH6sxW9j0PCS7kscmL1Ql3SKold9OC3Cs4T/8oADwU886c2SpF7bKURQG5VI2Cs2BSABtLhyMGn9mxDWUmvzKhJU+hL6ZzlUez6d/tz5Yct3ZfpK47FPQU7RcXRLX0uv1PD9Ti/shlpAvRKlFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754369870; c=relaxed/simple;
-	bh=cJbs+cvM0NNKFQ/wSvXQE3ntNS2aAzkKyaYaG/X9Ims=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VGMGTOvwmReYIQTVIa8VF7mYtbCOu1S6U4iDGgy89gElVKVdkU9/Cl1LPo7vm/widtLpq0MU71ls+T4YIraei0Q6IqeK9+3fHDyQVGiu9fd5Uxqo94XWKy2eOeNk9OWAW2z/uglBVoTvD1GpKq9EnhCuxHMYF7TgIHJL7EsGGbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZ8F29UM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32D75C4CEF4;
-	Tue,  5 Aug 2025 04:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754369870;
-	bh=cJbs+cvM0NNKFQ/wSvXQE3ntNS2aAzkKyaYaG/X9Ims=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MZ8F29UMNxJFqIPIR9eWCaU7bMAQiENt9S3PavpThJD5WynI01Yku1E4HnH9zc5M1
-	 5/c4znzGwR/4bmJMwRQIWd8C3bTpNUTp1HTs9fFOut+ravSzoXuZ/JP3Y3QN5uY7HD
-	 lctF0AEdSgFgabKbIkYuxRG0eGaKsO0DAcYf5HLHEZkLYhKJUUDUcEYDIMuiCx/Bgc
-	 ih3A784zNixG9njs9hrMv5CMFvCX/5DL25qB7vDeC7xs1QQbA2dXNdQ1/8TVeGwfyW
-	 c6+iNeG7Ypqj2bQMw6HtlQWmyMNx0Cgl4l9kg6lJM0kGgCas15GGptZZpspgAJ17/l
-	 JrT0AwGGhWWBA==
-Date: Tue, 5 Aug 2025 12:57:45 +0800
-From: Coly Li <colyli@kernel.org>
-To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
-Cc: kent.overstreet@linux.dev, linux-bcache@vger.kernel.org,
-	linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1754386721; c=relaxed/simple;
+	bh=aktc5dqy0XdXo2NiJZhSIR+MuUapW46joBtXUvCXNcc=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=cAaqnzCvli8zQAtjX7DZCEmBtvbNxghO7jBOluHoNbBzTfvc4OTd+hTvncdaAkbCTfawILqlhfiI9GkO2SJjeV/JSl5Evky0Yqon8627Y9Ccp71JqSrTbmQNJwvlcVqQIx1YSLM+vWQrw0vWhohkBySDZzCMdpE3SraPCdXiLiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn; spf=pass smtp.mailfrom=kylinos.com.cn; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.com.cn
+EX-QQ-RecipientCnt: 4
+X-QQ-GoodBg: 2
+X-QQ-SSF: 00400000000000F0
+X-QQ-FEAT: D4aqtcRDiqSYbfq2fqToiGQ640EZkclUqGZucf6tfws=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: O5fxmLgQmvK6wCAsIJqc5pEvdCMaXkoSJeSlIbxrs6Y=
+X-QQ-STYLE: 
+X-QQ-mid: lv3sz3a-2t1754386664t20b87b6a
+From: "=?utf-8?B?WmhvdSBKaWZlbmc=?=" <zhoujifeng@kylinos.com.cn>
+To: "=?utf-8?B?Q29seSBMaQ==?=" <colyli@kernel.org>
+Cc: "=?utf-8?B?a2VudC5vdmVyc3RyZWV0?=" <kent.overstreet@linux.dev>, "=?utf-8?B?bGludXgtYmNhY2hl?=" <linux-bcache@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
-Message-ID: <20250805045745.iu4ukc6tfdm3j7xn@P16.>
-References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Tue, 5 Aug 2025 17:37:44 +0800
+X-Priority: 3
+Message-ID: <tencent_29AAD4111647BCD160DCFD85@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
+	<20250805045745.iu4ukc6tfdm3j7xn@P16.>
+In-Reply-To: <20250805045745.iu4ukc6tfdm3j7xn@P16.>
+X-QQ-ReplyHash: 1918342255
+X-BIZMAIL-ID: 16386564884597588281
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Tue, 05 Aug 2025 17:37:45 +0800 (CST)
+Feedback-ID: lv:kylinos.com.cn:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: OVyrbz22gz1nO64Bu2+urjWVdSrEJmr/UtgBM4rPK2C/LnPArwA/O/Ho
+	UmcgeY1GOkjQ3vhBkh45Rd+trW5CijE+XEJSen1fdDQWEwl3EBErfovrLzFSXjHbX6H5Xco
+	aZAoozA6Y/dPxL+3gjEyJYPzs0HetFbQVeAEo24jK8tomIA7mBcGec+BnkNHmUvAx1Y2dpJ
+	luzlGYAtz0jqxghxDa3U0Q8gKbaiVJWtnZL2sS4/HpyILlnQjeibnBiI3ONZG+f57Tvl9zF
+	8Toshb7ma3YQYPWeA09SDQMs81VrJ7/0g7pwqqp2DV1NXIje3feuCAlVEDPc36/ZV3XFGIl
+	2azr0npZPt7UseeE6ODHKFAChoA7pPlYy8LyNS4+B6ZVoDKLbLoF3s+OyP77rkrxTOP99Zh
+	5geeCMiMz1UGhGMmdW0Yk6Ltguj0ShwkpssggHymEncqqvuwBw1Y0p0+XnL9f6bt/gDu0Xk
+	/4oIVFulcskQurovzHIpbnKmYX44jCTvSUkxuvzyGAoHo8eeAjrhDV1SG16nfdlzmljLrTR
+	1V9cerBpjOhHap6pGsDvBUWyo/JQjq+KIpBpJ0rnJrCCjtfgeKLPDZ4a2uW5HC9of0gPsAC
+	HghkB4hTPsBevHRgaUpWDIPMvUuiN7LNkbTMbfbhZn1Xzpd0b0fhx7myV1uo/UbWcqRaTmr
+	uYK5i0f3an9TBwkYkvhVub7iA3dpFtDdQ8zsr9Da6DZkok2ZTiXKgbuvDmSqH97nADCHLfA
+	+SwD0pOQSky9GzBTF3kHRYLVfajrjrCu8y4V8iw+kuA3Mu5VbDMlizT8HQfURwOLMUFNEuh
+	iNiI9TZ9v+sYskCGa61O45AXlF+CITsJ+iVQbIlfKLUZz2gLCxhFqjHQYZSCRtHVE/CZLoQ
+	pKZzYy5NDXJpxqlk9x9DIC8DVtrdGD63IWLcU8poMaRlkvUZ9YAMEI1W3ZjjGJ2ZcwzR9Tv
+	0VRiJyzDOz0hVkVPfRnX1c1Y/n9gIzWY4xF2Vf6sBvwHewVha5VOYcmbkTshMIiN3C3CP42
+	U+0c7nLNrW6ZsQ5nUZgjWG1EpHURjzIlVHk5KDgVHy6BalXhMT
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Thu, Jul 31, 2025 at 02:21:40PM +0800, Zhou Jifeng wrote:
-> There is a potential data consistency risk in bcache's writeback mode:when
-> the application calls fsync, bcache returns success after completing the
-> log write, persisting the cache disk data, and persisting the HDD internal
-> cache. However, at this point, the actual application data may still be in
-> a dirty state and remain stuck in the cache disk. when these data are
-> subsequently written back to the HDD asynchronously through REQ_OP_WRITE,
-> there is no forced refresh mechanism to ensure physical placement on the
-> disk, and there may be no power-off protection measures, which poses a risk
-> of data loss. This mechanism may cause the application to misjudge that the
-> data has been persisted, which is different from the actual storage state,
-> and also violates the semantic agreement that fsync should ensure data
-> persistence.
-> 
+T24gVHVlLCA1IEF1ZyAyMDI1IGF0IDEzOjAwLCBDb2x5IExpIDxjb2x5bGlAa2VybmVsLm9y
+Zz4gd3JvdGU6DQo+DQo+IE9uIFRodSwgSnVsIDMxLCAyMDI1IGF0IDAyOjIxOjQwUE0gKzA4
+MDAsIFpob3UgSmlmZW5nIHdyb3RlOg0KPiA+IFRoZXJlIGlzIGEgcG90ZW50aWFsIGRhdGEg
+Y29uc2lzdGVuY3kgcmlzayBpbiBiY2FjaGUncyB3cml0ZWJhY2sgbW9kZTp3aGVuDQo+ID4g
+dGhlIGFwcGxpY2F0aW9uIGNhbGxzIGZzeW5jLCBiY2FjaGUgcmV0dXJucyBzdWNjZXNzIGFm
+dGVyIGNvbXBsZXRpbmcgdGhlDQo+ID4gbG9nIHdyaXRlLCBwZXJzaXN0aW5nIHRoZSBjYWNo
+ZSBkaXNrIGRhdGEsIGFuZCBwZXJzaXN0aW5nIHRoZSBIREQgaW50ZXJuYWwNCj4gPiBjYWNo
+ZS4gSG93ZXZlciwgYXQgdGhpcyBwb2ludCwgdGhlIGFjdHVhbCBhcHBsaWNhdGlvbiBkYXRh
+IG1heSBzdGlsbCBiZSBpbg0KPiA+IGEgZGlydHkgc3RhdGUgYW5kIHJlbWFpbiBzdHVjayBp
+biB0aGUgY2FjaGUgZGlzay4gd2hlbiB0aGVzZSBkYXRhIGFyZQ0KPiA+IHN1YnNlcXVlbnRs
+eSB3cml0dGVuIGJhY2sgdG8gdGhlIEhERCBhc3luY2hyb25vdXNseSB0aHJvdWdoIFJFUV9P
+UF9XUklURSwNCj4gPiB0aGVyZSBpcyBubyBmb3JjZWQgcmVmcmVzaCBtZWNoYW5pc20gdG8g
+ZW5zdXJlIHBoeXNpY2FsIHBsYWNlbWVudCBvbiB0aGUNCj4gPiBkaXNrLCBhbmQgdGhlcmUg
+bWF5IGJlIG5vIHBvd2VyLW9mZiBwcm90ZWN0aW9uIG1lYXN1cmVzLCB3aGljaCBwb3NlcyBh
+IHJpc2sNCj4gPiBvZiBkYXRhIGxvc3MuIFRoaXMgbWVjaGFuaXNtIG1heSBjYXVzZSB0aGUg
+YXBwbGljYXRpb24gdG8gbWlzanVkZ2UgdGhhdCB0aGUNCj4gPiBkYXRhIGhhcyBiZWVuIHBl
+cnNpc3RlZCwgd2hpY2ggaXMgZGlmZmVyZW50IGZyb20gdGhlIGFjdHVhbCBzdG9yYWdlIHN0
+YXRlLA0KPiA+IGFuZCBhbHNvIHZpb2xhdGVzIHRoZSBzZW1hbnRpYyBhZ3JlZW1lbnQgdGhh
+dCBmc3luYyBzaG91bGQgZW5zdXJlIGRhdGENCj4gPiBwZXJzaXN0ZW5jZS4NCj4gPg0KPg0K
+PiBbc25pcHBlZF0NCj4NCj4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBaaG91IEppZmVuZyA8emhv
+dWppZmVuZ0BreWxpbm9zLmNvbS5jbj4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9tZC9iY2Fj
+aGUvYmNhY2hlLmggICAgICAgIHwgIDIzICsrKysNCj4gPiAgZHJpdmVycy9tZC9iY2FjaGUv
+YmNhY2hlX29uZGlzay5oIHwgICA0ICsNCj4gPiAgZHJpdmVycy9tZC9iY2FjaGUvc3lzZnMu
+YyAgICAgICAgIHwgIDQ3ICsrKysrKysrDQo+ID4gIGRyaXZlcnMvbWQvYmNhY2hlL3dyaXRl
+YmFjay5jICAgICB8IDE3NCArKysrKysrKysrKysrKysrKysrKysrKysrKystLS0NCj4gPiAg
+ZHJpdmVycy9tZC9iY2FjaGUvd3JpdGViYWNrLmggICAgIHwgICA0ICsNCj4gPiAgNSBmaWxl
+cyBjaGFuZ2VkLCAyMzkgaW5zZXJ0aW9ucygrKSwgMTMgZGVsZXRpb25zKC0pDQo+ID4NCj4g
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZC9iY2FjaGUvYmNhY2hlLmggYi9kcml2ZXJzL21k
+L2JjYWNoZS9iY2FjaGUuaA0KPiA+IGluZGV4IDc4NWIwZDkwMDhmYS4uMDk0MjQ5Mzg0Mzdi
+IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbWQvYmNhY2hlL2JjYWNoZS5oDQo+ID4gKysr
+IGIvZHJpdmVycy9tZC9iY2FjaGUvYmNhY2hlLmgNCj4gPiBAQCAtMjQ3LDYgKzI0NywxNyBA
+QCBzdHJ1Y3Qga2V5YnVmIHsNCj4gPiAgICAgICBERUNMQVJFX0FSUkFZX0FMTE9DQVRPUihz
+dHJ1Y3Qga2V5YnVmX2tleSwgZnJlZWxpc3QsIEtFWUJVRl9OUik7DQo+ID4gIH07DQo+ID4N
+Cj4gPiArc3RydWN0IGtleWJ1Zl9wcmVmbHVzaCB7DQo+ID4gKyAgICAgc3BpbmxvY2tfdCAg
+ICAgIGxvY2s7DQo+ID4gKyAgICAgc3RydWN0IGxpc3RfaGVhZCBsaXN0Ow0KPiA+ICsgICAg
+IHUzMiBjb3VudDsNCj4gPiArfTsNCj4gPiArDQo+ID4gK3N0cnVjdCBmbHVzaF9rZXlfZW50
+cnkgew0KPiA+ICsgICAgIHN0cnVjdCBrZXlidWZfa2V5IGtleTsNCj4gPiArICAgICBzdHJ1
+Y3QgbGlzdF9oZWFkIGxpc3Q7DQo+ID4gK307DQo+ID4gKw0KPiA+ICBzdHJ1Y3QgYmNhY2hl
+X2RldmljZSB7DQo+ID4gICAgICAgc3RydWN0IGNsb3N1cmUgICAgICAgICAgY2w7DQo+ID4N
+Cj4gPiBAQCAtMzQ2LDYgKzM1NywxOCBAQCBzdHJ1Y3QgY2FjaGVkX2RldiB7DQo+ID4NCj4g
+PiAgICAgICBzdHJ1Y3Qga2V5YnVmICAgICAgICAgICB3cml0ZWJhY2tfa2V5czsNCj4gPg0K
+PiA+ICsgICAgIC8qDQo+ID4gKyAgICAgICogQmVmb3JlIHBlcmZvcm1pbmcgcHJlZmx1c2gg
+dG8gdGhlIGJhY2tpbmcgZGV2aWNlLCB0ZW1wb3JhcmlseQ0KPiA+ICsgICAgICAqIHN0b3Jl
+IHRoZSBia2V5IHdhaXRpbmcgdG8gY2xlYW4gdXAgdGhlIGRpcnR5IG1hcmsNCj4gPiArICAg
+ICAgKi8NCj4gPiArICAgICBzdHJ1Y3Qga2V5YnVmX3ByZWZsdXNoICBwcmVmbHVzaF9rZXlz
+Ow0KPiA+ICsgICAgIC8qDQo+ID4gKyAgICAgICogZmx1c2hfaW50ZXJ2YWwgaXMgdXNlZCB0
+byBzcGVjaWZ5IHRoYXQgYSBQUk9GTFVTSCBvcGVyYXRpb24gd2lsbA0KPiA+ICsgICAgICAq
+IGJlIGlzc3VlZCBvbmNlIGEgY2VydGFpbiBudW1iZXIgb2YgZGlydHkgYmtleXMgaGF2ZSBi
+ZWVuIHdyaXR0ZW4NCj4gPiArICAgICAgKiBlYWNoIHRpbWUuDQo+ID4gKyAgICAgICovDQo+
+ID4gKyAgICAgdW5zaWduZWQgaW50IGZsdXNoX2ludGVydmFsOw0KPiA+ICsNCj4gPiAgICAg
+ICBzdHJ1Y3QgdGFza19zdHJ1Y3QgICAgICAqc3RhdHVzX3VwZGF0ZV90aHJlYWQ7DQo+ID4g
+ICAgICAgLyoNCj4gPiAgICAgICAgKiBPcmRlciB0aGUgd3JpdGUtaGFsZiBvZiB3cml0ZWJh
+Y2sgb3BlcmF0aW9ucyBzdHJvbmdseSBpbiBkaXNwYXRjaA0KPiA+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL21kL2JjYWNoZS9iY2FjaGVfb25kaXNrLmggYi9kcml2ZXJzL21kL2JjYWNoZS9i
+Y2FjaGVfb25kaXNrLmgNCj4gPiBpbmRleCA2NjIwYTdmOGZmZmMuLmRmNTgwMDgzOGU0MCAx
+MDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL21kL2JjYWNoZS9iY2FjaGVfb25kaXNrLmgNCj4g
+PiArKysgYi9kcml2ZXJzL21kL2JjYWNoZS9iY2FjaGVfb25kaXNrLmgNCj4gPiBAQCAtMjk0
+LDYgKzI5NCwxMCBAQCBCSVRNQVNLKEJERVZfQ0FDSEVfTU9ERSwgICAgICAgICBzdHJ1Y3Qg
+Y2FjaGVfc2IsIGZsYWdzLCAwLCA0KTsNCj4gPiAgI2RlZmluZSBDQUNIRV9NT0RFX1dSSVRF
+QkFDSyAgICAgICAgIDFVDQo+ID4gICNkZWZpbmUgQ0FDSEVfTU9ERV9XUklURUFST1VORCAg
+ICAgICAgICAgICAgIDJVDQo+ID4gICNkZWZpbmUgQ0FDSEVfTU9ERV9OT05FICAgICAgICAg
+ICAgICAgICAgICAgIDNVDQo+ID4gK0JJVE1BU0soQkRFVl9XUklURUJBQ0tfRkxVU0gsICAg
+ICAgICAgICAgICAgIHN0cnVjdCBjYWNoZV9zYiwgZmxhZ3MsIDQsIDEpOw0KPiA+ICsjZGVm
+aW5lIFdSSVRFQkFDS19GTFVTSF9PRkYgICAgICAgICAgMFUNCj4gPiArI2RlZmluZSBXUklU
+RUJBQ0tfRkxVU0hfT04gICAgICAgICAgIDFVDQo+ID4gKw0KPg0KPg0KPiBXZSBzaG91bGQg
+YXZvaWQgdG8gY2hhbmdlIHRoZSBvbiBkaXNrIGZvcm1hdC4gQ2FuIHlvdSB1c2UgYW5vdGhl
+ciBtZXRob2QNCj4gdG8gY2hlY2sgd2hldGhlciB0aGUgY2FjaGVkIGRldmljZSBoYXMgdG8g
+YmUgZmx1c2hlZD8gZS5nLiBjaGVja2luZw0KPiBkYy0+cHJlZmx1c2hfa2V5cy4NCj4NCj4N
+Cj4gPiAgQklUTUFTSyhCREVWX1NUQVRFLCAgICAgICAgICAgICAgICAgIHN0cnVjdCBjYWNo
+ZV9zYiwgZmxhZ3MsIDYxLCAyKTsNCj4gPiAgI2RlZmluZSBCREVWX1NUQVRFX05PTkUgICAg
+ICAgICAgICAgICAgICAgICAgMFUNCj4gPiAgI2RlZmluZSBCREVWX1NUQVRFX0NMRUFOICAg
+ICAgICAgICAgIDFVDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWQvYmNhY2hlL3N5c2Zz
+LmMgYi9kcml2ZXJzL21kL2JjYWNoZS9zeXNmcy5jDQo+ID4gaW5kZXggZThmNjk2Y2I1OGMw
+Li5jYzIyOGU1OTJhYjYgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9tZC9iY2FjaGUvc3lz
+ZnMuYw0KPiA+ICsrKyBiL2RyaXZlcnMvbWQvYmNhY2hlL3N5c2ZzLmMNCj4gPiBAQCAtMjgs
+NiArMjgsMTggQEAgc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBiY2hfY2FjaGVfbW9kZXNb
+XSA9IHsNCj4gPiAgICAgICBOVUxMDQo+ID4gIH07DQo+ID4NCj4gPiArLyoNCj4gPiArICog
+RGVmYXVsdCBpcyAwICgib2ZmIikNCj4gPiArICogb2ZmOiBEbyBub3RoaW5nDQo+ID4gKyAq
+IG9uOiBVc2UgRkxVU0ggd2hlbiB3cml0aW5nIGJhY2sgZGlydHkgZGF0YS4NCj4gPiArICov
+DQo+ID4gK3N0YXRpYyBjb25zdCBjaGFyICogY29uc3QgYmNoX3dyaXRlYmFja19mbHVzaFtd
+ID0gew0KPiA+ICsgICAgICJvZmYiLA0KPiA+ICsgICAgICJvbiIsDQo+ID4gKyAgICAgTlVM
+TA0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArDQo+ID4gIHN0YXRpYyBjb25zdCBjaGFyICogY29u
+c3QgYmNoX3JlYWRhX2NhY2hlX3BvbGljaWVzW10gPSB7DQo+ID4gICAgICAgImFsbCIsDQo+
+ID4gICAgICAgIm1ldGEtb25seSIsDQo+ID4gQEAgLTE1MSw2ICsxNjMsMTkgQEAgcndfYXR0
+cmlidXRlKGNvcHlfZ2NfZW5hYmxlZCk7DQo+ID4gIHJ3X2F0dHJpYnV0ZShpZGxlX21heF93
+cml0ZWJhY2tfcmF0ZSk7DQo+ID4gIHJ3X2F0dHJpYnV0ZShnY19hZnRlcl93cml0ZWJhY2sp
+Ow0KPiA+ICByd19hdHRyaWJ1dGUoc2l6ZSk7DQo+ID4gKy8qDQo+ID4gKyAqIFRoZSAid3Jp
+dGViYWNrX2ZsdXNoIiBoYXMgdHdvIG9wdGlvbnM6ICJvZmYiIGFuZCAib24iLiAib2ZmIiBp
+cw0KPiA+ICsgKiB0aGUgZGVmYXVsdCB2YWx1ZS4NCj4gPiArICogb2ZmOiBEbyBub3RoaW5n
+DQo+ID4gKyAqIG9uOiBVc2UgRkxVU0ggd2hlbiB3cml0aW5nIGJhY2sgZGlydHkgZGF0YS4N
+Cj4gPiArICovDQo+ID4gK3J3X2F0dHJpYnV0ZSh3cml0ZWJhY2tfZmx1c2gpOw0KPiA+ICsv
+Kg0KPiA+ICsgKiAiZmx1c2hfaW50ZXJ2YWwiIGlzIHVzZWQgdG8gc3BlY2lmeSB0aGF0IGEg
+UFJPRkxVU0ggb3BlcmF0aW9uIHdpbGwNCj4gPiArICogYmUgaXNzdWVkIG9uY2UgYSBjZXJ0
+YWluIG51bWJlciBvZiBkaXJ0eSBia2V5cyBoYXZlIGJlZW4gd3JpdHRlbg0KPiA+ICsgKiBl
+YWNoIHRpbWUuDQo+ID4gKyAqLw0KPiA+ICtyd19hdHRyaWJ1dGUoZmx1c2hfaW50ZXJ2YWwp
+Ow0KPiA+DQo+ID4gIHN0YXRpYyBzc2l6ZV90IGJjaF9zbnByaW50X3N0cmluZ19saXN0KGNo
+YXIgKmJ1ZiwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2l6
+ZV90IHNpemUsDQo+ID4gQEAgLTIxMyw2ICsyMzgsNyBAQCBTSE9XKF9fYmNoX2NhY2hlZF9k
+ZXYpDQo+ID4gICAgICAgdmFyX3ByaW50KHdyaXRlYmFja19yYXRlX2ZwX3Rlcm1fbWlkKTsN
+Cj4gPiAgICAgICB2YXJfcHJpbnQod3JpdGViYWNrX3JhdGVfZnBfdGVybV9oaWdoKTsNCj4g
+PiAgICAgICB2YXJfcHJpbnQod3JpdGViYWNrX3JhdGVfbWluaW11bSk7DQo+ID4gKyAgICAg
+dmFyX3ByaW50KGZsdXNoX2ludGVydmFsKTsNCj4gPg0KPiA+ICAgICAgIGlmIChhdHRyID09
+ICZzeXNmc193cml0ZWJhY2tfcmF0ZV9kZWJ1Zykgew0KPiA+ICAgICAgICAgICAgICAgY2hh
+ciByYXRlWzIwXTsNCj4gPiBAQCAtMjgzLDYgKzMwOSwxMSBAQCBTSE9XKF9fYmNoX2NhY2hl
+ZF9kZXYpDQo+ID4gICAgICAgICAgICAgICByZXR1cm4gc3RybGVuKGJ1Zik7DQo+ID4gICAg
+ICAgfQ0KPiA+DQo+ID4gKyAgICAgaWYgKGF0dHIgPT0gJnN5c2ZzX3dyaXRlYmFja19mbHVz
+aCkNCj4gPiArICAgICAgICAgICAgIHJldHVybiBiY2hfc25wcmludF9zdHJpbmdfbGlzdChi
+dWYsIFBBR0VfU0laRSwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBiY2hfd3JpdGViYWNrX2ZsdXNoLA0KPiA+ICsgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIEJERVZfV1JJVEVCQUNLX0ZMVVNIKCZkYy0+
+c2IpKTsNCj4gPiArDQo+ID4gICN1bmRlZiB2YXINCj4gPiAgICAgICByZXR1cm4gMDsNCj4g
+PiAgfQ0KPiA+IEBAIC0zNTQsNiArMzg1LDkgQEAgU1RPUkUoX19jYWNoZWRfZGV2KQ0KPiA+
+DQo+ID4gICAgICAgc3lzZnNfc3RydG91bF9jbGFtcChpb19lcnJvcl9saW1pdCwgZGMtPmVy
+cm9yX2xpbWl0LCAwLCBJTlRfTUFYKTsNCj4gPg0KPiA+ICsgICAgIHN5c2ZzX3N0cnRvdWxf
+Y2xhbXAoZmx1c2hfaW50ZXJ2YWwsIGRjLT5mbHVzaF9pbnRlcnZhbCwNCj4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICAgIFdSSVRFQkFDS19GTFVTSF9JTlRFUlZBTF9NSU4sIFdSSVRF
+QkFDS19GTFVTSF9JTlRFUlZBTF9NQVgpOw0KPiA+ICsNCj4gPiAgICAgICBpZiAoYXR0ciA9
+PSAmc3lzZnNfaW9fZGlzYWJsZSkgew0KPiA+ICAgICAgICAgICAgICAgaW50IHYgPSBzdHJ0
+b3VsX29yX3JldHVybihidWYpOw0KPiA+DQo+ID4gQEAgLTQ1MSw2ICs0ODUsMTcgQEAgU1RP
+UkUoX19jYWNoZWRfZGV2KQ0KPiA+ICAgICAgIGlmIChhdHRyID09ICZzeXNmc19zdG9wKQ0K
+PiA+ICAgICAgICAgICAgICAgYmNhY2hlX2RldmljZV9zdG9wKCZkYy0+ZGlzayk7DQo+ID4N
+Cj4gPiArICAgICBpZiAoYXR0ciA9PSAmc3lzZnNfd3JpdGViYWNrX2ZsdXNoKSB7DQo+ID4g
+KyAgICAgICAgICAgICB2ID0gX19zeXNmc19tYXRjaF9zdHJpbmcoYmNoX3dyaXRlYmFja19m
+bHVzaCwgLTEsIGJ1Zik7DQo+ID4gKyAgICAgICAgICAgICBpZiAodiA8IDApDQo+ID4gKyAg
+ICAgICAgICAgICAgICAgICAgIHJldHVybiB2Ow0KPiA+ICsNCj4gPiArICAgICAgICAgICAg
+IGlmICgodW5zaWduZWQgaW50KSB2ICE9IEJERVZfV1JJVEVCQUNLX0ZMVVNIKCZkYy0+c2Ip
+KSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIFNFVF9CREVWX1dSSVRFQkFDS19GTFVT
+SCgmZGMtPnNiLCB2KTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgYmNoX3dyaXRlX2Jk
+ZXZfc3VwZXIoZGMsIE5VTEwpOw0KPiA+ICsgICAgICAgICAgICAgfQ0KPiA+ICsgICAgIH0N
+Cj4gPiArDQo+ID4gICAgICAgcmV0dXJuIHNpemU7DQo+ID4gIH0NCj4gPg0KPiA+IEBAIC01
+NDEsNiArNTg2LDggQEAgc3RhdGljIHN0cnVjdCBhdHRyaWJ1dGUgKmJjaF9jYWNoZWRfZGV2
+X2F0dHJzW10gPSB7DQo+ID4gICNlbmRpZg0KPiA+ICAgICAgICZzeXNmc19iYWNraW5nX2Rl
+dl9uYW1lLA0KPiA+ICAgICAgICZzeXNmc19iYWNraW5nX2Rldl91dWlkLA0KPiA+ICsgICAg
+ICZzeXNmc193cml0ZWJhY2tfZmx1c2gsDQo+ID4gKyAgICAgJnN5c2ZzX2ZsdXNoX2ludGVy
+dmFsLA0KPiA+ICAgICAgIE5VTEwNCj4gPiAgfTsNCj4gPiAgQVRUUklCVVRFX0dST1VQUyhi
+Y2hfY2FjaGVkX2Rldik7DQo+DQo+IFdlIGRvbid0IG5lZWQgdGhpcyBzeXNmcyBpdGVtLiBP
+bmNlIHRoZSBpc3N1ZSBpcyBmaXhlZCwgdGhpcyBpcw0KPiBtYW5kYXRvcnkgZm9yIGRhdGEg
+c2VjdXJpdHksIGV2ZW4gcGVyZm9ybWFuY2UgaHVydHMuDQo+DQo+DQo+DQo+ID4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvbWQvYmNhY2hlL3dyaXRlYmFjay5jIGIvZHJpdmVycy9tZC9iY2Fj
+aGUvd3JpdGViYWNrLmMNCj4gPiBpbmRleCA0NTNlZmJiZGM4ZWUuLjUzMGVlYTJiOTUzYSAx
+MDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL21kL2JjYWNoZS93cml0ZWJhY2suYw0KPiA+ICsr
+KyBiL2RyaXZlcnMvbWQvYmNhY2hlL3dyaXRlYmFjay5jDQo+ID4gQEAgLTM0OCw4ICszNDgs
+MTIxIEBAIHN0YXRpYyBDTE9TVVJFX0NBTExCQUNLKGRpcnR5X2lvX2Rlc3RydWN0b3IpDQo+
+ID4gICAgICAga2ZyZWUoaW8pOw0KPiA+ICB9DQo+ID4NCj4gPiArc3RhdGljIGludCBiY2Fj
+aGVfYWRkX3ByZWZsdXNoX2tleShzdHJ1Y3QgY2FjaGVkX2RldiAqZGMsIHN0cnVjdCBrZXli
+dWZfa2V5ICprZXkpDQo+ID4gK3sNCj4gPiArICAgICBzdHJ1Y3QgZmx1c2hfa2V5X2VudHJ5
+ICplbnRyeSA9IGttYWxsb2Moc2l6ZW9mKCplbnRyeSksIEdGUF9BVE9NSUMpOw0KPiA+ICsN
+Cj4gPiArICAgICBpZiAoIWVudHJ5KSB7DQo+ID4gKyAgICAgICAgICAgICBwcl9pbmZvKCJ0
+aGUgcHJlZmx1c2ggYmtleSBtZW1vcnkgYWxsb2NhdGlvbiBmYWlsZWQuXG4iKTsNCj4NCj4g
+VGhlIGRlYnVnIHByX2luZm8oKSBjYW4gYmUgcmVtb3ZlZC4NCj4NCj4NCj4NCj4gPiArICAg
+ICAgICAgICAgIHJldHVybiAtRU5PTUVNOw0KPiA+ICsgICAgIH0NCj4gPiArDQo+ID4gKyAg
+ICAgbWVtY3B5KCZlbnRyeS0+a2V5LCBrZXksIHNpemVvZigqa2V5KSk7DQo+DQo+IFlvdSBt
+YXkgd2FudCB0byBsb29rIGF0IGJrZXlfY29weSgpLg0KPg0KPiA+ICsgICAgIElOSVRfTElT
+VF9IRUFEKCZlbnRyeS0+bGlzdCk7DQo+ID4gKw0KPiA+ICsgICAgIHNwaW5fbG9jaygmZGMt
+PnByZWZsdXNoX2tleXMubG9jayk7DQo+ID4gKyAgICAgbGlzdF9hZGRfdGFpbCgmZW50cnkt
+Pmxpc3QsICZkYy0+cHJlZmx1c2hfa2V5cy5saXN0KTsNCj4gPiArICAgICBkYy0+cHJlZmx1
+c2hfa2V5cy5jb3VudCsrOw0KPiA+ICsgICAgIHNwaW5fdW5sb2NrKCZkYy0+cHJlZmx1c2hf
+a2V5cy5sb2NrKTsNCj4gPiArDQo+ID4gKyAgICAgcmV0dXJuIDA7DQo+ID4gK30NCj4gPiAr
+DQo+ID4gK3N0YXRpYyB2b2lkIGJjYWNoZV9tYXJrX3ByZWZsdXNoX2tleXNfY2xlYW4oc3Ry
+dWN0IGNhY2hlZF9kZXYgKmRjKQ0KPiA+ICt7DQo+ID4gKyAgICAgc3RydWN0IGZsdXNoX2tl
+eV9lbnRyeSAqZSwgKnRtcDsNCj4gPiArDQo+ID4gKyAgICAgbGlzdF9mb3JfZWFjaF9lbnRy
+eV9zYWZlKGUsIHRtcCwgJmRjLT5wcmVmbHVzaF9rZXlzLmxpc3QsIGxpc3QpIHsNCj4gPiAr
+ICAgICAgICAgICAgIGxpc3RfZGVsKCZlLT5saXN0KTsNCj4gPiArICAgICAgICAgICAgIGtm
+cmVlKGUpOw0KPiA+ICsgICAgIH0NCj4gPiArICAgICBkYy0+cHJlZmx1c2hfa2V5cy5jb3Vu
+dCA9IDA7DQo+ID4gK30NCj4gPiArDQo+DQo+IEZvciBkYy0+cHJlZmx1c2hfa2V5cywgSSB3
+b3VsZCBwcmVmZXIgdG8gdXNlIGEgc3RhdGljIGFsbG9jYXRlZCBidWZmZXINCj4gdGhlbiBk
+eW5hbWljIGxpc3QuIFlvdSBtYXkgY2hlY2sgdGhlIGhlYWQgcm91dGluZXMgaW4gdXRpLmgs
+IHRoaXMgaXMNCj4gdGhlIHRoaW5nIEknZCBzdWdnZXN0IHRvIHVzZS4NCj4NCj4gWW91IG1h
+eSBpbml0aWFsaXplIHRoZSBoZWFwIGJ1ZmZlciBxdWl0ZSBsYXJnZSwgYW5kIHN0b3JlIHRv
+IHByZWZsdXNoDQo+IGtleXMgaW4gb3JkZXIuIEl0IHdpbGwgYmUgdXNlZnVsIHdoZW4geW91
+IGluc2VydCB0aGUga2V5cyBiYWNrIHRvIGJ0cmVlLg0KPg0KPg0KPiA+ICtzdGF0aWMgdm9p
+ZCBsYXVuY2hfYXN5bmNfcHJlZmx1c2hfZW5kaW8oc3RydWN0IGJpbyAqYmlvKQ0KPiA+ICt7
+DQo+ID4gKyAgICAgaWYgKGJpby0+Ymlfc3RhdHVzKQ0KPiA+ICsgICAgICAgICAgICAgcHJf
+ZXJyKCJmbHVzaCBiYWNraW5nIGRldmljZSBlcnJvciAlZC5cbiIsIGJpby0+Ymlfc3RhdHVz
+KTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArDQo+ID4gK3N0YXRpYyBpbmxpbmUgdm9pZCBsYXVu
+Y2hfYXN5bmNfcHJlZmx1c2hfcmVxdWVzdChzdHJ1Y3QgY2FjaGVkX2RldiAqZGMpDQo+ID4g
+K3sNCj4gPiArICAgICBzdHJ1Y3QgYmlvIGZsdXNoOw0KPiA+ICsNCj4gPiArICAgICBiaW9f
+aW5pdCgmZmx1c2gsIGRjLT5iZGV2LCBOVUxMLCAwLCBSRVFfT1BfV1JJVEUgfCBSRVFfUFJF
+RkxVU0gpOw0KPiA+ICsNCj4gPiArICAgICBmbHVzaC5iaV9wcml2YXRlID0gZGM7DQo+ID4g
+KyAgICAgZmx1c2guYmlfZW5kX2lvID0gbGF1bmNoX2FzeW5jX3ByZWZsdXNoX2VuZGlvOw0K
+PiA+ICsNCj4gPiArICAgICBzdWJtaXRfYmlvKCZmbHVzaCk7DQo+ID4gK30NCj4gPiArDQo+
+ID4gKw0KPiA+ICtzdGF0aWMgdm9pZCBmbHVzaF9iYWNraW5nX2RldmljZShzdHJ1Y3QgY2Fj
+aGVkX2RldiAqZGMpDQo+ID4gK3sNCj4gPiArICAgICBpbnQgcmV0Ow0KPiA+ICsgICAgIHVu
+c2lnbmVkIGludCBpOw0KPiA+ICsgICAgIHN0cnVjdCBrZXlsaXN0IGtleXM7DQo+ID4gKyAg
+ICAgc3RydWN0IGZsdXNoX2tleV9lbnRyeSAqZSwgKnRtcDsNCj4gPiArICAgICBzdHJ1Y3Qg
+YmlvIGZsdXNoOw0KPiA+ICsNCj4gPiArICAgICBpZiAoZGMtPnByZWZsdXNoX2tleXMuY291
+bnQgPT0gMCkNCj4gPiArICAgICAgICAgICAgIHJldHVybjsNCj4gPiArDQo+ID4gKyAgICAg
+YmlvX2luaXQoJmZsdXNoLCBkYy0+YmRldiwgTlVMTCwgMCwgUkVRX09QX1dSSVRFIHwgUkVR
+X1BSRUZMVVNIKTsNCj4gPiArICAgICByZXQgPSBzdWJtaXRfYmlvX3dhaXQoJmZsdXNoKTsN
+Cj4gPiArICAgICBpZiAocmV0KSB7DQo+ID4gKyAgICAgICAgICAgICBwcl9lcnIoImZsdXNo
+IGJhY2tpbmcgZGV2aWNlIGVycm9yICVkLlxuIiwgcmV0KTsNCj4gPiArDQo+ID4gKyAgICAg
+ICAgICAgICAvKg0KPiA+ICsgICAgICAgICAgICAgICogSW4gdGhlIGNhc2Ugb2YgZmx1c2gg
+ZmFpbHVyZSwgZG8gbm90IHVwZGF0ZSB0aGUgc3RhdHVzIG9mIGJrZXkNCj4gPiArICAgICAg
+ICAgICAgICAqIGluIHRoZSBidHJlZSwgYW5kIHdhaXQgdW50aWwgdGhlIG5leHQgdGltZSB0
+byByZS13cml0ZSB0aGUgZGlydHkNCj4gPiArICAgICAgICAgICAgICAqIGRhdGEuDQo+ID4g
+KyAgICAgICAgICAgICAgKi8NCj4gPiArICAgICAgICAgICAgIGJjYWNoZV9tYXJrX3ByZWZs
+dXNoX2tleXNfY2xlYW4oZGMpOw0KPiA+ICsgICAgICAgICAgICAgcmV0dXJuOw0KPiA+ICsg
+ICAgIH0NCj4gPiArDQo+ID4gKyAgICAgLyoNCj4gPiArICAgICAgKiBUaGUgZGlydHkgZGF0
+YSB3YXMgc3VjY2Vzc2Z1bGx5IHdyaXR0ZW4gYmFjayBhbmQgY29uZmlybWVkIHRvIGJlIHdy
+aXR0ZW4NCj4gPiArICAgICAgKiB0byB0aGUgZGlzay4gVGhlIHN0YXR1cyBvZiB0aGUgYmtl
+eSBpbiB0aGUgYnRyZWUgd2FzIHVwZGF0ZWQuDQo+ID4gKyAgICAgICovDQo+ID4gKyAgICAg
+bGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlKGUsIHRtcCwgJmRjLT5wcmVmbHVzaF9rZXlzLmxp
+c3QsIGxpc3QpIHsNCj4gPiArICAgICAgICAgICAgIG1lbXNldChrZXlzLmlubGluZV9rZXlz
+LCAwLCBzaXplb2Yoa2V5cy5pbmxpbmVfa2V5cykpOw0KPiA+ICsgICAgICAgICAgICAgYmNo
+X2tleWxpc3RfaW5pdCgma2V5cyk7DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgYmtleV9j
+b3B5KGtleXMudG9wLCAmKGUtPmtleS5rZXkpKTsNCj4gPiArICAgICAgICAgICAgIFNFVF9L
+RVlfRElSVFkoa2V5cy50b3AsIGZhbHNlKTsNCj4gPiArICAgICAgICAgICAgIGJjaF9rZXls
+aXN0X3B1c2goJmtleXMpOw0KPiA+ICsNCj4NCj4gSWYgYWxsIHRoZSBwcmVmbHVzaCBrZXlz
+IGFyZSBzdG9yZWQgaW4gYSBtaW4gaGVhcCwgYXMgSSBzdWdnZXN0ZWQNCj4gcHJldmlvdXNs
+eS4gTm93IHlvdSBjYW4gYXNzZW1ibGUgYSBrZXlsaXN0IHdpdGggbXVsdGlwbGUga2V5cyBh
+bmQNCj4gc2VuZCB0aGVtIGludG8gYmNoX2J0cmVlX2luc2VydCgpLiBUaGUga2V5cyBjYW4g
+YmVpbnNlcnRlZCBpbiBhDQo+IGJhdGNoLCB3aGljaCB3aWxsIGJlIGEgYml0IGZhc3Rlci4N
+Cj4NCj4NCj4gPiArICAgICAgICAgICAgIGZvciAoaSA9IDA7IGkgPCBLRVlfUFRSUygmKGUt
+PmtleS5rZXkpKTsgaSsrKQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICBhdG9taWNfaW5j
+KCZQVFJfQlVDS0VUKGRjLT5kaXNrLmMsICYoZS0+a2V5LmtleSksIGkpLT5waW4pOw0KPiA+
+ICsNCj4gPiArICAgICAgICAgICAgIHJldCA9IGJjaF9idHJlZV9pbnNlcnQoZGMtPmRpc2su
+YywgJmtleXMsIE5VTEwsICYoZS0+a2V5LmtleSkpOw0KPiA+ICsNCj4gPiArICAgICAgICAg
+ICAgIGlmIChyZXQpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIHRyYWNlX2JjYWNoZV93
+cml0ZWJhY2tfY29sbGlzaW9uKCYoZS0+a2V5LmtleSkpOw0KPiA+ICsNCj4gPiArICAgICAg
+ICAgICAgIGF0b21pY19sb25nX2luYyhyZXQNCj4gPiArICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICA/ICZkYy0+ZGlzay5jLT53cml0ZWJhY2tfa2V5c19mYWlsZWQNCj4gPiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICA6ICZkYy0+ZGlzay5jLT53cml0ZWJhY2tfa2V5
+c19kb25lKTsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICBsaXN0X2RlbCgmZS0+bGlzdCk7
+DQo+ID4gKyAgICAgICAgICAgICBrZnJlZShlKTsNCj4gPiArDQo+ID4gKyAgICAgICAgICAg
+ICAvKiBGb3IgdGhvc2UgYmtleXMgdGhhdCBmYWlsZWQgdG8gYmUgaW5zZXJ0ZWQsIHlvdSBj
+YW4NCj4gPiArICAgICAgICAgICAgICAqIGlnbm9yZSB0aGVtIGFuZCB0aGV5IHdpbGwgYmUg
+cHJvY2Vzc2VkIGFnYWluIGluIHRoZQ0KPiA+ICsgICAgICAgICAgICAgICogbmV4dCB3cml0
+ZS1iYWNrIHNjYW4uDQo+ID4gKyAgICAgICAgICAgICAgKi8NCj4gPiArICAgICB9DQo+ID4g
+Kw0KPg0KPiBUaGVuIHRoZSBhYm92ZSBjb2RlIG1pZ2h0IGJlIHNvbWV0aGluZyBsaWtlLA0K
+Pg0KPiB3aGlsZSAoaGVhcCBpcyBub3QgZW1wdHkpIHsNCj4gICAgICAgICB3aGlsZSAoaGVh
+cCBpcyBub3QgZnVsbCAmJiBoZWFwIGlzIG5vdCBlbXB0eSkgew0KPiAgICAgICAgICAgICAg
+ICAga2V5ID0gaGVhcF9wb3AoKQ0KPiAgICAgICAgICAgICAgICAgYmNoX2tleWxpc3RfYWRk
+KGtleWxpc3QsIGtleSkNCj4gICAgICAgICB9DQo+DQo+ICAgICAgICAgYmNoX2J0cmVlX2lu
+c2VydChrZXlsaXN0KTsNCj4gfQ0KPg0KPiBZb3UgbmVlZCB0byBjaGVjayBiY2hfYnRyZWVf
+aW5zZXJ0KCkgdG8gZGVjaWRlIGh0ZSBoZWFwIGlzIG1heCBoZWFwIG9yDQo+IG1pbiBoZWFw
+Lg0KPg0KPg0KPiA+ICsgICAgIGRjLT5wcmVmbHVzaF9rZXlzLmNvdW50ID0gMDsNCj4gPiAr
+fQ0KPiA+ICsNCj4gPiAgc3RhdGljIENMT1NVUkVfQ0FMTEJBQ0sod3JpdGVfZGlydHlfZmlu
+aXNoKQ0KPiA+ICB7DQo+ID4gKyAgICAgaW50IHJldDsNCj4gPiAgICAgICBjbG9zdXJlX3R5
+cGUoaW8sIHN0cnVjdCBkaXJ0eV9pbywgY2wpOw0KPiA+ICAgICAgIHN0cnVjdCBrZXlidWZf
+a2V5ICp3ID0gaW8tPmJpby5iaV9wcml2YXRlOw0KPiA+ICAgICAgIHN0cnVjdCBjYWNoZWRf
+ZGV2ICpkYyA9IGlvLT5kYzsNCj4gPiBAQCAtMzU4LDI3ICs0NzEsNDEgQEAgc3RhdGljIENM
+T1NVUkVfQ0FMTEJBQ0sod3JpdGVfZGlydHlfZmluaXNoKQ0KPiA+DQo+ID4gICAgICAgLyog
+VGhpcyBpcyBraW5kIG9mIGEgZHVtYiB3YXkgb2Ygc2lnbmFsbGluZyBlcnJvcnMuICovDQo+
+ID4gICAgICAgaWYgKEtFWV9ESVJUWSgmdy0+a2V5KSkgew0KPiA+IC0gICAgICAgICAgICAg
+aW50IHJldDsNCj4gPiAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBpOw0KPiA+ICAgICAg
+ICAgICAgICAgc3RydWN0IGtleWxpc3Qga2V5czsNCj4gPg0KPiA+IC0gICAgICAgICAgICAg
+YmNoX2tleWxpc3RfaW5pdCgma2V5cyk7DQo+ID4gKyAgICAgICAgICAgICBpZiAoIUJERVZf
+V1JJVEVCQUNLX0ZMVVNIKCZkYy0+c2IpKSB7DQo+ID4gK3VwZGF0ZV9ia2V5Og0KPiA+ICsg
+ICAgICAgICAgICAgICAgICAgICBiY2hfa2V5bGlzdF9pbml0KCZrZXlzKTsNCj4gPg0KPiA+
+IC0gICAgICAgICAgICAgYmtleV9jb3B5KGtleXMudG9wLCAmdy0+a2V5KTsNCj4gPiAtICAg
+ICAgICAgICAgIFNFVF9LRVlfRElSVFkoa2V5cy50b3AsIGZhbHNlKTsNCj4gPiAtICAgICAg
+ICAgICAgIGJjaF9rZXlsaXN0X3B1c2goJmtleXMpOw0KPiA+ICsgICAgICAgICAgICAgICAg
+ICAgICBia2V5X2NvcHkoa2V5cy50b3AsICZ3LT5rZXkpOw0KPiA+ICsgICAgICAgICAgICAg
+ICAgICAgICBTRVRfS0VZX0RJUlRZKGtleXMudG9wLCBmYWxzZSk7DQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgIGJjaF9rZXlsaXN0X3B1c2goJmtleXMpOw0KPiA+DQo+ID4gLSAgICAg
+ICAgICAgICBmb3IgKGkgPSAwOyBpIDwgS0VZX1BUUlMoJnctPmtleSk7IGkrKykNCj4gPiAt
+ICAgICAgICAgICAgICAgICAgICAgYXRvbWljX2luYygmUFRSX0JVQ0tFVChkYy0+ZGlzay5j
+LCAmdy0+a2V5LCBpKS0+cGluKTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgZm9yIChp
+ID0gMDsgaSA8IEtFWV9QVFJTKCZ3LT5rZXkpOyBpKyspDQo+ID4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgYXRvbWljX2luYygmUFRSX0JVQ0tFVChkYy0+ZGlzay5jLCAmdy0+
+a2V5LCBpKS0+cGluKTsNCj4gPg0KPiA+IC0gICAgICAgICAgICAgcmV0ID0gYmNoX2J0cmVl
+X2luc2VydChkYy0+ZGlzay5jLCAma2V5cywgTlVMTCwgJnctPmtleSk7DQo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgIHJldCA9IGJjaF9idHJlZV9pbnNlcnQoZGMtPmRpc2suYywgJmtl
+eXMsIE5VTEwsICZ3LT5rZXkpOw0KPiA+DQo+ID4gLSAgICAgICAgICAgICBpZiAocmV0KQ0K
+PiA+IC0gICAgICAgICAgICAgICAgICAgICB0cmFjZV9iY2FjaGVfd3JpdGViYWNrX2NvbGxp
+c2lvbigmdy0+a2V5KTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgaWYgKHJldCkNCj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICB0cmFjZV9iY2FjaGVfd3JpdGViYWNr
+X2NvbGxpc2lvbigmdy0+a2V5KTsNCj4gPg0KPiA+IC0gICAgICAgICAgICAgYXRvbWljX2xv
+bmdfaW5jKHJldA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgID8gJmRjLT5k
+aXNrLmMtPndyaXRlYmFja19rZXlzX2ZhaWxlZA0KPiA+IC0gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIDogJmRjLT5kaXNrLmMtPndyaXRlYmFja19rZXlzX2RvbmUpOw0KPiA+ICsg
+ICAgICAgICAgICAgICAgICAgICBhdG9taWNfbG9uZ19pbmMocmV0DQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICA/ICZkYy0+ZGlzay5jLT53cml0ZWJhY2tf
+a2V5c19mYWlsZWQNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IDogJmRjLT5kaXNrLmMtPndyaXRlYmFja19rZXlzX2RvbmUpOw0KPiA+ICsgICAgICAgICAg
+ICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgLyogQWZ0ZXIgZmx1c2hp
+bmcgdGhlIGJhY2tpbmcgZGV2aWNlLCB1cGRhdGUgdGhlIGJ0cmVlICovDQo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgIHJldCA9IGJjYWNoZV9hZGRfcHJlZmx1c2hfa2V5KGRjLCB3KTsN
+Cj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIC8qDQo+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgICAqIFdoZW4gbWVtb3J5IGFsbG9jYXRpb24gZmFpbHMsIGltbWVkaWF0ZWx5
+IHNlbmQgUFJFRkxVU0gNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICogYW5kIHRoZW4g
+dXBkYXRlIHRoZSBidHJlZS4NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICovDQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgIGlmIChyZXQpIHsNCj4gPiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBsYXVuY2hfYXN5bmNfcHJlZmx1c2hfcmVxdWVzdChkYyk7DQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZ290byB1cGRhdGVfYmtleTsNCj4gPiAr
+ICAgICAgICAgICAgICAgICAgICAgfQ0KPiA+ICsgICAgICAgICAgICAgfQ0KPiA+ICAgICAg
+IH0NCj4gPg0KPg0KPiBJZiBiZWZvcmUgdGhlIGNsZWFyZWQga2V5IGluc2VydGVkIGludG8g
+dGhlIGJ0cmVlLCB0aGVyZSBhcmUgbmV3IHdyaXRlDQo+IGludG8gb3ZlcmxhcHBlZCBMQkEg
+cmFuZ2Ugb2YgdGhlIGNsZWFyZWQga2V5IGFuZCBhIGRpcnR5IGtleSBpbnNlcnRlZC4NCj4g
+VGhlbiB0aGUgY2xlYXJlZCBrZXkgaXMgaW5zZXJ0ZWQgYW5kIG92ZXJ3cml0ZXMgdGhlIGRp
+cnR5IGtleSwgYnV0IHRoZQ0KPiBkaXJ0eSBkYXRhIG9uIGNhY2hlIGlzIG5vdCB3cml0dGVu
+IGJhY2sgdG8gYmFja2luZyBkZXZpY2UgeWV0LiBIb3cgdG8NCj4gaGFuZGxlIHN1Y2ggc2l0
+dWF0aW9uPw0KPg0KDQpUaGVyZSBhcmUgaW5kZWVkIHNvbWUgaXNzdWVzIGhlcmUuIEkgaGF2
+ZSBpbml0aWFsbHkgY29tZSB1cCB3aXRoIGENCnNvbHV0aW9uOiBVdGlsaXplIHRoZSBleGlz
+dGluZyBkYy0+d3JpdGViYWNrX2tleXMgbWVjaGFuaXNtIGZvcg0KcHJvdGVjdGlvbi4gVGhl
+IGdlbmVyYWwgcHJvY2Vzc2luZyBmbG93IGlzIGFzIGZvbGxvd3M6DQoxLiBJbiB0aGUgd3Jp
+dGVfZGlydHlfZmluaXNoKCkgZnVuY3Rpb24sIHJlbW92ZSB0aGUgb3BlcmF0aW9uIG9mIA0K
+dXBkYXRpbmcgYmtleSBpbnNlcnRpb24sIGFuZCBkZWxldGUgdGhlIGNvZGUgYmNoX2tleWJ1
+Zl9kZWwoJmRjDQotPndyaXRlYmFja19rZXlzLCB3KS4NCjIuIEFmdGVyIGV4ZWN1dGluZyB0
+aGUgcmVhZF9kaXJ0eShkYykgY29kZSwgcGVyZm9ybSBmbHVzaCwgdGhlbg0KaW5zZXJ0IHRo
+ZSB1cGRhdGVkIGJrZXksIGFuZCBmaW5hbGx5IHJlbW92ZSB0aGUgYmtleSBmcm9tIGRjLT4N
+CndyaXRlYmFja19rZXlzLiBUaGlzIHByb2Nlc3MgaXMgZXF1aXZhbGVudCB0byBzZW5kaW5n
+IGEgZmx1c2gNCmV2ZXJ5IEtFWUJVRl9OUiBia2V5cyBhcmUgd3JpdHRlbiBiYWNrLg0KMy4g
+U3VwcG9ydCBjb25maWd1cmFibGUgS0VZQlVGX05SIHRvIGluZGlyZWN0bHkgY29udHJvbCB0
+aGUNCmZyZXF1ZW5jeSBvZiBmbHVzaC4NCg0KSXMgdGhpcyBwbGFuIGFwcHJvcHJpYXRlPyBP
+ciBhcmUgdGhlcmUgYW55IGJldHRlciB3YXlzIHRvIGhhbmRsZSBpdD8NCg0KPiA+ICAgICAg
+IGJjaF9rZXlidWZfZGVsKCZkYy0+d3JpdGViYWNrX2tleXMsIHcpOw0KPiA+IEBAIC00MzUs
+NiArNTYyLDcgQEAgc3RhdGljIENMT1NVUkVfQ0FMTEJBQ0sod3JpdGVfZGlydHkpDQo+ID4g
+ICAgICAgaWYgKEtFWV9ESVJUWSgmdy0+a2V5KSkgew0KPiA+ICAgICAgICAgICAgICAgZGly
+dHlfaW5pdCh3KTsNCj4gPiAgICAgICAgICAgICAgIGlvLT5iaW8uYmlfb3BmID0gUkVRX09Q
+X1dSSVRFOw0KPiA+ICsNCj4gPiAgICAgICAgICAgICAgIGlvLT5iaW8uYmlfaXRlci5iaV9z
+ZWN0b3IgPSBLRVlfU1RBUlQoJnctPmtleSk7DQo+ID4gICAgICAgICAgICAgICBiaW9fc2V0
+X2RldigmaW8tPmJpbywgaW8tPmRjLT5iZGV2KTsNCj4gPiAgICAgICAgICAgICAgIGlvLT5i
+aW8uYmlfZW5kX2lvICAgICAgID0gZGlydHlfZW5kaW87DQo+ID4gQEAgLTc0MSw2ICs4Njks
+NyBAQCBzdGF0aWMgaW50IGJjaF93cml0ZWJhY2tfdGhyZWFkKHZvaWQgKmFyZykNCj4gPiAg
+ICAgICBzdHJ1Y3QgY2FjaGVkX2RldiAqZGMgPSBhcmc7DQo+ID4gICAgICAgc3RydWN0IGNh
+Y2hlX3NldCAqYyA9IGRjLT5kaXNrLmM7DQo+ID4gICAgICAgYm9vbCBzZWFyY2hlZF9mdWxs
+X2luZGV4Ow0KPiA+ICsgICAgIHVuc2lnbmVkIGxvbmcgbGFzdF9mbHVzaF9qaWZmaWVzID0g
+amlmZmllczsNCj4gPg0KPiA+ICAgICAgIGJjaF9yYXRlbGltaXRfcmVzZXQoJmRjLT53cml0
+ZWJhY2tfcmF0ZSk7DQo+ID4NCj4gPiBAQCAtODE5LDkgKzk0OCwyMyBAQCBzdGF0aWMgaW50
+IGJjaF93cml0ZWJhY2tfdGhyZWFkKHZvaWQgKmFyZykNCj4gPg0KPg0KPiBUaGFua3MuDQo+
+DQo+IENvbHkgTGkNCj4gPiAgICAgICAgICAgICAgIHJlYWRfZGlydHkoZGMpOw0KPiA+DQo+
+ID4gKyAgICAgICAgICAgICAvKg0KPiA+ICsgICAgICAgICAgICAgICogSWYgdGhlIGFjY3Vt
+dWxhdGVkIHByZWZsdXNoX2tleXMgZXhjZWVkIGEgY2VydGFpbiBxdWFudGl0eSBvcg0KPiA+
+ICsgICAgICAgICAgICAgICogdGhlIGludGVydmFsIHRpbWUgZXhjZWVkcyAzMCBzZWNvbmRz
+LCBpc3N1ZSB0aGUgUFJFRkxVU0ggY29tbWFuZA0KPiA+ICsgICAgICAgICAgICAgICogb25j
+ZS4NCj4gPiArICAgICAgICAgICAgICAqLw0KPiA+ICsgICAgICAgICAgICAgaWYgKGRjLT5w
+cmVmbHVzaF9rZXlzLmNvdW50ID49IGRjLT5mbHVzaF9pbnRlcnZhbCB8fA0KPiA+ICsgICAg
+ICAgICAgICAgICAgIHRpbWVfYWZ0ZXIoamlmZmllcywgbGFzdF9mbHVzaF9qaWZmaWVzICsg
+MzAgKiBIWikpIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgZmx1c2hfYmFja2luZ19k
+ZXZpY2UoZGMpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICBsYXN0X2ZsdXNoX2ppZmZp
+ZXMgPSBqaWZmaWVzOw0KPiA+ICsgICAgICAgICAgICAgfQ0KPiA+ICsNCj4gPiAgICAgICAg
+ICAgICAgIGlmIChzZWFyY2hlZF9mdWxsX2luZGV4KSB7DQo+ID4gICAgICAgICAgICAgICAg
+ICAgICAgIHVuc2lnbmVkIGludCBkZWxheSA9IGRjLT53cml0ZWJhY2tfZGVsYXkgKiBIWjsN
+Cj4gPg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAvKiBDbGVhbiB1cCB0aGUgcmVtYWlu
+aW5nIHByZWZsdXNoX2tleXMuICovDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIGZsdXNo
+X2JhY2tpbmdfZGV2aWNlKGRjKTsNCj4gPiArDQo+ID4gICAgICAgICAgICAgICAgICAgICAg
+IHdoaWxlIChkZWxheSAmJg0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIWt0
+aHJlYWRfc2hvdWxkX3N0b3AoKSAmJg0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIXRlc3RfYml0KENBQ0hFX1NFVF9JT19ESVNBQkxFLCAmYy0+ZmxhZ3MpICYmDQo+ID4g
+QEAgLTEwNjgsMTAgKzEyMTEsMTUgQEAgdm9pZCBiY2hfY2FjaGVkX2Rldl93cml0ZWJhY2tf
+aW5pdChzdHJ1Y3QgY2FjaGVkX2RldiAqZGMpDQo+ID4gICAgICAgZGMtPndyaXRlYmFja19y
+YXRlX2ZwX3Rlcm1fbWlkID0gMTA7DQo+ID4gICAgICAgZGMtPndyaXRlYmFja19yYXRlX2Zw
+X3Rlcm1faGlnaCA9IDEwMDA7DQo+ID4gICAgICAgZGMtPndyaXRlYmFja19yYXRlX2lfdGVy
+bV9pbnZlcnNlID0gMTAwMDA7DQo+ID4gKyAgICAgZGMtPmZsdXNoX2ludGVydmFsID0gV1JJ
+VEVCQUNLX0ZMVVNIX0lOVEVSVkFMX0RFRkFVTFQ7DQo+ID4NCj4gPiAgICAgICAvKiBGb3Ig
+ZGMtPndyaXRlYmFja19sb2NrIGNvbnRlbnRpb24gaW4gdXBkYXRlX3dyaXRlYmFja19yYXRl
+KCkgKi8NCj4gPiAgICAgICBkYy0+cmF0ZV91cGRhdGVfcmV0cnkgPSAwOw0KPiA+DQo+ID4g
+KyAgICAgSU5JVF9MSVNUX0hFQUQoJmRjLT5wcmVmbHVzaF9rZXlzLmxpc3QpOw0KPiA+ICsg
+ICAgIHNwaW5fbG9ja19pbml0KCZkYy0+cHJlZmx1c2hfa2V5cy5sb2NrKTsNCj4gPiArICAg
+ICBkYy0+cHJlZmx1c2hfa2V5cy5jb3VudCA9IDA7DQo+ID4gKw0KPiA+ICAgICAgIFdBUk5f
+T04odGVzdF9hbmRfY2xlYXJfYml0KEJDQUNIRV9ERVZfV0JfUlVOTklORywgJmRjLT5kaXNr
+LmZsYWdzKSk7DQo+ID4gICAgICAgSU5JVF9ERUxBWUVEX1dPUksoJmRjLT53cml0ZWJhY2tf
+cmF0ZV91cGRhdGUsIHVwZGF0ZV93cml0ZWJhY2tfcmF0ZSk7DQo+ID4gIH0NCj4gPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9tZC9iY2FjaGUvd3JpdGViYWNrLmggYi9kcml2ZXJzL21kL2Jj
+YWNoZS93cml0ZWJhY2suaA0KPiA+IGluZGV4IDMxZGY3MTY5NTFmNi4uMWNkM2U0YWRkYmEy
+IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbWQvYmNhY2hlL3dyaXRlYmFjay5oDQo+ID4g
+KysrIGIvZHJpdmVycy9tZC9iY2FjaGUvd3JpdGViYWNrLmgNCj4gPiBAQCAtMTQsNiArMTQs
+MTAgQEANCj4gPiAgI2RlZmluZSBXUklURUJBQ0tfUkFURV9VUERBVEVfU0VDU19NQVggICAg
+ICAgICAgICAgICA2MA0KPiA+ICAjZGVmaW5lIFdSSVRFQkFDS19SQVRFX1VQREFURV9TRUNT
+X0RFRkFVTFQgICA1DQo+ID4NCj4gPiArI2RlZmluZSBXUklURUJBQ0tfRkxVU0hfSU5URVJW
+QUxfTUlOICAgICAgICAgNTAwDQo+ID4gKyNkZWZpbmUgV1JJVEVCQUNLX0ZMVVNIX0lOVEVS
+VkFMX01BWCAgICAgICAgIDUwMDAwDQo+ID4gKyNkZWZpbmUgV1JJVEVCQUNLX0ZMVVNIX0lO
+VEVSVkFMX0RFRkFVTFQgICAgIDIwMDAwIC8qIHRoZSBudW1iZXIgb2YgYmtleSAqLw0KPiA+
+ICsNCj4gPiAgI2RlZmluZSBCQ0hfQVVUT19HQ19ESVJUWV9USFJFU0hPTEQgIDUwDQo+ID4N
+Cj4gPiAgI2RlZmluZSBCQ0hfV1JJVEVCQUNLX0ZSQUdNRU5UX1RIUkVTSE9MRF9MT1cgNTAN
+Cj4gPiAtLQ0KPiA+IDIuMTguMQ0KPiA+DQo+
 
-[snipped]
-
-
-> Signed-off-by: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
-> ---
->  drivers/md/bcache/bcache.h        |  23 ++++
->  drivers/md/bcache/bcache_ondisk.h |   4 +
->  drivers/md/bcache/sysfs.c         |  47 ++++++++
->  drivers/md/bcache/writeback.c     | 174 +++++++++++++++++++++++++++---
->  drivers/md/bcache/writeback.h     |   4 +
->  5 files changed, 239 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 785b0d9008fa..09424938437b 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -247,6 +247,17 @@ struct keybuf {
->  	DECLARE_ARRAY_ALLOCATOR(struct keybuf_key, freelist, KEYBUF_NR);
->  };
->  
-> +struct keybuf_preflush {
-> +	spinlock_t	lock;
-> +	struct list_head list;
-> +	u32 count;
-> +};
-> +
-> +struct flush_key_entry {
-> +	struct keybuf_key key;
-> +	struct list_head list;
-> +};
-> +
->  struct bcache_device {
->  	struct closure		cl;
->  
-> @@ -346,6 +357,18 @@ struct cached_dev {
->  
->  	struct keybuf		writeback_keys;
->  
-> +	/*
-> +	 * Before performing preflush to the backing device, temporarily
-> +	 * store the bkey waiting to clean up the dirty mark
-> +	 */
-> +	struct keybuf_preflush  preflush_keys;
-> +	/*
-> +	 * flush_interval is used to specify that a PROFLUSH operation will
-> +	 * be issued once a certain number of dirty bkeys have been written
-> +	 * each time.
-> +	 */
-> +	unsigned int flush_interval;
-> +
->  	struct task_struct	*status_update_thread;
->  	/*
->  	 * Order the write-half of writeback operations strongly in dispatch
-> diff --git a/drivers/md/bcache/bcache_ondisk.h b/drivers/md/bcache/bcache_ondisk.h
-> index 6620a7f8fffc..df5800838e40 100644
-> --- a/drivers/md/bcache/bcache_ondisk.h
-> +++ b/drivers/md/bcache/bcache_ondisk.h
-> @@ -294,6 +294,10 @@ BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
->  #define CACHE_MODE_WRITEBACK		1U
->  #define CACHE_MODE_WRITEAROUND		2U
->  #define CACHE_MODE_NONE			3U
-> +BITMASK(BDEV_WRITEBACK_FLUSH,		struct cache_sb, flags, 4, 1);
-> +#define WRITEBACK_FLUSH_OFF		0U
-> +#define WRITEBACK_FLUSH_ON		1U
-> +
-
-
-We should avoid to change the on disk format. Can you use another method
-to check whether the cached device has to be flushed? e.g. checking
-dc->preflush_keys.
-
-
->  BITMASK(BDEV_STATE,			struct cache_sb, flags, 61, 2);
->  #define BDEV_STATE_NONE			0U
->  #define BDEV_STATE_CLEAN		1U
-> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> index e8f696cb58c0..cc228e592ab6 100644
-> --- a/drivers/md/bcache/sysfs.c
-> +++ b/drivers/md/bcache/sysfs.c
-> @@ -28,6 +28,18 @@ static const char * const bch_cache_modes[] = {
->  	NULL
->  };
->  
-> +/*
-> + * Default is 0 ("off")
-> + * off: Do nothing
-> + * on: Use FLUSH when writing back dirty data.
-> + */
-> +static const char * const bch_writeback_flush[] = {
-> +	"off",
-> +	"on",
-> +	NULL
-> +};
-> +
-> +
->  static const char * const bch_reada_cache_policies[] = {
->  	"all",
->  	"meta-only",
-> @@ -151,6 +163,19 @@ rw_attribute(copy_gc_enabled);
->  rw_attribute(idle_max_writeback_rate);
->  rw_attribute(gc_after_writeback);
->  rw_attribute(size);
-> +/*
-> + * The "writeback_flush" has two options: "off" and "on". "off" is
-> + * the default value.
-> + * off: Do nothing
-> + * on: Use FLUSH when writing back dirty data.
-> + */
-> +rw_attribute(writeback_flush);
-> +/*
-> + * "flush_interval" is used to specify that a PROFLUSH operation will
-> + * be issued once a certain number of dirty bkeys have been written
-> + * each time.
-> + */
-> +rw_attribute(flush_interval);
->  
->  static ssize_t bch_snprint_string_list(char *buf,
->  				       size_t size,
-> @@ -213,6 +238,7 @@ SHOW(__bch_cached_dev)
->  	var_print(writeback_rate_fp_term_mid);
->  	var_print(writeback_rate_fp_term_high);
->  	var_print(writeback_rate_minimum);
-> +	var_print(flush_interval);
->  
->  	if (attr == &sysfs_writeback_rate_debug) {
->  		char rate[20];
-> @@ -283,6 +309,11 @@ SHOW(__bch_cached_dev)
->  		return strlen(buf);
->  	}
->  
-> +	if (attr == &sysfs_writeback_flush)
-> +		return bch_snprint_string_list(buf, PAGE_SIZE,
-> +					       bch_writeback_flush,
-> +					       BDEV_WRITEBACK_FLUSH(&dc->sb));
-> +
->  #undef var
->  	return 0;
->  }
-> @@ -354,6 +385,9 @@ STORE(__cached_dev)
->  
->  	sysfs_strtoul_clamp(io_error_limit, dc->error_limit, 0, INT_MAX);
->  
-> +	sysfs_strtoul_clamp(flush_interval, dc->flush_interval,
-> +			    WRITEBACK_FLUSH_INTERVAL_MIN, WRITEBACK_FLUSH_INTERVAL_MAX);
-> +
->  	if (attr == &sysfs_io_disable) {
->  		int v = strtoul_or_return(buf);
->  
-> @@ -451,6 +485,17 @@ STORE(__cached_dev)
->  	if (attr == &sysfs_stop)
->  		bcache_device_stop(&dc->disk);
->  
-> +	if (attr == &sysfs_writeback_flush) {
-> +		v = __sysfs_match_string(bch_writeback_flush, -1, buf);
-> +		if (v < 0)
-> +			return v;
-> +
-> +		if ((unsigned int) v != BDEV_WRITEBACK_FLUSH(&dc->sb)) {
-> +			SET_BDEV_WRITEBACK_FLUSH(&dc->sb, v);
-> +			bch_write_bdev_super(dc, NULL);
-> +		}
-> +	}
-> +
->  	return size;
->  }
->  
-> @@ -541,6 +586,8 @@ static struct attribute *bch_cached_dev_attrs[] = {
->  #endif
->  	&sysfs_backing_dev_name,
->  	&sysfs_backing_dev_uuid,
-> +	&sysfs_writeback_flush,
-> +	&sysfs_flush_interval,
->  	NULL
->  };
->  ATTRIBUTE_GROUPS(bch_cached_dev);
-
-We don't need this sysfs item. Once the issue is fixed, this is
-mandatory for data security, even performance hurts.
-
-
-
-> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-> index 453efbbdc8ee..530eea2b953a 100644
-> --- a/drivers/md/bcache/writeback.c
-> +++ b/drivers/md/bcache/writeback.c
-> @@ -348,8 +348,121 @@ static CLOSURE_CALLBACK(dirty_io_destructor)
->  	kfree(io);
->  }
->  
-> +static int bcache_add_preflush_key(struct cached_dev *dc, struct keybuf_key *key)
-> +{
-> +	struct flush_key_entry *entry = kmalloc(sizeof(*entry), GFP_ATOMIC);
-> +
-> +	if (!entry) {
-> +		pr_info("the preflush bkey memory allocation failed.\n");
-
-The debug pr_info() can be removed.
-
-
-
-> +		return -ENOMEM;
-> +	}
-> +
-> +	memcpy(&entry->key, key, sizeof(*key));
-
-You may want to look at bkey_copy().
-
-> +	INIT_LIST_HEAD(&entry->list);
-> +
-> +	spin_lock(&dc->preflush_keys.lock);
-> +	list_add_tail(&entry->list, &dc->preflush_keys.list);
-> +	dc->preflush_keys.count++;
-> +	spin_unlock(&dc->preflush_keys.lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static void bcache_mark_preflush_keys_clean(struct cached_dev *dc)
-> +{
-> +	struct flush_key_entry *e, *tmp;
-> +
-> +	list_for_each_entry_safe(e, tmp, &dc->preflush_keys.list, list) {
-> +		list_del(&e->list);
-> +		kfree(e);
-> +	}
-> +	dc->preflush_keys.count = 0;
-> +}
-> +
-
-For dc->preflush_keys, I would prefer to use a static allocated buffer
-then dynamic list. You may check the head routines in uti.h, this is
-the thing I'd suggest to use.
-
-You may initialize the heap buffer quite large, and store to preflush
-keys in order. It will be useful when you insert the keys back to btree.
-
-
-> +static void launch_async_preflush_endio(struct bio *bio)
-> +{
-> +	if (bio->bi_status)
-> +		pr_err("flush backing device error %d.\n", bio->bi_status);
-> +}
-> +
-> +
-> +static inline void launch_async_preflush_request(struct cached_dev *dc)
-> +{
-> +	struct bio flush;
-> +
-> +	bio_init(&flush, dc->bdev, NULL, 0, REQ_OP_WRITE | REQ_PREFLUSH);
-> +
-> +	flush.bi_private = dc;
-> +	flush.bi_end_io = launch_async_preflush_endio;
-> +
-> +	submit_bio(&flush);
-> +}
-> +
-> +
-> +static void flush_backing_device(struct cached_dev *dc)
-> +{
-> +	int ret;
-> +	unsigned int i;
-> +	struct keylist keys;
-> +	struct flush_key_entry *e, *tmp;
-> +	struct bio flush;
-> +
-> +	if (dc->preflush_keys.count == 0)
-> +		return;
-> +
-> +	bio_init(&flush, dc->bdev, NULL, 0, REQ_OP_WRITE | REQ_PREFLUSH);
-> +	ret = submit_bio_wait(&flush);
-> +	if (ret) {
-> +		pr_err("flush backing device error %d.\n", ret);
-> +
-> +		/*
-> +		 * In the case of flush failure, do not update the status of bkey
-> +		 * in the btree, and wait until the next time to re-write the dirty
-> +		 * data.
-> +		 */
-> +		bcache_mark_preflush_keys_clean(dc);
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * The dirty data was successfully written back and confirmed to be written
-> +	 * to the disk. The status of the bkey in the btree was updated.
-> +	 */
-> +	list_for_each_entry_safe(e, tmp, &dc->preflush_keys.list, list) {
-> +		memset(keys.inline_keys, 0, sizeof(keys.inline_keys));
-> +		bch_keylist_init(&keys);
-> +
-> +		bkey_copy(keys.top, &(e->key.key));
-> +		SET_KEY_DIRTY(keys.top, false);
-> +		bch_keylist_push(&keys);
-> +
-
-If all the preflush keys are stored in a min heap, as I suggested
-previously. Now you can assemble a keylist with multiple keys and
-send them into bch_btree_insert(). The keys can beinserted in a
-batch, which will be a bit faster.
-
-
-> +		for (i = 0; i < KEY_PTRS(&(e->key.key)); i++)
-> +			atomic_inc(&PTR_BUCKET(dc->disk.c, &(e->key.key), i)->pin);
-> +
-> +		ret = bch_btree_insert(dc->disk.c, &keys, NULL, &(e->key.key));
-> +
-> +		if (ret)
-> +			trace_bcache_writeback_collision(&(e->key.key));
-> +
-> +		atomic_long_inc(ret
-> +				? &dc->disk.c->writeback_keys_failed
-> +				: &dc->disk.c->writeback_keys_done);
-> +
-> +		list_del(&e->list);
-> +		kfree(e);
-> +
-> +		/* For those bkeys that failed to be inserted, you can
-> +		 * ignore them and they will be processed again in the
-> +		 * next write-back scan.
-> +		 */
-> +	}
-> +
-
-Then the above code might be something like,
-
-while (heap is not empty) {
-	while (heap is not full && heap is not empty) {
-		key = heap_pop()
-		bch_keylist_add(keylist, key)
-	}
-
-	bch_btree_insert(keylist);
-}
-
-You need to check bch_btree_insert() to decide hte heap is max heap or
-min heap.
-
-
-> +	dc->preflush_keys.count = 0;
-> +}
-> +
->  static CLOSURE_CALLBACK(write_dirty_finish)
->  {
-> +	int ret;
->  	closure_type(io, struct dirty_io, cl);
->  	struct keybuf_key *w = io->bio.bi_private;
->  	struct cached_dev *dc = io->dc;
-> @@ -358,27 +471,41 @@ static CLOSURE_CALLBACK(write_dirty_finish)
->  
->  	/* This is kind of a dumb way of signalling errors. */
->  	if (KEY_DIRTY(&w->key)) {
-> -		int ret;
->  		unsigned int i;
->  		struct keylist keys;
->  
-> -		bch_keylist_init(&keys);
-> +		if (!BDEV_WRITEBACK_FLUSH(&dc->sb)) {
-> +update_bkey:
-> +			bch_keylist_init(&keys);
->  
-> -		bkey_copy(keys.top, &w->key);
-> -		SET_KEY_DIRTY(keys.top, false);
-> -		bch_keylist_push(&keys);
-> +			bkey_copy(keys.top, &w->key);
-> +			SET_KEY_DIRTY(keys.top, false);
-> +			bch_keylist_push(&keys);
->  
-> -		for (i = 0; i < KEY_PTRS(&w->key); i++)
-> -			atomic_inc(&PTR_BUCKET(dc->disk.c, &w->key, i)->pin);
-> +			for (i = 0; i < KEY_PTRS(&w->key); i++)
-> +				atomic_inc(&PTR_BUCKET(dc->disk.c, &w->key, i)->pin);
->  
-> -		ret = bch_btree_insert(dc->disk.c, &keys, NULL, &w->key);
-> +			ret = bch_btree_insert(dc->disk.c, &keys, NULL, &w->key);
->  
-> -		if (ret)
-> -			trace_bcache_writeback_collision(&w->key);
-> +			if (ret)
-> +				trace_bcache_writeback_collision(&w->key);
->  
-> -		atomic_long_inc(ret
-> -				? &dc->disk.c->writeback_keys_failed
-> -				: &dc->disk.c->writeback_keys_done);
-> +			atomic_long_inc(ret
-> +					? &dc->disk.c->writeback_keys_failed
-> +					: &dc->disk.c->writeback_keys_done);
-> +		} else {
-> +			/* After flushing the backing device, update the btree */
-> +			ret = bcache_add_preflush_key(dc, w);
-> +
-> +			/*
-> +			 * When memory allocation fails, immediately send PREFLUSH
-> +			 * and then update the btree.
-> +			 */
-> +			if (ret) {
-> +				launch_async_preflush_request(dc);
-> +				goto update_bkey;
-> +			}
-> +		}
->  	}
-> 
-
-If before the cleared key inserted into the btree, there are new write
-into overlapped LBA range of the cleared key and a dirty key inserted.
-Then the cleared key is inserted and overwrites the dirty key, but the
-dirty data on cache is not written back to backing device yet. How to
-handle such situation?
- 
->  	bch_keybuf_del(&dc->writeback_keys, w);
-> @@ -435,6 +562,7 @@ static CLOSURE_CALLBACK(write_dirty)
->  	if (KEY_DIRTY(&w->key)) {
->  		dirty_init(w);
->  		io->bio.bi_opf = REQ_OP_WRITE;
-> +
->  		io->bio.bi_iter.bi_sector = KEY_START(&w->key);
->  		bio_set_dev(&io->bio, io->dc->bdev);
->  		io->bio.bi_end_io	= dirty_endio;
-> @@ -741,6 +869,7 @@ static int bch_writeback_thread(void *arg)
->  	struct cached_dev *dc = arg;
->  	struct cache_set *c = dc->disk.c;
->  	bool searched_full_index;
-> +	unsigned long last_flush_jiffies = jiffies;
->  
->  	bch_ratelimit_reset(&dc->writeback_rate);
->  
-> @@ -819,9 +948,23 @@ static int bch_writeback_thread(void *arg)
->  
-
-Thanks.
-
-Coly Li
->  		read_dirty(dc);
->  
-> +		/*
-> +		 * If the accumulated preflush_keys exceed a certain quantity or
-> +		 * the interval time exceeds 30 seconds, issue the PREFLUSH command
-> +		 * once.
-> +		 */
-> +		if (dc->preflush_keys.count >= dc->flush_interval ||
-> +		    time_after(jiffies, last_flush_jiffies + 30 * HZ)) {
-> +			flush_backing_device(dc);
-> +			last_flush_jiffies = jiffies;
-> +		}
-> +
->  		if (searched_full_index) {
->  			unsigned int delay = dc->writeback_delay * HZ;
->  
-> +			/* Clean up the remaining preflush_keys. */
-> +			flush_backing_device(dc);
-> +
->  			while (delay &&
->  			       !kthread_should_stop() &&
->  			       !test_bit(CACHE_SET_IO_DISABLE, &c->flags) &&
-> @@ -1068,10 +1211,15 @@ void bch_cached_dev_writeback_init(struct cached_dev *dc)
->  	dc->writeback_rate_fp_term_mid = 10;
->  	dc->writeback_rate_fp_term_high = 1000;
->  	dc->writeback_rate_i_term_inverse = 10000;
-> +	dc->flush_interval = WRITEBACK_FLUSH_INTERVAL_DEFAULT;
->  
->  	/* For dc->writeback_lock contention in update_writeback_rate() */
->  	dc->rate_update_retry = 0;
->  
-> +	INIT_LIST_HEAD(&dc->preflush_keys.list);
-> +	spin_lock_init(&dc->preflush_keys.lock);
-> +	dc->preflush_keys.count = 0;
-> +
->  	WARN_ON(test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags));
->  	INIT_DELAYED_WORK(&dc->writeback_rate_update, update_writeback_rate);
->  }
-> diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
-> index 31df716951f6..1cd3e4addba2 100644
-> --- a/drivers/md/bcache/writeback.h
-> +++ b/drivers/md/bcache/writeback.h
-> @@ -14,6 +14,10 @@
->  #define WRITEBACK_RATE_UPDATE_SECS_MAX		60
->  #define WRITEBACK_RATE_UPDATE_SECS_DEFAULT	5
->  
-> +#define WRITEBACK_FLUSH_INTERVAL_MIN		500
-> +#define WRITEBACK_FLUSH_INTERVAL_MAX		50000
-> +#define WRITEBACK_FLUSH_INTERVAL_DEFAULT	20000 /* the number of bkey */
-> +
->  #define BCH_AUTO_GC_DIRTY_THRESHOLD	50
->  
->  #define BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW 50
-> -- 
-> 2.18.1
-> 
 
