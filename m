@@ -1,138 +1,225 @@
-Return-Path: <linux-bcache+bounces-1180-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1181-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7019EB1C99E
-	for <lists+linux-bcache@lfdr.de>; Wed,  6 Aug 2025 18:11:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3405EB1D0CC
+	for <lists+linux-bcache@lfdr.de>; Thu,  7 Aug 2025 04:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EEDD623B25
-	for <lists+linux-bcache@lfdr.de>; Wed,  6 Aug 2025 16:11:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D61175791
+	for <lists+linux-bcache@lfdr.de>; Thu,  7 Aug 2025 02:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767462989B4;
-	Wed,  6 Aug 2025 16:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYmXYE2A"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829453F9FB;
+	Thu,  7 Aug 2025 02:02:44 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3A318A6AB;
-	Wed,  6 Aug 2025 16:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DB74430;
+	Thu,  7 Aug 2025 02:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754496656; cv=none; b=Vh378qhgXRC9X1F9e/x7GCM8BZPfECrenP2UCt4xpsU7GrGyBAC6dGuC46d+NdQaew6RBht6jAC492oSEo/XMOo7AwQUWbBBF+rsQqJakaUbXdfcje7m9+M2nOtg4bPFxwxC1aYtipVk7dZtEtDw8zzAEHR8iy9v3oMrSJIg8WQ=
+	t=1754532164; cv=none; b=ajgy5OzONCKc/pkQ86Hd19fmXtfj8taE57XeyG5kIXWo1J+iwApuqaiUlXn0aKmbhXJW03YFuoC7GLpYcl5bGW35yoQEVSTYo9R0RH1M/lVmkhwLHlNJ6fT/5Dy3IKfeB/vhzgSA8dW7mUdcEMieHg9McYCnWwNyrEFoe4oEa9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754496656; c=relaxed/simple;
-	bh=WqURAroBlot3BKcRkU57tPw+uTst8u/HvzLlwfACFxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJdprHWWJAFXbtagFAjQcr7x63YQz61Y2BtoCaQsLWDJQG22pEh33ZzYGH3JP7PSgB6bOl3TQStipWwGaiY+wlxWxeGFE3TomSxRzTB2AvpHhSg3G4mPP+TgS8MqdM2kARt7oTlutlcJaXM7UksA3OAElwCgOvjU5uPpH/3Dw0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYmXYE2A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0471EC4CEE7;
-	Wed,  6 Aug 2025 16:10:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754496655;
-	bh=WqURAroBlot3BKcRkU57tPw+uTst8u/HvzLlwfACFxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kYmXYE2AfPcc3M5icsim0mDqdiZQuLqBgY2TqDXrtz+rGU77FlgOpanCshl/bjtKd
-	 Tk7UVWn4uflLxA7GjuESUmCom0SMp/wNTn1PIEo9ajPtD7DReWpbl2XUS3eH7kqK/a
-	 HdWXZ7wCB4ktLlcsYiXpztFDTPk/i1ULmmqqKGixxGkrhZb9dZ/hCiQvaPeoZfHuiz
-	 RfkXkm7xf7L9tDOUmaliPnfsBd0Hg9SKONukUGPeTNjz/VklTiirCJyFsoO/cjbLS5
-	 k2bSvaBcPFQrcQo2XguOqALJBUX0O1J8Az6uXvpcEXCrJVDBzDxGJEzO2UAqrLlOQM
-	 /I6wevf864rNw==
-Date: Thu, 7 Aug 2025 00:10:50 +0800
-From: Coly Li <colyli@kernel.org>
-To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
-Cc: "kent.overstreet" <kent.overstreet@linux.dev>,
-	linux-bcache <linux-bcache@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1754532164; c=relaxed/simple;
+	bh=aZvKz2ob9JA2tr2waEk0IcVQT3b1rhmempwz68LWvF8=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=PS1AHgvl22O/Ftt9eMaE16jdRZPHLgE+IyKzjMi5f+IJX2IQwdYXIhpoJMmSWvvrsNVRUmLxALTU1GVtE0R+h++CPeALmM6dmRRwam5m6EquGBt0EtAMJ8o1mVJxESr7iX3Wp5K5Iaq/cmf+Js3KuNMx/hmCSMlH7h+x5lyc4mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn; spf=pass smtp.mailfrom=kylinos.com.cn; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.com.cn
+EX-QQ-RecipientCnt: 4
+X-QQ-GoodBg: 2
+X-QQ-SSF: 00400000000000F0
+X-QQ-FEAT: D4aqtcRDiqT0lIevWKG+BVnbhYYmM7POEhOP+T0DEcs=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: GnUMECSdt3JZqJ9cmdSHzsyqfh9aFzwRX4BxOkJxwPM=
+X-QQ-STYLE: 
+X-QQ-mid: lv3sz3a-2t1754532104t73f26c5d
+From: "=?utf-8?B?WmhvdSBKaWZlbmc=?=" <zhoujifeng@kylinos.com.cn>
+To: "=?utf-8?B?Q29seSBMaQ==?=" <colyli@kernel.org>
+Cc: "=?utf-8?B?a2VudC5vdmVyc3RyZWV0?=" <kent.overstreet@linux.dev>, "=?utf-8?B?bGludXgtYmNhY2hl?=" <linux-bcache@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
-Message-ID: <20250806161050.iggmpp4mdmcysegn@P16.>
-References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
- <20250805045745.iu4ukc6tfdm3j7xn@P16.>
- <tencent_29AAD4111647BCD160DCFD85@qq.com>
- <20250805162915.3kaqbxjbwfuj6u6w@P16.>
- <tencent_59A1DBB462115B77340A389D@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <tencent_59A1DBB462115B77340A389D@qq.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Thu, 7 Aug 2025 10:01:44 +0800
+X-Priority: 3
+Message-ID: <tencent_27E675CD6ADE39EA7923AD17@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
+	<20250805045745.iu4ukc6tfdm3j7xn@P16.>
+	<tencent_29AAD4111647BCD160DCFD85@qq.com>
+	<20250805162915.3kaqbxjbwfuj6u6w@P16.>
+	<tencent_59A1DBB462115B77340A389D@qq.com>
+	<20250806161050.iggmpp4mdmcysegn@P16.>
+In-Reply-To: <20250806161050.iggmpp4mdmcysegn@P16.>
+X-QQ-ReplyHash: 2201246355
+X-BIZMAIL-ID: 8098051558801133544
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Thu, 07 Aug 2025 10:01:45 +0800 (CST)
+Feedback-ID: lv:kylinos.com.cn:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: OfWmDiPF3NtuM2sbH7BcqjlqbDWZtn3XbNyptgAzTVNpLFDHQjYVwDz8
+	KKBdKvzMcC9gX9+ivARVrj/LfMm1lo91E0syhXYF4vHcmck1T6u8I/a7LesTMR7IT1zDHq8
+	gy4y4zWFlATjGtrQLYvK+4L+Ck+8SqJGy6vV+0xs7FWoXM9YekZyUKtu3NBWiHFFEVClr5W
+	y5PTRckkiok1+jy97Xmw21Vuj1f1YlM3c43D3Vsu+qyga9MqTxCe5cGmPGfEQt9PR2zejL8
+	WV6BZRayCga3IFn8wWIkvB/Y7I1UClcubPuJwHCae0w+3mNkuvuTlElTLKsy/+xNZqY2H3n
+	TsM7e+SmFyLRx7mskCWNIlRzjC+7j+SQbxAi/2AseGl3uyeq515GDKX01T3WtuLJU+2vDyk
+	+d+cV/mwiQaNTNNtg0TX4yiLsr2jGz1tyiQl0R/O6arV4F9Rcr6wKxvkw//muFp5VUJLdpd
+	taXgH4/lCh/eCtUlzhA7IxwfvZkTZdaY/Miyj5XQ+l4c0nDISPK/9jXjrZSYtOjAv9sYu6p
+	nI/UM7dlpzZXltdgfqLUaQc4dS5RBieknoxNr/fzCIrjpRzqtx7a7IlUkdTIr3wm1uJZMTp
+	bRo7a0pk8Hau20jaGTgmf5NJTfQIiTwyfYztJ6xxGf60RWO73V/yMi6ESyW65xWi9Q6ZNEa
+	9esd1xFC5S4aG97FjZRSw/J/v3zdMZsNYD6QH0e2NmiztVmbHegwmxMc8E1EULwcpq10rnQ
+	GzPfNfFHa0Js1B9QH8qL86LHEv9ZHw7LNNQYjmeeAnscfYYKrAoIWCjRt0k7bp5J6I73oqr
+	xHGyCYjf5kIYBMJWCWuxyq0NR6xu0LCLUxh08t8rA1kDAY4KRzugIsJdI3tYQ7pI/beDEBc
+	v8ckEDqcSEP7zgwh85MuGMjeu6mx3bZbpmcx2Db83j5tyaBjvycCBZreBoSwErAQiI0Y5up
+	ABdudCBekRd2fjNG9cf+mIntyEXQ/W4cf2exVR6KFw545LS6QZ7zotL+DfBcuY3SmCte+VY
+	Uh0Zlkhp0/UiCzO4hVEmHQKwuOMd7ie92ET5an/zG98fj1HFjxo7kcFpuI3wMa19BSaARNN
+	HJdiJcYsSVP9MII4rqeHTs=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On Wed, Aug 06, 2025 at 07:19:49PM +0800, Zhou Jifeng wrote:
-> On Wed, 6 Aug 2025 at 00:29, Coly Li <colyli@kernel.org> wrote:
-> >
-> > On Tue, Aug 05, 2025 at 05:37:44PM +0800, Zhou Jifeng wrote:
-> > > On Tue, 5 Aug 2025 at 13:00, Coly Li <colyli@kernel.org> wrote:
-> > > >
-> > > > On Thu, Jul 31, 2025 at 02:21:40PM +0800, Zhou Jifeng wrote:
-> > > > > There is a potential data consistency risk in bcache's writeback mode:when
-> > > > > the application calls fsync, bcache returns success after completing the
-> > > > > log write, persisting the cache disk data, and persisting the HDD internal
-> > > > > cache. However, at this point, the actual application data may still be in
-> > > > > a dirty state and remain stuck in the cache disk. when these data are
-> > > > > subsequently written back to the HDD asynchronously through REQ_OP_WRITE,
-> > > > > there is no forced refresh mechanism to ensure physical placement on the
-> > > > > disk, and there may be no power-off protection measures, which poses a risk
-> > > > > of data loss. This mechanism may cause the application to misjudge that the
-> > > > > data has been persisted, which is different from the actual storage state,
-> > > > > and also violates the semantic agreement that fsync should ensure data
-> > > > > persistence.
-> > > > >
-> > > >
-> > > > [snipped]
-> > > >
-> > > >
-> > > >
-> > > > If before the cleared key inserted into the btree, there are new write
-> > > > into overlapped LBA range of the cleared key and a dirty key inserted.
-> > > > Then the cleared key is inserted and overwrites the dirty key, but the
-> > > > dirty data on cache is not written back to backing device yet. How to
-> > > > handle such situation?
-> > > >
-> > >
-> > > There are indeed some issues here. I have initially come up with a
-> > > solution: Utilize the existing dc->writeback_keys mechanism for
-> > > protection. The general processing flow is as follows:
-> > > 1. In the write_dirty_finish() function, remove the operation of
-> > > updating bkey insertion, and delete the code bch_keybuf_del(&dc
-> > > ->writeback_keys, w).
-> > > 2. After executing the read_dirty(dc) code, perform flush, then
-> > > insert the updated bkey, and finally remove the bkey from dc->
-> > > writeback_keys. This process is equivalent to sending a flush
-> > > every KEYBUF_NR bkeys are written back.
-> > > 3. Support configurable KEYBUF_NR to indirectly control the
-> > > frequency of flush.
-> > >
-> > > Is this plan appropriate? Or are there any better ways to handle it?
-> >
-> > No, I won't suggest this way. It sounds complicaed and changes the main
-> > code flow too much in an implicit way, this should be avoided.
-> >
-> > So it seems Kent's suggestion to flush backing device before committing
-> > jset is the proper method I can see now.
-> >
-> > Coly Li
-> >
-> 
-> Sorry, my previous response was not rigorous enough. I have carefully
-> considered your question about "the bkey being overwritten". In fact,
-> there is no issue of being overwritten. The bcache has ingeniously
-> designed a replace mechanism. In my code, the bkey with the dirty flag
-> cleared is inserted using the replace method. This method handles
-> address overlaps ingeniously during the insertion of the bkey and will
-> not overwrite the bkey generated by concurrent writes. The main code
-> for the replace mechanism is located in bch_btree_insert_key->bch_extent_insert_fixup
-> , which calls the bch_bkey_equal_header function, which is also a
-> crucial checkpoint.
+T24gVGh1LCA3IEF1ZyAyMDI1IGF0IDAwOjExLCBDb2x5IExpIDxjb2x5bGlAa2VybmVsLm9y
+Zz4gd3JvdGU6DQo+DQo+IE9uIFdlZCwgQXVnIDA2LCAyMDI1IGF0IDA3OjE5OjQ5UE0gKzA4
+MDAsIFpob3UgSmlmZW5nIHdyb3RlOg0KPiA+IE9uIFdlZCwgNiBBdWcgMjAyNSBhdCAwMDoy
+OSwgQ29seSBMaSA8Y29seWxpQGtlcm5lbC5vcmc+IHdyb3RlOg0KPiA+ID4NCj4gPiA+IE9u
+IFR1ZSwgQXVnIDA1LCAyMDI1IGF0IDA1OjM3OjQ0UE0gKzA4MDAsIFpob3UgSmlmZW5nIHdy
+b3RlOg0KPiA+ID4gPiBPbiBUdWUsIDUgQXVnIDIwMjUgYXQgMTM6MDAsIENvbHkgTGkgPGNv
+bHlsaUBrZXJuZWwub3JnPiB3cm90ZToNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IE9uIFRodSwg
+SnVsIDMxLCAyMDI1IGF0IDAyOjIxOjQwUE0gKzA4MDAsIFpob3UgSmlmZW5nIHdyb3RlOg0K
+PiA+ID4gPiA+ID4gVGhlcmUgaXMgYSBwb3RlbnRpYWwgZGF0YSBjb25zaXN0ZW5jeSByaXNr
+IGluIGJjYWNoZSdzIHdyaXRlYmFjayBtb2RlOndoZW4NCj4gPiA+ID4gPiA+IHRoZSBhcHBs
+aWNhdGlvbiBjYWxscyBmc3luYywgYmNhY2hlIHJldHVybnMgc3VjY2VzcyBhZnRlciBjb21w
+bGV0aW5nIHRoZQ0KPiA+ID4gPiA+ID4gbG9nIHdyaXRlLCBwZXJzaXN0aW5nIHRoZSBjYWNo
+ZSBkaXNrIGRhdGEsIGFuZCBwZXJzaXN0aW5nIHRoZSBIREQgaW50ZXJuYWwNCj4gPiA+ID4g
+PiA+IGNhY2hlLiBIb3dldmVyLCBhdCB0aGlzIHBvaW50LCB0aGUgYWN0dWFsIGFwcGxpY2F0
+aW9uIGRhdGEgbWF5IHN0aWxsIGJlIGluDQo+ID4gPiA+ID4gPiBhIGRpcnR5IHN0YXRlIGFu
+ZCByZW1haW4gc3R1Y2sgaW4gdGhlIGNhY2hlIGRpc2suIHdoZW4gdGhlc2UgZGF0YSBhcmUN
+Cj4gPiA+ID4gPiA+IHN1YnNlcXVlbnRseSB3cml0dGVuIGJhY2sgdG8gdGhlIEhERCBhc3lu
+Y2hyb25vdXNseSB0aHJvdWdoIFJFUV9PUF9XUklURSwNCj4gPiA+ID4gPiA+IHRoZXJlIGlz
+IG5vIGZvcmNlZCByZWZyZXNoIG1lY2hhbmlzbSB0byBlbnN1cmUgcGh5c2ljYWwgcGxhY2Vt
+ZW50IG9uIHRoZQ0KPiA+ID4gPiA+ID4gZGlzaywgYW5kIHRoZXJlIG1heSBiZSBubyBwb3dl
+ci1vZmYgcHJvdGVjdGlvbiBtZWFzdXJlcywgd2hpY2ggcG9zZXMgYSByaXNrDQo+ID4gPiA+
+ID4gPiBvZiBkYXRhIGxvc3MuIFRoaXMgbWVjaGFuaXNtIG1heSBjYXVzZSB0aGUgYXBwbGlj
+YXRpb24gdG8gbWlzanVkZ2UgdGhhdCB0aGUNCj4gPiA+ID4gPiA+IGRhdGEgaGFzIGJlZW4g
+cGVyc2lzdGVkLCB3aGljaCBpcyBkaWZmZXJlbnQgZnJvbSB0aGUgYWN0dWFsIHN0b3JhZ2Ug
+c3RhdGUsDQo+ID4gPiA+ID4gPiBhbmQgYWxzbyB2aW9sYXRlcyB0aGUgc2VtYW50aWMgYWdy
+ZWVtZW50IHRoYXQgZnN5bmMgc2hvdWxkIGVuc3VyZSBkYXRhDQo+ID4gPiA+ID4gPiBwZXJz
+aXN0ZW5jZS4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBbc25pcHBlZF0N
+Cj4gPiA+ID4gPg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBJZiBiZWZvcmUg
+dGhlIGNsZWFyZWQga2V5IGluc2VydGVkIGludG8gdGhlIGJ0cmVlLCB0aGVyZSBhcmUgbmV3
+IHdyaXRlDQo+ID4gPiA+ID4gaW50byBvdmVybGFwcGVkIExCQSByYW5nZSBvZiB0aGUgY2xl
+YXJlZCBrZXkgYW5kIGEgZGlydHkga2V5IGluc2VydGVkLg0KPiA+ID4gPiA+IFRoZW4gdGhl
+IGNsZWFyZWQga2V5IGlzIGluc2VydGVkIGFuZCBvdmVyd3JpdGVzIHRoZSBkaXJ0eSBrZXks
+IGJ1dCB0aGUNCj4gPiA+ID4gPiBkaXJ0eSBkYXRhIG9uIGNhY2hlIGlzIG5vdCB3cml0dGVu
+IGJhY2sgdG8gYmFja2luZyBkZXZpY2UgeWV0LiBIb3cgdG8NCj4gPiA+ID4gPiBoYW5kbGUg
+c3VjaCBzaXR1YXRpb24/DQo+ID4gPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gVGhlcmUgYXJl
+IGluZGVlZCBzb21lIGlzc3VlcyBoZXJlLiBJIGhhdmUgaW5pdGlhbGx5IGNvbWUgdXAgd2l0
+aCBhDQo+ID4gPiA+IHNvbHV0aW9uOiBVdGlsaXplIHRoZSBleGlzdGluZyBkYy0+d3JpdGVi
+YWNrX2tleXMgbWVjaGFuaXNtIGZvcg0KPiA+ID4gPiBwcm90ZWN0aW9uLiBUaGUgZ2VuZXJh
+bCBwcm9jZXNzaW5nIGZsb3cgaXMgYXMgZm9sbG93czoNCj4gPiA+ID4gMS4gSW4gdGhlIHdy
+aXRlX2RpcnR5X2ZpbmlzaCgpIGZ1bmN0aW9uLCByZW1vdmUgdGhlIG9wZXJhdGlvbiBvZg0K
+PiA+ID4gPiB1cGRhdGluZyBia2V5IGluc2VydGlvbiwgYW5kIGRlbGV0ZSB0aGUgY29kZSBi
+Y2hfa2V5YnVmX2RlbCgmZGMNCj4gPiA+ID4gLT53cml0ZWJhY2tfa2V5cywgdykuDQo+ID4g
+PiA+IDIuIEFmdGVyIGV4ZWN1dGluZyB0aGUgcmVhZF9kaXJ0eShkYykgY29kZSwgcGVyZm9y
+bSBmbHVzaCwgdGhlbg0KPiA+ID4gPiBpbnNlcnQgdGhlIHVwZGF0ZWQgYmtleSwgYW5kIGZp
+bmFsbHkgcmVtb3ZlIHRoZSBia2V5IGZyb20gZGMtPg0KPiA+ID4gPiB3cml0ZWJhY2tfa2V5
+cy4gVGhpcyBwcm9jZXNzIGlzIGVxdWl2YWxlbnQgdG8gc2VuZGluZyBhIGZsdXNoDQo+ID4g
+PiA+IGV2ZXJ5IEtFWUJVRl9OUiBia2V5cyBhcmUgd3JpdHRlbiBiYWNrLg0KPiA+ID4gPiAz
+LiBTdXBwb3J0IGNvbmZpZ3VyYWJsZSBLRVlCVUZfTlIgdG8gaW5kaXJlY3RseSBjb250cm9s
+IHRoZQ0KPiA+ID4gPiBmcmVxdWVuY3kgb2YgZmx1c2guDQo+ID4gPiA+DQo+ID4gPiA+IElz
+IHRoaXMgcGxhbiBhcHByb3ByaWF0ZT8gT3IgYXJlIHRoZXJlIGFueSBiZXR0ZXIgd2F5cyB0
+byBoYW5kbGUgaXQ/DQo+ID4gPg0KPiA+ID4gTm8sIEkgd29uJ3Qgc3VnZ2VzdCB0aGlzIHdh
+eS4gSXQgc291bmRzIGNvbXBsaWNhZWQgYW5kIGNoYW5nZXMgdGhlIG1haW4NCj4gPiA+IGNv
+ZGUgZmxvdyB0b28gbXVjaCBpbiBhbiBpbXBsaWNpdCB3YXksIHRoaXMgc2hvdWxkIGJlIGF2
+b2lkZWQuDQo+ID4gPg0KPiA+ID4gU28gaXQgc2VlbXMgS2VudCdzIHN1Z2dlc3Rpb24gdG8g
+Zmx1c2ggYmFja2luZyBkZXZpY2UgYmVmb3JlIGNvbW1pdHRpbmcNCj4gPiA+IGpzZXQgaXMg
+dGhlIHByb3BlciBtZXRob2QgSSBjYW4gc2VlIG5vdy4NCj4gPiA+DQo+ID4gPiBDb2x5IExp
+DQo+ID4gPg0KPiA+DQo+ID4gU29ycnksIG15IHByZXZpb3VzIHJlc3BvbnNlIHdhcyBub3Qg
+cmlnb3JvdXMgZW5vdWdoLiBJIGhhdmUgY2FyZWZ1bGx5DQo+ID4gY29uc2lkZXJlZCB5b3Vy
+IHF1ZXN0aW9uIGFib3V0ICJ0aGUgYmtleSBiZWluZyBvdmVyd3JpdHRlbiIuIEluIGZhY3Qs
+DQo+ID4gdGhlcmUgaXMgbm8gaXNzdWUgb2YgYmVpbmcgb3ZlcndyaXR0ZW4uIFRoZSBiY2Fj
+aGUgaGFzIGluZ2VuaW91c2x5DQo+ID4gZGVzaWduZWQgYSByZXBsYWNlIG1lY2hhbmlzbS4g
+SW4gbXkgY29kZSwgdGhlIGJrZXkgd2l0aCB0aGUgZGlydHkgZmxhZw0KPiA+IGNsZWFyZWQg
+aXMgaW5zZXJ0ZWQgdXNpbmcgdGhlIHJlcGxhY2UgbWV0aG9kLiBUaGlzIG1ldGhvZCBoYW5k
+bGVzDQo+ID4gYWRkcmVzcyBvdmVybGFwcyBpbmdlbmlvdXNseSBkdXJpbmcgdGhlIGluc2Vy
+dGlvbiBvZiB0aGUgYmtleSBhbmQgd2lsbA0KPiA+IG5vdCBvdmVyd3JpdGUgdGhlIGJrZXkg
+Z2VuZXJhdGVkIGJ5IGNvbmN1cnJlbnQgd3JpdGVzLiBUaGUgbWFpbiBjb2RlDQo+ID4gZm9y
+IHRoZSByZXBsYWNlIG1lY2hhbmlzbSBpcyBsb2NhdGVkIGluIGJjaF9idHJlZV9pbnNlcnRf
+a2V5LT5iY2hfZXh0ZW50X2luc2VydF9maXh1cA0KPiA+ICwgd2hpY2ggY2FsbHMgdGhlIGJj
+aF9ia2V5X2VxdWFsX2hlYWRlciBmdW5jdGlvbiwgd2hpY2ggaXMgYWxzbyBhDQo+ID4gY3J1
+Y2lhbCBjaGVja3BvaW50Lg0KPg0KPiBJIGFtIG5vdCBhYmxlIHRvIG1ha2UganVkZ2VtZW50
+IGJ5IHRoZSBhYm92ZSBkZXNjcmlwdGlvbiwgY2FuIHlvdSBwb3N0IGEgcGF0Y2gNCj4gdGhl
+biBJIGNhbiBzZWUgaG93IHlvdSBpbnNlcnQgdGhlIGtleSB3aXRoIHJlcGxhY2UgcGFyYW1l
+dGVyLg0KPg0KPiBDb2x5IExpDQo+DQoNCkluIHRoZSBwYXRjaCBJIHN1Ym1pdHRlZCBlYXJs
+aWVyLCB0aGUgYmtleSBmb3IgY2xlYXJpbmcgdGhlIGRpcnR5IG1hcmsgaXMNCmltcGxlbWVu
+dGVkIGluIHRoZSBmb2xsb3dpbmcgY29kZToNCisgICAgICAgLyoNCisgICAgICAgICogVGhl
+IGRpcnR5IGRhdGEgd2FzIHN1Y2Nlc3NmdWxseSB3cml0dGVuIGJhY2sgYW5kIGNvbmZpcm1l
+ZCB0byBiZSB3cml0dGVuDQorICAgICAgICAqIHRvIHRoZSBkaXNrLiBUaGUgc3RhdHVzIG9m
+IHRoZSBia2V5IGluIHRoZSBidHJlZSB3YXMgdXBkYXRlZC4NCisgICAgICAgICovDQorICAg
+ICAgIGxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZShlLCB0bXAsICZkYy0+cHJlZmx1c2hfa2V5
+cy5saXN0LCBsaXN0KSB7DQorICAgICAgICAgICAgICAgbWVtc2V0KGtleXMuaW5saW5lX2tl
+eXMsIDAsIHNpemVvZihrZXlzLmlubGluZV9rZXlzKSk7DQorICAgICAgICAgICAgICAgYmNo
+X2tleWxpc3RfaW5pdCgma2V5cyk7DQorDQorICAgICAgICAgICAgICAgYmtleV9jb3B5KGtl
+eXMudG9wLCAmKGUtPmtleS5rZXkpKTsNCisgICAgICAgICAgICAgICBTRVRfS0VZX0RJUlRZ
+KGtleXMudG9wLCBmYWxzZSk7DQorICAgICAgICAgICAgICAgYmNoX2tleWxpc3RfcHVzaCgm
+a2V5cyk7DQorDQorICAgICAgICAgICAgICAgZm9yIChpID0gMDsgaSA8IEtFWV9QVFJTKCYo
+ZS0+a2V5LmtleSkpOyBpKyspDQorICAgICAgICAgICAgICAgICAgICAgICBhdG9taWNfaW5j
+KCZQVFJfQlVDS0VUKGRjLT5kaXNrLmMsICYoZS0+a2V5LmtleSksIGkpLT5waW4pOw0KKw0K
+KyAgICAgICAgICAgICAgIHJldCA9IGJjaF9idHJlZV9pbnNlcnQoZGMtPmRpc2suYywgJmtl
+eXMsIE5VTEwsICYoZS0+a2V5LmtleSkpOw0KKw0KKyAgICAgICAgICAgICAgIGlmIChyZXQp
+DQorICAgICAgICAgICAgICAgICAgICAgICB0cmFjZV9iY2FjaGVfd3JpdGViYWNrX2NvbGxp
+c2lvbigmKGUtPmtleS5rZXkpKTsNCisNCisgICAgICAgICAgICAgICBhdG9taWNfbG9uZ19p
+bmMocmV0DQorICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgID8gJmRjLT5kaXNrLmMt
+PndyaXRlYmFja19rZXlzX2ZhaWxlZA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICA6ICZkYy0+ZGlzay5jLT53cml0ZWJhY2tfa2V5c19kb25lKTsNCisNCisgICAgICAgICAg
+ICAgICBsaXN0X2RlbCgmZS0+bGlzdCk7DQorICAgICAgICAgICAgICAga2ZyZWUoZSk7DQor
+DQorICAgICAgICAgICAgICAgLyogRm9yIHRob3NlIGJrZXlzIHRoYXQgZmFpbGVkIHRvIGJl
+IGluc2VydGVkLCB5b3UgY2FuDQorICAgICAgICAgICAgICAgICogaWdub3JlIHRoZW0gYW5k
+IHRoZXkgd2lsbCBiZSBwcm9jZXNzZWQgYWdhaW4gaW4gdGhlDQorICAgICAgICAgICAgICAg
+ICogbmV4dCB3cml0ZS1iYWNrIHNjYW4uDQorICAgICAgICAgICAgICAgICovDQorICAgICAg
+IH0NCg0KQ29kZSBFeHBsYW5hdGlvbjoNCjEuIGRjLT5wcmVmbHVzaF9rZXlzLmxpc3Qgc3Rv
+cmVzIGFsbCBia2V5cyB3aG9zZSBkaXJ0eSBmbGFncyBhcmUgdG8NCmJlIGNsZWFyZWQuDQoy
+LiBJbiB0aGUgbGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlIGxvb3AsIHRoZXJlIGFyZSB0d28g
+aW1wb3J0YW50DQp2YXJpYWJsZXM6IHZhcmlhYmxlICdlJyBzdG9yZXMgdGhlIGJrZXlzIHdo
+b3NlIGRpcnR5IGZsYWdzIGFyZSB0byBiZQ0KY2xlYXJlZCAodGhlIG9yaWdpbmFsIGJrZXlz
+IHdhaXRpbmcgdG8gYmUgcmVwbGFjZWQpLCBhbmQgdmFyaWFibGUNCidrZXlzJyBzdG9yZXMg
+dGhlIGJrZXlzIHdob3NlIGRpcnR5IGZsYWdzIGhhdmUgYmVlbiBjbGVhcmVkICh0aGUNCm5l
+dyBia2V5cyB3YWl0aW5nIHRvIGJlIGluc2VydGVkKS4NCjMuIEluIHRoZSBiY2hfYnRyZWVf
+aW5zZXJ0KGRjLT5kaXNrLmMsICZrZXlzLCBOVUxMLCAmKGUtPmtleS5rZXkpKQ0KZnVuY3Rp
+b24gY2FsbCwgdGhlIHNlY29uZCBwYXJhbWV0ZXIgJyZrZXlzJyByZXByZXNlbnRzIHRoZSBu
+ZXcgYmtleQ0KdG8gYmUgaW5zZXJ0ZWQsIHdob3NlIGRpcnR5IGZsYWcgaGFzIGJlZW4gY2xl
+YXJlZCwgYW5kIHRoZSBmb3VydGgNCnBhcmFtZXRlciAnJihlLT5rZXkua2V5KScgcmVwcmVz
+ZW50cyB0aGUgb3JpZ2luYWwgYmtleSB0byBiZSByZXBsYWNlZC4NCjQuIFRoZSBwcm90b3R5
+cGUgZGVmaW5pdGlvbiBvZiB0aGUgYmNoX2J0cmVlX2luc2VydCBmdW5jdGlvbiBpcyANCiJp
+bnQgYmNoX2J0cmVlX2luc2VydChzdHJ1Y3QgY2FjaGVfc2V0ICpjLCBzdHJ1Y3Qga2V5bGlz
+dCAqa2V5cywgDQphdG9taWNfdCAqam91cm5hbF9yZWYsIHN0cnVjdCBia2V5ICpyZXBsYWNl
+X2tleSkiLiBJdHMgZm91cnRoIHBhcmFtZXRlcg0Kc3BlY2lmaWVzIHRoZSBia2V5IHRvIGJl
+IHJlcGxhY2VkLg0KNS4gVGhlIGNvcmUgY29kZSBjYWxsIHN0YWNrIGZvciByZXBsYWNpbmcg
+dGhlIGJrZXk6IGJjaF9idHJlZV9pbnNlcnQtPg0KYmNoX2J0cmVlX21hcF9sZWFmX25vZGVz
+LT5iY2hfYnRyZWVfbWFwX25vZGVzX3JlY3Vyc2UtPg0KYnRyZWVfaW5zZXJ0X2ZuLT5iY2hf
+YnRyZWVfaW5zZXJ0X25vZGUtPmJjaF9idHJlZV9pbnNlcnRfa2V5cy0+DQpidHJlZV9pbnNl
+cnRfa2V5LT5iY2hfYnRyZWVfaW5zZXJ0X2tleS0+YmNoX2V4dGVudF9pbnNlcnRfZml4dXAN
+CjYuIFRoZSBwcm90b3R5cGUgb2YgdGhlIGJjaF9leHRlbnRfaW5zZXJ0X2ZpeHVwIGZ1bmN0
+aW9uIGlzIGRlZmluZWQgYXMNCiJzdGF0aWMgYm9vbCBiY2hfZXh0ZW50X2luc2VydF9maXh1
+cChzdHJ1Y3QgYnRyZWVfa2V5cyAqYiwgc3RydWN0IGJrZXkgDQoqaW5zZXJ0LCBzdHJ1Y3Qg
+YnRyZWVfaXRlciAqaXRlciwgc3RydWN0IGJrZXkgKnJlcGxhY2Vfa2V5KSIuIFRoZSBmdW5j
+dGlvbidzDQppbnRlcm5hbCBpbXBsZW1lbnRhdGlvbiBjaGVja3Mgd2hldGhlciB0aGUgcmVw
+bGFjZV9rZXkgcGFyYW1ldGVyDQpleGlzdHMuIElmIHNvLCBpdCBpbml0aWF0ZXMgdGhlIHJl
+cGxhY2VtZW50IHByb2Nlc3MuIFRoaXMgcmVwbGFjZW1lbnQNCnByb2Nlc3MgZW5zdXJlcyB0
+aGF0IHRoZSBia2V5IGlzIG5vdCBlcnJvciBvdmVyd3JpdHRlbiB3aGVuIGEgd3JpdGUNCnJl
+cXVlc3QgYW5kIGRpcnR5IGRhdGEgYXJlIHdyaXR0ZW4gYmFjayBjb25jdXJyZW50bHkuDQoN
+Clpob3UgSmlmZW5n
 
-I am not able to make judgement by the above description, can you post a patch
-then I can see how you insert the key with replace parameter.
-
-Coly Li
 
