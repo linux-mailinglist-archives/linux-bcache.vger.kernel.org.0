@@ -1,112 +1,210 @@
-Return-Path: <linux-bcache+bounces-1190-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1191-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB3F1B3A596
-	for <lists+linux-bcache@lfdr.de>; Thu, 28 Aug 2025 18:07:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0347B3A5EF
+	for <lists+linux-bcache@lfdr.de>; Thu, 28 Aug 2025 18:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE2703BB8E8
-	for <lists+linux-bcache@lfdr.de>; Thu, 28 Aug 2025 16:06:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5350161B6F
+	for <lists+linux-bcache@lfdr.de>; Thu, 28 Aug 2025 16:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C806026B2AD;
-	Thu, 28 Aug 2025 16:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B093203B9;
+	Thu, 28 Aug 2025 16:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="gqW0fJgs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bg7eZ72h"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D617D25783B
-	for <linux-bcache@vger.kernel.org>; Thu, 28 Aug 2025 16:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04905212567
+	for <linux-bcache@vger.kernel.org>; Thu, 28 Aug 2025 16:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756397191; cv=none; b=HabhWOYYquH91X3whQQu95P7MWpbY3EdptL/pt+mIaafxQ3FocSdsv0brcYWISIJQ8c270uNCibMQNp9Ryfy547vVQZ8Z2z2hLu0UoOU6j9k4O+Gfv9q6l/LlyNNyNW8iXf/xnX9fS3JV7gnXcrXvuzcNkiky73RicdwUp5Cy4g=
+	t=1756397797; cv=none; b=SgF+1Zx4tjYYsRFORnqkC12G3/Otr4ENG15FYKzQCyz6lGtO07Akly7kSiY0NwPp1lhTBQRgyeYiZ7syYtg6W9US2vEUW+RoKvcQi1BN84/Gy7q4RY70xqv4/Qb2CRLM4rjy5G5g7fTq2aWERXf5W3nJbIUQVgxNnAjuBVGB1MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756397191; c=relaxed/simple;
-	bh=F//I10DGQ3c+0b/Z9jeGysiniCCLugL6GuqwDiDfu4A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=To7zQg+IuJvycs+EjDCLfIxbBgTpoDhAvOGj5R8BLxKHvFwf+Lx30gHP6cjRQVYEenKTs2si3LtCnTun2ix7LcnZZbIqI0XtM2XFW9zX2lyXEF93cUcaXNa7Q/gYJtx9r/MmJS/55K+n2FVLWTm7VxvwwrHtdQejky0ZJNaeVbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=gqW0fJgs; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3ea8b3a64bbso9557625ab.0
-        for <linux-bcache@vger.kernel.org>; Thu, 28 Aug 2025 09:06:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756397188; x=1757001988; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sQ1iBkivcgNxINJNzY151f9lwALON3YL8XgfKRBEIv8=;
-        b=gqW0fJgs8ha6cUN1GUJE12BOGPI8m3auFSLy6xdurSNOubKCa20L37Bb4a58xKPINy
-         oaJJMDWWN6jm0oIE52zCaWWvC23dg7Tr/mi4ge/Huq0gSogeRI20HIhXzd1oCHSmhfz7
-         lDazi7b6n4zK77UWCWxetxdJCrkNqSwAWYvXKgqJsAVz2sIZ6QuEjhPT/H96DiGpUk8t
-         rZi4zjo0t5258kUzPNZteGL4btzTMfCHtkthICLi4myp+w1gEBhuk/wOrhzTCB0UWKX2
-         1sSx0KhTo+58ap6soFB0/7uHzMCMS30cZDjf2kVRoDcrW0zsyIilhxZq2LvCB5kPHI3n
-         Aj4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756397188; x=1757001988;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sQ1iBkivcgNxINJNzY151f9lwALON3YL8XgfKRBEIv8=;
-        b=KwFlacBzkKpAJDptBbYN6IjyR6j/tt1HFXZf2iiaBg+eBcERknX6K+au7UQYOqaUuD
-         IJH5Tp+b6Tw0vRPMxMarGfRAJT0dAo/McNCfETW9qe/Xq+pvrAZ90SWL0EqHiz7Uqzod
-         avl8aN8oz2exuEMlY2z9QC0ITyL5zOoqJkALKtKTiUcQzpaJn8H0O5Iy55aviXECE/40
-         4IvJyXIb80C3MRzqptz1I438WTOhzU/YZ1HKtJ831Kafx9I4n4VegsrkU6oocuX15NC6
-         C0EXKPHZ65tRZfHq7smZmAgzjT/4hvFsklR6VptbKCkbNXInxu2YNbz7qKP7/+SOZ1Fr
-         hEGQ==
-X-Gm-Message-State: AOJu0YwdcT99j7U0xp9GCUr99sGHUrdSSC1cRVWR7EDOykyFEycAGBTe
-	7lPmE5MX0aZ54NsMPBmPIPznosLFPB58JLuh+AesXe6lO0w+fMJeN5rRtwvyoIPDCYzi+fiE7YA
-	MyyRp
-X-Gm-Gg: ASbGnctPvSAwFIvmLgCICwQelZpQduQEhn4i9DZai9ByRuOGK5O/+5gZnRYfDoYWPE+
-	M7vd+5X/rg+2lK8d0r6BUgsY4tRJVowiM+MskkR1k5oyjoju5kV9iKttBT2ocf0GqCAA3X4KxHd
-	69uVZ8yzNXdwZcp1Us2I0ZLfPqUwi8maqmbx3fmdp0ZEVBg429uZxxSwmjnEhPOD8IZYeMD+VFE
-	Vb9gJKoR8HmLGV5pmXlnJj0YdM5fMnbadoWu24Y6OAhUwnJ32xIEGWOetKKlHZbZPefRurCD+Js
-	gr7EoRcqHABRuOfCHxkZMIQU7pMKEIdXfzzQKu8CNOEtnLFtGwZydtyNZKvva7zMGmYFBe9pJoZ
-	q5DARWCIPNOpWEQRaY7alZjf1
-X-Google-Smtp-Source: AGHT+IFYVPLNEA9w3bodw9+YfXXXHlX/wG691OXdZ7TUdqpI2rZ1DapvCar4yq/2nhje8ygl3GK+kQ==
-X-Received: by 2002:a05:6e02:1448:b0:3ec:7e74:36bb with SMTP id e9e14a558f8ab-3ec7e7438b4mr206664125ab.9.1756397187718;
-        Thu, 28 Aug 2025 09:06:27 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ea4c191f23sm111747185ab.16.2025.08.28.09.06.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 09:06:26 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: colyli@kernel.org
-Cc: linux-bcache@vger.kernel.org, linux-block@vger.kernel.org, 
- Coly Li <colyli@suse.de>, Coly Li <colyli@fnnas.com>
-In-Reply-To: <20250828154835.32926-1-colyli@kernel.org>
-References: <20250828154835.32926-1-colyli@kernel.org>
-Subject: Re: [PATCH] bcache: change maintainer's email address
-Message-Id: <175639718595.484892.13913272754617595641.b4-ty@kernel.dk>
-Date: Thu, 28 Aug 2025 10:06:25 -0600
+	s=arc-20240116; t=1756397797; c=relaxed/simple;
+	bh=a/Scw0MupeEhJrlREpJGNFG+Alw4Ari6AkHjzc6xlBY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ugK42ud5VHw0R3AvAMgmQ77vy5pVEINQidxzkeSxa4N05aUNxYNisTnrZlOj0HHGOjaYQg+w4Hzc/5lmODskKWm1Z2dCw9tpwOhzq1jSPI7bx+8qZk5B+PKrm5uXSnOIeQTwgMBgI2SekejqaNCRNc8A21IqTNeFlCgs0L7Pu88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bg7eZ72h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 633C6C4CEED;
+	Thu, 28 Aug 2025 16:16:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756397796;
+	bh=a/Scw0MupeEhJrlREpJGNFG+Alw4Ari6AkHjzc6xlBY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bg7eZ72he68TyNqtqsaChocD/XR/efMOaEYqMq/24V1Slmpn0N1tyO06NnP5NBFWc
+	 C0tOa0TvdgbvyrrYQRkeFTnbrl9UhRLSHMRDSWIEqEqbsnz4k8C0Ix+e4fd96Q21j+
+	 G9nqt7vUdFQqKFR1UsDWAvj7I1qfdP1oQm2Fxm+N7mD6Zy+7Cs0DckK/izU2jPD2Gp
+	 2ZG6aJ6dUyFC3qtuk3D7c16VqhqxpBoUCjTVWUG9x5mU5shcclZZwDoxcHKqRH7DNk
+	 iW9k+PE4nVau+6IbKVeZEFhyTybfddH4tNoRfXKLkHcNJMvtaGbIl2OpZnjYB8HTSp
+	 uuC4QoCra8nTQ==
+From: colyli@kernel.org
+To: linux-bcache@vger.kernel.org
+Cc: Coly Li <colyli@suse.de>,
+	Coly Li <colyli@fnnas.com>,
+	Robert Pang <robertpang@google.com>,
+	Mingzhe Zou <mingzhe.zou@easystack.cn>
+Subject: [RFC PATCH] bcache: reduce gc latency by processing less nodes and sleep less time
+Date: Fri, 29 Aug 2025 00:16:31 +0800
+Message-ID: <20250828161631.33480-1-colyli@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+Content-Transfer-Encoding: 8bit
 
+From: Coly Li <colyli@suse.de>
 
-On Thu, 28 Aug 2025 23:48:35 +0800, colyli@kernel.org wrote:
-> Change to my new email address on fnnas.com.
-> 
-> 
+When bcache device is busy for high I/O loads, there are two methods to
+reduce the garbage collection latency,
+- Process less nodes in eac loop of incremental garbage collection in
+  btree_gc_recurse().
+- Sleep less time between two full garbage collection in
+  bch_btree_gc().
 
-Applied, thanks!
+This patch introduces to hleper routines to provide different garbage
+collection nodes number and sleep intervel time.
+- btree_gc_min_nodes()
+  If there is no front end I/O, return 128 nodes to process in each
+  incremental loop, otherwise only 10 nodes are returned. Then front I/O
+  is able to access the btree earlier.
+- btree_gc_sleep_ms()
+  If there is no synchronized wait for bucket allocation, sleep 100 ms
+  between two incremental GC loop. Othersize only sleep 10 ms before
+  incremental GC loop. Then a faster GC may provide available buckets
+  earlier, to avoid most of bcache working threads from being starved by
+  buckets allocation.
 
-[1/1] bcache: change maintainer's email address
-      commit: 95a7c5000956f939b86d8b00b8e6b8345f4a9b65
+The idea is inspired by works from Mingzhe Zou and Robert Pang, but much
+simpler and the expected behavior is more predictable.
 
-Best regards,
+Signed-off-by: Coly Li <colyli@fnnas.com>
+Cc: Robert Pang <robertpang@google.com>
+Cc: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+ drivers/md/bcache/alloc.c  |  4 ++++
+ drivers/md/bcache/bcache.h |  1 +
+ drivers/md/bcache/btree.c  | 47 +++++++++++++++++++-------------------
+ 3 files changed, 28 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index 48ce750bf70a..db519e1678c2 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -412,7 +412,11 @@ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
+ 				TASK_UNINTERRUPTIBLE);
+ 
+ 		mutex_unlock(&ca->set->bucket_lock);
++
++		atomic_inc(&ca->set->bucket_wait_cnt);
+ 		schedule();
++		atomic_dec(&ca->set->bucket_wait_cnt);
++
+ 		mutex_lock(&ca->set->bucket_lock);
+ 	} while (!fifo_pop(&ca->free[RESERVE_NONE], r) &&
+ 		 !fifo_pop(&ca->free[reserve], r));
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 1d33e40d26ea..d43fcccf297c 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -607,6 +607,7 @@ struct cache_set {
+ 	 */
+ 	atomic_t		prio_blocked;
+ 	wait_queue_head_t	bucket_wait;
++	atomic_t		bucket_wait_cnt;
+ 
+ 	/*
+ 	 * For any bio we don't skip we subtract the number of sectors from
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 210b59007d98..f79a229d5728 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -89,8 +89,9 @@
+  * Test module load/unload
+  */
+ 
+-#define MAX_GC_TIMES		100
+-#define MIN_GC_NODES		100
++#define MAX_GC_TIMES_SHIFT	7  /* 128 loops */
++#define GC_NODES_MIN		10
++#define GC_SLEEP_MS_MIN		10
+ #define GC_SLEEP_MS		100
+ 
+ #define PTR_DIRTY_BIT		(((uint64_t) 1 << 36))
+@@ -1578,29 +1579,28 @@ static unsigned int btree_gc_count_keys(struct btree *b)
+ 
+ static size_t btree_gc_min_nodes(struct cache_set *c)
+ {
+-	size_t min_nodes;
++	size_t min_nodes = GC_NODES_MIN;
+ 
+-	/*
+-	 * Since incremental GC would stop 100ms when front
+-	 * side I/O comes, so when there are many btree nodes,
+-	 * if GC only processes constant (100) nodes each time,
+-	 * GC would last a long time, and the front side I/Os
+-	 * would run out of the buckets (since no new bucket
+-	 * can be allocated during GC), and be blocked again.
+-	 * So GC should not process constant nodes, but varied
+-	 * nodes according to the number of btree nodes, which
+-	 * realized by dividing GC into constant(100) times,
+-	 * so when there are many btree nodes, GC can process
+-	 * more nodes each time, otherwise, GC will process less
+-	 * nodes each time (but no less than MIN_GC_NODES)
+-	 */
+-	min_nodes = c->gc_stats.nodes / MAX_GC_TIMES;
+-	if (min_nodes < MIN_GC_NODES)
+-		min_nodes = MIN_GC_NODES;
++	if (atomic_read(&c->search_inflight) == 0) {
++		size_t n = c->gc_stats.nodes >> MAX_GC_TIMES_SHIFT;
++		if (min_nodes < n)
++			min_nodes = n;
++	}
+ 
+ 	return min_nodes;
+ }
+ 
++static uint64_t btree_gc_sleep_ms(struct cache_set *c)
++{
++	uint64_t sleep_ms;
++
++	if (atomic_read(&c->bucket_wait_cnt) > 0)
++		sleep_ms = GC_SLEEP_MS_MIN;
++	else
++		sleep_ms = GC_SLEEP_MS;
++
++	return sleep_ms;
++}
+ 
+ static int btree_gc_recurse(struct btree *b, struct btree_op *op,
+ 			    struct closure *writes, struct gc_stat *gc)
+@@ -1668,8 +1668,7 @@ static int btree_gc_recurse(struct btree *b, struct btree_op *op,
+ 		memmove(r + 1, r, sizeof(r[0]) * (GC_MERGE_NODES - 1));
+ 		r->b = NULL;
+ 
+-		if (atomic_read(&b->c->search_inflight) &&
+-		    gc->nodes >= gc->nodes_pre + btree_gc_min_nodes(b->c)) {
++		if (gc->nodes >= (gc->nodes_pre + btree_gc_min_nodes(b->c))) {
+ 			gc->nodes_pre =  gc->nodes;
+ 			ret = -EAGAIN;
+ 			break;
+@@ -1846,8 +1845,8 @@ static void bch_btree_gc(struct cache_set *c)
+ 		cond_resched();
+ 
+ 		if (ret == -EAGAIN)
+-			schedule_timeout_interruptible(msecs_to_jiffies
+-						       (GC_SLEEP_MS));
++			schedule_timeout_interruptible(
++				msecs_to_jiffies(btree_gc_sleep_ms(c)));
+ 		else if (ret)
+ 			pr_warn("gc failed!\n");
+ 	} while (ret && !test_bit(CACHE_SET_IO_DISABLE, &c->flags));
 -- 
-Jens Axboe
-
-
+2.47.2
 
 
