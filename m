@@ -1,53 +1,53 @@
-Return-Path: <linux-bcache+bounces-1193-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1194-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086B4B3A5F1
-	for <lists+linux-bcache@lfdr.de>; Thu, 28 Aug 2025 18:17:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F7EB3A5F3
+	for <lists+linux-bcache@lfdr.de>; Thu, 28 Aug 2025 18:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B34F3A04C14
-	for <lists+linux-bcache@lfdr.de>; Thu, 28 Aug 2025 16:17:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C21D188EDD9
+	for <lists+linux-bcache@lfdr.de>; Thu, 28 Aug 2025 16:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E96320CCA;
-	Thu, 28 Aug 2025 16:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1278320CD8;
+	Thu, 28 Aug 2025 16:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmRuNayW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLcYi0iS"
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434FB1FF1D1
-	for <linux-bcache@vger.kernel.org>; Thu, 28 Aug 2025 16:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE2426CE11
+	for <linux-bcache@vger.kernel.org>; Thu, 28 Aug 2025 16:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756397844; cv=none; b=ofI+20az9gsC7YCp9AnipW+CsOEGgbo5yxlRVBRkrAqOPgBwNmQSPS/Oe+OQzx+OX1ec7pw9BYdhAqyn35R+5vv+f+QnyuElVMVW6F+lAAQeFiZwFxeMdxIANOn21Xn0beU8ck6a1/D/+MKGGeKC1gkxP+A+CQkC9BHjaVmHuek=
+	t=1756397845; cv=none; b=lqYGcztWuy0kLw3y3jeiqmRCd+UJhXxBjQDQQHDqoT/QJumHFPY4VjjI4pvGtcXpFl5AN9/+Rs1kf73mNy+A3D7amYNW/uZPpgiZQsXAuZUecakrxcrfOfvdauWLpOxB51j5jrjL+3fCJnBb2Aks/tKW6pDae3ySv4UoxSEXXMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756397844; c=relaxed/simple;
-	bh=ktGSpMu4HpMCA6puSDvdALuCk3Dj6bVx+G8zVJLElRw=;
+	s=arc-20240116; t=1756397845; c=relaxed/simple;
+	bh=3+5ToAT6pe2oK82eMMTf91+wBfdTAnwsn/FMs0eATEg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=icNqLbSF6Rv6wmO8MlLfGosI9gJItuiO1legde/KGK2kLVLRMJ70BWLSMDVHJgDeit+SOl6lH3LZaidebOUGNNyyN1zXclTMTqJrjNWbW69a1fcQQCTM8rRuPhqAvwS1T5nNF95M2s32fd4IXD2T7AViEmH7nZqk/x7I/LL00QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmRuNayW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B6AC4CEED;
-	Thu, 28 Aug 2025 16:17:22 +0000 (UTC)
+	 MIME-Version; b=eH2Y48mhVDpO1GOHbuK4rb8SLEMwVKjExKUFPsH/nmIi/YCyXul2gqPlrg6prOkkiDBNdbGj8j3EKVBpXdzmBV5Kl37ZRUxRZoAv3hcBq/ctzbGeuyOIP5a2n+1Gu+iaNRchBvo9WfzsevWfvKrAkxDvZOlfv0UYSW0hu0ZNN4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLcYi0iS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F21C4CEEB;
+	Thu, 28 Aug 2025 16:17:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756397843;
-	bh=ktGSpMu4HpMCA6puSDvdALuCk3Dj6bVx+G8zVJLElRw=;
+	s=k20201202; t=1756397845;
+	bh=3+5ToAT6pe2oK82eMMTf91+wBfdTAnwsn/FMs0eATEg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tmRuNayW4VG9rMBXxj8ce8yLRguwJrIWrqjZ5G0kHJiff3sHI4xjLIbF8DEjBE2td
-	 uYSdAmOmRqg7RUcrBXCum6PBwAFG51RRWBQKIwh7POMyGaNESOziJlct0oHVfydKTa
-	 1UHrewrmPPUWNYA8upw9mNejQ/P28QnV2TZBA0wRqMlXqm8ngkjFmFEwZ6a6RlGrJU
-	 tcNhr5QB95An24yzaA3o3kZsqN8JEhreJpOWtXQA0k7G4xt3okRQiNlhJuHjLTrsZz
-	 zkWFzuL54IRc2VUspk7trw0REIGwuzZafEaPecl+SwjLmjlmv+gzEpxO3niP0WB8vE
-	 YLBzNUPwqUhDg==
+	b=RLcYi0iSgSYbh3qeGh2Ih/WEDR/zI7piKEe6+wFJoBJGbzG/kup7QNxlQsX58GIob
+	 krdp/YhZV8es5eEcGgendx3W9dkGeu0vbkLxtVroVAgDexIclpuzTISVoQ6EZhPOEf
+	 RUqkT2W+afPGHDyXlpBVNw6d7U2KhqAchJbjzTK1FMKur3iSUDwC3GEf7gGUcDYYD5
+	 mzXMbPOM2EqeJvqZpnrPLhKiFYEkW+1CUCWhMmHw8AwXy4kr2YI4aa7KVV9UadjB66
+	 JfyR5gM5hqbwuwWq2F+AFJvebbZLhjBS2jK8IT0iK57WGQ9cN+yx7YMEYhQEtpuAeE
+	 KoOK7/hXtFpBg==
 From: colyli@kernel.org
 To: linux-bcache@vger.kernel.org
 Cc: Coly Li <colyli@suse.de>,
 	Coly Li <colyli@fnnas.com>
-Subject: [PATCH 2/4] bcache: remove discard code from alloc.c
-Date: Fri, 29 Aug 2025 00:17:15 +0800
-Message-ID: <20250828161717.33518-2-colyli@kernel.org>
+Subject: [PATCH 3/4] bcache: drop discard sysfs interface
+Date: Fri, 29 Aug 2025 00:17:16 +0800
+Message-ID: <20250828161717.33518-3-colyli@kernel.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250828161717.33518-1-colyli@kernel.org>
 References: <20250828161717.33518-1-colyli@kernel.org>
@@ -61,85 +61,116 @@ Content-Transfer-Encoding: 8bit
 
 From: Coly Li <colyli@suse.de>
 
-Bcache allocator initially has no free space to allocate. Firstly it
-does a garbage collection which is triggered by a cache device write
-and fills free space into ca->free[] lists. The discard happens after
-the free bucket is handled by garbage collection added into one of the
-ca->free[] lists. But normally this bucket will be allocated out very
-soon to requester and filled data onto it. The discard hint on this
-bucket LBA range doesn't help SSD control to improve internal erasure
-performance, and waste extra CPU cycles to issue discard bios.
-
-This patch removes the almost-useless discard code from alloc.c.
+Since discard code is removed, now the sysfs interface to enable discard
+is useless. This patch removes the corresponding sysfs entry, and remove
+bool variable 'discard' from struct cache as well.
 
 Signed-off-by: Coly Li <colyli@fnnas.com>
 ---
- drivers/md/bcache/alloc.c | 21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
+ drivers/md/bcache/bcache.h    |  5 +----
+ drivers/md/bcache/super.c     |  3 ---
+ drivers/md/bcache/sysfs.c     | 15 ---------------
+ drivers/md/bcache/writeback.c |  3 +--
+ 4 files changed, 2 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index db519e1678c2..7708d92df23e 100644
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -24,21 +24,18 @@
-  * Since the gens and priorities are all stored contiguously on disk, we can
-  * batch this up: We fill up the free_inc list with freshly invalidated buckets,
-  * call prio_write(), and when prio_write() finishes we pull buckets off the
-- * free_inc list and optionally discard them.
-+ * free_inc list.
-  *
-  * free_inc isn't the only freelist - if it was, we'd often to sleep while
-  * priorities and gens were being written before we could allocate. c->free is a
-  * smaller freelist, and buckets on that list are always ready to be used.
-  *
-- * If we've got discards enabled, that happens when a bucket moves from the
-- * free_inc list to the free list.
-- *
-  * There is another freelist, because sometimes we have buckets that we know
-  * have nothing pointing into them - these we can reuse without waiting for
-  * priorities to be rewritten. These come from freed btree nodes and buckets
-  * that garbage collection discovered no longer had valid keys pointing into
-  * them (because they were overwritten). That's the unused list - buckets on the
-- * unused list move to the free list, optionally being discarded in the process.
-+ * unused list move to the free list.
-  *
-  * It's also important to ensure that gens don't wrap around - with respect to
-  * either the oldest gen in the btree or the gen on disk. This is quite
-@@ -118,8 +115,7 @@ void bch_rescale_priorities(struct cache_set *c, int sectors)
- /*
-  * Background allocation thread: scans for buckets to be invalidated,
-  * invalidates them, rewrites prios/gens (marking them as invalidated on disk),
-- * then optionally issues discard commands to the newly free buckets, then puts
-- * them on the various freelists.
-+ * then puts them on the various freelists.
-  */
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 88fb9bb69ce9..f75417b8e228 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -448,8 +448,7 @@ struct cache {
+ 	 * free_inc: Incoming buckets - these are buckets that currently have
+ 	 * cached data in them, and we can't reuse them until after we write
+ 	 * their new gen to disk. After prio_write() finishes writing the new
+-	 * gens/prios, they'll be moved to the free list (and possibly discarded
+-	 * in the process)
++	 * gens/prios, they'll be moved to the free list.
+ 	 */
+ 	DECLARE_FIFO(long, free)[RESERVE_NR];
+ 	DECLARE_FIFO(long, free_inc);
+@@ -468,8 +467,6 @@ struct cache {
+ 	 */
+ 	unsigned int		invalidate_needs_gc;
  
- static inline bool can_inc_bucket_gen(struct bucket *b)
-@@ -321,8 +317,7 @@ static int bch_allocator_thread(void *arg)
- 	while (1) {
- 		/*
- 		 * First, we pull buckets off of the unused and free_inc lists,
--		 * possibly issue discards to them, then we add the bucket to
--		 * the free list:
-+		 * then we add the bucket to the free list:
- 		 */
- 		while (1) {
- 			long bucket;
-@@ -330,14 +325,6 @@ static int bch_allocator_thread(void *arg)
- 			if (!fifo_pop(&ca->free_inc, bucket))
- 				break;
- 
--			if (ca->discard) {
--				mutex_unlock(&ca->set->bucket_lock);
--				blkdev_issue_discard(ca->bdev,
--					bucket_to_sector(ca->set, bucket),
--					ca->sb.bucket_size, GFP_KERNEL);
--				mutex_lock(&ca->set->bucket_lock);
--			}
+-	bool			discard; /* Get rid of? */
 -
- 			allocator_wait(ca, bch_allocator_push(ca, bucket));
- 			wake_up(&ca->set->btree_cache_wait);
- 			wake_up(&ca->set->bucket_wait);
+ 	struct journal_device	journal;
+ 
+ 	/* The rest of this all shows up in sysfs */
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 1492c8552255..2c17231762c1 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -2382,9 +2382,6 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+ 	ca->bdev = file_bdev(bdev_file);
+ 	ca->sb_disk = sb_disk;
+ 
+-	if (bdev_max_discard_sectors(file_bdev(bdev_file)))
+-		ca->discard = CACHE_DISCARD(&ca->sb);
+-
+ 	ret = cache_alloc(ca);
+ 	if (ret != 0) {
+ 		if (ret == -ENOMEM)
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 826b14cae4e5..72f38e5b6f5c 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -134,7 +134,6 @@ read_attribute(partial_stripes_expensive);
+ rw_attribute(synchronous);
+ rw_attribute(journal_delay_ms);
+ rw_attribute(io_disable);
+-rw_attribute(discard);
+ rw_attribute(running);
+ rw_attribute(label);
+ rw_attribute(errors);
+@@ -1036,7 +1035,6 @@ SHOW(__bch_cache)
+ 	sysfs_hprint(bucket_size,	bucket_bytes(ca));
+ 	sysfs_hprint(block_size,	block_bytes(ca));
+ 	sysfs_print(nbuckets,		ca->sb.nbuckets);
+-	sysfs_print(discard,		ca->discard);
+ 	sysfs_hprint(written, atomic_long_read(&ca->sectors_written) << 9);
+ 	sysfs_hprint(btree_written,
+ 		     atomic_long_read(&ca->btree_sectors_written) << 9);
+@@ -1142,18 +1140,6 @@ STORE(__bch_cache)
+ 	if (bcache_is_reboot)
+ 		return -EBUSY;
+ 
+-	if (attr == &sysfs_discard) {
+-		bool v = strtoul_or_return(buf);
+-
+-		if (bdev_max_discard_sectors(ca->bdev))
+-			ca->discard = v;
+-
+-		if (v != CACHE_DISCARD(&ca->sb)) {
+-			SET_CACHE_DISCARD(&ca->sb, v);
+-			bcache_write_super(ca->set);
+-		}
+-	}
+-
+ 	if (attr == &sysfs_cache_replacement_policy) {
+ 		v = __sysfs_match_string(cache_replacement_policies, -1, buf);
+ 		if (v < 0)
+@@ -1185,7 +1171,6 @@ static struct attribute *bch_cache_attrs[] = {
+ 	&sysfs_block_size,
+ 	&sysfs_nbuckets,
+ 	&sysfs_priority_stats,
+-	&sysfs_discard,
+ 	&sysfs_written,
+ 	&sysfs_btree_written,
+ 	&sysfs_metadata_written,
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index 4f0e47c841aa..32703a51e6ab 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -793,8 +793,7 @@ static int bch_writeback_thread(void *arg)
+ 			 * may set BCH_ENABLE_AUTO_GC via sysfs, then when
+ 			 * BCH_DO_AUTO_GC is set, garbage collection thread
+ 			 * will be wake up here. After moving gc, the shrunk
+-			 * btree and discarded free buckets SSD space may be
+-			 * helpful for following write requests.
++			 * btree may be helpful for following write requests.
+ 			 */
+ 			if (c->gc_after_writeback ==
+ 			    (BCH_ENABLE_AUTO_GC|BCH_DO_AUTO_GC)) {
 -- 
 2.47.2
 
