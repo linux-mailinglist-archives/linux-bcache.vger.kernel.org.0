@@ -1,251 +1,167 @@
-Return-Path: <linux-bcache+bounces-1200-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1201-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496A9B3C8E7
-	for <lists+linux-bcache@lfdr.de>; Sat, 30 Aug 2025 09:47:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7616B466C4
+	for <lists+linux-bcache@lfdr.de>; Sat,  6 Sep 2025 00:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 054CBA02CE9
-	for <lists+linux-bcache@lfdr.de>; Sat, 30 Aug 2025 07:47:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82D951B23FD8
+	for <lists+linux-bcache@lfdr.de>; Fri,  5 Sep 2025 22:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FB926C385;
-	Sat, 30 Aug 2025 07:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77FB2741A0;
+	Fri,  5 Sep 2025 22:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="d25xlACG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WlL+bCHa"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail85.out.titan.email (mail85.out.titan.email [3.216.99.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C33264624
-	for <linux-bcache@vger.kernel.org>; Sat, 30 Aug 2025 07:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.216.99.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ECA1B3935
+	for <linux-bcache@vger.kernel.org>; Fri,  5 Sep 2025 22:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756540047; cv=none; b=XCYzMWXQ38ryL7KQ45s4o0mPqcVe4bsyR7nkeFHoZv+Fbj51t52JX8ogSkH2Jcq6MPfy3ZnzbcZturtn0ZmzaY7HVMJ5v0yObnVsNL3hyz5/9Xlno3lZStXw42HDTzyB/1QGyRpXrxjvOpG1HmdG4PyZ88H8a6vJzb7dCAJrDUI=
+	t=1757112224; cv=none; b=meYpCcuiB9bHvvKgF0CbRmpM7IS/51Gf2gU3lVo/RUocGk9j0at/i2jrnLk5VVlNrTHYWMYR0hpXl7/po8VZynMAuW7q18ptqlkSOBeZUYcMJwWiq+JinoMPng8omagDtYUDkZzxK5LiIKBMDxkjFUQo+vnskOzmJjxX96Yb2yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756540047; c=relaxed/simple;
-	bh=vUrZMGsdgn758dFhlL/pte6r4VNg0B9IvP3nV2fC3v0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=FON9nuTrEh8ExQXE4d3P5B+2g5IuwXT3hRx56xFaDmXUgxnvMsNabnubfhR9gFhTx+AQ5Q76YoRaNxF9KTa+wSYDEDI9AIXpstaSIzW0avJMac3pFXu94tIeLKoY+kA4SfH7j0aF0Mx9ATuMbHYt5IHoy+dBaqC6R30HfqWV+1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=d25xlACG; arc=none smtp.client-ip=3.216.99.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
-Received: from localhost (localhost [127.0.0.1])
-	by smtp-out.flockmail.com (Postfix) with ESMTP id 5A1B910000A;
-	Sat, 30 Aug 2025 07:28:56 +0000 (UTC)
-DKIM-Signature: a=rsa-sha256; bh=+wKDeWIXngC305Ix6UMS86kEdR/xv5z7k7Dz6PRiMNo=;
-	c=relaxed/relaxed; d=t12smtp-sign004.email;
-	h=in-reply-to:references:mime-version:subject:from:date:cc:to:message-id:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-	q=dns/txt; s=titan1; t=1756538936; v=1;
-	b=d25xlACGGLIxOS9ML58cYNQ5H4Yno/Mqs26647j4E04z0pRmp+t45TrxoTZkrIdz2ufFjlWO
-	wrvjVxcCoJrlq8GqfmAqOdWiKR2YHeF4pVIR31YwwIXDMPj+I3a64zSv0LW75Gnv1sbM/oGAAgT
-	CqvGETGiuMoyQwU757gQMB0c=
-Received: from smtpclient.apple (42-200-231-247.static.imsbiz.com [42.200.231.247])
-	by smtp-out.flockmail.com (Postfix) with ESMTPA id 8A53E100009;
-	Sat, 30 Aug 2025 07:28:54 +0000 (UTC)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1757112224; c=relaxed/simple;
+	bh=lQ0WxFywZW9XwzY77UkiLAw4S+FTC7dFLVATZVPkuwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hz3tfjUZQSxYHW47fUAdnGWkXoJajWtVVdK8H77LD0fL0S0wcwxj6Av+P9yi6Y8JHrfFM19LPq9cvZOkkG2LzKixyzSeTWSEEhPwuAn3nduX/I2/reA1zInDUzv6n9perVMEXz1ribMYhX7qbaXwQz2qW7MOY421E3mgmvHzw/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WlL+bCHa; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b350971a2eso36071cf.1
+        for <linux-bcache@vger.kernel.org>; Fri, 05 Sep 2025 15:43:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757112221; x=1757717021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A/PSopFxnL5bEX7RbCq8Lkb1gScmBjtjSzM8/FyG5zA=;
+        b=WlL+bCHaWHZDizr2Mc3R2fe4sVGxTE7UXQvBv9XZpjhMgfS9wdpbVKLGmMgjZrmSzy
+         4Y11I4TAGRqrJfSTsVV18MO+mq1oMYx8ZAhUIqDx6DyzvqEaFDyugY5LM8QkVTi7rMeF
+         SVrIKS1pbzs3WYZtoQWB/o3TdXXy8d4ck+kQ8/yWJWEK1LfVwhzj1yINUbxl5O7ZM6qW
+         wpI3Kq2pPzY5EDjOCYb74kSYGZDnEfV6zUS6Zyxp1Z6yq727Bvi5zY+ROiR+IvpWQUbn
+         IRbFqJTvmRa0BYKTewLDNzm+CeatSOPOIDW/EUIhdR6VRr3hBLCPezAEj2/sCy6PzfRp
+         ttWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757112221; x=1757717021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A/PSopFxnL5bEX7RbCq8Lkb1gScmBjtjSzM8/FyG5zA=;
+        b=JDVbL+vWbPfNwvHPyiFXuOYOXGGkTjEIla5Vz4y+eC5hPmy0icXWrQw5pwOF2V8c2a
+         +Ivq2Eg+TpYg8M7lpwuvmtGdeStLzUss2pf6Whv/WHqSRvSSWEPoKaATrcM3uAFc1aD5
+         dSIFHj71ynkqpb6hAdv+kP4rpk4sRIDxeoZbX7pCTT4HzTKYALw9UOPWBXIPJm+hmvb8
+         BrU0ni49ybUwe2AlJ/s/F/v7xZlA7tQ0oxheILafOPxA/MFVmVsK1dj73545Z0fq8TGD
+         +11mLFZwyDTXE4USdACu/J9AfH7qGaMN+aI/OPzChWa8P3fPt1BD2Gi4xPLBu6JEmwIZ
+         DCmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUv46iZxfI+nRhh/FugMi7sLR+twRTvydNe6QtCULR+dVjtzqfQ8Ez7HNlVZ6z5rkL+pI+V8FQryiEkRJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSUetLlB6YSIny+mVDQRGyN0K7yjCWGjULlVLcGTYWEBZoGLdF
+	Fimb/iuAqd2/S24QvUSA0O1QPVYHLPNxuBSXLZ8IIu18N4zKSgu32WLLr5z5cTCxN9IxdhHB6io
+	IFWegLK8BvHGCtvVSqQCaqu2lhDNOIF7GU2UvWT2y
+X-Gm-Gg: ASbGncupF+yfxDGI8h6kE2nJHVFpvtv+STxFz+xNoAPJTAe+lpDUxjn92Hrl4ovaLEF
+	LoQPSlSHYu1/zFYCHNdXvj6+ltWKrKSpfoilOwP0Cyytr5OiP1ZB4MerLAV9TlVdCBgyp4yqosU
+	1uNu4Lo0TcgErZPXHTIuRtvgncMqbLFmyQdYNOGf0AmKUR6f8oXg33uFZIL9vxKSCtJPcSLJaOJ
+	rSm6Gzuxqx+
+X-Google-Smtp-Source: AGHT+IE5oIO5eTyPajlmWiB1Cit9otoUodTI2NixRYbGD88hcwGy58wvF+Po7wRUFH3Nuz7e3JE3mXo+sn5+eqZ7M9M=
+X-Received: by 2002:ac8:5e0d:0:b0:4b4:979d:8764 with SMTP id
+ d75a77b69052e-4b5f83f6654mr549251cf.19.1757112221043; Fri, 05 Sep 2025
+ 15:43:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] bcache: improve writeback throughput when frontend I/O is
- idle
-Feedback-ID: :i@coly.li:coly.li:flockmailId
-From: Coly Li <i@coly.li>
-In-Reply-To: <2wpmy6joztl2uc5v5mrv4v4edkqtijpbwe7pqlfrbv6hh3mgks@bgab27rwjkka>
-Date: Sat, 30 Aug 2025 15:28:41 +0800
-Cc: linux-bcache@vger.kernel.org,
- Coly Li <colyli@fnnas.com>
+MIME-Version: 1.0
+References: <20250828161631.33480-1-colyli@kernel.org> <9CAADFD0-B713-4F83-8B08-3FA97604D9FD@coly.li>
+In-Reply-To: <9CAADFD0-B713-4F83-8B08-3FA97604D9FD@coly.li>
+From: Robert Pang <robertpang@google.com>
+Date: Fri, 5 Sep 2025 15:43:29 -0700
+X-Gm-Features: Ac12FXxBwnAgcCGdxRsYa9fMo7kHHauleaT__hwJMCwfgg6nmf74TrwTvW05Mew
+Message-ID: <CAJhEC04owpJMN_7+0kkNeJnFsUDjcv1JapgRqOnkOfyUCpN8pA@mail.gmail.com>
+Subject: Re: [RFC PATCH] bcache: reduce gc latency by processing less nodes
+ and sleep less time
+To: Coly Li <i@coly.li>
+Cc: Mingzhe Zou <mingzhe.zou@easystack.cn>, linux-bcache@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <5AFD45AB-C0B6-47BF-82A2-99BD38CD453D@coly.li>
-References: <20250828161951.33615-1-colyli@kernel.org>
- <CAOtvtNA++zLk0TcMwScJitDNGKUiVAVpMw803cYVG5vrtK2P_g@mail.gmail.com>
- <2wpmy6joztl2uc5v5mrv4v4edkqtijpbwe7pqlfrbv6hh3mgks@bgab27rwjkka>
-To: jifeng zhou <z583340363@gmail.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1756538936211889879.8766.4108097239299940848@prod-use1-smtp-out1002.
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=evQlzppX c=1 sm=1 tr=0 ts=68b2a838
-	a=1SoAjZNkZYAIyhvPV8pctQ==:117 a=1SoAjZNkZYAIyhvPV8pctQ==:17
-	a=kj9zAlcOel0A:10 a=CEWIc4RMnpUA:10 a=VwQbUJbxAAAA:8 a=tJLSzyRPAAAA:8
-	a=HR2vvlNUXTs0e8t3QwIA:9 a=CjuIK1q_8ugA:10 a=H0xsmVfZzgdqH4_HIfU3:22
 
-On Sat, Aug 30, 2025 at 02:17:29AM +0800, Coly Li wrote:
-> On Fri, Aug 29, 2025 at 03:56:42PM +0800, jifeng zhou wrote:
->> On Fri, 29 Aug 2025 at 00:20, <colyli@kernel.org> wrote:
->>>=20
->>> Currently in order to write dirty blocks to backend device in LBA =
-order
->>> for better performance, inside write_dirty() the I/O is issued only =
-when
->>> its sequence matches current expected sequence. Otherwise the =
-kworker
->>> will repeat check-wait-woken loop until the sequence number matches.
->>>=20
->>> When frontend I/O is idle, the writeback rate is set to INT_MAX, but =
-the
->>> writeback thoughput doesn't increase much. There are two reasons,
->>> - The check-wait-woken loop is inefficient.
->>> - I/O depth on backing device is every low.
->>>=20
->>> To improve the writeback throughput, this patch continues to use LBA =
-re-
->>> order idea, but improves it by the following means,
->>> - Do the reorder from write_dirty() to read_dirty().
->>>  Inside read_dirty(), use a min_heap to order all the =
-to-be-writebacked
->>>  keys, and read dirty blocks in LBA order. Although each read =
-requests
->>>  are not completed in issue order, there is no check-wait-woken loop =
-so
->>>  that the dirty blocks are issued in a small time range and they can =
-be
->>>  ordered by I/O schedulers efficiently.
->>>=20
->>> - Read more dirty keys when frontend I/O is idle
->>>  Define WRITEBACKS_IN_PASS (5), MAX_WRITEBACKS_IN_PASS (80) for =
-write-
->>>  back dirty keys in each pass, and define WRITESIZE_IN_PASS (5000) =
-and
->>>  MAX_WRITESIZE_IN_PASS (80000) for total writeback data size in each
->>>  pass. When frontend I/O is idle, new values MAX_WRITEBACKS_IN_PASS =
-and
->>>  MAX_WRITESIZE_IN_PASS are used to read more dirty keys and data =
-size
->>>  from cache deice, then more dirty blocks will be written to backend
->>>  device in almost LBA order.
->>>=20
->>> By this effort, when there is frontend I/O, the IOPS and latency =
-almost
->>> has no difference observed, identical from previous read_dirty() and
->>> write_dirty() implementation. When frontend I/O is idle, with this =
-patch
->>> the average queue size increases from 2.5 to 21, writeback thoughput =
-on
->>> backing device increases from 12MiB/s to 20MiB/s.
->>>=20
->>> Writeback throughput increases around 67% when frontend I/O is idle.
->>>=20
->>> Signed-off-by: Coly Li <colyli@fnnas.com>
->>> ---
->>> drivers/md/bcache/bcache.h    |  1 +
->>> drivers/md/bcache/util.h      |  8 ++++
->>> drivers/md/bcache/writeback.c | 82 =
-+++++++++++++++++------------------
->>> drivers/md/bcache/writeback.h |  6 ++-
->>> 4 files changed, 52 insertions(+), 45 deletions(-)
->>>=20
+Hi Coly,
 
-[snipped]
->>> static void read_dirty(struct cached_dev *dc)
->>> {
->>>        unsigned int delay =3D 0;
->>> -       struct keybuf_key *next, *keys[MAX_WRITEBACKS_IN_PASS], *w;
->>> -       size_t size;
->>> -       int nk, i;
->>> +       struct keybuf_key *next, *w;
->>>        struct dirty_io *io;
->>>        struct closure cl;
->>> -       uint16_t sequence =3D 0;
->>> +       size_t size;
->>> +       int nk, i;
->>>=20
->>>        BUG_ON(!llist_empty(&dc->writeback_ordering_wait.list));
->>> -       atomic_set(&dc->writeback_sequence_next, sequence);
->>>        closure_init_stack(&cl);
->>>=20
->>>        /*
->>> @@ -495,46 +481,49 @@ static void read_dirty(struct cached_dev *dc)
->>>        while (!kthread_should_stop() &&
->>>               !test_bit(CACHE_SET_IO_DISABLE, &dc->disk.c->flags) &&
->>>               next) {
->>> +               size_t max_size_in_pass;
->>> +               int max_writebacks_in_pass;
->>> +
->>>                size =3D 0;
->>>                nk =3D 0;
->>> +               reset_heap(&dc->read_dirty_heap);
->>>=20
->>>                do {
->>>                        BUG_ON(ptr_stale(dc->disk.c, &next->key, 0));
->>>=20
->>> +                       if =
-(atomic_read(&dc->disk.c->at_max_writeback_rate)) {
->>> +                               max_writebacks_in_pass =3D =
-MAX_WRITEBACKS_IN_PASS;
->>> +                               max_size_in_pass =3D =
-MAX_WRITESIZE_IN_PASS;
->>> +                       } else {
->>> +                               max_writebacks_in_pass =3D =
-WRITEBACKS_IN_PASS;
->>> +                               max_size_in_pass =3D =
-WRITESIZE_IN_PASS;
->>> +                       }
->>> +
->>>                        /*
->>>                         * Don't combine too many operations, even if =
-they
->>>                         * are all small.
->>>                         */
->>> -                       if (nk >=3D MAX_WRITEBACKS_IN_PASS)
->>> +                       if (nk >=3D max_writebacks_in_pass)
->>>                                break;
->>>=20
->>>                        /*
->>>                         * If the current operation is very large, =
-don't
->>>                         * further combine operations.
->>>                         */
->>> -                       if (size >=3D MAX_WRITESIZE_IN_PASS)
->>> +                       if (size >=3D max_size_in_pass)
->>>                                break;
->>>=20
->>> -                       /*
->>> -                        * Operations are only eligible to be =
-combined
->>> -                        * if they are contiguous.
->>> -                        *
->>> -                        * TODO: add a heuristic willing to fire a
->>> -                        * certain amount of non-contiguous IO per =
-pass,
->>> -                        * so that we can benefit from backing =
-device
->>> -                        * command queueing.
->>> -                        */
->>> -                       if ((nk !=3D 0) && =
-bkey_cmp(&keys[nk-1]->key,
->>> -                                               =
-&START_KEY(&next->key)))
->>> +                       if (!heap_add(&dc->read_dirty_heap, next,
->>> +                                     keybuf_key_cmp))
->>>                                break;
->>=20
->> The bkeys retrieved from the dc->writeback_keys rbtree are in a =
-specific order.
->> Can the heap sorting here be omitted?
->=20
-> Indeed the keys in dc->writeback_keys are not in a specific order, yes =
-they are
-> in the order from oldest to newest, but there is *NO* overlap betwen =
-any two
-> keys in dc->writeback_keys. See RB_INSERT() inside refill_keybuf_fn().
->=20
-> Because there is no overlap inside keys of dc->writeback_keys, =
-re-order them by
-> LBA incremental order won't make trouble here.
->=20
+Thank you for your new patch. I have reviewed the patch, and it is
+much simpler and cleaner indeed.
 
-I want to say thank you! I re-read the refill_dirty() implementation, it =
-seems in
-read_dirty(), it is unnecessary to call bch_keybuf_del(). Let me try =
-whethere
-there is chance to do more improvement.
+In addition, I have run the 24-hour stress tests and can confirm that
+it brings noticeable performance improvement. For our 4kb writethrough
+workload, your patch further reduces the median (P50) latency during
+garbage collection from about 20 ms in the previous approach [1] to 4
+ms [2]. And I did not observe any issues during my testing.
 
-Coly Li
+This is a great step forward. I look forward to seeing this patch
+submitted soon. And please feel free to add me to the sign-off list if
+it fits.
 
+Best regards,
+Robert Pang
+
+[1] https://gist.github.com/robert-pang/a22b7c5dee2600be3260f4db57e5776d
+[2] https://gist.github.com/robert-pang/05b17921a83d59afc8aab28b5d9e9e0d
+
+On Thu, Aug 28, 2025 at 9:25=E2=80=AFAM Coly Li <i@coly.li> wrote:
+>
+> Hi Robert,
+>
+> Your patch breaks the emwa_add() method to maintain the gc stats numbers.=
+ So I have to look for another method but try to get similar benchmark resu=
+lts as yours did.
+>
+>  Hi Mingzhe,
+>
+> The dynamic sleep interval and gc nodes patch is kind of over complicated=
+ IMHO. So I compose a simplified one based on the idea from you and Robert.
+>
+>
+> Can you all help to review and test this RFC patch? Hope it may work out.=
+ Thanks for your help in advance.
+>
+> Coly Li
+>
+>
+>
+> > 2025=E5=B9=B48=E6=9C=8829=E6=97=A5 00:16=EF=BC=8Ccolyli@kernel.org =E5=
+=86=99=E9=81=93=EF=BC=9A
+> >
+> > When bcache device is busy for high I/O loads, there are two methods to
+> > reduce the garbage collection latency,
+> > - Process less nodes in eac loop of incremental garbage collection in
+> >  btree_gc_recurse().
+> > - Sleep less time between two full garbage collection in
+> >  bch_btree_gc().
+> >
+> > This patch introduces to hleper routines to provide different garbage
+> > collection nodes number and sleep intervel time.
+> > - btree_gc_min_nodes()
+> >  If there is no front end I/O, return 128 nodes to process in each
+> >  incremental loop, otherwise only 10 nodes are returned. Then front I/O
+> >  is able to access the btree earlier.
+> > - btree_gc_sleep_ms()
+> >  If there is no synchronized wait for bucket allocation, sleep 100 ms
+> >  between two incremental GC loop. Othersize only sleep 10 ms before
+> >  incremental GC loop. Then a faster GC may provide available buckets
+> >  earlier, to avoid most of bcache working threads from being starved by
+> >  buckets allocation.
+> >
+> > The idea is inspired by works from Mingzhe Zou and Robert Pang, but muc=
+h
+> > simpler and the expected behavior is more predictable.
+> >
+> > Signed-off-by: Coly Li <colyli@fnnas.com>
+> > Cc: Robert Pang <robertpang@google.com>
+> > Cc: Mingzhe Zou <mingzhe.zou@easystack.cn>
+> > ---
+>
+> [snipped]
+>
 
