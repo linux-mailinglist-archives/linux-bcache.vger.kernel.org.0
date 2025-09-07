@@ -1,167 +1,137 @@
-Return-Path: <linux-bcache+bounces-1201-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1202-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7616B466C4
-	for <lists+linux-bcache@lfdr.de>; Sat,  6 Sep 2025 00:43:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5AD8B47C04
+	for <lists+linux-bcache@lfdr.de>; Sun,  7 Sep 2025 17:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82D951B23FD8
-	for <lists+linux-bcache@lfdr.de>; Fri,  5 Sep 2025 22:44:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9288D1788E2
+	for <lists+linux-bcache@lfdr.de>; Sun,  7 Sep 2025 15:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77FB2741A0;
-	Fri,  5 Sep 2025 22:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WlL+bCHa"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A203827F178;
+	Sun,  7 Sep 2025 15:25:08 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.esperi.org.uk (icebox.esperi.org.uk [81.187.191.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ECA1B3935
-	for <linux-bcache@vger.kernel.org>; Fri,  5 Sep 2025 22:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B50D158535
+	for <linux-bcache@vger.kernel.org>; Sun,  7 Sep 2025 15:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.187.191.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757112224; cv=none; b=meYpCcuiB9bHvvKgF0CbRmpM7IS/51Gf2gU3lVo/RUocGk9j0at/i2jrnLk5VVlNrTHYWMYR0hpXl7/po8VZynMAuW7q18ptqlkSOBeZUYcMJwWiq+JinoMPng8omagDtYUDkZzxK5LiIKBMDxkjFUQo+vnskOzmJjxX96Yb2yI=
+	t=1757258708; cv=none; b=CtJg//DBJTpqpLzWH7O7Zi6Z2+B7IKjs8qEmtgpno8Ijij5+WRWqTV/dIdGxo3xvKiB9nDb+i2uZiR8BsGg9gNKdOkmcsmTgbWjjlMOIG9HUC9mCNAO9yuWdVohM7GU7fYT2BsmivhY0yjFkcA0f8SaTCaHubSHxnHTUKfqhJIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757112224; c=relaxed/simple;
-	bh=lQ0WxFywZW9XwzY77UkiLAw4S+FTC7dFLVATZVPkuwk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hz3tfjUZQSxYHW47fUAdnGWkXoJajWtVVdK8H77LD0fL0S0wcwxj6Av+P9yi6Y8JHrfFM19LPq9cvZOkkG2LzKixyzSeTWSEEhPwuAn3nduX/I2/reA1zInDUzv6n9perVMEXz1ribMYhX7qbaXwQz2qW7MOY421E3mgmvHzw/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WlL+bCHa; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b350971a2eso36071cf.1
-        for <linux-bcache@vger.kernel.org>; Fri, 05 Sep 2025 15:43:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757112221; x=1757717021; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A/PSopFxnL5bEX7RbCq8Lkb1gScmBjtjSzM8/FyG5zA=;
-        b=WlL+bCHaWHZDizr2Mc3R2fe4sVGxTE7UXQvBv9XZpjhMgfS9wdpbVKLGmMgjZrmSzy
-         4Y11I4TAGRqrJfSTsVV18MO+mq1oMYx8ZAhUIqDx6DyzvqEaFDyugY5LM8QkVTi7rMeF
-         SVrIKS1pbzs3WYZtoQWB/o3TdXXy8d4ck+kQ8/yWJWEK1LfVwhzj1yINUbxl5O7ZM6qW
-         wpI3Kq2pPzY5EDjOCYb74kSYGZDnEfV6zUS6Zyxp1Z6yq727Bvi5zY+ROiR+IvpWQUbn
-         IRbFqJTvmRa0BYKTewLDNzm+CeatSOPOIDW/EUIhdR6VRr3hBLCPezAEj2/sCy6PzfRp
-         ttWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757112221; x=1757717021;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A/PSopFxnL5bEX7RbCq8Lkb1gScmBjtjSzM8/FyG5zA=;
-        b=JDVbL+vWbPfNwvHPyiFXuOYOXGGkTjEIla5Vz4y+eC5hPmy0icXWrQw5pwOF2V8c2a
-         +Ivq2Eg+TpYg8M7lpwuvmtGdeStLzUss2pf6Whv/WHqSRvSSWEPoKaATrcM3uAFc1aD5
-         dSIFHj71ynkqpb6hAdv+kP4rpk4sRIDxeoZbX7pCTT4HzTKYALw9UOPWBXIPJm+hmvb8
-         BrU0ni49ybUwe2AlJ/s/F/v7xZlA7tQ0oxheILafOPxA/MFVmVsK1dj73545Z0fq8TGD
-         +11mLFZwyDTXE4USdACu/J9AfH7qGaMN+aI/OPzChWa8P3fPt1BD2Gi4xPLBu6JEmwIZ
-         DCmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv46iZxfI+nRhh/FugMi7sLR+twRTvydNe6QtCULR+dVjtzqfQ8Ez7HNlVZ6z5rkL+pI+V8FQryiEkRJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSUetLlB6YSIny+mVDQRGyN0K7yjCWGjULlVLcGTYWEBZoGLdF
-	Fimb/iuAqd2/S24QvUSA0O1QPVYHLPNxuBSXLZ8IIu18N4zKSgu32WLLr5z5cTCxN9IxdhHB6io
-	IFWegLK8BvHGCtvVSqQCaqu2lhDNOIF7GU2UvWT2y
-X-Gm-Gg: ASbGncupF+yfxDGI8h6kE2nJHVFpvtv+STxFz+xNoAPJTAe+lpDUxjn92Hrl4ovaLEF
-	LoQPSlSHYu1/zFYCHNdXvj6+ltWKrKSpfoilOwP0Cyytr5OiP1ZB4MerLAV9TlVdCBgyp4yqosU
-	1uNu4Lo0TcgErZPXHTIuRtvgncMqbLFmyQdYNOGf0AmKUR6f8oXg33uFZIL9vxKSCtJPcSLJaOJ
-	rSm6Gzuxqx+
-X-Google-Smtp-Source: AGHT+IE5oIO5eTyPajlmWiB1Cit9otoUodTI2NixRYbGD88hcwGy58wvF+Po7wRUFH3Nuz7e3JE3mXo+sn5+eqZ7M9M=
-X-Received: by 2002:ac8:5e0d:0:b0:4b4:979d:8764 with SMTP id
- d75a77b69052e-4b5f83f6654mr549251cf.19.1757112221043; Fri, 05 Sep 2025
- 15:43:41 -0700 (PDT)
+	s=arc-20240116; t=1757258708; c=relaxed/simple;
+	bh=2mLggywtNyhjEokMa3tAMhBjBZweVsYv6qUz7XP1pGQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zvl6Mxe4nD3Akh/How/dyTDyPeyWRzqq7HuQrU4JqMN7DhyJSTVOEupp0BImZu14MKHmse4Kk59H/WhmtCGTKF23nV2qANnPucfpu9qGw+R7SDdTMipFcBZcbtjjJh1dq1RnkZ78QwpRCoGvuJK8AzhSmcqffkF9qKl4xKmQT48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=esperi.org.uk; spf=pass smtp.mailfrom=esperi.org.uk; arc=none smtp.client-ip=81.187.191.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=esperi.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=esperi.org.uk
+Received: from loom (nix@sidle.srvr.nix [192.168.14.8])
+	by mail.esperi.org.uk (8.17.2/8.17.2) with ESMTPS id 587EbotS029876
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
+	for <linux-bcache@vger.kernel.org>; Sun, 7 Sep 2025 15:37:51 +0100
+From: Nix <nix@esperi.org.uk>
+To: linux-bcache@vger.kernel.org
+Subject: gen wraparound warning: is this a problem?
+Emacs: no job too big... no job.
+Date: Sun, 07 Sep 2025 15:37:50 +0100
+Message-ID: <87a536e3b5.fsf@esperi.org.uk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.3 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828161631.33480-1-colyli@kernel.org> <9CAADFD0-B713-4F83-8B08-3FA97604D9FD@coly.li>
-In-Reply-To: <9CAADFD0-B713-4F83-8B08-3FA97604D9FD@coly.li>
-From: Robert Pang <robertpang@google.com>
-Date: Fri, 5 Sep 2025 15:43:29 -0700
-X-Gm-Features: Ac12FXxBwnAgcCGdxRsYa9fMo7kHHauleaT__hwJMCwfgg6nmf74TrwTvW05Mew
-Message-ID: <CAJhEC04owpJMN_7+0kkNeJnFsUDjcv1JapgRqOnkOfyUCpN8pA@mail.gmail.com>
-Subject: Re: [RFC PATCH] bcache: reduce gc latency by processing less nodes
- and sleep less time
-To: Coly Li <i@coly.li>
-Cc: Mingzhe Zou <mingzhe.zou@easystack.cn>, linux-bcache@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-DCC-wuwien-Metrics: loom 1290; Body=1 Fuz1=1
 
-Hi Coly,
+So, out of the blue, I just got this for my long-standing writearound
+bcache setup (which covers my rootfs and $HOME, so I kind of care that
+it keeps working):
 
-Thank you for your new patch. I have reviewed the patch, and it is
-much simpler and cleaner indeed.
+[3997629.262213] WARNING: CPU: 0 PID: 222478 at drivers/md/bcache/alloc.c:81 bch_inc_gen+0x3c/0x40
+[3997629.278998] Modules linked in: vfat fat intel_uncore_frequency intel_uncore_frequency_common
+[3997629.295763] CPU: 0 UID: 0 PID: 222478 Comm: kworker/0:9 Tainted: G        W           6.15.6-00002-g0d4613ee4427-dirty #2 NONE 
+[3997629.329334] Tainted: [W]=WARN
+[3997629.345701] Hardware name: Intel Corporation S2600CWR/S2600CWR, BIOS SE5C610.86B.01.01.1029.090220201031 09/02/2020
+[3997629.362413] Workqueue: bcache bch_data_insert_keys
+[3997629.378983] RIP: 0010:bch_inc_gen+0x3c/0x40
+[3997629.395389] Code: 0f 89 c2 48 89 e5 2a 56 07 0f b6 b1 1a 06 00 00 40 38 f2 0f 42 d6 88 91 1a 06 00 00 48 8b 17 80 ba 1a 06 00 00 60 77 02 5d c3 <0f> 0b 5d c3 0f 1f 44 00 00 55 48 89 e5 41 54 53 48 8b 87 30 03 00
+[3997629.428514] RSP: 0018:ffffa7dba31b7a00 EFLAGS: 00010202
+[3997629.444857] RAX: 0000000000000045 RBX: 000007ffffffffff RCX: ffff9e5e0d140000
+[3997629.461276] RDX: ffff9e5e0d140000 RSI: 0000000000000060 RDI: ffff9e5e00ee4000
+[3997629.477509] RBP: ffffa7dba31b7a00 R08: 0000000000000001 R09: 0000000000000000
+[3997629.493394] R10: 000e33d2971e5c02 R11: 0000000000000004 R12: 0000000000000002
+[3997629.509021] R13: 0000000000000001 R14: ffffa7dba31b7ac8 R15: ffff9e5e149b5000
+[3997629.524515] FS:  0000000000000000(0000) GS:ffff9e7d6d275000(0000) knlGS:0000000000000000
+[3997629.539853] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[3997629.555063] CR2: 00000000328da018 CR3: 00000007d6c41002 CR4: 00000000003726f0
+[3997629.570252] Call Trace:
+[3997629.585190]  <TASK>
+[3997629.599881]  make_btree_freeing_key+0xf0/0x130
+[3997629.614450]  btree_split+0x4c9/0x6b0
+[3997629.628797]  ? cpu_rmap_get+0x40/0x40
+[3997629.642981]  bch_btree_insert_node+0x2c2/0x390
+[3997629.657004]  btree_insert_fn+0x24/0x50
+[3997629.670750]  bch_btree_map_nodes_recurse+0x3c/0x170
+[3997629.684371]  ? bch_btree_insert_check_key+0x1b0/0x1b0
+[3997629.697940]  ? bch_btree_ptr_bad+0x49/0xe0
+[3997629.711187]  ? bch_btree_node_get.part.0+0x79/0x2c0
+[3997629.724089]  ? rwsem_wake.isra.0+0x70/0x70
+[3997629.736874]  bch_btree_map_nodes_recurse+0xf3/0x170
+[3997629.749516]  ? bch_btree_insert_check_key+0x1b0/0x1b0
+[3997629.762012]  __bch_btree_map_nodes+0x189/0x1a0
+[3997629.774179]  ? bch_btree_insert_check_key+0x1b0/0x1b0
+[3997629.786202]  bch_btree_insert+0xca/0x130
+[3997629.797987]  ? ipi_sync_rq_state+0x40/0x40
+[3997629.809575]  bch_data_insert_keys+0x36/0xe0
+[3997629.820919]  process_one_work+0x14b/0x300
+[3997629.831940]  worker_thread+0x2c3/0x400
+[3997629.842820]  ? flush_rcu_work+0x40/0x40
+[3997629.853452]  kthread+0xe8/0x1e0
+[3997629.863718]  ? kthread_cancel_delayed_work_sync+0x20/0x20
+[3997629.873923]  ret_from_fork+0x36/0x50
+[3997629.883866]  ? kthread_cancel_delayed_work_sync+0x20/0x20
+[3997629.893642]  ret_from_fork_asm+0x11/0x20
+[3997629.903209]  </TASK>
 
-In addition, I have run the 24-hour stress tests and can confirm that
-it brings noticeable performance improvement. For our 4kb writethrough
-workload, your patch further reduces the median (P50) latency during
-garbage collection from about 20 ms in the previous approach [1] to 4
-ms [2]. And I did not observe any issues during my testing.
+[4001476.794864] WARNING: CPU: 10 PID: 408 at drivers/md/bcache/alloc.c:81 __bch_invalidate_one_bucket+0xba/0xc0
+[4001476.804157] Modules linked in: vfat fat intel_uncore_frequency intel_uncore_frequency_common
+[4001476.813375] CPU: 10 UID: 0 PID: 408 Comm: bcache_allocato Tainted: G        W           6.15.6-00002-g0d4613ee4427-dirty #2 NONE 
+[4001476.832090] Tainted: [W]=WARN
+[4001476.841130] Hardware name: Intel Corporation S2600CWR/S2600CWR, BIOS SE5C610.86B.01.01.1029.090220201031 09/02/2020
+[4001476.850542] RIP: 0010:__bch_invalidate_one_bucket+0xba/0xc0
+[4001476.859914] Code: 24 48 89 f2 48 8b 78 08 4c 89 e6 48 29 ca 48 b9 ab aa aa aa aa aa aa aa 48 c1 fa 02 48 0f af d1 e8 fb c6 01 00 e9 6a ff ff ff <0f> 0b eb 96 0f 0b 0f 1f 44 00 00 55 48 89 e5 41 54 49 89 f4 53 48
+[4001476.879592] RSP: 0018:ffffa7db80a2fe50 EFLAGS: 00010202
+[4001476.889576] RAX: ffff9e5e0d140000 RBX: ffffa7db80976af0 RCX: 0000000000000061
+[4001476.899666] RDX: ffff9e5e0d140000 RSI: ffffa7db80976af0 RDI: ffff9e5e00ee4000
+[4001476.909659] RBP: ffffa7db80a2fe60 R08: ffffa7db808e82a8 R09: 0000000000000102
+[4001476.919519] R10: 000000000000040b R11: ffff9e5e00ee0000 R12: ffff9e5e00ee4000
+[4001476.929322] R13: 00000000000003ff R14: ffffa7db808ff30c R15: ffff9e5e00ee4000
+[4001476.938978] FS:  0000000000000000(0000) GS:ffff9e7d6d4f5000(0000) knlGS:0000000000000000
+[4001476.948860] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[4001476.958735] CR2: 00007f8d3fbff6d8 CR3: 00000007d6c41006 CR4: 00000000003726f0
+[4001476.968744] Call Trace:
+[4001476.978687]  <TASK>
+[4001476.988541]  bch_invalidate_one_bucket+0x17/0x80
+[4001476.998509]  bch_allocator_thread+0xb05/0xc90
+[4001477.008447]  ? bch_invalidate_one_bucket+0x80/0x80
+[4001477.018391]  kthread+0xe8/0x1e0
+[4001477.028309]  ? kthread_cancel_delayed_work_sync+0x20/0x20
+[4001477.038348]  ret_from_fork+0x36/0x50
+[4001477.048346]  ? kthread_cancel_delayed_work_sync+0x20/0x20
+[4001477.058448]  ret_from_fork_asm+0x11/0x20
+[4001477.068493]  </TASK>
 
-This is a great step forward. I look forward to seeing this patch
-submitted soon. And please feel free to add me to the sign-off list if
-it fits.
+These both map to this in bch_inc_gen():
 
-Best regards,
-Robert Pang
+        WARN_ON_ONCE(ca->set->need_gc > BUCKET_GC_GEN_MAX);
 
-[1] https://gist.github.com/robert-pang/a22b7c5dee2600be3260f4db57e5776d
-[2] https://gist.github.com/robert-pang/05b17921a83d59afc8aab28b5d9e9e0d
-
-On Thu, Aug 28, 2025 at 9:25=E2=80=AFAM Coly Li <i@coly.li> wrote:
->
-> Hi Robert,
->
-> Your patch breaks the emwa_add() method to maintain the gc stats numbers.=
- So I have to look for another method but try to get similar benchmark resu=
-lts as yours did.
->
->  Hi Mingzhe,
->
-> The dynamic sleep interval and gc nodes patch is kind of over complicated=
- IMHO. So I compose a simplified one based on the idea from you and Robert.
->
->
-> Can you all help to review and test this RFC patch? Hope it may work out.=
- Thanks for your help in advance.
->
-> Coly Li
->
->
->
-> > 2025=E5=B9=B48=E6=9C=8829=E6=97=A5 00:16=EF=BC=8Ccolyli@kernel.org =E5=
-=86=99=E9=81=93=EF=BC=9A
-> >
-> > When bcache device is busy for high I/O loads, there are two methods to
-> > reduce the garbage collection latency,
-> > - Process less nodes in eac loop of incremental garbage collection in
-> >  btree_gc_recurse().
-> > - Sleep less time between two full garbage collection in
-> >  bch_btree_gc().
-> >
-> > This patch introduces to hleper routines to provide different garbage
-> > collection nodes number and sleep intervel time.
-> > - btree_gc_min_nodes()
-> >  If there is no front end I/O, return 128 nodes to process in each
-> >  incremental loop, otherwise only 10 nodes are returned. Then front I/O
-> >  is able to access the btree earlier.
-> > - btree_gc_sleep_ms()
-> >  If there is no synchronized wait for bucket allocation, sleep 100 ms
-> >  between two incremental GC loop. Othersize only sleep 10 ms before
-> >  incremental GC loop. Then a faster GC may provide available buckets
-> >  earlier, to avoid most of bcache working threads from being starved by
-> >  buckets allocation.
-> >
-> > The idea is inspired by works from Mingzhe Zou and Robert Pang, but muc=
-h
-> > simpler and the expected behavior is more predictable.
-> >
-> > Signed-off-by: Coly Li <colyli@fnnas.com>
-> > Cc: Robert Pang <robertpang@google.com>
-> > Cc: Mingzhe Zou <mingzhe.zou@easystack.cn>
-> > ---
->
-> [snipped]
->
+Is this something the admin needs to do something about? (And, if it's
+not and bcache recovers smoothly, as so far it seems to -- though I
+haven't tried to remount it since the warning -- why do we warn about
+it at all?)
 
