@@ -1,102 +1,202 @@
-Return-Path: <linux-bcache+bounces-1203-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1204-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CD4B51C8E
-	for <lists+linux-bcache@lfdr.de>; Wed, 10 Sep 2025 17:54:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 490B6B56A90
+	for <lists+linux-bcache@lfdr.de>; Sun, 14 Sep 2025 18:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FDC717FA9D
-	for <lists+linux-bcache@lfdr.de>; Wed, 10 Sep 2025 15:54:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E886317B290
+	for <lists+linux-bcache@lfdr.de>; Sun, 14 Sep 2025 16:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969BC311C11;
-	Wed, 10 Sep 2025 15:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BA62D9EF3;
+	Sun, 14 Sep 2025 16:27:07 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail.esperi.org.uk (icebox.esperi.org.uk [81.187.191.129])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA2A25B1C7
-	for <linux-bcache@vger.kernel.org>; Wed, 10 Sep 2025 15:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.187.191.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2279EEB3
+	for <linux-bcache@vger.kernel.org>; Sun, 14 Sep 2025 16:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757519692; cv=none; b=iZJTnzOejwuxvScVC4nbroGujkmWCGd8CVWsXb296byPDvgUBSDOwW2MNhn3AKJ5pGEkJPk5mWt+P8pqd4Xc8n6LqghPNPKvLf0zO1YK11n36EAqD0HG9ZnarVfaS028BMqzdFkHqzESxRVS2NL3dIFnnFbTWL+NBgOifIwQCJ4=
+	t=1757867227; cv=none; b=UE0JsqU/CuOHn7UUV5V2Tr4LN6kvcgQnj4eqqZEvSuJ24fB9h6YvpXBKkuFOCL1v2QRHJfKAKjCOS66qQFlVQhAQAJA8vohM0Ffu6wnFnM/hNZrf3mkYOmTJGOA7k9onFU0kMReRaFtlElpe8MOz670ZOG1wKEpel09MsN/n0Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757519692; c=relaxed/simple;
-	bh=k+xOMZFfU/VJnVd+TdCv7o9OiJw6H0N6VolCuwOuTl0=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=S/DKiU/PAGEo6uVZ76T8gxi8YwrqqbMiQ2dKWN0NDKCVXaiJAhSJc5EgkcZAeHQzcsUxFsbOd4yNVNyg8sh0JzohGRWiOlhRxFIw9ChhzJadvtSHLmGjEwvj6Xo8m0EnD2so/VDinGegGdnXl8MsDBmd/XomEbI7ZVaXMZJ397I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=esperi.org.uk; spf=pass smtp.mailfrom=esperi.org.uk; arc=none smtp.client-ip=81.187.191.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=esperi.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=esperi.org.uk
-Received: from loom (nix@sidle.srvr.nix [192.168.14.8])
-	by mail.esperi.org.uk (8.17.2/8.17.2) with ESMTPS id 58AFsc2w019076
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 10 Sep 2025 16:54:38 +0100
-From: Nix <nix@esperi.org.uk>
-To: Coly Li <i@coly.li>
-Cc: linux-bcache@vger.kernel.org
-Subject: Re: gen wraparound warning: is this a problem?
-References: <87a536e3b5.fsf@esperi.org.uk>
-	<C155231F-E439-46E5-8AFE-502CB75F183C@coly.li>
-Emacs: indefensible, reprehensible, and fully extensible.
-Date: Wed, 10 Sep 2025 16:54:38 +0100
-In-Reply-To: <C155231F-E439-46E5-8AFE-502CB75F183C@coly.li> (Coly Li's message
-	of "Mon, 8 Sep 2025 14:51:41 +0800")
-Message-ID: <871poecngh.fsf@esperi.org.uk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.3 (gnu/linux)
+	s=arc-20240116; t=1757867227; c=relaxed/simple;
+	bh=QHemlwxIxEz1rLBGs9UyWemPw/PptUgKPa0YEv03+FQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dmc2QLy50uc9CtENk+KflvrHyqDuilaitx74OaL8AqGY4NC5gG2Nyq3cOyoYqOkV5zqqVJKTCFvKDUtfPyJWQp1yJy+UQj+aTz264+D5sYr9URvQWi+S8ixxK9nL0HMAhIf6eYHLRJvZ0kb2Hpf/bsKh/8kEyKWe/pBDUJQyfMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E774AC4CEF0;
+	Sun, 14 Sep 2025 16:27:04 +0000 (UTC)
+From: colyli@fnnas.com
+To: linux-bcache@vger.kernel.org
+Cc: Coly Li <colyli@fnnas.com>,
+	Robert Pang <robertpang@google.com>,
+	Mingzhe Zou <mingzhe.zou@easystack.cn>
+Subject: [PATCH v2] bcache: reduce gc latency by processing less nodes and sleep less time
+Date: Mon, 15 Sep 2025 00:26:55 +0800
+Message-ID: <20250914162655.114689-1-colyli@fnnas.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-DCC--Metrics: loom 1102; Body=2 Fuz1=2 Fuz2=2 rep=57%
+Content-Transfer-Encoding: 8bit
 
-On 8 Sep 2025, Coly Li verbalised:
+From: Coly Li <colyli@fnnas.com>
 
->> 2025=E5=B9=B49=E6=9C=887=E6=97=A5 22:37=EF=BC=8CNix <nix@esperi.org.uk> =
-=E5=86=99=E9=81=93=EF=BC=9A
->>=20
->> So, out of the blue, I just got this for my long-standing writearound
->> bcache setup (which covers my rootfs and $HOME, so I kind of care that
->> it keeps working):
+When bcache device is busy for high I/O loads, there are two methods to
+reduce the garbage collection latency,
+- Process less nodes in eac loop of incremental garbage collection in
+  btree_gc_recurse().
+- Sleep less time between two full garbage collection in
+  bch_btree_gc().
 
-(Oh, this is kernel 6.15.6 -- but that's only since Jul 20th. Before
-that, I was running 5.16.19 right back to April 2022, yes, I know... so
-it's possible this wasn't touched by *5.16* and thus this is a bug that
-was fixed long ago.)
+This patch introduces to hleper routines to provide different garbage
+collection nodes number and sleep intervel time.
+- btree_gc_min_nodes()
+  If there is no front end I/O, return 128 nodes to process in each
+  incremental loop, otherwise only 10 nodes are returned. Then front I/O
+  is able to access the btree earlier.
+- btree_gc_sleep_ms()
+  If there is no synchronized wait for bucket allocation, sleep 100 ms
+  between two incremental GC loop. Othersize only sleep 10 ms before
+  incremental GC loop. Then a faster GC may provide available buckets
+  earlier, to avoid most of bcache working threads from being starved by
+  buckets allocation.
 
->> These both map to this in bch_inc_gen():
->>=20
->>     WARN_ON_ONCE(ca->set->need_gc > BUCKET_GC_GEN_MAX);
->
-> It seems a bucket has not been touched by garbage collection for a long t=
-ime.
+The idea is inspired by works from Mingzhe Zou and Robert Pang, but much
+simpler and the expected behavior is more predictable.
 
-Not too surprising: half-terabyte cache, and the xfs filesystems it
-backs only has 1.5TiB of data on it and not all of it is accessed
-frequently, and some is bypassed... so it can take a long time to gc
-through the entire cache :) it took months just to fill it.
+Signed-off-by: Coly Li <colyli@fnnas.com>
+Signed-off-by: Robert Pang <robertpang@google.com>
+Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
+---
+changelog,
+v2: Add Robert Pang and Mingzhe Zou as Signed-off-by, they are authors
+    of the original patches which inspired me.
+v1: original version.
 
->> Is this something the admin needs to do something about? (And, if it's
->> not and bcache recovers smoothly, as so far it seems to -- though I
->> haven't tried to remount it since the warning -- why do we warn about
->> it at all?)
->
-> I don=E2=80=99t know why this bucket is not touched by GC for such a long
-> time. It should not happen in my expectation.
+ drivers/md/bcache/alloc.c  |  4 ++++
+ drivers/md/bcache/bcache.h |  1 +
+ drivers/md/bcache/btree.c  | 47 +++++++++++++++++++-------------------
+ 3 files changed, 28 insertions(+), 24 deletions(-)
 
-It's possible that *no* buckets were touched for a long time.
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index 48ce750bf70a..db519e1678c2 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -412,7 +412,11 @@ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
+ 				TASK_UNINTERRUPTIBLE);
+ 
+ 		mutex_unlock(&ca->set->bucket_lock);
++
++		atomic_inc(&ca->set->bucket_wait_cnt);
+ 		schedule();
++		atomic_dec(&ca->set->bucket_wait_cnt);
++
+ 		mutex_lock(&ca->set->bucket_lock);
+ 	} while (!fifo_pop(&ca->free[RESERVE_NONE], r) &&
+ 		 !fifo_pop(&ca->free[reserve], r));
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 1d33e40d26ea..d43fcccf297c 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -607,6 +607,7 @@ struct cache_set {
+ 	 */
+ 	atomic_t		prio_blocked;
+ 	wait_queue_head_t	bucket_wait;
++	atomic_t		bucket_wait_cnt;
+ 
+ 	/*
+ 	 * For any bio we don't skip we subtract the number of sectors from
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index 210b59007d98..f79a229d5728 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -89,8 +89,9 @@
+  * Test module load/unload
+  */
+ 
+-#define MAX_GC_TIMES		100
+-#define MIN_GC_NODES		100
++#define MAX_GC_TIMES_SHIFT	7  /* 128 loops */
++#define GC_NODES_MIN		10
++#define GC_SLEEP_MS_MIN		10
+ #define GC_SLEEP_MS		100
+ 
+ #define PTR_DIRTY_BIT		(((uint64_t) 1 << 36))
+@@ -1578,29 +1579,28 @@ static unsigned int btree_gc_count_keys(struct btree *b)
+ 
+ static size_t btree_gc_min_nodes(struct cache_set *c)
+ {
+-	size_t min_nodes;
++	size_t min_nodes = GC_NODES_MIN;
+ 
+-	/*
+-	 * Since incremental GC would stop 100ms when front
+-	 * side I/O comes, so when there are many btree nodes,
+-	 * if GC only processes constant (100) nodes each time,
+-	 * GC would last a long time, and the front side I/Os
+-	 * would run out of the buckets (since no new bucket
+-	 * can be allocated during GC), and be blocked again.
+-	 * So GC should not process constant nodes, but varied
+-	 * nodes according to the number of btree nodes, which
+-	 * realized by dividing GC into constant(100) times,
+-	 * so when there are many btree nodes, GC can process
+-	 * more nodes each time, otherwise, GC will process less
+-	 * nodes each time (but no less than MIN_GC_NODES)
+-	 */
+-	min_nodes = c->gc_stats.nodes / MAX_GC_TIMES;
+-	if (min_nodes < MIN_GC_NODES)
+-		min_nodes = MIN_GC_NODES;
++	if (atomic_read(&c->search_inflight) == 0) {
++		size_t n = c->gc_stats.nodes >> MAX_GC_TIMES_SHIFT;
++		if (min_nodes < n)
++			min_nodes = n;
++	}
+ 
+ 	return min_nodes;
+ }
+ 
++static uint64_t btree_gc_sleep_ms(struct cache_set *c)
++{
++	uint64_t sleep_ms;
++
++	if (atomic_read(&c->bucket_wait_cnt) > 0)
++		sleep_ms = GC_SLEEP_MS_MIN;
++	else
++		sleep_ms = GC_SLEEP_MS;
++
++	return sleep_ms;
++}
+ 
+ static int btree_gc_recurse(struct btree *b, struct btree_op *op,
+ 			    struct closure *writes, struct gc_stat *gc)
+@@ -1668,8 +1668,7 @@ static int btree_gc_recurse(struct btree *b, struct btree_op *op,
+ 		memmove(r + 1, r, sizeof(r[0]) * (GC_MERGE_NODES - 1));
+ 		r->b = NULL;
+ 
+-		if (atomic_read(&b->c->search_inflight) &&
+-		    gc->nodes >= gc->nodes_pre + btree_gc_min_nodes(b->c)) {
++		if (gc->nodes >= (gc->nodes_pre + btree_gc_min_nodes(b->c))) {
+ 			gc->nodes_pre =  gc->nodes;
+ 			ret = -EAGAIN;
+ 			break;
+@@ -1846,8 +1845,8 @@ static void bch_btree_gc(struct cache_set *c)
+ 		cond_resched();
+ 
+ 		if (ret == -EAGAIN)
+-			schedule_timeout_interruptible(msecs_to_jiffies
+-						       (GC_SLEEP_MS));
++			schedule_timeout_interruptible(
++				msecs_to_jiffies(btree_gc_sleep_ms(c)));
+ 		else if (ret)
+ 			pr_warn("gc failed!\n");
+ 	} while (ret && !test_bit(CACHE_SET_IO_DISABLE, &c->flags));
+-- 
+2.39.5
 
-> To make sure everything is safe, I would suggest to writeback all the
-> dirty datas into backing device, detach the cache device, re-make the
-> cache device and attach backing device to it again.
-
-There is no dirty data (writethrough cache)... and this is backing the
-rootfs, among other things, so IIRC detaching is quite difficult and
-panic-prone to do (it's been many years, but I believe you can't do it
-while mounted?). I'll schedule it for the next reboot...
 
