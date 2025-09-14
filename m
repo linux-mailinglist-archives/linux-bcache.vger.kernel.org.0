@@ -1,41 +1,39 @@
-Return-Path: <linux-bcache+bounces-1204-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1205-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490B6B56A90
-	for <lists+linux-bcache@lfdr.de>; Sun, 14 Sep 2025 18:27:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0815B56A99
+	for <lists+linux-bcache@lfdr.de>; Sun, 14 Sep 2025 18:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E886317B290
-	for <lists+linux-bcache@lfdr.de>; Sun, 14 Sep 2025 16:27:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52AE73A75D1
+	for <lists+linux-bcache@lfdr.de>; Sun, 14 Sep 2025 16:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BA62D9EF3;
-	Sun, 14 Sep 2025 16:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7938A25E813;
+	Sun, 14 Sep 2025 16:32:22 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2279EEB3
-	for <linux-bcache@vger.kernel.org>; Sun, 14 Sep 2025 16:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B461EA7CE
+	for <linux-bcache@vger.kernel.org>; Sun, 14 Sep 2025 16:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757867227; cv=none; b=UE0JsqU/CuOHn7UUV5V2Tr4LN6kvcgQnj4eqqZEvSuJ24fB9h6YvpXBKkuFOCL1v2QRHJfKAKjCOS66qQFlVQhAQAJA8vohM0Ffu6wnFnM/hNZrf3mkYOmTJGOA7k9onFU0kMReRaFtlElpe8MOz670ZOG1wKEpel09MsN/n0Yg=
+	t=1757867542; cv=none; b=ikmwsQerm0fkBoudO4tRk/t71BaqcmHgr0JvTfvA8h3B/D4I/TEmm3Y5bSA8olYUX0FrbQkJ2nFviS8fX5P9fAdLdyeDMrWz9KV7fJZE8Kyg2tSji/3oqGRi/xHRujm6oL2HIdwMMRInNM613OF5aUQ6QH9990fN2GtZGr7lNCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757867227; c=relaxed/simple;
-	bh=QHemlwxIxEz1rLBGs9UyWemPw/PptUgKPa0YEv03+FQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dmc2QLy50uc9CtENk+KflvrHyqDuilaitx74OaL8AqGY4NC5gG2Nyq3cOyoYqOkV5zqqVJKTCFvKDUtfPyJWQp1yJy+UQj+aTz264+D5sYr9URvQWi+S8ixxK9nL0HMAhIf6eYHLRJvZ0kb2Hpf/bsKh/8kEyKWe/pBDUJQyfMo=
+	s=arc-20240116; t=1757867542; c=relaxed/simple;
+	bh=7hznT+uaN+MTEpl9VRF3ZALQkfKnhrvLexgdOYqEDSU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kk7NPH/+LLovSeDgU0FJoe5ZB5+N+QGR/S6njSkywv51N1Hv09rJFHw9BCWQDx+7PclUGCuRft2aRLYDsg1g28Nl5bAa2xFb3gfFU1gvBfwG0MrW11l928wJWxWdhX+h7xzhdFYcqsPYzyKg/zfuEfh4D0PbSGxxRs2NBa9Q9bU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E774AC4CEF0;
-	Sun, 14 Sep 2025 16:27:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37F1EC4CEF0;
+	Sun, 14 Sep 2025 16:32:19 +0000 (UTC)
 From: colyli@fnnas.com
 To: linux-bcache@vger.kernel.org
-Cc: Coly Li <colyli@fnnas.com>,
-	Robert Pang <robertpang@google.com>,
-	Mingzhe Zou <mingzhe.zou@easystack.cn>
-Subject: [PATCH v2] bcache: reduce gc latency by processing less nodes and sleep less time
-Date: Mon, 15 Sep 2025 00:26:55 +0800
-Message-ID: <20250914162655.114689-1-colyli@fnnas.com>
+Cc: Coly Li <colyli@fnnas.com>
+Subject: [PATCH 1/4] bcache: get rid of discard code from journal
+Date: Mon, 15 Sep 2025 00:32:13 +0800
+Message-ID: <20250914163216.115036-1-colyli@fnnas.com>
 X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
@@ -47,156 +45,183 @@ Content-Transfer-Encoding: 8bit
 
 From: Coly Li <colyli@fnnas.com>
 
-When bcache device is busy for high I/O loads, there are two methods to
-reduce the garbage collection latency,
-- Process less nodes in eac loop of incremental garbage collection in
-  btree_gc_recurse().
-- Sleep less time between two full garbage collection in
-  bch_btree_gc().
+In bcache journal there is discard funcationality but almost useless in
+reality. Becasue discard happens after a journal bucket is reclaimed,
+and the reclaimed bucket is allocated for new journaling immediately.
+There is no time for underlying SSD to use the discard hint for internal
+data management.
 
-This patch introduces to hleper routines to provide different garbage
-collection nodes number and sleep intervel time.
-- btree_gc_min_nodes()
-  If there is no front end I/O, return 128 nodes to process in each
-  incremental loop, otherwise only 10 nodes are returned. Then front I/O
-  is able to access the btree earlier.
-- btree_gc_sleep_ms()
-  If there is no synchronized wait for bucket allocation, sleep 100 ms
-  between two incremental GC loop. Othersize only sleep 10 ms before
-  incremental GC loop. Then a faster GC may provide available buckets
-  earlier, to avoid most of bcache working threads from being starved by
-  buckets allocation.
-
-The idea is inspired by works from Mingzhe Zou and Robert Pang, but much
-simpler and the expected behavior is more predictable.
+The discard code in bcache journal doesn't bring any performance
+optimization and wastes CPU cycles for issuing discard bios. Therefore
+this patch gits rid of it from journal.c and journal.h.
 
 Signed-off-by: Coly Li <colyli@fnnas.com>
-Signed-off-by: Robert Pang <robertpang@google.com>
-Signed-off-by: Mingzhe Zou <mingzhe.zou@easystack.cn>
 ---
-changelog,
-v2: Add Robert Pang and Mingzhe Zou as Signed-off-by, they are authors
-    of the original patches which inspired me.
-v1: original version.
+ drivers/md/bcache/journal.c | 85 ++-----------------------------------
+ drivers/md/bcache/journal.h | 13 ------
+ 2 files changed, 4 insertions(+), 94 deletions(-)
 
- drivers/md/bcache/alloc.c  |  4 ++++
- drivers/md/bcache/bcache.h |  1 +
- drivers/md/bcache/btree.c  | 47 +++++++++++++++++++-------------------
- 3 files changed, 28 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index 48ce750bf70a..db519e1678c2 100644
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -412,7 +412,11 @@ long bch_bucket_alloc(struct cache *ca, unsigned int reserve, bool wait)
- 				TASK_UNINTERRUPTIBLE);
+diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+index 7ff14bd2feb8..742359d0c231 100644
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -275,8 +275,7 @@ int bch_journal_read(struct cache_set *c, struct list_head *list)
+ 			 * ja->cur_idx
+ 			 */
+ 			ja->cur_idx = i;
+-			ja->last_idx = ja->discard_idx = (i + 1) %
+-				ca->sb.njournal_buckets;
++			ja->last_idx = (i + 1) % ca->sb.njournal_buckets;
  
- 		mutex_unlock(&ca->set->bucket_lock);
-+
-+		atomic_inc(&ca->set->bucket_wait_cnt);
- 		schedule();
-+		atomic_dec(&ca->set->bucket_wait_cnt);
-+
- 		mutex_lock(&ca->set->bucket_lock);
- 	} while (!fifo_pop(&ca->free[RESERVE_NONE], r) &&
- 		 !fifo_pop(&ca->free[reserve], r));
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 1d33e40d26ea..d43fcccf297c 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -607,6 +607,7 @@ struct cache_set {
- 	 */
- 	atomic_t		prio_blocked;
- 	wait_queue_head_t	bucket_wait;
-+	atomic_t		bucket_wait_cnt;
+ 		}
  
- 	/*
- 	 * For any bio we don't skip we subtract the number of sectors from
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 210b59007d98..f79a229d5728 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -89,8 +89,9 @@
-  * Test module load/unload
-  */
- 
--#define MAX_GC_TIMES		100
--#define MIN_GC_NODES		100
-+#define MAX_GC_TIMES_SHIFT	7  /* 128 loops */
-+#define GC_NODES_MIN		10
-+#define GC_SLEEP_MS_MIN		10
- #define GC_SLEEP_MS		100
- 
- #define PTR_DIRTY_BIT		(((uint64_t) 1 << 36))
-@@ -1578,29 +1579,28 @@ static unsigned int btree_gc_count_keys(struct btree *b)
- 
- static size_t btree_gc_min_nodes(struct cache_set *c)
- {
--	size_t min_nodes;
-+	size_t min_nodes = GC_NODES_MIN;
- 
--	/*
--	 * Since incremental GC would stop 100ms when front
--	 * side I/O comes, so when there are many btree nodes,
--	 * if GC only processes constant (100) nodes each time,
--	 * GC would last a long time, and the front side I/Os
--	 * would run out of the buckets (since no new bucket
--	 * can be allocated during GC), and be blocked again.
--	 * So GC should not process constant nodes, but varied
--	 * nodes according to the number of btree nodes, which
--	 * realized by dividing GC into constant(100) times,
--	 * so when there are many btree nodes, GC can process
--	 * more nodes each time, otherwise, GC will process less
--	 * nodes each time (but no less than MIN_GC_NODES)
--	 */
--	min_nodes = c->gc_stats.nodes / MAX_GC_TIMES;
--	if (min_nodes < MIN_GC_NODES)
--		min_nodes = MIN_GC_NODES;
-+	if (atomic_read(&c->search_inflight) == 0) {
-+		size_t n = c->gc_stats.nodes >> MAX_GC_TIMES_SHIFT;
-+		if (min_nodes < n)
-+			min_nodes = n;
-+	}
- 
- 	return min_nodes;
+@@ -336,16 +335,6 @@ void bch_journal_mark(struct cache_set *c, struct list_head *list)
+ 	}
  }
  
-+static uint64_t btree_gc_sleep_ms(struct cache_set *c)
-+{
-+	uint64_t sleep_ms;
-+
-+	if (atomic_read(&c->bucket_wait_cnt) > 0)
-+		sleep_ms = GC_SLEEP_MS_MIN;
-+	else
-+		sleep_ms = GC_SLEEP_MS;
-+
-+	return sleep_ms;
-+}
+-static bool is_discard_enabled(struct cache_set *s)
+-{
+-	struct cache *ca = s->cache;
+-
+-	if (ca->discard)
+-		return true;
+-
+-	return false;
+-}
+-
+ int bch_journal_replay(struct cache_set *s, struct list_head *list)
+ {
+ 	int ret = 0, keys = 0, entries = 0;
+@@ -360,15 +349,10 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
+ 		BUG_ON(i->pin && atomic_read(i->pin) != 1);
  
- static int btree_gc_recurse(struct btree *b, struct btree_op *op,
- 			    struct closure *writes, struct gc_stat *gc)
-@@ -1668,8 +1668,7 @@ static int btree_gc_recurse(struct btree *b, struct btree_op *op,
- 		memmove(r + 1, r, sizeof(r[0]) * (GC_MERGE_NODES - 1));
- 		r->b = NULL;
+ 		if (n != i->j.seq) {
+-			if (n == start && is_discard_enabled(s))
+-				pr_info("journal entries %llu-%llu may be discarded! (replaying %llu-%llu)\n",
+-					n, i->j.seq - 1, start, end);
+-			else {
+ 				pr_err("journal entries %llu-%llu missing! (replaying %llu-%llu)\n",
+ 					n, i->j.seq - 1, start, end);
+ 				ret = -EIO;
+ 				goto err;
+-			}
+ 		}
  
--		if (atomic_read(&b->c->search_inflight) &&
--		    gc->nodes >= gc->nodes_pre + btree_gc_min_nodes(b->c)) {
-+		if (gc->nodes >= (gc->nodes_pre + btree_gc_min_nodes(b->c))) {
- 			gc->nodes_pre =  gc->nodes;
- 			ret = -EAGAIN;
- 			break;
-@@ -1846,8 +1845,8 @@ static void bch_btree_gc(struct cache_set *c)
- 		cond_resched();
+ 		for (k = i->j.start;
+@@ -568,65 +552,6 @@ static void btree_flush_write(struct cache_set *c)
  
- 		if (ret == -EAGAIN)
--			schedule_timeout_interruptible(msecs_to_jiffies
--						       (GC_SLEEP_MS));
-+			schedule_timeout_interruptible(
-+				msecs_to_jiffies(btree_gc_sleep_ms(c)));
- 		else if (ret)
- 			pr_warn("gc failed!\n");
- 	} while (ret && !test_bit(CACHE_SET_IO_DISABLE, &c->flags));
+ #define last_seq(j)	((j)->seq - fifo_used(&(j)->pin) + 1)
+ 
+-static void journal_discard_endio(struct bio *bio)
+-{
+-	struct journal_device *ja =
+-		container_of(bio, struct journal_device, discard_bio);
+-	struct cache *ca = container_of(ja, struct cache, journal);
+-
+-	atomic_set(&ja->discard_in_flight, DISCARD_DONE);
+-
+-	closure_wake_up(&ca->set->journal.wait);
+-	closure_put(&ca->set->cl);
+-}
+-
+-static void journal_discard_work(struct work_struct *work)
+-{
+-	struct journal_device *ja =
+-		container_of(work, struct journal_device, discard_work);
+-
+-	submit_bio(&ja->discard_bio);
+-}
+-
+-static void do_journal_discard(struct cache *ca)
+-{
+-	struct journal_device *ja = &ca->journal;
+-	struct bio *bio = &ja->discard_bio;
+-
+-	if (!ca->discard) {
+-		ja->discard_idx = ja->last_idx;
+-		return;
+-	}
+-
+-	switch (atomic_read(&ja->discard_in_flight)) {
+-	case DISCARD_IN_FLIGHT:
+-		return;
+-
+-	case DISCARD_DONE:
+-		ja->discard_idx = (ja->discard_idx + 1) %
+-			ca->sb.njournal_buckets;
+-
+-		atomic_set(&ja->discard_in_flight, DISCARD_READY);
+-		fallthrough;
+-
+-	case DISCARD_READY:
+-		if (ja->discard_idx == ja->last_idx)
+-			return;
+-
+-		atomic_set(&ja->discard_in_flight, DISCARD_IN_FLIGHT);
+-
+-		bio_init(bio, ca->bdev, bio->bi_inline_vecs, 1, REQ_OP_DISCARD);
+-		bio->bi_iter.bi_sector	= bucket_to_sector(ca->set,
+-						ca->sb.d[ja->discard_idx]);
+-		bio->bi_iter.bi_size	= bucket_bytes(ca);
+-		bio->bi_end_io		= journal_discard_endio;
+-
+-		closure_get(&ca->set->cl);
+-		INIT_WORK(&ja->discard_work, journal_discard_work);
+-		queue_work(bch_journal_wq, &ja->discard_work);
+-	}
+-}
+-
+ static unsigned int free_journal_buckets(struct cache_set *c)
+ {
+ 	struct journal *j = &c->journal;
+@@ -635,10 +560,10 @@ static unsigned int free_journal_buckets(struct cache_set *c)
+ 	unsigned int n;
+ 
+ 	/* In case njournal_buckets is not power of 2 */
+-	if (ja->cur_idx >= ja->discard_idx)
+-		n = ca->sb.njournal_buckets +  ja->discard_idx - ja->cur_idx;
++	if (ja->cur_idx >= ja->last_idx)
++		n = ca->sb.njournal_buckets + ja->last_idx - ja->cur_idx;
+ 	else
+-		n = ja->discard_idx - ja->cur_idx;
++		n = ja->last_idx - ja->cur_idx;
+ 
+ 	if (n > (1 + j->do_reserve))
+ 		return n - (1 + j->do_reserve);
+@@ -668,8 +593,6 @@ static void journal_reclaim(struct cache_set *c)
+ 		ja->last_idx = (ja->last_idx + 1) %
+ 			ca->sb.njournal_buckets;
+ 
+-	do_journal_discard(ca);
+-
+ 	if (c->journal.blocks_free)
+ 		goto out;
+ 
+diff --git a/drivers/md/bcache/journal.h b/drivers/md/bcache/journal.h
+index cd316b4a1e95..9e9d1b3016a5 100644
+--- a/drivers/md/bcache/journal.h
++++ b/drivers/md/bcache/journal.h
+@@ -139,19 +139,6 @@ struct journal_device {
+ 	/* Last journal bucket that still contains an open journal entry */
+ 	unsigned int		last_idx;
+ 
+-	/* Next journal bucket to be discarded */
+-	unsigned int		discard_idx;
+-
+-#define DISCARD_READY		0
+-#define DISCARD_IN_FLIGHT	1
+-#define DISCARD_DONE		2
+-	/* 1 - discard in flight, -1 - discard completed */
+-	atomic_t		discard_in_flight;
+-
+-	struct work_struct	discard_work;
+-	struct bio		discard_bio;
+-	struct bio_vec		discard_bv;
+-
+ 	/* Bio for journal reads/writes to this device */
+ 	struct bio		bio;
+ 	struct bio_vec		bv[8];
 -- 
-2.39.5
+2.47.3
 
 
