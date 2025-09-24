@@ -1,118 +1,137 @@
-Return-Path: <linux-bcache+bounces-1208-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1209-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4985B56A9B
-	for <lists+linux-bcache@lfdr.de>; Sun, 14 Sep 2025 18:32:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDE0B9AD0C
+	for <lists+linux-bcache@lfdr.de>; Wed, 24 Sep 2025 18:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95A7E3A98C9
-	for <lists+linux-bcache@lfdr.de>; Sun, 14 Sep 2025 16:32:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4B407AA8E9
+	for <lists+linux-bcache@lfdr.de>; Wed, 24 Sep 2025 16:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E534D2DCBF4;
-	Sun, 14 Sep 2025 16:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B02E2FD1C2;
+	Wed, 24 Sep 2025 16:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="LVwcRj+5"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sg-1-19.ptr.blmpb.com (sg-1-19.ptr.blmpb.com [118.26.132.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1AA1EA7CE
-	for <linux-bcache@vger.kernel.org>; Sun, 14 Sep 2025 16:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD1D1311AC
+	for <linux-bcache@vger.kernel.org>; Wed, 24 Sep 2025 16:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757867544; cv=none; b=ZB+Mb2suwUtjRo65CPhmRqqK4Dv8g97ir1kiTZQpMKFUDrMrKbzRXDlxF28sgXW+ZeYXVBjeRud78U9X9fBSc9RRemYslLta322hdr60xLflzBzRGu1f4lJmvdBcfk+4ZS+oADBWAEfbLcIdRlEGS62pjX9q4AHtj1QiW2aEtXo=
+	t=1758730038; cv=none; b=BmHm/BSPo184ke/qJnmetCeorp69YXS0jCrzw3Mvdc81O/3xLQ5/3DKMr5h0RH6W3h6sfFtqTknVQHOQcBhd/r/zVrS5QewPfmvAwB9NjvciBugvVNbetZr7pP8wJOXHBAfu2reIm8ujrtfAsuvCrGoQw91zX1HHlCjop662du4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757867544; c=relaxed/simple;
-	bh=jOoDbp6fAgesc1rlON005ue+v2QyXSdaDaWUcVv8+YY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O6BbFwTwpNVo1O1u/pkjafebaXq/hdnVp1Qw3bAG0Rs9eMoKjXG2hMcv0TnSJDWKkEOUnERMrJPJNnBGKwEpk8bKn3db6bbYIXS5w7xafrXPr2UomMXuxgDBXbMwxhOktbNHHWr0Xo5I7dJUB2jDZXI5mpsXflDj3NvrbWpgRuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E30CEC4CEF1;
-	Sun, 14 Sep 2025 16:32:23 +0000 (UTC)
-From: colyli@fnnas.com
-To: linux-bcache@vger.kernel.org
-Cc: Coly Li <colyli@fnnas.com>
-Subject: [PATCH 4/4] bcache: remove discard sysfs interface document
-Date: Mon, 15 Sep 2025 00:32:16 +0800
-Message-ID: <20250914163216.115036-4-colyli@fnnas.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250914163216.115036-1-colyli@fnnas.com>
-References: <20250914163216.115036-1-colyli@fnnas.com>
+	s=arc-20240116; t=1758730038; c=relaxed/simple;
+	bh=XBCgSckQt7IM22vJ5De5Ijl5O+kcIJnZGJBikHzUVtc=;
+	h=To:Cc:Date:Content-Type:In-Reply-To:From:Message-Id:References:
+	 Subject:Mime-Version; b=lIrL/GCa17P6LK8mR+w3QWMJn1xC/jAucDFv69qp+MtBvyKyyKCaxWBZzSkppdgMD5q6HuFmwR+RpH6SS3YbUFgIFwDv2Y9vP4KPOgC7snfXEZiEb+E8akIXkhc8uaQF5dzcfU+2wALQgFUHfB6VvfU94P5U+hx4HrbFiC8o0wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=fail smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=LVwcRj+5; arc=none smtp.client-ip=118.26.132.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1758729910;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=jE19ZwRQzDh9IGWXXAfbBmdAN7GngJTcbHfkNT0DRPw=;
+ b=LVwcRj+5rgzF6lju8WsleEwagEbyspJFf8iXOD8YZlTtOYLnJsY0nfr/YqxF3euiHuuNBM
+ 626NLAE1dTbSsRQdKlaTEVhFkNBp5bVpfGIKQNwPjIW/2a+Ij2NQqcpuvetvBZCcRqwGaL
+ LhOOm6fhmuOpCf9htTodRGp0nzwTXrWb9jXZQ2a+13Lo1+F67h1aKflxXs5GtHcXq5xtxu
+ G/JzoAn/PkMZp1dpihSYXnwsgM9PoFRJnQevkeXPfuGLWQXqMPcO4GRW7U8yO+/B6+G9JK
+ 96CefN/V0kVJbo/zMxj2NRCLy0lTkwBK6g5WEYeb3hozBOIw6CtCuXcNuT6pLg==
+Content-Transfer-Encoding: quoted-printable
+To: "Nix" <nix@esperi.org.uk>
+Cc: <linux-bcache@vger.kernel.org>
+Date: Thu, 25 Sep 2025 00:04:55 +0800
+Content-Type: text/plain; charset=UTF-8
+X-Mailer: Apple Mail (2.3826.700.81)
+In-Reply-To: <871poecngh.fsf@esperi.org.uk>
+Received: from smtpclient.apple ([120.245.64.75]) by smtp.feishu.cn with ESMTPS; Thu, 25 Sep 2025 00:05:07 +0800
+X-Original-From: Coly Li <colyli@fnnas.com>
+From: "Coly Li" <colyli@fnnas.com>
+Message-Id: <B7F547FD-BEE7-4910-BA69-5C6F2C9FE4E4@fnnas.com>
+References: <87a536e3b5.fsf@esperi.org.uk> <C155231F-E439-46E5-8AFE-502CB75F183C@coly.li> <871poecngh.fsf@esperi.org.uk>
+Subject: Re: gen wraparound warning: is this a problem?
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Lms-Return-Path: <lba+268d416b4+02d43c+vger.kernel.org+colyli@fnnas.com>
 
-From: Coly Li <colyli@fnnas.com>
+> 2025=E5=B9=B49=E6=9C=8810=E6=97=A5 23:54=EF=BC=8CNix <nix@esperi.org.uk> =
+=E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On 8 Sep 2025, Coly Li verbalised:
+>=20
+>>> 2025=E5=B9=B49=E6=9C=887=E6=97=A5 22:37=EF=BC=8CNix <nix@esperi.org.uk>=
+ =E5=86=99=E9=81=93=EF=BC=9A
+>>>=20
+>>> So, out of the blue, I just got this for my long-standing writearound
+>>> bcache setup (which covers my rootfs and $HOME, so I kind of care that
+>>> it keeps working):
+>=20
+> (Oh, this is kernel 6.15.6 -- but that's only since Jul 20th. Before
+> that, I was running 5.16.19 right back to April 2022, yes, I know... so
+> it's possible this wasn't touched by *5.16* and thus this is a bug that
+> was fixed long ago.)
 
-This patch removes documents of bcache discard sysfs interface, it
-drops discard related sections from,
-- Documentation/ABI/testing/sysfs-block-bcache
-- Documentation/admin-guide/bcache.rst
+IMHO this might not be a kernel bug, and just about time.
 
-Signed-off-by: Coly Li <colyli@fnnas.com>
----
- Documentation/ABI/testing/sysfs-block-bcache |  7 -------
- Documentation/admin-guide/bcache.rst         | 13 ++-----------
- 2 files changed, 2 insertions(+), 18 deletions(-)
+>=20
+>>> These both map to this in bch_inc_gen():
+>>>=20
+>>>    WARN_ON_ONCE(ca->set->need_gc > BUCKET_GC_GEN_MAX);
+>>=20
+>> It seems a bucket has not been touched by garbage collection for a long =
+time.
+>=20
+> Not too surprising: half-terabyte cache, and the xfs filesystems it
+> backs only has 1.5TiB of data on it and not all of it is accessed
+> frequently, and some is bypassed... so it can take a long time to gc
+> through the entire cache :) it took months just to fill it.
+>=20
 
-diff --git a/Documentation/ABI/testing/sysfs-block-bcache b/Documentation/ABI/testing/sysfs-block-bcache
-index 9e4bbc5d51fd..9344a657ca70 100644
---- a/Documentation/ABI/testing/sysfs-block-bcache
-+++ b/Documentation/ABI/testing/sysfs-block-bcache
-@@ -106,13 +106,6 @@ Description:
- 		will be discarded from the cache. Should not be turned off with
- 		writeback caching enabled.
- 
--What:		/sys/block/<disk>/bcache/discard
--Date:		November 2010
--Contact:	Kent Overstreet <kent.overstreet@gmail.com>
--Description:
--		For a cache, a boolean allowing discard/TRIM to be turned off
--		or back on if the device supports it.
--
- What:		/sys/block/<disk>/bcache/bucket_size
- Date:		November 2010
- Contact:	Kent Overstreet <kent.overstreet@gmail.com>
-diff --git a/Documentation/admin-guide/bcache.rst b/Documentation/admin-guide/bcache.rst
-index 6fdb495ac466..f71f349553e4 100644
---- a/Documentation/admin-guide/bcache.rst
-+++ b/Documentation/admin-guide/bcache.rst
-@@ -17,8 +17,7 @@ The latest bcache kernel code can be found from mainline Linux kernel:
- It's designed around the performance characteristics of SSDs - it only allocates
- in erase block sized buckets, and it uses a hybrid btree/log to track cached
- extents (which can be anywhere from a single sector to the bucket size). It's
--designed to avoid random writes at all costs; it fills up an erase block
--sequentially, then issues a discard before reusing it.
-+designed to avoid random writes at all costs.
- 
- Both writethrough and writeback caching are supported. Writeback defaults to
- off, but can be switched on and off arbitrarily at runtime. Bcache goes to
-@@ -618,19 +617,11 @@ bucket_size
- cache_replacement_policy
-   One of either lru, fifo or random.
- 
--discard
--  Boolean; if on a discard/TRIM will be issued to each bucket before it is
--  reused. Defaults to off, since SATA TRIM is an unqueued command (and thus
--  slow).
--
- freelist_percent
-   Size of the freelist as a percentage of nbuckets. Can be written to to
-   increase the number of buckets kept on the freelist, which lets you
-   artificially reduce the size of the cache at runtime. Mostly for testing
--  purposes (i.e. testing how different size caches affect your hit rate), but
--  since buckets are discarded when they move on to the freelist will also make
--  the SSD's garbage collection easier by effectively giving it more reserved
--  space.
-+  purposes (i.e. testing how different size caches affect your hit rate).
- 
- io_errors
-   Number of errors that have occurred, decayed by io_error_halflife.
--- 
-2.47.3
+Copied.
 
+
+
+>>> Is this something the admin needs to do something about? (And, if it's
+>>> not and bcache recovers smoothly, as so far it seems to -- though I
+>>> haven't tried to remount it since the warning -- why do we warn about
+>>> it at all?)
+>>=20
+>> I don=E2=80=99t know why this bucket is not touched by GC for such a lon=
+g
+>> time. It should not happen in my expectation.
+>=20
+> It's possible that *no* buckets were touched for a long time.
+>=20
+
+Yeah, I assumed for that.
+
+
+>> To make sure everything is safe, I would suggest to writeback all the
+>> dirty datas into backing device, detach the cache device, re-make the
+>> cache device and attach backing device to it again.
+>=20
+> There is no dirty data (writethrough cache)... and this is backing the
+> rootfs, among other things, so IIRC detaching is quite difficult and
+> panic-prone to do (it's been many years, but I believe you can't do it
+> while mounted?). I'll schedule it for the next reboot=E2=80=A6
+
+If there is no dirty data on the cache, the cache device can be safely deta=
+ched
+from backing device while the bcache device is mounted.
+
+echo 1 > /sys/block/<backing dev>/bcache/detach
+
+Hope it works.
+
+Thanks.
+
+Coly Li
 
