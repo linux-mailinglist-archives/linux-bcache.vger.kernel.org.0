@@ -1,137 +1,198 @@
-Return-Path: <linux-bcache+bounces-1209-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1210-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EDE0B9AD0C
-	for <lists+linux-bcache@lfdr.de>; Wed, 24 Sep 2025 18:07:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB53BBFC2C
+	for <lists+linux-bcache@lfdr.de>; Tue, 07 Oct 2025 01:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4B407AA8E9
-	for <lists+linux-bcache@lfdr.de>; Wed, 24 Sep 2025 16:05:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9519F3BEE87
+	for <lists+linux-bcache@lfdr.de>; Mon,  6 Oct 2025 23:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B02E2FD1C2;
-	Wed, 24 Sep 2025 16:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC42F18C02E;
+	Mon,  6 Oct 2025 23:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="LVwcRj+5"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G4QG5NRj"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from sg-1-19.ptr.blmpb.com (sg-1-19.ptr.blmpb.com [118.26.132.19])
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD1D1311AC
-	for <linux-bcache@vger.kernel.org>; Wed, 24 Sep 2025 16:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A039B661
+	for <linux-bcache@vger.kernel.org>; Mon,  6 Oct 2025 23:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758730038; cv=none; b=BmHm/BSPo184ke/qJnmetCeorp69YXS0jCrzw3Mvdc81O/3xLQ5/3DKMr5h0RH6W3h6sfFtqTknVQHOQcBhd/r/zVrS5QewPfmvAwB9NjvciBugvVNbetZr7pP8wJOXHBAfu2reIm8ujrtfAsuvCrGoQw91zX1HHlCjop662du4=
+	t=1759792747; cv=none; b=CWQ5nW1MlDEjYhcJ9hWbgQWqCqxTxx7HWYyFNFwJ6icrdLjwItPqrGGeI63ICOuQYpqFQY4EsyjkMNpYlhDxRQzIFuoadKplcIFxkFnb+zA7EB9MGpDdNZNhrWtc5r7leI1f58qlW57ELT6nDKl//zwYJADQ4wOLHNbFI5hWryA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758730038; c=relaxed/simple;
-	bh=XBCgSckQt7IM22vJ5De5Ijl5O+kcIJnZGJBikHzUVtc=;
-	h=To:Cc:Date:Content-Type:In-Reply-To:From:Message-Id:References:
-	 Subject:Mime-Version; b=lIrL/GCa17P6LK8mR+w3QWMJn1xC/jAucDFv69qp+MtBvyKyyKCaxWBZzSkppdgMD5q6HuFmwR+RpH6SS3YbUFgIFwDv2Y9vP4KPOgC7snfXEZiEb+E8akIXkhc8uaQF5dzcfU+2wALQgFUHfB6VvfU94P5U+hx4HrbFiC8o0wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=fail smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=LVwcRj+5; arc=none smtp.client-ip=118.26.132.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fnnas.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1758729910;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=jE19ZwRQzDh9IGWXXAfbBmdAN7GngJTcbHfkNT0DRPw=;
- b=LVwcRj+5rgzF6lju8WsleEwagEbyspJFf8iXOD8YZlTtOYLnJsY0nfr/YqxF3euiHuuNBM
- 626NLAE1dTbSsRQdKlaTEVhFkNBp5bVpfGIKQNwPjIW/2a+Ij2NQqcpuvetvBZCcRqwGaL
- LhOOm6fhmuOpCf9htTodRGp0nzwTXrWb9jXZQ2a+13Lo1+F67h1aKflxXs5GtHcXq5xtxu
- G/JzoAn/PkMZp1dpihSYXnwsgM9PoFRJnQevkeXPfuGLWQXqMPcO4GRW7U8yO+/B6+G9JK
- 96CefN/V0kVJbo/zMxj2NRCLy0lTkwBK6g5WEYeb3hozBOIw6CtCuXcNuT6pLg==
-Content-Transfer-Encoding: quoted-printable
-To: "Nix" <nix@esperi.org.uk>
-Cc: <linux-bcache@vger.kernel.org>
-Date: Thu, 25 Sep 2025 00:04:55 +0800
-Content-Type: text/plain; charset=UTF-8
-X-Mailer: Apple Mail (2.3826.700.81)
-In-Reply-To: <871poecngh.fsf@esperi.org.uk>
-Received: from smtpclient.apple ([120.245.64.75]) by smtp.feishu.cn with ESMTPS; Thu, 25 Sep 2025 00:05:07 +0800
-X-Original-From: Coly Li <colyli@fnnas.com>
-From: "Coly Li" <colyli@fnnas.com>
-Message-Id: <B7F547FD-BEE7-4910-BA69-5C6F2C9FE4E4@fnnas.com>
-References: <87a536e3b5.fsf@esperi.org.uk> <C155231F-E439-46E5-8AFE-502CB75F183C@coly.li> <871poecngh.fsf@esperi.org.uk>
-Subject: Re: gen wraparound warning: is this a problem?
+	s=arc-20240116; t=1759792747; c=relaxed/simple;
+	bh=vM3gR2lTp4Oe3so2Fi9UTw6e0Q6vUpcZr1VOn05eD4U=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=dxA6GlDR73Vc4CvwHe438V70k4tTJghY1ULINUq0Qs8AsUROSE2dpJjQ+20LjvaTmuvCu+lmpA1QOlMeDB/NCj0gwjz4oNpHc4A6k1OFwPIqnkYFnhuco6Jyq0DtPIljfNhLe6lyHU+3YkOHzcweRkfCa7chjFe/f8z6/obcDvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--robertpang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G4QG5NRj; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--robertpang.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-78427dae77eso4558007b3a.3
+        for <linux-bcache@vger.kernel.org>; Mon, 06 Oct 2025 16:19:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759792744; x=1760397544; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4ICaunvcTNzioB2csrgVGJSTIahocAF7LkiUszCDNWo=;
+        b=G4QG5NRj0yvfOyJgbjoOF1Cxf5GU/Zt8LADpnnSB6f9u8IYt3xMGVXFLFsgTwsZojo
+         fyq7g6JKEGiq6nYEEXh0ioZC+2VXN3tHBRHze+kTUoZDgNpiJx4ds13MloT7z+5FuZUQ
+         DkdIAKDqpVoJ14evjF5e+DG0QOv6Isz9OpGfs4uUY21ZlE9Z2Ul6y7kNLlHl7/UNKNGD
+         +eJk4v61wsKmYHz8Shoh12PW5MOUyM2mTotkSK4Xb4BAARJDO0GN5Mgxc0MgquFtF9dU
+         t/ZTQm91UjXq8jefi6nTjyUWxtJuOLWHGx2CVyyRLL5zwkTpFKljeh9Af0tacDg+tJ1H
+         Hwjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759792744; x=1760397544;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4ICaunvcTNzioB2csrgVGJSTIahocAF7LkiUszCDNWo=;
+        b=lW8skRGri3hDadG06nFuzNRazJMcZv3nR5ZexNsVyqpiQp0nIvwbL7LUjhG6cOqR9f
+         AkdkQp13ihZI03+4dZU0wtp5/X02nRTDvv5nvi7BvWIHZk+NXK6F4AymRTAseWc7Dw1o
+         R4vEGbwOJmnzBhIQRoH1spDnoR7+QzRBj3oAXxSg3kdA7H1PdaU7mDiFZLL5Qi7eBF3f
+         qYZn3eVRcUgoIaua0+p54Q6gC+ggg672J/w5KV17bY/NtVWrUviIq/tTwVAOqSBN0Xp7
+         cVZ2w8tM6Dk3aV57S8V2rkxjL61+Ed0+7R9rUaJKH7+eE6tFVlv3arVUXSPKruwMPtDu
+         aDWg==
+X-Gm-Message-State: AOJu0YyESX6/UCuV1pywm865O9dNnuE5xccsKsDohQZobv2cboL2Wi/5
+	zTrnSiCNoeqsPhL/eF2JhlD0PUz/HrIri9yRtgaoBHd0ph9Zz3B3U93b+Ep6JQnEGArBVY7UB1F
+	2xMiEcI5b5xOYWQUVnBkK/g==
+X-Google-Smtp-Source: AGHT+IGxVmZG4v8SFhHKuWnMm6Yo6Tgn6NgC8qM5J6B9M55B98D7V3HoQTkoVvUFGa+qqd9ie/S+4z5cQ6AJQ/mN
+X-Received: from pgnq10.prod.google.com ([2002:a63:8c4a:0:b0:b55:1545:5a8d])
+ (user=robertpang job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:6a09:b0:2f6:14c6:95ea with SMTP id adf61e73a8af0-32b61e78f14mr20281500637.20.1759792744504;
+ Mon, 06 Oct 2025 16:19:04 -0700 (PDT)
+Date: Mon,  6 Oct 2025 16:18:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Lms-Return-Path: <lba+268d416b4+02d43c+vger.kernel.org+colyli@fnnas.com>
+X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
+Message-ID: <20251006231845.3082485-2-robertpang@google.com>
+Subject: [PATCH] bcache: add "clock" cache replacement policy
+From: Robert Pang <robertpang@google.com>
+To: Coly Li <colyli@fnnas.com>, Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Robert Pang <robertpang@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-> 2025=E5=B9=B49=E6=9C=8810=E6=97=A5 23:54=EF=BC=8CNix <nix@esperi.org.uk> =
-=E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On 8 Sep 2025, Coly Li verbalised:
->=20
->>> 2025=E5=B9=B49=E6=9C=887=E6=97=A5 22:37=EF=BC=8CNix <nix@esperi.org.uk>=
- =E5=86=99=E9=81=93=EF=BC=9A
->>>=20
->>> So, out of the blue, I just got this for my long-standing writearound
->>> bcache setup (which covers my rootfs and $HOME, so I kind of care that
->>> it keeps working):
->=20
-> (Oh, this is kernel 6.15.6 -- but that's only since Jul 20th. Before
-> that, I was running 5.16.19 right back to April 2022, yes, I know... so
-> it's possible this wasn't touched by *5.16* and thus this is a bug that
-> was fixed long ago.)
+This new policy extends the FIFO policy to approximate the classic clock policy
+(O(n) time complexity) by considering bucket priority, similar to the LRU
+policy.
 
-IMHO this might not be a kernel bug, and just about time.
+This policy addresses the high IO latency (1-2 seconds) experienced on
+multi-terabyte cache devices when the free list is empty. The default LRU
+policy's O(n log n) complexity for sorting priorities for the entire bucket
+list causes this delay.
 
->=20
->>> These both map to this in bch_inc_gen():
->>>=20
->>>    WARN_ON_ONCE(ca->set->need_gc > BUCKET_GC_GEN_MAX);
->>=20
->> It seems a bucket has not been touched by garbage collection for a long =
-time.
->=20
-> Not too surprising: half-terabyte cache, and the xfs filesystems it
-> backs only has 1.5TiB of data on it and not all of it is accessed
-> frequently, and some is bypassed... so it can take a long time to gc
-> through the entire cache :) it took months just to fill it.
->=20
+Signed-off-by: Robert Pang <robertpang@google.com>
+---
+ drivers/md/bcache/alloc.c         | 34 +++++++++++++++++++++++++++----
+ drivers/md/bcache/bcache_ondisk.h |  1 +
+ drivers/md/bcache/sysfs.c         |  1 +
+ 3 files changed, 32 insertions(+), 4 deletions(-)
 
-Copied.
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index 48ce750bf70a..c65c48eab169 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -69,7 +69,8 @@
+ #include <linux/random.h>
+ #include <trace/events/bcache.h>
+ 
+-#define MAX_OPEN_BUCKETS 128
++#define MAX_OPEN_BUCKETS	128
++#define CHECK_PRIO_SLICES	16
+ 
+ /* Bucket heap / gen */
+ 
+@@ -211,19 +212,41 @@ static void invalidate_buckets_lru(struct cache *ca)
+ 	}
+ }
+ 
+-static void invalidate_buckets_fifo(struct cache *ca)
++/*
++ * When check_prio is true, this FIFO policy examines the priority of the
++ * buckets and invalidates only the ones below a threshold in the priority
++ * ladder. As it goes, the threshold will be raised if not enough buckets are
++ * invalidated. Empty buckets are also invalidated. This evaulation resembles
++ * the LRU policy, and is used to approximate the classic clock-sweep cache
++ * replacement algorithm.
++ */
++static void invalidate_buckets_fifo(struct cache *ca, bool check_prio)
+ {
+ 	struct bucket *b;
+ 	size_t checked = 0;
++	size_t check_quota = 0;
++	uint16_t prio_threshold = ca->set->min_prio;
+ 
+ 	while (!fifo_full(&ca->free_inc)) {
+ 		if (ca->fifo_last_bucket <  ca->sb.first_bucket ||
+ 		    ca->fifo_last_bucket >= ca->sb.nbuckets)
+ 			ca->fifo_last_bucket = ca->sb.first_bucket;
+ 
++		if (check_prio && checked >= check_quota) {
++			BUG_ON(ca->set->min_prio > INITIAL_PRIO);
++			prio_threshold +=
++				DIV_ROUND_UP(INITIAL_PRIO - ca->set->min_prio,
++					     CHECK_PRIO_SLICES);
++			check_quota += DIV_ROUND_UP(ca->sb.nbuckets,
++						    CHECK_PRIO_SLICES);
++		}
++
+ 		b = ca->buckets + ca->fifo_last_bucket++;
+ 
+-		if (bch_can_invalidate_bucket(ca, b))
++		if (bch_can_invalidate_bucket(ca, b) &&
++		    (!check_prio ||
++		     b->prio <= prio_threshold ||
++		     !GC_SECTORS_USED(b)))
+ 			bch_invalidate_one_bucket(ca, b);
+ 
+ 		if (++checked >= ca->sb.nbuckets) {
+@@ -269,11 +292,14 @@ static void invalidate_buckets(struct cache *ca)
+ 		invalidate_buckets_lru(ca);
+ 		break;
+ 	case CACHE_REPLACEMENT_FIFO:
+-		invalidate_buckets_fifo(ca);
++		invalidate_buckets_fifo(ca, false);
+ 		break;
+ 	case CACHE_REPLACEMENT_RANDOM:
+ 		invalidate_buckets_random(ca);
+ 		break;
++	case CACHE_REPLACEMENT_CLOCK:
++		invalidate_buckets_fifo(ca, true);
++		break;
+ 	}
+ }
+ 
+diff --git a/drivers/md/bcache/bcache_ondisk.h b/drivers/md/bcache/bcache_ondisk.h
+index 6620a7f8fffc..d45794e01fe1 100644
+--- a/drivers/md/bcache/bcache_ondisk.h
++++ b/drivers/md/bcache/bcache_ondisk.h
+@@ -288,6 +288,7 @@ BITMASK(CACHE_REPLACEMENT,		struct cache_sb, flags, 2, 3);
+ #define CACHE_REPLACEMENT_LRU		0U
+ #define CACHE_REPLACEMENT_FIFO		1U
+ #define CACHE_REPLACEMENT_RANDOM	2U
++#define CACHE_REPLACEMENT_CLOCK		3U
+ 
+ BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
+ #define CACHE_MODE_WRITETHROUGH		0U
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 826b14cae4e5..c8617bad0648 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -45,6 +45,7 @@ static const char * const cache_replacement_policies[] = {
+ 	"lru",
+ 	"fifo",
+ 	"random",
++	"clock",
+ 	NULL
+ };
+ 
+-- 
+2.51.0.710.ga91ca5db03-goog
 
-
-
->>> Is this something the admin needs to do something about? (And, if it's
->>> not and bcache recovers smoothly, as so far it seems to -- though I
->>> haven't tried to remount it since the warning -- why do we warn about
->>> it at all?)
->>=20
->> I don=E2=80=99t know why this bucket is not touched by GC for such a lon=
-g
->> time. It should not happen in my expectation.
->=20
-> It's possible that *no* buckets were touched for a long time.
->=20
-
-Yeah, I assumed for that.
-
-
->> To make sure everything is safe, I would suggest to writeback all the
->> dirty datas into backing device, detach the cache device, re-make the
->> cache device and attach backing device to it again.
->=20
-> There is no dirty data (writethrough cache)... and this is backing the
-> rootfs, among other things, so IIRC detaching is quite difficult and
-> panic-prone to do (it's been many years, but I believe you can't do it
-> while mounted?). I'll schedule it for the next reboot=E2=80=A6
-
-If there is no dirty data on the cache, the cache device can be safely deta=
-ched
-from backing device while the bcache device is mounted.
-
-echo 1 > /sys/block/<backing dev>/bcache/detach
-
-Hope it works.
-
-Thanks.
-
-Coly Li
 
