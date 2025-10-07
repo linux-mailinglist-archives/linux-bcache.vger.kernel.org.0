@@ -1,40 +1,39 @@
-Return-Path: <linux-bcache+bounces-1212-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1213-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746E2BC0CEA
-	for <lists+linux-bcache@lfdr.de>; Tue, 07 Oct 2025 11:03:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62925BC0DAE
+	for <lists+linux-bcache@lfdr.de>; Tue, 07 Oct 2025 11:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 224D63A3A11
-	for <lists+linux-bcache@lfdr.de>; Tue,  7 Oct 2025 09:03:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3110B1896540
+	for <lists+linux-bcache@lfdr.de>; Tue,  7 Oct 2025 09:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996A82C3258;
-	Tue,  7 Oct 2025 09:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739AA256C84;
+	Tue,  7 Oct 2025 09:27:42 +0000 (UTC)
 X-Original-To: linux-bcache@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8068B1891AB
-	for <linux-bcache@vger.kernel.org>; Tue,  7 Oct 2025 09:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8D8253F13
+	for <linux-bcache@vger.kernel.org>; Tue,  7 Oct 2025 09:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759827782; cv=none; b=elBVCorY9wqDV+NMtNakcs+D3tw4T2PoVGXqqTXVVss3lpCcobPL1H/Wjmcp6qZT4Z8jP3ZtmlFcu8uBsVYd+ujMRRf1N4ROUrzzta1t2h5OLOmqqYmcqG23SeMYexUavKgwD9ES3EFWrS8hJIZt2g6JQR0Sp/4xYsZoIKITydc=
+	t=1759829262; cv=none; b=VvGdtpAkiEAdCI/LAmPO2TXUgI2An+nRhNLWmZ/6DsfMiu/GbntlqPGv7N2tLTnNeyOe5enIdy1woQ10YIFxkwaUzOxmGjhcLZSRc61vW2FmuP1tMQvA7e1srFRgaPrjX4YT8A2W9dI8yQ6e0MHiQHhsKhCy133z4XIoKtVXbhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759827782; c=relaxed/simple;
-	bh=am8F0jhQ86R2uVPYT2W+IWbx6NwhsYoO67B+qZdE5fg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GeomVRwiYL/Or2hc+9I1dKN+SqTiRc2SvvEOQ2fv5MLtXNwT6OGsJjqPyd02xI8A4CB21Lfowxsnemehh1Unem4tvkgDII7cH9nlGz5lsnm0wrBtMR4Ce2hAo6Wbphlr0sS4eCmJALC7bgX8N00iswOHs9BcMBLP6HVX7nm+Lsw=
+	s=arc-20240116; t=1759829262; c=relaxed/simple;
+	bh=fmeSs+QEP+BD0poKfLDAcJ1JL/pa/5yBR6e8+n7nzBU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xbrr5pbd0CTLnoz4H5Z7nLH9SGX5ZMp+XT6PCk66HMeKpArvSCtrQFtT4iKXIb8T6y/q4/4wzTi35EuwR4mqNskjvrkwkGUQi7dzGx3AY+gaJR3qlAj1n5ekJv9LSOtZWLWyvYGZ6wxsA8OBf1csBAYzrNCS1aM1K13tHXqKBnE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 247F1C4CEF1;
-	Tue,  7 Oct 2025 09:02:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1EBFC4CEF1;
+	Tue,  7 Oct 2025 09:27:40 +0000 (UTC)
 From: colyli@fnnas.com
 To: linux-bcache@vger.kernel.org
-Cc: Coly Li <colyli@fnnas.com>,
-	Zhou Jifeng <zhoujifeng@kylinos.com.cn>
-Subject: [PATCH] bcache: avoid redundant access RB tree in read_dirty
-Date: Tue,  7 Oct 2025 17:02:32 +0800
-Message-ID: <20251007090232.30386-1-colyli@fnnas.com>
+Cc: Coly Li <colyli@fnnas.com>
+Subject: [PATCH] bcache: improve writeback throughput when frontend I/O is idle
+Date: Tue,  7 Oct 2025 17:27:28 +0800
+Message-ID: <20251007092728.30534-1-colyli@fnnas.com>
 X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
@@ -46,278 +45,189 @@ Content-Transfer-Encoding: 8bit
 
 From: Coly Li <colyli@fnnas.com>
 
-In bcache writeback procedure, scanned dirty keys are stored in a
-red-black tree, it is dc->writeback_keys.freelist, and can be indexed by
-dc->writeback_keys.keys. Inside red_dirty() one dirty key is fetched by
-calling bch_keybuf_next() in each while-loop until one of the following
-situations meets,
-- The fetched keys number reaches MAX_WRTEBACKS_IN_PASS.
-- The total size of the fetched keys reaches MAX_WRITESIZE_IN_PASS.
-- All nodes in the red-black tree are iterated.
+Currently in order to write dirty blocks to backend device in LBA order
+for better performance, inside write_dirty() the I/O is issued only when
+its sequence matches current expected sequence. Otherwise the kworker
+will repeat check-wait-woken loop until the sequence number matches.
 
-The above process is reasonable, but calling bch_keybuf_next() in each
-while-loop is inefficient. Let me explain why. Let's see its code,
-2767 struct keybuf_key *bch_keybuf_next(struct keybuf *buf)
-2768 {
-2769         struct keybuf_key *w;
-2770
-2771         spin_lock(&buf->lock);
-2772
-2773         w = RB_FIRST(&buf->keys, struct keybuf_key, node);
-2774
-2775         while (w && w->private)
-2776                 w = RB_NEXT(w, node);
-2777
-2778         if (w)
-2779                 w->private = ERR_PTR(-EINTR);
-2780
-2781         spin_unlock(&buf->lock);
-2782         return w;
-2783 }
+When frontend I/O is idle, the writeback rate is set to INT_MAX, but the
+writeback thoughput doesn't increase much. There are two reasons,
+- The check-wait-woken loop is inefficient.
+- I/O depth on backing device is low.
 
-Every time when bch_keybuf_next() is called, the red-black tree is
-iterated from start until a node doesn't have w->private value. Then
-this node's w->private is set by ERR_PTR(-EINTR) and pointer of the
-node's holder (struct keybuf_key) is returned back to read_dirty().
+To improve the writeback throughput, this patch does two things,
+- Remove the check-wait-woken cycle from write_dirty()
+  In read_dirty(), the read dirty bios are issued in LBA order and they
+  are not completed in issue orders. The check-wait-woken loop makes
+  sure these bios are ordered in LBA order again and issued to backing
+  device, but indeed it is unncessary now. When all the bios are issued
+  in a reasonable time windows, they can be properly merged or sorted by
+  LBA address. mq-deadline does such stuff perfectly in benchmark, and
+  bfq is just a bit less than mq-deadline, but all are much better than
+  current check-wait-woken loops.
 
-In worst case, if there are 500 nodes in this red-black tree, nodes to
-be iterated in each calling of bch_keybuf_next() in read_dirty() will
-be: 1, 2, 3, 4, ......, 498, 499, 500. The total nodes iteration times
-are 125250. If all the nodes can be fetched from read_dirty() once, the
-iteration times are only 500, it is about 0.3% of the original number.
+- Read more dirty keys when frontend I/O is idle
+  Define WRITEBACKS_IN_PASS (5), MAX_WRITEBACKS_IN_PASS (30) for write-
+  back dirty keys in each pass, and define WRITESIZE_IN_PASS (5000) and
+  MAX_WRITESIZE_IN_PASS (30000) for total writeback data size in each
+  pass. When frontend I/O is idle, new values MAX_WRITEBACKS_IN_PASS and
+  MAX_WRITESIZE_IN_PASS are used to issue more read-dirty bios on cache
+  device and in true issue more writeback bios on backing device.
 
-This patch adds new member dump_keys[KEYBUF_NR], it is used to store
-one-time fetched dirty keys from the red-black trees. All the keys in
-dump_keys[] array is in their original iterated order. A new function
-bch_keybuf_dump() is used to fetch all ndoes from the red-black tree and
-store the selected keys in dump_keys[]. In side read_dirty(), this new
-function is called before entering while-loop, and bch_keybuf_next() is
-not used anymore. Now the red-black tree only be iterated once, also the
-spinlock buf->lock is only acquired once.
+On an 8 component disks md raid5 array, after applying this patch and
+when there is no frontend I/O for a while, the writeback throughput on
+backing device increases from 4MiB/s to 8MiB/s (because all cached dirty
+blocks are 4KiB), queue depth on the md raid5 array roughly increases
+from 21 to 55, and on each component disk the queue depth roughly
+increases from 1.5 to 4.5.
 
-For the situation that not all nodes inside dump_keys[] are handled, the
-non-handled nodes should be fetched next time when read_dirty() is
-called again. So inside the red-black tree, w->private is not set by
-ERR_PTR(-EINTR) when the node is fetched into dump_keys[]. It is set in
-write_dirty_finish(), that means this node is marked as handled when the
-dirty data of the key is written backed to backing device. This is a
-change should be noticed.
+Thanks to the developers of mq-deadline and bfq schedulers in these
+years.
 
-Inside read_dirty() after closure_sync() returned, it means all write-
-back bios are completed, then patch will check whether all fetched nodes
-are written back. Because items in dump_keys[] array are exactly equal
-to nodes in the red-black tree, if all the keys in dump_keys[] are
-handled, the red-black tree is reset directly by array_allocator_init().
-Only when unexpected condition happens and there are some items inside
-dump_keys[] array not handled, bch_keybuf_del() is called to delete the
-written dirty keys one by one from the red-black tree.
-
-In practice, testing shows most of the time all items in dump_keys[] are
-all handled promptly, the red-black tree is directly reset.
-
-Answers to some potential concerns:
-- Memory barrier issue for dc->writeback_keys.hangled.
-    This atomic_t value is increased inside semaphore dc->in_flight in
-  write_dirty_finish(). Calling up(&dc->in_flight) has implicit memory
-  barrier inside, no need to redundant explicit memory barrier call. 
-- Concurrent access to the red-black tree in dc->writeback_keys.freelist
-    Access to dc->writeback_keys.freelist is guarded by
-  dc->writeback_keys.lock, it is safe for concurrent access on it.
-  Indeed before returning from read_dirty(), no one else will access
-  this red-black tree (no matter adding new nodes or setting w->private)
-  it is also safe to check w->private inside read_dirty() without
-  holding dc->writeback_keys.lock after closure_sync() returned. 
-
-The idea was inspired by code review comments of previous patches from
-Zhou Jifeng.
-
-
-Signed-off-by: Coly Li <colyli@fnnas.com> 
-Cc: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+Signed-off-by: Coly Li <colyli@fnnas.com>
 ---
- drivers/md/bcache/bcache.h    |  2 ++
- drivers/md/bcache/btree.c     | 28 ++++++++++++++++++++++
- drivers/md/bcache/btree.h     |  2 ++
- drivers/md/bcache/writeback.c | 45 +++++++++++++++++++++++++----------
- 4 files changed, 65 insertions(+), 12 deletions(-)
+ drivers/md/bcache/writeback.c | 57 ++++++++---------------------------
+ drivers/md/bcache/writeback.h |  6 ++--
+ 2 files changed, 17 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 8ccacba85547..06880e2d5b1d 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -240,11 +240,13 @@ struct keybuf {
- 	 */
- 	struct bkey		start;
- 	struct bkey		end;
-+	atomic_t		handled;
- 
- 	struct rb_root		keys;
- 
- #define KEYBUF_NR		500
- 	DECLARE_ARRAY_ALLOCATOR(struct keybuf_key, freelist, KEYBUF_NR);
-+	struct keybuf_key	*dump_keys[KEYBUF_NR];
- };
- 
- struct bcache_device {
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index bdb90833bff0..e107d0f05ee4 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -2763,6 +2763,34 @@ bool bch_keybuf_check_overlapping(struct keybuf *buf, struct bkey *start,
- 	return ret;
- }
- 
-+int bch_keybuf_dump(struct keybuf *buf, struct keybuf_key *dump_list[],
-+		    int dump_list_len)
-+{
-+	struct keybuf_key *w;
-+	int i = 0;
-+
-+	memset(dump_list, 0, dump_list_len * sizeof(struct keybuf_key *));
-+
-+	spin_lock(&buf->lock);
-+
-+	w = RB_FIRST(&buf->keys, struct keybuf_key, node);
-+
-+	while (w && i < dump_list_len) {
-+		if (w->private) {
-+			w = RB_NEXT(w, node);
-+			continue;
-+		}
-+
-+		dump_list[i++] = w;
-+		w->private = ERR_PTR(-EINTR);
-+		w = RB_NEXT(w, node);
-+	}
-+
-+	spin_unlock(&buf->lock);
-+
-+	return i;
-+}
-+
- struct keybuf_key *bch_keybuf_next(struct keybuf *buf)
- {
- 	struct keybuf_key *w;
-diff --git a/drivers/md/bcache/btree.h b/drivers/md/bcache/btree.h
-index 45d64b54115a..65d81a7b5ac6 100644
---- a/drivers/md/bcache/btree.h
-+++ b/drivers/md/bcache/btree.h
-@@ -413,5 +413,7 @@ struct keybuf_key *bch_keybuf_next_rescan(struct cache_set *c,
- 					  struct keybuf *buf,
- 					  struct bkey *end,
- 					  keybuf_pred_fn *pred);
-+int bch_keybuf_dump(struct keybuf *buf, struct keybuf_key *dump_list[],
-+		   int dump_list_len);
- void bch_update_bucket_in_use(struct cache_set *c, struct gc_stat *stats);
- #endif
 diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index 59cd0c3f8ce9..e6c548e83ff1 100644
+index e6c548e83ff1..20edde7152bf 100644
 --- a/drivers/md/bcache/writeback.c
 +++ b/drivers/md/bcache/writeback.c
-@@ -381,7 +381,8 @@ static CLOSURE_CALLBACK(write_dirty_finish)
- 				: &dc->disk.c->writeback_keys_done);
+@@ -322,7 +322,6 @@ static unsigned int writeback_delay(struct cached_dev *dc,
+ struct dirty_io {
+ 	struct closure		cl;
+ 	struct cached_dev	*dc;
+-	uint16_t		sequence;
+ 	struct bio		bio;
+ };
+ 
+@@ -405,27 +404,6 @@ static CLOSURE_CALLBACK(write_dirty)
+ {
+ 	closure_type(io, struct dirty_io, cl);
+ 	struct keybuf_key *w = io->bio.bi_private;
+-	struct cached_dev *dc = io->dc;
+-
+-	uint16_t next_sequence;
+-
+-	if (atomic_read(&dc->writeback_sequence_next) != io->sequence) {
+-		/* Not our turn to write; wait for a write to complete */
+-		closure_wait(&dc->writeback_ordering_wait, cl);
+-
+-		if (atomic_read(&dc->writeback_sequence_next) == io->sequence) {
+-			/*
+-			 * Edge case-- it happened in indeterminate order
+-			 * relative to when we were added to wait list..
+-			 */
+-			closure_wake_up(&dc->writeback_ordering_wait);
+-		}
+-
+-		continue_at(cl, write_dirty, io->dc->writeback_write_wq);
+-		return;
+-	}
+-
+-	next_sequence = io->sequence + 1;
+ 
+ 	/*
+ 	 * IO errors are signalled using the dirty bit on the key.
+@@ -444,9 +422,6 @@ static CLOSURE_CALLBACK(write_dirty)
+ 		closure_bio_submit(io->dc->disk.c, &io->bio, cl);
  	}
  
--	bch_keybuf_del(&dc->writeback_keys, w);
-+	w->private = ERR_PTR(-EINTR);
-+	atomic_inc(&dc->writeback_keys.handled);
- 	up(&dc->in_flight);
+-	atomic_set(&dc->writeback_sequence_next, next_sequence);
+-	closure_wake_up(&dc->writeback_ordering_wait);
+-
+ 	continue_at(cl, write_dirty_finish, io->dc->writeback_write_wq);
+ }
  
- 	closure_return_with_destructor(cl, dirty_io_destructor);
-@@ -474,8 +475,10 @@ static CLOSURE_CALLBACK(read_dirty_submit)
- static void read_dirty(struct cached_dev *dc)
- {
- 	unsigned int delay = 0;
--	struct keybuf_key *next, *keys[MAX_WRITEBACKS_IN_PASS], *w;
-+	struct keybuf_key *keys[MAX_WRITEBACKS_IN_PASS], *w;
-+	struct keybuf_key **dump_keys;
- 	size_t size;
-+	int checked, dump_nr;
+@@ -482,10 +457,7 @@ static void read_dirty(struct cached_dev *dc)
  	int nk, i;
  	struct dirty_io *io;
  	struct closure cl;
-@@ -489,17 +492,22 @@ static void read_dirty(struct cached_dev *dc)
- 	 * XXX: if we error, background writeback just spins. Should use some
- 	 * mempools.
- 	 */
--
--	next = bch_keybuf_next(&dc->writeback_keys);
-+	dump_nr = bch_keybuf_dump(&dc->writeback_keys,
-+			dc->writeback_keys.dump_keys,
-+			ARRAY_SIZE(dc->writeback_keys.dump_keys));
-+	dump_keys = dc->writeback_keys.dump_keys;
-+	atomic_set(&dc->writeback_keys.handled, 0);
-+	checked = 0;
+-	uint16_t sequence = 0;
  
+-	BUG_ON(!llist_empty(&dc->writeback_ordering_wait.list));
+-	atomic_set(&dc->writeback_sequence_next, sequence);
+ 	closure_init_stack(&cl);
+ 
+ 	/*
+@@ -502,6 +474,9 @@ static void read_dirty(struct cached_dev *dc)
  	while (!kthread_should_stop() &&
  	       !test_bit(CACHE_SET_IO_DISABLE, &dc->disk.c->flags) &&
--	       next) {
-+	       (checked < dump_nr)) {
+ 	       (checked < dump_nr)) {
++		size_t max_size_in_pass;
++		int max_writebacks_in_pass;
++
  		size = 0;
  		nk = 0;
  
- 		do {
--			BUG_ON(ptr_stale(dc->disk.c, &next->key, 0));
-+			w = dump_keys[checked];
-+			BUG_ON(ptr_stale(dc->disk.c, &w->key, 0));
+@@ -509,31 +484,26 @@ static void read_dirty(struct cached_dev *dc)
+ 			w = dump_keys[checked];
+ 			BUG_ON(ptr_stale(dc->disk.c, &w->key, 0));
  
++			if (!atomic_read(&dc->disk.c->at_max_writeback_rate)) {
++				max_writebacks_in_pass = WRITEBACKS_IN_PASS;
++				max_size_in_pass = WRITESIZE_IN_PASS;
++			} else {
++				max_writebacks_in_pass = MAX_WRITEBACKS_IN_PASS;
++				max_size_in_pass = MAX_WRITESIZE_IN_PASS;
++			}
++
  			/*
  			 * Don't combine too many operations, even if they
-@@ -525,12 +533,12 @@ static void read_dirty(struct cached_dev *dc)
- 			 * command queueing.
+ 			 * are all small.
  			 */
- 			if ((nk != 0) && bkey_cmp(&keys[nk-1]->key,
--						&START_KEY(&next->key)))
-+						&START_KEY(&w->key)))
+-			if (nk >= MAX_WRITEBACKS_IN_PASS)
++			if (nk >= max_writebacks_in_pass)
  				break;
  
--			size += KEY_SIZE(&next->key);
--			keys[nk++] = next;
--		} while ((next = bch_keybuf_next(&dc->writeback_keys)));
-+			size += KEY_SIZE(&w->key);
-+			keys[nk++] = w;
-+		} while (++checked < dump_nr);
- 
- 		/* Now we have gathered a set of 1..5 keys to write back. */
- 		for (i = 0; i < nk; i++) {
-@@ -581,7 +589,6 @@ static void read_dirty(struct cached_dev *dc)
- err_free:
- 		kfree(w->private);
- err:
--		bch_keybuf_del(&dc->writeback_keys, w);
- 	}
- 
- 	/*
-@@ -589,6 +596,21 @@ static void read_dirty(struct cached_dev *dc)
- 	 * freed) before refilling again
- 	 */
- 	closure_sync(&cl);
-+
-+	if (atomic_read(&dc->writeback_keys.handled) == dump_nr) {
-+		spin_lock(&dc->writeback_keys.lock);
-+		dc->writeback_keys.keys = RB_ROOT;
-+		array_allocator_init(&dc->writeback_keys.freelist);
-+		spin_unlock(&dc->writeback_keys.lock);
-+	} else {
-+		for (i = 0; i < dump_nr; i++) {
-+			w = dump_keys[i];
-+			if (!w->private)
-+				continue;
-+			bch_keybuf_del(&dc->writeback_keys, w);
-+		}
-+	}
-+	atomic_set(&dc->writeback_keys.handled, 0);
- }
- 
- /* Scan for dirty data */
-@@ -820,7 +842,6 @@ static int bch_writeback_thread(void *arg)
- 
- 		if (searched_full_index) {
- 			unsigned int delay = dc->writeback_delay * HZ;
+ 			/*
+ 			 * If the current operation is very large, don't
+ 			 * further combine operations.
+ 			 */
+-			if (size >= MAX_WRITESIZE_IN_PASS)
+-				break;
 -
- 			while (delay &&
- 			       !kthread_should_stop() &&
- 			       !test_bit(CACHE_SET_IO_DISABLE, &c->flags) &&
+-			/*
+-			 * Operations are only eligible to be combined
+-			 * if they are contiguous.
+-			 *
+-			 * TODO: add a heuristic willing to fire a
+-			 * certain amount of non-contiguous IO per pass,
+-			 * so that we can benefit from backing device
+-			 * command queueing.
+-			 */
+-			if ((nk != 0) && bkey_cmp(&keys[nk-1]->key,
+-						&START_KEY(&w->key)))
++			if (size >= max_size_in_pass)
+ 				break;
+ 
+ 			size += KEY_SIZE(&w->key);
+@@ -552,7 +522,6 @@ static void read_dirty(struct cached_dev *dc)
+ 
+ 			w->private	= io;
+ 			io->dc		= dc;
+-			io->sequence    = sequence++;
+ 
+ 			dirty_init(w);
+ 			io->bio.bi_opf = REQ_OP_READ;
+diff --git a/drivers/md/bcache/writeback.h b/drivers/md/bcache/writeback.h
+index 31df716951f6..fa7582df1ac2 100644
+--- a/drivers/md/bcache/writeback.h
++++ b/drivers/md/bcache/writeback.h
+@@ -8,8 +8,10 @@
+ #define CUTOFF_WRITEBACK_MAX		70
+ #define CUTOFF_WRITEBACK_SYNC_MAX	90
+ 
+-#define MAX_WRITEBACKS_IN_PASS  5
+-#define MAX_WRITESIZE_IN_PASS   5000	/* *512b */
++#define WRITEBACKS_IN_PASS	5
++#define MAX_WRITEBACKS_IN_PASS	30
++#define WRITESIZE_IN_PASS	5000	/* *512b */
++#define MAX_WRITESIZE_IN_PASS	30000	/* *512b */
+ 
+ #define WRITEBACK_RATE_UPDATE_SECS_MAX		60
+ #define WRITEBACK_RATE_UPDATE_SECS_DEFAULT	5
 -- 
 2.39.5
 
