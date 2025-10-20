@@ -1,103 +1,111 @@
-Return-Path: <linux-bcache+bounces-1220-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1221-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E76FBE8520
-	for <lists+linux-bcache@lfdr.de>; Fri, 17 Oct 2025 13:27:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83035BF27F9
+	for <lists+linux-bcache@lfdr.de>; Mon, 20 Oct 2025 18:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01B831884CE5
-	for <lists+linux-bcache@lfdr.de>; Fri, 17 Oct 2025 11:28:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24A01424DE1
+	for <lists+linux-bcache@lfdr.de>; Mon, 20 Oct 2025 16:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D704C343D62;
-	Fri, 17 Oct 2025 11:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9683A32ED5D;
+	Mon, 20 Oct 2025 16:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=orange.fr header.i=@orange.fr header.b="Pai5ocVa"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACB03128AF;
-	Fri, 17 Oct 2025 11:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCF832E753
+	for <linux-bcache@vger.kernel.org>; Mon, 20 Oct 2025 16:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760700472; cv=none; b=IpQi0vmZnoBR1BjdKte24k8LlDfbEcCrznsEARVn/NZOTElDgVbNnx2QkV3frq5RAxl5vnLW7uplSdWMijGOwXQvnyI0l67bx1oWxRgUY5TVL7soMxQFuSbo5ot0CFDlDSCNtbe4lJObB1Lop1TNMt5Zx6tNAbcbWOONasgiuwQ=
+	t=1760978771; cv=none; b=W05+Q4WreYAZFdwj/zazUicW2/E4DfoA/qm3v/tt/lIzKoiA0XS83eDT7QFrIqtjy1VWH1excOdehbqMQxLpcjD+m44LaMmTccxnEyNGgn28ljdwA9/a2OzlhgCHZxHe9aakv0f3/swjhjck70DywnxQhU9Ttes556W7LcC8gqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760700472; c=relaxed/simple;
-	bh=CZcskr+Q9AEsDHbjtdq1XBShG4uAg9MXPyQ/K0Y4S+E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a5MOsJToqMU20yTb4tq9Z7SkYfp6QkaTDfhe2vJiEQ0+unCMWFykzIANCtVmHrA81ih0915UKrooz1BaoxZu5Ya3NFYxBjLY959vTieAALCjVKZNUqYa9hHbdKZGU3JGCo8ItcITg9ml6xWsCS1cqfTQp6LRXk1IcOdCHgiXtlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 4cca3f60ab4c11f0a38c85956e01ac42-20251017
-X-CID-CACHE: Type:Local,Time:202510171913+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:ff31d857-3f8a-407a-94ca-39d25e20bf34,IP:0,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:25
-X-CID-META: VersionHash:a9d874c,CLOUDID:67b192479dfb68beb5b2e4b1047cc656,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
-	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 4cca3f60ab4c11f0a38c85956e01ac42-20251017
-X-User: tanze@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <tanze@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1600226422; Fri, 17 Oct 2025 19:27:44 +0800
-From: tanze <tanze@kylinos.cn>
-To: colyli@fnnas.com,
-	kent.overstreet@linux.dev,
-	john.g.garry@oracle.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-bcache@vger.kernel.org,
-	tanze <tanze@kylinos.cn>
-Subject: [PATCH v1] bcache: Use vmalloc_array() to improve code
-Date: Fri, 17 Oct 2025 19:27:39 +0800
-Message-Id: <20251017112739.244021-1-tanze@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251017111306.239064-1-tanze@kylinos.cn>
-References: <20251017111306.239064-1-tanze@kylinos.cn>
+	s=arc-20240116; t=1760978771; c=relaxed/simple;
+	bh=ZxU/BKy1rigoiF1U6BFEhs2KdfYiXtVmq6iWw04VBTY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=arCAtTrFWz+TStuD94RJiULjc5bQwmRBVmW25XlIIPS5o+3qCciUslBuL+YlfGhk3maA91QqghDcc1O3dglu7ZNkh3daHpcytaMmXxvmvKHdkBCFPPNb3ox0fBdi2Ill3h9ZGxpf0r8X32uOTFU+HC8FmYfSvjQPKxPCa49bFtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=orange.fr; spf=pass smtp.mailfrom=orange.fr; dkim=pass (2048-bit key) header.d=orange.fr header.i=@orange.fr header.b=Pai5ocVa; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=orange.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orange.fr
+Received: from [192.168.1.7] ([82.125.151.155])
+	by smtp.orange.fr with ESMTPA
+	id At07vYJxbhT3MAt07vQhj5; Mon, 20 Oct 2025 18:44:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
+	s=t20230301; t=1760978694;
+	bh=5da61BWJyUZJGiv0xEr1Sb8g+Aa37ynvVcsRGH+tFIc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To;
+	b=Pai5ocVaF2KDa5i1YNaQr3rCIvT/bFrUJuwYRMTmNH7397LzDMyda+PgahNrAM63K
+	 YOvtncgiOHVTvc6K7oP+mRhz5Jw1ILeuKNRVHHmWUiAfqOpqXmFsIUxWCyOdLnhDIK
+	 3dY1QnBW4j1Ph3z1SbMfdhsT/C/sYs7kBxTZAw3HBnXAIqsPYgbOOwd7upoiCRxHZT
+	 PJR0gTFzmB6J51tOCCsKH/2RGHrPu36eZH62TsgNKWyR215lQtRmxPzMvZbKAohD24
+	 Xun5Rz3sMTKHP/zxUvMsV0lpH1kODxzMP8JkTtvXuy88PTCwv9CbHRoA1vamfsHlPc
+	 UQHcEm4D9bHfw==
+X-ME-Helo: [192.168.1.7]
+X-ME-Auth: cGllcnJlLmp1aGVuQG9yYW5nZS5mcg==
+X-ME-Date: Mon, 20 Oct 2025 18:44:54 +0200
+X-ME-IP: 82.125.151.155
+Message-ID: <83676ed0-1645-484c-a192-3b031e269eda@orange.fr>
+Date: Mon, 20 Oct 2025 18:44:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Pierre Juhen <pierre.juhen@orange.fr>
+Subject: Re: [PATCH] bcache: avoid redundant access RB tree in read_dirty
+To: colyli@fnnas.com, linux-bcache@vger.kernel.org
+Cc: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+References: <20251007090232.30386-1-colyli@fnnas.com>
+Content-Language: fr, en-GB, en-US
+In-Reply-To: <20251007090232.30386-1-colyli@fnnas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Remove array_size() calls and replace vmalloc(), Due to vmalloc_array() is optimized better,
-uses fewer instructions, and handles overflow more concisely[1].
+Hi
 
-Signed-off-by: tanze <tanze@kylinos.cn>
----
-Please ignore the previous email, a simple formatting error 
-has been corrected in this one.
+I am on kernel 6.16.12.
 
-Thanks
----
- drivers/md/bcache/sysfs.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I have had errors with bcache recently, And I lost my fronted 3 or 4 times :
 
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index 826b14cae4e5..7bb5605ad7fb 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -1061,8 +1061,7 @@ SHOW(__bch_cache)
- 		uint16_t q[31], *p, *cached;
- 		ssize_t ret;
- 
--		cached = p = vmalloc(array_size(sizeof(uint16_t),
--						ca->sb.nbuckets));
-+		cached = p = vmalloc_array(ca->sb.nbuckets, sizeof(uint16_t));
- 		if (!p)
- 			return -ENOMEM;
- 
--- 
-2.25.1
+oct. 20 15:37:40 pierre.juhen kernel: bcache: journal_read_bucket() 128: 
+bad csum, 32768 bytes, offset 0
+oct. 20 15:37:40 pierre.juhen kernel: bcache: journal_read_bucket() 64: 
+bad csum, 22928 bytes, offset 0
+oct. 20 15:37:40 pierre.juhen kernel: bcache: journal_read_bucket() 32: 
+bad csum, 4848 bytes, offset 2
+oct. 20 15:37:40 pierre.juhen kernel: bcache: journal_read_bucket() 48: 
+bad csum, 14096 bytes, offset 0
+oct. 20 15:37:40 pierre.juhen (udev-worker)[461]: nvme0n1p3: Process 
+'bcache-register /dev/nvme0n1p3' failed with exit code 1.
+oct. 20 15:37:40 pierre.juhen kernel: bcache: prio_read() bad csum 
+reading priorities
+oct. 20 15:37:40 pierre.juhen kernel: bcache: bch_cache_set_error() 
+error on 448f191c-28df-4396-bc44-14d1f77c9005: IO error reading 
+priorities, disabling caching
+oct. 20 15:37:40 pierre.juhen kernel: bcache: register_bcache() error : 
+failed to register device
+
+I had to reconfigure everything after a disk problem.
+
+I have been running bcache for years now, without any problems.
+
+The only difference might be that I configured the frontend with the 
+discard option.
+
+The logical volume using bcache have also a discard option in fstab.
+
+The frontend is on a Samsung 980 nvme disk.
+
+Any hint ?
+
+Thank you
+
+Regards
 
 
