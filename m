@@ -1,107 +1,164 @@
-Return-Path: <linux-bcache+bounces-1231-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1232-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF8CBFF4FA
-	for <lists+linux-bcache@lfdr.de>; Thu, 23 Oct 2025 08:14:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E768C362A7
+	for <lists+linux-bcache@lfdr.de>; Wed, 05 Nov 2025 15:52:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953EB18C6492
-	for <lists+linux-bcache@lfdr.de>; Thu, 23 Oct 2025 06:15:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56F8E4EC11C
+	for <lists+linux-bcache@lfdr.de>; Wed,  5 Nov 2025 14:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47AE27814A;
-	Thu, 23 Oct 2025 06:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5FF246BA4;
+	Wed,  5 Nov 2025 14:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="yLIcTdH6"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gy70U958"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from sg-1-22.ptr.blmpb.com (sg-1-22.ptr.blmpb.com [118.26.132.22])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B75C2571D4
-	for <linux-bcache@vger.kernel.org>; Thu, 23 Oct 2025 06:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780E3239562
+	for <linux-bcache@vger.kernel.org>; Wed,  5 Nov 2025 14:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761200077; cv=none; b=AlK9xZvHkwmu667czO/CS6TWSwjtuzYQuhNQJb2FhlGcPcEJ1C7rFM8W/FZUoxsyjT447ELtS1cuZAcAQ8LoUyeJsBgFKwLaj6e92DYCxEN8DoY9xuFDDYYweIL/HvMYqwekRvKNsF3jVHMrIq5rG4HjGS9hXOVKqgr4xGQPs4w=
+	t=1762354257; cv=none; b=bBpJPFq7mge+EJ5R3DVLT87wskkh6fCRyqPhlQcUY1x6x8cA+IZoCDfq5AhwIVbaVP293B6WfLpgDHne9o6Pu32XgePNmKAL3jkjqoY70VBR78VOrnkxej8AOKSTlFuBP27bPfVIrFDmukVQ5EcI42gn2nEPtF8NqIzOXlrS4WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761200077; c=relaxed/simple;
-	bh=ZL5TWyyHbxmT4xy0Sv8uektcWHxntirjX+FvT7x5qeM=;
-	h=Message-Id:In-Reply-To:From:Subject:Date:To:Cc:References:
-	 Mime-Version:Content-Type:Content-Disposition; b=JyyP+Zq/DASEx3snZSWHtJ9cmauLpOnxTX/uZyVnWmdVUxIGDs7s86s3Ze+JNLUrTPFWlVjgPbmG3XiG/vcW2jsqqkZUa6Stobs/wLGf2LHWd/5A3S8zWTNT5K1VHbTcZU5SetejF1S7/rJnH8laLhRSr3sL8FJ0aPQuuzqkS8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=fail smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=yLIcTdH6; arc=none smtp.client-ip=118.26.132.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fnnas.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761200066;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=I0DeQvV/YRBGnIAotey1VEst0KMw5VbVrMVkBCLAcS0=;
- b=yLIcTdH6+z79XscLsh99AbyejGWdjkoO75Mq/1190Z6owoTGlApT5mA0oMqCmNGNUecdVj
- oY9P/lIQLO53BhC/BU++aEkXXfd1f8HnOmaCdr+zOa37aL+YAEaAEeOOrH+KrMjFg5ttwS
- FRAoyebEIMAnmT+1wNZl9R9fpoHnxmXF4RCHVDneHqxk2hbDGR5t0UhJ1wHwVHJkVsTXwH
- 1EpoYDvsWL7I7fwmg5BlceLHQKQSelZx56+dZb+KZPIBPgs52umsZEaIl7rl7KzrKJf5KH
- QEPW1VlyTjP9UPqF3/U8zUk4EO4rXZmiGcS1WFvvVcpkdntmPie3NNTG2dJuWg==
-Message-Id: <vwzui4ahytskgcffiei2grbypf5jgebwku5qevdyxja463t4fv@w6kycwc47qwf>
-X-Original-From: Coly Li <colyli@fnnas.com>
-In-Reply-To: <20251023060629.801792-1-tanze@kylinos.cn>
-Received: from studio.lan ([120.245.65.31]) by smtp.feishu.cn with ESMTPS; Thu, 23 Oct 2025 14:14:23 +0800
-From: "Coly Li" <colyli@fnnas.com>
-Subject: Re: [PATCH v3] bcache: Use vmalloc_array() to improve code
-Date: Thu, 23 Oct 2025 14:14:22 +0800
-To: "tanze" <tanze@kylinos.cn>
-Cc: <john.g.garry@oracle.com>, <kent.overstreet@linux.dev>, 
-	<linux-bcache@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Lms-Return-Path: <lba+268f9c7c0+bcc63c+vger.kernel.org+colyli@fnnas.com>
-References: <20251023060629.801792-1-tanze@kylinos.cn>
+	s=arc-20240116; t=1762354257; c=relaxed/simple;
+	bh=+GvlQk06G9W39519d3jc60EuiE8rQv//MMTxBFhe96g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CYVYP2p2a463rgSuZyotI7X4rXXit3gs2LoU3aB37dcpe0ZJlULET7FLZ//vABnwdtLTThwovKuD7uG/O3qHD0VjACcRD+rprC6VVBGdO7G+WMclU6ZnF6IvnEnQqjnWbF/SAJXb9bsaxDMIpewlhREvbqKN/jXVVGM0dPSLV7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gy70U958; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee130237a8so4365114f8f.0
+        for <linux-bcache@vger.kernel.org>; Wed, 05 Nov 2025 06:50:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762354254; x=1762959054; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxFsnMA9mRTRiSe0nOFLXrbbhFFoy8CeiOo3gwfHLbQ=;
+        b=gy70U9582vQB5xTbnbvQeu/ev+CARvyBRSyHPVc7Cpkggg/FZVq7VOaVwHJWdQVzJs
+         3qG4dhn1zjyNvWLQXGQmoVRbfkkKJ9h9Xam0ulgV3eSCXRrsYi9XLpFJBuDviTLZL+p4
+         m9sQSVGfevIdYJV3ZPUOxaA1qlECXMJ+2Q+vtm9ScxlF/xS5Dz6oXecUbEQQf7uqBQMQ
+         5PsUqknaGcTzKA71vx9dtWXY1q+VZmOX9y91zzF4o3LeTysArtF5h29vMg8paigi3zfp
+         btlJ9g8FS/pL1sgrsNVgvVXRNxJlX1uOIhHsaOP3sNJKz1zTn+oT6gLO84WJiowfMvzF
+         PNmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762354254; x=1762959054;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OxFsnMA9mRTRiSe0nOFLXrbbhFFoy8CeiOo3gwfHLbQ=;
+        b=FGqwbl61cRBaLZVgPvnCt+jpb6kmYItcJice5faX+c7PMqc9HQuGA3w18NEL3hK8wi
+         tQ6RQ+oRIcagYNiwWr82egJ9tpDBd60iWe6LNQb3kGdd1orAVGDze4Dx8h02ZISj1jiv
+         p0/o8rOAjo1TID4T42QtXJDfBElREWsVhFGsOPN+bdOc67Q2ASzZ9d4vVZJqpJlPAo0q
+         yzc0RAkL/1S1AfZuMXtiH9aDG2AFHKjn84c0EOX7eKv+FJ7VehLN7its1w2IQLtssMyD
+         8qO7LVdL5J9KSGjxJhNqWfVWKvsIxDxkUWmkQ70fEX2jFpwAlwRcmvw2SBKx4qh9oeQ6
+         JlKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5rs+V1bM4Sscns4DKIDFFgEUuPTuY8zbKKsiBn/zixESkMv3Anxi+7mNgtbu1kJLGQZq1KM08Qup9gSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsgMwrYt1+nJmY5f8QW7t6zLi3Hr4AzD/PpcFwyq5NU3Mue8ao
+	qlMsHEO2DwFOH9iPnqYthDKYPReLvQYec7hOTeR5VgBbkUDF9MeCve0g4D//RO/RUo4=
+X-Gm-Gg: ASbGncsP6U79Ffnc7AioMhYIaXflxyzzYnlgwUzVtnRX/JzjrZSUIhVDwQqH2mbVc7Y
+	PrlCX911CeMrwypn/juaS6f2F3s4rYx9/HbB4z/beZDKEPDeF+IfJdAtzTA0KcS+mQEpe1zeUrf
+	IH6onXVV+4AgkcoTk1STQ74+VqexmMaIAa2RGGwebj5KxjY2x0BIAWItPpGvxTCkVWOEM3LA5iC
+	D8swA+tMq90HJRl72T0ySeUvm3E9zGd+JQm4Og5JRyhK43XiQRarW9R+t48KdRe1O8opHjY9Sxa
+	f5vhj6LOFO9IDu5zdjymzubWiJwCuQDt17Vc6TbD4sIEBO1urrWcm/l/nfZy5gcgnCC6ZXlhG0Y
+	0yRaozgfU5QEzgLlDh4QeHAvpIoLtAkTmhJYVsgiJ4TVdvAL7O3J1WGTh72RXZXK77HNbtSqSSu
+	fj/BSMkbafK17fRSr84GA7alA=
+X-Google-Smtp-Source: AGHT+IHo6EfCx3qMEtwlwpO7+vL3gANNLC57V9Vp+QrpOWGUp+tf1ZuveBJQR8sQocotcTRWWlh73g==
+X-Received: by 2002:a05:6000:60f:b0:428:bb7:174f with SMTP id ffacd0b85a97d-429e32ed31emr3767404f8f.26.1762354253783;
+        Wed, 05 Nov 2025 06:50:53 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dc1f5ccasm10662873f8f.25.2025.11.05.06.50.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Nov 2025 06:50:53 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-bcache@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Coly Li <colyli@fnnas.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Subject: [PATCH 0/2] replace system_wq with system_percpu_wq, add WQ_PERCPU to alloc_workqueue
+Date: Wed,  5 Nov 2025 15:50:41 +0100
+Message-ID: <20251105145043.231927-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 23, 2025 at 02:06:29PM +0800, tanze wrote:
-> Remove array_size() calls and replace vmalloc(),
-> due to vmalloc_array() being optimized better,
-> using fewer instructions, and handling overflow more concisely.
-> 
-> Signed-off-by: tanze <tanze@kylinos.cn>
-> 
-> ---
-> Hi, Coly Li.
-> 
-> Thank you for your prompt reply. 
-> I have resubmitted the v3 version of the patch, 
-> with revisions made as per your requirements.
-> 
-> Best regards,
-> Ze Tan
-> ---
-> Changes in v3:
-> - The empty line has been deleted.
-> ---
->  drivers/md/bcache/sysfs.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> index 826b14cae4e5..7bb5605ad7fb 100644
-> --- a/drivers/md/bcache/sysfs.c
-> +++ b/drivers/md/bcache/sysfs.c
-> @@ -1061,8 +1061,7 @@ SHOW(__bch_cache)
->  		uint16_t q[31], *p, *cached;
->  		ssize_t ret;
->  
-> -		cached = p = vmalloc(array_size(sizeof(uint16_t),
-> -						ca->sb.nbuckets));
-> +		cached = p = vmalloc_array(ca->sb.nbuckets, sizeof(uint16_t));
->  		if (!p)
->  			return -ENOMEM;
-> 
+Hi,
 
-It looks good to me. I take it into my for-next. Thanks.
+=== Current situation: problems ===
 
-Coly Li
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+
+This leads to different scenarios if a work item is scheduled on an
+isolated CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
+
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
+
+        schedule_delayed_work(, 1);
+
+Will move the timer on an housekeeping CPU, and schedule the work there.
+
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+
+This lack of consistency cannot be addressed without refactoring the API.
+
+=== Recent changes to the WQ API ===
+
+The following, address the recent changes in the Workqueue API:
+
+- commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+- commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+The old workqueues will be removed in a future release cycle.
+
+=== Introduced Changes by this series ===
+
+1) [P 1]  Replace uses of system_wq and system_unbound_wq
+
+    system_wq is a per-CPU workqueue, but his name is not clear.
+
+    Because of that, system_wq has been replaced with system_percpu_wq,
+    keeping the same old behavior.
+
+2) [P 2] WQ_PERCPU added to alloc_workqueue()
+
+    This change adds a new WQ_PERCPU flag to explicitly request
+    alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+
+
+Thanks!
+
+
+Marco Crivellari (2):
+  bcache: replace use of system_wq with system_percpu_wq
+  bcache: WQ_PERCPU added to alloc_workqueue users
+
+ drivers/md/bcache/btree.c     |  3 ++-
+ drivers/md/bcache/super.c     | 30 ++++++++++++++++--------------
+ drivers/md/bcache/writeback.c |  2 +-
+ 3 files changed, 19 insertions(+), 16 deletions(-)
+
+-- 
+2.51.1
+
 
