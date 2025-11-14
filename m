@@ -1,134 +1,140 @@
-Return-Path: <linux-bcache+bounces-1256-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1257-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A26C58CC2
-	for <lists+linux-bcache@lfdr.de>; Thu, 13 Nov 2025 17:42:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9A6C5C26E
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Nov 2025 10:06:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EEC042343E
-	for <lists+linux-bcache@lfdr.de>; Thu, 13 Nov 2025 16:32:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0B8D1358677
+	for <lists+linux-bcache@lfdr.de>; Fri, 14 Nov 2025 09:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771C5357A33;
-	Thu, 13 Nov 2025 16:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C39B301493;
+	Fri, 14 Nov 2025 09:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QKi16B8U"
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="LaLRcpyh"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+Received: from sg-1-13.ptr.blmpb.com (sg-1-13.ptr.blmpb.com [118.26.132.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7AA3559EE
-	for <linux-bcache@vger.kernel.org>; Thu, 13 Nov 2025 16:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3C826CE25
+	for <linux-bcache@vger.kernel.org>; Fri, 14 Nov 2025 09:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763051223; cv=none; b=oONh2yRge/dps0HhjLezWzlPQMaXhaYUfHoWcKMdAYSoKZiSAKdBiMIAe2OliUlkxTmgY+TrdHS9OTiugHdd3GQIcSkzNTGbGarh6B8qnAiMKuh7+flkww0+vxkvQSEIXIHQ6UVksoBLGv7fYYd1xqxyhNo7k5EyNS1wWCJr3/E=
+	t=1763111036; cv=none; b=p4gHaOxGFcESZ/RFgCcEnKG/oFj3sPIK/ZZlQt7QXOY8eoD5ZG8ASBngXBD9zu4WH+m/IhMSD+AuYK5o1608dBFGoN7vdn+JWh9B29k1jMc6PKXwoqE+J+QJF/PD0rD3KOOuYk0KkQrhUSKzWoa6RN1/r2LGy4t1jj6aqvHlNtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763051223; c=relaxed/simple;
-	bh=8cGpt1mnnD4Nd84oB3FjjbO1ZroPYw3Bi1pxnVfLhrk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Cupa2Q+Q9eLLwh9jahQfrbRUGvPl0OqepuWcsH8cYuRUorG9dHqV6AU7vUJr3yl74EAKEARxGNsfi3jPch3Fm55EIZRfsItRKD34NSP5DYTux0sLM89R05u0pmABKy9x+RBMkynT9D6objzk9fWFFzIrtssIh208uC49mk6cFyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QKi16B8U; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-433100c59dcso4859585ab.0
-        for <linux-bcache@vger.kernel.org>; Thu, 13 Nov 2025 08:27:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1763051220; x=1763656020; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+WV0XxB+XpXMsT65IEjX1Mg5hj1WPsVipB9m+jCtnpo=;
-        b=QKi16B8U97BczHNWv3tbcTOdHFf4ULVB0kmAG6gLit+pmQT494KOsHR/EvXhrd13kP
-         aa6YHaHouA/nXFKaY2PBj6WfEhFYozBy4Y0IFbVPifpHxICbXFCP63UHXUghMfrHid/C
-         aK7bEMf/sERG90SKl1s49KH2Cu0nJS/pILsJEDH3I9gT6dSSrHa/zBbgGWXNXAmbVBhU
-         k/aZfoAH/KwsswZotkt3D1oORlIRsk86D5ZHmofBQ0hWE7OXppXfTaOMdfswMnY8dEhC
-         lqEkRWfsfEP+ucfHIHTZseCvCplEVWL5Sth8qS+w0xAfSYHn6p3Qu7+F3uGgVzwTuJa1
-         bKkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763051220; x=1763656020;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+WV0XxB+XpXMsT65IEjX1Mg5hj1WPsVipB9m+jCtnpo=;
-        b=Rdma4NkiwRtHD1QjLq312mdOB9HklHk8uYOHGLwDPDxQqWjYDN670zAc4NimiZro+Q
-         lBWI0IPSVFxXo1Vx3l0dWCaqkjAXz1idB8HZAbm15NrhQ/7bxVAtdErli/R0X9kj2zWC
-         EPBveHDbzkSbwdXYN7Tel1X+X1bO0abXH9kGjMJ91LYkKiwsy38SpmpGMBtjsWB5FbYu
-         6kPiwMXSr9U4Isvc7AZHiOxkFI0lgM4REdYoTdVS6bfzmVx55zGe92RNh46xuxLosIRV
-         NwZAV6SMMljvgXwPg4k2wic8rh8uKe1kv+i87VcLtcRbs3rYsB7cLpPGcWMw7MEDgMFm
-         //9A==
-X-Gm-Message-State: AOJu0YyKwyAm2D1Obm+f7WCsUsBtxYnvR293m59b8mortOZq83WFALm2
-	N5/hwMvcLE6mo/zaJaax1i6Lh9S27tR9uFyizlLfcLnqId9V2r+FTQ4HYZsoXL5qt8bATNxF/XJ
-	HyDhU
-X-Gm-Gg: ASbGncuZz4d0cyBw+SRKfeo9obBw7aTqd88BKb+rjyE2Ff8svpLOXkKSeJ7/x22dhxf
-	9mwbhrO6rMyQIqsjxJv0DQ58WT85MxMRwZuntQaTN8JhG/fXxVpUrPyRCNMrJCInuSXhbUOHkND
-	YazAhdc9aFSA3xjE7x+ItyCkLccYudV3pz5rOyVRj8eJxy947ptL2yst1F9NbNu72hJqTSjOVVg
-	oyBZZY+Wl3Hb7aLe4EaTVw2QCHrrvyDpxPrZ9CxGoakdQb6Qxl6Qe9Aj1qFoFsKCl75WpY3iLEl
-	mg9iPQCLKLoq0tFWVIMxVnUMn2X3uAza33aw5IER2DhQLI2K0icONzSYBVzZcvZK/DdUSBw8jJo
-	CCUtcM0yBw6NbDnezTcrvMSSxzPnI4JOpTxAZ+2L7mimSA7FwsZi6ZwkF6eyRYfTmsac=
-X-Google-Smtp-Source: AGHT+IEfPEzNVUtSijTeS0YXmDIkYTXhI19QS5zHoA8Z8cIEgyRelQqFXKdqTDIpcP6BSYul/ZnQtw==
-X-Received: by 2002:a05:6e02:318f:b0:433:6fe2:6b00 with SMTP id e9e14a558f8ab-4348c8648a5mr1678615ab.5.1763051219861;
-        Thu, 13 Nov 2025 08:26:59 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-434833c5357sm8641725ab.2.2025.11.13.08.26.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 08:26:59 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: colyli@fnnas.com
-Cc: linux-bcache@vger.kernel.org, linux-block@vger.kernel.org
-In-Reply-To: <20251113053630.54218-1-colyli@fnnas.com>
-References: <20251113053630.54218-1-colyli@fnnas.com>
-Subject: Re: [PATCH 0/9] bcache patches for Linux 6.19
-Message-Id: <176305121881.129995.1450932700968780784.b4-ty@kernel.dk>
-Date: Thu, 13 Nov 2025 09:26:58 -0700
+	s=arc-20240116; t=1763111036; c=relaxed/simple;
+	bh=4O7KLGIHhHTX6UHtPkiroNXXmtNdk6P2JM8CAnt5lXc=;
+	h=Content-Type:To:Cc:Subject:Message-Id:Mime-Version:References:
+	 From:Date:In-Reply-To; b=iKLNnjyfz1bzSXjeKVKHPvgL7Eu0GlC9PbCR7UpyOZpZaEcL+2jH4mjG+S+ch9R7t4KkYCFG6VhgYczz7FzaQUWRBIQ0iwajtMTBLxTZORXtbnL7/A0wN3VCpb2kFIgt42YjLgl5xqXsZ+pcoc/3essLORfXpxcw3Kl/ay+vZpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=fail smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=LaLRcpyh; arc=none smtp.client-ip=118.26.132.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1763111022;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=4O7KLGIHhHTX6UHtPkiroNXXmtNdk6P2JM8CAnt5lXc=;
+ b=LaLRcpyhrACfzkWICkRQudWhzotDp9X6yXW+w0cY+D2y79pryZ+9YxojsUzzKh8G6kjSq/
+ PY7CKcmBmI6rbI8F5J6JL3PwxzIbrHs/7uMKGYOCbDdTw85Ae299CNMtTKqapLFJPle4XE
+ GztjVeWwnSKe0/CW5xgn8JtpBd5wPgACM3vl2hP8bdeZJX41VHDrLipA7rf4JbTb9GUruO
+ IzAp2KsbNfCRlOrhahhZgut9WUDGo57xxzMju827aBDy1Sn5KpztIlEt3z49015dg8LEvB
+ HIcKxr4j3uvKcAYJLDdj/UB0jkUpSmyaJA/G+h5+pgVCBDZP8c0QqAiMtktEmQ==
+Content-Type: text/plain; charset=UTF-8
+X-Original-From: Coly Li <colyli@fnnas.com>
+X-Lms-Return-Path: <lba+26916f06c+725298+vger.kernel.org+colyli@fnnas.com>
+To: <linf@wangsu.com>
+Cc: <linux-bcache@vger.kernel.org>
+Subject: Re: [PATCH 1/9] bcache: get rid of discard code from journal
+Message-Id: <E26D0C0C-FB08-4C44-B6CC-6E04D58CB43D@fnnas.com>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Mime-Version: 1.0
+References: <007801dc5533$064c29a0$12e47ce0$@wangsu.com>
+From: "Coly Li" <colyli@fnnas.com>
+Date: Fri, 14 Nov 2025 17:03:27 +0800
+Content-Transfer-Encoding: quoted-printable
+Received: from smtpclient.apple ([120.245.64.178]) by smtp.feishu.cn with ESMTPS; Fri, 14 Nov 2025 17:03:38 +0800
+X-Mailer: Apple Mail (2.3864.200.81.1.6)
+In-Reply-To: <007801dc5533$064c29a0$12e47ce0$@wangsu.com>
+
+> 2025=E5=B9=B411=E6=9C=8814=E6=97=A5 14:50=EF=BC=8Clinf@wangsu.com =E5=86=
+=99=E9=81=93=EF=BC=9A
+>=20
+> Hi Coly:
+> =20
+> AFAICT SSD use write-after-erase mode to reuse a ssd block for writing an=
+d
+> internally ssd firmware will gc those to be discarded blocks for future w=
+rites.
+> so even write to a same logical bcache bucket it won=E2=80=99t be mapped =
+to the same=20
+> physical ssd block, because ssd always needs a clean block for writing.=
+=20
+> =20
+> So IMHO the discard op does have its function role, it could tell the fir=
+mware=20
+> to gc that bucket immediately while I=E2=80=99m not sure if we gain perfo=
+rmance benefit
+> from such journal discard ops.
+> =20
+> Perhaps I misunderstood something, kindly if you could point me out.
+
+The issue is the time when discard is issued for cache device (not backing =
+device).
+For enterprise SSD such discard hint is unnecessary, for low end consumer S=
+SD it is too late.
+
+In my testing, enterprise SSDs (e.g. Lenovo or memblaze ones) have enough i=
+nternal reserved
+space for gc, almost no performance impact with/without enabling cache devi=
+ce discard option.
+
+For low end SATA or m.2 SSD, after issue discard bio then new data is writi=
+ng onto SSD, the performance
+number differs a lot comparing that I manually discard the SSD and then cre=
+ate cache device. I assume it
+is because the internal reserved space is quite limited for gc. Such quite =
+late discard hint doesn=E2=80=99t help any
+and introduces extra latency.
+
+This is why I call it useless.
+
+Thanks.
+
+Coly Li
 
 
-On Thu, 13 Nov 2025 13:36:21 +0800, colyli@fnnas.com wrote:
-> This is the first wave bcache patches for Linux 6.19.
-> 
-> The major change is from me, which is to remove useless discard
-> interface and code for cache device (not the backing device). And the
-> last patch about gc latency is a cooperative result from Robert Pang
-> (Google), Mingzhe Zou (Easystack) and me, by inspired from their
-> previous works, I compose the final version and Robert prvides positive
-> benchmark result.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/9] bcache: get rid of discard code from journal
-      commit: 0c72e9fcc156caaf123a6291321bc9bd74cd1b61
-[2/9] bcache: remove discard code from alloc.c
-      commit: b4056afbd4b90f5bdbdc53cca2768f9b8872a2dd
-[3/9] bcache: drop discard sysfs interface
-      commit: 73a004f83cf024e785b74243ba9817a329423379
-[4/9] bcache: remove discard sysfs interface document
-      commit: 7bf90cd740bf87dd1692cf74d49bb1dc849dcd11
-[5/9] bcache: reduce gc latency by processing less nodes and sleep less time
-      commit: 70bc173ce06be90b026bb00ea175567c91f006e4
-[6/9] bcache: remove redundant __GFP_NOWARN
-      commit: 21194c44b6bdf50a27a0e065683d94bae16f69cb
-[7/9] bcache: replace use of system_wq with system_percpu_wq
-      commit: fd82071814d06c7b760fe8d90b932d8a66cffc63
-[8/9] bcache: WQ_PERCPU added to alloc_workqueue users
-      commit: c0c808214249c32a8961999e0779b953095b0074
-[9/9] bcache: Avoid -Wflex-array-member-not-at-end warning
-      commit: 699122b590ebbc450737eebde3ab8f5b871cc7f0
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+> =20
+> Ps: I haven=E2=80=99t subscribe the mail list so I just paste the patch t=
+itle for reply,
+> Sorry if it makes inconvenient to anyone. =20
+> =20
+> Thanks!
+> linfeng
+> =20
+> =20
+> Following contents extracted from original patch.
+> =20
+> From: Coly Li <colyli@fnnas.com>
+> =20
+> In bcache journal there is discard functionality but almost useless in
+> reality. Because discard happens after a journal bucket is reclaimed,
+> and the reclaimed bucket is allocated for new journaling immediately.
+> There is no time for underlying SSD to use the discard hint for internal
+> data management.
+> =20
+> The discard code in bcache journal doesn't bring any performance
+> optimization and wastes CPU cycles for issuing discard bios. Therefore
+> this patch gits rid of it from journal.c and journal.h.
+> =20
+> Signed-off-by: Coly Li <colyli@fnnas.com>
+> ---
+> drivers/md/bcache/journal.c | 93 ++++---------------------------------
+> drivers/md/bcache/journal.h | 13 ------
+> 2 files changed, 8 insertions(+), 98 deletions(-)
 
