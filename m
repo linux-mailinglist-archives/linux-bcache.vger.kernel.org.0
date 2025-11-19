@@ -1,272 +1,344 @@
-Return-Path: <linux-bcache+bounces-1258-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1259-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA02EC6BB58
-	for <lists+linux-bcache@lfdr.de>; Tue, 18 Nov 2025 22:21:16 +0100 (CET)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3149CC6D5B8
+	for <lists+linux-bcache@lfdr.de>; Wed, 19 Nov 2025 09:16:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 366A5367959
-	for <lists+linux-bcache@lfdr.de>; Tue, 18 Nov 2025 21:19:27 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTPS id 6E1D52D45D
+	for <lists+linux-bcache@lfdr.de>; Wed, 19 Nov 2025 08:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4948830AAC2;
-	Tue, 18 Nov 2025 21:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BE32ED844;
+	Wed, 19 Nov 2025 08:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XMwjFUkH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAKFkFy8"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB533002C6
-	for <linux-bcache@vger.kernel.org>; Tue, 18 Nov 2025 21:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34771C84DE
+	for <linux-bcache@vger.kernel.org>; Wed, 19 Nov 2025 08:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763500761; cv=none; b=FuuzaYohT5foJ7Pk5/o5weOjMCb9D8IeT59XdZB3ZVXKgFuySpQs1sBzMax6M4P+n2gNGb26NqQjghe5IVQNrPorWi3jx5jAsI/KfXy2Avl7NKK/qg+8BFFUlejevjOWAb6k6m9qE7boZ/sKIH6L9aS12eR4zRBHMGLJYOrkgQ8=
+	t=1763539978; cv=none; b=fAHLlGWWmZbZVJegwoMNcBowEvdOmi1vXaZGiaNOzfhLcUCc79ao4L012LQtXjJkwghEYZR+ZQfFx86HgYdrKULWLPdkb/poo6t0t3NX+Li3pR7qOg9+KzYUR9e0oABgqNdLz+4Yd8F3B0DvBtuZzvMOstfL8VTd+BJqK/GaoSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763500761; c=relaxed/simple;
-	bh=S1p+1uh5Qnw9KbCY/tPNm3juBs65q4x/3qBm2RyJUJ8=;
+	s=arc-20240116; t=1763539978; c=relaxed/simple;
+	bh=DnuOXgxfU6qtybWZtlQwa3TZWZgnfr3HBeC6+Wa6oA0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TcE/wP01nM5CvedGhyELXRaTxQGV2yD27ntMqQbOvYOSkl/nr8JUZYXvsi+BM6FEkaXgrrI0QgJ7ISi0BE0TTb4a/jMPlAWYG+x+O2mftiTsk836JmdyZiZamz/rz5ac5sPntTEixKxAD3QETu+ctG8sW4IWEWYPTu3yBqObsv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XMwjFUkH; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4ee147baf7bso24431cf.1
-        for <linux-bcache@vger.kernel.org>; Tue, 18 Nov 2025 13:19:19 -0800 (PST)
+	 To:Cc:Content-Type; b=dXF8rejONooC9reziYhuas+ZYmNgAwpE8YQ7MCk7uwaMe4Xjd5mkp5GB4ERYhiBU6BXTvi3+nmxcAfDPSddOPrEmSl/pdF1JohdXl9AiIwO1ssuB+KI0x+oQYOkGhLWVc6fWkOW5ztMDX/8uY/LBCi5U8uAHL+oI/mppeiXHr8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QAKFkFy8; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-88245cc8c92so41273036d6.0
+        for <linux-bcache@vger.kernel.org>; Wed, 19 Nov 2025 00:12:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1763500758; x=1764105558; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763539975; x=1764144775; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wTNIaT6hawss8NcHro1kkVVLu9sPdxYwoB3MDDsm3x8=;
-        b=XMwjFUkH12F5Ab5tflFYKx4sAVqPXJg8lm2FwsWyXrZy5UdUd32zkh38Y5bN/psYFG
-         6Kctp3hAuiPlXNSQpcintV/UL0cnTYq6D682U4AjpFGiL7LV2WzcA0I6yMP2cT+eFJDW
-         uPreX4OTEeE3wA/6o1SMlVRWb8rwKq2GQJaprMxF5dDUVdOc8YP+r1SA19RBjDIM880R
-         YGj3e9OLvWZ+rSwOISavkY9371rBzjq1bZiQZgWWRkm2aCC9szYEm2vE0qh9DtJPxLgV
-         cdU/TMcilxQcvRKXwA+cEeAUCvil5T+RQ8ZnSYeLbYNRqRakNGIwoddH0Vcx3Dxb+xQI
-         SPIw==
+        bh=/tU5N9FC1VC2jhsjwqPUnanjm4jcyQCilLFFNyoSH3g=;
+        b=QAKFkFy8cSKK11VANVCoC8FF/sLaGUVjMDEiEquoZnYsCBTGnvRDzFmV7DCDrHDgUm
+         d7vRoX44qiVFOmflB5NucCZEXxzse2XEgCU2KlR1Gv/Jsb6in0S75LFtVQavHlT0x+QF
+         7XAKY8sn5l2LTnxRCxTqRjAztKTrNsg143v0kXK25RRlopDHRuxNPvy3xDS/JXWd9Tol
+         zR5Fnj9jgujLtK8U0pWf5bg0Bkbfr3y8/SwnldIoD19zDoQQrgDFyHbU6wom5Du+TF88
+         hsAYjTjo+K+nG6rWxNl1u+KxmnmMJK9k2sSxRr/iwCyGA9FICimu8QOQV6Rm9bhN0Fic
+         VF7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763500758; x=1764105558;
+        d=1e100.net; s=20230601; t=1763539975; x=1764144775;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=wTNIaT6hawss8NcHro1kkVVLu9sPdxYwoB3MDDsm3x8=;
-        b=DES06EuBavPwhtxwu0xua4Xr+mTQtKsOrGYxa9jmXZkNFvaeyk4WPDlzwrQgFVyG8t
-         q1BC3Wob9c0VXf5BSio8/As+hpaLDOFMwIkV6Co23v0Bnjf7XhTBdwuofQP/mOZUo+tl
-         3DMKpe8U5BE1fwEr7jIkzvyLjT31TsQyWc1eQqWQGBJZEOYHU+qLRSYwOW/pCs9ewN09
-         FShd9+iY5aSX0O3LyuMFtDBVXeGUSXfZPfZx9ntBylmY7y4r5/3ejcfFCJlCm1OnjVQ7
-         RDLdSz/K8z7mFAW4ez2Ks/VvNPUm3N/9bHkv0yQ0r8/KYqTmNBFL5Jn8qxBON1npP1+H
-         87cA==
-X-Gm-Message-State: AOJu0YzM151p+goTxc1OaA5RM1gCjchqDfRZVDGEiQUzAvDIujskh6H0
-	JQ2v9X0WrSGx5yW8HMoEAELrVzEXH8+g6UxAYVqaBSkz2fhw2PU4oU24T+Tb5N2vIUfw4+SSz7V
-	pjslsRGtpg9JuFQdwa92MU1Wto7J0QxZHGhbUG78j
-X-Gm-Gg: ASbGncvWXbfX4WyXtaLTbuWN+RsKO3Ah7OpU250zQwEHiyERmMB3GriZB/CGsNiYvEL
-	l2qMNY1KE50ORq/9TX09LTTp+NxcClJwNRWa2t0+Z83xUQfWNxjzj4RsqkrYN6xI0kMZkuvo44O
-	h14vH3iyRb/JRqsQcdEUEEdsrieWVlgHbDYnGBvp2aWwGzYt5XYsVD7OjBp0oUttPNlvExFKh2/
-	n19SVjUAENtZKI1twWxPMWrdthKwCEDt++zwOH3RafzpGnHx9+9pP3B/FG6oa1rw1QeKFink/qk
-	K74P3MUDa3JdwEoAF1rAtVc6Sr5gKZLfEFFf
-X-Google-Smtp-Source: AGHT+IEkb+JubdQGkitY8RsKDLpR38aflwPlNZYLjkbAhIxH6DqVCtUKVbYZcMEukG/Q9vlGidm9yfryPH1Fb6bmGrI=
-X-Received: by 2002:a05:622a:4d2:b0:4ed:7c45:9908 with SMTP id
- d75a77b69052e-4ee3eb9b15cmr1434181cf.10.1763500757956; Tue, 18 Nov 2025
- 13:19:17 -0800 (PST)
+        bh=/tU5N9FC1VC2jhsjwqPUnanjm4jcyQCilLFFNyoSH3g=;
+        b=Y+7L5SpVUp4DmhibjFfINhS+MIJR8N2ZcK2gsqzZxhQHjGou4EVfKz5vIND3sikLqs
+         ioTQyaRcCKr3zSgB5und30SKf1U9GGUwQ2UncMQfM2xhd9Uf8i481Zu6BmpYspX4O8Dd
+         UgHFGXWczbRs/uigNwBtMd85iAzaqNXDPCRaM15g/q72CqrlHBTz3BI1ZIIgTIktj5Dr
+         YKSITHXz0yq8SCE8aV+Q2r5nQgqPCF0QEtecE76t4pr3Cj+QPMyr8voAXhm4KeDjxhct
+         QhTZKTlaiKBafuUpt4VYoOXK7DFA1xoC70iQwHSVzXxYjtfCMFM96FDZ/3SlyTZSVMyw
+         vTTA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4NdGgmkwE05Ui4RwQTrzP/vLgWz3mNh/ux0IOqd+n6f5sAkqpGCFkmOUCabdNm69RwaoWEaRICrqAzqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRa2nIYJ2DBnI8kU7dOrgIjD6EKN3RrAfD+j0NqdFJoT8N0RA5
+	znZb4ZulOyjWgcjuM6yjimlxs1NkWE0nLpqqWjOco49rDco+mqD+CK2504MEirmgXJ8eJXlItJB
+	ELOpH4DZhfOWRkU562td7rmkGtK4gd13DUOoB0Ng=
+X-Gm-Gg: ASbGncueHmbk94Nxs6fVSydSOxEb/ZuyQSzVUehnRLi3nh0pWAzGXItvaoI/Wv1TPvj
+	+Bnp6rY6WDYjVDXmt+nwyGczCXc+JJSaFxw8f6eTdgGCPikmthQabw7XPdA4h5ySIul+OdBOLlH
+	2YAB5MtcxiuRAwdIXQA11xmWI5+yawLBp8uuGRwzwlAKkSrX3qNpwHFsaRDyKUKKXIdT/AM0wf0
+	3juoRE5AasdFlYHoN/htyqi/QPRNbuSo9yg/An8bw7dmxp6OKoKoOOlpWo6CvK5+zu8UOSmym3S
+	MtQNxA==
+X-Google-Smtp-Source: AGHT+IFpr/4m7kqFyVp6wv7lGNWYepzTg8Zt7CTxQPr9rwyqLTHTilIDdohkSa0G6a38Dwte5D8WBF80QQAULjpMjVA=
+X-Received: by 2002:a05:6214:29ce:b0:880:4c73:9e3b with SMTP id
+ 6a1803df08f44-882925c47f5mr247916706d6.15.1763539975325; Wed, 19 Nov 2025
+ 00:12:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009071512.3952240-2-robertpang@google.com> <CAJhEC05VTcS-=jsDUoyybQ5Cc33DbPXqJ=5FxfVxo06xfugwAQ@mail.gmail.com>
-In-Reply-To: <CAJhEC05VTcS-=jsDUoyybQ5Cc33DbPXqJ=5FxfVxo06xfugwAQ@mail.gmail.com>
-From: Robert Pang <robertpang@google.com>
-Date: Tue, 18 Nov 2025 13:19:06 -0800
-X-Gm-Features: AWmQ_bkBU8vQ0_W2Gx9ur2SfzRyOFFhAKDlN1lMiaVbNbsPuZaB9aYKg_q9JbTA
-Message-ID: <CAJhEC06kaOgD3=0r+K7yh9+x4mXEfCzBXiDkD9yn2qqCEs1SJA@mail.gmail.com>
-Subject: Re: [PATCH v2] bcache: add "clock" cache replacement policy
-To: Coly Li <colyli@fnnas.com>, Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAAsfc_ry+u771V_dTQMiXpaz2iGbQOPmZfhwnyF56pM+FjXdsw@mail.gmail.com>
+ <4y5xucuqqqe4ppxu46nwsr6g34bu7ixc5xwwogdvkdpl3zhqi6@c6lj7rk5giem>
+ <CAAsfc_pa=AwaaN6Fy2jU6nPwnGET0oZgWZtSc3LtQ9_oJ6supA@mail.gmail.com>
+ <CAAsfc_rRK1rBVYFOzdioQSj5BL_t--Sbg6y5KhS+uiSeKz51xw@mail.gmail.com> <CAAsfc_pafORaG_PrVpOB9GBK+YCjdzJMd2Ww=ya2PbcPkw04+w@mail.gmail.com>
+In-Reply-To: <CAAsfc_pafORaG_PrVpOB9GBK+YCjdzJMd2Ww=ya2PbcPkw04+w@mail.gmail.com>
+From: liequan che <liequanche@gmail.com>
+Date: Wed, 19 Nov 2025 16:12:43 +0800
+X-Gm-Features: AWmQ_bmyegNzM53loB2ULYV1djoH10Q3gCydOmPFKqamxldxo_z4on5kqXJPRrA
+Message-ID: <CAAsfc_p4KWYgkfny0BqS8G7jOiXf_r1QCb0x0Sh56je=GBdUXw@mail.gmail.com>
+Subject: Re: [PATCH v2] bcache: fix UAF in cached_dev_free and safely flush/destroy
+To: Coly Li <colyli@fnnas.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>, linux-bcache <linux-bcache@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Coly and Kent,
+ Hi Coly and Kent,
 
-I'm writing to follow up on the patch proposal regarding this new
-cache replacement policy.
+Sorry for the earlier omissions. Here is a concise correction and completio=
+n.
 
-Do you have any feedback on the proposed policy or the implementation?
+1) Could you please point out exactly which reference is still held?
+From the crash we analyzed, there isn=E2=80=99t a leaked struct cached_dev
+reference causing the panic. The long-lived references during teardown
+behave as expected:
 
-Best regards
-Robert
+dc->disk.cl (closure) is taken/released around detach/free paths.
+
+dc->count (refcount) gates device lifetime.
+
+The actual failure is a stop-ownership race on dc->writeback_thread:
+one path stops the kthread and it exits (freeing the task), while
+another racing path still calls kthread_stop() on a stale pointer,
+triggering the refcount_t warning and subsequent fault. In short, it=E2=80=
+=99s
+not a missing cached_dev_put(), but a second kthread_stop() against an
+already exited thread.
 
 
-On Thu, Oct 9, 2025 at 3:06=E2=80=AFPM Robert Pang <robertpang@google.com> =
-wrote:
+2) Could you please point out all the locations where writeback_wq is stopp=
+ed?
+If by =E2=80=9Cstopped=E2=80=9D you mean flush/destroy of the per-device wr=
+iteback
+workqueue (dc->writeback_write_wq), there is only one place:
+
+At the tail of bch_writeback_thread():
+
+if (dc->writeback_write_wq) {
+    flush_workqueue(dc->writeback_write_wq);
+    destroy_workqueue(dc->writeback_write_wq);
+}
+
+Other sites stop the thread (see next paragraph), but do not
+flush/destroy the workqueue.
+
+For completeness, there are exactly three call sites that may call
+kthread_stop(dc->writeback_thread):
+
+cached_dev_detach_finish()
+
+bch_cached_dev_attach() error path when bch_cached_dev_run() fails
+(and error !=3D -EBUSY)
+
+cached_dev_free()
+
+Note: bch_writeback_thread() does not call kthread_stop() on itself;
+it only tears down its WQ, then cached_dev_put(dc) and
+wait_for_kthread_stop().
+
+
+The per-device writeback workqueue is flushed/destroyed at one place:
+
+1=E3=80=81bch_writeback_thread() tail =E2=80=94 it does not call kthread_st=
+op(); it
+only tears down dc->writeback_write_wq (flush + destroy), then
+cached_dev_put(dc) and
+ wait_for_kthread_stop().
+
+3=EF=BC=89how the panic comes in code logic
+
+I/O errors -> bch_cache_set_error()
+   -> set_bit(CACHE_SET_IO_DISABLE)
+   -> conditional_stop_bcache_device()
+        -> bcache_device_stop() -> cached_dev_flush()
+             -> continue_at(..., cached_dev_free, system_wq)
+                   -> cached_dev_free():
+kthread_stop(writeback_thread) [Thread stop site #3]
+
+Meanwhile writeback thread observes IO_DISABLE:
+   bch_writeback_thread():
+      exit path:
+        - flush/destroy dc->writeback_write_wq (single owner)
+        - cached_dev_put(dc)
+        - wait_for_kthread_stop()
+
+If last ref:
+   queue detach once:
+      cached_dev_detach_finish():
+         - cancel writeback-rate dwork
+         - kthread_stop(writeback_thread) if still present [Thread stop sit=
+e #1]
+         - bcache_device_detach(), list moves, clear flags, closure_put()
+
+Attach error path:
+   bch_cached_dev_attach():
+      if bch_cached_dev_run() fails && err !=3D -EBUSY:
+         - kthread_stop(writeback_thread) [Thread stop site #2]
+         - cancel writeback-rate dwork
+
+I/O errors (e.g., NVMe remove/journal error)
+   |
+   v
+bch_cache_set_error()
+   |-- set_bit(CACHE_SET_IO_DISABLE, &c->flags)
+   |-- conditional_stop_bcache_device()
+          |
+          v
+       bcache_device_stop()
+          |
+          v
+       cached_dev_flush()
+          |
+          v
+       (system "events" WQ) -> cached_dev_free(dc)
+                                |
+                                +-- kthread_stop(dc->writeback_thread)   [A=
+]
+                                +-- kthread_stop(dc->status_update_thread)
+                                '-- cancel writeback-rate dwork, unlink, fr=
+ee...
+
+Meanwhile:
+bch_writeback_thread(dc) sees IO_DISABLE or should_stop and exits:
+   |
+   +-- flush/destroy dc->writeback_write_wq      [sole WQ teardown site]
+   +-- cached_dev_put(dc)
+   '-- wait_for_kthread_stop()
+
+Race:
+- One path already ended the thread and freed its task_struct.
+- A second path still calls kthread_stop(dc->writeback_thread) on the
+stale pointer
+  -> refcount splat / GPF (what we observe).
+
+Thanks again, and apologies for the earlier incomplete answer.
+
+Best regards,
+cheliequan
+
+liequan che <liequanche@gmail.com> =E4=BA=8E2025=E5=B9=B411=E6=9C=8813=E6=
+=97=A5=E5=91=A8=E5=9B=9B 19:38=E5=86=99=E9=81=93=EF=BC=9A
 >
-> Apology for missing the change log earlier:
-> v2: Add "clock" cache replacement policy to admin-guide/bcache.rst and
-> performance results.
-> v1: initial version.
+> stop writeback thread and rate-update work exactly once across teardown p=
+aths,
+> - Add STOP_THREAD_ONCE() and use it at all three places that stop
+>   dc->writeback_thread: cached_dev_detach_finish(), cached_dev_free(),
+>   and the bch_cached_dev_attach() error path.
+> - In cached_dev_detach_finish(), also clear WB_RUNNING and cancel the
+>   periodic writeback-rate delayed work to avoid a UAF window after
+>   detach is initiated.
+> - Keep the per-dc writeback workqueue flush/destroy in the writeback
+>   thread exit tail, avoiding double-destroy.
+> Signed-off-by: cheliequan <cheliequan@inspur.com>
+> ---
+>  drivers/md/bcache/bcache.h    | 11 +++++++++++
+>  drivers/md/bcache/super.c     | 14 ++++++--------
+>  drivers/md/bcache/writeback.c |  7 +++++--
+>  3 files changed, 22 insertions(+), 10 deletions(-)
+> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+> index 1d33e40d26ea..66dc5dca5c20 100644
+> --- a/drivers/md/bcache/bcache.h
+> +++ b/drivers/md/bcache/bcache.h
+> @@ -961,6 +961,17 @@ static inline void wait_for_kthread_stop(void)
+>         }
+>  }
 >
-> On Thu, Oct 9, 2025 at 12:17=E2=80=AFAM Robert Pang <robertpang@google.co=
-m> wrote:
-> >
-> > This new policy extends the FIFO policy to approximate the classic cloc=
-k policy
-> > (O(n) time complexity) by considering bucket priority, similar to the L=
-RU
-> > policy.
-> >
-> > This clock policy addresses the high IO latency (1-2 seconds) experienc=
-ed on
-> > multi-terabyte cache devices when the free list is empty due to the def=
-ault LRU
-> > policy. The LRU policy's O(n log n) complexity for sorting priorities f=
-or the
-> > entire bucket list causes this delay.
-> >
-> > Here are the average execution times (in microseconds) of the LRU and t=
-he clock
-> > replacement policies:
-> >
-> > SSD Size  Bucket Count  LRU (us)  Clock (us)
-> > 375 GB      1536000       58292        1163
-> > 750 GB      3072000      121769        1729
-> > 1.5 TB      6144000      244012        3862
-> > 3 TB       12288000      496569        6428
-> > 6 TB       24576000     1067628       14298
-> > 9 TB       36864000     1564348       25763
-> >
-> > Signed-off-by: Robert Pang <robertpang@google.com>
-> > ---
-> >  Documentation/admin-guide/bcache.rst |  2 +-
-> >  drivers/md/bcache/alloc.c            | 34 ++++++++++++++++++++++++----
-> >  drivers/md/bcache/bcache_ondisk.h    |  1 +
-> >  drivers/md/bcache/sysfs.c            |  1 +
-> >  4 files changed, 33 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/Documentation/admin-guide/bcache.rst b/Documentation/admin=
--guide/bcache.rst
-> > index 6fdb495ac466..2be2999c7de4 100644
-> > --- a/Documentation/admin-guide/bcache.rst
-> > +++ b/Documentation/admin-guide/bcache.rst
-> > @@ -616,7 +616,7 @@ bucket_size
-> >    Size of buckets
-> >
-> >  cache_replacement_policy
-> > -  One of either lru, fifo or random.
-> > +  One of either lru, fifo, random or clock.
-> >
-> >  discard
-> >    Boolean; if on a discard/TRIM will be issued to each bucket before i=
-t is
-> > diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-> > index 48ce750bf70a..c65c48eab169 100644
-> > --- a/drivers/md/bcache/alloc.c
-> > +++ b/drivers/md/bcache/alloc.c
-> > @@ -69,7 +69,8 @@
-> >  #include <linux/random.h>
-> >  #include <trace/events/bcache.h>
-> >
-> > -#define MAX_OPEN_BUCKETS 128
-> > +#define MAX_OPEN_BUCKETS       128
-> > +#define CHECK_PRIO_SLICES      16
-> >
-> >  /* Bucket heap / gen */
-> >
-> > @@ -211,19 +212,41 @@ static void invalidate_buckets_lru(struct cache *=
-ca)
-> >         }
-> >  }
-> >
-> > -static void invalidate_buckets_fifo(struct cache *ca)
-> > +/*
-> > + * When check_prio is true, this FIFO policy examines the priority of =
-the
-> > + * buckets and invalidates only the ones below a threshold in the prio=
-rity
-> > + * ladder. As it goes, the threshold will be raised if not enough buck=
-ets are
-> > + * invalidated. Empty buckets are also invalidated. This evaulation re=
-sembles
-> > + * the LRU policy, and is used to approximate the classic clock-sweep =
-cache
-> > + * replacement algorithm.
-> > + */
-> > +static void invalidate_buckets_fifo(struct cache *ca, bool check_prio)
-> >  {
-> >         struct bucket *b;
-> >         size_t checked =3D 0;
-> > +       size_t check_quota =3D 0;
-> > +       uint16_t prio_threshold =3D ca->set->min_prio;
-> >
-> >         while (!fifo_full(&ca->free_inc)) {
-> >                 if (ca->fifo_last_bucket <  ca->sb.first_bucket ||
-> >                     ca->fifo_last_bucket >=3D ca->sb.nbuckets)
-> >                         ca->fifo_last_bucket =3D ca->sb.first_bucket;
-> >
-> > +               if (check_prio && checked >=3D check_quota) {
-> > +                       BUG_ON(ca->set->min_prio > INITIAL_PRIO);
-> > +                       prio_threshold +=3D
-> > +                               DIV_ROUND_UP(INITIAL_PRIO - ca->set->mi=
-n_prio,
-> > +                                            CHECK_PRIO_SLICES);
-> > +                       check_quota +=3D DIV_ROUND_UP(ca->sb.nbuckets,
-> > +                                                   CHECK_PRIO_SLICES);
-> > +               }
-> > +
-> >                 b =3D ca->buckets + ca->fifo_last_bucket++;
-> >
-> > -               if (bch_can_invalidate_bucket(ca, b))
-> > +               if (bch_can_invalidate_bucket(ca, b) &&
-> > +                   (!check_prio ||
-> > +                    b->prio <=3D prio_threshold ||
-> > +                    !GC_SECTORS_USED(b)))
-> >                         bch_invalidate_one_bucket(ca, b);
-> >
-> >                 if (++checked >=3D ca->sb.nbuckets) {
-> > @@ -269,11 +292,14 @@ static void invalidate_buckets(struct cache *ca)
-> >                 invalidate_buckets_lru(ca);
-> >                 break;
-> >         case CACHE_REPLACEMENT_FIFO:
-> > -               invalidate_buckets_fifo(ca);
-> > +               invalidate_buckets_fifo(ca, false);
-> >                 break;
-> >         case CACHE_REPLACEMENT_RANDOM:
-> >                 invalidate_buckets_random(ca);
-> >                 break;
-> > +       case CACHE_REPLACEMENT_CLOCK:
-> > +               invalidate_buckets_fifo(ca, true);
-> > +               break;
-> >         }
-> >  }
-> >
-> > diff --git a/drivers/md/bcache/bcache_ondisk.h b/drivers/md/bcache/bcac=
-he_ondisk.h
-> > index 6620a7f8fffc..d45794e01fe1 100644
-> > --- a/drivers/md/bcache/bcache_ondisk.h
-> > +++ b/drivers/md/bcache/bcache_ondisk.h
-> > @@ -288,6 +288,7 @@ BITMASK(CACHE_REPLACEMENT,          struct cache_sb=
-, flags, 2, 3);
-> >  #define CACHE_REPLACEMENT_LRU          0U
-> >  #define CACHE_REPLACEMENT_FIFO         1U
-> >  #define CACHE_REPLACEMENT_RANDOM       2U
-> > +#define CACHE_REPLACEMENT_CLOCK                3U
-> >
-> >  BITMASK(BDEV_CACHE_MODE,               struct cache_sb, flags, 0, 4);
-> >  #define CACHE_MODE_WRITETHROUGH                0U
-> > diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> > index 826b14cae4e5..c8617bad0648 100644
-> > --- a/drivers/md/bcache/sysfs.c
-> > +++ b/drivers/md/bcache/sysfs.c
-> > @@ -45,6 +45,7 @@ static const char * const cache_replacement_policies[=
-] =3D {
-> >         "lru",
-> >         "fifo",
-> >         "random",
-> > +       "clock",
-> >         NULL
-> >  };
-> >
-> > --
-> > 2.51.0.710.ga91ca5db03-goog
-> >
+> +/*
+> + * Stop a kthread exactly once by taking ownership of the pointer.
+> + * Safe against concurrent callers and against already-stopped threads.
+> + */
+> +#define STOP_THREAD_ONCE(dc, member)                                    =
+\
+> +       do {                                                             =
+\
+> +               struct task_struct *t__ =3D xchg(&(dc)->member, NULL);   =
+  \
+> +               if (t__ && !IS_ERR(t__))                                 =
+\
+> +               kthread_stop(t__);                                       =
+\
+> +       } while (0)
+> +
+>  /* Forward declarations */
+>
+>  void bch_count_backing_io_errors(struct cached_dev *dc, struct bio *bio)=
+;
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index 1492c8552255..b4da0a505d4a 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -1143,8 +1143,7 @@ static void cached_dev_detach_finish(struct
+> work_struct *w)
+>                 cancel_writeback_rate_update_dwork(dc);
+>
+>         if (!IS_ERR_OR_NULL(dc->writeback_thread)) {
+> -               kthread_stop(dc->writeback_thread);
+> -               dc->writeback_thread =3D NULL;
+> +               STOP_THREAD_ONCE(dc, writeback_thread);
+>         }
+>
+>         mutex_lock(&bch_register_lock);
+> @@ -1308,8 +1307,9 @@ int bch_cached_dev_attach(struct cached_dev *dc,
+> struct cache_set *c,
+>                  * created previously in bch_cached_dev_writeback_start()
+>                  * have to be stopped manually here.
+>                  */
+> -               kthread_stop(dc->writeback_thread);
+> -               cancel_writeback_rate_update_dwork(dc);
+> +               if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.f=
+lags))
+> +                       cancel_writeback_rate_update_dwork(dc);
+> +               STOP_THREAD_ONCE(dc, writeback_thread);
+>                 pr_err("Couldn't run cached device %pg\n", dc->bdev);
+>                 return ret;
+>         }
+> @@ -1349,10 +1349,8 @@ static CLOSURE_CALLBACK(cached_dev_free)
+>         if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
+>                 cancel_writeback_rate_update_dwork(dc);
+>
+> -       if (!IS_ERR_OR_NULL(dc->writeback_thread))
+> -               kthread_stop(dc->writeback_thread);
+> -       if (!IS_ERR_OR_NULL(dc->status_update_thread))
+> -               kthread_stop(dc->status_update_thread);
+> +       STOP_THREAD_ONCE(dc, writeback_thread);
+> +       STOP_THREAD_ONCE(dc, status_update_thread);
+>
+>         mutex_lock(&bch_register_lock);
+>
+> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.=
+c
+> index 302e75f1fc4b..50e67a784acd 100644
+> --- a/drivers/md/bcache/writeback.c
+> +++ b/drivers/md/bcache/writeback.c
+> @@ -741,6 +741,7 @@ static int bch_writeback_thread(void *arg)
+>         struct cached_dev *dc =3D arg;
+>         struct cache_set *c =3D dc->disk.c;
+>         bool searched_full_index;
+> +       struct workqueue_struct *wq =3D NULL;
+>
+>         bch_ratelimit_reset(&dc->writeback_rate);
+>
+> @@ -832,8 +833,10 @@ static int bch_writeback_thread(void *arg)
+>                 }
+>         }
+>
+> -       if (dc->writeback_write_wq)
+> -               destroy_workqueue(dc->writeback_write_wq);
+> +       wq =3D xchg(&dc->writeback_write_wq, NULL);
+> +       if (wq) {
+> +           destroy_workqueue(wq);
+> +        }
+>
+>         cached_dev_put(dc);
+>         wait_for_kthread_stop();
+> --
+> 2.25.1
 
