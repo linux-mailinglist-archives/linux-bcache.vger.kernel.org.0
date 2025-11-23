@@ -1,344 +1,209 @@
-Return-Path: <linux-bcache+bounces-1259-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1260-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3149CC6D5B8
-	for <lists+linux-bcache@lfdr.de>; Wed, 19 Nov 2025 09:16:04 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD7AC7DB2C
+	for <lists+linux-bcache@lfdr.de>; Sun, 23 Nov 2025 04:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sin.lore.kernel.org (Postfix) with ESMTPS id 6E1D52D45D
-	for <lists+linux-bcache@lfdr.de>; Wed, 19 Nov 2025 08:13:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2305C350FAF
+	for <lists+linux-bcache@lfdr.de>; Sun, 23 Nov 2025 03:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BE32ED844;
-	Wed, 19 Nov 2025 08:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF28218AA0;
+	Sun, 23 Nov 2025 03:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAKFkFy8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kx9RzuA6"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34771C84DE
-	for <linux-bcache@vger.kernel.org>; Wed, 19 Nov 2025 08:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD0F1EDA3C
+	for <linux-bcache@vger.kernel.org>; Sun, 23 Nov 2025 03:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763539978; cv=none; b=fAHLlGWWmZbZVJegwoMNcBowEvdOmi1vXaZGiaNOzfhLcUCc79ao4L012LQtXjJkwghEYZR+ZQfFx86HgYdrKULWLPdkb/poo6t0t3NX+Li3pR7qOg9+KzYUR9e0oABgqNdLz+4Yd8F3B0DvBtuZzvMOstfL8VTd+BJqK/GaoSc=
+	t=1763867691; cv=none; b=MK/qgplOuYSvufsugzNXUs7QIHJQNy4ZLFBs9VtkzxankauHqGKNeTsO1nwyzWZjMh4272aJ8e22emLBbTmsPqrofiCgJdlAHgkZ3EXHmgZWTAKx94lupMJlMTVyJcx42UJ0m4qyY3kB6RT8JVhCr/TT9YX/o1Z5a6v0qjfsri8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763539978; c=relaxed/simple;
-	bh=DnuOXgxfU6qtybWZtlQwa3TZWZgnfr3HBeC6+Wa6oA0=;
+	s=arc-20240116; t=1763867691; c=relaxed/simple;
+	bh=nRs19Xsq1ucV508Y+KpD0MmfKZJfnRugxP+r8Pey/Ow=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dXF8rejONooC9reziYhuas+ZYmNgAwpE8YQ7MCk7uwaMe4Xjd5mkp5GB4ERYhiBU6BXTvi3+nmxcAfDPSddOPrEmSl/pdF1JohdXl9AiIwO1ssuB+KI0x+oQYOkGhLWVc6fWkOW5ztMDX/8uY/LBCi5U8uAHL+oI/mppeiXHr8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QAKFkFy8; arc=none smtp.client-ip=209.85.219.49
+	 To:Cc:Content-Type; b=CE+ptbdCH832Ud1AMQFtgLaUiwioC4q3qLBEpkhUUdfbeyTDVkZydgrr05nXt9bc5I75yEJHBWTq2eXRXRKR6d/Xv/mDYi8UdcpCKrtZnbHw64CC15sdohpwOlEIc7oKyJASe+h5xRl+NFLYG9cMk/eOFDqI5K5dG9beBdfrrJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kx9RzuA6; arc=none smtp.client-ip=209.85.160.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-88245cc8c92so41273036d6.0
-        for <linux-bcache@vger.kernel.org>; Wed, 19 Nov 2025 00:12:56 -0800 (PST)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4ee19b1fe5dso44769531cf.0
+        for <linux-bcache@vger.kernel.org>; Sat, 22 Nov 2025 19:14:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763539975; x=1764144775; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763867688; x=1764472488; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/tU5N9FC1VC2jhsjwqPUnanjm4jcyQCilLFFNyoSH3g=;
-        b=QAKFkFy8cSKK11VANVCoC8FF/sLaGUVjMDEiEquoZnYsCBTGnvRDzFmV7DCDrHDgUm
-         d7vRoX44qiVFOmflB5NucCZEXxzse2XEgCU2KlR1Gv/Jsb6in0S75LFtVQavHlT0x+QF
-         7XAKY8sn5l2LTnxRCxTqRjAztKTrNsg143v0kXK25RRlopDHRuxNPvy3xDS/JXWd9Tol
-         zR5Fnj9jgujLtK8U0pWf5bg0Bkbfr3y8/SwnldIoD19zDoQQrgDFyHbU6wom5Du+TF88
-         hsAYjTjo+K+nG6rWxNl1u+KxmnmMJK9k2sSxRr/iwCyGA9FICimu8QOQV6Rm9bhN0Fic
-         VF7w==
+        bh=sSUmOlF3E259ASbJ7NKM/1Z38SFWeY0yp8l6jgM+Ktg=;
+        b=Kx9RzuA6o7L5/regvp7GCHsXfXPn7NCcqo3aCBfPl4hiu7fwebLSYvsKKUY0KVQ+Ie
+         ICT83rwOpf9TiDzPvgQ1GfYd8DusVNTqbwZV0JzVcMGs5HhK695wRZ70sm6flScHvlUf
+         UgMlWhuZgWhMBY7jpYWFjd6yD8RdoSY8F4A1HGTC2s5msh57a5g9dSWMFxo0k6jcWr95
+         hv7A0qDPp/C3mXlb/sql77oWRBnQERTwG1bAsDL8leZW7jWFhBjiqCBF5lRshOiV4mpS
+         Es9nKtAQ6+uTDUyBSccyKYpywg44qPu0ahwgWWpJsaebiWg6LTeuCoW1dBUJHNxB3/Yw
+         AwOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763539975; x=1764144775;
+        d=1e100.net; s=20230601; t=1763867688; x=1764472488;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=/tU5N9FC1VC2jhsjwqPUnanjm4jcyQCilLFFNyoSH3g=;
-        b=Y+7L5SpVUp4DmhibjFfINhS+MIJR8N2ZcK2gsqzZxhQHjGou4EVfKz5vIND3sikLqs
-         ioTQyaRcCKr3zSgB5und30SKf1U9GGUwQ2UncMQfM2xhd9Uf8i481Zu6BmpYspX4O8Dd
-         UgHFGXWczbRs/uigNwBtMd85iAzaqNXDPCRaM15g/q72CqrlHBTz3BI1ZIIgTIktj5Dr
-         YKSITHXz0yq8SCE8aV+Q2r5nQgqPCF0QEtecE76t4pr3Cj+QPMyr8voAXhm4KeDjxhct
-         QhTZKTlaiKBafuUpt4VYoOXK7DFA1xoC70iQwHSVzXxYjtfCMFM96FDZ/3SlyTZSVMyw
-         vTTA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4NdGgmkwE05Ui4RwQTrzP/vLgWz3mNh/ux0IOqd+n6f5sAkqpGCFkmOUCabdNm69RwaoWEaRICrqAzqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRa2nIYJ2DBnI8kU7dOrgIjD6EKN3RrAfD+j0NqdFJoT8N0RA5
-	znZb4ZulOyjWgcjuM6yjimlxs1NkWE0nLpqqWjOco49rDco+mqD+CK2504MEirmgXJ8eJXlItJB
-	ELOpH4DZhfOWRkU562td7rmkGtK4gd13DUOoB0Ng=
-X-Gm-Gg: ASbGncueHmbk94Nxs6fVSydSOxEb/ZuyQSzVUehnRLi3nh0pWAzGXItvaoI/Wv1TPvj
-	+Bnp6rY6WDYjVDXmt+nwyGczCXc+JJSaFxw8f6eTdgGCPikmthQabw7XPdA4h5ySIul+OdBOLlH
-	2YAB5MtcxiuRAwdIXQA11xmWI5+yawLBp8uuGRwzwlAKkSrX3qNpwHFsaRDyKUKKXIdT/AM0wf0
-	3juoRE5AasdFlYHoN/htyqi/QPRNbuSo9yg/An8bw7dmxp6OKoKoOOlpWo6CvK5+zu8UOSmym3S
-	MtQNxA==
-X-Google-Smtp-Source: AGHT+IFpr/4m7kqFyVp6wv7lGNWYepzTg8Zt7CTxQPr9rwyqLTHTilIDdohkSa0G6a38Dwte5D8WBF80QQAULjpMjVA=
-X-Received: by 2002:a05:6214:29ce:b0:880:4c73:9e3b with SMTP id
- 6a1803df08f44-882925c47f5mr247916706d6.15.1763539975325; Wed, 19 Nov 2025
- 00:12:55 -0800 (PST)
+        bh=sSUmOlF3E259ASbJ7NKM/1Z38SFWeY0yp8l6jgM+Ktg=;
+        b=uuUIx37hQGvIAvhn2CGYkVJ4dp1tIHW8HIz6Zk6ghRexp2lDrzq0Mup9mynf2lZO7b
+         rqf13a9wiAvo9ta7SgtA5/1ZmIhMIRAACv7j3aNZ9jHaBzmKaXoyBr2g/pP+1sOm7swK
+         jVz+fOCpG4McPxKhMSklWsl8Y0dlvVaOTCLC/aCy8TKLgbZ/HR/uRwK0n4Tf43DYbQyk
+         6P2OSXAZDOTGXYj6gyvehOhCzjymkyoMt0bqWUuPJSAlMd0nv25VBaGTPM9GtGd50siQ
+         6/e0e3vMrmyPR/o7kgvz+doBWh/T2q89ScRoLfrwRRp4LJOXYFx/Yn+dsnfdvGJ97KRs
+         IRpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEIqHSa3a3VEIkGXT+yPw6tl4Wb6vGqGYNO2NHvl4qScWV6BRQ8faYbSltEPOdxfmY5y99bB+bwNP8+ic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaVWoW0+ISgEIbfCax5hE4c7+O8YTiVvrtGgNMnjaIvexUN5gr
+	9YenYjIclq4Wmh7lfgH6xNeMm/ohFvATdUozcaf/d+mYjCeYWaoUntMkmX3TEwypnhfah3+ieDQ
+	TZ6N/cYTucwU0RzDZ6wZgmaB4HUrmtL/UVDQDsQ0=
+X-Gm-Gg: ASbGncumTCmKWumn8ePvALh9xl47MYWpfFewrW/C5rZ6ERWxEUE7D3W7J5QezdULiiG
+	Rnu8BRes7Q8Vl92YpJAreLCIIL7yFk6wn0sjzSpxODhttwgsjvkc2xEE55ql58+6AS6Ht3lXgkE
+	NhS7DuI1dHwId9CNwpOzCk6G2JL7KbMGK+kn+cjqtZSugIode+sNjIpTD/jnf8aiGOJMdzvWeDh
+	lu75Yb/qTjmMnl+sXKa9h6J5EQZ2sKEuOn6aMYQY1CYk/b65JwpBZmw0v6KP89Mqvf0TcE=
+X-Google-Smtp-Source: AGHT+IGdga/kzhdwCVG7yVfSoR3Y4Mpj0tXp1Phothz1pnN4zZDpqFPu9X4DmFfSbiDItMnyiKDLP9Ui4prcpSBpeyE=
+X-Received: by 2002:a05:622a:409:b0:4ec:ef62:8c81 with SMTP id
+ d75a77b69052e-4ee588cb739mr81789031cf.47.1763867688428; Sat, 22 Nov 2025
+ 19:14:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAsfc_ry+u771V_dTQMiXpaz2iGbQOPmZfhwnyF56pM+FjXdsw@mail.gmail.com>
- <4y5xucuqqqe4ppxu46nwsr6g34bu7ixc5xwwogdvkdpl3zhqi6@c6lj7rk5giem>
- <CAAsfc_pa=AwaaN6Fy2jU6nPwnGET0oZgWZtSc3LtQ9_oJ6supA@mail.gmail.com>
- <CAAsfc_rRK1rBVYFOzdioQSj5BL_t--Sbg6y5KhS+uiSeKz51xw@mail.gmail.com> <CAAsfc_pafORaG_PrVpOB9GBK+YCjdzJMd2Ww=ya2PbcPkw04+w@mail.gmail.com>
-In-Reply-To: <CAAsfc_pafORaG_PrVpOB9GBK+YCjdzJMd2Ww=ya2PbcPkw04+w@mail.gmail.com>
-From: liequan che <liequanche@gmail.com>
-Date: Wed, 19 Nov 2025 16:12:43 +0800
-X-Gm-Features: AWmQ_bmyegNzM53loB2ULYV1djoH10Q3gCydOmPFKqamxldxo_z4on5kqXJPRrA
-Message-ID: <CAAsfc_p4KWYgkfny0BqS8G7jOiXf_r1QCb0x0Sh56je=GBdUXw@mail.gmail.com>
-Subject: Re: [PATCH v2] bcache: fix UAF in cached_dev_free and safely flush/destroy
-To: Coly Li <colyli@fnnas.com>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>, linux-bcache <linux-bcache@vger.kernel.org>
+References: <20251121081748.1443507-1-zhangshida@kylinos.cn>
+ <aSEvg8z9qxSwJmZn@fedora> <CANubcdULTQo5jF7hGSWFqXw6v5DhEg=316iFNipMbsyz64aneg@mail.gmail.com>
+ <aSGmBAP0BA_2D3Po@fedora> <CAHc6FU7+riVQBX7L2uk64A355rF+DfQ6xhP425ruQ76d_SDPGA@mail.gmail.com>
+In-Reply-To: <CAHc6FU7+riVQBX7L2uk64A355rF+DfQ6xhP425ruQ76d_SDPGA@mail.gmail.com>
+From: Stephen Zhang <starzhangzsd@gmail.com>
+Date: Sun, 23 Nov 2025 11:14:12 +0800
+X-Gm-Features: AWmQ_bkhV3WFHcWH6ezrZh5TyYLHctF2XYDfyBPe3dT3HiPXGugPAFouComClV0
+Message-ID: <CANubcdXOZvW9HjG4NA0DUWjKDbG4SspFnEih_RyobpFPXn2jWQ@mail.gmail.com>
+Subject: Re: Fix potential data loss and corruption due to Incorrect BIO Chain Handling
+To: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: Ming Lei <ming.lei@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, nvdimm@lists.linux.dev, 
+	virtualization@lists.linux.dev, linux-nvme@lists.infradead.org, 
+	gfs2@lists.linux.dev, ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org, 
+	zhangshida@kylinos.cn, linux-bcache@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
- Hi Coly and Kent,
+Andreas Gruenbacher <agruenba@redhat.com> =E4=BA=8E2025=E5=B9=B411=E6=9C=88=
+22=E6=97=A5=E5=91=A8=E5=85=AD 22:57=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Sat, Nov 22, 2025 at 1:07=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wr=
+ote:
+> > > static void bio_chain_endio(struct bio *bio)
+> > > {
+> > >         bio_endio(__bio_chain_endio(bio));
+> > > }
+> >
+> > bio_chain_endio() never gets called really, which can be thought as `fl=
+ag`,
+>
+> That's probably where this stops being relevant for the problem
+> reported by Stephen Zhang.
+>
+> > and it should have been defined as `WARN_ON_ONCE(1);` for not confusing=
+ people.
+>
+> But shouldn't bio_chain_endio() still be fixed to do the right thing
+> if called directly, or alternatively, just BUG()? Warning and still
+> doing the wrong thing seems a bit bizarre.
+>
+> I also see direct bi_end_io calls in erofs_fileio_ki_complete(),
+> erofs_fscache_bio_endio(), and erofs_fscache_submit_bio(), so those
+> are at least confusing.
+>
+> Thanks,
+> Andreas
+>
 
-Sorry for the earlier omissions. Here is a concise correction and completio=
-n.
+Thank you, Ming and Andreas, for the detailed explanation. I will
+remember to add the `WARN()`/`BUG()` macros in `bio_chain_endio()`.
 
-1) Could you please point out exactly which reference is still held?
-From the crash we analyzed, there isn=E2=80=99t a leaked struct cached_dev
-reference causing the panic. The long-lived references during teardown
-behave as expected:
+Following that discussion, I have identified a similar and suspicious
+call in the
+bcache driver.
 
-dc->disk.cl (closure) is taken/released around detach/free paths.
+Location:`drivers/md/bcache/request.c`
+```c
+static void detached_dev_do_request(struct bcache_device *d, struct bio *bi=
+o,
+                                    struct block_device *orig_bdev,
+unsigned long start_time)
+{
+    struct detached_dev_io_private *ddip;
+    struct cached_dev *dc =3D container_of(d, struct cached_dev, disk);
 
-dc->count (refcount) gates device lifetime.
-
-The actual failure is a stop-ownership race on dc->writeback_thread:
-one path stops the kthread and it exits (freeing the task), while
-another racing path still calls kthread_stop() on a stale pointer,
-triggering the refcount_t warning and subsequent fault. In short, it=E2=80=
-=99s
-not a missing cached_dev_put(), but a second kthread_stop() against an
-already exited thread.
-
-
-2) Could you please point out all the locations where writeback_wq is stopp=
-ed?
-If by =E2=80=9Cstopped=E2=80=9D you mean flush/destroy of the per-device wr=
-iteback
-workqueue (dc->writeback_write_wq), there is only one place:
-
-At the tail of bch_writeback_thread():
-
-if (dc->writeback_write_wq) {
-    flush_workqueue(dc->writeback_write_wq);
-    destroy_workqueue(dc->writeback_write_wq);
+    /*
+     * no need to call closure_get(&dc->disk.cl),
+     * because upper layer had already opened bcache device,
+     * which would call closure_get(&dc->disk.cl)
+     */
+    ddip =3D kzalloc(sizeof(struct detached_dev_io_private), GFP_NOIO);
+    if (!ddip) {
+        bio->bi_status =3D BLK_STS_RESOURCE;
+        bio->bi_end_io(bio); // <-- POTENTIAL ISSUE
+        return;
+    }
+    // ...
 }
+```
+Scenario Description:
+1.  A chained bio is created in the block layer.
+2.  This bio is intercepted by the bcache layer to be routed to the appropr=
+iate
+backing disk.
+3.  The code path determines that the backing device is in a detached state=
+,
+leading to a call to `detached_dev_do_request()` to handle the I/O.
+4.  The memory allocation for the `ddip` structure fails.
+5.  In the error path, the function directly invokes `bio->bi_end_io(bio)`.
 
-Other sites stop the thread (see next paragraph), but do not
-flush/destroy the workqueue.
+The Problem:
+For a bio that is part of a chain, the `bi_end_io` function is likely set t=
+o
+`bio_chain_endio`. Directly calling it in this context would corrupt the
+`bi_remaining` reference count, exactly as described in our previous
+discussion.
 
-For completeness, there are exactly three call sites that may call
-kthread_stop(dc->writeback_thread):
+Is it  a valid theoretical scenario?
 
-cached_dev_detach_finish()
+And there is another call:
+```
+static void detached_dev_end_io(struct bio *bio)
+{
+        struct detached_dev_io_private *ddip;
 
-bch_cached_dev_attach() error path when bch_cached_dev_run() fails
-(and error !=3D -EBUSY)
+        ddip =3D bio->bi_private;
+        bio->bi_end_io =3D ddip->bi_end_io;
+        bio->bi_private =3D ddip->bi_private;
 
-cached_dev_free()
+        /* Count on the bcache device */
+        bio_end_io_acct_remapped(bio, ddip->start_time, ddip->orig_bdev);
 
-Note: bch_writeback_thread() does not call kthread_stop() on itself;
-it only tears down its WQ, then cached_dev_put(dc) and
-wait_for_kthread_stop().
+        if (bio->bi_status) {
+                struct cached_dev *dc =3D container_of(ddip->d,
+                                                     struct cached_dev, dis=
+k);
+                /* should count I/O error for backing device here */
+                bch_count_backing_io_errors(dc, bio);
+        }
 
+        kfree(ddip);
+        bio->bi_end_io(bio);
+}
+```
 
-The per-device writeback workqueue is flushed/destroyed at one place:
+Would you mind me adding the bcache to the talk?
+[Adding the bcache list to the CC]
 
-1=E3=80=81bch_writeback_thread() tail =E2=80=94 it does not call kthread_st=
-op(); it
-only tears down dc->writeback_write_wq (flush + destroy), then
-cached_dev_put(dc) and
- wait_for_kthread_stop().
-
-3=EF=BC=89how the panic comes in code logic
-
-I/O errors -> bch_cache_set_error()
-   -> set_bit(CACHE_SET_IO_DISABLE)
-   -> conditional_stop_bcache_device()
-        -> bcache_device_stop() -> cached_dev_flush()
-             -> continue_at(..., cached_dev_free, system_wq)
-                   -> cached_dev_free():
-kthread_stop(writeback_thread) [Thread stop site #3]
-
-Meanwhile writeback thread observes IO_DISABLE:
-   bch_writeback_thread():
-      exit path:
-        - flush/destroy dc->writeback_write_wq (single owner)
-        - cached_dev_put(dc)
-        - wait_for_kthread_stop()
-
-If last ref:
-   queue detach once:
-      cached_dev_detach_finish():
-         - cancel writeback-rate dwork
-         - kthread_stop(writeback_thread) if still present [Thread stop sit=
-e #1]
-         - bcache_device_detach(), list moves, clear flags, closure_put()
-
-Attach error path:
-   bch_cached_dev_attach():
-      if bch_cached_dev_run() fails && err !=3D -EBUSY:
-         - kthread_stop(writeback_thread) [Thread stop site #2]
-         - cancel writeback-rate dwork
-
-I/O errors (e.g., NVMe remove/journal error)
-   |
-   v
-bch_cache_set_error()
-   |-- set_bit(CACHE_SET_IO_DISABLE, &c->flags)
-   |-- conditional_stop_bcache_device()
-          |
-          v
-       bcache_device_stop()
-          |
-          v
-       cached_dev_flush()
-          |
-          v
-       (system "events" WQ) -> cached_dev_free(dc)
-                                |
-                                +-- kthread_stop(dc->writeback_thread)   [A=
-]
-                                +-- kthread_stop(dc->status_update_thread)
-                                '-- cancel writeback-rate dwork, unlink, fr=
-ee...
-
-Meanwhile:
-bch_writeback_thread(dc) sees IO_DISABLE or should_stop and exits:
-   |
-   +-- flush/destroy dc->writeback_write_wq      [sole WQ teardown site]
-   +-- cached_dev_put(dc)
-   '-- wait_for_kthread_stop()
-
-Race:
-- One path already ended the thread and freed its task_struct.
-- A second path still calls kthread_stop(dc->writeback_thread) on the
-stale pointer
-  -> refcount splat / GPF (what we observe).
-
-Thanks again, and apologies for the earlier incomplete answer.
-
-Best regards,
-cheliequan
-
-liequan che <liequanche@gmail.com> =E4=BA=8E2025=E5=B9=B411=E6=9C=8813=E6=
-=97=A5=E5=91=A8=E5=9B=9B 19:38=E5=86=99=E9=81=93=EF=BC=9A
->
-> stop writeback thread and rate-update work exactly once across teardown p=
-aths,
-> - Add STOP_THREAD_ONCE() and use it at all three places that stop
->   dc->writeback_thread: cached_dev_detach_finish(), cached_dev_free(),
->   and the bch_cached_dev_attach() error path.
-> - In cached_dev_detach_finish(), also clear WB_RUNNING and cancel the
->   periodic writeback-rate delayed work to avoid a UAF window after
->   detach is initiated.
-> - Keep the per-dc writeback workqueue flush/destroy in the writeback
->   thread exit tail, avoiding double-destroy.
-> Signed-off-by: cheliequan <cheliequan@inspur.com>
-> ---
->  drivers/md/bcache/bcache.h    | 11 +++++++++++
->  drivers/md/bcache/super.c     | 14 ++++++--------
->  drivers/md/bcache/writeback.c |  7 +++++--
->  3 files changed, 22 insertions(+), 10 deletions(-)
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 1d33e40d26ea..66dc5dca5c20 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -961,6 +961,17 @@ static inline void wait_for_kthread_stop(void)
->         }
->  }
->
-> +/*
-> + * Stop a kthread exactly once by taking ownership of the pointer.
-> + * Safe against concurrent callers and against already-stopped threads.
-> + */
-> +#define STOP_THREAD_ONCE(dc, member)                                    =
-\
-> +       do {                                                             =
-\
-> +               struct task_struct *t__ =3D xchg(&(dc)->member, NULL);   =
-  \
-> +               if (t__ && !IS_ERR(t__))                                 =
-\
-> +               kthread_stop(t__);                                       =
-\
-> +       } while (0)
-> +
->  /* Forward declarations */
->
->  void bch_count_backing_io_errors(struct cached_dev *dc, struct bio *bio)=
-;
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 1492c8552255..b4da0a505d4a 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1143,8 +1143,7 @@ static void cached_dev_detach_finish(struct
-> work_struct *w)
->                 cancel_writeback_rate_update_dwork(dc);
->
->         if (!IS_ERR_OR_NULL(dc->writeback_thread)) {
-> -               kthread_stop(dc->writeback_thread);
-> -               dc->writeback_thread =3D NULL;
-> +               STOP_THREAD_ONCE(dc, writeback_thread);
->         }
->
->         mutex_lock(&bch_register_lock);
-> @@ -1308,8 +1307,9 @@ int bch_cached_dev_attach(struct cached_dev *dc,
-> struct cache_set *c,
->                  * created previously in bch_cached_dev_writeback_start()
->                  * have to be stopped manually here.
->                  */
-> -               kthread_stop(dc->writeback_thread);
-> -               cancel_writeback_rate_update_dwork(dc);
-> +               if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.f=
-lags))
-> +                       cancel_writeback_rate_update_dwork(dc);
-> +               STOP_THREAD_ONCE(dc, writeback_thread);
->                 pr_err("Couldn't run cached device %pg\n", dc->bdev);
->                 return ret;
->         }
-> @@ -1349,10 +1349,8 @@ static CLOSURE_CALLBACK(cached_dev_free)
->         if (test_and_clear_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags))
->                 cancel_writeback_rate_update_dwork(dc);
->
-> -       if (!IS_ERR_OR_NULL(dc->writeback_thread))
-> -               kthread_stop(dc->writeback_thread);
-> -       if (!IS_ERR_OR_NULL(dc->status_update_thread))
-> -               kthread_stop(dc->status_update_thread);
-> +       STOP_THREAD_ONCE(dc, writeback_thread);
-> +       STOP_THREAD_ONCE(dc, status_update_thread);
->
->         mutex_lock(&bch_register_lock);
->
-> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.=
-c
-> index 302e75f1fc4b..50e67a784acd 100644
-> --- a/drivers/md/bcache/writeback.c
-> +++ b/drivers/md/bcache/writeback.c
-> @@ -741,6 +741,7 @@ static int bch_writeback_thread(void *arg)
->         struct cached_dev *dc =3D arg;
->         struct cache_set *c =3D dc->disk.c;
->         bool searched_full_index;
-> +       struct workqueue_struct *wq =3D NULL;
->
->         bch_ratelimit_reset(&dc->writeback_rate);
->
-> @@ -832,8 +833,10 @@ static int bch_writeback_thread(void *arg)
->                 }
->         }
->
-> -       if (dc->writeback_write_wq)
-> -               destroy_workqueue(dc->writeback_write_wq);
-> +       wq =3D xchg(&dc->writeback_write_wq, NULL);
-> +       if (wq) {
-> +           destroy_workqueue(wq);
-> +        }
->
->         cached_dev_put(dc);
->         wait_for_kthread_stop();
-> --
-> 2.25.1
+Thanks,
+Shida
 
