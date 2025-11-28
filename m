@@ -1,155 +1,163 @@
-Return-Path: <linux-bcache+bounces-1278-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1279-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F61C913CA
-	for <lists+linux-bcache@lfdr.de>; Fri, 28 Nov 2025 09:39:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF30C920A4
+	for <lists+linux-bcache@lfdr.de>; Fri, 28 Nov 2025 13:58:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7AD1B343FAC
-	for <lists+linux-bcache@lfdr.de>; Fri, 28 Nov 2025 08:38:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B4C3AD6AF
+	for <lists+linux-bcache@lfdr.de>; Fri, 28 Nov 2025 12:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625FF2E7F25;
-	Fri, 28 Nov 2025 08:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284FB32B993;
+	Fri, 28 Nov 2025 12:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dC2IxDOR"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eqGtPdEJ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="KkmTyH/+"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5012B2E718B
-	for <linux-bcache@vger.kernel.org>; Fri, 28 Nov 2025 08:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C391732ABFA
+	for <linux-bcache@vger.kernel.org>; Fri, 28 Nov 2025 12:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764319113; cv=none; b=iFjXHyHwqsBapfh5y0SJBiZVFDjwi1URlkb2nP6w3QD9HZ5MjooBLbTZB1xl+a2xao6e8ZPashcYpFUnDnGqmBIkC8PqncTUB3bhTsqCpW1ehPLzLOL7H3ZFJclzT/EVc47gIqwcAc921XBs6xcF9hlFLTCagCpXPJyYxswzd2U=
+	t=1764334659; cv=none; b=hWcuBdDpFGDwhvJHTUBCd+hnSb5m5dSnpYAK03aDpSH5QaG0PwWsfd5N8KY8enB/4OUB2qv60LjxjuAAEAv9TeLubJm3SSSKtlBZSlCn0A/xib3ZOPzSN4ERJDCLvIdSTYdCjQR1u+YB+IHvx0Huy9KD9TF7M/zXQx9hXqEsOPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764319113; c=relaxed/simple;
-	bh=mG04EOy5shg0G6MHF6boM7DuHGiLByU6HW/XuA5FyN4=;
+	s=arc-20240116; t=1764334659; c=relaxed/simple;
+	bh=77RRIbnmoJwy1cEKeO1cRn3JJgXHE29OKRRM9cIvMcc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jLR+qxRQ0ksNth/Vr4vbLJRGTiDhTdIrgp27RqyKXn+xHWEeFep5YyPt+JkcafwLZOB5eQdKE9mwim0yEnMHNz/suU0uFsA+mdvE6zGMZzsAW+qLkZ+59twcRIAeljQ+T5LtFWYLo8qJ45XyumsIDF9F3ndgywVPJB1Ef4612FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dC2IxDOR; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4ee158187aaso17505131cf.0
-        for <linux-bcache@vger.kernel.org>; Fri, 28 Nov 2025 00:38:31 -0800 (PST)
+	 To:Cc:Content-Type; b=MMbbP7oB97N99SbGkAFGf86EOlP+UFZ9Bhj+s47uu+dNw8M6DcQQN1FY+vfeokC77FlIj+5lUgMpfVgL8/bB62RxhtD71obfUpWoXzCTMiSBfyVC649gvkaRYdS7P819/34Mzflf9WGe/2e0ULZ+t/HVBPrli6k3ahR9NjIcYfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eqGtPdEJ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=KkmTyH/+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764334655;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k2NUtFfF9SbHj+pN5h7ZLsSymt83AD97eoXiZYz42dA=;
+	b=eqGtPdEJ27UP49AIWSoGhqx3ahsyvnrQiOQhYP1ZdyQwTXcEviCdg6ZNVKwpUbnqreNB9f
+	qZ3RdIPMgWU5nzNRfCaCAksCgGIhROBnVFjWZZ58I2kb0DhIlAIDIFfZXIMaZJL89uO9PP
+	sRmQBWHdY3mROQAuySMyzMetrhn7IY8=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-bzCfuPn9NJS2nKuyX-xK7A-1; Fri, 28 Nov 2025 07:57:34 -0500
+X-MC-Unique: bzCfuPn9NJS2nKuyX-xK7A-1
+X-Mimecast-MFC-AGG-ID: bzCfuPn9NJS2nKuyX-xK7A_1764334654
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-787d4af9896so23868697b3.3
+        for <linux-bcache@vger.kernel.org>; Fri, 28 Nov 2025 04:57:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764319110; x=1764923910; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1764334654; x=1764939454; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=++QMIe2Gzi7z7FeXSAmSiuqg8P1uQ1lVTlMI6i3m06g=;
-        b=dC2IxDOR0WeEmPZSlsUxwDLBGMsc+fIeXUYA+M+8wTeUPkh4BpLsVKWiIWaKfxtLNj
-         s30DMr23fbEbBnmdth3SK0f8HTjXmqF+jpfglihhy6alcBMQrRfCQwWecd47M5pFVdI/
-         UaNo6JCtvgYcDq7wVEFMYbujCkDcBTDPlacvfh1hsifnN4b8UIzOuIgib4dpdhUTJJbG
-         2+WU1qaSortVni3Vwgk8eNvqX3pBqtlrAno69ovaRZ5lCGSvCGW7IcUP7pQpFuOWuyB3
-         rVhw+SFUFjSr/dXCy/9Eo2Wo7ImEm0q7EpnxaFhaTiOJ4U6PHqK+EswOoX5dW4cRWPYp
-         bnyQ==
+        bh=k2NUtFfF9SbHj+pN5h7ZLsSymt83AD97eoXiZYz42dA=;
+        b=KkmTyH/+YC8Pr4pIQyvVOsSh7/2QgJLBbxgIZuOBDms7KR0jqwCdQJMYK0noUZabxW
+         vW8EAUlW+I8yoPMRzsbbDc3BUEBQhAU4HonDoHxc1UHSxUCbI9D97catXteU/hsdKV8Q
+         ghvO4e2HPI5CtwvSeOTymnEKR6q3xn4yE6kaKM9Cp8R7wy8mkAbjS1FbExKgFNg8lEne
+         EFTD/D7wom7Pm1bnDbG9EL0phHFOL1uiNXahyh1YTgrj41RoQ8bsb7BZI66wvhqLAQiv
+         IsIlXGncrulI4vLTi8kEkyLyfe4OJKN0fUtfD60sUZ6W8Wk3aXd8IlwtoXYIx0BO9rPl
+         HcZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764319110; x=1764923910;
+        d=1e100.net; s=20230601; t=1764334654; x=1764939454;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=++QMIe2Gzi7z7FeXSAmSiuqg8P1uQ1lVTlMI6i3m06g=;
-        b=AbYxZfWJCf/o48bIcfxh1j+3gxA8iZ1EXiMOvf/ZjV/OQaLG/MuD6mhyW8+wyWI5Rl
-         mcdjCF2FmRE7iR0TUFcS0cg34NNVo4oaPDMYam9mUsZwT203b5B0dpi39M9J70ymMQBm
-         77wYw6NTb3B27++5umak9cFGewr+xM9Uz+6YF//6paV9QsFOYW9WsBF8jCuTIflpTesI
-         6cpm5BKhUVc4+zaE8apsQEIOZLevG5WzQj+XzGvZLumnrKgoyC4kEeDvdVM8e2bKpadR
-         +0RUdKCdsrEPyNrzypYGM4KwM0ALYARl5emFM3qAxwboYGYfBzxfVmv+AhPmGo3xEIzM
-         X3pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoUXPHf8KhKy1vXXONgWr5pMJ6va22M2ohpiXL7dqpEIGvZlfsQR0o9n+k2r02Byf3sSu8ijCJ1svlU/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3O0kzejJ0lzURtCJYhyPknWVa1sUfflz+vvlmKWrb8BBAh9KW
-	omdBc6fdMZMkd2BHZkmndGwq89lwrArN6yWbah1541D/1/mMBIbxgV5MF+gccxF38yefNY4XA4L
-	Je32Mv1ecwDcMaj87URBl7nUeQxD8Bdk=
-X-Gm-Gg: ASbGncvjxg2y/iOs2txhlXEn+vCzytv9uJeQCX/b4v5IDoLRGjmQ+rUf/j1uk1T5PKW
-	hoFFcylmSlezlz2JQQfyex9cKTH71Eau9xgb0XzQLDCXEqAes1ePZCkfMBwJVF7XIrBJZX4StDf
-	PAp1Q7qYyEcjZ5xLAh2tcUUu1AFfVh9YQSTEGks0f5a1+xxCJ+y7sfrPtUYeV+/39rJ+wxWfQwG
-	tTFhGIwbFIzFoXVeErM1az3JzrtiBNIUcvkp6axIZOQbnNuhWiWK3SY+ygmlWo5SsUc4LU=
-X-Google-Smtp-Source: AGHT+IEfh/pR5dVEp+MyGlS6Z0E5USpuJd+WqXIzQcqzstZI05ioUW/B3ey2i9/MpvyCwVsDk2BTTIWfhdBYNOpApmc=
-X-Received: by 2002:ac8:5a4d:0:b0:4e7:1eb9:605d with SMTP id
- d75a77b69052e-4ee5883f99cmr321417371cf.11.1764319110284; Fri, 28 Nov 2025
- 00:38:30 -0800 (PST)
+        bh=k2NUtFfF9SbHj+pN5h7ZLsSymt83AD97eoXiZYz42dA=;
+        b=ZY0tK2/jk9K/x0PgNN++4CQGVtoWGCAmF0gx4OczA7krZczG4s6+mKPqilF+xyKVO1
+         TdJunnUyaJlwu3HHtd+7wpyTJj608w/INaJGh852nWPSWM3WObW3bytppCtQFfpg3TSu
+         +CJ7u+hBpaL1Wpuj0dcb/nGcoE4/38h87wQKleUtqmJG3jV6oe1eE62b6+bCEgiguveT
+         s2b+7usU+lCj9HMQnmKklWSuvr5sdsrvr7+rvag8RktEQzK2v5E5cGHeOChvb60SlUdG
+         KRuQnBt9rlx+R6evUs9yoojH84NYsoxHVumQf7ZTHt89Zw80KDCVW2GMXcDcRJ6tE65I
+         +rUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUots9a8i82j6m01KeJT7JFPCl/deHTyWRoB7vP0/xg42KPEBBg15sgcpRPcgNgvzSx18FRiCGf+Geun1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2pmUVbquwSNfa97G1kxCrZmxBTju8UYmkycZ0hZYmhhFtBYp0
+	5uchP9tpkUW9SI1/rAZnA2Vr+3dm0Cqo6QZcG3KRHOeAhRjI9gaU5HMWk869EsevplwmRqx0bok
+	I3xDoD5TLbp4hY8e81T9oKRaPUJVv4wWwnFkQzCqg4eYd2a5+atQimI5fDh52yyXpjsxTkpLX8X
+	o+dQ46ylSS7z6WXqJHcXhYJCB6aaqEystigVbsgkvO5C2bVU8E
+X-Gm-Gg: ASbGnctJBXDspiOEUYzgfhKKM3lnpxjhaBrAsaR0B7ONzbR6Yn6vvU3tTG5Z3it6X33
+	8I9uIKB+fqi1PI/mvWpl1V2415AOUhssiVKdEAMSMsUy769zh+WzlQktPq70NHyEHelaJpmPaJu
+	Wg+CFP8TRQxyHqPE5PzSIBrU7MwNQSVBKHIRo/G2h+Ivi6WQkHe/WFvYiua1bdoBp8
+X-Received: by 2002:a05:690c:3348:b0:786:a967:5a8a with SMTP id 00721157ae682-78a8b521351mr209364477b3.51.1764334653921;
+        Fri, 28 Nov 2025 04:57:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFYKB1oLuPGJAVoxdwBsDfFu85nnaWrR7frU4rGijoJHAkyVO4VlXEEBnQXgKFqXNy1QVvTkGpWt9+fdpViZKM=
+X-Received: by 2002:a05:690c:3348:b0:786:a967:5a8a with SMTP id
+ 00721157ae682-78a8b521351mr209364247b3.51.1764334653580; Fri, 28 Nov 2025
+ 04:57:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251128083219.2332407-1-zhangshida@kylinos.cn>
-In-Reply-To: <20251128083219.2332407-1-zhangshida@kylinos.cn>
-From: Stephen Zhang <starzhangzsd@gmail.com>
-Date: Fri, 28 Nov 2025 16:37:54 +0800
-X-Gm-Features: AWmQ_bkmQmYK3DJQjInSuzOGjciJ8sGZNWSCY3EbybUAu4bZJ47LIxlxmcK_q9w
-Message-ID: <CANubcdUgYpxBqPrsOnFpGJK8S9DM46DT6hriu4kDckPMVzc-Fw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/12] Fix bio chain related issues
-To: Johannes.Thumshirn@wdc.com, hch@infradead.org, gruenba@redhat.com, 
-	ming.lei@redhat.com, Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: linux-block@vger.kernel.org, linux-bcache@vger.kernel.org, 
-	nvdimm@lists.linux.dev, virtualization@lists.linux.dev, 
-	linux-nvme@lists.infradead.org, gfs2@lists.linux.dev, ntfs3@lists.linux.dev, 
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	zhangshida@kylinos.cn
+References: <20251128083219.2332407-1-zhangshida@kylinos.cn> <20251128083219.2332407-3-zhangshida@kylinos.cn>
+In-Reply-To: <20251128083219.2332407-3-zhangshida@kylinos.cn>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Fri, 28 Nov 2025 13:57:22 +0100
+X-Gm-Features: AWmQ_bncrRsjrklAzt9B3bsSktqMzFJHIbAcDYZydnWE535duaAjUcuyPEWTG9Q
+Message-ID: <CAHc6FU53GR-FTPzWSuxQumJXX7z6HrzFGo5=kfA1VHt3KxwNOA@mail.gmail.com>
+Subject: Re: [PATCH v2 02/12] block: prevent race condition on bi_status in __bio_chain_endio
+To: zhangshida <starzhangzsd@gmail.com>
+Cc: Johannes.Thumshirn@wdc.com, hch@infradead.org, gruenba@redhat.com, 
+	ming.lei@redhat.com, siangkao@linux.alibaba.com, linux-block@vger.kernel.org, 
+	linux-bcache@vger.kernel.org, nvdimm@lists.linux.dev, 
+	virtualization@lists.linux.dev, linux-nvme@lists.infradead.org, 
+	gfs2@lists.linux.dev, ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-zhangshida <starzhangzsd@gmail.com> =E4=BA=8E2025=E5=B9=B411=E6=9C=8828=E6=
-=97=A5=E5=91=A8=E4=BA=94 16:32=E5=86=99=E9=81=93=EF=BC=9A
->
+On Fri, Nov 28, 2025 at 9:32=E2=80=AFAM zhangshida <starzhangzsd@gmail.com>=
+ wrote:
 > From: Shida Zhang <zhangshida@kylinos.cn>
 >
-> Hi all,
+> Andreas point out that multiple completions can race setting
+> bi_status.
 >
-> While investigating another problem [mentioned in v1], we identified
-> some buggy code in the bio chain handling logic. This series addresses
-> those issues and performs related code cleanup.
+> The check (parent->bi_status) and the subsequent write are not an
+> atomic operation. The value of parent->bi_status could have changed
+> between the time you read it for the if check and the time you write
+> to it. So we use cmpxchg to fix the race, as suggested by Christoph.
 >
-> Patches 1-4 fix incorrect usage of bio_chain_endio().
-> Patches 5-12 clean up repetitive code patterns in bio chain handling.
+> Suggested-by: Andreas Gruenbacher <agruenba@redhat.com>
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
+> ---
+>  block/bio.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 >
-> v2:
-> - Added fix for bcache.
-> - Added BUG_ON() in bio_chain_endio().
-> - Enhanced commit messages for each patch
->
-> v1:
-> https://lore.kernel.org/all/20251121081748.1443507-1-zhangshida@kylinos.c=
-n/
->
->
-> Shida Zhang (12):
->   block: fix incorrect logic in bio_chain_endio
->   block: prevent race condition on bi_status in __bio_chain_endio
->   md: bcache: fix improper use of bi_end_io
->   block: prohibit calls to bio_chain_endio
->   block: export bio_chain_and_submit
->   gfs2: Replace the repetitive bio chaining code patterns
->   xfs: Replace the repetitive bio chaining code patterns
->   block: Replace the repetitive bio chaining code patterns
->   fs/ntfs3: Replace the repetitive bio chaining code patterns
->   zram: Replace the repetitive bio chaining code patterns
->   nvdimm: Replace the repetitive bio chaining code patterns
->   nvmet: use bio_chain_and_submit to simplify bio chaining
->
->  block/bio.c                       | 15 ++++++++++++---
->  drivers/block/zram/zram_drv.c     |  3 +--
->  drivers/md/bcache/request.c       |  6 +++---
->  drivers/nvdimm/nd_virtio.c        |  3 +--
->  drivers/nvme/target/io-cmd-bdev.c |  3 +--
->  fs/gfs2/lops.c                    |  3 +--
->  fs/ntfs3/fsntfs.c                 | 12 ++----------
->  fs/squashfs/block.c               |  3 +--
->  fs/xfs/xfs_bio_io.c               |  3 +--
->  fs/xfs/xfs_buf.c                  |  3 +--
->  fs/xfs/xfs_log.c                  |  3 +--
->  11 files changed, 25 insertions(+), 32 deletions(-)
->
+> diff --git a/block/bio.c b/block/bio.c
+> index 55c2c1a0020..aa43435c15f 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -313,9 +313,12 @@ EXPORT_SYMBOL(bio_reset);
+>  static struct bio *__bio_chain_endio(struct bio *bio)
+>  {
+>         struct bio *parent =3D bio->bi_private;
+> +       blk_status_t *status =3D &parent->bi_status;
+> +       blk_status_t new_status =3D bio->bi_status;
+> +
+> +       if (new_status !=3D BLK_STS_OK)
+> +               cmpxchg(status, BLK_STS_OK, new_status);
+
+This isn't wrong, but bi_status is explicitly set to 0 and compared
+with 0 all over the place, so putting in BLK_STS_OK here doesn't
+really help IMHO.
+
+> -       if (bio->bi_status && !parent->bi_status)
+> -               parent->bi_status =3D bio->bi_status;
+>         bio_put(bio);
+>         return parent;
+>  }
 > --
 > 2.34.1
 >
 
-Apologies, I missed the 'h' in the email address when CC'ing
-hsiangkao@linux.alibaba.com.
-
 Thanks,
-Shida
+Andreas
+
 
