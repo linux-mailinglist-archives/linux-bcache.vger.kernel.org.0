@@ -1,117 +1,159 @@
-Return-Path: <linux-bcache+bounces-1314-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1315-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0AF9C96546
-	for <lists+linux-bcache@lfdr.de>; Mon, 01 Dec 2025 10:08:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA344C96669
+	for <lists+linux-bcache@lfdr.de>; Mon, 01 Dec 2025 10:37:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 834873A3D29
-	for <lists+linux-bcache@lfdr.de>; Mon,  1 Dec 2025 09:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4592E3A4F7D
+	for <lists+linux-bcache@lfdr.de>; Mon,  1 Dec 2025 09:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF99231842;
-	Mon,  1 Dec 2025 09:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8C03016E3;
+	Mon,  1 Dec 2025 09:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="U7rcZ2v6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a1ySRkXZ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="kgnj2fEK"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from sg-1-40.ptr.blmpb.com (sg-1-40.ptr.blmpb.com [118.26.132.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B194C1F463E
-	for <linux-bcache@vger.kernel.org>; Mon,  1 Dec 2025 09:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C0D30147D
+	for <linux-bcache@vger.kernel.org>; Mon,  1 Dec 2025 09:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764580111; cv=none; b=Csxlq5BjVp+zmvZ0iiqN/i2iHmb2MNznyGTRY751P7w3GbsWm5wK8G34sT7huJniMNO+qjioObDyfaLZz76xNUDFIbTC+XSVabfQx4TAqWdc0NDP9WcjwtKqmw3ib8DjMG2mQ1QGTjWGFCruLcz482/5q0KZYCMioLVwBz6g0BA=
+	t=1764581697; cv=none; b=U+plbmwG9XLitFczxBY9+nP/550B5eUMVoSStcCmN8pTQShU6lsDv1QqQ5wpEbzuWAZ2WNof4laGgwHYvba4mAXP3GRsYJI9m6EX02Lb9OT8nauCumYFDNpo4LxRi0Dye+NbQZEwlCWexRGE0Ul8X/TxcURPBVyZW3p7gT5bivA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764580111; c=relaxed/simple;
-	bh=trVQE4PC6il3vSKiNbXVZ7T1f7N0BsICd2ElIcQjZ0A=;
-	h=In-Reply-To:Content-Type:Content-Disposition:From:Subject:Date:
-	 Message-Id:Cc:Mime-Version:To:References; b=Z9WPCvVLm62wSzIeEu7jkaEhp3t78obzsqLY5HO4EfICU3GqvXBjMw0j4HiNRgGJrQ/6jXBbcr5GeWpvKM/3shDIOnANgvJDKXu/T/q1Ym0v/bmSkVF5AvuyITM1VkhKMxOqsjEVv06pXqG9XCv8eCud+BnzBG7iiqdLmyCO7TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=pass smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=U7rcZ2v6; arc=none smtp.client-ip=118.26.132.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fnnas.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1764580101;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=hgkJQ3PQE/6598gAxptdMWoKRhgO+ciZhSMHPbjcE/o=;
- b=U7rcZ2v6PZ3fUkGeqELrRTh3bzo4YeVVTZQx55j9Jvg4VQizTCfo+qQwTq5vqtDCozrf0Q
- F2/5CJ6RfYJdn+bgqctFv0FN6DpByeU3l0eS7YPm/emCV7X2nZ8Bro0BsXdZwox57YncYu
- +LW4xSJKRM8TlXUgDbVGfTR1mbMWepqvtu19uOH9F4PBW+mDVJfWspm02DXVWzcSOx7g0H
- q4lmTGpMpEW6qRVCL3BQ94rKjB+iF8+voBgSTAvKGRpn5zJEPOSXN2m4P2A6ilMGutmEfT
- g6pFyHWbWmDW1vWnsTx9wTPHR7DT2uJ5cd/XNf7wvB1Yh9OV8i8ZjXWokVxaBQ==
-In-Reply-To: <20251201082611.2703889-1-zhangshida@kylinos.cn>
-Content-Transfer-Encoding: 7bit
-Received: from studio.local ([120.245.66.121]) by smtp.feishu.cn with ESMTPS; Mon, 01 Dec 2025 17:08:19 +0800
-X-Lms-Return-Path: <lba+2692d5b04+61dcc5+vger.kernel.org+colyli@fnnas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-From: "Coly Li" <colyli@fnnas.com>
-Subject: Re: [PATCH] bcache: fix improper use of bi_end_io
-Date: Mon, 1 Dec 2025 17:08:18 +0800
-Message-Id: <rjhla7utyfh5khnj3rumuw2tlelribiphotaz5v5olpe6jcavk@hytopklmihjk>
-Cc: <linux-bcache@vger.kernel.org>, <zhangshida@kylinos.cn>, 
-	"Christoph Hellwig" <hch@infradead.org>
+	s=arc-20240116; t=1764581697; c=relaxed/simple;
+	bh=T52AtHPElaPUhvMaiSySl1nDPtYlKqOJljlXi1j8qDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ALITWtmrdUuLuqT5F5qvNI1SYAIpZnpey44Ew7L8XduoP00y3hG4Q4Zh0L97sh6PrZtaeJU2ornmj26FUUZl5Dk+uhPicK3LK2F0Ha4EPzESW4TIJ59Hv2N9IGYiD+qZlVSy5Oqmw9ysA1qTpkKJnD7/0yD/SnKNzQnh9urvW7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a1ySRkXZ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=kgnj2fEK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764581694;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7YnXOTrBkDWFfUknE1oxAp7HDSV9l35AiIkERLzX4GY=;
+	b=a1ySRkXZGxAUiTfbngehExE4V+oFMiLpCDswlGj3X4BN2QMT5c5qo30+YyLGjKNP9fqXea
+	cH0o1CdSGWxaxsIHNkXA9qD7J6hQRXcx86F7TyIGWFkItSscnmXhJ75gzFma5uvoB6wIAn
+	SPu+icR8C4besMD+Q/o0DdpIjBwKaXY=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-672-q97VzfTWMCOmcezAf3oJPQ-1; Mon, 01 Dec 2025 04:34:53 -0500
+X-MC-Unique: q97VzfTWMCOmcezAf3oJPQ-1
+X-Mimecast-MFC-AGG-ID: q97VzfTWMCOmcezAf3oJPQ_1764581693
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-78659774402so50135437b3.2
+        for <linux-bcache@vger.kernel.org>; Mon, 01 Dec 2025 01:34:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1764581693; x=1765186493; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7YnXOTrBkDWFfUknE1oxAp7HDSV9l35AiIkERLzX4GY=;
+        b=kgnj2fEKyuJ6SrAFR9hQ+Z0PhkkELMpCJhItlNnTYxDRqDZf1Y/ZnZPXaxsue3IUSm
+         2xCowS2Hnz6IdyCBUd7At94+M80Jeyvj45r3Lit8Bc3G+2N1CYkv01DwDRgR0uPCCXx9
+         JhhJdT9ARMyV18LfrwU/Ep+V3vlv0dTNHGhB/UBhabH9zTpxJrUrC6tzBIwBVvP9Colg
+         P1sqvp6R2PUlyN77eR4a2Y9Ezwt3lrA7d1GmpGqN461SZHOV+4HCnh5h0WVLp5hNWBJX
+         HBOd9H6HFQJGwa+5SHIHNBLl9M4h2j8/2Euea8hYkUBJ/iOmqV004Ny9oVaxn468bRN4
+         1UOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764581693; x=1765186493;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7YnXOTrBkDWFfUknE1oxAp7HDSV9l35AiIkERLzX4GY=;
+        b=d27RMlUxcnqRjPD1UsPKZYhidLn3rZ8BTX5JlTdYYgn2WW840HJUlpNUwdKR/THh+5
+         q1CBewDdoYsQyUuSzyS/Wdpryd7lAm6DNlFrJDrZFUIGdBKXudiLnaeo7XQmdQuZkoXI
+         dqQvIYn7LJuVdoYdGxcddsw91/2QIotFsJjVIwKWlY/m5Rhf64g+V0m7AMy8BpKMAfu2
+         NR5spqtvigXsTb9tNxipT/VE4rz9ujMbJElDVvW3WZ1WlpatmJAswn8dTA9ToNpAIh+F
+         pw5E3ODsW9Ns6wwkm7/xoO+pKEhijWF7Xvt6srdQOeeFeEr/hT0+jNPV/RFwe+JyylLG
+         OYPg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4oh8GEPmwGodknTEkZbMwJoE1lPbzyz5H9ESKsgtZvyl2PR93GrU2Ath0nW2NLWOgL0k2HFvCezgBDnk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI3ruPNdjVX9aZzF2RXT1wzABW86pT7LjeUZgIbjg/192U3Kvs
+	CXUnhKMNbTVSyTl9SBeaXKv3YDTVl+EK/t/b8GBcliLQ9WjpL285rZVzSdi+BBz5g5bGvgPvEm1
+	R4B5k81ptTqsDMHObA30HeNKNrn+X/AfqUb3LQuDYY0CWjzAy+OSdjtciPkoHm/Pi8Kjzb7ncRB
+	hOQbvy/wiGg82UbOqwTY4MJ9E3rONgf15oFdpSbUYU
+X-Gm-Gg: ASbGncuQrVlnq6ucgNXOEuWHPQ6eb6ctZn9tkNUXxa8J7qcDnQdTN6IRvsbKJuPF1L8
+	ekAMBXlEr8DihZ5kqijYu17TBbSoEQS3rLbAdFo99qAxXEnzsFmwHdH/QO3C1jbCHgYJIpuLFvQ
+	I/A76JRhqblE/JYsGtdB2pIM3+umt+TynQrWPctnhjVwEk6gnYLPTJ9ugWLRAesdBm
+X-Received: by 2002:a05:690c:4b89:b0:789:6c45:5ee with SMTP id 00721157ae682-78a8b529321mr327732197b3.42.1764581693221;
+        Mon, 01 Dec 2025 01:34:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEE+ydvQLXLWR4PLDlpL5sDe/7ms/CBFUiYi8OzSrRwSjG/eFnKOHmSMbzUo+6JiXvQr8GsLl9rt2B5meQ6+yY=
+X-Received: by 2002:a05:690c:4b89:b0:789:6c45:5ee with SMTP id
+ 00721157ae682-78a8b529321mr327732007b3.42.1764581692913; Mon, 01 Dec 2025
+ 01:34:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Original-From: Coly Li <colyli@fnnas.com>
-To: "zhangshida" <starzhangzsd@gmail.com>
-References: <20251201082611.2703889-1-zhangshida@kylinos.cn>
+MIME-Version: 1.0
+References: <20251201090442.2707362-1-zhangshida@kylinos.cn> <20251201090442.2707362-3-zhangshida@kylinos.cn>
+In-Reply-To: <20251201090442.2707362-3-zhangshida@kylinos.cn>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Mon, 1 Dec 2025 10:34:42 +0100
+X-Gm-Features: AWmQ_bkx-ahSOMJme7sYbH0k3cAGQiXM2JSUj318w4dIuYwRxb1qdF2fgZVmzjo
+Message-ID: <CAHc6FU53qroW6nj_ToKrSJoMZG4xrucq=jMJhc2qMr22UAWMCw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] block: prohibit calls to bio_chain_endio
+To: zhangshida <starzhangzsd@gmail.com>
+Cc: Johannes.Thumshirn@wdc.com, hch@infradead.org, ming.lei@redhat.com, 
+	hsiangkao@linux.alibaba.com, csander@purestorage.com, colyli@fnnas.com, 
+	linux-block@vger.kernel.org, linux-bcache@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn, 
+	Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 01, 2025 at 04:26:11PM +0800, zhangshida wrote:
+On Mon, Dec 1, 2025 at 10:05=E2=80=AFAM zhangshida <starzhangzsd@gmail.com>=
+ wrote:
 > From: Shida Zhang <zhangshida@kylinos.cn>
-> 
-> Don't call bio->bi_end_io() directly. Use the bio_endio() helper
-> function instead, which handles completion more safely and uniformly.
-> 
+>
+> Now that all potential callers of bio_chain_endio have been
+> eliminated, completely prohibit any future calls to this function.
+>
+> Suggested-by: Ming Lei <ming.lei@redhat.com>
+> Suggested-by: Andreas Gruenbacher <agruenba@redhat.com>
 > Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
 > ---
-
-The patch is fine, I take it for next submit. Thanks.
-
-Coly Li
-
-
->  drivers/md/bcache/request.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index af345dc6fde..82fdea7dea7 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -1104,7 +1104,7 @@ static void detached_dev_end_io(struct bio *bio)
->  	}
->  
->  	kfree(ddip);
-> -	bio->bi_end_io(bio);
-> +	bio_endio(bio);
+>  block/bio.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/block/bio.c b/block/bio.c
+> index b3a79285c27..1b5e4577f4c 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -320,9 +320,13 @@ static struct bio *__bio_chain_endio(struct bio *bio=
+)
+>         return parent;
 >  }
->  
->  static void detached_dev_do_request(struct bcache_device *d, struct bio *bio,
-> @@ -1121,7 +1121,7 @@ static void detached_dev_do_request(struct bcache_device *d, struct bio *bio,
->  	ddip = kzalloc(sizeof(struct detached_dev_io_private), GFP_NOIO);
->  	if (!ddip) {
->  		bio->bi_status = BLK_STS_RESOURCE;
-> -		bio->bi_end_io(bio);
-> +		bio_endio(bio);
->  		return;
->  	}
->  
-> @@ -1136,7 +1136,7 @@ static void detached_dev_do_request(struct bcache_device *d, struct bio *bio,
->  
->  	if ((bio_op(bio) == REQ_OP_DISCARD) &&
->  	    !bdev_max_discard_sectors(dc->bdev))
-> -		bio->bi_end_io(bio);
-> +		detached_dev_end_io(bio);
->  	else
->  		submit_bio_noacct(bio);
+>
+> +/**
+> + * This function should only be used as a flag and must never be called.
+> + * If execution reaches here, it indicates a serious programming error.
+> + */
+>  static void bio_chain_endio(struct bio *bio)
+>  {
+> -       bio_endio(__bio_chain_endio(bio));
+> +       BUG_ON(1);
+
+Just 'BUG()'.
+
 >  }
-> -- 
+>
+>  /**
+
+> --
 > 2.34.1
+>
+
+Andreas
+
 
