@@ -1,85 +1,99 @@
-Return-Path: <linux-bcache+bounces-1303-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1304-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D490C95B8B
-	for <lists+linux-bcache@lfdr.de>; Mon, 01 Dec 2025 06:42:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3028C95B94
+	for <lists+linux-bcache@lfdr.de>; Mon, 01 Dec 2025 06:45:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C51F3A1FBB
-	for <lists+linux-bcache@lfdr.de>; Mon,  1 Dec 2025 05:42:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FD444E0540
+	for <lists+linux-bcache@lfdr.de>; Mon,  1 Dec 2025 05:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B389F200110;
-	Mon,  1 Dec 2025 05:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C65020C477;
+	Mon,  1 Dec 2025 05:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="MjNzpAAN"
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="mlVsioHM"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from sg-1-19.ptr.blmpb.com (sg-1-19.ptr.blmpb.com [118.26.132.19])
+Received: from sg-1-18.ptr.blmpb.com (sg-1-18.ptr.blmpb.com [118.26.132.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0E3154BE2
-	for <linux-bcache@vger.kernel.org>; Mon,  1 Dec 2025 05:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9F97E110
+	for <linux-bcache@vger.kernel.org>; Mon,  1 Dec 2025 05:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764567769; cv=none; b=TovgJSQdcuUOZZBdIefR5xIOuJ4pdx8VTdHb7ND4/P/bOQ6L9MUKUnODhsJHKFMakelvajRkqrpFKxu+OyK+bF0BcnjDKXiq3p8WbhNmuORqDwlIQORnIypkul3111fr2KKdImQKlWgctEyZ3kbi1Z6G/rjpZOAfenvznnMUpuw=
+	t=1764567946; cv=none; b=RkNs4P1uObgsAnhvxKxkEBEABwn+xiNQbIeSkyGCt3epEUBCm1HTvvFsPVxjZJb1qjT7Q9NBaTk2XPVhQAnR6cOuYbDRMUWi4hxwRljr96EFJwcAtZbjxU2p5+6UtC3R2FJLduBJb8NEftcjDNtXEOu4DmdocHaionlmDd+uRQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764567769; c=relaxed/simple;
-	bh=c1rjV/8l6N5f1RM2rQjR3SlHORaNasTZ5ipYnJkZFDQ=;
-	h=From:Date:In-Reply-To:Cc:Message-Id:Content-Type:References:To:
-	 Subject:Mime-Version; b=hfPvPzX4bpxDyNMbb2uMqSp2KUx8FbPrBaNTkv7RvePZHJQlvNT8p1hnKe7hgWUroQwrqKXudnWR/rGnRsIL6sijyg8tnOndhdeKa/XPIsF5c1VPJxF7DNWPHLnzRl+WZPLZ9uSc1sRd7niryhgLkH2mfV9P5YHpbzteiNmW7Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=MjNzpAAN; arc=none smtp.client-ip=118.26.132.19
+	s=arc-20240116; t=1764567946; c=relaxed/simple;
+	bh=FrLZeS9iVrmZMi5DRhrhFzf5CcnM5AZI3fO/L2TjI1E=;
+	h=Cc:From:Subject:To:Date:Message-Id:References:Content-Type:
+	 Mime-Version:In-Reply-To; b=lasZbEZ5cdKsOIoIglAm95roq1ME5nY9k1FJk9PBhRg/HNeiQ9C1lIxwz1l8szU2kPju8wUy74UkVjuCLFYgV9hhkyvwGJXPEpx4+dhDfUMN1M4+qHymmCj+Ms6aAieSAjFFEdtzBaBpy5UMboIY1a4/x62LNXsN/Cw5VyAskM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=mlVsioHM; arc=none smtp.client-ip=118.26.132.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1764567755;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1764567939;
   h=from:subject:mime-version:from:date:message-id:subject:to:cc:
  reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=c1rjV/8l6N5f1RM2rQjR3SlHORaNasTZ5ipYnJkZFDQ=;
- b=MjNzpAANlYctCOptHx7qmyvN2J0YX+8JCV6JeYdi861oS/dWVuAIyMMBujx1D5GHdb1vFX
- 858dMeQ/4+hdOZIIfvmoXXYqWAd5KcHC21JRni7LKd2WhEltRFAyXZIowviHf7pmTyyT3r
- kwv8FN55eKgjmby6IiJiRGCosEKJb7zZVvWopY2bXK5EDDAJtabeofKD8hDRiG4venN3WW
- n344r30BgSrYW9CbhHmLppqwPBieyawzfryQ7tqqt6sXhIciR8w6e6ubB/AAvW/uVgNEdy
- bAc09oixfEIdfN8QIvcZeF4rzV7XUCOmFmputhllrPSdPE4+x6H+9zCZQRh7hw==
+ bh=sCJL8NM5LN4ox9qDlAfQe91dK8F8fKCk/Hgg80m0H8Q=;
+ b=mlVsioHMKYge9CWuleC4jliVQ3Weuv5CzkJGzTH4vCKC9ax/M+RcxXilpXCcI9Li7jFLI8
+ 6g6MaYOl7pBPRzOZaX5ES9+GjkqLm19EQDx4+VJLCQDJSBmAuRSZrQ/t3dS6dwYyHhDhmo
+ J+CartXY1deG2DRV5hNzfveNCu0BwpW6NyNM6nbomfE7HaBeptBfLG/SNEAv6I9PWMInax
+ 9g3cOQBpt4AOcmz8zGyqty+FEXZ9MM/6e3kp4zjt15kQjIobhFnV3nPmstIjwVLQKQeyvY
+ E99pLMpvh4HJ35t0TwbduzeYR/8fEX2pNPmUCbWLsLZCZbOzhjH0marQlOgVvQ==
+Cc: <Johannes.Thumshirn@wdc.com>, <hch@infradead.org>, <agruenba@redhat.com>, 
+	<ming.lei@redhat.com>, <hsiangkao@linux.alibaba.com>, 
+	<csander@purestorage.com>, <linux-block@vger.kernel.org>, 
+	<linux-bcache@vger.kernel.org>, <nvdimm@lists.linux.dev>, 
+	<virtualization@lists.linux.dev>, <ntfs3@lists.linux.dev>, 
+	<linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	<zhangshida@kylinos.cn>
 From: "Coly Li" <colyli@fnnas.com>
-Date: Mon, 1 Dec 2025 13:42:20 +0800
-Received: from smtpclient.apple ([120.245.66.121]) by smtp.feishu.cn with ESMTPS; Mon, 01 Dec 2025 13:42:32 +0800
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CANubcdUGqYsaxsd-cUtjhtCSL4G1kQGevei1m25qKm0ip0-i9g@mail.gmail.com>
-X-Original-From: Coly Li <colyli@fnnas.com>
 X-Mailer: Apple Mail (2.3864.200.81.1.6)
-Cc: <baijiaju1990@gmail.com>, "Christoph Hellwig" <hch@infradead.org>, 
-	<linux-bcache@vger.kernel.org>, <linux-block@vger.kernel.org>, 
-	<stable@vger.kernel.org>, "zhangshida" <zhangshida@kylinos.cn>
-Message-Id: <D4188931-CEEE-49CB-94AF-FE81D952BAA4@fnnas.com>
+Subject: Re: [PATCH v3 1/9] md: bcache: fix improper use of bi_end_io
+Content-Transfer-Encoding: quoted-printable
+To: "zhangshida" <starzhangzsd@gmail.com>
+Date: Mon, 1 Dec 2025 13:45:24 +0800
+Message-Id: <DFAC6F10-B224-4524-9D8F-506B5312A2E8@coly.li>
+References: <20251129090122.2457896-1-zhangshida@kylinos.cn> <20251129090122.2457896-2-zhangshida@kylinos.cn>
 Content-Type: text/plain; charset=UTF-8
-References: <CANubcdUGqYsaxsd-cUtjhtCSL4G1kQGevei1m25qKm0ip0-i9g@mail.gmail.com>
-To: "Stephen Zhang" <starzhangzsd@gmail.com>
-Subject: Re: [PATCH] bcache: call bio_endio() to replace directly calling bio->bi_end_io()
+X-Lms-Return-Path: <lba+2692d2b81+e49eb8+vger.kernel.org+colyli@fnnas.com>
+Received: from smtpclient.apple ([120.245.66.121]) by smtp.feishu.cn with ESMTPS; Mon, 01 Dec 2025 13:45:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Lms-Return-Path: <lba+2692d2ac9+9329a4+vger.kernel.org+colyli@fnnas.com>
+X-Original-From: Coly Li <i@coly.li>
+In-Reply-To: <20251129090122.2457896-2-zhangshida@kylinos.cn>
 
-> 2025=E5=B9=B412=E6=9C=881=E6=97=A5 10:49=EF=BC=8CStephen Zhang <starzhang=
-zsd@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+> 2025=E5=B9=B411=E6=9C=8829=E6=97=A5 17:01=EF=BC=8Czhangshida <starzhangzs=
+d@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
 >=20
-> Hi Coly,
+> From: Shida Zhang <zhangshida@kylinos.cn>
 >=20
-> For this issue, I've previously sent a fix here:
-> https://lore.kernel.org/all/20251129090122.2457896-2-zhangshida@kylinos.c=
-n/
-> Would you be able to take a look and see if that one is suitable to pick =
-up?
+> Don't call bio->bi_end_io() directly. Use the bio_endio() helper
+> function instead, which handles completion more safely and uniformly.
+>=20
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
+> ---
+> drivers/md/bcache/request.c | 6 +++---
+> 1 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+> index af345dc6fde..82fdea7dea7 100644
+> --- a/drivers/md/bcache/request.c
+> +++ b/drivers/md/bcache/request.c
 
-Hi Shida,
+[snipped]
 
-It seems my email server didn=E2=80=99t handle the v3 patch set well. Yes, =
-now I see your patch,
-I will reply your in the patch context.
+The patch is good. Please modify the patch subject to:  bcache: fix imprope=
+r use of bi_end_io
+
+You may directly send the refined version to linux-bcache mailing list, I w=
+ill take it.
 
 Thanks.
 
