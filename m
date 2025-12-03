@@ -1,74 +1,75 @@
-Return-Path: <linux-bcache+bounces-1322-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1323-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D75EC9D875
-	for <lists+linux-bcache@lfdr.de>; Wed, 03 Dec 2025 02:51:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE10CC9D9C6
+	for <lists+linux-bcache@lfdr.de>; Wed, 03 Dec 2025 04:10:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D83994E4ACD
-	for <lists+linux-bcache@lfdr.de>; Wed,  3 Dec 2025 01:51:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86B103A7A13
+	for <lists+linux-bcache@lfdr.de>; Wed,  3 Dec 2025 03:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B24122B8CB;
-	Wed,  3 Dec 2025 01:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAFD2417C6;
+	Wed,  3 Dec 2025 03:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IBIlYA6l"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hqb0JAzv"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ED3221271
-	for <linux-bcache@vger.kernel.org>; Wed,  3 Dec 2025 01:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1BB1F5842
+	for <linux-bcache@vger.kernel.org>; Wed,  3 Dec 2025 03:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764726705; cv=none; b=MGiHcaH3TEg5qWbpKpDrBy1kIsMhCxuaGR3NLsKv+YPXBKMHPsTks/C7AaO9gCT3ru//fCItDFq7PQHzafoN1BCS810h6QxLPlUimjE3krsJriI1hg57adS4AmV+AkY/A6etd9IqA+5+2bgcQcleDMyPxwEuoWhU5EATUsC7kWQ=
+	t=1764731415; cv=none; b=TJ/WYVA2uH0q0V3FDsVw70NgLj0sUoZp9+RtSQQ6UFp/z3zJmE9pBwzXGQRbogBUR1dqK67CyTbvBCLP4eDsBrP9kOmB5K9D/NnsY8Vu/fHsXvbBObG9jvIKO4Y/xr0yrVPjQ20jZ+tyqFJqBDtYWSR4pOaMvvoavcBmawrd6gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764726705; c=relaxed/simple;
-	bh=9dM7t/x9Pd+ZbM9rUoMJiiZhZigihD98RMT1wtBkj2s=;
+	s=arc-20240116; t=1764731415; c=relaxed/simple;
+	bh=dZN4WVnkipc85rk8nkTuXzZoX9R6uWz0FXNT3hLqQtU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OSySkR5Ls+bD4MPV1JvtnEOL1PciWqCZZWf3+/D+WOArp4Mcy8RSW7DxCdS4fx27j7S8s/rvr/F6E/m9A5rqaLfNw9eqCGS+/kvHu7DK4N5NI39Kmanl/EQE+DlDMvH17+pTqTR2LUOruYyk9UBjvOcUp24Mwb4CRDyWVK/xmng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IBIlYA6l; arc=none smtp.client-ip=209.85.160.178
+	 To:Cc:Content-Type; b=q+WcxCHVnRueVhzSWYbb036AkfMkqyLOcY5sTq5cl+QhH+dVG9oyK96ndFSNsPp0xs1/7Fo3TQVLw7516ZUwBbtUGsSdOu8g+3BJsdpE95Qz9E7bGpufuPc8aghi5FSERnPQEE6CBQCap3kOSLKcJHzhb3WepkMFhs0wDM7CejA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hqb0JAzv; arc=none smtp.client-ip=209.85.160.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4eda6a8cc12so59915371cf.0
-        for <linux-bcache@vger.kernel.org>; Tue, 02 Dec 2025 17:51:43 -0800 (PST)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4eda057f3c0so46875041cf.2
+        for <linux-bcache@vger.kernel.org>; Tue, 02 Dec 2025 19:10:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764726702; x=1765331502; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1764731413; x=1765336213; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=29HfRhtowelPyFq0bm7t4v7lXxLMZQ3G+lwt5TZkuog=;
-        b=IBIlYA6lg78c1qPhUH6r/N7sB3CaIC3qyvfIGJR1udvgTFDTBtfaCnw80TVplJPQCp
-         lUFmX4yn6ZAMgdblZIelDmm8WNBH0YvkbA2MFQTAt5EiFc977l3/gm/kh154MxI/wJbX
-         0ZRBbw8HuWo1o8y4D/eeU4yvXEnqxG+T0tziI1SOkaVhai4xhEH32Woq/3fPnvYSU6R4
-         sAnT/PySdjYCHUEMy8FPudyYVma4xR3SVqfqJbNS9E69JzleiI4T2iOVErkAbahf6H7n
-         L8NeJE8l3epIFWKlORm9soh+KfE+9+cOmRLWkKcfqqJzgC7UiJNmsG6oJ2UO1++ldxgB
-         CNBg==
+        bh=Da50DXWuPPV4XcN/IgeMyPMOa+pTGHDkioCpUx5+o3U=;
+        b=Hqb0JAzv5Fetm6vvIzH0TVVffeUYQUyX5xcepWaVQB+KA2rG4trC/2lDtbbo1WsUK8
+         qnMaX6t4wxS6AyJh0mdZwmeKakyLayvfGbxuqwkI4R9kyrwjjjzaKf6uIo343YcfrFVX
+         xw/n0nCs/YxjMZATr33PxdcBRIbj6FjCviKV66z+obESxUZ3YmvJ9uUGNkDS2hfJwc5S
+         TDacpLQzPoOUfn3Vya1o1eTwRQn2T1C5RQOnVTSNmrT1EPTONhQzhNwST9EgD1fuczG/
+         pssLhfVfJ0fDeMLDpO4tLJE95UwdNPw2RXXwXkreMtvPLv2B1e9R5l0t6REHwj01y1pt
+         wazw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764726702; x=1765331502;
+        d=1e100.net; s=20230601; t=1764731413; x=1765336213;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=29HfRhtowelPyFq0bm7t4v7lXxLMZQ3G+lwt5TZkuog=;
-        b=u1E2GTLwDNbBab7zT10TgUadpwf+xc5m3oH19kcape4dAluJTdBEtQv5UZcLb2NQlL
-         /gcilSuXMLWS/MH7ppiQkxPupBSXbldOa6TkBEfoWN2a3pxGwcLG8VIaJIW/PkKzGqrw
-         sqpd1Rh7n5kL7iq2RJO4qDKKSiCdyu8neL9bcqbvsxsouK6rEt74mYe8bF1QbZfsLc5F
-         Qp2Oj7b3hpc3D0MkD35Shfs7SxLxqKdSjadea2g7C6wKSB5reRbH1N9FoU8HEYa15duJ
-         dWi9/oMwxYPU6gsMZLzfzsHuR7KJeMq++DsSQALCZvHymIf+wJ8Ua9XqHGnz2xNDEp+B
-         Fz5w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/yOzZwnZek2RNtFmKW0d8KOSsj7Plp0h1wQ/lOA8P1kFH/CabSOhJgC5k0JG6JHNoDeaOkcxa2cfaPJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYqK6i1+1laax7WJuwpN7/WT1N5wSdA4mzw0Bimkpu9wEEKv0D
-	CmRPoB2HfRHtlqE8fyBgSmiEUZA7UM/8ezJlcpJk0QslB3XJvoGmXq7pgnG/o6+dhb6QZSJqZeU
-	piPnbbv+BqLUOENYprye7nRMAkJu1Slm2Ce5v
-X-Gm-Gg: ASbGnct4MCKg5cwo6uj++sUt/VmP0813w2a2CHb/8KdEX80HtzoD6mh36QE5nltB2O6
-	adV7a6zGJHytUVEgyAde/IfnpPwRwuV2JTvQjPDmvcCR8IRbEHQ96SOXoMs8shyuzlbEqg0ynwP
-	Tx9gs1fldYH7sRGAzkAu35N+ANWlnbvFUi6+Lc/kKqm1xtNAKYHH6bl3mtjefb/qDhghc9LFF9i
-	+kDorJjIfM4XJ7IthziZy1AduAW0SZhybY0h7fop2A+ip7BvpVbjL4yza4lTYzLcO/BGMQ=
-X-Google-Smtp-Source: AGHT+IG7vBpednoopH1DKxZOoSo8zpv84EdVF+k41o0sX1zR/8W3FEVNG8uFv3gmerv3xFbLF+STWsZgh/6ESAaBVno=
-X-Received: by 2002:a05:622a:30d:b0:4eb:a0aa:28e with SMTP id
- d75a77b69052e-4f0176566f0mr9901431cf.64.1764726702214; Tue, 02 Dec 2025
- 17:51:42 -0800 (PST)
+        bh=Da50DXWuPPV4XcN/IgeMyPMOa+pTGHDkioCpUx5+o3U=;
+        b=Zm+nhvcQlQW0siVFiG2hFItsRyzaESrLt+tXAOVhQMcHhrCeK2LNxOAiXWmsE1mwLx
+         7S677V+HKc6q7vMscOp6ympc61Kp/bk4gvv//6jPujJDy0jl4mCpP4ayWdeeJQo0l4Py
+         hRypU8Mu9ilN5jxVCC6HBO3F3LxTipb+/RGsHVjZzdmRGgWh8Xz+M+6PdFn/6y3RVECq
+         xUHVr/JsbjqZOsGbLG4Xk5hK5yAzLsbs4RALwv/rLI8xV2Z2qgADavaXSHKki0EOwUiJ
+         G/VLsj4Ur2xZgnKRin94Rf7gG0DdX1OJp+8qgaccIoM4d15qRY6aNZD0kMB45yuYTU2y
+         oxVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQlOZlld+jHbGIvISqC+csvDqOnwAzf5ASeCdeZo+2rv7NMTi07RU5HN541Fv2jYInqpO1eQ/yCABLXN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNX3aBXSjMFWx04EI2u634BP5giVBKaJdYyYMDKtU7JdBe3n6F
+	ru+FLW8UmahqxhTSFz07Q0Knm5Lcn58lH/CCXaTusVD/36PsSBKanjbmUSPQFMfJHpEPPgw6AEM
+	BfonUr53/aZoj2WftH/8l6ba/WIImGAs=
+X-Gm-Gg: ASbGncsQZELZqUtKIz5s1qyVe5ApzTUocHG1AaljcO03KgLXYHNIxN1l2/xOzkyAJG9
+	JUuw1qHeNPbziav2wTJpBuhv44RVpizKb4CHq/w/6/rkrFY4XnFbIqUVfSBHE6qlGMjTiGI7+d0
+	MJyp2pR1BVlE6sZn2NvmUPGEtqvTDX6SUbl1OUcZI3oJNGLqmbONItG2Tj0AVUvk3YVxUYrdNvW
+	pnQuk/raJWCyQW4j9Jl8c7fW0sotyQPMxDvH+t6eASi+Tm4t+T8/pNnlRVOdK4d2LgJ/3sGJ8D3
+	fIVTmg==
+X-Google-Smtp-Source: AGHT+IFKj9nQ1yW2Qdi7amywixjfuhwbrJxLsfaLBhk60aClgLDyRt7rXIoN0mQ/5gg9IEpDjYYZGqQMKhBVvtX6Jyw=
+X-Received: by 2002:a05:622a:15c7:b0:4f0:1543:6762 with SMTP id
+ d75a77b69052e-4f0174fe734mr15479451cf.2.1764731412842; Tue, 02 Dec 2025
+ 19:10:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -79,11 +80,12 @@ References: <20251201090442.2707362-1-zhangshida@kylinos.cn>
  <20251201090442.2707362-4-zhangshida@kylinos.cn> <CAHc6FU4o8Wv+6TQti4NZJRUQpGF9RWqiN9fO6j55p4xgysM_3g@mail.gmail.com>
  <aS17LOwklgbzNhJY@infradead.org> <CAHc6FU7k7vH5bJaM6Hk6rej77t4xijBESDeThdDe1yCOqogjtA@mail.gmail.com>
  <20251202054841.GC15524@lst.de> <CAHc6FU6B6ip8e-+VXaAiPN+oqJTW2Tuoh0Vv-E96Baf2SSbt7w@mail.gmail.com>
-In-Reply-To: <CAHc6FU6B6ip8e-+VXaAiPN+oqJTW2Tuoh0Vv-E96Baf2SSbt7w@mail.gmail.com>
+ <CANubcdWHor3Jx+5yeY84nx0yFe3JosqVG4wGdVkpMfbQLVAWpQ@mail.gmail.com>
+In-Reply-To: <CANubcdWHor3Jx+5yeY84nx0yFe3JosqVG4wGdVkpMfbQLVAWpQ@mail.gmail.com>
 From: Stephen Zhang <starzhangzsd@gmail.com>
-Date: Wed, 3 Dec 2025 09:51:06 +0800
-X-Gm-Features: AWmQ_bk3Wx_6JA9rlYJqME-wTYEbXZg-BK2IuYtOy-m-WqmSKhAL-wpGdfR7pkk
-Message-ID: <CANubcdWHor3Jx+5yeY84nx0yFe3JosqVG4wGdVkpMfbQLVAWpQ@mail.gmail.com>
+Date: Wed, 3 Dec 2025 11:09:36 +0800
+X-Gm-Features: AWmQ_bn7qJQi1QOaQkYkEYIXtU-m8JUkCUbhC8-ZBvDQ79P6S19scEkkxp42Vgw
+Message-ID: <CANubcdWBF5tCfrutAOiUkFaZb=9s4=bMKzi7dSwQxTGbC_3_1Q@mail.gmail.com>
 Subject: Re: [PATCH v4 3/3] block: prevent race condition on bi_status in __bio_chain_endio
 To: Andreas Gruenbacher <agruenba@redhat.com>
 Cc: Christoph Hellwig <hch@lst.de>, Johannes.Thumshirn@wdc.com, ming.lei@redhat.com, 
@@ -93,111 +95,151 @@ Cc: Christoph Hellwig <hch@lst.de>, Johannes.Thumshirn@wdc.com, ming.lei@redhat.
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Andreas Gruenbacher <agruenba@redhat.com> =E4=BA=8E2025=E5=B9=B412=E6=9C=88=
-3=E6=97=A5=E5=91=A8=E4=B8=89 05:15=E5=86=99=E9=81=93=EF=BC=9A
+Stephen Zhang <starzhangzsd@gmail.com> =E4=BA=8E2025=E5=B9=B412=E6=9C=883=
+=E6=97=A5=E5=91=A8=E4=B8=89 09:51=E5=86=99=E9=81=93=EF=BC=9A
 >
-> On Tue, Dec 2, 2025 at 6:48=E2=80=AFAM Christoph Hellwig <hch@lst.de> wro=
-te:
-> > On Mon, Dec 01, 2025 at 02:07:07PM +0100, Andreas Gruenbacher wrote:
-> > > On Mon, Dec 1, 2025 at 12:25=E2=80=AFPM Christoph Hellwig <hch@infrad=
-ead.org> wrote:
-> > > > On Mon, Dec 01, 2025 at 11:22:32AM +0100, Andreas Gruenbacher wrote=
-:
-> > > > > > -       if (bio->bi_status && !parent->bi_status)
-> > > > > > -               parent->bi_status =3D bio->bi_status;
-> > > > > > +       if (bio->bi_status)
-> > > > > > +               cmpxchg(&parent->bi_status, 0, bio->bi_status);
-> > > > >
-> > > > > Hmm. I don't think cmpxchg() actually is of any value here: for a=
-ll
-> > > > > the chained bios, bi_status is initialized to 0, and it is only s=
-et
-> > > > > again (to a non-0 value) when a failure occurs. When there are
-> > > > > multiple failures, we only need to make sure that one of those
-> > > > > failures is eventually reported, but for that, a simple assignmen=
-t is
-> > > > > enough here.
-> > > >
-> > > > A simple assignment doesn't guarantee atomicy.
-> > >
-> > > Well, we've already discussed that bi_status is a single byte and so
-> > > tearing won't be an issue. Otherwise, WRITE_ONCE() would still be
-> > > enough here.
+> Andreas Gruenbacher <agruenba@redhat.com> =E4=BA=8E2025=E5=B9=B412=E6=9C=
+=883=E6=97=A5=E5=91=A8=E4=B8=89 05:15=E5=86=99=E9=81=93=EF=BC=9A
 > >
-> > No.  At least older alpha can tear byte updates as they need a
-> > read-modify-write cycle.
+> > On Tue, Dec 2, 2025 at 6:48=E2=80=AFAM Christoph Hellwig <hch@lst.de> w=
+rote:
+> > > On Mon, Dec 01, 2025 at 02:07:07PM +0100, Andreas Gruenbacher wrote:
+> > > > On Mon, Dec 1, 2025 at 12:25=E2=80=AFPM Christoph Hellwig <hch@infr=
+adead.org> wrote:
+> > > > > On Mon, Dec 01, 2025 at 11:22:32AM +0100, Andreas Gruenbacher wro=
+te:
+> > > > > > > -       if (bio->bi_status && !parent->bi_status)
+> > > > > > > -               parent->bi_status =3D bio->bi_status;
+> > > > > > > +       if (bio->bi_status)
+> > > > > > > +               cmpxchg(&parent->bi_status, 0, bio->bi_status=
+);
+> > > > > >
+> > > > > > Hmm. I don't think cmpxchg() actually is of any value here: for=
+ all
+> > > > > > the chained bios, bi_status is initialized to 0, and it is only=
+ set
+> > > > > > again (to a non-0 value) when a failure occurs. When there are
+> > > > > > multiple failures, we only need to make sure that one of those
+> > > > > > failures is eventually reported, but for that, a simple assignm=
+ent is
+> > > > > > enough here.
+> > > > >
+> > > > > A simple assignment doesn't guarantee atomicy.
+> > > >
+> > > > Well, we've already discussed that bi_status is a single byte and s=
+o
+> > > > tearing won't be an issue. Otherwise, WRITE_ONCE() would still be
+> > > > enough here.
+> > >
+> > > No.  At least older alpha can tear byte updates as they need a
+> > > read-modify-write cycle.
+> >
+> > I know this used to be a thing in the past, but to see that none of
+> > that is relevant anymore today, have a look at where [*] quotes the
+> > C11 standard:
+> >
+> >         memory location
+> >                 either an object of scalar type, or a maximal sequence
+> >                 of adjacent bit-fields all having nonzero width
+> >
+> >                 NOTE 1: Two threads of execution can update and access
+> >                 separate memory locations without interfering with
+> >                 each other.
+> >
+> >                 NOTE 2: A bit-field and an adjacent non-bit-field membe=
+r
+> >                 are in separate memory locations. The same applies
+> >                 to two bit-fields, if one is declared inside a nested
+> >                 structure declaration and the other is not, or if the t=
+wo
+> >                 are separated by a zero-length bit-field declaration,
+> >                 or if they are separated by a non-bit-field member
+> >                 declaration. It is not safe to concurrently update two
+> >                 bit-fields in the same structure if all members declare=
+d
+> >                 between them are also bit-fields, no matter what the
+> >                 sizes of those intervening bit-fields happen to be.
+> >
+> > [*] Documentation/memory-barriers.txt
+> >
+> > > But even on normal x86 the check and the update would be racy.
+> >
+> > There is no check and update (RMW), though. Quoting what I wrote
+> > earlier in this thread:
+> >
+> > On Mon, Dec 1, 2025 at 11:22=E2=80=AFAM Andreas Gruenbacher <agruenba@r=
+edhat.com> wrote:
+> > > Hmm. I don't think cmpxchg() actually is of any value here: for all
+> > > the chained bios, bi_status is initialized to 0, and it is only set
+> > > again (to a non-0 value) when a failure occurs. When there are
+> > > multiple failures, we only need to make sure that one of those
+> > > failures is eventually reported, but for that, a simple assignment is
+> > > enough here. The cmpxchg() won't guarantee that a specific error valu=
+e
+> > > will survive; it all still depends on the timing. The cmpxchg() only
+> > > makes it look like something special is happening here with respect t=
+o
+> > > ordering.
+> >
+> > So with or without the cmpxchg(), if there are multiple errors, we
+> > won't know which bi_status code will survive, but we do know that we
+> > will end up with one of those error codes.
+> >
 >
-> I know this used to be a thing in the past, but to see that none of
-> that is relevant anymore today, have a look at where [*] quotes the
-> C11 standard:
+> Thank you for sharing your insights=E2=80=94I found the discussion very e=
+nlightening.
 >
->         memory location
->                 either an object of scalar type, or a maximal sequence
->                 of adjacent bit-fields all having nonzero width
+> While I agree with Andreas=E2=80=99s perspective, I also very much apprec=
+iate
+> the clarity
+> and precision offered by the cmpxchg() approach. That=E2=80=99s why when =
+Christoph
+> suggested it, I was happy to incorporate it into the code.
 >
->                 NOTE 1: Two threads of execution can update and access
->                 separate memory locations without interfering with
->                 each other.
+> But a cmpxchg is a little bit redundant here.
+> so we will change it to the simple assignment:
 >
->                 NOTE 2: A bit-field and an adjacent non-bit-field member
->                 are in separate memory locations. The same applies
->                 to two bit-fields, if one is declared inside a nested
->                 structure declaration and the other is not, or if the two
->                 are separated by a zero-length bit-field declaration,
->                 or if they are separated by a non-bit-field member
->                 declaration. It is not safe to concurrently update two
->                 bit-fields in the same structure if all members declared
->                 between them are also bit-fields, no matter what the
->                 sizes of those intervening bit-fields happen to be.
+> -       if (bio->bi_status && !parent->bi_status)
+>                  parent->bi_status =3D bio->bi_status;
+> +       if (bio->bi_status)
+>                  parent->bi_status =3D bio->bi_status;
 >
-> [*] Documentation/memory-barriers.txt
->
-> > But even on normal x86 the check and the update would be racy.
->
-> There is no check and update (RMW), though. Quoting what I wrote
-> earlier in this thread:
->
-> On Mon, Dec 1, 2025 at 11:22=E2=80=AFAM Andreas Gruenbacher <agruenba@red=
-hat.com> wrote:
-> > Hmm. I don't think cmpxchg() actually is of any value here: for all
-> > the chained bios, bi_status is initialized to 0, and it is only set
-> > again (to a non-0 value) when a failure occurs. When there are
-> > multiple failures, we only need to make sure that one of those
-> > failures is eventually reported, but for that, a simple assignment is
-> > enough here. The cmpxchg() won't guarantee that a specific error value
-> > will survive; it all still depends on the timing. The cmpxchg() only
-> > makes it look like something special is happening here with respect to
-> > ordering.
->
-> So with or without the cmpxchg(), if there are multiple errors, we
-> won't know which bi_status code will survive, but we do know that we
-> will end up with one of those error codes.
+> I will integrate this discussion into the commit message, it is very insi=
+ghtful.
 >
 
-Thank you for sharing your insights=E2=80=94I found the discussion very enl=
-ightening.
+Hi,
 
-While I agree with Andreas=E2=80=99s perspective, I also very much apprecia=
-te
-the clarity
-and precision offered by the cmpxchg() approach. That=E2=80=99s why when Ch=
-ristoph
-suggested it, I was happy to incorporate it into the code.
+I=E2=80=99ve been reconsidering the two approaches for the upcoming patch r=
+evision.
+Essentially, we=E2=80=99re comparing two methods:
+A:
+        if (bio->bi_status)
+                   parent->bi_status =3D bio->bi_status;
+B:
+        if (bio->bi_status)
+                cmpxchg(&parent->bi_status, 0, bio->bi_status);
 
-But a cmpxchg is a little bit redundant here.
-so we will change it to the simple assignment:
+Both appear correct, but B seems a little bit redundant here.
+Upon further reflection, I=E2=80=99ve noticed a subtle difference:
+A unconditionally writes to parent->bi_status when bio->bi_status is non-ze=
+ro,
+regardless of the current value of parent->bi_status.
+B uses cmpxchg to only update parent->bi_status if it is still zero.
 
--       if (bio->bi_status && !parent->bi_status)
-                 parent->bi_status =3D bio->bi_status;
-+       if (bio->bi_status)
-                 parent->bi_status =3D bio->bi_status;
+Thus, B could avoid unnecessary writes in cases where parent->bi_status has
+already been set to a non-zero value.
 
-I will integrate this discussion into the commit message, it is very insigh=
-tful.
+Do you think this optimization would be beneficial in practice, or is
+the difference
+negligible?
 
 Thanks,
 Shida
 
-> Andreas
+> Thanks,
+> Shida
 >
+> > Andreas
+> >
 
