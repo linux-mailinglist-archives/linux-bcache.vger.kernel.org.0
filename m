@@ -1,152 +1,139 @@
-Return-Path: <linux-bcache+bounces-1338-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1339-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21F9CA771B
-	for <lists+linux-bcache@lfdr.de>; Fri, 05 Dec 2025 12:42:06 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF99CAA368
+	for <lists+linux-bcache@lfdr.de>; Sat, 06 Dec 2025 10:27:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 9F4EE3243AC5
-	for <lists+linux-bcache@lfdr.de>; Fri,  5 Dec 2025 08:57:19 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id CFE49308ED2F
+	for <lists+linux-bcache@lfdr.de>; Sat,  6 Dec 2025 09:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDD83128CD;
-	Fri,  5 Dec 2025 08:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31032E285C;
+	Sat,  6 Dec 2025 09:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xlnz3tOy";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="FCUaHuew"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qq1zBoTv"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C484D311C20
-	for <linux-bcache@vger.kernel.org>; Fri,  5 Dec 2025 08:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FC42E22BD
+	for <linux-bcache@vger.kernel.org>; Sat,  6 Dec 2025 09:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764925031; cv=none; b=BnRd93Ku7peQ2moe90rqJm8csUvyoz7Z1TgApUldJSI5/aiiRsXtBz5NPjRULQlSBF4I9AXApPFxW4mXI9PkVRmUqcj6YnEq/y77/mM1itVgFMGcy9nUSWQncxj8lGyLyJHcvTDGvx+ZcTMCUnQ0px13ym/Ymqf6K2JT1j0CJQo=
+	t=1765013210; cv=none; b=jZ7Ecav/97x5wHtczNAhLcROYgtZiJB9Ppq+1nH147rCxDn/+JkHSYhWE+IhCcv7AF03yrFth3VxHx8FHgItpU5fJOlWz+y5hJCgIEVT5/jvGzprtOvSKXjnQjd2XSgTwcUEj7+coxvLTttAFw+LsS2Y6VKZd7u1fiHQtRrycIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764925031; c=relaxed/simple;
-	bh=kI/BmZknfJEnMAoux6UNqNWZZavATt2Ci9CEQ2NFztc=;
+	s=arc-20240116; t=1765013210; c=relaxed/simple;
+	bh=U2cyg0CRWB2HshiXhIkvPbUF9ckk6zfXQWgmnUX/HfI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n/c6ViIBBFNnXO8FKldD8ui6t9gMBtQLJiBLpg9BhWCeM+WxyIYjFsDe4HuYXzM+hsdLtP2/LLlRyXPN5FZHRLMWCvXyxDTOMBokyHi6bXnm1QWb0nv9CH0ksb5Fau1rxP9PDXAkyu8aTG0xkD5E6zdHn4e9A0nujUZO3SYgoAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xlnz3tOy; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=FCUaHuew; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764925022;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kI/BmZknfJEnMAoux6UNqNWZZavATt2Ci9CEQ2NFztc=;
-	b=Xlnz3tOyAvnzTEu5P5xXFQGUu8B4tZ+K3kVdrmQIrDEjMbzfP+WZ62DQRlKWZ8k9jgt13A
-	GBW/4PrNYEaaS8eaA95OMcWzNb4bnB9Nwrd7gegUFJgQsh3mcB9kUT5Cmdh9j9z0MzdgB9
-	8gR0B9N1u/1ZU83koUKjuA/d2oxwSxw=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-635-Kag1ekvANb6_bXMu_etMJg-1; Fri, 05 Dec 2025 03:55:51 -0500
-X-MC-Unique: Kag1ekvANb6_bXMu_etMJg-1
-X-Mimecast-MFC-AGG-ID: Kag1ekvANb6_bXMu_etMJg_1764924951
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-787e19a09c3so34090737b3.1
-        for <linux-bcache@vger.kernel.org>; Fri, 05 Dec 2025 00:55:51 -0800 (PST)
+	 To:Cc:Content-Type; b=GZvbWd7UcaDHrrqtsCAqzBOTWqqPDNQ0IOKgPC4oIAZ9C2LZlQu48OHPHNfn1bNpFWH6py6MsVn1Th52E7TqwCx7HiYu2Ucx+7Yr3CbZWFqNt79WA+P0QhXD1ETVI3ZlMJb/hOBMFTCJBNzhqkmPI1T4mpzzpsv0FlMcjN6anv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qq1zBoTv; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ee328b8e38so27825821cf.0
+        for <linux-bcache@vger.kernel.org>; Sat, 06 Dec 2025 01:26:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1764924951; x=1765529751; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1765013208; x=1765618008; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kI/BmZknfJEnMAoux6UNqNWZZavATt2Ci9CEQ2NFztc=;
-        b=FCUaHuewzJr0ItO7Uo5L86Nrwo8aqenxBPuUb4bOmmHTFVJq4vye7IGq70AzxJQPQJ
-         MHpqO0Zv+YzfSv64JvUgkD68IQ4Lkc3wos/W+YYRiElerTTNXTrXoq1Rr4p+jAYZfsbN
-         JreJtV1czwU96ygq6Q3u1xVnllUdIFs5eTJ3oPH4q/Gl1S2E39PLAL7pqzwTE7QeJN3F
-         kOSWg7rR2muJhZo3iZDiEnVMnXG5DxGVVep0O/oH1ge1SlzgsDukPDMk7dO98luRVhk3
-         3mS9L5Vt/N5sLgAR7b6aKv45HjlhCO9tzMcrE4fkXJyB6ntno3MmvwVqbPvQSmo+eGT9
-         jLag==
+        bh=DFq0oc8pMr+gyKPI+JedBdUGzF3CFNc+V/Wsq4FQfLE=;
+        b=Qq1zBoTvgsNqJtmT3SC2qB+68Tbq4CbwcqrUf8BBun5ksjn8GfDP0hch9RTBb83bTO
+         QWmrMY85avTTy1EijiakUxqgP4NipvADUUerJCT+EQBT4uUsdHx1JR9z/AIKKEsl8nWP
+         U6UYUT9MFw+TdR+ieyTrsZm0s4q4xMAdzPka2bn3hzPGtdopIOdehLJi5Fy5uE+qlvGG
+         gT0ulQrxA6QYrgq9Seq/faInKGFp1XneQGhyHtPKLx4Y1nKPlUvFj7IGy2gssGEZjMI7
+         EtavdMOvUQfYIcrPDjom2/uoXBkg3+XN/uEYcwZzIGCHMWZaXiS0DCj2THTRz47TGcXh
+         tMDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764924951; x=1765529751;
+        d=1e100.net; s=20230601; t=1765013208; x=1765618008;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=kI/BmZknfJEnMAoux6UNqNWZZavATt2Ci9CEQ2NFztc=;
-        b=VBkJvO0CPglyTbfcaJysZ/ZBJXSTR02cBTNzD+t73GW+NBPbm4JaREuQNhvKUwWpw7
-         pF97VeISjJSLZjuNckDmi02rnnzriK0aoCNVjjhqhksEZvSeZZx218KCFb3Q083swUt1
-         ahfw2pOnolhrW6ZwcSoTqVJ/J9zLc5gGAFjvAZGqJoqwruub2zncVIPnZT8D/IEloxvf
-         EEFNRa3+ZswdKJ4RGc/FimaLZCSlZsZn2Fuj2fbefG3U2QtC5N6WXf6/iPwp2+2DoLrA
-         9iRHw9oYrPOmp9UCdTrtl8Wvl+axiTsgLfLMcVmDp8unOP0LiLdVK/rPZUgYlJKorvJS
-         Hayw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmRXkNxTDdgPO+jp2SRKVsHnfmIODwn3bl6pz8iNbqmFVA2+s1ZDjLPY4pEgj5DvK6gxPEkH/JwEvdr18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLl0vUP3Z0cFrCIc4wm5Tdv/24H9oAAKu4yaIvYvGge003Xvru
-	hM1mSA/G+4JgD7UVjGkI3x+WpWgBRh/yOwntEMadVVZbaHeOJnt8WDaOIpst4zUpRqt4Azy6c0v
-	XC95IWM9O6NN6zvxlIOBEhwaDxMaVQMhO6m9awBja1ZAi2yb6j0GUe7IMzpzF7fnJ3W5MYDtKbv
-	8q1hNy8FmVmIGlT8ASuVM2qeqheIh9NNJ4/5Fqkw8cqBX8i7IwDq0=
-X-Gm-Gg: ASbGncvQ9Lko6CL7rVHZtIgolGO382pu8e0pzLl/ZKSt1UqcIUXAi0AQU6HT4n86cV/
-	MOnF9KlH92WCnybTezlBKhaIGZunc1C1CCsieBrTz/9hd6anXeCSKJBZN7NqdX3t4JVvRGdX9zN
-	yxf+T0TytQaddYl1n8WQ4MHimMinile360oaU/TMvU+rah8Jhla4420xiBshd1uytV
-X-Received: by 2002:a05:690e:11c7:b0:63f:a876:ae58 with SMTP id 956f58d0204a3-6443d6e683bmr5035625d50.9.1764924951054;
-        Fri, 05 Dec 2025 00:55:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH06t5ScTL3/41cXQ9/KNdNBUKke6bRZRDIIsDOJI/s90MmtU+OELXMsXOy8CKQ41Y5BIrK12B8cMtyqGUq3aU=
-X-Received: by 2002:a05:690e:11c7:b0:63f:a876:ae58 with SMTP id
- 956f58d0204a3-6443d6e683bmr5035612d50.9.1764924950709; Fri, 05 Dec 2025
- 00:55:50 -0800 (PST)
+        bh=DFq0oc8pMr+gyKPI+JedBdUGzF3CFNc+V/Wsq4FQfLE=;
+        b=Dsd+9JjiMpQ2+yJ6YMmnEn5eSdb6ihSuyb7I6uIXl9VdJc76ThXinF7YQvbBOutYoJ
+         AmTgZGE+vkeLZHk4V826bBkADtKgayMrzKCHQUnZ7jqBmewn9F6Mg1IkAOs7oNZ9XdN1
+         6iZvX1EqGYnohLeD4z0tPB3CEUI3gck8pkc5FfdRk3K5QFeUiV5vgdaL8Ga0KeEUWdNj
+         YKjXCaZ42tJivLfWoP+AX11hAMZ2GKXWRbkj0hmg2Ou3aQHMshkHIOqZkGIZstUAdKyd
+         cAtIuhYGK1nl9rjwE1vvF1wnfw8U2Qa5DK6EhyABtyMqEqq1TzVJGeFP5EA7dJwWA3j0
+         9uLA==
+X-Forwarded-Encrypted: i=1; AJvYcCX07aUPOBmdSxWzc3cV2Gv7UOg5Tgh/OWfA+XvPYoFGe6dk931omC0OHzfOEtDKksSDrzsfXz0HPsvjMVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI6zq/xMvRqgAqha5q5B2UqNNhYYzlcxCJfrcSykPINmy+BgtX
+	AUG0QQRztvQxOUJ5Yk3iYh24Cj9HdfI9jcKhfOnoLzyAVVW0RNV61jGdZR3fCpC6tru7A1BI5di
+	LY0jOorFz6eWKwH8ycDDvk7iBhSMgBwE=
+X-Gm-Gg: ASbGncvJVKDoHb8Icuphbd7axtrNKMVlfPYMbgU+vLBrU1O6BvFCQCaG7LDJNXBTxgJ
+	nDT+QsUUzZpG2E8qJHEZ/Y0DRFZpJ7NwHB5KC6ebKE9oXbGEm/5VpkDtXW5eNpO+AntMh4saSuD
+	RXGnuLp8q+Uli9NYTLgpRwBLYraG4nos8gz8UQXG1vB9g1Y0v2tAluvi5An1LfVHHWPcsvgoCGG
+	7BXj5NhXH8vhrPKpAZYQbMFLks+PrGyOqd7qKgMlNpTiVdniusc2e4spXmvo9Dho2uz2Hk=
+X-Google-Smtp-Source: AGHT+IFspZZ6ukZmncarZXsvudX/fTFn7X4UqQQLpC7cwpKhlBQrJVKiC6JvXdnBKnL/BP0NqWEJAP6XaakAFwO/Qk8=
+X-Received: by 2002:a05:622a:40b:b0:4e8:a413:bb3a with SMTP id
+ d75a77b69052e-4f03fecb7b0mr26065551cf.46.1765013207871; Sat, 06 Dec 2025
+ 01:26:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251128083219.2332407-1-zhangshida@kylinos.cn>
- <20251128083219.2332407-7-zhangshida@kylinos.cn> <CANubcdUtncH7OxYg0+4ax0v9OmbuV337AM5DQHOpsBVa-A1cbA@mail.gmail.com>
- <CAHc6FU5DAhrRKyYjuZ+qF84rCsUDiPo3iPoZ67NvN-pbunJH4A@mail.gmail.com>
- <CAHc6FU57xqs1CTSOd-oho_m52aCTorRVJQKKyVAGJ=rbfh5VxQ@mail.gmail.com> <CANubcdVuRNfygyGwnXQpsb2GsHy4=yrzcLC06paUbAMS60+qyA@mail.gmail.com>
-In-Reply-To: <CANubcdVuRNfygyGwnXQpsb2GsHy4=yrzcLC06paUbAMS60+qyA@mail.gmail.com>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Fri, 5 Dec 2025 09:55:39 +0100
-X-Gm-Features: AWmQ_bn5nYIfNoOVXdPvu9TIQvwvBK4TRvGDwrtrakvgOSxNJSsbjWkIZFSXMho
-Message-ID: <CAHc6FU4G+5QnSgXoMN726DOTF9R-d88-CrfYMof0kME6P_o-7w@mail.gmail.com>
-Subject: Re: [PATCH v2 06/12] gfs2: Replace the repetitive bio chaining code patterns
-To: Stephen Zhang <starzhangzsd@gmail.com>
-Cc: Johannes.Thumshirn@wdc.com, hch@infradead.org, ming.lei@redhat.com, 
-	Gao Xiang <hsiangkao@linux.alibaba.com>, linux-block@vger.kernel.org, 
-	linux-bcache@vger.kernel.org, nvdimm@lists.linux.dev, 
-	virtualization@lists.linux.dev, linux-nvme@lists.infradead.org, 
-	gfs2@lists.linux.dev, ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org, 
+References: <20251204024748.3052502-1-zhangshida@kylinos.cn>
+ <20251204024748.3052502-3-zhangshida@kylinos.cn> <aTFW_gdWmXmCP5fd@infradead.org>
+In-Reply-To: <aTFW_gdWmXmCP5fd@infradead.org>
+From: Stephen Zhang <starzhangzsd@gmail.com>
+Date: Sat, 6 Dec 2025 17:26:11 +0800
+X-Gm-Features: AWmQ_bnus57zLSjJ12Ea0wTIQU-JiJap0bH-CABljQkrwQsCmNED2Krc5F7dwk4
+Message-ID: <CANubcdVyvXTo98cOWLXr8JuEmo7P3H4kq2JASBURwZZG5oSYXQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] block: prohibit calls to bio_chain_endio
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Johannes.Thumshirn@wdc.com, agruenba@redhat.com, ming.lei@redhat.com, 
+	hsiangkao@linux.alibaba.com, csander@purestorage.com, colyli@fnnas.com, 
+	linux-block@vger.kernel.org, linux-bcache@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 5, 2025 at 8:46=E2=80=AFAM Stephen Zhang <starzhangzsd@gmail.co=
-m> wrote:
-> Andreas Gruenbacher <agruenba@redhat.com> =E4=BA=8E2025=E5=B9=B412=E6=9C=
-=884=E6=97=A5=E5=91=A8=E5=9B=9B 17:37=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Mon, Dec 1, 2025 at 11:31=E2=80=AFAM Andreas Gruenbacher <agruenba@r=
-edhat.com> wrote:
-> > > On Sat, Nov 29, 2025 at 3:48=E2=80=AFAM Stephen Zhang <starzhangzsd@g=
-mail.com> wrote:
-> > > > This one should also be dropped because the 'prev' and 'new' are in
-> > > > the wrong order.
-> > >
-> > > Ouch. Thanks for pointing this out.
-> >
-> > Linus has merged the fix for this bug now, so this patch can be
-> > updated / re-added.
-> >
+Christoph Hellwig <hch@infradead.org> =E4=BA=8E2025=E5=B9=B412=E6=9C=884=E6=
+=97=A5=E5=91=A8=E5=9B=9B 17:40=E5=86=99=E9=81=93=EF=BC=9A
 >
-> Thank you for the update. I'm not clear on what specifically has been
-> merged or how to verify it.
-> Could you please clarify which fix was merged,
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D8a157e0a0aa5
-"gfs2: Fix use of bio_chain"
-
-
-> and if I should now resubmit the cleanup patches?
->
-> Thanks,
-> Shida
->
-> > Thanks,
-> > Andreas
+> On Thu, Dec 04, 2025 at 10:47:47AM +0800, zhangshida wrote:
+> > From: Shida Zhang <zhangshida@kylinos.cn>
 > >
+> > Now that all potential callers of bio_chain_endio have been
+> > eliminated, completely prohibit any future calls to this function.
+> >
+> > Suggested-by: Ming Lei <ming.lei@redhat.com>
+> > Suggested-by: Andreas Gruenbacher <agruenba@redhat.com>
+> > Suggested-by: Christoph Hellwig <hch@infradead.org>
+> > Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
+> > ---
+> >  block/bio.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/block/bio.c b/block/bio.c
+> > index b3a79285c27..cfb751dfcf5 100644
+> > --- a/block/bio.c
+> > +++ b/block/bio.c
+> > @@ -320,9 +320,13 @@ static struct bio *__bio_chain_endio(struct bio *b=
+io)
+> >       return parent;
+> >  }
+> >
+> > +/**
+> > + * This function should only be used as a flag and must never be calle=
+d.
+> > + * If execution reaches here, it indicates a serious programming error=
+.
+> > + */
+>
+> This is not a kerneldoc comment and thus should not use /** to start
+> the comment, otherwise the kerneldoc script will complain about
+> missing kernel doc elelemts.
 >
 
+Thanks for catching that. I'll fix the comment format in the next revision.
+
+Thanks,
+Shida
+
+
+> Otherwise looks good:
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
