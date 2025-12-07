@@ -1,183 +1,150 @@
-Return-Path: <linux-bcache+bounces-1341-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1342-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488BCCAB356
-	for <lists+linux-bcache@lfdr.de>; Sun, 07 Dec 2025 11:04:38 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DA3CAB422
+	for <lists+linux-bcache@lfdr.de>; Sun, 07 Dec 2025 13:21:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 428103002FFC
-	for <lists+linux-bcache@lfdr.de>; Sun,  7 Dec 2025 10:04:36 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 3FA8E30552DE
+	for <lists+linux-bcache@lfdr.de>; Sun,  7 Dec 2025 12:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D741E991B;
-	Sun,  7 Dec 2025 10:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C796B2D9EF3;
+	Sun,  7 Dec 2025 12:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSQIzmnW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2rqsv8R"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2CB2D0636
-	for <linux-bcache@vger.kernel.org>; Sun,  7 Dec 2025 10:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8B02609EE
+	for <linux-bcache@vger.kernel.org>; Sun,  7 Dec 2025 12:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765101873; cv=none; b=MJUEblaUEQ7f2rSkWZTLUx8E0tWKKU1nFc4kcaQvg9vKB/gIcJont1T6QrZoaHKYJjK7NBvyl4Nrr4aEQM/GwlZBoh3iwu7OhjYx6B1bHDOPFYocGAe6n+t3I1qG4QPca1DiI4Fq7ilTICI7ljbrSlGuWlfKPo38rFOeKsmNlFE=
+	t=1765110110; cv=none; b=QyPTJAEv1IGB5/GULXpYD5sVFN+rNtYvX8ADWY3KOwjFnYqspTRaWu8kTlK6WPo4RRlEVRrNcfUNklGWljhxJ8/rtTJG11oM69KQWlrkKvxDnBT1TB8hFQivJgjwccBBBInYJzgxhkZp4UX9ehB8r0sg/KHfrv/jjPZ4hGv2+TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765101873; c=relaxed/simple;
-	bh=oU+vvCeHMKSGHwu1ci54jpS3s8eATvZ3aiVnEThBVIc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P30c5ix1i/f7eGErD3EuTrlfaIT+p6jmqYOzFicAyKpLooHbNvrk4lyMSPkt2baG9KDtiNw9JH0MacAMzlsqjR3HQzGLz5a+8Q0YN0qQ71isbJLTzJOxpQot1Epx/D27GA6o0Adz6CDclKnJOEkDCe1EVJ9sKMzPFEiJnL+ndz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RSQIzmnW; arc=none smtp.client-ip=209.85.222.177
+	s=arc-20240116; t=1765110110; c=relaxed/simple;
+	bh=EdAQp9CHsrjyYHWEK1NLd3cyuoRw/bMWYJkcM+8jzxY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ijEsTgHI58NjT9g2suN8xTHZJOHJdvnnoi5/KiBFXnfRuW1Ver6TE9n5wnraqLyUgBn26VEBMudTHA9E7Zjq0/7ZLrW+ca5sYKINH2lBkVNRYFYKjREMp6tdQCdqia/nYv/eZHuVPfGIQIY2QCRDRoqwhuwko2ZStt/AEaQu+OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f2rqsv8R; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-8b2e530a748so296254385a.0
-        for <linux-bcache@vger.kernel.org>; Sun, 07 Dec 2025 02:04:30 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-29845b06dd2so49191335ad.2
+        for <linux-bcache@vger.kernel.org>; Sun, 07 Dec 2025 04:21:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765101870; x=1765706670; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oU+vvCeHMKSGHwu1ci54jpS3s8eATvZ3aiVnEThBVIc=;
-        b=RSQIzmnWj4khIOTf0dWLfD3/Kb647t/nCWk2E4sHXhw+mItmDj9ehTOnAUPSQE0U04
-         h7ubqgDAHGu4fblNFF8M4DsRTwJ/fMtrS+aMJkIbmkFcIYudx9JHLrhvhRQ5T7mBBcaD
-         3ATRVYkW9o5UxUypUahcEjFc0IzsUWPOU8ziilHmECruvt6zvSdNnzQLW82BWsRyWrEX
-         82vUbCk4zTJTIzu3XdvKgpQLcNUFKIl5CnjJHW/0mjyhxGlH4YjgAv3xJ9dy4gKJ0Vbv
-         qzywEokoZv9Vem/8ztVxKyS3FuyLzJlkwP9FX0WoYD0tlWfzdXppkLD5rLIfek7uMvbn
-         7MWQ==
+        d=gmail.com; s=20230601; t=1765110108; x=1765714908; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=joTQfPhywjCMY+5oDHnst7DgiG3VJz2oKR4JgFEEjaA=;
+        b=f2rqsv8ROnq2vdZG7gkLyt3kFx7zSQj3BRwTcF9g5/I7Jca+yQLWLKe+sUDDTHi3+I
+         HHxf6WuXLyKokXnb9Sov6+UYuUiDERXcu1mhAZZm+PZLc3YinOuWkadz8dt9WJDR2idn
+         Wnp+YPxXAXck4RXmfqMpn9yiH2aXsbB4aVppJ4KCYwsnk6YEtiFlju11xr/hlE5+kwx8
+         7vl6LS5qwoUs+YhlvnelDzkfPr+mtHIkU8PRSIhoEZDhB2WQRudmXeRqV4lxeZzTgVlR
+         lxw3gINpigDFrBLIPtGMdFn/q05ZXHOMCRJvEzvQL2hyyfvjeYzY00Fh1SyDSThmrtg0
+         o42w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765101870; x=1765706670;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=oU+vvCeHMKSGHwu1ci54jpS3s8eATvZ3aiVnEThBVIc=;
-        b=f2nJQDy9q6B/sGGcbPHvUnT3s0W7kSQ4gS76UOFDlCVzc/cbmn2gve8eTOlL0sx7Kd
-         gQJFZQbM7ObfLtBM/m/8Dz7gl3CqDx0JovqfBhEjrS7TSfbd4sd9+J7nfniZIKMI0+Bf
-         mgIghcHTBolbTQ/i8EqnkLDOPIbNEkxMMXrr3pA9bUR8T1A5u7L00daIF9RvcjCzlmmY
-         1LAPVpz35OwX9QT1tWOzWdmYKsbfn16J/AUPyxOSSqn7M2ifkEIEw+hEizrtuDhAbQV5
-         tUr0kE7L0vUSwIWK3vOgaqX5Wrjn8/O7fhFj56ZaIOSL5TANCxxPhzvDL1rtjZPdWLnq
-         o6/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUMrUzkcjqv6vomsXnK8vdfS3ZO3+Y06tjH6cy2ZEVsHUfelwCg5KBxVucPkn8bI9f5Yh+SGG+mUZntZSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO+bBXzasLR4VX1aSSFT5Hz0LI60y90T9eXXN0IILv47m5yb15
-	Q1QjrJbpdQT7EkL8DooF50Gn7zaZvhaR11MDUyxTSHlT2x1MCG9yfaMJcyeVe9GYbbw/qEhv7d+
-	OcddmDtwYGUKg1sn5v9MAhTXcts0GLCA=
-X-Gm-Gg: ASbGncs6PR4JEKR14+9Nc/tjY0GUd0dabwL3+hxCvpbxWbiBjgn5zYKSpBR6FzzC2rh
-	wlY9FM+gardMMujm19dN8mE/NmgREuiLuW3DJGsCC4TsT91PxBplZjDwslP8N0lGiOCDsAOJ1Vr
-	i9USFtmf3yTUmiar7k7YzKMv6VhtzLXSA1alaFpM7ecSYe2sKo7MyivO/KOJMGKLpS/XU/2sCrQ
-	/KkJsIaG6arxkkughx+cqY+T9k6e2s1PgjSiSuRxoMJjlvoiYy7knq9Htj8iA2RQAyL1rY=
-X-Google-Smtp-Source: AGHT+IFyS19gciaAgZhRx4HvH1R1sNPMXGO05IWdCy0tyufd5AG5DROw9tSZhuIt2ZeFQYvOMOepLj8Zf3YwFI1IGTs=
-X-Received: by 2002:a05:622a:1249:b0:4ed:aeaa:ec4d with SMTP id
- d75a77b69052e-4f03ff48c23mr65405971cf.77.1765101869874; Sun, 07 Dec 2025
- 02:04:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1765110108; x=1765714908;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=joTQfPhywjCMY+5oDHnst7DgiG3VJz2oKR4JgFEEjaA=;
+        b=II8kyc3LoBrJc1U77FS0efeExpynZ62gDb4g9+88grQFmYuao3hX/673BJHjG0HXW1
+         Ty6+9CUE9L8DXcVDEtBQddoDHkx/OK1OA5L4mfyTU8pCHGBs+qI+10GSdYQsYCJGVJvu
+         JBsOKf8zppi/W9kmCV8U953R3DkrUFV5Ga2bpeQyFeSp4PO+1Bh7ttZZemNwPI5244Kr
+         rinJ7UaZ1UedDA2E4VOM93r1qCHtOZh4ijYk7CTc4OUlEoHJ0jDMwuu5u0Y+99EQU73C
+         HgK0dx9qrLJj4qFA8432/oTdD8zZgI8CmYhSMkG/ror3uxTRvfk/TIu11Yb8Sa7aPHsc
+         z/Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGwcTBrHkcBQ+0jKV1ZlGDV3rh+7rSj2Sk0GcpsXmfBuIN0BnmMMfOk/ur8vqRsE8FT4ktExocXqOas9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxek/Z/tQic33KyZk6NWzy9JTKRjETqYbxmAdMFmVjhCDHNdHpi
+	m/fPuMar1NFgJeNmp/iDtOO9RhaPVHf5OS0BxgHWd+copX4mU1irngM3qbfnnia7xno=
+X-Gm-Gg: ASbGncse0GKNumsVh7uEbmU1Iii5lQNtV0cZUAD+JeqlM+4nFabMj/EhvjzK/s0ZOeF
+	bPAMi+2Wwk3ma9MIfXEYW972Vb/N3Plw6dPZNTnGdhSnfU26OH1dzFB5yHuaGgsnm4BrYPoydQ7
+	pofuXK6zqc1D69+LAlQSAWvgoczLglxdS9xAmxcHXz5W8m1W9gb9VqSnTeyj83NKl0xpcZs7ch6
+	Te3hreGgVq2HWj2ucPKj1ZfkfDgQpttiwNlcamvKt8DX95WuaXw4M336Bm6FDKqqKwYtWel/5Re
+	3CaTSCgfiP5c3gOGAgYyft/6G/Rofrf1qcvSRNcig0+aXX81118EXJN+lN8/Cb9f/ktlcvj54XA
+	2o1HVl90qgHu+XtaONyma6jvOEW4kWGqdWoa0czdp7doo049eQHIog/YELWj53Sd+gAM6aCZZcK
+	IknGvZXib6MqJZsAUw4UvRo1cJWA==
+X-Google-Smtp-Source: AGHT+IG8BbDKk36cm/PHPVqWDlq17iC4do7MY7rKoUCFS0nZ2SwpdfJ+A5u1l78OZShYQYwtPCeo3Q==
+X-Received: by 2002:a05:7022:699d:b0:11b:9386:a3c4 with SMTP id a92af1059eb24-11e032d8b2fmr3479895c88.47.1765110108364;
+        Sun, 07 Dec 2025 04:21:48 -0800 (PST)
+Received: from localhost.localdomain ([104.128.72.41])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-11df76e2f3csm38598822c88.5.2025.12.07.04.21.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Dec 2025 04:21:48 -0800 (PST)
+From: zhangshida <starzhangzsd@gmail.com>
+X-Google-Original-From: zhangshida <zhangshida@kylinos.cn>
+To: Johannes.Thumshirn@wdc.com,
+	hch@infradead.org,
+	agruenba@redhat.com,
+	ming.lei@redhat.com,
+	hsiangkao@linux.alibaba.com,
+	csander@purestorage.com,
+	colyli@fnnas.com
+Cc: linux-block@vger.kernel.org,
+	linux-bcache@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhangshida@kylinos.cn,
+	starzhangzsd@gmail.com
+Subject: [PATCH v6 0/3] Fix bio chain related issues
+Date: Sun,  7 Dec 2025 20:21:23 +0800
+Message-Id: <20251207122126.3518192-1-zhangshida@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251128083219.2332407-1-zhangshida@kylinos.cn>
- <20251128083219.2332407-7-zhangshida@kylinos.cn> <CANubcdUtncH7OxYg0+4ax0v9OmbuV337AM5DQHOpsBVa-A1cbA@mail.gmail.com>
- <CAHc6FU5DAhrRKyYjuZ+qF84rCsUDiPo3iPoZ67NvN-pbunJH4A@mail.gmail.com>
- <CAHc6FU57xqs1CTSOd-oho_m52aCTorRVJQKKyVAGJ=rbfh5VxQ@mail.gmail.com>
- <CANubcdVuRNfygyGwnXQpsb2GsHy4=yrzcLC06paUbAMS60+qyA@mail.gmail.com> <CAHc6FU4G+5QnSgXoMN726DOTF9R-d88-CrfYMof0kME6P_o-7w@mail.gmail.com>
-In-Reply-To: <CAHc6FU4G+5QnSgXoMN726DOTF9R-d88-CrfYMof0kME6P_o-7w@mail.gmail.com>
-From: Stephen Zhang <starzhangzsd@gmail.com>
-Date: Sun, 7 Dec 2025 18:03:53 +0800
-X-Gm-Features: AQt7F2r1YNFWGA2Q9VwdNr_tG5KYi4lqES_2HjNJQ6tE7fdz6CI5_Dt06IQV2e4
-Message-ID: <CANubcdVAitTW_aBqwxC=TV77rg_iie0uX54_qEtMCjgdN+zeig@mail.gmail.com>
-Subject: Re: [PATCH v2 06/12] gfs2: Replace the repetitive bio chaining code patterns
-To: Andreas Gruenbacher <agruenba@redhat.com>, sashal@kernel.org
-Cc: Johannes.Thumshirn@wdc.com, hch@infradead.org, ming.lei@redhat.com, 
-	Gao Xiang <hsiangkao@linux.alibaba.com>, linux-block@vger.kernel.org, 
-	linux-bcache@vger.kernel.org, nvdimm@lists.linux.dev, 
-	virtualization@lists.linux.dev, linux-nvme@lists.infradead.org, 
-	gfs2@lists.linux.dev, ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Andreas Gruenbacher <agruenba@redhat.com> =E4=BA=8E2025=E5=B9=B412=E6=9C=88=
-5=E6=97=A5=E5=91=A8=E4=BA=94 16:55=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Fri, Dec 5, 2025 at 8:46=E2=80=AFAM Stephen Zhang <starzhangzsd@gmail.=
-com> wrote:
-> > Andreas Gruenbacher <agruenba@redhat.com> =E4=BA=8E2025=E5=B9=B412=E6=
-=9C=884=E6=97=A5=E5=91=A8=E5=9B=9B 17:37=E5=86=99=E9=81=93=EF=BC=9A
-> > >
-> > > On Mon, Dec 1, 2025 at 11:31=E2=80=AFAM Andreas Gruenbacher <agruenba=
-@redhat.com> wrote:
-> > > > On Sat, Nov 29, 2025 at 3:48=E2=80=AFAM Stephen Zhang <starzhangzsd=
-@gmail.com> wrote:
-> > > > > This one should also be dropped because the 'prev' and 'new' are =
-in
-> > > > > the wrong order.
-> > > >
-> > > > Ouch. Thanks for pointing this out.
-> > >
-> > > Linus has merged the fix for this bug now, so this patch can be
-> > > updated / re-added.
-> > >
-> >
-> > Thank you for the update. I'm not clear on what specifically has been
-> > merged or how to verify it.
-> > Could you please clarify which fix was merged,
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/?id=3D8a157e0a0aa5
-> "gfs2: Fix use of bio_chain"
->
->
+From: Shida Zhang <zhangshida@kylinos.cn>
 
-Thank you for the detailed clarification. Here is a polite and
-professional rephrasing of your message:
+This series addresses incorrect usage of bio_chain_endio().
 
----
+Note: Patch 2 depends on changes introduced in patch 1. Therefore, patch
+1 is still included in this series even though Coly suggested sending it
+directly to the bcache mailing list:
+https://lore.kernel.org/all/20251201082611.2703889-1-zhangshida@kylinos.cn/
 
-[WARNING]
-Hello,
+V6:
+- Patch 2: Fixed the comment format.
 
-I may not have expressed myself clearly, and you might have
-misunderstood my point.
+V5:
+- Patch 2: Replaced BUG_ON(1) with BUG().
+- Patch 3: Rephrased the commit message.
+https://lore.kernel.org/all/20251204024748.3052502-1-zhangshida@kylinos.cn/
 
-In the original code, the real end I/O handler (`gfs2_end_log_read`)
-was placed at the end of the chained bio list, while the newer
-`bio_chain_endio` was placed earlier. With `bio_chain(new, prev)`,
-the chain looked like:
+v4:
+- Removed unnecessary cleanups from the series.
+https://lore.kernel.org/all/20251201090442.2707362-1-zhangshida@kylinos.cn/
 
-`bio1 =E2=86=92 bio2 =E2=86=92 bio3`
-`bio_chain_endio =E2=86=92 bio_chain_endio =E2=86=92 gfs2_end_log_read`
+v3:
+- Remove the dead code in bio_chain_endio and drop patch 1 in v2 
+- Refined the __bio_chain_endio changes with minor modifications (was
+  patch 02 in v2).
+- Dropped cleanup patches 06 and 12 from v2 due to an incorrect 'prev'
+  and 'new' order.
+https://lore.kernel.org/all/20251129090122.2457896-1-zhangshida@kylinos.cn/
 
-This ensured the actual handler (`gfs2_end_log_read`) was triggered
-at the end of the chain.
+v2:
+- Added fix for bcache.
+- Added BUG_ON() in bio_chain_endio().
+- Enhanced commit messages for each patch
+https://lore.kernel.org/all/20251128083219.2332407-1-zhangshida@kylinos.cn/
 
-However, after the fix changed the order to `bio_chain(prev, new)`,
-the chain now looks like:
-
-`bio1 =E2=86=92 bio2 =E2=86=92 bio3`
-`gfs2_end_log_read =E2=86=92 bio_chain_endio =E2=86=92 bio_chain_endio`
-
-This seems to place `gfs2_end_log_read` at the beginning rather
-than the end, potentially preventing it from being executed as intended.
-
-I hope I misunderstand the gfs2 code logic, and your fix may still be
-correct. However, given how quickly the change was made and ported
-back, I wanted to highlight this concern in case the original behavior
-was intentional.
-
-Thank you for your attention to this matter.
-
-Best regards,
-Shida
+v1:
+https://lore.kernel.org/all/20251121081748.1443507-1-zhangshida@kylinos.cn/
 
 
+Shida Zhang (3):
+  bcache: fix improper use of bi_end_io
+  block: prohibit calls to bio_chain_endio
+  block: prevent race condition on bi_status in __bio_chain_endio
 
+ block/bio.c                 | 11 ++++++++---
+ drivers/md/bcache/request.c |  6 +++---
+ 2 files changed, 11 insertions(+), 6 deletions(-)
 
-> > and if I should now resubmit the cleanup patches?
-> >
-> > Thanks,
-> > Shida
-> >
-> > > Thanks,
-> > > Andreas
-> > >
-> >
->
+-- 
+2.34.1
+
 
