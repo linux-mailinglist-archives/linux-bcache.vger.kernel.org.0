@@ -1,105 +1,87 @@
-Return-Path: <linux-bcache+bounces-1346-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1347-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5027CAB571
-	for <lists+linux-bcache@lfdr.de>; Sun, 07 Dec 2025 14:30:33 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF02CAC9CC
+	for <lists+linux-bcache@lfdr.de>; Mon, 08 Dec 2025 10:14:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id A225E3003BFC
-	for <lists+linux-bcache@lfdr.de>; Sun,  7 Dec 2025 13:30:31 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B65BE306C2F2
+	for <lists+linux-bcache@lfdr.de>; Mon,  8 Dec 2025 09:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38C820B80B;
-	Sun,  7 Dec 2025 13:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCE931A564;
+	Mon,  8 Dec 2025 09:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="abpO20rL";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="kjaguT/K"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SL4qP5uC"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1ACC274B3B
-	for <linux-bcache@vger.kernel.org>; Sun,  7 Dec 2025 13:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB5831985E
+	for <linux-bcache@vger.kernel.org>; Mon,  8 Dec 2025 09:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765114230; cv=none; b=YBjUhpdgReR2wNB9CHo6NdrFfORv0flX+iF0gzstqBwTg+LAR2Q/d9/MlNE3Ao8JV36z4T4e7bD2Bzuh+GZYD8AhDizrcFMD2oms14l3wqCUiu5Y1faJ3R9k3I5llicpNffH68N9ArjLWP0ILH6lx0ErZrsldRheNZFsXaBsX2A=
+	t=1765184601; cv=none; b=XD0IiMfZJzH0RAfF/Afj+QVJYciMUSmyCEFjg6wI2R4MNeOxyYfa7ZGQn7T2jeZgsAL20+CvO2yj5B9bEgmLJlAtYtSPN+1YlI3n7oA+s99eSrEKV6RF7a1OcTM+/dDRxb+jbOeTP3JlqcW6wna66Jr6Sc7OvIDUEPGOnNMbbV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765114230; c=relaxed/simple;
-	bh=W5VgE4r2CVWoGwWRjm61UM1/NAP7KmItMDhR9b0IcpQ=;
+	s=arc-20240116; t=1765184601; c=relaxed/simple;
+	bh=xmR28IaaF9nKj4dqQJUQXvae3UpVRNnFUf/OMWTEm0A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CKgq3n09u9UIsjW3MxN6AlqC8SI/oyIqCylNZPYE/1vYiKIVrAAsIpxu6WCDBQRS14ObMwN/VqfOSGp3LeoqArj2iDBt3to6NZ/OwfbcZVcSi7keKl5aJ2O/DtDgrvOvnIuBSSN4/ueNHw7KxQiy5Et9nvkxaNQVZEVGqtqZntI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=abpO20rL; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=kjaguT/K; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1765114227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dyJaX3Br1gUfDH7aDIFFQJYtt7YC2wra38Oz5IMJMOs=;
-	b=abpO20rLXh03xCFVjLL6C5/hwnW5P+ASnEijl1JunG3OCzRLT5bufrzNTVjEPpi+sVbbcE
-	k+x1UIm/9CcjbBimaGoEq3RGtyo4h7ixOOrQ5UqBfZttQzXNUVhBOLnGWstZ+sDaiQyzoc
-	jY98CraicoIFBYmd8FGinVuT2/k3VwI=
-Received: from mail-yx1-f70.google.com (mail-yx1-f70.google.com
- [74.125.224.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-682-oi8BO_WAOb-rR6VwF1E-cQ-1; Sun, 07 Dec 2025 08:30:26 -0500
-X-MC-Unique: oi8BO_WAOb-rR6VwF1E-cQ-1
-X-Mimecast-MFC-AGG-ID: oi8BO_WAOb-rR6VwF1E-cQ_1765114226
-Received: by mail-yx1-f70.google.com with SMTP id 956f58d0204a3-640b8f1f66cso4668660d50.0
-        for <linux-bcache@vger.kernel.org>; Sun, 07 Dec 2025 05:30:26 -0800 (PST)
+	 To:Cc:Content-Type; b=E3iByEQTRjIeG5zbnvjHoYxQ/I8XkUYIXg+1cyFH3TSIVHR4L0z/+TUlTmXJkbXfjN88WQJ3E7XKjV9qAVrHqkP9/z0gmr4VjRQQ8UIluP3ToOtWLJcdacls/53kCrWJI53/pNudv7IIs+nPEMIskXrmAjeE5KV9gM6O8YLuQjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SL4qP5uC; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4ed75832448so60328501cf.2
+        for <linux-bcache@vger.kernel.org>; Mon, 08 Dec 2025 01:03:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1765114226; x=1765719026; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1765184595; x=1765789395; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dyJaX3Br1gUfDH7aDIFFQJYtt7YC2wra38Oz5IMJMOs=;
-        b=kjaguT/K0p4P5MmSx6YhsbhXhFOISUHERO8XqV2ukuXbUIf4PK2vlw0CkOnHQFcWbQ
-         M4nWqLwhO4KcJgKtTnmxkbq1/5SNAYyT8CLsAicuRwuqCLms4DglQJiBh7A0HwxbV6mo
-         tCcTgfRe01HYiQ4qFZAhVZyc2nwCPAKc9TkpmNzxwoCjHk+xcSVroUO5q73hcYFWAm0T
-         mWoW/iLxPKEg8urucctI2tYzcdHmlLm4HLs95wMXo3u4TVjc1JPM0qIdqT11J1RSc+kg
-         ZKvpnwGqykHP+YI0rbUqsDwjlzKy0cBx2cSS9NaLgvSxS5YTScMyDqNlVw/dI0XX660Y
-         LWPg==
+        bh=sFNPtodxXWt5Thf93tD054e493TCPaIRwICEb5+aRZ4=;
+        b=SL4qP5uCCpmULw5Eu9O4BD6HWoTa99JO7h/8si2gsyGa/VIha5u+FePjtE8c8hpkmV
+         6V4hls5yJFtsnejuDesheZh10gzcYZWCb5FrJteDzxMR2kcwKMseqKw9zQcTiJ1e4ZZi
+         7u+K0UVVYElhiFkAtKnS2t848TYyXKsRJ1Md47nwdnxSSeUbDFapgK8s0POotpVHv9Wc
+         eJzXAXNrH5uCxfQ9HqUyAzY/XMXw3TkOZOyHjMbsYUmoLYbIXJMCRmhsBojTFKw0pGvs
+         zOOyD9WFW78hhtlelbrxbhaX7r3IW64i6mpPAot5pkJrohEKvvO79ia3ark8XzRj6gVN
+         bHLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765114226; x=1765719026;
+        d=1e100.net; s=20230601; t=1765184595; x=1765789395;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=dyJaX3Br1gUfDH7aDIFFQJYtt7YC2wra38Oz5IMJMOs=;
-        b=TXS9NqjiSzyg2JvNsaI76rAHmred4AoNQqaJN5zElg03mWOLqcxkZRGjVN1xGv52j3
-         seRVaDcbnszDEkFGoAq47Ie6p2ULbIEQMZ+4lFLsLHbRZG13eP0jqGyu18Yuyk2MK/SR
-         S23W8k+Fz5N8IMnIAaGENfn57gPyJPElKrM0P+KBJ2NxoP0nMJJ2MIreOomiFx2J/+9u
-         iYya8S+hkjQtUUkRuGdh/m0SAMoSisBV6CpJsGR0Op597+3hgvgYvR5ueautiq4cIofW
-         W4NPIGD6E5NLScT0Ljr6H5VzrkBsNYYLWRsTeSXLTfUf3d05GkE6hd4yVC39Be1cX4nq
-         wkjA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4++gSf41Fh9Tt83nlJHakJPuZHU2KGXuUdTC/Nhz2DroBoLJsJYhsAtEVy39wAULCw3PM3ls0xn5cnUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKmWswqc1BBJtwWx52hnxGmRtJcipIlkJF385ehAqS6IJbX9lH
-	FkIIZZcGUadSl8GmKK8Cqh3EOz1y7TskwunchaPoTmoVdl6x4ljDdDlU0LDuhboVYEFc9AvZTYV
-	4xpaFO6NGMT8SC96WRuKzHp3sqXo6TLlD1O/YLrf2F362yN0VA3bWw4CunvYKTqvpwSEwIlOyXC
-	xKMoSQ0CpcWwQ/RuWzxB6JDYoh9W4IJcc8dvfIYIx4
-X-Gm-Gg: ASbGncuEYILwUIXpWhwrLTq8et6ngYx/6eY2Pk8FS7X8Z6nHBUE/GSL+F5i85s0ozA2
-	4+TJNlOp52LAHe8L7dxXiXNRE9LNNQoG7e+kBe+WQ96ioASmso90Z362HP/wDlllG9krtNpeehT
-	QW0phxtua7PncGJFVJJWja93MDqYDonQkTiICJa2RGwgT0jix2Lvn8w+9ocDFDIc2y
-X-Received: by 2002:a05:690e:1558:20b0:63e:d1f:d685 with SMTP id 956f58d0204a3-6444e7a7349mr3378298d50.51.1765114225826;
-        Sun, 07 Dec 2025 05:30:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEsn94jBMoBtCfC8cOMR7Xi5Q38jNQ4OxAQtSaZJowhI0RPQWMyYAHpWjEOclJ1tIBrXif951eLBGPvNrNBnac=
-X-Received: by 2002:a05:690e:1558:20b0:63e:d1f:d685 with SMTP id
- 956f58d0204a3-6444e7a7349mr3378279d50.51.1765114225448; Sun, 07 Dec 2025
- 05:30:25 -0800 (PST)
+        bh=sFNPtodxXWt5Thf93tD054e493TCPaIRwICEb5+aRZ4=;
+        b=lWJB3LGddyf7QKSfa143n/Cn95Qa9znTEtKxNJB6wqyYFfrVX3G7HVJPDUCf4Cmgim
+         Uxl/9D2Ydgvw2iUPTSkQr9ovhgGkJyzyfkgN6WX7KB9oIa2jBSsFdCTH0yPgJuZnPLhx
+         EwlrZ7gHgre/qUTjcUwmDGhzIOp8X8q5BTo8auuLR/kaHck4LVWEyQKXsqjourSWpUSP
+         8nnjJifQjNT3OBCqhWbzOeAzkWZL0/5UouGSKp3mco+ujaoSLXg5Uhc6M5bVV/56ml98
+         7n/YqjqBSDqnZmrc33CqAqTX/66XsAWajv4qSqtml55qIlcsr+iJ0POB519kUL/W9RTE
+         hhZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQSJnXlvyC6nC9mRqUu9y5cqDva0sa2N9KTXxUEgg0Nle2nNdRQt3c4f1DrdJYxapkYkRd1fqzxXD3IrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP+wGGGJz708/odNr7uWOgr5dKHA8crvqI0FRXmhYAEp7tHNuH
+	85QMEjxLa2GKRC/165mUJx5c2MKTgfXNQFAZs/MTlImDhlq5aWVYFNteXHL3YtyuuEnRVlBzv+I
+	FlTA9W0ekMmuD5y4Yf+AWhf6yHRA+1u4=
+X-Gm-Gg: ASbGncsV92PZGCAwBFndwXKBNJoWFYE5W3MWdpVsPhIuRYjFYdA3ChwtC8al8UKw4p6
+	2PgN6OSU/NiiTgHn85TrdRWpDq4pXqwTAgCqWC+z8LWipeIfjZTA5hZK7gFsUlpW8a9Fr2e+SCG
+	/4m9wIlwGtgKjv8O07NaxDZaV+gnL5Rfue5mWVIJ4FAzYDRGm/zttzqrAXwQcVsSJiy5my6MNBF
+	GxxqdV3Gjr1XDmgeozvUfBvp6LtmsPA/x1pr/vpoSbId7uVWyWNHr3C4fp63mbSPGjcmks=
+X-Google-Smtp-Source: AGHT+IGIkzL28sT6p6sHHt80WO2WaduAwsABGOknJWn3+PKdTWs//JTVokCkbxDwbiaJN5b1fBdoaRLK+6PY3xW0EGs=
+X-Received: by 2002:ac8:5a4c:0:b0:4ed:af59:9df0 with SMTP id
+ d75a77b69052e-4f03fef2e6fmr113096381cf.40.1765184594906; Mon, 08 Dec 2025
+ 01:03:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251207122126.3518192-1-zhangshida@kylinos.cn> <20251207122126.3518192-4-zhangshida@kylinos.cn>
-In-Reply-To: <20251207122126.3518192-4-zhangshida@kylinos.cn>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Sun, 7 Dec 2025 14:30:14 +0100
-X-Gm-Features: AQt7F2prHqWgr_4RxHUQSeBpsi93bplDx1qYL7XLgoYg1x8_8EqR7WBy3ifdzP8
-Message-ID: <CAHc6FU5urJotiNOJEC4hyJz8HsNechZm9W07e_-DhgkYJmuDmA@mail.gmail.com>
+References: <20251207122126.3518192-1-zhangshida@kylinos.cn>
+ <20251207122126.3518192-4-zhangshida@kylinos.cn> <CAHc6FU5urJotiNOJEC4hyJz8HsNechZm9W07e_-DhgkYJmuDmA@mail.gmail.com>
+In-Reply-To: <CAHc6FU5urJotiNOJEC4hyJz8HsNechZm9W07e_-DhgkYJmuDmA@mail.gmail.com>
+From: Stephen Zhang <starzhangzsd@gmail.com>
+Date: Mon, 8 Dec 2025 17:02:38 +0800
+X-Gm-Features: AQt7F2qzVM3qX0lIGsVmmMGQ2bZcm4pD2OyMECaPkDdNJjgAQX0YAAlAmy5mJrg
+Message-ID: <CANubcdXUvVdMeMK_dJ0eE+A3Un_UzQ6PfjW8m6pGofmFnt+69g@mail.gmail.com>
 Subject: Re: [PATCH v6 3/3] block: prevent race condition on bi_status in __bio_chain_endio
-To: zhangshida <starzhangzsd@gmail.com>
+To: Andreas Gruenbacher <agruenba@redhat.com>
 Cc: Johannes.Thumshirn@wdc.com, hch@infradead.org, ming.lei@redhat.com, 
 	hsiangkao@linux.alibaba.com, csander@purestorage.com, colyli@fnnas.com, 
 	linux-block@vger.kernel.org, linux-bcache@vger.kernel.org, 
@@ -108,57 +90,67 @@ Cc: Johannes.Thumshirn@wdc.com, hch@infradead.org, ming.lei@redhat.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 7, 2025 at 1:22=E2=80=AFPM zhangshida <starzhangzsd@gmail.com> =
-wrote:
-> From: Shida Zhang <zhangshida@kylinos.cn>
+Andreas Gruenbacher <agruenba@redhat.com> =E4=BA=8E2025=E5=B9=B412=E6=9C=88=
+7=E6=97=A5=E5=91=A8=E6=97=A5 21:30=E5=86=99=E9=81=93=EF=BC=9A
 >
-> Andreas point out that multiple completions can race setting
-> bi_status.
+> On Sun, Dec 7, 2025 at 1:22=E2=80=AFPM zhangshida <starzhangzsd@gmail.com=
+> wrote:
+> > From: Shida Zhang <zhangshida@kylinos.cn>
+> >
+> > Andreas point out that multiple completions can race setting
+> > bi_status.
+> >
+> > If __bio_chain_endio() is called concurrently from multiple threads
+> > accessing the same parent bio, it should use WRITE_ONCE()/READ_ONCE()
+> > to access parent->bi_status and avoid data races.
+> >
+> > On x86 and ARM, these macros compile to the same instruction as a
+> > normal write, but they may be required on other architectures to
+> > prevent tearing, and to ensure the compiler does not add or remove
+> > memory accesses under the assumption that the values are not accessed
+> > concurrently.
+> >
+> > Adopting a cmpxchg approach, as used in other code paths, resolves all
+> > these issues, as suggested by Christoph.
+> >
+> > Suggested-by: Andreas Gruenbacher <agruenba@redhat.com>
+> > Suggested-by: Christoph Hellwig <hch@infradead.org>
+> > Suggested-by: Caleb Sander Mateos <csander@purestorage.com>
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
+> > ---
+> >  block/bio.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/block/bio.c b/block/bio.c
+> > index d236ca35271..8b4b6b4e210 100644
+> > --- a/block/bio.c
+> > +++ b/block/bio.c
+> > @@ -314,8 +314,9 @@ static struct bio *__bio_chain_endio(struct bio *bi=
+o)
+> >  {
+> >         struct bio *parent =3D bio->bi_private;
+> >
+> > -       if (bio->bi_status && !parent->bi_status)
+> > -               parent->bi_status =3D bio->bi_status;
+> > +       if (bio->bi_status)
+> > +               cmpxchg(&parent->bi_status, 0, bio->bi_status);
+> > +
+> >         bio_put(bio);
+> >         return parent;
+> >  }
+> > --
+> > 2.34.1
+> >
 >
-> If __bio_chain_endio() is called concurrently from multiple threads
-> accessing the same parent bio, it should use WRITE_ONCE()/READ_ONCE()
-> to access parent->bi_status and avoid data races.
->
-> On x86 and ARM, these macros compile to the same instruction as a
-> normal write, but they may be required on other architectures to
-> prevent tearing, and to ensure the compiler does not add or remove
-> memory accesses under the assumption that the values are not accessed
-> concurrently.
->
-> Adopting a cmpxchg approach, as used in other code paths, resolves all
-> these issues, as suggested by Christoph.
->
-> Suggested-by: Andreas Gruenbacher <agruenba@redhat.com>
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Suggested-by: Caleb Sander Mateos <csander@purestorage.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
-> ---
->  block/bio.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/block/bio.c b/block/bio.c
-> index d236ca35271..8b4b6b4e210 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -314,8 +314,9 @@ static struct bio *__bio_chain_endio(struct bio *bio)
->  {
->         struct bio *parent =3D bio->bi_private;
->
-> -       if (bio->bi_status && !parent->bi_status)
-> -               parent->bi_status =3D bio->bi_status;
-> +       if (bio->bi_status)
-> +               cmpxchg(&parent->bi_status, 0, bio->bi_status);
-> +
->         bio_put(bio);
->         return parent;
->  }
-> --
-> 2.34.1
+> I thought you were going to drop this??
 >
 
-I thought you were going to drop this??
+Okay, I will drop it.
 
-Andreas
+Thanks,
+Shida
 
+> Andreas
+>
 
