@@ -1,120 +1,242 @@
-Return-Path: <linux-bcache+bounces-1351-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1352-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD051CB0B44
-	for <lists+linux-bcache@lfdr.de>; Tue, 09 Dec 2025 18:21:51 +0100 (CET)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED45CCBC274
+	for <lists+linux-bcache@lfdr.de>; Mon, 15 Dec 2025 01:42:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 48565305EC17
-	for <lists+linux-bcache@lfdr.de>; Tue,  9 Dec 2025 17:21:38 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id E830F300769E
+	for <lists+linux-bcache@lfdr.de>; Mon, 15 Dec 2025 00:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8074E32ABF9;
-	Tue,  9 Dec 2025 17:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E4D2FDC3D;
+	Mon, 15 Dec 2025 00:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1IFq9vuL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZYqolXH"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DB932ABC0
-	for <linux-bcache@vger.kernel.org>; Tue,  9 Dec 2025 17:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF3B2FD679;
+	Mon, 15 Dec 2025 00:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765300896; cv=none; b=fL4QWMB8EW4kXjg9wxVLWM6fgSXOb72vLuG0GoaNLwZlJDLGQtCOjidf2APw8hsOFVu6XkuCGv+7f4Hz+g30tUlzJbZiH+ig3q4KJq4/xCjc6G3uBIB1n/wNYV4+0zISNDQt8xt8qvUP4H6juK8+AeC9NiiYrVvik76Z26I7P/I=
+	t=1765759321; cv=none; b=LUNpEA/YC+D80CHwJOHtDrcbIcO/acm/2d75URAZIJxaL/NMFct9Lrh08iAu0/oRBw/7xYM/R9NAZKULVo8SYuG49nlY+fH/obmmbozSVMh88PdNdwb8qsHV77IUrN/a+9hBK2g48nfnrxjfGRL8uqoNWiu7snvdr1GopYu0gQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765300896; c=relaxed/simple;
-	bh=PxfN6IrhmJsY3FGoedlwbgk9sixTb5+ZEyyS77wtU7E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RVcUdjxFAtCtESs606CS/SKctw2msH8CB/WhiTLLRy/5GrxMrfKCcJLhzxOOVVJA3TYWT5KI/lxjk1KDq6/lAEMYbr+neCp0swt89RjFx4wwBQLD7y03Y0tq5PFVJz007+NS8vf0DfSt3DhtQPXobLa8nZ4TNSxK89TudnVwR7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1IFq9vuL; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-c03ec27c42eso1112999a12.1
-        for <linux-bcache@vger.kernel.org>; Tue, 09 Dec 2025 09:21:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1765300894; x=1765905694; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1rCsW9PlTAYIGULzV3a3bQeMbvWm/rssCDvYfHhy5jY=;
-        b=1IFq9vuLT8BcaYEzHwCFYUamjWdAF4jJuX9BVzkpT7Nr7/M7H5/c2m1TmL7jVfGeJH
-         /u692qOsoEryq3Qdz/lUcHUo/RsbLbNipVqFFOiNK1KhLh2O4Oq81N77eYuxP8gmMffX
-         VoFjh2fJly141fPSewLKszypo+XEwqVHsimtOkWDH2GgcmvN7uL6OGHOwnC0P+J9iYSc
-         CAyD22GOFO4WwLpENl+Oh8i66fwP3LSiUEwAyeWHd+o4RFxTaEtI7+gpqMNgYGIqpUAX
-         haTdh7yOJuhvA+9758XILu2CJm9ZU2zHvR8+36w0vrXcjey8E4bxtrma0OR0CWxaH+xn
-         jtGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765300894; x=1765905694;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=1rCsW9PlTAYIGULzV3a3bQeMbvWm/rssCDvYfHhy5jY=;
-        b=Ex56zK6EA6wU0f+tDoqME24dt2hD2SLjjN4rM97YbOM7hXjNOrcTad2dyXAdP3pynE
-         lbeHW5UEtVO/4AT76p2/G4/XQP3Mjgu6ZseKY8n2YuUVEWwmglHrSXhe5BNFOi6x5/er
-         zbnS8ziX5qbOxlJE3WtRBdCDV2hEhncAaC7yyJPFkgC4fNxhfEhlPK5edWqwfKauN9vS
-         iR1JXLq0bpUU8jYtpQi7RqZGN36BesOubDNwHvXKcmV2wQh2ha7Eyb6Y0XPb/RxPj6kC
-         Mr23BW4Q1SfYOOUDWbxmcUZzv3m+g0ae6OjakooK0W3D7uyyzicMHbuIDOtAGMc15GR5
-         dS7A==
-X-Forwarded-Encrypted: i=1; AJvYcCX18wtBh5uMZKEQuXeyAOcv/6OW9gCMUr1qzgv3IdaGIHxlOlVKNXG1u9EyE1EUsnOckaj5IbBEofDZdn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5ducwKBUydzQon+/6m3WN4l5CRvnwMXejTyLbTOV5S7JTTTEb
-	EgtEFXNtNeY52j6A+nAJXD6/KaaVW0JmXbjc3znjEDFUYHfbhykXUtLT6bg4e0maZgA=
-X-Gm-Gg: ASbGncsMjn5wZ47yvz4GwchgiBCYxb/ZAAzfhd2iBujcRIBeB5uHVWeozZpEGVraiZO
-	kLk9NioUOiGRnl1Q+McgqzfuDmxVgEK28S1gnAduqMRI3QkYl6YNCR9YUCneLUWu/ZjhQj0VjJi
-	h/W6Fi9ZXxo+2JaFk4EMgytcuF1Mobgyz2I7CLxM7sVjDCY8WxsgTdCVn9NwsURMcav7uIKd+Uv
-	QpNmY9wQJlUWQzopRAp+TPYAV1Ce63exabkzkJgjBorV3ZI5N419/h8CuOVbEj4aBC3+pxATZJv
-	l5DpZWTVd5DbRkXw3/yFhRjr1OGxurQBvy5pbRpvK/6e8r1y/LfZDfgjBNFcDIIxfPQVFwwWzy/
-	JY+77TjHOryeAj/IjIwVS6V71RnavrgXkhaVsDuFf/bRUHY+hE3CFETaH81Y3mICEWMdb1Ot0sJ
-	nAJivtN8ikoWz9Elz9H3uclpB2UB0ZhFvNhQVZClHGPiEUvHR+BOPhDWPP
-X-Google-Smtp-Source: AGHT+IH6eqzKuOWUxreqhPpZimoHVZ2JHD7vpSeAoJZzK5vKnGNGqQwB+Pc2fWZI97x8Z5EiAlsbCQ==
-X-Received: by 2002:a05:7022:fe05:b0:11d:f0d3:c5da with SMTP id a92af1059eb24-11e032bbdc1mr6698483c88.43.1765300893595;
-        Tue, 09 Dec 2025 09:21:33 -0800 (PST)
-Received: from [127.0.0.1] (221x255x142x61.ap221.ftth.ucom.ne.jp. [221.255.142.61])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-11f283d4733sm994549c88.17.2025.12.09.09.21.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Dec 2025 09:21:33 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Johannes.Thumshirn@wdc.com, hch@infradead.org, agruenba@redhat.com, 
- ming.lei@redhat.com, csander@purestorage.com, colyli@fnnas.com, 
- Gao Xiang <xiang@kernel.org>, zhangshida <starzhangzsd@gmail.com>
-Cc: linux-block@vger.kernel.org, linux-bcache@vger.kernel.org, 
- linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
-In-Reply-To: <20251209090157.3755068-1-zhangshida@kylinos.cn>
-References: <20251209090157.3755068-1-zhangshida@kylinos.cn>
-Subject: Re: [PATCH v7 0/2] Fix bio chain related issues
-Message-Id: <176530089153.83150.12817626967905322379.b4-ty@kernel.dk>
-Date: Tue, 09 Dec 2025 10:21:31 -0700
+	s=arc-20240116; t=1765759321; c=relaxed/simple;
+	bh=3Qj265UrbssCIwX1v5j+Fo9Ll7BNWo0kYrEq6sI6/NM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oVA9P3jcsfCnruMrgwXeqzi4/SdnDuBM3wi/zKQ6WNyV6rsC+h0AGHEWF47b8vrkorJIzgGH2KvXPkIZTwSRKB7youbG8jN6QBmQc+vRWaK8AEO4J3x85BOAs9cYO1jMQQPYCt1N1VLhrlHKjoy51z4bh4vwtQYBPRTmmiXpz9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZYqolXH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A55C19421;
+	Mon, 15 Dec 2025 00:41:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765759320;
+	bh=3Qj265UrbssCIwX1v5j+Fo9Ll7BNWo0kYrEq6sI6/NM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lZYqolXHce2YC5DIE+5XzOcKxM34pb/xAicTuZvvhveZDWFRD9iHIDnqaB8rosg5e
+	 LzFpiM2oj4ye5E+tBoDV+QEnRvXx66yd1mGOsmV4LQVa208AKhRSigWuadRXunu+9H
+	 VZwYt/ALv3X9HZcXeyCr1/El0LfJpIYxrRB1CzMGGd0fX39W2Z2aI58ttrkBeHGkcG
+	 Uo2UkaaCVKb65NuObTZqaBsqfWGInIVPrRUYhL+9z8LL6Vrc4scWNvSDgDO/afQTAL
+	 8WQZ3zrc+afBje2cCmbOr7S4gHIgDX+WP+gDjjnOltrVgcgI45ffK/q/ouqGFLFJBG
+	 pmF8FfWSPmw1g==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Shida Zhang <zhangshida@kylinos.cn>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>,
+	Sasha Levin <sashal@kernel.org>,
+	colyli@fnnas.com,
+	kent.overstreet@linux.dev,
+	linux-bcache@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.18-6.1] bcache: fix improper use of bi_end_io
+Date: Sun, 14 Dec 2025 19:41:23 -0500
+Message-ID: <20251215004145.2760442-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251215004145.2760442-1-sashal@kernel.org>
+References: <20251215004145.2760442-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.18.1
+Content-Transfer-Encoding: 8bit
 
+From: Shida Zhang <zhangshida@kylinos.cn>
 
-On Tue, 09 Dec 2025 17:01:55 +0800, zhangshida wrote:
-> This series addresses incorrect usage of bio_chain_endio().
-> 
-> Note: Patch 2 depends on changes introduced in patch 1. Therefore, patch
-> 1 is still included in this series even though Coly suggested sending it
-> directly to the bcache mailing list:
-> https://lore.kernel.org/all/20251201082611.2703889-1-zhangshida@kylinos.cn/
-> 
-> [...]
+[ Upstream commit 53280e398471f0bddbb17b798a63d41264651325 ]
 
-Applied, thanks!
+Don't call bio->bi_end_io() directly. Use the bio_endio() helper
+function instead, which handles completion more safely and uniformly.
 
-[1/2] bcache: fix improper use of bi_end_io
-      commit: 53280e398471f0bddbb17b798a63d41264651325
-[2/2] block: prohibit calls to bio_chain_endio
-      commit: cfdeb588ae1dff5d52da37d2797d0203e8605480
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
 
-Best regards,
+LLM Generated explanations, may be completely bogus:
+
+## Analysis of bcache commit: "fix improper use of bi_end_io"
+
+### 1. COMMIT MESSAGE ANALYSIS
+
+The commit message clearly indicates this is a **bug fix** addressing
+improper use of the block I/O completion API. Key signals:
+- Subject explicitly says "fix improper use"
+- Body explains the correct API (`bio_endio()`) should be used instead
+  of direct `bi_end_io()` calls
+- Suggested and Reviewed by Christoph Hellwig - one of the most
+  respected Linux kernel developers, particularly in block layer code
+
+### 2. CODE CHANGE ANALYSIS
+
+The commit makes three changes in `drivers/md/bcache/request.c`:
+
+**Change 1** (detached_dev_end_io, line 1107):
+```c
+- bio->bi_end_io(bio);
++       bio_endio(bio);
+```
+After restoring the original `bi_end_io`, uses proper API for
+completion.
+
+**Change 2** (detached_dev_do_request error path, line 1122):
+```c
+- bio->bi_end_io(bio);
++       bio_endio(bio);
+```
+Error path when `kzalloc` fails - uses proper API.
+
+**Change 3** (detached_dev_do_request discard handling, line 1139):
+```c
+- bio->bi_end_io(bio);
++       detached_dev_end_io(bio);
+```
+**This is the most critical fix.** At this point, `bio->bi_end_io` has
+already been reassigned to `detached_dev_end_io`. The old code was
+calling the *saved* original handler directly, completely bypassing the
+accounting and cleanup in `detached_dev_end_io()`. This could cause:
+- Missing I/O accounting (`bio_end_io_acct_remapped` never called)
+- Memory leak (ddip structure never freed)
+- Incorrect error handling for backing device
+
+### 3. WHY THIS IS A BUG
+
+`bio_endio()` does more than just calling `bi_end_io()`:
+- Handles bio chaining/splitting properly
+- Manages completion accounting
+- Ensures proper memory barriers
+- Provides unified completion path expected by block layer
+
+Bypassing this function can cause:
+- Incorrect I/O statistics
+- Race conditions in bio completion
+- Potential memory issues
+- Missing cleanup (especially Change 3)
+
+### 4. CLASSIFICATION
+
+- **Bug fix**: Yes - corrects improper API usage
+- **Feature addition**: No
+- **Security**: Not explicitly, but improper completion could lead to
+  memory issues
+
+### 5. SCOPE AND RISK ASSESSMENT
+
+| Factor | Assessment |
+|--------|------------|
+| Lines changed | 3 lines |
+| Files touched | 1 file |
+| Complexity | Very low - simple API call substitution |
+| Subsystem | bcache (mature, stable subsystem) |
+| Risk | Very low - using proper API is strictly safer |
+
+### 6. USER IMPACT
+
+- **Affected users**: bcache users (SSD caching in front of HDDs)
+- **Severity**: Medium - Change 3 especially could cause I/O accounting
+  issues and memory leaks for discards on devices without discard
+  support
+- **Visibility**: Subtle issues that may manifest as accounting bugs or
+  resource leaks
+
+### 7. STABILITY INDICATORS
+
+- **Reviewed-by: Christoph Hellwig** - block layer maintainer provides
+  high confidence
+- **Suggested-by: Christoph Hellwig** - issue identified by expert
+  during code review
+- `bio_endio()` is a fundamental, long-standing block layer API - no
+  dependency concerns
+
+### 8. DEPENDENCY CHECK
+
+- `bio_endio()` has existed for many years in all stable kernels
+- bcache has been in mainline since ~3.10
+- No dependencies on other commits
+- Should apply cleanly to any stable tree with bcache
+
+### CONCLUSION
+
+This commit meets all stable kernel criteria:
+
+1. **Obviously correct**: Uses the documented, proper block layer API
+2. **Fixes real bugs**: Third change especially fixes missing
+   cleanup/accounting
+3. **Small and contained**: Only 3 one-line changes
+4. **Reviewed by expert**: Christoph Hellwig's review carries
+   significant weight
+5. **No new features**: Pure correctness fix
+6. **Low risk**: Switching to proper API cannot introduce new bugs
+
+The fix is surgical, addresses genuine API misuse that causes real
+issues (particularly the discard path), has top-tier review, and carries
+essentially no regression risk.
+
+**YES**
+
+ drivers/md/bcache/request.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index af345dc6fde14..82fdea7dea7aa 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -1104,7 +1104,7 @@ static void detached_dev_end_io(struct bio *bio)
+ 	}
+ 
+ 	kfree(ddip);
+-	bio->bi_end_io(bio);
++	bio_endio(bio);
+ }
+ 
+ static void detached_dev_do_request(struct bcache_device *d, struct bio *bio,
+@@ -1121,7 +1121,7 @@ static void detached_dev_do_request(struct bcache_device *d, struct bio *bio,
+ 	ddip = kzalloc(sizeof(struct detached_dev_io_private), GFP_NOIO);
+ 	if (!ddip) {
+ 		bio->bi_status = BLK_STS_RESOURCE;
+-		bio->bi_end_io(bio);
++		bio_endio(bio);
+ 		return;
+ 	}
+ 
+@@ -1136,7 +1136,7 @@ static void detached_dev_do_request(struct bcache_device *d, struct bio *bio,
+ 
+ 	if ((bio_op(bio) == REQ_OP_DISCARD) &&
+ 	    !bdev_max_discard_sectors(dc->bdev))
+-		bio->bi_end_io(bio);
++		detached_dev_end_io(bio);
+ 	else
+ 		submit_bio_noacct(bio);
+ }
 -- 
-Jens Axboe
-
-
+2.51.0
 
 
