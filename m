@@ -1,51 +1,59 @@
-Return-Path: <linux-bcache+bounces-1365-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1366-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0926D1A322
-	for <lists+linux-bcache@lfdr.de>; Tue, 13 Jan 2026 17:22:57 +0100 (CET)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id C264AD1A3FA
+	for <lists+linux-bcache@lfdr.de>; Tue, 13 Jan 2026 17:28:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id CDB8A30674D5
-	for <lists+linux-bcache@lfdr.de>; Tue, 13 Jan 2026 16:18:58 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 35D9C3065158
+	for <lists+linux-bcache@lfdr.de>; Tue, 13 Jan 2026 16:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6762C236B;
-	Tue, 13 Jan 2026 16:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE96D1A2392;
+	Tue, 13 Jan 2026 16:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="ZJt1nKKv"
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="aWv/852N"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from sg-1-14.ptr.blmpb.com (sg-1-14.ptr.blmpb.com [118.26.132.14])
+Received: from sg-1-19.ptr.blmpb.com (sg-1-19.ptr.blmpb.com [118.26.132.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AD829BD85
-	for <linux-bcache@vger.kernel.org>; Tue, 13 Jan 2026 16:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864DA1F5825
+	for <linux-bcache@vger.kernel.org>; Tue, 13 Jan 2026 16:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768321138; cv=none; b=IwXCDC6NynM1EjX/MZgIqt+gaIXDLYfotHnN/Izcl0tJgJZKzRjfv7UyPAVOTK9nrDpv3QLeNoRt0TESNw8LmR74BK9K9mvdhaB+gmZ3usYOTbmb55NBVAJc+K1iaqYD6yC1Rj68wpsTu+ODBlQFy0nTzVk53zes+miIGF/6fyY=
+	t=1768321388; cv=none; b=H86xEkdlyk/mprlvgxFBZ2/Tm5lT1quO33pPEKNDkoT4dWATEHAI9OgD2JH1tqGpG1RMDMLjOmHvBQTrXG4ApQiN+hA9UPwxJTgtv+HWK463/tjWMtXd+LDFzCib+klpy3aE5fXcZcWtng7OBJi9BeEQPDTh4+VGAi5erGwLSz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768321138; c=relaxed/simple;
-	bh=z8QW9RM/QtCie70LzQhtGtw6a5KRTfRDA/Y3zNEPukc=;
-	h=To:In-Reply-To:From:Date:Message-Id:Mime-Version:Cc:
-	 Content-Disposition:Subject:References:Content-Type; b=nykdfWL/okXGOfydn/cOkX37Fp0gaoHIMTgn5lJevrpO3pLLr9bi2gleVnFnDJB9RHnDTFQKTsVQSqRHByKJkHVAsjbjpVPcP013mUrDG3XsCtl5cRPSc05tvb1AFbly4dXnMnB8MlMlxWhAcdU7n/8WSZ5o1PssS9rI/qJceTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=pass smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=ZJt1nKKv; arc=none smtp.client-ip=118.26.132.14
+	s=arc-20240116; t=1768321388; c=relaxed/simple;
+	bh=7CfmFoq7I+S+WiQ8cKHFUDPldkcAOfFOZIawspnCLpU=;
+	h=Subject:In-Reply-To:Cc:Message-Id:Date:Content-Disposition:
+	 Content-Type:To:From:References:Mime-Version; b=uYLJs9idsZgrLST5abPrwBtq+tySdbJC7bAiQjYgdE/tdDWdJkHnSnCf7EyG6zguHKa9P5g0RSaIeFeuREVhn+Vvj4FZu9x8fs0ZQq6iAMof1bV6fi3ieGIO+9+lRCGHxIW44fj9rr02iko6BYqvBngM3qX0tzowlzkmu3skXhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=aWv/852N; arc=none smtp.client-ip=118.26.132.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1768321128;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1768321380;
   h=from:subject:mime-version:from:date:message-id:subject:to:cc:
  reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=1FEaWR6s3vACUbZUBJqrBfIUA2CDXoSFYAmZNWSjVqI=;
- b=ZJt1nKKvtR+wTGv23J9o6Z+yEezbqLCpLEUUOrRqSCRuMhueXMTymNddUfmoRQSdkFINQ0
- k0oaRAl2bGpYFgL09BM52NYqoZG9ACULv6hWimF3P+28kPWiD1RjMQCSGjMzuUxZTKl9X2
- /Rs92k0g2ONQ4SZGz1WVW3vPpj4inCLuFpsk7030jGtuuZvjPjm2Ke8CoFihw9JHwZk67h
- ue6fxpKJI99QbwHg5F/A61x2e3IPgLUBUAHItIUTCZxhf1BYdw/llj5g2r5JPSp4ukYRCG
- 0zNdeL8rUcg5187qg2hX5HUFhBX90F7EyboKA4EbEpPN+DktX2faYA5xCCn9iA==
-To: "Christoph Hellwig" <hch@infradead.org>
-In-Reply-To: <aWYJRsxQcLfEXJlu@infradead.org>
-Received: from studio.local ([120.245.64.3]) by smtp.feishu.cn with ESMTPS; Wed, 14 Jan 2026 00:18:45 +0800
+ bh=bNq/lYaLdIPww6NNywM9E7Dj+tufsVWAHsCFwcVSWE0=;
+ b=aWv/852N0/KT9ny1ITMaYCyE0Zs/MDQvXxCRbFOY+ruSKMPOofviGwJbJeFLLdjx86ddQ9
+ i2i3EofcaOugvyqyfecQOt1VwuhEDgte04Mzv2J6DKCvEyv4u7Gk/NlhnpBnTp5CbWlE5w
+ hS60xsMi47wGDd577xUyBYXYLr5hRg8QFVodBKUPgZdS60JESWHuQfwu17y0quWJgx5Sqn
+ s/BLpGXPPdyVya3JNITRxRz45kpLCuBzZt896YUolV0OYUOss2CNjCqMC3Qb9EtkWBv7sZ
+ cVWHAKKnW2P0nS1V8erGT29qNc05QFosiVsrC68J5Jd9GMaVjEifBj3pRbNx3Q==
+Subject: Re: [PATCH] Revert "bcache: fix improper use of bi_end_io"
+In-Reply-To: <aWX9WmRrlaCRuOqy@infradead.org>
+Received: from studio.local ([120.245.64.3]) by smtp.feishu.cn with ESMTPS; Wed, 14 Jan 2026 00:22:58 +0800
 Content-Transfer-Encoding: 7bit
+Cc: <axboe@kernel.dk>, <linux-block@vger.kernel.org>, 
+	<linux-bcache@vger.kernel.org>, "Shida Zhang" <zhangshida@kylinos.cn>, 
+	"Kent Overstreet" <kent.overstreet@linux.dev>
+Message-Id: <aWZwlE0JdtEvhh9g@studio.local>
+Date: Wed, 14 Jan 2026 00:22:56 +0800
+X-Lms-Return-Path: <lba+269667163+9d5847+vger.kernel.org+colyli@fnnas.com>
+Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+To: "Christoph Hellwig" <hch@infradead.org>
 From: "Coly Li" <colyli@fnnas.com>
-Date: Wed, 14 Jan 2026 00:18:45 +0800
-Message-Id: <aWZwBZaVVBC0otPd@studio.local>
+References: <20260113060940.46489-1-colyli@fnnas.com> <aWX9WmRrlaCRuOqy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
@@ -53,175 +61,27 @@ List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 X-Original-From: Coly Li <colyli@fnnas.com>
-X-Lms-Return-Path: <lba+269667066+e30e01+vger.kernel.org+colyli@fnnas.com>
-Cc: "Kent Overstreet" <kent.overstreet@linux.dev>, <axboe@kernel.dk>, 
-	<linux-block@vger.kernel.org>, <linux-bcache@vger.kernel.org>, 
-	"Shida Zhang" <zhangshida@kylinos.cn>
-Content-Disposition: inline
-Subject: Re: [PATCH] Revert "bcache: fix improper use of bi_end_io"
-References: <20260113060940.46489-1-colyli@fnnas.com> <aWX9WmRrlaCRuOqy@infradead.org> <aWYCe-MJKFaS__vi@moria.home.lan> <aWYDnKOdpT6gwL5b@infradead.org> <aWYDySBBmQ01JQOk@moria.home.lan> <aWYJRsxQcLfEXJlu@infradead.org>
-Content-Type: text/plain; charset=UTF-8
 
-On Tue, Jan 13, 2026 at 12:58:46AM +0800, Christoph Hellwig wrote:
-> Anyway, Coly: I think the issue is that bcache tries to do a silly
-> shortcut and reuses the bio for multiple layers of I/O which still trying
-> to hook into completions for both.  Something like the (untested) patch
-> below fixes that by cloning the bio and making everything work as
-> expected.  I'm not sure how dead lock safe even the original version is,
-> and my suspicion is that it needs a bio_set.  Of course even suggesting
-> something will probably get me in trouble so take it with a grain of
-> salt.
+On Tue, Jan 13, 2026 at 12:07:54AM +0800, Christoph Hellwig wrote:
+> On Tue, Jan 13, 2026 at 02:09:39PM +0800, colyli@fnnas.com wrote:
+> > From: Coly Li <colyli@fnnas.com>
+> > 
+> > This reverts commit 53280e398471f0bddbb17b798a63d41264651325.
+> > 
+> > The above commit tries to address the race in bio chain handling,
+> > but it seems in detached_dev_end_io() simply using bio_endio() to
+> > replace bio->bi_end_io() may introduce potential regression.
+> > 
+> > This patch revert the commit, let's wait for better fix from Shida.
 > 
-> ---
-> From 1a2336f617f2e351564ec20e4db9727584e04aa9 Mon Sep 17 00:00:00 2001
-> From: Christoph Hellwig <hch@lst.de>
-> Date: Tue, 13 Jan 2026 09:53:34 +0100
-> Subject: bcache: clone bio in detached_dev_do_request
+> That's a pretty vague commit message for reverting a clear API
+> violation that has caused trouble.  What is the story here?
 > 
-> Not-yet-Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Hi Christoph,
-
-This cloned bio method looks good. Could you please post a formal patch?
-Then I may replace the revert commit with your patch.
-
-Thanks.
+The discussion happens in stable mailing list. Also I admitted my fault.
+Though I didn't ack commit 53280e398471 ("bcache: fix improper use of
+bi_end_io"), I read it and overlooked the bio_endio() duplicated entry
+issue.
 
 Coly Li
-
-> ---
->  drivers/md/bcache/request.c | 72 ++++++++++++++++++-------------------
->  1 file changed, 36 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index 82fdea7dea7a..9e7b59121313 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -1078,67 +1078,66 @@ static CLOSURE_CALLBACK(cached_dev_nodata)
->  }
->  
->  struct detached_dev_io_private {
-> -	struct bcache_device	*d;
->  	unsigned long		start_time;
-> -	bio_end_io_t		*bi_end_io;
-> -	void			*bi_private;
-> -	struct block_device	*orig_bdev;
-> +	struct bio		*orig_bio;
-> +	struct bio		bio;
->  };
->  
->  static void detached_dev_end_io(struct bio *bio)
->  {
-> -	struct detached_dev_io_private *ddip;
-> -
-> -	ddip = bio->bi_private;
-> -	bio->bi_end_io = ddip->bi_end_io;
-> -	bio->bi_private = ddip->bi_private;
-> +	struct detached_dev_io_private *ddip =
-> +		container_of(bio, struct detached_dev_io_private, bio);
-> +	struct bio *orig_bio = ddip->orig_bio;
->  
->  	/* Count on the bcache device */
-> -	bio_end_io_acct_remapped(bio, ddip->start_time, ddip->orig_bdev);
-> +	bio_end_io_acct(orig_bio, ddip->start_time);
->  
->  	if (bio->bi_status) {
-> -		struct cached_dev *dc = container_of(ddip->d,
-> -						     struct cached_dev, disk);
-> +		struct cached_dev *dc = bio->bi_private;
-> +
->  		/* should count I/O error for backing device here */
->  		bch_count_backing_io_errors(dc, bio);
-> +		orig_bio->bi_status = bio->bi_status;
->  	}
->  
->  	kfree(ddip);
-> -	bio_endio(bio);
-> +	bio_endio(orig_bio);
->  }
->  
-> -static void detached_dev_do_request(struct bcache_device *d, struct bio *bio,
-> -		struct block_device *orig_bdev, unsigned long start_time)
-> +static void detached_dev_do_request(struct bcache_device *d,
-> +		struct bio *orig_bio, unsigned long start_time)
->  {
->  	struct detached_dev_io_private *ddip;
->  	struct cached_dev *dc = container_of(d, struct cached_dev, disk);
->  
-> +	if (bio_op(orig_bio) == REQ_OP_DISCARD &&
-> +	    !bdev_max_discard_sectors(dc->bdev)) {
-> +		bio_endio(orig_bio);
-> +		return;
-> +	}
-> +
->  	/*
->  	 * no need to call closure_get(&dc->disk.cl),
->  	 * because upper layer had already opened bcache device,
->  	 * which would call closure_get(&dc->disk.cl)
->  	 */
->  	ddip = kzalloc(sizeof(struct detached_dev_io_private), GFP_NOIO);
-> -	if (!ddip) {
-> -		bio->bi_status = BLK_STS_RESOURCE;
-> -		bio_endio(bio);
-> -		return;
-> -	}
-> -
-> -	ddip->d = d;
-> +	if (!ddip)
-> +		goto enomem;
-> +	if (bio_init_clone(dc->bdev, &ddip->bio, orig_bio, GFP_NOIO))
-> +		goto free_ddip;
->  	/* Count on the bcache device */
-> -	ddip->orig_bdev = orig_bdev;
->  	ddip->start_time = start_time;
-> -	ddip->bi_end_io = bio->bi_end_io;
-> -	ddip->bi_private = bio->bi_private;
-> -	bio->bi_end_io = detached_dev_end_io;
-> -	bio->bi_private = ddip;
-> -
-> -	if ((bio_op(bio) == REQ_OP_DISCARD) &&
-> -	    !bdev_max_discard_sectors(dc->bdev))
-> -		detached_dev_end_io(bio);
-> -	else
-> -		submit_bio_noacct(bio);
-> +	ddip->orig_bio = orig_bio;
-> +	ddip->bio.bi_end_io = detached_dev_end_io;
-> +	ddip->bio.bi_private = dc;
-> +	submit_bio_noacct(&ddip->bio);
-> +	return;
-> +free_ddip:
-> +	kfree(ddip);
-> +enomem:
-> +	orig_bio->bi_status = BLK_STS_RESOURCE;
-> +	bio_endio(orig_bio);
->  }
->  
->  static void quit_max_writeback_rate(struct cache_set *c,
-> @@ -1214,10 +1213,10 @@ void cached_dev_submit_bio(struct bio *bio)
->  
->  	start_time = bio_start_io_acct(bio);
->  
-> -	bio_set_dev(bio, dc->bdev);
->  	bio->bi_iter.bi_sector += dc->sb.data_offset;
->  
->  	if (cached_dev_get(dc)) {
-> +		bio_set_dev(bio, dc->bdev);
->  		s = search_alloc(bio, d, orig_bdev, start_time);
->  		trace_bcache_request_start(s->d, bio);
->  
-> @@ -1237,9 +1236,10 @@ void cached_dev_submit_bio(struct bio *bio)
->  			else
->  				cached_dev_read(dc, s);
->  		}
-> -	} else
-> +	} else {
->  		/* I/O request sent to backing device */
-> -		detached_dev_do_request(d, bio, orig_bdev, start_time);
-> +		detached_dev_do_request(d, bio, start_time);
-> +	}
->  }
->  
->  static int cached_dev_ioctl(struct bcache_device *d, blk_mode_t mode,
-> -- 
-> 2.47.3
 
