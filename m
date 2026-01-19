@@ -1,89 +1,146 @@
-Return-Path: <linux-bcache+bounces-1382-lists+linux-bcache=lfdr.de@vger.kernel.org>
+Return-Path: <linux-bcache+bounces-1383-lists+linux-bcache=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-bcache@lfdr.de
 Delivered-To: lists+linux-bcache@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A990BD3A21A
-	for <lists+linux-bcache@lfdr.de>; Mon, 19 Jan 2026 09:52:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7811ED3A3BE
+	for <lists+linux-bcache@lfdr.de>; Mon, 19 Jan 2026 10:53:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 708023016CFF
-	for <lists+linux-bcache@lfdr.de>; Mon, 19 Jan 2026 08:52:17 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 6BCD730456A7
+	for <lists+linux-bcache@lfdr.de>; Mon, 19 Jan 2026 09:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B258A34FF59;
-	Mon, 19 Jan 2026 08:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B700B3081A2;
+	Mon, 19 Jan 2026 09:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="sHn0ZVXo"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dxOx0lHp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="W4qUigv7";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dxOx0lHp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="W4qUigv7"
 X-Original-To: linux-bcache@vger.kernel.org
-Received: from sg-1-22.ptr.blmpb.com (sg-1-22.ptr.blmpb.com [118.26.132.22])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BC426158C
-	for <linux-bcache@vger.kernel.org>; Mon, 19 Jan 2026 08:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8D6305057
+	for <linux-bcache@vger.kernel.org>; Mon, 19 Jan 2026 09:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768812736; cv=none; b=RrDztxUPlmqI0izqFrC+6wEftH9ORHoqPQg+S1b/IJGSE60csICUEDuspyFfFQOiDhypSAS7Y7+NqV88ds2R5a/YEvVPJxtvoxblNRzM3NjHxTDpsu6KuTkOSWhvruYPBTthInrBx4LYsAxt3XslaXQhfnywfVVIBz0c2/HU+JM=
+	t=1768816314; cv=none; b=UuXoL4JBexo6tCIVIE0LARFAKc892BylrUYV+67rx+1xtfhZBF0AX9X8HZxjJHi5wxMRglFTjDa2R6LXnDkJffY4NgBa7H5sdYDUEu3s+BmZ1gEq5WNfdCUWJFyJZX7WFbuBIeXW/UInJ4RBaa1qo2zeIgsn4Iz2oeWhAvL2lsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768812736; c=relaxed/simple;
-	bh=jf86IloKeDsZGLkTiknyb5s0/ZMBbJtIFQQMkrjARyM=;
-	h=Subject:References:Cc:From:Date:Mime-Version:Message-Id:
-	 In-Reply-To:Content-Type:To; b=okHsKs5VKDLorLnvFl1sjKz91KHq5+7iTPmB9tZoqK3q75Ir9gJHm5rw2RDdEure5cuFrNRzfx3hAxlGBEGCC99rY5IVYFJP1Pni2GS+RbCZOvhxkKe96091yx5HGovCn87g3HQHt4EkAGkFCwkIMbLRgS62jQl7FjauYy3Yij0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=pass smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=sHn0ZVXo; arc=none smtp.client-ip=118.26.132.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fnnas.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1768812728;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=CQgXpZzD7q7X74mbtoLyfIj+SzVrOwqEO5tD2hixhKA=;
- b=sHn0ZVXoxJcaLlExHznKIbWOFUGm7GrwYkRAypHKNTO1j3YtjYHIsBwy6yqAYbbqauP6GP
- 4QoWCd+DeH4KNIbrMceVjVY0hhOfsx+ScY8P55N4LzYoppkvP5AAqqiPRrGAnTLCw8/R2f
- F6ncAzWqdVfw7UoEUrH2d0L9XUkiMJX8hLmpl7PyZtl5xGejqc88utSJRVHeDOxZNxfvks
- +vWUdzYRCymnqfXtW1poiiLEV5rROtMlk43D2izQwWidPWgApqF3KGkFV4d/YxHiYAOjoB
- dH+dQh9ctr3Yfx/AQCPFGs9voXtpk+IPO5ycb9+v207YS5F594SC31jZwyMFMQ==
-Subject: Re: [PATCH] bcache: fix double bio_endio completion in detached_dev_end_io
-X-Mailer: Apple Mail (2.3864.300.41.1.7)
-References: <20260115074811.230807-1-zhangshida@kylinos.cn> <CANubcdUdQ9gJ7uQELc80h0+FpurR5f2COmB3hBEDejavfFZJ9g@mail.gmail.com> <aWilW0RKQiHJzpsZ@infradead.org> <aWzIU3ASp139lHNz@studio.local> <aW3Sq4H_OosPVaNe@infradead.org> <aW3nzb2lOSVSbqQZ@studio.local> <aW3rfPoloviR1Rp9@infradead.org>
-Content-Transfer-Encoding: quoted-printable
-Cc: "Stephen Zhang" <starzhangzsd@gmail.com>, <kent.overstreet@linux.dev>, 
-	<axboe@kernel.dk>, <sashal@kernel.org>, <linux-bcache@vger.kernel.org>, 
-	<linux-kernel@vger.kernel.org>, <zhangshida@kylinos.cn>
-From: "Coly Li" <colyli@fnnas.com>
-Date: Mon, 19 Jan 2026 16:51:54 +0800
+	s=arc-20240116; t=1768816314; c=relaxed/simple;
+	bh=SDYD2YLxll9ec1gMp8losBgO3r9CiNIjB7uVki/KizM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osmzKKM59CyRutJ6Gb5hCsCOgKXou4J/zJx59iMTRgf/UVC2vCdgkK7O8TTAwupjwhAMFI7jF95SeG4MFB4Q+/7XARgSCwDydW/2gVOxrAaSInM4yUvFICtUfoP04WLm1nusOT5EhTf+b/Uc+jzdOf4YWq2dbk38h++Xliwodtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dxOx0lHp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=W4qUigv7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dxOx0lHp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=W4qUigv7; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9B29C5BD44;
+	Mon, 19 Jan 2026 09:51:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1768816311; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uxrf5LEU65FkvilzgzhnRk5j0tnadXH2M9TjKeq/hFA=;
+	b=dxOx0lHpchUMMf22iNFKaVVDlTatr+n4W11wp/giefmQVnSPR/pV9g/f73N7zQ6pQ3Grcs
+	982NMXN/D1zRvwvhaW+b9eqiXwbMDX4BE7ukW6ebKDm3owQJ/b2eOLilPS2bv9lnQDbBkw
+	iZbI8f76oEfoDVGQKJrUNZrjr7vdXBE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1768816311;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uxrf5LEU65FkvilzgzhnRk5j0tnadXH2M9TjKeq/hFA=;
+	b=W4qUigv7MeAHgq2fBI4s2LelPP64yG+1MwtrszNw9gORsnTsPCABESWudlnJ/0K4Gog81D
+	pI6xmGmkTKf4TuBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1768816311; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uxrf5LEU65FkvilzgzhnRk5j0tnadXH2M9TjKeq/hFA=;
+	b=dxOx0lHpchUMMf22iNFKaVVDlTatr+n4W11wp/giefmQVnSPR/pV9g/f73N7zQ6pQ3Grcs
+	982NMXN/D1zRvwvhaW+b9eqiXwbMDX4BE7ukW6ebKDm3owQJ/b2eOLilPS2bv9lnQDbBkw
+	iZbI8f76oEfoDVGQKJrUNZrjr7vdXBE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1768816311;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uxrf5LEU65FkvilzgzhnRk5j0tnadXH2M9TjKeq/hFA=;
+	b=W4qUigv7MeAHgq2fBI4s2LelPP64yG+1MwtrszNw9gORsnTsPCABESWudlnJ/0K4Gog81D
+	pI6xmGmkTKf4TuBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8C95E3EA63;
+	Mon, 19 Jan 2026 09:51:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hLh+Ibf+bWkCawAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Mon, 19 Jan 2026 09:51:51 +0000
+Date: Mon, 19 Jan 2026 10:51:46 +0100
+From: Daniel Wagner <dwagner@suse.de>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Christoph Hellwig <hch@infradead.org>, Coly Li <colyli@fnnas.com>, 
+	axboe@kernel.dk, linux-block@vger.kernel.org, linux-bcache@vger.kernel.org, 
+	Shida Zhang <zhangshida@kylinos.cn>
+Subject: Re: [PATCH] Revert "bcache: fix improper use of bi_end_io"
+Message-ID: <f7af1e25-fbe9-4d37-b902-5b3a9ed4c8f4@flourine.local>
+References: <20260113060940.46489-1-colyli@fnnas.com>
+ <aWX9WmRrlaCRuOqy@infradead.org>
+ <aWYCe-MJKFaS__vi@moria.home.lan>
+ <aWYDnKOdpT6gwL5b@infradead.org>
+ <aWYDySBBmQ01JQOk@moria.home.lan>
+ <aWYJRsxQcLfEXJlu@infradead.org>
+ <aWZwBZaVVBC0otPd@studio.local>
+ <aWZyHz_eZWN-yQiD@infradead.org>
+ <aWZyWJiOi9hZgtqo@moria.home.lan>
 Precedence: bulk
 X-Mailing-List: linux-bcache@vger.kernel.org
 List-Id: <linux-bcache.vger.kernel.org>
 List-Subscribe: <mailto:linux-bcache+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-bcache+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-Id: <18D8841B-9C33-436A-9B8D-C81E2EA0DE69@fnnas.com>
-Received: from smtpclient.apple ([120.245.64.73]) by smtp.feishu.cn with ESMTPS; Mon, 19 Jan 2026 16:52:05 +0800
-In-Reply-To: <aW3rfPoloviR1Rp9@infradead.org>
-X-Lms-Return-Path: <lba+2696df0b6+a232e8+vger.kernel.org+colyli@fnnas.com>
-Content-Type: text/plain; charset=UTF-8
-X-Original-From: Coly Li <colyli@fnnas.com>
-To: "Christoph Hellwig" <hch@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aWZyWJiOi9hZgtqo@moria.home.lan>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-> 2026=E5=B9=B41=E6=9C=8819=E6=97=A5 16:29=EF=BC=8CChristoph Hellwig <hch@i=
-nfradead.org> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Mon, Jan 19, 2026 at 04:19:38PM +0800, Coly Li wrote:
->> Before I work on it, I want to know the author already ran and tested th=
-e
->> patch firstly. Normally I won't test any patches posted on mailing list.
->=20
-> Without a published test suite that can be used for that, that is a very
-> high demand.  Maintainers of code that can't easily be tested by a
-> drive by contributor (or contributor to the parent subsystems for that
-> matter) need to help with testing, otherwise we would not get anything
-> done in the kernel.
->=20
+On Tue, Jan 13, 2026 at 11:34:18AM -0500, Kent Overstreet wrote:
+> Coly and I were just on a call discussing updating my old test suite. I
+> haven't used the bcache tests in > 10 years so they do need to be
+> updated, but the harness and related tooling is well supported both for
+> local development and has full CI.
+> 
+> https://evilpiepirate.org/git/ktest.git/tree/README.md
+> https://evilpiepirate.org/git/ktest.git/tree/tests/bcache/
 
-OK, let me integrate Kent=E2=80=99s test cases and my scripts, and show it =
-in git.kernel.org.
-You ask this for times, I should handle it ASAP. But it won=E2=80=99t be th=
-e blocker of proceeding this fix.
-
-Anyway, there is no conflict with asking =E2=80=9Cdo you test your patch=E2=
-=80=9D from me.
-
-Coly Li
+I just quickly look at the tests and I got the impression some of those
+tests could be added to blktests. blktests is run by various people,
+thus bcache would get some basic test exposure, e.g. in linux-next.
 
